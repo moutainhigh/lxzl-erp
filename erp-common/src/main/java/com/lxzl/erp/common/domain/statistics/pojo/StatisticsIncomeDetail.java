@@ -23,6 +23,7 @@ public class StatisticsIncomeDetail {
     private BigDecimal returnRentDepositPaidAmount;  //退租金押金
     private BigDecimal rentAmount;  //租金
     private BigDecimal prepayRentAmount;  //预付租金
+    private BigDecimal otherPaidAmount;  //其他费用（运费等）
     private BigDecimal incomeAmount;  //收入
     private Date payTime;  //支付时间
     private Integer orderItemReferId;  //订单项ID
@@ -162,5 +163,13 @@ public class StatisticsIncomeDetail {
 
     public void setOrderItemType(Integer orderItemType) {
         this.orderItemType = orderItemType;
+    }
+
+    public BigDecimal getOtherPaidAmount() {
+        return otherPaidAmount;
+    }
+
+    public void setOtherPaidAmount(BigDecimal otherPaidAmount) {
+        this.otherPaidAmount = otherPaidAmount;
     }
 }

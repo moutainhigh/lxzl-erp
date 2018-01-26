@@ -11,8 +11,10 @@ import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncomeDetail;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
-import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
-import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.common.util.BigDecimalUtil;
+import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.DateUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -20,17 +22,12 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
-import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
-import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.tree.ReturnType;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -98,34 +95,47 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         StatisticsIncome statisticsIncome = statisticsMapper.queryIncomeCount(maps);
         List<StatisticsIncomeDetail> statisticsIncomeDetailList = statisticsMapper.queryIncome(maps);
-        Map<String,StatisticsIncomeDetail> statisticsIncomeDetailMap = ListUtil.listToMap(statisticsIncomeDetailList,"orderItemReferId","orderItemType");
+        Map<String, StatisticsIncomeDetail> statisticsIncomeDetailMap = ListUtil.listToMap(statisticsIncomeDetailList, "orderItemReferId", "orderItemType");
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForStatistics(maps);
         BigDecimal totalRent = BigDecimal.ZERO;    //总租金
         BigDecimal totalPrepayRent = BigDecimal.ZERO;    //总预付租金
-        if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
-            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
-                String key = statementOrderDetailDO.getOrderItemReferId()+"-"+statementOrderDetailDO.getOrderItemType();
+        BigDecimal totalOtherPaid = BigDecimal.ZERO;    //总其他收入
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                String key = statementOrderDetailDO.getOrderItemReferId() + "-" + statementOrderDetailDO.getOrderItemType();
                 //如果在返回列表中有数据，则处理租金及预付租金字段
-                if(statisticsIncomeDetailMap.containsKey(key)){
+                if (statisticsIncomeDetailMap.containsKey(key)) {
                     StatisticsIncomeDetail statisticsIncomeDetail = statisticsIncomeDetailMap.get(key);
                     //计算查询区间内租金费用
-                    BigDecimal rentAmount = calculateRentAmount(statisticsIncomePageParam.getStartTime(),statisticsIncomePageParam.getEndTime(),statementOrderDetailDO);
+                    BigDecimal rentAmount = calculateRentAmount(statisticsIncomePageParam.getStartTime(), statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
                     //计算查询区间内预付租金费用
-                    BigDecimal prepayRentAmount =  calculatePrepayRentAmount(statisticsIncomePageParam.getEndTime(),statementOrderDetailDO);
+                    BigDecimal prepayRentAmount = calculatePrepayRentAmount(statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
 
-                    statisticsIncomeDetail.setRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getRentAmount(),rentAmount));
-                    statisticsIncomeDetail.setPrepayRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getPrepayRentAmount(),prepayRentAmount));
+                    statisticsIncomeDetail.setRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getRentAmount(), rentAmount));
+                    statisticsIncomeDetail.setPrepayRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getPrepayRentAmount(), prepayRentAmount));
+                    statisticsIncomeDetail.setOtherPaidAmount(BigDecimalUtil.add(statisticsIncomeDetail.getOtherPaidAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount()));
+
+                    BigDecimal in = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),
+                            BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(),
+                                    BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),
+                                            statementOrderDetailDO.getStatementDetailRentDepositPaidAmount())));
+                    BigDecimal out = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+
+                    statisticsIncomeDetail.setIncomeAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsIncomeDetail.getIncomeAmount(), in), out));
+
                     //统计总租金及总预付租金
-                    totalRent = BigDecimalUtil.add(totalRent,rentAmount);
-                    totalPrepayRent = BigDecimalUtil.add(totalPrepayRent,prepayRentAmount);
+                    totalRent = BigDecimalUtil.add(totalRent, rentAmount);
+                    totalPrepayRent = BigDecimalUtil.add(totalPrepayRent, prepayRentAmount);
+                    totalOtherPaid = BigDecimalUtil.add(totalOtherPaid, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
                 }
             }
         }
         statisticsIncome.setTotalRent(totalRent);
         statisticsIncome.setTotalPrepayRent(totalPrepayRent);
-        BigDecimal in = BigDecimalUtil.add(statisticsIncome.getTotalPrepayRent(),BigDecimalUtil.add(statisticsIncome.getTotalRent(),BigDecimalUtil.add(statisticsIncome.getTotalDeposit(),statisticsIncome.getTotalRentDeposit())));
-        BigDecimal out = BigDecimalUtil.add(statisticsIncome.getTotalReturnDeposit(),statisticsIncome.getTotalReturnRentDeposit());
-        statisticsIncome.setTotalIncome(BigDecimalUtil.sub(in,out));
+        statisticsIncome.setTotalOtherPaid(totalOtherPaid);
+        BigDecimal in = BigDecimalUtil.add(statisticsIncome.getTotalPrepayRent(), BigDecimalUtil.add(statisticsIncome.getTotalRent(), BigDecimalUtil.add(statisticsIncome.getTotalDeposit(), statisticsIncome.getTotalRentDeposit())));
+        BigDecimal out = BigDecimalUtil.add(statisticsIncome.getTotalReturnDeposit(), statisticsIncome.getTotalReturnRentDeposit());
+        statisticsIncome.setTotalIncome(BigDecimalUtil.sub(in, out));
         Page<StatisticsIncomeDetail> page = new Page<>(statisticsIncomeDetailList, statisticsIncome.getTotalCount(), statisticsIncomePageParam.getPageNo(), statisticsIncomePageParam.getPageSize());
         statisticsIncome.setStatisticsIncomeDetailPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -133,34 +143,35 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
-    private BigDecimal calculateRentAmount(Date startTime,Date endTime,StatementOrderDetailDO statementOrderDetailDO){
+    private BigDecimal calculateRentAmount(Date startTime, Date endTime, StatementOrderDetailDO statementOrderDetailDO) {
         //比较日期大小确定统计起始时间，结束时间
         //起始时间为MAX[统计起始时间，结算开始时间]
         //结束时间为MIN[统计结束时间，结算结束时间]
-        Date start = DateUtil.daysBetween(startTime,statementOrderDetailDO.getStatementStartTime())>0?startTime:statementOrderDetailDO.getStatementStartTime();
-        Date end = DateUtil.daysBetween(endTime,statementOrderDetailDO.getStatementEndTime())>0?statementOrderDetailDO.getStatementEndTime():endTime;
-        if(OrderRentType.RENT_TYPE_MONTH.equals(statementOrderDetailDO.getRentType())){
-            return BigDecimalUtil.mul(amountSupport.calculateRentAmount(start,end,statementOrderDetailDO.getGoodsUnitAmount()),new BigDecimal(statementOrderDetailDO.getGoodsCount()));
-        }else if(OrderRentType.RENT_TYPE_DAY.equals(statementOrderDetailDO.getRentType())){
+        Date start = DateUtil.daysBetween(startTime, statementOrderDetailDO.getStatementStartTime()) > 0 ? startTime : statementOrderDetailDO.getStatementStartTime();
+        Date end = DateUtil.daysBetween(endTime, statementOrderDetailDO.getStatementEndTime()) > 0 ? statementOrderDetailDO.getStatementEndTime() : endTime;
+        if (OrderRentType.RENT_TYPE_MONTH.equals(statementOrderDetailDO.getRentType())) {
+            return BigDecimalUtil.mul(amountSupport.calculateRentAmount(start, end, statementOrderDetailDO.getGoodsUnitAmount()), new BigDecimal(statementOrderDetailDO.getGoodsCount()));
+        } else if (OrderRentType.RENT_TYPE_DAY.equals(statementOrderDetailDO.getRentType())) {
             //计算两日期时间差
-            Integer dayCount = DateUtil.daysBetween(start,end);
-            return BigDecimalUtil.mul(statementOrderDetailDO.getGoodsUnitAmount(),new BigDecimal(dayCount));
+            Integer dayCount = DateUtil.daysBetween(start, end);
+            return BigDecimalUtil.mul(statementOrderDetailDO.getGoodsUnitAmount(), new BigDecimal(dayCount));
         }
 
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal calculatePrepayRentAmount(Date endTime,StatementOrderDetailDO statementOrderDetailDO){
+    private BigDecimal calculatePrepayRentAmount(Date endTime, StatementOrderDetailDO statementOrderDetailDO) {
         //如果结算单结束时间小于等于统计结束时间，则预付租金为0
-        if(DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(),endTime)>=0){
+        if (DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), endTime) >= 0) {
             return BigDecimal.ZERO;
         }
-        BigDecimal amount = BigDecimalUtil.mul(amountSupport.calculateRentAmount(statementOrderDetailDO.getStatementStartTime(),endTime,statementOrderDetailDO.getGoodsUnitAmount()),new BigDecimal(statementOrderDetailDO.getGoodsCount()));
+        BigDecimal amount = BigDecimalUtil.mul(amountSupport.calculateRentAmount(statementOrderDetailDO.getStatementStartTime(), endTime, statementOrderDetailDO.getGoodsUnitAmount()), new BigDecimal(statementOrderDetailDO.getGoodsCount()));
 //        System.out.println("结算金额已交的为"+statementOrderDetailDO.getStatementDetailRentPaidAmount()+"元");
 //        System.out.println("结算日起，至统计结束时间为止，需交金额为"+amount+"元");
 //        System.out.println("预付"+BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(),amount)+"元");
-        return BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(),amount);
+        return BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(), amount);
     }
+
     @Autowired
     private CustomerMapper customerMapper;
 
