@@ -5,7 +5,9 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
 import com.lxzl.erp.common.domain.payment.WeixinPayParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -97,6 +99,12 @@ public class InterfaceController extends BaseController {
     @RequestMapping(value = "wechatCharge", method = RequestMethod.POST)
     public Result wechatCharge(@RequestBody WeixinPayParam weixinPayParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = paymentService.wechatCharge(weixinPayParam,NetworkUtil.getIpAddress(request));
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryChargeRecordPage", method = RequestMethod.POST)
+    public Result queryChargeRecordPage(@RequestBody ChargeRecordParam param, BindingResult validResult) {
+        ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
