@@ -77,12 +77,11 @@ public interface PaymentService extends BaseService {
 
     /**
      * 微信充值
-     * 
-     * @param weixinPayParam
+     *
      * @param ip
      * @return
      */
-    ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip);
+    ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip);
 
     /**
      * 退还用户押金

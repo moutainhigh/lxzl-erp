@@ -203,16 +203,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip) {
+    public ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
 //        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
-        CustomerDO customerDO = customerMapper.findByNo(weixinPayParam.getBusinessCustomerNo());
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if(customerDO == null){
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+        WeixinPayParam weixinPayParam = new WeixinPayParam();
 
         if(customerDO.getCustomerType() == CustomerType.CUSTOMER_TYPE_COMPANY){
             weixinPayParam.setBusinessOrderNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
@@ -222,7 +223,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         weixinPayParam.setPayName(customerDO.getCustomerName());
-        weixinPayParam.setAmount(weixinPayParam.getAmount());
+        weixinPayParam.setAmount(new BigDecimal(0.01));
         weixinPayParam.setPayDescription("充值1分钱也是爱");
         weixinPayParam.setOpenId(weixinPayParam.getOpenId());
         weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());

@@ -62,7 +62,7 @@ public class PaymentController extends BaseController {
 
     @RequestMapping(value = "wechatCharge", method = RequestMethod.POST)
     public Result wechatCharge(@RequestBody WeixinPayParam weixinPayParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = paymentService.wechatCharge(weixinPayParam,NetworkUtil.getIpAddress(request));
+        ServiceResult<String, String> serviceResult = paymentService.wechatCharge(weixinPayParam.getBusinessCustomerNo(),weixinPayParam.getBusinessOrderRemark(),weixinPayParam.getAmount(),weixinPayParam.getOpenId(),NetworkUtil.getIpAddress(request));
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
