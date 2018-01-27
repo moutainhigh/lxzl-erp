@@ -1,7 +1,7 @@
 package com.lxzl.erp.core.service.payment;
 
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.pay.WeixinPayResponse;
+import com.lxzl.erp.common.domain.payment.WeixinPayParam;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
@@ -62,7 +62,27 @@ public interface PaymentService extends BaseService {
      */
     ServiceResult<String, Boolean> balancePay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payRentAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal payOtherAmount);
 
+    /**
+     * 微信支付
+     * @param customerNo
+     * @param businessOrderNo
+     * @param businessOrderRemark
+     * @param payAmount
+     * @param openId
+     * @param ip
+     * @param loginUserId
+     * @return
+     */
     ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount, String openId, String ip, Integer loginUserId);
+
+    /**
+     * 微信充值
+     * 
+     * @param weixinPayParam
+     * @param ip
+     * @return
+     */
+    ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip);
 
     /**
      * 退还用户押金
@@ -73,4 +93,7 @@ public interface PaymentService extends BaseService {
      * @return 退还结果
      */
     ServiceResult<String, Boolean> returnDeposit(String customerNo, BigDecimal returnRentDepositAmount, BigDecimal returnDepositAmount);
+
+
+
 }

@@ -34,6 +34,7 @@
         <property name="paymentSystemReturnDepositURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_URL}"/>
         <property name="paymentSystemAppId" value="${PAYMENT_SYSTEM_APP_ID}"/>
         <property name="paymentSystemAppSecret" value="${PAYMENT_SYSTEM_APP_SECRET}"/>
+        <property name="paymentSystemWeixinChargeURL" value="${PAYMENT_SYSTEM_WEIXIN_CHARGE_URL}"/>
     </bean>
 
 </beans>

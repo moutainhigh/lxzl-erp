@@ -1,23 +1,36 @@
 package com.lxzl.erp.core.service.payment.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.PayStatus;
 import com.lxzl.erp.common.domain.PaymentSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PaymentResult;
+import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.pay.WeixinPayResponse;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -31,6 +44,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
+
 
     @Override
     public CustomerAccount queryCustomerAccountNoLogin(String customerNo) {
@@ -172,6 +190,53 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinPayURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                result.setResult((String) paymentResult.getResultMap().get("data"));
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+//        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        CustomerDO customerDO = customerMapper.findByNo(weixinPayParam.getBusinessCustomerNo());
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+        if(customerDO.getCustomerType() == CustomerType.CUSTOMER_TYPE_COMPANY){
+            weixinPayParam.setBusinessOrderNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
+        }else{
+            weixinPayParam.setBusinessOrderNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
+        }
+
+        weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        weixinPayParam.setPayName(customerDO.getCustomerName());
+        weixinPayParam.setAmount(weixinPayParam.getAmount());
+        weixinPayParam.setPayDescription("充值1分钱也是爱");
+        weixinPayParam.setOpenId(weixinPayParam.getOpenId());
+        weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
+        weixinPayParam.setBusinessNotifyUrl(null);
+        weixinPayParam.setClientIp(ip);
+        weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        weixinPayParam.setBusinessOperateUser(loginUser.getUserId().toString());
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(weixinPayParam);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinChargeURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((String) paymentResult.getResultMap().get("data"));

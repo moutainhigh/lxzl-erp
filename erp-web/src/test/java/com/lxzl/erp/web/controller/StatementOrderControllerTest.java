@@ -49,7 +49,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void weixinPay() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-731454-20180101-00025");
+        param.setStatementOrderNo("LXSO-731457-20180101-00037");
         param.setOpenId("o_ORluFbHAHEKaa_PCRo1bky4R6U");
         TestResult testResult = getJsonTestResult("/statementOrder/weixinPay", param);
     }

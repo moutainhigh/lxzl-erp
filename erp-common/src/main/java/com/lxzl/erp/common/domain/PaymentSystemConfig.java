@@ -18,6 +18,8 @@ public class PaymentSystemConfig {
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
 
+    public static String paymentSystemWeixinChargeURL;
+
     public void setPaymentSystemManualChargeURL(String paymentSystemManualChargeURL) {
         PaymentSystemConfig.paymentSystemManualChargeURL = paymentSystemManualChargeURL;
     }
@@ -52,5 +54,9 @@ public class PaymentSystemConfig {
 
     public void setPaymentSystemWeixinPayCallbackURL(String paymentSystemWeixinPayCallbackURL) {
         PaymentSystemConfig.paymentSystemWeixinPayCallbackURL = paymentSystemWeixinPayCallbackURL;
+    }
+
+    public void setPaymentSystemWeixinChargeURL(String paymentSystemWeixinChargeURL) {
+        PaymentSystemConfig.paymentSystemWeixinChargeURL = paymentSystemWeixinChargeURL;
     }
 }
