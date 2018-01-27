@@ -186,7 +186,11 @@ public class StatementServiceImpl implements StatementService {
                 StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), otherAmount, currentTime, loginUserId);
                 if (depositDetail != null) {
                     depositDetail.setStatementDetailPhase(0);
-                    depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                    if (BigDecimalUtil.compare(BigDecimalUtil.add(orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount()), BigDecimal.ZERO) != 0) {
+                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                    } else {
+                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
+                    }
                     addStatementOrderDetailDOList.add(depositDetail);
                     otherAmount = BigDecimal.ZERO;
                 }
@@ -245,7 +249,11 @@ public class StatementServiceImpl implements StatementService {
                 StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), otherAmount, currentTime, loginUserId);
                 if (depositDetail != null) {
                     depositDetail.setStatementDetailPhase(0);
-                    depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                    if (BigDecimalUtil.compare(BigDecimalUtil.add(orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount()), BigDecimal.ZERO) != 0) {
+                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
+                    } else {
+                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
+                    }
                     addStatementOrderDetailDOList.add(depositDetail);
                     otherAmount = BigDecimal.ZERO;
                 }
@@ -483,11 +491,12 @@ public class StatementServiceImpl implements StatementService {
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                 BigDecimal needStatementDetailRentPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                statementOrderDetailNeedPayMap.put(statementOrderDetailDO.getId(), needStatementDetailRentPayAmount);
+                statementOrderDetailNeedPayMap.put(statementOrderDetailDO.getId(), BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId()), needStatementDetailRentPayAmount));
             }
             if (StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT.equals(statementOrderDetailDO.getStatementDetailType())
-                    && BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailAmount(), BigDecimal.ZERO) < 0) {
-                statementOrderDetailNeedPayMap.put(statementOrderDetailDO.getId(),BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId()),statementOrderDetailDO.getStatementDetailAmount()));
+                    && BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailAmount(), BigDecimal.ZERO) < 0
+                    && statementOrderDetailDO.getReturnReferId() != null) {
+                statementOrderDetailNeedPayMap.put(statementOrderDetailDO.getReturnReferId(), BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getReturnReferId()), statementOrderDetailDO.getStatementDetailAmount()));
             }
         }
 
@@ -506,7 +515,7 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDO.setUpdateTime(currentTime);
                 statementOrderDetailDO.setUpdateUser(loginUserId.toString());
                 statementOrderDetailMapper.update(statementOrderDetailDO);
-                BigDecimal orderPaidAmount = BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId()),needStatementDetailOtherPayAmount);
+                BigDecimal orderPaidAmount = BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId()), needStatementDetailOtherPayAmount);
                 orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), orderPaidAmount));
             }
         }
@@ -692,6 +701,12 @@ public class StatementServiceImpl implements StatementService {
         ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(returnOrderNo);
         if (returnOrderDO == null) {
             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByReturnOrderId(returnOrderDO.getId());
+        if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
             return result;
         }
 

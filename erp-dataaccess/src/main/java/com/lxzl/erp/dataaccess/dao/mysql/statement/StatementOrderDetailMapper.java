@@ -12,6 +12,8 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
 
     List<StatementOrderDetailDO> findByOrderId(@Param("orderId") Integer orderId);
 
+    List<StatementOrderDetailDO> findByReturnOrderId(@Param("orderId") Integer orderId);
+
     List<StatementOrderDetailDO> findByOrderItemTypeAndId(@Param("orderItemType") Integer orderItemType, @Param("orderItemId") Integer orderItemId);
 
     List<StatementOrderDetailDO> findByStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
