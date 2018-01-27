@@ -1,7 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statistics;
 
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncomeDetail;
+import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -22,4 +21,11 @@ public interface StatisticsMapper extends BaseMysqlDAO {
 
     List<StatisticsIncomeDetail> queryIncome(@Param("maps") Map<String, Object> paramMap);
 
+    UnReceivable queryUnReceivableCount(@Param("maps") Map<String, Object> paramMap);
+
+    List<UnReceivableDetail> queryUnReceivable(@Param("maps") Map<String, Object> paramMap);
+
+    StatisticsUnReceivable queryStatisticsUnReceivableCount(@Param("maps") Map<String, Object> paramMap);
+
+    List<StatisticsUnReceivableDetail> queryStatisticsUnReceivable(@Param("maps") Map<String, Object> paramMap);
 }
