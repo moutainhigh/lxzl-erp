@@ -569,8 +569,7 @@ public class PageController extends BaseController {
         return "/component/peer/bulkMaterialList";
     }
 
-
-        //结算单
+    //结算单
     @RequestMapping("/statement-order/list")
     public String statementOrderList() {
         return "/statementOrderManage/statementOrderList";
@@ -579,6 +578,13 @@ public class PageController extends BaseController {
     public String statementOrderDetail() {
         return "/statementOrderManage/statementOrderDetail";
     }
+
+    //统计
+    @RequestMapping("/statistics/income-list")
+    public String statisticsIncomeList() {
+        return "/statisticsManage/incomeList";
+    }
+
 
 
     //选择仓库Modal
