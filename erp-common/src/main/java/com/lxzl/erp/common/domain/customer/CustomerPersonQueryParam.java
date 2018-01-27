@@ -16,6 +16,7 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private String personNo;//身份证号'
     private String connectRealName;//紧急联系人姓名'
     private String connectPhone;//紧急联系人电话'
+    private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，1不可用；0可用
 
     private List<Integer> passiveUserIdList;
@@ -114,5 +115,13 @@ public class CustomerPersonQueryParam extends BasePageParam {
 
     public void setIsDisabled(Integer isDisabled) {
         this.isDisabled = isDisabled;
+    }
+
+    public Integer getCustomerStatus() {
+        return customerStatus;
+    }
+
+    public void setCustomerStatus(Integer customerStatus) {
+        this.customerStatus = customerStatus;
     }
 }

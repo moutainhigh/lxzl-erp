@@ -15,6 +15,7 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
+    private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，0不可用；1可用
 
     private String legalPerson;   //法人姓名
@@ -207,5 +208,13 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setIsDisabled(Integer isDisabled) {
         this.isDisabled = isDisabled;
+    }
+
+    public Integer getCustomerStatus() {
+        return customerStatus;
+    }
+
+    public void setCustomerStatus(Integer customerStatus) {
+        this.customerStatus = customerStatus;
     }
 }

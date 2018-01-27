@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface ImgMysqlMapper extends BaseMysqlDAO<ImageDO> {
 
-    List<ImageDO> findByRefId(String refId);
+    List<ImageDO> findByRefId(@Param("refId")String refId);
     ImageDO findByImgId(@Param("id") Integer id);
     List<ImageDO> findByRefIdAndType(@Param("refId") String refId,
                                      @Param("imgType") Integer imgType);

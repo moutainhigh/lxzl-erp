@@ -214,4 +214,9 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
+	<select id="findByCustomerId" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
+		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.data_status = 1
+	</select>
+
 </mapper>

@@ -21,7 +21,7 @@ public class Customer extends BasePO {
 
 	private Integer customerId;   //唯一标识
 	private Integer customerType;   //用户类型,1为企业用户，2为个人用户
-	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class})
 	private String customerNo;   //客戶编号
 	private String customerName; //客户名称
 	private Integer isDisabled;   //是否禁用，1不可用；0可用
@@ -62,6 +62,11 @@ public class Customer extends BasePO {
 
 	private User customerOwnerUser;
 	private User customerUnionUser;
+
+	@NotNull(message = ErrorCode.CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class})
+	private Integer isDefaultConsignAddress; //是否以地址作为收货地址,1是，0否
+
+
 
 	public Integer getCustomerId() {
 		return customerId;
@@ -309,5 +314,13 @@ public class Customer extends BasePO {
 
 	public void setStatementDate(Integer statementDate) {
 		this.statementDate = statementDate;
+	}
+
+	public Integer getIsDefaultConsignAddress() {
+		return isDefaultConsignAddress;
+	}
+
+	public void setIsDefaultConsignAddress(Integer isDefaultConsignAddress) {
+		this.isDefaultConsignAddress = isDefaultConsignAddress;
 	}
 }

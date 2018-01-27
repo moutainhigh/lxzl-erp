@@ -60,8 +60,8 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "commitCustomer", method = RequestMethod.POST)
-    public Result commitCustomer(@RequestBody Customer customer, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = customerService.commitCustomer(customer.getCustomerNo());
+    public Result commitCustomer(@RequestBody @Validated(CommitCustomerGroup.class)Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.commitCustomer(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -178,5 +178,7 @@ public class CustomerController {
         ServiceResult<String, String> serviceResult = customerService.enableCustomer(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+
 
 }

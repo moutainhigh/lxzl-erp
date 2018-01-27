@@ -13,7 +13,7 @@ public interface CustomerService {
     ServiceResult<String,String> addPerson(Customer customer);
     ServiceResult<String,String> updateCompany(Customer customer);
     ServiceResult<String,String> updatePerson(Customer customer);
-    ServiceResult<String,String> commitCustomer(String customerNo);
+    ServiceResult<String,String> commitCustomer(Customer customer);
     ServiceResult<String,String> verifyCustomer(String customerNo, Integer customerStatus, String verifyRemark);
     ServiceResult<String,Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam);
     ServiceResult<String,Page<Customer>> pageCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
@@ -112,4 +112,6 @@ public interface CustomerService {
      *
      */
     ServiceResult<String,String> addStatementDate(Customer customer);
+
+//
 }
