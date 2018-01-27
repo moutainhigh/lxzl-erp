@@ -48,7 +48,12 @@ public class AmountSupport {
             monthSpace = monthSpace + 1;
         } else {
             // 计算前一个月时，算当天，所以要增加一天
-            previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay + 1;
+            if (rentStartDateDay < previousAllDays) {
+                previousSurplusDays = com.lxzl.erp.common.util.DateUtil.getActualMaximum(DateUtil.monthInterval(returnEndDate, -1)) - rentStartDateDay + 1;
+            } else {
+                previousSurplusDays = 1;
+            }
+
             nextSurplusDays = returnEndDateDay;
         }
         BigDecimal surplusDaysAmount = BigDecimalUtil.add(BigDecimalUtil.div(BigDecimalUtil.mul(unitAmount, new BigDecimal(previousSurplusDays)), new BigDecimal(previousAllDays), BigDecimalUtil.SCALE), BigDecimalUtil.div(BigDecimalUtil.mul(unitAmount, new BigDecimal(nextSurplusDays)), new BigDecimal(nextAllDays), BigDecimalUtil.SCALE));

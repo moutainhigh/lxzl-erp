@@ -76,6 +76,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
+        CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
@@ -95,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderDO.getBuyerCustomerId()));
-        orderDO.setOrderSellerId(loginUser.getUserId());
+        orderDO.setOrderSellerId(customerDO.getOwner());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
@@ -1385,8 +1386,13 @@ public class OrderServiceImpl implements OrderService {
                         orderProductDO.setPaymentCycle(0);
                         continue;
                     }
-                    // 商品品牌为苹果品牌
-                    if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
+                    // 判断用户是否为全额押金用户，如果为全额押金用户，即全额押金，并且押0付1
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                        orderProductDO.setDepositCycle(0);
+                        orderProductDO.setPaymentCycle(1);
+                        orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                    } else if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
+                        // 商品品牌为苹果品牌
                         orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                         orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
                         orderProductDO.setPayMode(customerRiskManagementDO.getApplePayMode());
@@ -1438,7 +1444,12 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialDO.setPaymentCycle(0);
                         continue;
                     }
-                    if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
+                    // 判断用户是否为全额押金用户，如果为全额押金用户，即全额押金，并且押0付1
+                    if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                        orderMaterialDO.setDepositCycle(0);
+                        orderMaterialDO.setPaymentCycle(1);
+                        orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                    } else if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
                         orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
                         orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
                         orderMaterialDO.setPayMode(customerRiskManagementDO.getApplePayMode());
@@ -1765,6 +1776,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO) {
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         if (orderProductDOList != null && !orderProductDOList.isEmpty()) {
             int productCount = 0;
             // 商品租赁总额
@@ -1801,6 +1813,9 @@ public class OrderServiceImpl implements OrderService {
                         throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
                     }
                     depositAmount = orderProductDO.getDepositAmount();
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
@@ -1845,8 +1860,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO) {
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         if (orderMaterialDOList != null && !orderMaterialDOList.isEmpty()) {
-
             int materialCount = 0;
             // 商品租赁总额
             BigDecimal materialAmountTotal = new BigDecimal(0.0);
@@ -1874,7 +1889,6 @@ public class OrderServiceImpl implements OrderService {
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
 
                 BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
-
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
@@ -1882,6 +1896,9 @@ public class OrderServiceImpl implements OrderService {
                         throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
                     }
                     depositAmount = orderMaterialDO.getDepositAmount();
+                    totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
+                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                    depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > CommonConstant.ORDER_NEED_VERIFY_DAYS) {
                     creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
