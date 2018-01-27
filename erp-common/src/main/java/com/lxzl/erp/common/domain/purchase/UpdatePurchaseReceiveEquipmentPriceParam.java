@@ -2,7 +2,6 @@ package com.lxzl.erp.common.domain.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 
@@ -17,8 +16,6 @@ public class UpdatePurchaseReceiveEquipmentPriceParam {
     private String purchaseReceiveOrderNo;
     @Valid
     private List<ProductEquipment> equipmentList;
-    @Valid
-    private List<BulkMaterial> bulkMaterialList;
 
     public List<ProductEquipment> getEquipmentList() {
         return equipmentList;
@@ -34,13 +31,5 @@ public class UpdatePurchaseReceiveEquipmentPriceParam {
 
     public void setPurchaseReceiveOrderNo(String purchaseReceiveOrderNo) {
         this.purchaseReceiveOrderNo = purchaseReceiveOrderNo;
-    }
-
-    public List<BulkMaterial> getBulkMaterialList() {
-        return bulkMaterialList;
-    }
-
-    public void setBulkMaterialList(List<BulkMaterial> bulkMaterialList) {
-        this.bulkMaterialList = bulkMaterialList;
     }
 }
