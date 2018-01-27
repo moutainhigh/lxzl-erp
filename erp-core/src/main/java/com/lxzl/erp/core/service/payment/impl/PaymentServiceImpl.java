@@ -203,11 +203,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip) {
+    public ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip ) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
-//        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         WeixinPayParam weixinPayParam = new WeixinPayParam();
 
         weixinPayParam.setBusinessCustomerNo(customerNo);
@@ -220,8 +220,8 @@ public class PaymentServiceImpl implements PaymentService {
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
-        weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppWeixinChargeAppSecret);
-        weixinPayParam.setBusinessOperateUser(loginUser.getUserId().toString());
+        weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        weixinPayParam.setBusinessOperateUser(loginUserId.toString());
 
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();

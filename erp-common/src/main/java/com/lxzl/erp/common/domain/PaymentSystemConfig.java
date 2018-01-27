@@ -17,7 +17,6 @@ public class PaymentSystemConfig {
     public static String paymentSystemReturnDepositURL;
     public static String paymentSystemAppId;
     public static String paymentSystemAppSecret;
-    public static String paymentSystemAppWeixinChargeAppSecret;
 
     public static String paymentSystemWeixinChargeURL;
 
@@ -61,7 +60,4 @@ public class PaymentSystemConfig {
         PaymentSystemConfig.paymentSystemWeixinChargeURL = paymentSystemWeixinChargeURL;
     }
 
-    public void setPaymentSystemAppWeixinChargeAppSecret(String paymentSystemAppWeixinChargeAppSecret) {
-        PaymentSystemConfig.paymentSystemAppWeixinChargeAppSecret = paymentSystemAppWeixinChargeAppSecret;
-    }
 }
