@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.payment.WeixinPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -13,6 +14,7 @@ import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
@@ -49,6 +51,9 @@ public class InterfaceController extends BaseController {
 
     @Autowired
     private StatementService statementService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private HttpServletRequest request;
@@ -88,4 +93,11 @@ public class InterfaceController extends BaseController {
         ServiceResult<String, String> serviceResult = statementService.weixinPayStatementOrder(param.getStatementOrderNo(), param.getOpenId(), NetworkUtil.getIpAddress(request));
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "wechatCharge", method = RequestMethod.POST)
+    public Result wechatCharge(@RequestBody WeixinPayParam weixinPayParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = paymentService.wechatCharge(weixinPayParam.getBusinessCustomerNo(),weixinPayParam.getBusinessOrderRemark(),weixinPayParam.getAmount(),weixinPayParam.getOpenId(),NetworkUtil.getIpAddress(request));
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }

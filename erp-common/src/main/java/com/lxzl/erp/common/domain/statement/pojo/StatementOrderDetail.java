@@ -37,6 +37,8 @@ public class StatementOrderDetail extends BasePO {
     private BigDecimal statementDetailRentPaidAmount;            // 租金已付金额
     private Date statementDetailPaidTime;            // 结算单支付时间
     private BigDecimal statementDetailOverdueAmount;    // 逾期金额
+    private Integer statementDetailOverdueDays;
+    private Integer statementDetailOverduePhaseCount;
     private Integer statementDetailStatus;   //结算状态，0未结算，1已结算
     private Date statementStartTime;   //结算开始时间
     private Date statementEndTime;   //结算结束时间
@@ -371,5 +373,21 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementDetailOtherPaidAmount(BigDecimal statementDetailOtherPaidAmount) {
         this.statementDetailOtherPaidAmount = statementDetailOtherPaidAmount;
+    }
+
+    public Integer getStatementDetailOverdueDays() {
+        return statementDetailOverdueDays;
+    }
+
+    public void setStatementDetailOverdueDays(Integer statementDetailOverdueDays) {
+        this.statementDetailOverdueDays = statementDetailOverdueDays;
+    }
+
+    public Integer getStatementDetailOverduePhaseCount() {
+        return statementDetailOverduePhaseCount;
+    }
+
+    public void setStatementDetailOverduePhaseCount(Integer statementDetailOverduePhaseCount) {
+        this.statementDetailOverduePhaseCount = statementDetailOverduePhaseCount;
     }
 }
