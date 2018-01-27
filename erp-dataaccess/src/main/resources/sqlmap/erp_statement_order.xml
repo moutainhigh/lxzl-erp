@@ -41,6 +41,7 @@
 		<result column="detail_order_id" jdbcType="INTEGER" property="orderId" />
 		<result column="detail_order_item_type" jdbcType="INTEGER" property="orderItemType" />
 		<result column="detail_order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
+		<result column="detail_return_refer_id" jdbcType="INTEGER" property="returnReferId" />
 		<result column="detail_statement_detail_phase" jdbcType="INTEGER" property="statementDetailPhase" />
 		<result column="detail_statement_detail_type" jdbcType="INTEGER" property="statementDetailType" />
 		<result column="detail_statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
@@ -78,7 +79,7 @@
 
 	<sql id="detail_column_List">
 		esod.id as detail_id,esod.statement_order_id as detail_statement_order_id,esod.customer_id as detail_customer_id,esod.order_type as detail_order_type,esod.order_id as detail_order_id ,
-		esod.order_item_type as detail_order_item_type,esod.order_item_refer_id as detail_order_item_refer_id,esod.statement_detail_type as detail_statement_detail_type,esod.statement_detail_phase as detail_statement_detail_phase,esod.statement_expect_pay_time as detail_statement_expect_pay_time,
+		esod.order_item_type as detail_order_item_type,esod.order_item_refer_id as detail_order_item_refer_id,esod.return_refer_id as detail_return_refer_id,esod.statement_detail_type as detail_statement_detail_type,esod.statement_detail_phase as detail_statement_detail_phase,esod.statement_expect_pay_time as detail_statement_expect_pay_time,
 		esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_other_amount as detail_statement_detail_other_amount,esod.statement_detail_other_paid_amount as detail_statement_detail_other_paid_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,
 		esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time as detail_statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount as detail_statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount as detail_statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount as detail_statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time as detail_statement_detail_deposit_return_time,
 		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
@@ -149,9 +150,9 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
 				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
 			</if>
-			<!--<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">-->
-				<!--and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}-->
-			<!--</if>-->
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
+				and eso.statement_status in (0,4)
+			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
@@ -204,15 +205,15 @@
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
 					and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
 				</if>
-				<!--<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null">-->
-					<!--and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}-->
-				<!--</if>-->
+				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
+					and eso.statement_status in (0,4)
+				</if>
 				<choose>
 					<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
 						and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 					</when>
 					<otherwise>
-						and eso.statement_status in (0,4,8,16,20)
+						and eso.statement_status in (0,4,8,16)
 					</otherwise>
 				</choose>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -220,6 +221,12 @@
 				</if>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null ">
 					<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
+				</if>
+				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != null">
+					<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+				</if>
+				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null">
+					<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
 				</if>
 				<if test="maps.isQueryAll == null">
 					and eso.data_status = 1

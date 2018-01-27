@@ -56,7 +56,7 @@ public interface StatementService extends BaseService {
      * @param statementOrderNo 结算单编号
      * @return 支付参数
      */
-    ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo,String openId, String ip);
+    ServiceResult<String, String> weixinPayStatementOrder(String statementOrderNo, String openId, String ip);
 
     /**
      * 微信支付回调
@@ -108,4 +108,13 @@ public interface StatementService extends BaseService {
      * @return 差价
      */
     ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo);
+
+    /**
+     * 处理未支付的结算单
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return 是否处理成功
+     */
+    ServiceResult<String, Boolean> handleNoPaidStatementOrder(Date startTime, Date endTime);
 }

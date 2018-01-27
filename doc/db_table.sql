@@ -1848,6 +1848,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `order_id` int(20) NOT NULL COMMENT '订单ID',
   `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为配件',
   `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
+  `return_refer_id` int(20) COMMENT '退款的时候，关联的付款订单项',
   `rent_length_type` int(11) COMMENT '租赁期限类型，1短租，2长租',
   `statement_detail_type` int(20) COMMENT '结算单明细类型',
   `statement_detail_phase` int(20) COMMENT '期数',

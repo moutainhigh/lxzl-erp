@@ -15,6 +15,7 @@ public class StatementOrderDetailDO extends BaseDO {
     private Integer orderId;
     private Integer orderItemType;
     private Integer orderItemReferId;
+    private Integer returnReferId;     // 退款的时候，关联的结算单detail ID
     private Integer statementDetailType;
     private Integer statementDetailPhase;
     private Date statementExpectPayTime;
@@ -308,5 +309,13 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setGoodsUnitAmount(BigDecimal goodsUnitAmount) {
         this.goodsUnitAmount = goodsUnitAmount;
+    }
+
+    public Integer getReturnReferId() {
+        return returnReferId;
+    }
+
+    public void setReturnReferId(Integer returnReferId) {
+        this.returnReferId = returnReferId;
     }
 }
