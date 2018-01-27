@@ -3,12 +3,14 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.payment.WeixinPayParam;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.payment.PaymentService;
+import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -35,6 +39,9 @@ public class PaymentController extends BaseController {
     @Autowired
     private ResultGenerator resultGenerator;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @RequestMapping(value = "queryAccount", method = RequestMethod.POST)
     public Result queryAccount(@RequestBody Customer customer, BindingResult validResult) {
         CustomerAccount result = paymentService.queryCustomerAccount(customer.getCustomerNo());
@@ -51,5 +58,11 @@ public class PaymentController extends BaseController {
     public Result manualDeduct(@RequestBody ManualDeductParam param, BindingResult validResult) {
         ServiceResult<String, Boolean> result = paymentService.manualDeduct(param);
         return resultGenerator.generate(result.getErrorCode(), result.getResult());
+    }
+
+    @RequestMapping(value = "wechatCharge", method = RequestMethod.POST)
+    public Result wechatCharge(@RequestBody WeixinPayParam weixinPayParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = paymentService.wechatCharge(weixinPayParam,NetworkUtil.getIpAddress(request));
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
