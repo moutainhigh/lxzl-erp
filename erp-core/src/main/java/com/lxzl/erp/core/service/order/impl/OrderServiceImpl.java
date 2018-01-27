@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(),null, currentTime, loginUser.getUserId());
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
@@ -1275,6 +1275,11 @@ public class OrderServiceImpl implements OrderService {
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payType) &&
                 !PayStatus.PAY_STATUS_PAID.equals(dbRecordOrder.getPayStatus())
                 && !PayStatus.PAY_STATUS_PAID_PART.equals(dbRecordOrder.getPayStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
+            return result;
+        }
+        if (BigDecimalUtil.compare(dbRecordOrder.getFirstNeedPayAmount(), BigDecimal.ZERO) > 0 &&
+                !PayStatus.PAY_STATUS_PAID.equals(dbRecordOrder.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_HAVE_NO_PAID);
             return result;
         }

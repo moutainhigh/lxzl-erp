@@ -34,6 +34,8 @@ public class StatementOrderDetailDO extends BaseDO {
     private BigDecimal statementDetailRentPaidAmount;
     private Date statementDetailPaidTime;
     private BigDecimal statementDetailOverdueAmount;
+    private Integer statementDetailOverdueDays;
+    private Integer statementDetailOverduePhaseCount;
     private Integer statementDetailStatus;
     private Date statementStartTime;
     private Date statementEndTime;
@@ -317,5 +319,21 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setReturnReferId(Integer returnReferId) {
         this.returnReferId = returnReferId;
+    }
+
+    public Integer getStatementDetailOverdueDays() {
+        return statementDetailOverdueDays;
+    }
+
+    public void setStatementDetailOverdueDays(Integer statementDetailOverdueDays) {
+        this.statementDetailOverdueDays = statementDetailOverdueDays;
+    }
+
+    public Integer getStatementDetailOverduePhaseCount() {
+        return statementDetailOverduePhaseCount;
+    }
+
+    public void setStatementDetailOverduePhaseCount(Integer statementDetailOverduePhaseCount) {
+        this.statementDetailOverduePhaseCount = statementDetailOverduePhaseCount;
     }
 }

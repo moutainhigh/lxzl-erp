@@ -1170,6 +1170,7 @@ public class StatementServiceImpl implements StatementService {
                     continue;
                 }
 
+                Integer statementOrderOverduePhaseCount = 0;
                 // 判断订单的租赁类型，如果按月租的话，延后七天开始算逾期，如果按天租的话，延后第二天开始算逾期
                 if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetailDO.getOrderType())) {
                     if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetailDO.getOrderItemType())) {
@@ -1178,6 +1179,9 @@ public class StatementServiceImpl implements StatementService {
                             continue;
                         } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                             overdueDays = overdueDays - monthStatementOrderAllowDays;
+                            statementOrderOverduePhaseCount = DateUtil.getMonthSpace(statementOrderDetailDO.getStatementExpectPayTime(), currentTime) + 1;
+                        } else {
+                            statementOrderOverduePhaseCount = overdueDays;
                         }
                     } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetailDO.getOrderItemType())) {
                         OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(statementOrderDetailDO.getOrderItemReferId());
@@ -1185,6 +1189,9 @@ public class StatementServiceImpl implements StatementService {
                             continue;
                         } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
                             overdueDays = overdueDays - monthStatementOrderAllowDays;
+                            statementOrderOverduePhaseCount = DateUtil.getMonthSpace(statementOrderDetailDO.getStatementExpectPayTime(), currentTime) + 1;
+                        } else {
+                            statementOrderOverduePhaseCount = overdueDays;
                         }
                     }
                 }
@@ -1192,6 +1199,8 @@ public class StatementServiceImpl implements StatementService {
                 // 以下均为逾期处理，overdueDays 为逾期天数，开始算逾期。
                 BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(0.003)), new BigDecimal(overdueDays));
                 statementOrderDetailDO.setStatementDetailOverdueAmount(detailOverdueAmount);
+                statementOrderDetailDO.setStatementDetailOverdueDays(overdueDays);
+                statementOrderDetailDO.setStatementDetailOverduePhaseCount(statementOrderOverduePhaseCount);
                 statementOrderDetailMapper.update(statementOrderDetailDO);
 
                 totalOverdueAmount = BigDecimalUtil.add(totalOverdueAmount, detailOverdueAmount);
