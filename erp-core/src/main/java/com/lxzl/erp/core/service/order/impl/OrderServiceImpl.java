@@ -129,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
+        CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         OrderDO dbOrderDO = orderMapper.findByOrderNo(order.getOrderNo());
         if (dbOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
@@ -166,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
         orderDO.setOrderNo(dbOrderDO.getOrderNo());
-        orderDO.setOrderSellerId(loginUser.getUserId());
+        orderDO.setOrderSellerId(customerDO.getOwner());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -1965,7 +1966,11 @@ public class OrderServiceImpl implements OrderService {
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
             return ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS;
         }
-        if (order.getRentStartTime() == null) {
+        if (order.getExpectDeliveryTime() == null || order.getRentStartTime() == null) {
+            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
+        Integer deliveryBetweenDays = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectDeliveryTime(), order.getRentStartTime());
+        if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
