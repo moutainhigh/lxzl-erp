@@ -208,29 +208,19 @@ public class PaymentServiceImpl implements PaymentService {
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
 //        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
-        CustomerDO customerDO = customerMapper.findByNo(customerNo);
-        if(customerDO == null){
-            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return result;
-        }
         WeixinPayParam weixinPayParam = new WeixinPayParam();
 
-        if(customerDO.getCustomerType() == CustomerType.CUSTOMER_TYPE_COMPANY){
-            weixinPayParam.setBusinessOrderNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
-        }else{
-            weixinPayParam.setBusinessOrderNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
-        }
-
-        weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
-        weixinPayParam.setPayName(customerDO.getCustomerName());
+        weixinPayParam.setBusinessCustomerNo(customerNo);
+        weixinPayParam.setPayName("test-kai");
         weixinPayParam.setAmount(new BigDecimal(0.01));
         weixinPayParam.setPayDescription("充值1分钱也是爱");
-        weixinPayParam.setOpenId(weixinPayParam.getOpenId());
+        weixinPayParam.setBusinessOrderNo("test_kai_0001");
+        weixinPayParam.setOpenId(openId);
         weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
-        weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppWeixinChargeAppSecret);
         weixinPayParam.setBusinessOperateUser(loginUser.getUserId().toString());
 
         try {
