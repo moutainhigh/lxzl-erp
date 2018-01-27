@@ -708,22 +708,22 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         UpdatePurchaseReceiveEquipmentPriceParam updatePurchaseReceiveEquipmentPriceParam = new UpdatePurchaseReceiveEquipmentPriceParam();
         updatePurchaseReceiveEquipmentPriceParam.setPurchaseReceiveOrderNo("LXPR-1000-20180127-0204");
         List<ProductEquipment> productEquipmentList = new ArrayList<>();
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56260",1200));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56259",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56258",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56257",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56256",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56255",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56254",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56253",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56252",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56251",1000));
-        productEquipmentList.add(getProductEquiment("LX-1000-Ideapad320S-20180127-56250",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56260",1200));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56259",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56258",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56257",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56256",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56255",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56254",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56253",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56252",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56251",1000));
+        productEquipmentList.add(getProductEquipment("LX-1000-Ideapad320S-20180127-56250",1000));
         updatePurchaseReceiveEquipmentPriceParam.setEquipmentList(productEquipmentList);
         TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveEquipmentPrice", updatePurchaseReceiveEquipmentPriceParam);
     }
 
-    private ProductEquipment getProductEquiment(String no , double price){
+    private ProductEquipment getProductEquipment(String no , double price){
         ProductEquipment productEquipment = new ProductEquipment();
         productEquipment.setEquipmentNo(no);
         productEquipment.setPurchasePrice(new BigDecimal(price));

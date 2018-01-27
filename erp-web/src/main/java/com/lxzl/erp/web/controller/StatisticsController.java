@@ -2,7 +2,8 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome;
+import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
+import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -42,6 +43,26 @@ public class StatisticsController extends BaseController {
     @RequestMapping(value = "queryIncome", method = RequestMethod.POST)
     public Result queryIncome(@RequestBody @Validated StatisticsIncomePageParam statisticsIncomePageParam, BindingResult validResult) {
         return resultGenerator.generate(statisticsService.queryIncome(statisticsIncomePageParam));
+    }
+
+    /**
+     * 未收明细
+     * @param unReceivablePageParam
+     * @return
+     */
+    @RequestMapping(value = "queryUnReceivable", method = RequestMethod.POST)
+    public Result queryUnReceivable(@RequestBody UnReceivablePageParam unReceivablePageParam) {
+        return resultGenerator.generate(statisticsService.queryUnReceivable(unReceivablePageParam));
+    }
+
+    /**
+     * 未收统计
+     * @param statisticsUnReceivablePageParam
+     * @return
+     */
+    @RequestMapping(value = "queryStatisticsUnReceivable", method = RequestMethod.POST)
+    public Result queryStatisticsUnReceivable(@RequestBody StatisticsUnReceivablePageParam statisticsUnReceivablePageParam) {
+        return resultGenerator.generate(statisticsService.queryStatisticsUnReceivable(statisticsUnReceivablePageParam));
     }
 
     @Autowired

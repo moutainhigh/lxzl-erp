@@ -8,9 +8,9 @@ import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncomeDetail;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
+import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
+import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
+import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
@@ -143,6 +143,42 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, UnReceivable> queryUnReceivable(UnReceivablePageParam unReceivablePageParam) {
+        ServiceResult<String, UnReceivable> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(unReceivablePageParam.getPageNo(), unReceivablePageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("unReceivableQueryParam", unReceivablePageParam);
+
+        UnReceivable unReceivable = statisticsMapper.queryUnReceivableCount(maps);
+        List<UnReceivableDetail> statisticsIncomeDetailList = statisticsMapper.queryUnReceivable(maps);
+        Page<UnReceivableDetail> page = new Page<>(statisticsIncomeDetailList, unReceivable.getTotalCount(), unReceivablePageParam.getPageNo(), unReceivablePageParam.getPageSize());
+        unReceivable.setUnReceivableDetailPage(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(unReceivable);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, StatisticsUnReceivable> queryStatisticsUnReceivable(StatisticsUnReceivablePageParam statisticsUnReceivablePageParam) {
+        ServiceResult<String, StatisticsUnReceivable> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(statisticsUnReceivablePageParam.getPageNo(), statisticsUnReceivablePageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statisticsUnReceivablePageParam", statisticsUnReceivablePageParam);
+
+        StatisticsUnReceivable statisticsUnReceivable = statisticsMapper.queryStatisticsUnReceivableCount(maps);
+        List<StatisticsUnReceivableDetail> statisticsUnReceivableDetailList = statisticsMapper.queryStatisticsUnReceivable(maps);
+        Page<StatisticsUnReceivableDetail> page = new Page<>(statisticsUnReceivableDetailList, statisticsUnReceivable.getTotalCount(), statisticsUnReceivablePageParam.getPageNo(), statisticsUnReceivablePageParam.getPageSize());
+        statisticsUnReceivable.setStatisticsUnReceivableDetailPage(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(statisticsUnReceivable);
+        return result;
+    }
+
     private BigDecimal calculateRentAmount(Date startTime, Date endTime, StatementOrderDetailDO statementOrderDetailDO) {
         //比较日期大小确定统计起始时间，结束时间
         //起始时间为MAX[统计起始时间，结算开始时间]
@@ -169,7 +205,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 //        System.out.println("结算金额已交的为"+statementOrderDetailDO.getStatementDetailRentPaidAmount()+"元");
 //        System.out.println("结算日起，至统计结束时间为止，需交金额为"+amount+"元");
 //        System.out.println("预付"+BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(),amount)+"元");
-        return BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(), amount);
+        BigDecimal prepayRentAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(), amount);
+        return BigDecimalUtil.compare(prepayRentAmount,BigDecimal.ZERO)<0?BigDecimal.ZERO:prepayRentAmount;
     }
 
     @Autowired
