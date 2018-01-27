@@ -137,7 +137,7 @@
         LEFT JOIN erp_product ep ON epe.product_id = ep.id
         LEFT JOIN erp_purchase_receive_order_product eprop ON eprop.id = esoe.item_refer_id AND eprop.data_status=1
         WHERE esoe.item_refer_id = #{maps.purchaseReceiveOrderProductEquipmentPageParam.purchaseReceiveOrderProductId} AND epe.data_status = 1
-        ORDER BY epe.create_time DESC
+        ORDER BY epe.id DESC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
     <select id="listByPurchaseReceiveOrderProductIdCount" resultType="java.lang.Integer" parameterType="map">

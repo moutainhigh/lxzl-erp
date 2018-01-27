@@ -21,7 +21,7 @@
         </div>
         <div class="form-group pull-right mn" style="width: 100px;">
             <div class="input-group">
-                <input type="number" name="inputPage" class="form-control input-sm bradiusL " autocomplete="off" value="{{currentPage}}">
+                <input type="text" name="inputPage" class="form-control input-sm bradiusL " autocomplete="off" value="{{currentPage}}">
                 <span class="input-group-addon btn-search input-sm bradiusR goToPage">转至</span>
             </div>
         </div>
