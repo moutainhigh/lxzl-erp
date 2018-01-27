@@ -4,7 +4,6 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
-import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.material.pojo.MaterialInStorage;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductInStorage;
@@ -27,22 +26,25 @@ import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.*;
-import com.lxzl.erp.dataaccess.dao.mysql.warehouse.*;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderBulkMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.product.*;
-import com.lxzl.erp.dataaccess.domain.warehouse.*;
+import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderBulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
+import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -100,9 +102,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private ProductMapper productMapper;
-
-    @Autowired
-    private SqlSessionFactory sqlSessionFactory;
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
@@ -592,7 +591,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         Map<String, BulkMaterialDO> allBulkMaterialDOMap = new HashMap<>();
         Integer isNewMaterial = materialInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : materialInStorage.getIsNew();
-        LinkedList<String> linkedList = generateNoSupport.batchGenerateBulkMaterialNo(cityCode, productInStockCounter.getBulkMaterialCount(),materialInStorage.getMaterialCount());
+        LinkedList<String> linkedList = generateNoSupport.batchGenerateBulkMaterialNo(cityCode, productInStockCounter.getBulkMaterialCount(), materialInStorage.getMaterialCount());
         for (int i = 0; i < materialInStorage.getMaterialCount(); i++) {
 
             if (!materialMap.containsKey(materialInStorage.getMaterialId())) {
@@ -603,8 +602,8 @@ public class WarehouseServiceImpl implements WarehouseService {
 
             BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
             //优化编号生成方式
-            String materialModel = materialDO.getMaterialModel()==null?"":materialDO.getMaterialModel();
-            bulkMaterialDO.setBulkMaterialNo(String.format(linkedList.getFirst(),materialModel));
+            String materialModel = materialDO.getMaterialModel() == null ? "" : materialDO.getMaterialModel();
+            bulkMaterialDO.setBulkMaterialNo(String.format(linkedList.getFirst(), materialModel));
             linkedList.removeFirst();
 //            bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
             bulkMaterialDO.setMaterialId(materialInStorage.getMaterialId());
@@ -690,17 +689,17 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<Integer, MaterialDO> materialMap = new HashMap<>();
         Integer isNewProductEquipment = productInStorage.getIsNew() == null ? CommonConstant.COMMON_CONSTANT_NO : productInStorage.getIsNew();
         Integer bulkCount = 0;
-        for(int i = 0; i < productInStorage.getProductCount(); i++){
+        for (int i = 0; i < productInStorage.getProductCount(); i++) {
             for (ProductMaterial productMaterial : productInStorage.getProductMaterialList()) {
                 bulkCount += productMaterial.getMaterialCount();
             }
         }
-        LinkedList<String> bulkNoLinkedList = generateNoSupport.batchGenerateBulkMaterialNo(cityCode, productInStockCounter.getBulkMaterialCount(),bulkCount);
-        LinkedList<String> productNoLinkedList = generateNoSupport.batchGenerateEquipmentNo(cityCode, productInStockCounter.getProductEquipmentCount(),productInStorage.getProductCount());
+        LinkedList<String> bulkNoLinkedList = generateNoSupport.batchGenerateBulkMaterialNo(cityCode, productInStockCounter.getBulkMaterialCount(), bulkCount);
+        LinkedList<String> productNoLinkedList = generateNoSupport.batchGenerateEquipmentNo(cityCode, productInStockCounter.getProductEquipmentCount(), productInStorage.getProductCount());
         for (int i = 0; i < productInStorage.getProductCount(); i++) {
             ProductEquipmentDO productEquipmentDO = new ProductEquipmentDO();
-            String productModel = productDO.getProductModel()==null?"":productDO.getProductModel();
-            productEquipmentDO.setEquipmentNo(String.format(productNoLinkedList.getFirst(),productModel));
+            String productModel = productDO.getProductModel() == null ? "" : productDO.getProductModel();
+            productEquipmentDO.setEquipmentNo(String.format(productNoLinkedList.getFirst(), productModel));
             productNoLinkedList.removeFirst();
 //            productEquipmentDO.setEquipmentNo(generateNoSupport.generateEquipmentNo(productDO.getProductModel(), cityCode, productInStockCounter.getProductEquipmentCount()));
             productEquipmentDO.setProductId(productInStorage.getProductId());
@@ -752,8 +751,8 @@ public class WarehouseServiceImpl implements WarehouseService {
                     for (int j = 0; j < productMaterial.getMaterialCount(); j++) {
                         MaterialDO materialDO = materialMap.get(productMaterial.getMaterialId());
                         BulkMaterialDO bulkMaterialDO = new BulkMaterialDO();
-                        String materialModel = materialDO.getMaterialModel()==null?"":materialDO.getMaterialModel();
-                        bulkMaterialDO.setBulkMaterialNo(String.format(bulkNoLinkedList.getFirst(),materialModel));
+                        String materialModel = materialDO.getMaterialModel() == null ? "" : materialDO.getMaterialModel();
+                        bulkMaterialDO.setBulkMaterialNo(String.format(bulkNoLinkedList.getFirst(), materialModel));
                         bulkNoLinkedList.removeFirst();
 //                        bulkMaterialDO.setBulkMaterialNo(generateNoSupport.generateBulkMaterialNo(materialDO.getMaterialModel(), cityCode, productInStockCounter.getBulkMaterialCount()));
                         bulkMaterialDO.setMaterialId(productMaterial.getMaterialId());

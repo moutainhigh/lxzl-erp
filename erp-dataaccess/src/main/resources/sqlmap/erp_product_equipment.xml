@@ -29,6 +29,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 
         <result column="src_purchase_price" jdbcType="DECIMAL" property="srcPurchasePrice" />
+        <result column="stock_order_no" jdbcType="VARCHAR" property="stockOrderNo" />
         <collection property="productImgDOList" resultMap="ProductImgDO" />
         <collection property="bulkMaterialDOList" resultMap="BulkMaterialDO" />
     </resultMap>
@@ -175,6 +176,16 @@
         ) equipment_main LEFT JOIN erp_product_equipment_bulk_material epebm ON equipment_main.id = epebm.equipment_id and epebm.data_status = 1
         LEFT JOIN erp_bulk_material ebm ON epebm.bulk_material_id = ebm.id AND ebm.data_status = 1
         LEFT JOIN erp_product_img epi ON epi.product_id = equipment_main.product_id AND epi.data_status = 1 AND epi.img_type = 1
+    </select>
+
+    <select id="findByEquipmentList" resultMap="ProductEquipmentDO">
+        SELECT <include refid="column_List"/>,esoe.stock_order_no stock_order_no
+        FROM erp_product_equipment epe
+        inner join erp_stock_order_equipment esoe on esoe.equipment_no = epe.equipment_no and esoe.data_status=1
+        where epe.data_status = 1 and epe.equipment_no in
+        <foreach collection="productEquipmentList" index="index" item="item" open="(" separator="," close=")">
+            #{item.equipmentNo}
+        </foreach>
     </select>
 
     <select id="listPage" resultMap="ProductEquipmentDO" parameterType="map">
@@ -476,7 +487,33 @@
             #{productEquipmentDO.id,jdbcType=INTEGER}
         </foreach>
     </update>
-
+    <update id="updatePurchasePriceList" parameterType="java.util.ArrayList">
+        update erp_product_equipment
+        SET
+        <trim>
+            purchase_price =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.purchasePrice}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.updateTime}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach item="productEquipmentDO" collection="productEquipmentDOList"  index="index" separator=" " open="case id" close="end">
+                when #{productEquipmentDO.id} then #{productEquipmentDO.updateUser}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="productEquipmentDOList" index="index" item="productEquipmentDO"
+                 separator="," open="(" close=")">
+            #{productEquipmentDO.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO">
         update erp_product_equipment
         <include refid="set_column_sql"/>
