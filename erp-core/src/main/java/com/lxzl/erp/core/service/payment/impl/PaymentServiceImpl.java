@@ -203,19 +203,24 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip ) {
+    public ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip ) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date now = new Date();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
-        WeixinPayParam weixinPayParam = new WeixinPayParam();
 
-        weixinPayParam.setBusinessCustomerNo(customerNo);
-        weixinPayParam.setPayName("test-kai");
+        CustomerDO customerDO = customerMapper.findById(weixinPayParam.getCustomerId());
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+        weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        weixinPayParam.setPayName(customerDO.getCustomerName());
         weixinPayParam.setAmount(new BigDecimal(0.01));
         weixinPayParam.setPayDescription("充值1分钱也是爱");
         weixinPayParam.setBusinessOrderNo("test_kai_0001");
-        weixinPayParam.setOpenId(openId);
+        weixinPayParam.setOpenId(weixinPayParam.getOpenId());
         weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
