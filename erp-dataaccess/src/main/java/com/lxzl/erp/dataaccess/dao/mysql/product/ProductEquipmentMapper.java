@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.product;
 
+import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -14,6 +15,8 @@ public interface ProductEquipmentMapper extends BaseMysqlDAO<ProductEquipmentDO>
     Integer saveList(List<ProductEquipmentDO> productEquipmentDOList);
 
     Integer updateList(@Param("productEquipmentDOList") List<ProductEquipmentDO> productEquipmentDOList);
+
+    Integer updatePurchasePriceList(@Param("productEquipmentDOList") List<ProductEquipmentDO> productEquipmentDOList);
 
     ProductEquipmentDO findByEquipmentNo(@Param("equipmentNo") String equipmentNo);
 
@@ -40,4 +43,6 @@ public interface ProductEquipmentMapper extends BaseMysqlDAO<ProductEquipmentDO>
     List<ProductEquipmentDO> findBatchByPeerDeploymentOrderId(@Param("maps")Map<String, Object> maps);
 
     Integer updateStatusBatchByTransferOrderId(@Param("maps")Map<String, Object> maps);
+
+    List<ProductEquipmentDO> findByEquipmentList(@Param("productEquipmentList") List<ProductEquipment> productEquipmentList);
 }

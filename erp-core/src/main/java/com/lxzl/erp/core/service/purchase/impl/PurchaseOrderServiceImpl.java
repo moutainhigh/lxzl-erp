@@ -50,6 +50,7 @@ import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -112,10 +113,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private WorkflowLinkMapper workflowLinkMapper;
     @Autowired
     private StockOrderMapper stockOrderMapper;
-    @Autowired
-    private StockOrderEquipmentMapper stockOrderEquipmentMapper;
-    @Autowired
-    private StockOrderBulkMaterialMapper stockOrderBulkMaterialMapper;
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
     @Autowired
@@ -1504,22 +1501,24 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findByPurchaseNo(purchaseReceiveOrderDO.getPurchaseOrderNo());
         String stockOrderNo = stockOrderMapper.findNoByTypeAndRefer(StockCauseType.STOCK_CAUSE_TYPE_IN_PURCHASE, purchaseReceiveOrderDO.getPurchaseReceiveNo());
+
         Date now = new Date();
         //累加收货单总价
         BigDecimal totalAmount = purchaseReceiveOrderDO.getTotalAmount() == null ? BigDecimal.ZERO : purchaseReceiveOrderDO.getTotalAmount();
         //累加采购单总价
         BigDecimal totalPurchaseAmount = purchaseOrderDO.getPurchaseOrderAmountReal() == null ? BigDecimal.ZERO : purchaseOrderDO.getPurchaseOrderAmountReal();
         if (CollectionUtil.isNotEmpty(productEquipmentList)) {
+            List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.findByEquipmentList(productEquipmentList);
+            Map<String,ProductEquipmentDO> productEquipmentDOMap = ListUtil.listToMap(productEquipmentDOList,"equipmentNo");
             List<ProductEquipmentDO> productEquipmentDOListForUpdate = new ArrayList<>();
-            List<StockOrderEquipmentDO> stockOrderEquipmentDOList = stockOrderEquipmentMapper.findByStockOrderNo(stockOrderNo);
-            Map<String, StockOrderEquipmentDO> purchaseOrderProductDOMap = ListUtil.listToMap(stockOrderEquipmentDOList, "equipmentNo");
             for (ProductEquipment productEquipment : productEquipmentList) {
-                if (purchaseOrderProductDOMap.get(productEquipment.getEquipmentNo()) == null) {
+                //ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(productEquipment.getEquipmentNo());
+                ProductEquipmentDO productEquipmentDO = productEquipmentDOMap.get(productEquipment.getEquipmentNo());
+                if ( productEquipmentDO == null||!stockOrderNo.equals(productEquipmentDO.getStockOrderNo())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
                     return serviceResult;
                 }
-                ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(productEquipment.getEquipmentNo());
                 //累加原采购价，减去原采购价
                 totalAmount = BigDecimalUtil.add(totalAmount, productEquipment.getPurchasePrice());
                 totalAmount = BigDecimalUtil.sub(totalAmount, productEquipmentDO.getPurchasePrice());
@@ -1531,7 +1530,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 productEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 productEquipmentDOListForUpdate.add(productEquipmentDO);
             }
-            productEquipmentMapper.updateList(productEquipmentDOListForUpdate);
+            SqlLogInterceptor.setExecuteSql("skip print productEquipmentMapper.updatePurchasePriceList  sql ......");
+            productEquipmentMapper.updatePurchasePriceList(productEquipmentDOListForUpdate);
         }
         purchaseReceiveOrderDO.setTotalAmount(totalAmount);
         purchaseReceiveOrderDO.setUpdateTime(now);

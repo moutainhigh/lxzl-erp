@@ -40,6 +40,8 @@ public class ProductEquipmentDO extends BaseDO {
     private BigDecimal srcPurchasePrice;
     @Transient
     private String skuName;
+    @Transient
+    private String stockOrderNo;
 
     public Integer getId() {
         return id;
@@ -223,5 +225,13 @@ public class ProductEquipmentDO extends BaseDO {
 
     public void setSkuName(String skuName) {
         this.skuName = skuName;
+    }
+
+    public String getStockOrderNo() {
+        return stockOrderNo;
+    }
+
+    public void setStockOrderNo(String stockOrderNo) {
+        this.stockOrderNo = stockOrderNo;
     }
 }
