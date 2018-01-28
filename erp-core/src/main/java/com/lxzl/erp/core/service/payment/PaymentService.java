@@ -84,14 +84,14 @@ public interface PaymentService extends BaseService {
      * @param ip
      * @return
      */
-    ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip);
+    ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip);
 
     /**
      * 充值记录分页
-     * @param chargeRecordParam
+     * @param customerNo
      * @return
      */
-    ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(ChargeRecordParam chargeRecordParam);
+    ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo);
 
     /**
      * 退还用户押金

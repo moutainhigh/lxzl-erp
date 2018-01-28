@@ -195,27 +195,28 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip ) {
+    public ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         Date now = new Date();
-        CustomerDO customerDO = customerMapper.findById(weixinPayParam.getCustomerId());
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if(customerDO == null){
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-        if(weixinPayParam.getAmount() == null || BigDecimalUtil.compare(weixinPayParam.getAmount(), BigDecimal.ZERO) <= 0){
+        if(amount == null || BigDecimalUtil.compare(amount, BigDecimal.ZERO) <= 0){
             result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
+        WeixinPayParam weixinPayParam = new WeixinPayParam();
         weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         weixinPayParam.setPayName("凌雄租赁");
-//        weixinPayParam.setAmount(weixinPayParam.getAmount());
+        weixinPayParam.setAmount(amount);
         weixinPayParam.setPayDescription("凌雄租赁客户充值");
         weixinPayParam.setBusinessOrderNo(new SimpleDateFormat("yyyyMMddHHmmss").format(now));
-        weixinPayParam.setOpenId(weixinPayParam.getOpenId());
-//        weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
+        weixinPayParam.setOpenId(openId);
+        weixinPayParam.setBusinessOrderRemark("TEST");
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
@@ -240,15 +241,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(ChargeRecordParam chargeRecordParam) {
+    public ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo) {
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
-        CustomerDO customerDO = customerMapper.findById(chargeRecordParam.getCustomerId());
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if(customerDO == null){
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-
+        ChargeRecordParam chargeRecordParam = new ChargeRecordParam();
         chargeRecordParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         chargeRecordParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         chargeRecordParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
