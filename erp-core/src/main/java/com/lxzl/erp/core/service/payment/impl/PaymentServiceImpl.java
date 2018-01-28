@@ -62,13 +62,15 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+
     @Override
     public CustomerAccount queryCustomerAccount(String customerNo) {
         CustomerAccountQueryParam param = new CustomerAccountQueryParam();
         param.setBusinessCustomerNo(customerNo);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
-        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        Integer operateUser = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
+        param.setBusinessOperateUser(operateUser.toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -83,6 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+
     @Override
     public ServiceResult<String, Boolean> manualCharge(ManualChargeParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
@@ -162,7 +165,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip, Integer loginUserId) {
+    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount, String openId, String ip, Integer loginUserId) {
         ServiceResult<String, String> result = new ServiceResult<>();
         WeixinPayParam param = new WeixinPayParam();
         param.setBusinessCustomerNo(customerNo);
@@ -195,17 +198,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip) {
+    public ServiceResult<String, String> wechatCharge(String customerNo, BigDecimal amount, String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         Date now = new Date();
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
-        if(customerDO == null){
+        if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-        if(amount == null || BigDecimalUtil.compare(amount, BigDecimal.ZERO) <= 0){
+        if (amount == null || BigDecimalUtil.compare(amount, BigDecimal.ZERO) <= 0) {
             result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
@@ -245,7 +248,7 @@ public class PaymentServiceImpl implements PaymentService {
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
-        if(customerDO == null){
+        if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
@@ -258,7 +261,7 @@ public class PaymentServiceImpl implements PaymentService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
-            JSONObject jsonObject=JSON.parseObject(requestJson);
+            JSONObject jsonObject = JSON.parseObject(requestJson);
             jsonObject.remove("count");
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
