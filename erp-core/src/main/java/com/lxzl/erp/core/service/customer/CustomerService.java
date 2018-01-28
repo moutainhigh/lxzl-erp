@@ -113,11 +113,5 @@ public interface CustomerService {
      */
     ServiceResult<String,String> addStatementDate(Customer customer);
 
-    /**
-     * 查找客户信息
-     * @param customerNo
-     * @return
-     */
-    ServiceResult<String,Customer> queryCustomerByNo(String customerNo);
 //
 }

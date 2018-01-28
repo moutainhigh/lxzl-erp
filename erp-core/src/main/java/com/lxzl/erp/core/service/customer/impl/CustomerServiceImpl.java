@@ -686,20 +686,6 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-    @Override
-    public ServiceResult<String, Customer> queryCustomerByNo(String customerNo) {
-
-        ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
-        CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
-        if (customerDO == null){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return serviceResult;
-        }
-
-        serviceResult.setResult(ConverterUtil.convert(customerDO, Customer.class));
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
 
     @Override
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
