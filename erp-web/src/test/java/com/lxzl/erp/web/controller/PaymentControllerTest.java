@@ -6,6 +6,8 @@ import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
 import com.lxzl.erp.common.domain.payment.WeixinPayParam;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 
 /**
  * @Author : kai
@@ -20,6 +22,8 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
 
         weixinPayParam.setBusinessCustomerNo("LXCC-1000-20180124-13746");
         weixinPayParam.setOpenId("o_ORluM1fFEVm9LMePBFvyBzbdr8");
+        weixinPayParam.setAmount(new BigDecimal(0.01));
+        weixinPayParam.setBusinessOrderRemark("test");
         TestResult testResult = getJsonTestResult("/payment/wechatCharge", weixinPayParam);
     }
 

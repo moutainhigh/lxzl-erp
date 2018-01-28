@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -195,7 +197,8 @@ public class PaymentServiceImpl implements PaymentService {
     public ServiceResult<String, String> wechatCharge(WeixinPayParam weixinPayParam, String ip ) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
-
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        Date now = new Date();
         CustomerDO customerDO = customerMapper.findByNo(weixinPayParam.getBusinessCustomerNo());
         if(customerDO == null){
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -203,16 +206,16 @@ public class PaymentServiceImpl implements PaymentService {
         }
         weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         weixinPayParam.setPayName(customerDO.getCustomerName());
-        weixinPayParam.setAmount(new BigDecimal(0.01));
+        weixinPayParam.setAmount(weixinPayParam.getAmount());
         weixinPayParam.setPayDescription("充值1分钱也是爱");
-        weixinPayParam.setBusinessOrderNo("test_kai_0001");
+        weixinPayParam.setBusinessOrderNo(new SimpleDateFormat("yyyyMMddHHmmss").format(now));
         weixinPayParam.setOpenId(weixinPayParam.getOpenId());
         weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         weixinPayParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
-        weixinPayParam.setBusinessOperateUser(loginUser.getUserId().toString());
+        weixinPayParam.setBusinessOperateUser(loginUserId.toString());
 
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
