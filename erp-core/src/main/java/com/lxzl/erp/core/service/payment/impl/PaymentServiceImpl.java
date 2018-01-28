@@ -200,7 +200,7 @@ public class PaymentServiceImpl implements PaymentService {
         User loginUser = userSupport.getCurrentUser();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         Date now = new Date();
-        CustomerDO customerDO = customerMapper.findByNo(weixinPayParam.getBusinessCustomerNo());
+        CustomerDO customerDO = customerMapper.findById(weixinPayParam.getCustomerId());
         if(customerDO == null){
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
@@ -243,6 +243,13 @@ public class PaymentServiceImpl implements PaymentService {
     public ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(ChargeRecordParam chargeRecordParam) {
         ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
 
+        CustomerDO customerDO = customerMapper.findById(chargeRecordParam.getCustomerId());
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+
+        chargeRecordParam.setBusinessCustomerNo(customerDO.getCustomerNo());
         chargeRecordParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         chargeRecordParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
 

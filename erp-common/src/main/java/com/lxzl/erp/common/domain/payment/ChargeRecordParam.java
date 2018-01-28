@@ -12,6 +12,8 @@ public class ChargeRecordParam extends BasePageParam {
     private String businessAppSecret;
     private String businessOperateUser;
 
+    private Integer customerId;
+
     public String getBusinessCustomerNo() { return businessCustomerNo; }
 
     public void setBusinessCustomerNo(String businessCustomerNo) { this.businessCustomerNo = businessCustomerNo; }
@@ -38,4 +40,7 @@ public class ChargeRecordParam extends BasePageParam {
         this.businessOperateUser = businessOperateUser;
     }
 
+    public Integer getCustomerId() { return customerId; }
+
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 }
