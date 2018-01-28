@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.base.PaymentResult;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
@@ -204,13 +205,17 @@ public class PaymentServiceImpl implements PaymentService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+        if(weixinPayParam.getAmount() == null || BigDecimalUtil.compare(weixinPayParam.getAmount(), BigDecimal.ZERO) < 0){
+            result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
+            return result;
+        }
         weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
-        weixinPayParam.setPayName(customerDO.getCustomerName());
-        weixinPayParam.setAmount(weixinPayParam.getAmount());
-        weixinPayParam.setPayDescription("充值1分钱也是爱");
+        weixinPayParam.setPayName("凌雄租赁");
+//        weixinPayParam.setAmount(weixinPayParam.getAmount());
+        weixinPayParam.setPayDescription("凌雄租赁客户充值");
         weixinPayParam.setBusinessOrderNo(new SimpleDateFormat("yyyyMMddHHmmss").format(now));
         weixinPayParam.setOpenId(weixinPayParam.getOpenId());
-        weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
+//        weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
