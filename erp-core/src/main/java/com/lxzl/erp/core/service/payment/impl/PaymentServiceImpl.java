@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.payment.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
@@ -241,6 +242,9 @@ public class PaymentServiceImpl implements PaymentService {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+            JSONObject jsonObject=JSON.parseObject(requestJson);
+            jsonObject.remove("count");
+            requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
