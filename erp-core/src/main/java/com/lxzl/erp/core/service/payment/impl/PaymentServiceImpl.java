@@ -205,7 +205,7 @@ public class PaymentServiceImpl implements PaymentService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-        if(weixinPayParam.getAmount() == null || BigDecimalUtil.compare(weixinPayParam.getAmount(), BigDecimal.ZERO) < 0){
+        if(weixinPayParam.getAmount() == null || BigDecimalUtil.compare(weixinPayParam.getAmount(), BigDecimal.ZERO) <= 0){
             result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
