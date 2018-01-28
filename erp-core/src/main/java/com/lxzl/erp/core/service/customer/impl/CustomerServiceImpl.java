@@ -986,7 +986,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
         }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
-        processCustomerPhone(customerDO);
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //显示联合开发原的省，市，区
         if (customerDO.getUnionUser() != null) {
