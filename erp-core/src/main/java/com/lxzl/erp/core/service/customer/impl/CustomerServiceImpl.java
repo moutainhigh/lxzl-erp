@@ -922,6 +922,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
     }
+
     @Override
     public ServiceResult<String, Customer> detailCustomer(String customerNo) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
@@ -948,6 +949,43 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+        processCustomerPhone(customerDO);
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+        //显示联合开发原的省，市，区
+        if (customerDO.getUnionUser() != null) {
+            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        }
+        customerResult.setCustomerAccount(customerAccount);
+
+        if (customerResult.getOwner() != null) {
+            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        }
+        if (customerResult.getUnionUser() != null) {
+            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerResult);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Customer> queryCustomerByNo(String customerNo) {
+        ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+        }
+        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         processCustomerPhone(customerDO);
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
         //显示联合开发原的省，市，区

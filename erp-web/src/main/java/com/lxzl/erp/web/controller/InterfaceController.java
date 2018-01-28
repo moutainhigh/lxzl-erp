@@ -109,7 +109,7 @@ public class InterfaceController extends BaseController {
 
     @RequestMapping(value = "queryCustomerByNo", method = RequestMethod.POST)
     public Result queryCustomerByNo(@RequestBody Customer customer, BindingResult validResult) {
-        ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customer.getCustomerNo());
+        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByNo(customer.getCustomerNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
