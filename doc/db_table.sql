@@ -1096,6 +1096,7 @@ CREATE TABLE `erp_order` (
   `total_discount_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
   `logistics_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '运费',
   `order_seller_id` int(20) NOT NULL COMMENT '订单销售员',
+  `order_union_seller_id` int(20) COMMENT '订单联合销售员',
   `order_sub_company_id` int(20) DEFAULT NULL COMMENT '订单所属分公司',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
   `first_need_pay_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '首次需要交金额',
@@ -1119,6 +1120,19 @@ CREATE TABLE `erp_order` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_order_no` (`order_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单表';
+
+DROP TABLE if exists `erp_order_other_info`;
+CREATE TABLE `erp_order_other_info` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单其他信息表';
 
 DROP TABLE if exists `erp_order_product`;
 CREATE TABLE `erp_order_product` (

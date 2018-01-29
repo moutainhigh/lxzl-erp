@@ -23,6 +23,8 @@ public class WeixinPayParam extends PaymentIdentityParam {
     private String openId;
     private String clientIp;
 
+    private Integer customerId;
+
     public String getBusinessCustomerNo() {
         return businessCustomerNo;
     }
@@ -93,5 +95,13 @@ public class WeixinPayParam extends PaymentIdentityParam {
 
     public void setClientIp(String clientIp) {
         this.clientIp = clientIp;
+    }
+
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 }

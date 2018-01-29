@@ -1,7 +1,10 @@
 package com.lxzl.erp.core.service.payment;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
 import com.lxzl.erp.common.domain.payment.WeixinPayParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
@@ -81,7 +84,14 @@ public interface PaymentService extends BaseService {
      * @param ip
      * @return
      */
-    ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip);
+    ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip);
+
+    /**
+     * 充值记录分页
+     * @param customerNo
+     * @return
+     */
+    ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo);
 
     /**
      * 退还用户押金

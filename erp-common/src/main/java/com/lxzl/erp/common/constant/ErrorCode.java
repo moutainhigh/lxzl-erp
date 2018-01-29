@@ -353,6 +353,7 @@ public class ErrorCode {
     public static final String ORDER_PRODUCT_EQUIPMENT_NEW_NOT_MATCHING = "J400110";
     public static final String RETURN_TIME_NOT_NULL = "J400111";
     public static final String RETURN_REASON_TYPE_NOT_NULL = "J400112";
+    public static final String ORDER_EXPECT_DELIVERY_TIME_ERROR = "J400113";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -430,6 +431,14 @@ public class ErrorCode {
     public static final String CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY = "J500076";
     public static final String STATEMENT_DATE_NOT_NULL = "J500077";
     public static final String CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME = "J500078";
+    public static final String CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL = "J500079";
+    public static final String CUSTOMER_CONSIGN_ADDRESS_NOT_NULL = "J500080";
+    public static final String CUSTOMER_COMPANY_INDUSTRY_NOT_NULL = "J500081";
+    public static final String CUSTOMER_COMPANY_FOUND_TIME_NOT_NULL = "J500082";
+    public static final String CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL = "J500083";
+    public static final String CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL = "J500084";
+    public static final String CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL = "J500085";
+    public static final String CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL = "J500086";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -483,6 +492,7 @@ public class ErrorCode {
     public static final String OTHER_DATE_IMAGE_TYPE_IS_ERROR = "J1100030";
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
     public static final String IMG_REF_ID_NEED_NULL = "J1100032";
+    public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -682,7 +692,7 @@ public class ErrorCode {
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致");
         MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
-        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的总价值不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
         MAP.put(ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT, "全新配件库存不足！");
@@ -738,6 +748,7 @@ public class ErrorCode {
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NEW_NOT_MATCHING, "订单设备项目的新旧属性不匹配。");
         MAP.put(RETURN_TIME_NOT_NULL, "退还时间不能为空");
         MAP.put(RETURN_REASON_TYPE_NOT_NULL, "退换原因不能为空");
+        MAP.put(ORDER_EXPECT_DELIVERY_TIME_ERROR, "预计发货时间必须在租赁时间之前，并且不能大于2天");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -858,6 +869,15 @@ public class ErrorCode {
         MAP.put(CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY, "客户的联合开发员不能为总公司人员");
         MAP.put(STATEMENT_DATE_NOT_NULL, "客户的结算时间不能为空");
         MAP.put(CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME, "客户的开发员和联合开发员不能同一个人");
+        MAP.put(CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL, "客户是否将详细地址作为收货地址的该选项不能为空");
+        MAP.put(CUSTOMER_CONSIGN_ADDRESS_NOT_NULL, "客户的收货地址的不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL, "企业客户首次所需设备的总价值不能空");
+        MAP.put(CUSTOMER_COMPANY_INDUSTRY_NOT_NULL, "企业客户的所属行业不能为空");
+        MAP.put(CUSTOMER_COMPANY_FOUND_TIME_NOT_NULL, "企业客户的企业成立时间不能为空");
+        MAP.put(CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL, "企业客户的注册资本不能为空");
+        MAP.put(CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL, "企业客户的办公人数不能为空");
+        MAP.put(CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL, "企业客户的经营面积不能为空");
+
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1044,6 +1064,7 @@ public class ErrorCode {
         MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
         MAP.put(IMG_REF_ID_NEED_NULL, "编号【%s 】的图片refID已经有值，不能进行该操作");
+        MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
         MAP.put(TRANSFER_ORDER_ID_NOT_NULL, "转移单ID不能为空");

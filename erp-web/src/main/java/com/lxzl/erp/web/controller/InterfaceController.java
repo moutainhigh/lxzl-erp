@@ -5,7 +5,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.payment.WeixinPayParam;
+import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -95,8 +96,20 @@ public class InterfaceController extends BaseController {
     }
 
     @RequestMapping(value = "wechatCharge", method = RequestMethod.POST)
-    public Result wechatCharge(@RequestBody WeixinPayParam weixinPayParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = paymentService.wechatCharge(weixinPayParam.getBusinessCustomerNo(),weixinPayParam.getBusinessOrderRemark(),weixinPayParam.getAmount(),weixinPayParam.getOpenId(),NetworkUtil.getIpAddress(request));
+    public Result wechatCharge(@RequestBody WeixinChargeParam parm, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = paymentService.wechatCharge(parm.getCustomerNo(),parm.getAmount(),parm.getOpenId(),NetworkUtil.getIpAddress(request));
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryChargeRecordPage", method = RequestMethod.POST)
+    public Result queryChargeRecordPage(@RequestBody Customer customer, BindingResult validResult) {
+        ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordPage(customer.getCustomerNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryCustomerByNo", method = RequestMethod.POST)
+    public Result queryCustomerByNo(@RequestBody Customer customer, BindingResult validResult) {
+        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByNo(customer.getCustomerNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

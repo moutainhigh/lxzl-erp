@@ -47,20 +47,20 @@ public class CustomerCompany extends BasePO {
     private String updateUser;   //修改人
 
     private Integer customerOrigin; //客户来源,1地推活动，2展会了解，3业务联系，4百度推广，5朋友推荐，6其他广告
-    private Date companyFoundTime;  //企业成立时间'
-    private String industry;  //所属行业'
-    private BigDecimal registeredCapital;  //注册资本'
-    private Integer officeNumber;  //办公人数'
+    private Date companyFoundTime;  //企业成立时间
+    private String industry;  //所属行业
+    private BigDecimal registeredCapital;  //注册资本
+    private Integer officeNumber;  //办公人数
 //    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-    private String productPurpose;  //设备用途'
+    private String productPurpose;  //设备用途
     @Valid
 //    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
-    private String agentPersonName;  //经办人姓名'
-    private String agentPersonPhone;  //经办人电话'
-    private String agentPersonNo;  //经办人身份证号码'
-    private String unifiedCreditCode;  //统一信用代码'
+    private String agentPersonName;  //经办人姓名
+    private String agentPersonPhone;  //经办人电话
+    private String agentPersonNo;  //经办人身份证号码
+    private String unifiedCreditCode;  //统一信用代码
     private Double operatingArea; //经营面积
     private Integer unitInsuredNumber; //单位参保人数
     private String affiliatedEnterprise; //关联企业

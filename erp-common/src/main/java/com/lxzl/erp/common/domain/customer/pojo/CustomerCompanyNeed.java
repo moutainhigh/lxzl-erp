@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -17,18 +18,17 @@ import java.math.BigDecimal;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerCompanyNeed {
-    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer skuId;
-    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private BigDecimal unitPrice;  //设备单台价值
-    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer rentCount;  //租赁数量
     private BigDecimal totalPrice;  //总价值
-    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL,groups = {AddCustomerCompanyGroup.class})
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer rentLength;  //租赁期限
 
     private Product product; //商品
-
 
     public Integer getSkuId() {
         return skuId;

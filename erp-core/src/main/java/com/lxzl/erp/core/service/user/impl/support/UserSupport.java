@@ -51,7 +51,7 @@ public class UserSupport {
 
     public Integer getCurrentUserId() {
         User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
-        return user.getUserId();
+        return user == null? null:user.getUserId();
     }
 
     /**

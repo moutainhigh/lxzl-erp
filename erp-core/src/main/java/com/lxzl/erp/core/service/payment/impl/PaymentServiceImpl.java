@@ -1,18 +1,17 @@
 package com.lxzl.erp.core.service.payment.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.PayStatus;
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.PaymentSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PaymentResult;
-import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
-import com.lxzl.erp.common.domain.pay.WeixinPayResponse;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
@@ -24,14 +23,10 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
 
 /**
  * 描述: ${DESCRIPTION}
@@ -46,9 +41,6 @@ public class PaymentServiceImpl implements PaymentService {
     private UserSupport userSupport;
     @Autowired
     private CustomerMapper customerMapper;
-    @Autowired
-    private GenerateNoSupport generateNoSupport;
-
 
     @Override
     public CustomerAccount queryCustomerAccountNoLogin(String customerNo) {
@@ -70,13 +62,15 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+
     @Override
     public CustomerAccount queryCustomerAccount(String customerNo) {
         CustomerAccountQueryParam param = new CustomerAccountQueryParam();
         param.setBusinessCustomerNo(customerNo);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
-        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        Integer operateUser = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
+        param.setBusinessOperateUser(operateUser.toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -91,6 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+
     @Override
     public ServiceResult<String, Boolean> manualCharge(ManualChargeParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
@@ -170,7 +165,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip, Integer loginUserId) {
+    public ServiceResult<String, String> wechatPay(String customerNo, String businessOrderNo, String businessOrderRemark, BigDecimal payAmount, String openId, String ip, Integer loginUserId) {
         ServiceResult<String, String> result = new ServiceResult<>();
         WeixinPayParam param = new WeixinPayParam();
         param.setBusinessCustomerNo(customerNo);
@@ -203,20 +198,28 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> wechatCharge(String customerNo, String businessOrderRemark, BigDecimal payAmount,String openId, String ip ) {
+    public ServiceResult<String, String> wechatCharge(String customerNo, BigDecimal amount, String openId, String ip) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
-        Date now = new Date();
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        if (amount == null || BigDecimalUtil.compare(amount, BigDecimal.ZERO) <= 0) {
+            result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
+            return result;
+        }
         WeixinPayParam weixinPayParam = new WeixinPayParam();
-
-        weixinPayParam.setBusinessCustomerNo(customerNo);
-        weixinPayParam.setPayName("test-kai");
-        weixinPayParam.setAmount(new BigDecimal(0.01));
-        weixinPayParam.setPayDescription("充值1分钱也是爱");
-        weixinPayParam.setBusinessOrderNo("test_kai_0001");
+        weixinPayParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        weixinPayParam.setPayName("凌雄租赁");
+        weixinPayParam.setAmount(amount);
+        weixinPayParam.setPayDescription("凌雄租赁客户充值");
+        weixinPayParam.setBusinessOrderNo(new SimpleDateFormat("yyyyMMddHHmmss").format(now));
         weixinPayParam.setOpenId(openId);
-        weixinPayParam.setBusinessOrderRemark(weixinPayParam.getBusinessOrderRemark());
+        weixinPayParam.setBusinessOrderRemark("TEST");
         weixinPayParam.setBusinessNotifyUrl(null);
         weixinPayParam.setClientIp(ip);
         weixinPayParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
@@ -238,6 +241,42 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    @Override
+    public ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo) {
+        ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
+
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        ChargeRecordParam chargeRecordParam = new ChargeRecordParam();
+        chargeRecordParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        chargeRecordParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        chargeRecordParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+            JSONObject jsonObject = JSON.parseObject(requestJson);
+            jsonObject.remove("count");
+            requestJson = jsonObject.toJSONString();
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                Page<ChargeRecord> chargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);
+                result.setResult(chargeRecordPage);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+
     }
 
     @Override

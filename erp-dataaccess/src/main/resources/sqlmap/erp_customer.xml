@@ -319,6 +319,9 @@
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isDisabled != null">
 				AND ec.is_disabled = #{maps.customerCompanyQueryParam.isDisabled, jdbcType=INTEGER}
 			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerStatus != null">
+				AND ec.customer_status = #{maps.customerCompanyQueryParam.customerStatus, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ecc.data_status = 1
 			</if>
@@ -361,6 +364,9 @@
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isDisabled != null">
 				AND ec.is_disabled = #{maps.customerCompanyQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerStatus != null">
+				AND ec.customer_status = #{maps.customerCompanyQueryParam.customerStatus, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ecc.data_status = 1
@@ -413,6 +419,9 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isDisabled != null">
 				AND ec.is_disabled = #{maps.customerPersonQueryParam.isDisabled, jdbcType=INTEGER}
 			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
+				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ec.data_status = 1 AND ec.customer_type=2
 			</if>
@@ -462,6 +471,9 @@
 			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isDisabled != null">
 				AND ec.is_disabled = #{maps.customerPersonQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
+				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>

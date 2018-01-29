@@ -37,6 +37,8 @@ public class CustomerDO  extends BaseDO {
 	private String unionUserName; //联合业务员
 	@Transient
 	private String ownerName; //业务员
+	@Transient
+	private String verifyRemark;
 
 	public Integer getId(){
 		return id;
@@ -197,4 +199,12 @@ public class CustomerDO  extends BaseDO {
     public void setStatementDate(Integer statementDate) {
         this.statementDate = statementDate;
     }
+
+	public String getVerifyRemark() {
+		return verifyRemark;
+	}
+
+	public void setVerifyRemark(String verifyRemark) {
+		this.verifyRemark = verifyRemark;
+	}
 }
