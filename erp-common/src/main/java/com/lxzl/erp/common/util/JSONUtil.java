@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.util;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.se.common.util.StringUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -77,6 +79,47 @@ public class JSONUtil {
             return objectMapper.writeValueAsString(map);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * 将json数组格式的字符串或者List转换为Class对应泛型对象的集合
+     * @param listOrStr
+     * @param clazz
+     * @return List<T>
+     */
+    public static <T> List<T> parseArray(final Object listOrStr,Class<T> clazz){
+        if(listOrStr == null){
+            return null;
+        }
+        String arrStr = listOrStr.toString();
+        try{
+            if(listOrStr instanceof List){
+                arrStr = JSONArray.toJSONString(listOrStr);
+            }
+            return JSONArray.parseArray(arrStr, clazz);
+        }catch (Exception e){
+            return null;
+        }
+    }
+    /**
+     * 将obj转换为指定class对应的泛型对象、非json格式的字符串将直接返回
+     * @param obj
+     * @param clazz
+     * @return T
+     */
+    public static <T> T parseObject(final Object obj,Class<T> clazz){
+        if (obj == null) {
+            return null;
+        }
+        Object objTemp = obj;
+        try {
+            if(obj instanceof String){
+                objTemp = JSONObject.parse(obj.toString());
+            }
+            return JSONObject.parseObject(JSONObject.toJSONString(objTemp), clazz);
+        }catch (Exception e){
+            return (T)obj;
         }
     }
 

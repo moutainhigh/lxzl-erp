@@ -87,11 +87,13 @@ public interface PaymentService extends BaseService {
     ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip);
 
     /**
-     * 充值记录分页
+     * 给微信端充值客户记录分页
      * @param customerNo
      * @return
      */
     ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo);
+
+    ServiceResult<String, Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordParam chargeRecordParam);
 
     /**
      * 退还用户押金

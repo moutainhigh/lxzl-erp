@@ -71,4 +71,10 @@ public class PaymentController extends BaseController {
         ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordPage(customer.getCustomerNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "queryChargeRecordParamPage", method = RequestMethod.POST)
+    public Result queryChargeRecordParamPage(@RequestBody ChargeRecordParam param, BindingResult validResult) {
+        ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordParamPage(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

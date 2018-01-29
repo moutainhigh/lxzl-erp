@@ -19,6 +19,9 @@ public class ChargeRecord extends BasePO {
     private String chargeName;
     private String chargeDescription;
     private String openId;
+    private String businessCustomerNo;
+
+    private String customerName;
 
     public Integer getChargeOrderId() { return chargeOrderId; }
 
@@ -68,4 +71,11 @@ public class ChargeRecord extends BasePO {
 
     public void setOpenId(String openId) { this.openId = openId; }
 
+    public String getCustomerName() { return customerName; }
+
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getBusinessCustomerNo() { return businessCustomerNo; }
+
+    public void setBusinessCustomerNo(String businessCustomerNo) { this.businessCustomerNo = businessCustomerNo; }
 }

@@ -11,8 +11,7 @@ import com.lxzl.erp.common.domain.base.PaymentResult;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
@@ -21,12 +20,13 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -276,7 +276,128 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
 
+    @Override
+    public ServiceResult<String, Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordParam chargeRecordParam) {
+
+        ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
+
+        CustomerDO customerName = customerMapper.findByName(chargeRecordParam.getCustomerName());
+        CustomerDO customerNo = customerMapper.findByNo(chargeRecordParam.getBusinessCustomerNo());
+
+        if(chargeRecordParam.getCustomerName() != null){
+            chargeRecordParam.setBusinessCustomerNo(customerName.getCustomerNo());
+        }else if(chargeRecordParam.getBusinessCustomerNo() != null){
+            chargeRecordParam.setBusinessCustomerNo(customerNo.getCustomerNo());
+            chargeRecordParam.setCustomerName(customerNo.getCustomerName());
+        }
+
+        chargeRecordParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        chargeRecordParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = null;
+            JSONObject jsonObject = null;
+            if(chargeRecordParam.getCustomerName() != null && chargeRecordParam.getBusinessCustomerNo() != null){
+                if(chargeRecordParam.getChargeType() != null){
+                    if(chargeRecordParam.getChargeStatus() != null){
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }else{
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                }else{
+                    if(chargeRecordParam.getChargeStatus() != null){
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }else{
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                }
+            }else{
+                if(chargeRecordParam.getChargeType() != null){
+                    if(chargeRecordParam.getChargeStatus() != null){
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }else{
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                }else{
+                    if(chargeRecordParam.getChargeStatus() != null){
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }else{
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject=JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                }
+
+            }
+
+
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                Page<ChargeRecord> chargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);
+                List<ChargeRecord> chargeRecordList = new ArrayList<>();
+                List<ChargeRecord> chargeRecordPageList = chargeRecordPage.getItemList();
+                for(int i=0;i<chargeRecordPageList.size();i++){
+                    ChargeRecord chargeRecord = JSONUtil.parseObject(chargeRecordPageList.get(i), ChargeRecord.class);
+                    CustomerDO dbCusetomerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
+                    if(dbCusetomerDO == null){
+                        chargeRecord.setCustomerName("");
+                    }else{
+                        chargeRecord.setCustomerName(dbCusetomerDO.getCustomerName());
+                    }
+                    chargeRecordList.add(chargeRecord);
+                }
+                chargeRecordPage.setItemList(chargeRecordList);
+                result.setResult(chargeRecordPage);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 
     @Override
