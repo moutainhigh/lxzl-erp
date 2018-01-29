@@ -1797,7 +1797,7 @@ public class OrderServiceImpl implements OrderService {
                 }
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
-                orderProductDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+                orderProductDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
                 ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
                 if (productSku == null) {
                     throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
@@ -1884,7 +1884,7 @@ public class OrderServiceImpl implements OrderService {
                     throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
                 }
                 orderMaterialDO.setMaterialName(material.getMaterialName());
-                orderMaterialDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+                orderMaterialDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
