@@ -63,7 +63,7 @@ public class Customer extends BasePO {
 	private User customerOwnerUser;
 	private User customerUnionUser;
 
-	@NotNull(message = ErrorCode.CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class})
+//	@NotNull(message = ErrorCode.CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class})
 	private Integer isDefaultConsignAddress; //是否以地址作为收货地址,1是，0否
 
 
