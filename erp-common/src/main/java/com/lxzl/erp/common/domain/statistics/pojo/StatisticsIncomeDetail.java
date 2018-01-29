@@ -12,7 +12,7 @@ public class StatisticsIncomeDetail {
 
     private String customerNo;  //客户编号
     private String customerName;  //客户姓名
-    private Integer rentLengthType;  //业务类型，1-长租，2-短租
+    private Integer rentLengthType;  //业务类型，1-短租，2-长租
     private Integer subCompanyId;  //分公司ID
     private String subCompanyName;  //分公司名称
     private Integer orderSellerId;  //业务员ID

@@ -29,4 +29,5 @@ public class StatisticsUnReceivablePageParam extends BasePageParam {
     public void setSalesmanName(String salesmanName) {
         this.salesmanName = salesmanName;
     }
+
 }
