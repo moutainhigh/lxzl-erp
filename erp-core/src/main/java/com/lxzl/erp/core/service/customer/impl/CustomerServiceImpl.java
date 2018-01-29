@@ -9,13 +9,9 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerCompanyNeed;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
@@ -30,7 +26,6 @@ import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -63,7 +58,35 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> addCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
+        CustomerCompany customerCompany = customer.getCustomerCompany();
+
+        //校验法人手机号,经办人电话,紧急联系人手机号
+        if(customerCompany.getIsLegalPersonApple() == 0){
+            if(customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone()) ){
+                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
+                return serviceResult;
+            }
+            if(customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())){
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
+                return serviceResult;
+            }
+            if(customerCompany.getConnectPhone().equals(customerCompany.getLegalPersonPhone())){
+                serviceResult.setErrorCode(ErrorCode.CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE);
+                return serviceResult;
+            }
+        }
+
+        if(customerCompany.getIsLegalPersonApple() == 1){
+            if(customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())){
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
+                return serviceResult;
+            }
+            customerCompany.setLegalPerson(customerCompany.getAgentPersonName());
+            customerCompany.setLegalPersonNo(customerCompany.getAgentPersonNo());
+            customerCompany.setLegalPersonPhone(customerCompany.getAgentPersonPhone());
+        }
+
+        CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
         if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;

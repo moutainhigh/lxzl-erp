@@ -439,6 +439,9 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL = "J500084";
     public static final String CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL = "J500085";
     public static final String CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL = "J500086";
+    public static final String LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE = "J500087";
+    public static final String AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE = "J500088";
+    public static final String CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE = "J500089";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -877,7 +880,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL, "企业客户的注册资本不能为空");
         MAP.put(CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL, "企业客户的办公人数不能为空");
         MAP.put(CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL, "企业客户的经营面积不能为空");
-
+        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "客户法人手机号与办人电话相同");
+        MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
+        MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");

@@ -45,7 +45,13 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setProductPurpose("测试设备用途");
         customerCompany.setRemark("记住这是公司的备注不是客户的备注");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
-
+        customerCompany.setIsLegalPersonApple(1);
+        customerCompany.setAgentPersonPhone("18566324591");
+        customerCompany.setAgentPersonNo("aaaaaaa");
+        customerCompany.setAgentPersonName("woshi zhangshanaaaaaaaa");
+        customerCompany.setLegalPersonPhone("18566324592");
+        customerCompany.setLegalPersonNo("oooooooo");
+        customerCompany.setLegalPerson("woshi lisiaaaaaaa");
 /*        Image image1 = new Image();
 //        image1.setImgId(18);
 //        customerCompany.setBusinessLicensePictureImage(image1);
