@@ -1775,7 +1775,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //创建客户变更记录
         //如果开发员改变，
-        if (!userDOOwner.equals(userOwner)){
+        /*if (!userDOOwner.equals(userOwner)){
             if (userDOUnion == null && (userUnion == null || userUnion != null)){
                 //并且数据中联合开发员是null且传入的联合开发员为null或者不为null
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
@@ -1789,7 +1789,7 @@ public class CustomerServiceImpl implements CustomerService {
             }else if (!userDOUnion.equals(userUnion)) {
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
             }
-        }
+        }*/
 
 //        if (!userDOOwner.equals(userOwner) && (userDOUnion == null && userUnion == null)){
 //            //如果开发员改变，并且联合开发员传入的为null且数据中联合开发员也是null
