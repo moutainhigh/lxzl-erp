@@ -48,6 +48,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -62,6 +64,15 @@ public class CustomerServiceImpl implements CustomerService {
 
         //校验法人手机号,经办人电话,紧急联系人手机号
         if(customerCompany.getIsLegalPersonApple() == 0){
+            if(customerCompany.getLegalPersonPhone() != null && customerCompany.getLegalPersonPhone() != ""){
+                String regExp = "^1[0-9]{10}$";
+                Pattern pattern = Pattern.compile(regExp);
+                Matcher matcher = pattern.matcher(customerCompany.getLegalPersonPhone());
+                if(!matcher.matches() || customerCompany.getLegalPersonPhone().length()!= 11){
+                    serviceResult.setErrorCode(ErrorCode.PHONE_ERROR);
+                    return serviceResult;
+                }
+            }
             if(customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone()) ){
                 serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
                 return serviceResult;

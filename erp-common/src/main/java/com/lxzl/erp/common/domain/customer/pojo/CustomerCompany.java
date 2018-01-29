@@ -41,8 +41,6 @@ public class CustomerCompany extends BasePO {
     private Integer isLegalPersonApple;   //是否法人代表申请
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
-    @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
-    @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     private String legalPersonPhone;   //法人手机号
     private String businessLicenseNo;   //营业执照号
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
