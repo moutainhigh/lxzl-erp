@@ -226,6 +226,32 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> updateCompany(Customer customer) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        CustomerCompany customerCompany = customer.getCustomerCompany();
+        //校验法人手机号,经办人电话,紧急联系人手机号
+        if(customer.getCustomerCompany().getIsLegalPersonApple() == 0){
+            if(customer.getCustomerCompany().getLegalPersonPhone().equals(customer.getCustomerCompany().getAgentPersonPhone()) ){
+                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
+                return serviceResult;
+            }
+            if(customer.getCustomerCompany().getAgentPersonPhone().equals(customer.getCustomerCompany().getConnectPhone())){
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
+                return serviceResult;
+            }
+            if(customer.getCustomerCompany().getConnectPhone().equals(customer.getCustomerCompany().getLegalPersonPhone())){
+                serviceResult.setErrorCode(ErrorCode.CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE);
+                return serviceResult;
+            }
+        }
+
+        if(customer.getCustomerCompany().getIsLegalPersonApple() == 1){
+            if(customer.getCustomerCompany().getAgentPersonPhone().equals(customer.getCustomerCompany().getConnectPhone())){
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
+                return serviceResult;
+            }
+            customer.getCustomerCompany().setLegalPerson(customer.getCustomerCompany().getAgentPersonName());
+            customer.getCustomerCompany().setLegalPersonNo(customer.getCustomerCompany().getAgentPersonNo());
+            customer.getCustomerCompany().setLegalPersonPhone(customer.getCustomerCompany().getAgentPersonPhone());
+        }
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
@@ -268,8 +294,8 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //判断后续所需设备
-        if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedLaterList())) {
-            List<CustomerCompanyNeed> customerCompanyNeedLaterList = customer.getCustomerCompany().getCustomerCompanyNeedLaterList();
+        if (CollectionUtil.isNotEmpty(customerCompany.getCustomerCompanyNeedLaterList())) {
+            List<CustomerCompanyNeed> customerCompanyNeedLaterList = customerCompany.getCustomerCompanyNeedLaterList();
             serviceResult = setCustomerCompanyNeed(customerCompanyNeedLaterList);
             if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -289,7 +315,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //对营业执照图片操作
         List<Image> businessLicensePictureImageList = new ArrayList<>();
-        businessLicensePictureImageList.add(customer.getCustomerCompany().getBusinessLicensePictureImage());
+        businessLicensePictureImageList.add(customerCompany.getBusinessLicensePictureImage());
         serviceResult = updateImage(businessLicensePictureImageList, ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
@@ -299,7 +325,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //对身份证正面图片操作
         List<Image> legalPersonNoPictureFrontImageList = new ArrayList<>();
-        legalPersonNoPictureFrontImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureFrontImage());
+        legalPersonNoPictureFrontImageList.add(customerCompany.getLegalPersonNoPictureFrontImage());
         serviceResult = updateImage(legalPersonNoPictureFrontImageList, ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
@@ -309,7 +335,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //对身份证反面图片操作
         List<Image> legalPersonNoPictureBackImageList = new ArrayList<>();
-        legalPersonNoPictureBackImageList.add(customer.getCustomerCompany().getLegalPersonNoPictureBackImage());
+        legalPersonNoPictureBackImageList.add(customerCompany.getLegalPersonNoPictureBackImage());
         serviceResult = updateImage(legalPersonNoPictureBackImageList, ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
@@ -317,70 +343,70 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //对经营场所租赁合同图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getManagerPlaceRentContractImageList(), ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getManagerPlaceRentContractImageList(), ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对法人个人征信报告或附（法人个人征信授权书）图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonCreditReportImageList(), ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getLegalPersonCreditReportImageList(), ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对固定资产证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getFixedAssetsProveImageList(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getFixedAssetsProveImageList(), ImgType.FIXED_ASSETS_PROVE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对单位对公账户流水账单图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getPublicAccountFlowBillImageList(), ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getPublicAccountFlowBillImageList(), ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对社保/公积金缴纳证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getSocialSecurityRoProvidentFundImageList(), ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getSocialSecurityRoProvidentFundImageList(), ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对战略协议或合作协议图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getCooperationAgreementImageList(), ImgType.COOPERATION_AGREEMENT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getCooperationAgreementImageList(), ImgType.COOPERATION_AGREEMENT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对法人学历证明图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonEducationImageList(), ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getLegalPersonEducationImageList(), ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对法人职称证明图片操作.
-        serviceResult = updateImage(customer.getCustomerCompany().getLegalPersonPositionalTitleImageList(), ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getLegalPersonPositionalTitleImageList(), ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对现场核查表图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getLocaleChecklistsImageList(), ImgType.LOCALE_CHECKLISTS_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getLocaleChecklistsImageList(), ImgType.LOCALE_CHECKLISTS_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
 
         //对其他材料图片操作
-        serviceResult = updateImage(customer.getCustomerCompany().getOtherDateImageList(), ImgType.OTHER_DATE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        serviceResult = updateImage(customerCompany.getOtherDateImageList(), ImgType.OTHER_DATE_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
