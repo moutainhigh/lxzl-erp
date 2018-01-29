@@ -516,27 +516,29 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedFirstJson = customerCompanyDO.getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
             //对租赁设备进行判断
-            if(CollectionUtil.isEmpty(customerCompanyNeedList)){
+            /*if(CollectionUtil.isEmpty(customerCompanyNeedList)){
                 result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL);
                 return result;
-            }
-            for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList){
-                ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
-                if (productSkuDO == null){
-                    result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
-                    return result;
-                }
-                if (customerCompanyNeed.getUnitPrice() == null){
-                    result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL);
-                    return result;
-                }
-                if (customerCompanyNeed.getRentCount() == null){
-                    result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
-                    return result;
-                }
-                if (customerCompanyNeed.getTotalPrice() == null){
-                    result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL);
-                    return result;
+            }*/
+            if (CollectionUtil.isNotEmpty(customerCompanyNeedList)) {
+                for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
+                    ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+                    if (productSkuDO == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
+                        return result;
+                    }
+                    if (customerCompanyNeed.getUnitPrice() == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL);
+                        return result;
+                    }
+                    if (customerCompanyNeed.getRentCount() == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
+                        return result;
+                    }
+                    if (customerCompanyNeed.getTotalPrice() == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL);
+                        return result;
+                    }
                 }
             }
 
