@@ -881,7 +881,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL, "企业客户的注册资本不能为空");
         MAP.put(CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL, "企业客户的办公人数不能为空");
         MAP.put(CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL, "企业客户的经营面积不能为空");
-        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "客户法人手机号与办人电话相同");
+        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话相同");
         MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
         MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
 
