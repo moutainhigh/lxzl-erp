@@ -36,6 +36,7 @@
         <property name="paymentSystemAppSecret" value="${PAYMENT_SYSTEM_APP_SECRET}"/>
         <property name="paymentSystemWeixinChargeURL" value="${PAYMENT_SYSTEM_WEIXIN_CHARGE_URL}"/>
         <property name="paymentSystemQueryChargeRecordPageURL" value="${PAYMENT_SYSTEM_QUERY_CHARGE_RECORD_PAGE_URL}"/>
+        <property name="paymentSystemQueryPayResultURL" value="${PAYMENT_SYSTEM_QUERY_PAY_RESULT_URL}"/>
     </bean>
 
 </beans>

@@ -56,6 +56,12 @@
 	<select id="listPage" resultMap="StatementPayOrderDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_statement_pay_order espo 
 		<where>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createStartTime != null ">
+				<![CDATA[ AND ebm.create_time >= #{maps.bulkMaterialQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.createEndTime != null">
+				<![CDATA[ AND ebm.create_time <= #{maps.bulkMaterialQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND espo.data_status = 1
 			</if>

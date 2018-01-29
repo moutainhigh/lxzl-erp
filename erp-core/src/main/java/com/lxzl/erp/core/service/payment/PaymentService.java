@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -105,6 +106,15 @@ public interface PaymentService extends BaseService {
      */
     ServiceResult<String, Boolean> returnDeposit(String customerNo, BigDecimal returnRentDepositAmount, BigDecimal returnDepositAmount);
 
+
+    /**
+     * 根据参数查询订单结果
+     * @param orderNo 订单编码
+     * @param payType 支付类型
+     * @param customerNo 客户编码
+     * @return
+     */
+    ServiceResult<String, PayResult> queryPayResult(String orderNo, Integer payType, String customerNo);
 
 
 }

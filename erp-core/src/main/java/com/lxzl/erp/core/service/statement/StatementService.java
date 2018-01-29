@@ -110,6 +110,15 @@ public interface StatementService extends BaseService {
     ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo);
 
     /**
+     * 处理逾期的结算单
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return 是否处理成功
+     */
+    ServiceResult<String, Boolean> handleOverdueStatementOrder(Date startTime, Date endTime);
+
+    /**
      * 处理未支付的结算单
      *
      * @param startTime 开始时间

@@ -1819,6 +1819,23 @@ CREATE TABLE `erp_third_party_pay_record` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方支付记录表';
 
+DROP TABLE if exists `erp_statement_order_correct`;
+CREATE TABLE `erp_statement_order_correct` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_correct_no` varchar(100) NOT NULL COMMENT '冲正单号',
+  `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
+  `statement_correct_amount` decimal(15,2) NOT NULL COMMENT '冲正金额',
+  `statement_correct_reason` varchar(500) NOT NULL COMMENT '冲正原因',
+  `statement_correct_verify_status` int(20) COMMENT '审核状态',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算冲正单';
+
 DROP TABLE if exists `erp_statement_order`;
 CREATE TABLE `erp_statement_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',

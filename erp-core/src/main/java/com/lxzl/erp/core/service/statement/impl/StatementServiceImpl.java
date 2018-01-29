@@ -5,8 +5,10 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -29,6 +31,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapp
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -378,7 +381,6 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> weixinPayCallback(WeixinPayCallbackParam param) {
@@ -396,6 +398,13 @@ public class StatementServiceImpl implements StatementService {
                 || PayStatus.PAY_STATUS_PAID.equals(statementPayOrderDO.getPayStatus())
                 || PayStatus.PAY_STATUS_FAILED.equals(statementPayOrderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
+            return result;
+        }
+
+        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), WeixinPayCallbackParam.NOTIFY_STATUS_SUCCESS.equals(param.getNotifyStatus()) ? PayStatus.PAY_STATUS_PAID : PayStatus.PAY_STATUS_FAILED, param.getOrderNo(), loginUserId, currentTime);
+        if (!updatePayOrderResult) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
             return result;
         }
 
@@ -722,6 +731,7 @@ public class StatementServiceImpl implements StatementService {
         // 租金押金和设备押金
         BigDecimal totalReturnRentDepositAmount = BigDecimal.ZERO, totalReturnDepositAmount = BigDecimal.ZERO;
         Date returnTime = returnOrderDO.getReturnTime();
+        Date otherStatementTime = returnTime;
 
         List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDOList = returnOrderProductEquipmentMapper.findByReturnOrderNo(returnOrderNo);
         if (CollectionUtil.isNotEmpty(returnOrderProductEquipmentDOList)) {
@@ -816,8 +826,9 @@ public class StatementServiceImpl implements StatementService {
                         // 正常全额退
                         BigDecimal payReturnAmount = BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
-                            otherAmount = BigDecimal.ZERO;
+                            if (DateUtil.isSameDay(otherStatementTime, returnTime) || DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) < 0) {
+                                otherStatementTime = statementOrderDetailDO.getStatementExpectPayTime();
+                            }
                         }
                         // 退款金额，扣除未交款的部分
                         payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
@@ -931,8 +942,9 @@ public class StatementServiceImpl implements StatementService {
 
                         BigDecimal payReturnAmount = BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            payReturnAmount = BigDecimalUtil.sub(payReturnAmount, otherAmount);
-                            otherAmount = BigDecimal.ZERO;
+                            if (DateUtil.isSameDay(otherStatementTime, returnTime) || DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) < 0) {
+                                otherStatementTime = statementOrderDetailDO.getStatementExpectPayTime();
+                            }
                         }
                         // 退款金额，扣除未交款的部分
                         payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
@@ -955,10 +967,11 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
+
         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-            String key = "";
+            String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.toString();
             // 如果没有处理完差价，统一当天交钱
-            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), currentTime, currentTime, currentTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId());
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, returnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), otherStatementTime, returnTime, returnTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId());
             if (thisStatementOrderDetailDO != null) {
                 thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
                 addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
@@ -1124,10 +1137,9 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Boolean> handleNoPaidStatementOrder(Date startTime, Date endTime) {
+    public ServiceResult<String, Boolean> handleOverdueStatementOrder(Date startTime, Date endTime) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         Date currentTime = new Date();
         StatementOrderQueryParam param = new StatementOrderQueryParam();
@@ -1140,6 +1152,56 @@ public class StatementServiceImpl implements StatementService {
         maps.put("statementOrderQueryParam", param);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listPage(maps);
         updateStatementOrderOverdue(statementOrderDOList, currentTime);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, Boolean> handleNoPaidStatementOrder(Date startTime, Date endTime) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        StatementPayOrderQueryParam statementPayOrderQueryParam = new StatementPayOrderQueryParam();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        statementPayOrderQueryParam.setCreateStartTime(startTime);
+        statementPayOrderQueryParam.setCreateEndTime(endTime);
+        maps.put("statementPayOrderQueryParam", statementPayOrderQueryParam);
+        List<StatementPayOrderDO> statementPayOrderDOList = statementPayOrderMapper.listPage(maps);
+        if (CollectionUtil.isNotEmpty(statementPayOrderDOList)) {
+            for (StatementPayOrderDO statementPayOrderDO : statementPayOrderDOList) {
+                try {
+                    StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementPayOrderDO.getStatementOrderId());
+                    CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
+                    Integer payType = StatementOrderPayType.PAY_TYPE_WEIXIN.equals(statementPayOrderDO.getPayType()) ? 2 : 4;
+                    ServiceResult<String, PayResult> queryPayResult = paymentService.queryPayResult(statementPayOrderDO.getStatementPayOrderNo(), payType, customerDO.getCustomerNo());
+                    if (!ErrorCode.SUCCESS.equals(queryPayResult.getErrorCode())) {
+                        logger.error("查询结算单有误，请检查，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo());
+                        continue;
+                    }
+                    PayResult payResult = queryPayResult.getResult();
+                    if (!CommonConstant.COMMON_CONSTANT_YES.toString().equals(payResult.getStatus())
+                            || (!PayStatus.PAY_STATUS_PAID.toString().equals(payResult.getPayStatus()) && PayStatus.PAY_STATUS_FAILED.toString().equals(payResult.getPayStatus()))) {
+                        logger.error("查询结算单还没有结果，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo());
+                        continue;
+                    }
+
+                    WeixinPayCallbackParam param = new WeixinPayCallbackParam();
+                    param.setAmount(new BigDecimal(payResult.getRespAmount()));
+                    param.setBusinessOrderNo(payResult.getBusinessOrderNo());
+                    param.setOrderNo(payResult.getBusinessOrderNo());
+                    ServiceResult<String, String> weixinPayCallbackResult = weixinPayCallback(param);
+                    if (!ErrorCode.SUCCESS.equals(weixinPayCallbackResult.getErrorCode())) {
+                        logger.error("更新结算单有误，请检查，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo());
+                        continue;
+                    }
+                } catch (Exception e) {
+                    logger.error("自动检查支付结果遇到异常，请检查，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), e.toString());
+                }
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
@@ -1538,4 +1600,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private StatementReturnSupport statementReturnSupport;
+
+    @Autowired
+    private StatementPayOrderMapper statementPayOrderMapper;
 }

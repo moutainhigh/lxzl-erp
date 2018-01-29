@@ -1,5 +1,6 @@
 package com.lxzl.erp.worker.quartz;
 
+import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.core.quartz.job.BaseJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -9,18 +10,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component("countAmountJob")
-public class CountAmountJob extends BaseJob {
-    private static final Logger log = LoggerFactory.getLogger(CountAmountJob.class);
+import java.util.Date;
+
+@Component("statementOrderJob")
+public class StatementOrderJob extends BaseJob {
+
+    private static final Logger log = LoggerFactory.getLogger(StatementOrderJob.class);
 
     @Override
     public Object executeJob(JobExecutionContext context) throws JobExecutionException {
         JobKey key = context.getJobDetail().getKey();
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
         String jobSays = dataMap.getString("jobSays");
-        log.info("Instance {} of countAmountJob says: {} ", key, jobSays);
-
-        return null;
+        log.info("Instance {} of statementOrderJob says: {} ", key, jobSays);
+        Date currentTime = new Date();
+        Date startTime = DateUtil.addMinute(currentTime, -1890);
+//        statementService.handleNoPaidStatementOrder(startTime, currentTime);
+        return "success";
     }
 
 }

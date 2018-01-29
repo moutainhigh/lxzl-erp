@@ -20,7 +20,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createNew() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setOrderNo("LXO-20180124-731460-00094");
+        param.setOrderNo("LXO-20180129-731475-00110");
         TestResult testResult = getJsonTestResult("/statementOrder/createNew", param);
     }
 
@@ -34,7 +34,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createReturnOrderStatement() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setReturnOrderNo("LXRO-731449-20180120-00029");
+        param.setReturnOrderNo("LXRO-731475-20180129-00047");
         TestResult testResult = getJsonTestResult("/statementOrder/createReturnOrderStatement", param);
     }
 

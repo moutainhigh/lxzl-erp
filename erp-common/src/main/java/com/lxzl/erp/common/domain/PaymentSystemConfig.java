@@ -20,6 +20,7 @@ public class PaymentSystemConfig {
 
     public static String paymentSystemWeixinChargeURL;
     public static String paymentSystemQueryChargeRecordPageURL;
+    public static String paymentSystemQueryPayResultURL;
 
     public void setPaymentSystemManualChargeURL(String paymentSystemManualChargeURL) {
         PaymentSystemConfig.paymentSystemManualChargeURL = paymentSystemManualChargeURL;
@@ -63,5 +64,9 @@ public class PaymentSystemConfig {
 
     public void setPaymentSystemQueryChargeRecordPageURL(String paymentSystemQueryChargeRecordPageURL) {
         PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL = paymentSystemQueryChargeRecordPageURL;
+    }
+
+    public void setPaymentSystemQueryPayResultURL(String paymentSystemQueryPayResultURL) {
+        PaymentSystemConfig.paymentSystemQueryPayResultURL = paymentSystemQueryPayResultURL;
     }
 }

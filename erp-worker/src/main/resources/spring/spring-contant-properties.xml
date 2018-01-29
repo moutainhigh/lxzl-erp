@@ -15,14 +15,20 @@
 		http://www.springframework.org/schema/cache 
     	http://www.springframework.org/schema/cache/spring-cache.xsd">
 
+
     <bean id="paymentSystemConfig" class="com.lxzl.erp.common.domain.PaymentSystemConfig">
         <property name="paymentSystemQueryCustomerAccountURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_URL}"/>
         <property name="paymentSystemManualChargeURL" value="${PAYMENT_SYSTEM_MANUAL_CHARGE_URL}"/>
         <property name="paymentSystemManualDeductURL" value="${PAYMENT_SYSTEM_MANUAL_DEDUCT_URL}"/>
         <property name="paymentSystemBalancePayURL" value="${PAYMENT_SYSTEM_BALANCE_PAY_URL}"/>
+        <property name="paymentSystemWeixinPayURL" value="${PAYMENT_SYSTEM_WEIXIN_PAY_URL}"/>
+        <property name="paymentSystemWeixinPayCallbackURL" value="${PAYMENT_SYSTEM_WEIXIN_PAY_CALLBACK_URL}"/>
         <property name="paymentSystemReturnDepositURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_URL}"/>
         <property name="paymentSystemAppId" value="${PAYMENT_SYSTEM_APP_ID}"/>
         <property name="paymentSystemAppSecret" value="${PAYMENT_SYSTEM_APP_SECRET}"/>
+        <property name="paymentSystemWeixinChargeURL" value="${PAYMENT_SYSTEM_WEIXIN_CHARGE_URL}"/>
+        <property name="paymentSystemQueryChargeRecordPageURL" value="${PAYMENT_SYSTEM_QUERY_CHARGE_RECORD_PAGE_URL}"/>
+        <property name="paymentSystemQueryPayResultURL" value="${PAYMENT_SYSTEM_QUERY_PAY_RESULT_URL}"/>
     </bean>
 
 </beans>
