@@ -309,6 +309,22 @@ CREATE TABLE `erp_area_district` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区行政区表';
 
+DROP TABLE IF EXISTS `erp_business_system_config`;
+CREATE TABLE `erp_business_system_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `business_system_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '系统名称',
+  `business_system_type` int(20) NOT NULL DEFAULT '0' COMMENT '业务系统类型，1为凌雄商城',
+  `business_app_id` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '业务系统APP ID由ERP系统生成，提供给业务系统',
+  `business_app_secret` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '业务系统app secret由ERP系统生成，提供给业务系统',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务系统配置表';
+
 -- ****************************************客户表**************************************** --
 DROP TABLE if exists `erp_customer`;
 CREATE TABLE `erp_customer` (
