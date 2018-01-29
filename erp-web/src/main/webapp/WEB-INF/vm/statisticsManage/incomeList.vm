@@ -117,15 +117,15 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="14" class="text-center">没有查询到收入统计</td>
+                                    <td valign="top" colspan="16" class="text-center">没有查询到收入统计</td>
                                 </tr>
                                 {{/listData}}
                                 <tr>
                                     <td>合计</td>
-                                    <td id="totalCount"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="totalCount" colspan="4"></td>
+##                                    <td></td>
+##                                    <td></td>
+##                                    <td></td>
                                     <td id="totalDeposit"></td>
                                     <td id="totalRentDeposit"></td>
                                     <td id="totalReturnDeposit"></td>
