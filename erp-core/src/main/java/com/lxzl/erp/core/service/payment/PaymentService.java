@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.payment;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
@@ -125,4 +126,11 @@ public interface PaymentService extends BaseService {
      * @return
      */
     ServiceResult<String, CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam);
+
+    /**
+     * 微信端客户帐户流水接口
+     * @param param
+     * @return
+     */
+    ServiceResult<String, CustomerAccountLogSummary> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param);
 }

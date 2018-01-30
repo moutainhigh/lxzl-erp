@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
 import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
@@ -55,5 +56,15 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         param.setPageSize(10);
         param.setCustomerAccountLogType(5);
         TestResult testResult = getJsonTestResult("/payment/queryCustomerAccountLogPage", param);
+    }
+
+    @Test
+    public void weixinQueryCustomerAccountLogPage() throws Exception {
+        InterfaceCustomerAccountLogParam param = new InterfaceCustomerAccountLogParam();
+        param.setCustomerNo("CC201712161455119301332");
+        param.setPageNo(1);
+        param.setPageSize(10);
+        param.setAccountLogType(5);
+        TestResult testResult = getJsonTestResult("/payment/weixinQueryCustomerAccountLogPage", param);
     }
 }
