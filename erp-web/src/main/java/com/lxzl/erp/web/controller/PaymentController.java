@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountLogSummary;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -75,6 +78,12 @@ public class PaymentController extends BaseController {
     @RequestMapping(value = "queryChargeRecordParamPage", method = RequestMethod.POST)
     public Result queryChargeRecordParamPage(@RequestBody ChargeRecordParam param, BindingResult validResult) {
         ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordParamPage(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "queryCustomerAccountLogPage", method = RequestMethod.POST)
+    public Result queryCustomerAccountLogPage(@RequestBody CustomerAccountLogParam param, BindingResult validResult) {
+        ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.queryCustomerAccountLogPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

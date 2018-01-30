@@ -1,10 +1,12 @@
 package com.lxzl.erp.common.domain.payment.account.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChargeRecord extends BasePO {
 
     private Integer chargeOrderId;

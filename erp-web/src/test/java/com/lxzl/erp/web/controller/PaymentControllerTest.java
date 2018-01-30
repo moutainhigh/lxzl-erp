@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
+import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
 import org.junit.Test;
 
@@ -46,5 +47,15 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
 //        param.setChargeStatus(20);
 //        param.setQueryEndTime(new Date());
         TestResult testResult = getJsonTestResult("/payment/queryChargeRecordParamPage", param);
+    }
+
+    @Test
+    public void queryCustomerAccountLogPage() throws Exception {
+        CustomerAccountLogParam param = new CustomerAccountLogParam();
+        param.setBusinessCustomerNo("CC201712161455119301332");
+        param.setPageNo(1);
+        param.setPageSize(10);
+        param.setCustomerAccountLogType(5);
+        TestResult testResult = getJsonTestResult("/payment/queryCustomerAccountLogPage", param);
     }
 }

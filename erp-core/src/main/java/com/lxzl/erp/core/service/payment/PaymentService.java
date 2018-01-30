@@ -2,16 +2,16 @@ package com.lxzl.erp.core.service.payment;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
-import com.lxzl.erp.common.domain.payment.WeixinPayParam;
+import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.payment.ManualChargeParam;
-import com.lxzl.erp.common.domain.payment.ManualDeductParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountLogSummary;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -94,6 +94,11 @@ public interface PaymentService extends BaseService {
      */
     ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo);
 
+    /**
+     * 给ERP查看充值分页查询
+     * @param chargeRecordParam
+     * @return
+     */
     ServiceResult<String, Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordParam chargeRecordParam);
 
     /**
@@ -116,5 +121,10 @@ public interface PaymentService extends BaseService {
      */
     ServiceResult<String, PayResult> queryPayResult(String orderNo, Integer payType, String customerNo);
 
-
+    /**
+     * 查询客户账户流水
+     * @param customerAccountLogParam
+     * @return
+     */
+    ServiceResult<String, CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam);
 }

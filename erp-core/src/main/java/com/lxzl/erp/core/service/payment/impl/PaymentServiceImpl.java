@@ -14,13 +14,11 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
-import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
-import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -467,6 +465,59 @@ public class PaymentServiceImpl implements PaymentService {
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 PayResult payResult = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), PayResult.class);
                 result.setResult(payResult);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ServiceResult<String,  CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam) {
+        ServiceResult<String,  CustomerAccountLogSummary> result = new ServiceResult<>();
+
+        CustomerDO customerDO = customerMapper.findByNo(customerAccountLogParam.getBusinessCustomerNo());
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        customerAccountLogParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        customerAccountLogParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        customerAccountLogParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+
+            String requestJson;
+            JSONObject jsonObject;
+            if(customerAccountLogParam.getCustomerAccountLogType() == null){
+                requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
+                jsonObject=JSON.parseObject(requestJson);
+                jsonObject.remove("customerAccountLogType");
+                jsonObject.remove("count");
+                requestJson = jsonObject.toJSONString();
+            }else{
+                requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
+                jsonObject=JSON.parseObject(requestJson);
+                jsonObject.remove("count");
+                requestJson = jsonObject.toJSONString();
+            }
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountLogPageURL, requestJson, headerBuilder, "UTF-8");
+
+            logger.info("query Customer Account Log Page response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                Map<String,String> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+
+                CustomerAccountLogSummary customerAccountLogSummary = JSONUtil.parseObject(map.get("customerAccountLogSummary"), CustomerAccountLogSummary.class);
+                Page<CustomerAccountLogPage> customerAccountLogPage = JSONUtil.parseObject(map.get("customerAccountLogPage"), Page.class);
+                List<CustomerAccountLogPage> customerAccountLogPageList = customerAccountLogPage.getItemList();
+                customerAccountLogSummary.setCustomerAccountLogPage(customerAccountLogPageList);
+
+                result.setResult(customerAccountLogSummary);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
