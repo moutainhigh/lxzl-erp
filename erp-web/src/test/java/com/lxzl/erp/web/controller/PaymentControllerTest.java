@@ -9,8 +9,6 @@ import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.Date;
-
 
 /**
  * @Author : kai
