@@ -2,12 +2,11 @@ package com.lxzl.erp.core.service.payment;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
-import com.lxzl.erp.common.domain.payment.WeixinPayParam;
+import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.payment.ManualChargeParam;
-import com.lxzl.erp.common.domain.payment.ManualDeductParam;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountLogSummary;
+import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -87,11 +86,18 @@ public interface PaymentService extends BaseService {
     ServiceResult<String, String> wechatCharge(String customerNo,BigDecimal amount,String openId, String ip);
 
     /**
-     * 充值记录分页
+     * 给微信端充值客户记录分页
      * @param customerNo
      * @return
      */
     ServiceResult<String, Page<ChargeRecord>> queryChargeRecordPage(String customerNo);
+
+    /**
+     * 给ERP查看充值分页查询
+     * @param chargeRecordParam
+     * @return
+     */
+    ServiceResult<String, Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordParam chargeRecordParam);
 
     /**
      * 退还用户押金
@@ -104,5 +110,19 @@ public interface PaymentService extends BaseService {
     ServiceResult<String, Boolean> returnDeposit(String customerNo, BigDecimal returnRentDepositAmount, BigDecimal returnDepositAmount);
 
 
+    /**
+     * 根据参数查询订单结果
+     * @param orderNo 订单编码
+     * @param payType 支付类型
+     * @param customerNo 客户编码
+     * @return
+     */
+    ServiceResult<String, PayResult> queryPayResult(String orderNo, Integer payType, String customerNo);
 
+    /**
+     * 查询客户账户流水
+     * @param customerAccountLogParam
+     * @return
+     */
+    ServiceResult<String, CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam);
 }

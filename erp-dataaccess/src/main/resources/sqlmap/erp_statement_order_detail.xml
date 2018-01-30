@@ -75,7 +75,7 @@
 	<select id="findByOrderItemTypeAndId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
 		WHERE esod.order_item_type = #{orderItemType, jdbcType=INTEGER} AND esod.order_item_refer_id = #{orderItemId, jdbcType=INTEGER} AND order_type = 1  AND esod.data_status = 1
-		ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC
+		ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
 	</select>
 
 	<select id="findByOrderNo" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">

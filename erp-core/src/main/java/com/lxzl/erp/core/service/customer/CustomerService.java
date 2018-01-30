@@ -5,8 +5,9 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
 import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.*;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
 
 public interface CustomerService {
     ServiceResult<String,String> addCompany(Customer customer);

@@ -27,7 +27,6 @@ public class ErrorCode {
     public static final String RECORD_NOT_EXISTS = "J009999";
     public static final String RECORD_ALREADY_EXISTS = "J099999";
 
-
     public static final String USER_NAME_NOT_NULL = "J100000";
     public static final String USER_PASSWORD_NOT_NULL = "J100001";
     public static final String USER_DISABLE = "J100002";
@@ -52,6 +51,10 @@ public class ErrorCode {
     public static final String USER_NEW_PASSWORD_NOT_NULL = "J100022";
     public static final String USER_OWNER_NOT_EXISTS = "J100023";
     public static final String USER_UNION_NOT_EXISTS = "J100024";
+    public static final String PHONE_ERROR = "J100025";
+    public static final String BUSINESS_APP_ID_NOT_NULL = "J100026";
+    public static final String BUSINESS_APP_SECRET_NOT_NULL = "J100027";
+    public static final String BUSINESS_SYSTEM_ERROR = "J100028";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -128,6 +131,7 @@ public class ErrorCode {
     public static final String PRODUCT_NEW_SKU_PRICE_IS_NOT_NULL = "J200072";
     public static final String PRODUCT_NEW_DAY_RENT_PRICE_IS_NOT_NULL = "J200073";
     public static final String PRODUCT_NEW_MONTH_RENT_PRICE_IS_NOT_NULL = "J200074";
+    public static final String BUYER_CUSTOMER_NO_NOT_NULL = "J200075";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -354,6 +358,7 @@ public class ErrorCode {
     public static final String RETURN_TIME_NOT_NULL = "J400111";
     public static final String RETURN_REASON_TYPE_NOT_NULL = "J400112";
     public static final String ORDER_EXPECT_DELIVERY_TIME_ERROR = "J400113";
+    public static final String ORDER_NO_NOT_NULL = "J400114";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -439,6 +444,13 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL = "J500084";
     public static final String CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL = "J500085";
     public static final String CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL = "J500086";
+    public static final String LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE = "J500087";
+    public static final String AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE = "J500088";
+    public static final String CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE = "J500089";
+    public static final String STATEMENT_ORDER_NO_NOT_NULL = "J500090";
+    public static final String STATEMENT_PAY_NOT_NULL = "J500091";
+    public static final String OPEN_ID_NOT_NULL = "J500092";
+    public static final String CUSTOMER_NAME_NOT_NULL = "J500093";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -598,6 +610,10 @@ public class ErrorCode {
         MAP.put(COMMIT_ONLY_SELF, "只能提交自己的数据");
         MAP.put(RECORD_USED_CAN_NOT_DELETE, "数据被使用，无法删除");
         MAP.put(AMOUNT_MAST_MORE_THEN_ZERO, "金额必须大于0");
+        MAP.put(PHONE_ERROR, "手机号码格式有误");
+        MAP.put(BUSINESS_APP_ID_NOT_NULL, "业务系统appId不能为空");
+        MAP.put(BUSINESS_APP_SECRET_NOT_NULL, "业务系统appSecret不能为空");
+        MAP.put(BUSINESS_SYSTEM_ERROR, "业务系统验证失败");
 
         MAP.put(USER_NOT_LOGIN, "用户未登录");
         MAP.put(USER_DISABLE, "用户已禁用，请联系管理员");
@@ -749,6 +765,8 @@ public class ErrorCode {
         MAP.put(RETURN_TIME_NOT_NULL, "退还时间不能为空");
         MAP.put(RETURN_REASON_TYPE_NOT_NULL, "退换原因不能为空");
         MAP.put(ORDER_EXPECT_DELIVERY_TIME_ERROR, "预计发货时间必须在租赁时间之前，并且不能大于2天");
+        MAP.put(ORDER_NO_NOT_NULL, "订单号不能为空");
+        MAP.put(BUYER_CUSTOMER_NO_NOT_NULL, "购买人编号不能为空");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -877,7 +895,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL, "企业客户的注册资本不能为空");
         MAP.put(CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL, "企业客户的办公人数不能为空");
         MAP.put(CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL, "企业客户的经营面积不能为空");
-
+        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话相同");
+        MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
+        MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1010,7 +1030,10 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
         MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败");
         MAP.put(STATEMENT_ORDER_STATUS_ERROR, "结算单状态异常");
-        MAP.put(CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM, "客户没有租赁该设备或设备所在订单未确认收货");
+        MAP.put(STATEMENT_ORDER_NO_NOT_NULL, "结算单编号不能为空");
+        MAP.put(STATEMENT_PAY_NOT_NULL, "结算单支付方式不能为空");
+        MAP.put(OPEN_ID_NOT_NULL, "公众唯一标识不能为空");
+        MAP.put(CUSTOMER_NAME_NOT_NULL, "客户名称不能为空");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

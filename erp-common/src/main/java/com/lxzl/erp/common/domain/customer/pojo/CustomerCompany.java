@@ -5,11 +5,12 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +26,10 @@ public class CustomerCompany extends BasePO {
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String connectRealName;   //紧急联系人
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
+    @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     private String connectPhone;   //紧急联系人手机号
-    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class,QueryCustomerGroup.class})
+    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String companyName;   //公司名称
     private String companyAbb;   //公司简称
     private Integer province;   //省份ID，省份ID
@@ -53,11 +56,13 @@ public class CustomerCompany extends BasePO {
     private Integer officeNumber;  //办公人数
 //    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String productPurpose;  //设备用途
-    @Valid
+//    @Valid
 //    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
     private String agentPersonName;  //经办人姓名
+    @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
+    @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     private String agentPersonPhone;  //经办人电话
     private String agentPersonNo;  //经办人身份证号码
     private String unifiedCreditCode;  //统一信用代码

@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
+import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
 import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
 import org.junit.Test;
 
@@ -31,6 +32,12 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     public void queryUnReceivable() throws Exception {
         UnReceivablePageParam unReceivablePageParam = new UnReceivablePageParam();
         TestResult testResult = getJsonTestResult("/statistics/queryUnReceivable", unReceivablePageParam);
+    }
+
+    @Test
+    public void queryStatisticsUnReceivable() throws Exception {
+        StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = new StatisticsUnReceivablePageParam();
+        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
     }
     private Date getFistByMonth(){
         Calendar c = Calendar.getInstance();

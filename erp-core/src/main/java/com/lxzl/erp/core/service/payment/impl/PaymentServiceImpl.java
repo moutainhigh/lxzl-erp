@@ -11,22 +11,22 @@ import com.lxzl.erp.common.domain.base.PaymentResult;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
-import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -36,6 +36,8 @@ import java.util.Date;
  */
 @Service("paymentService")
 public class PaymentServiceImpl implements PaymentService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
     @Autowired
     private UserSupport userSupport;
@@ -53,6 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("query customer account no login response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 return JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), CustomerAccount.class);
@@ -76,6 +79,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("query customer account response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 return JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), CustomerAccount.class);
@@ -97,6 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemManualChargeURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("manual charge response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((Boolean) paymentResult.getResultMap().get("data"));
@@ -120,6 +125,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemManualDeductURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("manual deduct response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((Boolean) paymentResult.getResultMap().get("data"));
@@ -152,6 +158,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemBalancePayURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("balance pay response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((Boolean) paymentResult.getResultMap().get("data"));
@@ -185,6 +192,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinPayURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("wechat pay response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((String) paymentResult.getResultMap().get("data"));
@@ -231,6 +239,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(weixinPayParam);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemWeixinChargeURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("wechat charge response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((String) paymentResult.getResultMap().get("data"));
@@ -265,6 +274,8 @@ public class PaymentServiceImpl implements PaymentService {
             jsonObject.remove("count");
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+
+            logger.info("query charge page response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 Page<ChargeRecord> chargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);
@@ -276,7 +287,128 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
 
+    @Override
+    public ServiceResult<String, Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordParam chargeRecordParam) {
+
+        ServiceResult<String, Page<ChargeRecord>> result = new ServiceResult<>();
+
+        CustomerDO customerName = customerMapper.findByName(chargeRecordParam.getCustomerName());
+        CustomerDO customerNo = customerMapper.findByNo(chargeRecordParam.getBusinessCustomerNo());
+
+        if (chargeRecordParam.getCustomerName() != null) {
+            chargeRecordParam.setBusinessCustomerNo(customerName.getCustomerNo());
+        } else if (chargeRecordParam.getBusinessCustomerNo() != null) {
+            chargeRecordParam.setBusinessCustomerNo(customerNo.getCustomerNo());
+            chargeRecordParam.setCustomerName(customerNo.getCustomerName());
+        }
+
+        chargeRecordParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        chargeRecordParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = null;
+            JSONObject jsonObject = null;
+            if (chargeRecordParam.getCustomerName() != null && chargeRecordParam.getBusinessCustomerNo() != null) {
+                if (chargeRecordParam.getChargeType() != null) {
+                    if (chargeRecordParam.getChargeStatus() != null) {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    } else {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                } else {
+                    if (chargeRecordParam.getChargeStatus() != null) {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    } else {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                }
+            } else {
+                if (chargeRecordParam.getChargeType() != null) {
+                    if (chargeRecordParam.getChargeStatus() != null) {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    } else {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                } else {
+                    if (chargeRecordParam.getChargeStatus() != null) {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    } else {
+                        requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
+                        jsonObject = JSON.parseObject(requestJson);
+                        jsonObject.remove("chargeStatus");
+                        jsonObject.remove("chargeType");
+                        jsonObject.remove("customerName");
+                        jsonObject.remove("count");
+                        requestJson = jsonObject.toJSONString();
+                    }
+                }
+
+            }
+
+
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                Page<ChargeRecord> chargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);
+                List<ChargeRecord> chargeRecordList = new ArrayList<>();
+                List<ChargeRecord> chargeRecordPageList = chargeRecordPage.getItemList();
+                for (int i = 0; i < chargeRecordPageList.size(); i++) {
+                    ChargeRecord chargeRecord = JSONUtil.parseObject(chargeRecordPageList.get(i), ChargeRecord.class);
+                    CustomerDO dbCusetomerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
+                    if (dbCusetomerDO == null) {
+                        chargeRecord.setCustomerName("");
+                    } else {
+                        chargeRecord.setCustomerName(dbCusetomerDO.getCustomerName());
+                    }
+                    chargeRecordList.add(chargeRecord);
+                }
+                chargeRecordPage.setItemList(chargeRecordList);
+                result.setResult(chargeRecordPage);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 
     @Override
@@ -294,6 +426,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemReturnDepositURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("return deposit response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 result.setResult((Boolean) paymentResult.getResultMap().get("data"));
@@ -305,4 +438,93 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(e.getMessage());
         }
     }
+
+    @Override
+    public ServiceResult<String, PayResult> queryPayResult(String orderNo, Integer payType, String customerNo) {
+        ServiceResult<String, PayResult> result = new ServiceResult<>();
+
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        PayResultQueryParam payResultQueryParam = new PayResultQueryParam();
+        payResultQueryParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        payResultQueryParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        payResultQueryParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        payResultQueryParam.setBusinessOrderNo(orderNo);
+        payResultQueryParam.setPayType(payType.toString());
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(payResultQueryParam);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryPayResultURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("query pay result response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                PayResult payResult = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), PayResult.class);
+                result.setResult(payResult);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ServiceResult<String,  CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam) {
+        ServiceResult<String,  CustomerAccountLogSummary> result = new ServiceResult<>();
+
+        CustomerDO customerDO = customerMapper.findByNo(customerAccountLogParam.getBusinessCustomerNo());
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        customerAccountLogParam.setBusinessCustomerNo(customerDO.getCustomerNo());
+        customerAccountLogParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        customerAccountLogParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+
+            String requestJson;
+            JSONObject jsonObject;
+            if(customerAccountLogParam.getCustomerAccountLogType() == null){
+                requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
+                jsonObject=JSON.parseObject(requestJson);
+                jsonObject.remove("customerAccountLogType");
+                jsonObject.remove("count");
+                requestJson = jsonObject.toJSONString();
+            }else{
+                requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
+                jsonObject=JSON.parseObject(requestJson);
+                jsonObject.remove("count");
+                requestJson = jsonObject.toJSONString();
+            }
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountLogPageURL, requestJson, headerBuilder, "UTF-8");
+
+            logger.info("query Customer Account Log Page response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                Map<String,String> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+
+                CustomerAccountLogSummary customerAccountLogSummary = JSONUtil.parseObject(map.get("customerAccountLogSummary"), CustomerAccountLogSummary.class);
+                Page<CustomerAccountLogPage> customerAccountLogPage = JSONUtil.parseObject(map.get("customerAccountLogPage"), Page.class);
+                List<CustomerAccountLogPage> customerAccountLogPageList = customerAccountLogPage.getItemList();
+                customerAccountLogSummary.setCustomerAccountLogPage(customerAccountLogPageList);
+
+                result.setResult(customerAccountLogSummary);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
 }

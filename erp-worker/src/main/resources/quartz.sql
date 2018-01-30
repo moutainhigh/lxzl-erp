@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS lxzl_erp_quartz DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE lxzl_erp_quartz;
+
 /*
 Navicat MySQL Data Transfer
 
@@ -63,6 +66,10 @@ CREATE TABLE `QRTZ_CRON_TRIGGERS` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of QRTZ_CRON_TRIGGERS
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `QRTZ_FIRED_TRIGGERS`
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_FIRED_TRIGGERS`;
@@ -114,6 +121,36 @@ CREATE TABLE `QRTZ_JOB_DETAILS` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of QRTZ_JOB_DETAILS
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `QRTZ_JOB_RUNNING_INFOS`
+-- ----------------------------
+DROP TABLE IF EXISTS `QRTZ_JOB_RUNNING_INFOS`;
+CREATE TABLE `QRTZ_JOB_RUNNING_INFOS` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `JOB_NAME` varchar(200) DEFAULT NULL,
+  `JOB_GROUP` varchar(200) DEFAULT NULL,
+  `JOB_CLASS_NAME` varchar(250) NOT NULL,
+  `TRIGGER_NAME` varchar(200) NOT NULL,
+  `TRIGGER_GROUP` varchar(200) NOT NULL,
+  `RUNNING_ID` varchar(200) NOT NULL,
+  `INSTANCE_NAME` varchar(200) NOT NULL,
+  `IP` varchar(200) NOT NULL,
+  `HOST_NAME` varchar(200) NOT NULL,
+  `START_TIME` varchar(200) NOT NULL,
+  `END_TIME` varchar(200) DEFAULT NULL,
+  `COST` bigint(13) DEFAULT NULL,
+  `JOB_RESULT` varchar(200) NOT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of QRTZ_JOB_RUNNING_INFOS
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `QRTZ_LOCKS`
 -- ----------------------------
 DROP TABLE IF EXISTS `QRTZ_LOCKS`;
@@ -122,6 +159,10 @@ CREATE TABLE `QRTZ_LOCKS` (
   `LOCK_NAME` varchar(40) NOT NULL,
   PRIMARY KEY (`SCHED_NAME`,`LOCK_NAME`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of QRTZ_LOCKS
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `QRTZ_PAUSED_TRIGGER_GRPS`
@@ -148,6 +189,10 @@ CREATE TABLE `QRTZ_SCHEDULER_STATE` (
   `CHECKIN_INTERVAL` bigint(13) NOT NULL,
   PRIMARY KEY (`SCHED_NAME`,`INSTANCE_NAME`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of QRTZ_SCHEDULER_STATE
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `QRTZ_SIMPLE_TRIGGERS`
@@ -231,3 +276,20 @@ CREATE TABLE `QRTZ_TRIGGERS` (
   KEY `IDX_QRTZ_T_NFT_ST_MISFIRE_GRP` (`SCHED_NAME`,`MISFIRE_INSTR`,`NEXT_FIRE_TIME`,`TRIGGER_GROUP`,`TRIGGER_STATE`),
   CONSTRAINT `QRTZ_TRIGGERS_IBFK_1` FOREIGN KEY (`SCHED_NAME`, `JOB_NAME`, `JOB_GROUP`) REFERENCES `QRTZ_JOB_DETAILS` (`SCHED_NAME`, `JOB_NAME`, `JOB_GROUP`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of QRTZ_TRIGGERS
+-- ----------------------------
+
+DELETE FROM QRTZ_CRON_TRIGGERS;
+DELETE FROM QRTZ_TRIGGERS;
+DELETE FROM QRTZ_BLOB_TRIGGERS;
+DELETE FROM QRTZ_CALENDARS;
+DELETE FROM QRTZ_FIRED_TRIGGERS;
+DELETE FROM QRTZ_JOB_DETAILS;
+DELETE FROM QRTZ_JOB_RUNNING_INFOS;
+DELETE FROM QRTZ_LOCKS;
+DELETE FROM QRTZ_PAUSED_TRIGGER_GRPS;
+DELETE FROM QRTZ_SCHEDULER_STATE;
+DELETE FROM QRTZ_SIMPLE_TRIGGERS;
+DELETE FROM QRTZ_SIMPROP_TRIGGERS;

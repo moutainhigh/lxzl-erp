@@ -19,7 +19,10 @@ public class StatisticsUnReceivableDetail {
     private BigDecimal unReceivable;  //合计未收
     private Double unReceivablePercentage;  //未收占比(合计未收/上月租金),如果结果为百分之七十五点二，该值为75.20
     private Integer customerCount;  //总客户数
-    private Integer unReceivableCustomerCount;  //未收客户数
+    private Integer unReceivableCustomerCountShort;  //短租未收客户数
+    private Integer unReceivableCustomerCountLong;  //长租未收客户数
+    private Integer rentedCustomerCountShort;  //短租合作客户数
+    private Integer rentingCustomerCountLong;  //长租在租客户数
 
     public Integer getSubCompanyId() {
         return subCompanyId;
@@ -101,11 +104,35 @@ public class StatisticsUnReceivableDetail {
         this.customerCount = customerCount;
     }
 
-    public Integer getUnReceivableCustomerCount() {
-        return unReceivableCustomerCount;
+    public Integer getUnReceivableCustomerCountShort() {
+        return unReceivableCustomerCountShort;
     }
 
-    public void setUnReceivableCustomerCount(Integer unReceivableCustomerCount) {
-        this.unReceivableCustomerCount = unReceivableCustomerCount;
+    public void setUnReceivableCustomerCountShort(Integer unReceivableCustomerCountShort) {
+        this.unReceivableCustomerCountShort = unReceivableCustomerCountShort;
+    }
+
+    public Integer getUnReceivableCustomerCountLong() {
+        return unReceivableCustomerCountLong;
+    }
+
+    public void setUnReceivableCustomerCountLong(Integer unReceivableCustomerCountLong) {
+        this.unReceivableCustomerCountLong = unReceivableCustomerCountLong;
+    }
+
+    public Integer getRentedCustomerCountShort() {
+        return rentedCustomerCountShort;
+    }
+
+    public void setRentedCustomerCountShort(Integer rentedCustomerCountShort) {
+        this.rentedCustomerCountShort = rentedCustomerCountShort;
+    }
+
+    public Integer getRentingCustomerCountLong() {
+        return rentingCustomerCountLong;
+    }
+
+    public void setRentingCustomerCountLong(Integer rentingCustomerCountLong) {
+        this.rentingCustomerCountLong = rentingCustomerCountLong;
     }
 }

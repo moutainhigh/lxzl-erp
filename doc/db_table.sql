@@ -309,6 +309,22 @@ CREATE TABLE `erp_area_district` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区行政区表';
 
+DROP TABLE IF EXISTS `erp_business_system_config`;
+CREATE TABLE `erp_business_system_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `business_system_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '系统名称',
+  `business_system_type` int(20) NOT NULL DEFAULT '0' COMMENT '业务系统类型，1为凌雄商城',
+  `business_app_id` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '业务系统APP ID由ERP系统生成，提供给业务系统',
+  `business_app_secret` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '业务系统app secret由ERP系统生成，提供给业务系统',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务系统配置表';
+
 -- ****************************************客户表**************************************** --
 DROP TABLE if exists `erp_customer`;
 CREATE TABLE `erp_customer` (
@@ -1802,6 +1818,25 @@ CREATE TABLE `erp_third_party_pay_record` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方支付记录表';
+
+DROP TABLE if exists `erp_statement_order_correct`;
+CREATE TABLE `erp_statement_order_correct` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_correct_no` varchar(100) NOT NULL COMMENT '冲正单号',
+  `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
+  `statement_correct_amount` decimal(15,2) NOT NULL COMMENT '冲正金额',
+  `statement_correct_reason` varchar(500) NOT NULL COMMENT '冲正原因',
+  `statement_order_correct_status` int(20) COMMENT '结算冲正单状态，0-待提交，1-审核中，2-审核通过（待冲正），3-冲正成功，4-冲正失败，5-取消冲正',
+  `statement_correct_success_time` datetime DEFAULT NULL COMMENT '冲正成功时间',
+  `statement_correct_fail_reason` varchar(500) DEFAULT NULL COMMENT '冲正失败原因（建议格式为 错误代码:错误描述）',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算冲正单';
 
 DROP TABLE if exists `erp_statement_order`;
 CREATE TABLE `erp_statement_order` (

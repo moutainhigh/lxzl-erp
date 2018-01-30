@@ -133,7 +133,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         statisticsIncome.setTotalRent(totalRent);
         statisticsIncome.setTotalPrepayRent(totalPrepayRent);
         statisticsIncome.setTotalOtherPaid(totalOtherPaid);
-        BigDecimal in = BigDecimalUtil.add(statisticsIncome.getTotalPrepayRent(), BigDecimalUtil.add(statisticsIncome.getTotalRent(), BigDecimalUtil.add(statisticsIncome.getTotalDeposit(), statisticsIncome.getTotalRentDeposit())));
+        BigDecimal in = BigDecimalUtil.add(statisticsIncome.getTotalPrepayRent(), BigDecimalUtil.add(statisticsIncome.getTotalOtherPaid(), BigDecimalUtil.add(statisticsIncome.getTotalRent(), BigDecimalUtil.add(statisticsIncome.getTotalDeposit(), statisticsIncome.getTotalRentDeposit()))));
+
+
         BigDecimal out = BigDecimalUtil.add(statisticsIncome.getTotalReturnDeposit(), statisticsIncome.getTotalReturnRentDeposit());
         statisticsIncome.setTotalIncome(BigDecimalUtil.sub(in, out));
         Page<StatisticsIncomeDetail> page = new Page<>(statisticsIncomeDetailList, statisticsIncome.getTotalCount(), statisticsIncomePageParam.getPageNo(), statisticsIncomePageParam.getPageSize());
@@ -206,7 +208,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 //        System.out.println("结算日起，至统计结束时间为止，需交金额为"+amount+"元");
 //        System.out.println("预付"+BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(),amount)+"元");
         BigDecimal prepayRentAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentPaidAmount(), amount);
-        return BigDecimalUtil.compare(prepayRentAmount,BigDecimal.ZERO)<0?BigDecimal.ZERO:prepayRentAmount;
+        return BigDecimalUtil.compare(prepayRentAmount, BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : prepayRentAmount;
     }
 
     @Autowired

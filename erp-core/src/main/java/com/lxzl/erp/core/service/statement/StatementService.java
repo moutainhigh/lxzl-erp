@@ -3,7 +3,7 @@ package com.lxzl.erp.core.service.statement;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
+import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.se.core.service.BaseService;
 
@@ -70,10 +70,10 @@ public interface StatementService extends BaseService {
     /**
      * 查询结算单
      *
-     * @param statementOrderQueryParam 查询结算单参数
+     * @param interfaceStatementOrderQueryParam 查询结算单参数
      * @return 结算单结果
      */
-    ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam);
+    ServiceResult<String, Page<StatementOrder>> queryStatementOrder(InterfaceStatementOrderQueryParam interfaceStatementOrderQueryParam);
 
     /**
      * 查询结算单详情
@@ -108,6 +108,15 @@ public interface StatementService extends BaseService {
      * @return 差价
      */
     ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo);
+
+    /**
+     * 处理逾期的结算单
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return 是否处理成功
+     */
+    ServiceResult<String, Boolean> handleOverdueStatementOrder(Date startTime, Date endTime);
 
     /**
      * 处理未支付的结算单

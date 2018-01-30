@@ -3,11 +3,12 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
+import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-
 
 /**
  * @Author : kai
@@ -31,5 +32,28 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-1000-20180124-13746");
         TestResult testResult = getJsonTestResult("/payment/queryChargeRecordPage", customer);
+    }
+
+    @Test
+    public void queryChargeRecordParamPage() throws Exception {
+        ChargeRecordParam param = new ChargeRecordParam();
+        param.setPageNo(1);
+        param.setPageSize(10);
+//        param.setBusinessCustomerNo("LXCC-1000-20180124-13746");
+//        param.setCustomerName("新的测试数据");
+        param.setChargeType(2);
+//        param.setChargeStatus(20);
+//        param.setQueryEndTime(new Date());
+        TestResult testResult = getJsonTestResult("/payment/queryChargeRecordParamPage", param);
+    }
+
+    @Test
+    public void queryCustomerAccountLogPage() throws Exception {
+        CustomerAccountLogParam param = new CustomerAccountLogParam();
+        param.setBusinessCustomerNo("CC201712161455119301332");
+        param.setPageNo(1);
+        param.setPageSize(10);
+        param.setCustomerAccountLogType(5);
+        TestResult testResult = getJsonTestResult("/payment/queryCustomerAccountLogPage", param);
     }
 }

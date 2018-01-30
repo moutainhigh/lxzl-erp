@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.order.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
@@ -893,18 +894,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(OrderQueryParam orderQueryParam) {
+    public ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(InterfaceOrderQueryParam interfaceOrderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        PageQuery pageQuery = new PageQuery(interfaceOrderQueryParam.getPageNo(), interfaceOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        orderQueryParam.setBuyerCustomerId(orderQueryParam.getBuyerCustomerId());
-        maps.put("orderQueryParam", orderQueryParam);
+        interfaceOrderQueryParam.setBuyerCustomerId(interfaceOrderQueryParam.getBuyerCustomerId());
+        maps.put("orderQueryParam", interfaceOrderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, interfaceOrderQueryParam.getPageNo(), interfaceOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
@@ -1797,7 +1798,7 @@ public class OrderServiceImpl implements OrderService {
                 }
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
-                orderProductDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() > CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+                orderProductDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
                 ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
                 if (productSku == null) {
                     throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
@@ -1884,7 +1885,7 @@ public class OrderServiceImpl implements OrderService {
                     throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
                 }
                 orderMaterialDO.setMaterialName(material.getMaterialName());
-                orderMaterialDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() > CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+                orderMaterialDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;

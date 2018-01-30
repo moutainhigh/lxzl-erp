@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 @Component("countAmountJob")
 public class CountAmountJob extends BaseJob {
-
     private static final Logger log = LoggerFactory.getLogger(CountAmountJob.class);
 
     @Override
