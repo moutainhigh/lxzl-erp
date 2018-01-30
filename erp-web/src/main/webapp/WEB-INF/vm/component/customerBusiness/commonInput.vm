@@ -16,8 +16,8 @@
                     <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly />
                     <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
                 </label>
-                <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i>
-                </button>
+                <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i></button>
+##                <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName">重置</button>
             </div>
         </div>
         <div class="col-md-3">
@@ -194,12 +194,11 @@
     <div class="section row">
         <div class="col-md-6">
             <div class="section-divider mv40" id="spy2">
-                <span>公司地址信息</span>
+                <span>公司经营地址</span>
             </div>
             <div class="section row">
                 <div class="col-md-6">
                     <div class="section">
-##                        <label for="province" class="field-label"><em class="text-danger">*</em>省份/城市/地区</label>
                         <label class="field select">
                             <select id="province" name="province" class="required">
                                 <option value="">请选择</option>
@@ -225,7 +224,6 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-##                    <label for="address" class="field-label"><em class="text-danger">*</em>详细地址</label>
                     <label for="address" class="field prepend-icon">
                         <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入公司详细地址"></textarea>
                         <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
