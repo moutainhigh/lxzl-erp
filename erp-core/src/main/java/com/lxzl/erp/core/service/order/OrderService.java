@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.order;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.LastRentPriceResponse;
@@ -83,10 +84,10 @@ public interface OrderService extends VerifyReceiver {
     /**
      * 根据用户ID查询订单
      *
-     * @param param 参数
+     * @param interfaceOrderQueryParam 参数
      * @return 订单列表
      */
-    ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(OrderQueryParam param);
+    ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(InterfaceOrderQueryParam interfaceOrderQueryParam);
 
     /**
      * 处理订单

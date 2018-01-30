@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.order.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
@@ -893,18 +894,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(OrderQueryParam orderQueryParam) {
+    public ServiceResult<String, Page<Order>> queryOrderByUserIdInterface(InterfaceOrderQueryParam interfaceOrderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        PageQuery pageQuery = new PageQuery(interfaceOrderQueryParam.getPageNo(), interfaceOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        orderQueryParam.setBuyerCustomerId(orderQueryParam.getBuyerCustomerId());
-        maps.put("orderQueryParam", orderQueryParam);
+        interfaceOrderQueryParam.setBuyerCustomerId(interfaceOrderQueryParam.getBuyerCustomerId());
+        maps.put("orderQueryParam", interfaceOrderQueryParam);
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, interfaceOrderQueryParam.getPageNo(), interfaceOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;

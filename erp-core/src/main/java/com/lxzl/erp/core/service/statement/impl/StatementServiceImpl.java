@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
+import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
@@ -545,17 +546,17 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam) {
+    public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(InterfaceStatementOrderQueryParam interfaceStatementOrderQueryParam) {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+        PageQuery pageQuery = new PageQuery(interfaceStatementOrderQueryParam.getPageNo(), interfaceStatementOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("statementOrderQueryParam", statementOrderQueryParam);
+        maps.put("statementOrderQueryParam", interfaceStatementOrderQueryParam);
         Integer totalCount = statementOrderMapper.listCount(maps);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listPage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
-        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, interfaceStatementOrderQueryParam.getPageNo(), interfaceStatementOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;

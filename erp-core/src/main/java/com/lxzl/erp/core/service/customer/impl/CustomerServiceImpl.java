@@ -19,6 +19,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.businessSystemConfig.BusinessSystemConfigService;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
@@ -2025,5 +2026,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private PermissionSupport permissionSupport;
 
-
+    @Autowired
+    private BusinessSystemConfigService businessSystemConfigService;
 }

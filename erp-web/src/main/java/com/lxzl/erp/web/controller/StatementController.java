@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -72,8 +73,8 @@ public class StatementController extends BaseController {
     }
 
     @RequestMapping(value = "page", method = RequestMethod.POST)
-    public Result page(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
+    public Result page(@RequestBody InterfaceStatementOrderQueryParam interfaceStatementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(interfaceStatementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

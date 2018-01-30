@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.businessSystemConfig.BusinessSystemConfigMapper">
+
+	<resultMap id="BusinessSystemConfigDO" type="com.lxzl.erp.dataaccess.domain.businessSystemConfig.BusinessSystemConfigDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="business_system_name" jdbcType="VARCHAR" property="businessSystemName" />
+		<result column="business_system_type" jdbcType="INTEGER" property="businessSystemType" />
+		<result column="business_app_id" jdbcType="VARCHAR" property="businessAppId" />
+		<result column="business_app_secret" jdbcType="VARCHAR" property="businessAppSecret" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ebsc.id,ebsc.business_system_name,ebsc.business_system_type,ebsc.business_app_id,ebsc.business_app_secret,ebsc.data_status,ebsc.remark,ebsc.create_time,ebsc.update_time,ebsc.create_user,ebsc.update_user
+	</sql>
+
+	<select id="findById" resultMap="BusinessSystemConfigDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_business_system_config ebsc 
+		WHERE ebsc.id = #{id, jdbcType=INTEGER} AND ebsc.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ebsc.id) FROM erp_business_system_config ebsc 
+		<where>
+			<if test="maps.businessSystemConfigQueryParam != null &amp;&amp;maps.businessSystemConfigQueryParam.businessSystemName != null &amp;&amp; maps.businessSystemConfigQueryParam.businessSystemName != ''">
+				AND ebsc.business_system_name = #{maps.businessSystemConfigQueryParam.businessSystemName, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.businessSystemConfigQueryParam != null &amp;&amp;maps.businessSystemConfigQueryParam.businessAppId != null &amp;&amp; maps.businessSystemConfigQueryParam.businessAppId != ''">
+				AND ebsc.business_app_id = #{maps.businessSystemConfigQueryParam.businessAppId, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.businessSystemConfigQueryParam != null &amp;&amp;maps.businessSystemConfigQueryParam.businessAppSecret != null &amp;&amp; maps.businessSystemConfigQueryParam.businessAppSecret != ''">
+				AND ebsc.business_app_secret = #{maps.businessSystemConfigQueryParam.businessAppSecret, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="BusinessSystemConfigDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_business_system_config ebsc 
+		<where>
+			<if test="maps.businessSystemConfigQueryParam != null &amp;&amp;maps.businessSystemConfigQueryParam.businessSystemName != null &amp;&amp; maps.businessSystemConfigQueryParam.businessSystemName != ''">
+				AND ebsc.business_system_name = #{maps.businessSystemConfigQueryParam.businessSystemName, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.businessSystemConfigQueryParam != null &amp;&amp;maps.businessSystemConfigQueryParam.businessAppId != null &amp;&amp; maps.businessSystemConfigQueryParam.businessAppId != ''">
+				AND ebsc.business_app_id = #{maps.businessSystemConfigQueryParam.businessAppId, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.businessSystemConfigQueryParam != null &amp;&amp;maps.businessSystemConfigQueryParam.businessAppSecret != null &amp;&amp; maps.businessSystemConfigQueryParam.businessAppSecret != ''">
+				AND ebsc.business_app_secret = #{maps.businessSystemConfigQueryParam.businessAppSecret, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="businessSystemName != null">
+				business_system_name = #{businessSystemName,jdbcType=VARCHAR},
+			</if>
+			<if test="businessSystemType != null">
+				business_system_type = #{businessSystemType,jdbcType=INTEGER},
+			</if>
+			<if test="businessAppId != null">
+				business_app_id = #{businessAppId,jdbcType=VARCHAR},
+			</if>
+			<if test="businessAppSecret != null">
+				business_app_secret = #{businessAppSecret,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.businessSystemConfig.BusinessSystemConfigDO">
+		INSERT INTO erp_business_system_config <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.businessSystemConfig.BusinessSystemConfigDO">
+		UPDATE erp_business_system_config <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findCountByErpAppIdAndErpAppSecret" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM erp_business_system_config ebsc WHERE ebsc.business_app_id = #{erpAppId, jdbcType=VARCHAR} AND ebsc.business_app_secret = #{erpAppSecret, jdbcType=VARCHAR} AND ebsc.data_status = 1
+	</select>
+</mapper>
