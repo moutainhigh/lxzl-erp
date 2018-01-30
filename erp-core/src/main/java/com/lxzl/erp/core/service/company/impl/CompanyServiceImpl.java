@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.erpInterface.subCompany.InterfaceSubCompanyQueryParam;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -88,7 +89,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public ServiceResult<String, Page<SubCompany>> subCompanyPage(SubCompanyQueryParam subCompanyQueryParam) {
+    public ServiceResult<String, Page<SubCompany>> subCompanyPage(InterfaceSubCompanyQueryParam subCompanyQueryParam) {
         ServiceResult<String, Page<SubCompany>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(subCompanyQueryParam.getPageNo(), subCompanyQueryParam.getPageSize());
         Map<String, Object> paramMap = new HashMap<>();

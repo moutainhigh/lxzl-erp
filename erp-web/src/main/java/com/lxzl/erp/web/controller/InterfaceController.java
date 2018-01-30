@@ -3,12 +3,15 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
+import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderPayParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.erpInterface.subCompany.InterfaceSubCompanyQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.weiXin.InterfaceWeixinChargeParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
@@ -19,6 +22,7 @@ import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNoGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.businessSystemConfig.BusinessSystemConfigService;
+import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -67,6 +71,9 @@ public class InterfaceController extends BaseController {
 
     @Autowired
     private BusinessSystemConfigService businessSystemConfigService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody @Validated(QueryCustomerNoGroup.class) InterfaceOrderQueryParam interfaceOrderQueryParam, BindingResult validResult) {
@@ -174,6 +181,16 @@ public class InterfaceController extends BaseController {
         boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(param.getErpAppId(), param.getErpAppSecret());
         if(erpIdentity){
             ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
+            return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        }
+        return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
+    }
+
+    @RequestMapping(value = "subCompanyPage", method = RequestMethod.POST)
+    public Result pageSubCompany(@RequestBody @Validated InterfaceSubCompanyQueryParam param, BindingResult validResult) {
+        boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(param.getErpAppId(), param.getErpAppSecret());
+        if(erpIdentity){
+            ServiceResult<String, Page<SubCompany>> serviceResult = companyService.subCompanyPage(param);
             return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
         }
         return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
