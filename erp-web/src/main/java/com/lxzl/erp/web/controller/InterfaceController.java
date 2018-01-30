@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderPayParam;
@@ -11,6 +12,7 @@ import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatement
 import com.lxzl.erp.common.domain.erpInterface.weiXin.InterfaceWeixinChargeParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountLogSummary;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNameGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNoGroup;
@@ -162,6 +164,16 @@ public class InterfaceController extends BaseController {
         boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(interfaceCustomerQueryParam.getErpAppId(), interfaceCustomerQueryParam.getErpAppSecret());
         if(erpIdentity){
             ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByNo(interfaceCustomerQueryParam.getCustomerNo());
+            return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        }
+        return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
+    }
+
+    @RequestMapping(value = "weixinQueryCustomerAccountLogPage", method = RequestMethod.POST)
+    public Result weixinQueryCustomerAccountLogPage(@RequestBody @Validated InterfaceCustomerAccountLogParam param, BindingResult validResult) {
+        boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(param.getErpAppId(), param.getErpAppSecret());
+        if(erpIdentity){
+            ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
             return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
         }
         return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);

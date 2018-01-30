@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
@@ -83,6 +84,12 @@ public class PaymentController extends BaseController {
     @RequestMapping(value = "queryCustomerAccountLogPage", method = RequestMethod.POST)
     public Result queryCustomerAccountLogPage(@RequestBody CustomerAccountLogParam param, BindingResult validResult) {
         ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.queryCustomerAccountLogPage(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "weixinQueryCustomerAccountLogPage", method = RequestMethod.POST)
+    public Result weixinQueryCustomerAccountLogPage(@RequestBody InterfaceCustomerAccountLogParam param, BindingResult validResult) {
+        ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
