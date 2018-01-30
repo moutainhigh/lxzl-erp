@@ -1,6 +1,6 @@
 <div class="panel-body p25">
     <div class="section row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>客户来源</label>
             <label class="field select">
                 <select id="customerOrigin" name="customerOrigin" class="required">
@@ -9,7 +9,7 @@
                 <i class="arrow"></i>
             </label>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="customerOrigin" class="field-label">联合开发人</label>
             <div class="smart-widget sm-right smr-50">
                 <label class="field">
@@ -17,144 +17,9 @@
                     <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
                 </label>
                 <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i></button>
-##                <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName">重置</button>
             </div>
         </div>
-        <div class="col-md-3">
-            <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
-            <label for="companyName" class="field prepend-icon">
-                <input type="text" name="companyName" id="companyName" class="gui-input required" />
-                <label for="companyName" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="companyAbb" class="field-label">公司简称</label>
-            <label for="companyAbb" class="field prepend-icon">
-                <input type="text" name="companyAbb" id="companyAbb" class="gui-input" />
-                <label for="companyAbb" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-    </div>
-    <div class="section row">
-        <div class="col-md-3">
-            <label for="landline" class="field-label">座机电话</label>
-            <label for="landline" class="field prepend-icon">
-                <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
-                <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
-                </label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="connectRealName" class="field-label"><em class="text-danger">*</em>联系人姓名</label>
-            <label for="connectRealName" class="field prepend-icon">
-                <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
-                <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="connectPhone" class="field-label"><em class="text-danger">*</em>联系人手机号</label>
-            <label for="connectPhone" class="field prepend-icon">
-                <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
-                <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
-                </label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="companyFoundTime" class="field-label">企业成立时间</label>
-            <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
-                <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
-                <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
-            </label>
-        </div>
-    </div>
-    <div class="section row">
-        <div class="col-md-3">
-            <label for="industry" class="field-label">所属行业</label>
-##            <label for="industry" class="field prepend-icon">
-##                <input type="text" name="industry" id="industry" class="gui-input" />
-##                <label for="industry" class="field-icon"><i class="fa fa-tag"></i>
-##                </label>
-##            </label>
-            <label class="field select">
-                <select id="industry" name="industry" class="required">
-                    <option value="">请选择</option>
-                </select>
-                <i class="arrow"></i>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="affiliatedEnterprise" class="field-label">关联企业</label>
-            <label for="affiliatedEnterprise" class="field prepend-icon">
-                <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
-                <label for="affiliatedEnterprise" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="registeredCapital" class="field-label">注册资本</label>
-            <div class="smart-widget sm-right">
-                <label for="registeredCapital" class="field prepend-icon">
-                    <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
-                    <label for="registeredCapital" class="field-icon"><i class="fa fa-jpy"></i>
-                    </label>
-                </label>
-                <label for="registeredCapital" class="button">万</label>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <label for="officeNumber" class="field-label">办公人数</label>
-            <label for="officeNumber" class="field prepend-icon">
-                <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
-                <label for="officeNumber" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-
-    </div>
-    <div class="section row">
-        <div class="col-md-3">
-            <label for="unifiedCreditCode" class="field-label">统一信用代码</label>
-            <label for="unifiedCreditCode" class="field prepend-icon">
-                <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
-                <label for="unifiedCreditCode" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="registeredCapital" class="field-label">经营面积</label>
-            <div class="smart-widget sm-right">
-                <label for="operatingArea" class="field prepend-icon">
-                    <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
-                    <label for="operatingArea" class="field-icon"><i class="fa fa-jpy"></i>
-                    </label>
-                </label>
-                <label for="operatingArea" class="button">㎡</label>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <label for="productPurpose" class="field-label">设备用途</label>
-            <label for="productPurpose" class="field prepend-icon">
-                <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
-                <label for="productPurpose" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-        <div class="col-md-3">
-            <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
-            <label for="unitInsuredNumber" class="field prepend-icon">
-                <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
-                <label for="unitInsuredNumber" class="field-icon"><i class="fa fa-tag"></i>
-                </label>
-            </label>
-        </div>
-    </div>
-    <div class="section row">
-        <div class="section-divider mv40" id="spy2">
-            <span>申请额度信息</span>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>业务员</label>
             <div class="smart-widget sm-right smr-50">
                 <label class="field">
@@ -165,21 +30,51 @@
                 </button>
             </div>
         </div>
-        <div class="col-md-3">
-            <label for="firstApplyAmount" class="field-label"><em class="text-danger">*</em>首期申请额度</label>
-            <label for="firstApplyAmount" class="field prepend-icon">
-                <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="gui-input required moneyNumber" />
-                <label for="firstApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
+            <label for="companyName" class="field prepend-icon">
+                <input type="text" name="companyName" id="companyName" class="gui-input required" />
+                <label for="companyName" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
             </label>
         </div>
-       <div class="col-md-3">
-           <label for="remark" class="field-label"><em class="text-danger">*</em>后期申请额度</label>
-           <label for="laterApplyAmount" class="field prepend-icon">
-               <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="gui-input required moneyNumber" />
-               <label for="laterApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
-           </label>
-       </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
+            <label for="companyAbb" class="field-label">公司简称</label>
+            <label for="companyAbb" class="field prepend-icon">
+                <input type="text" name="companyAbb" id="companyAbb" class="gui-input" />
+                <label for="companyAbb" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="landline" class="field-label">座机电话</label>
+            <label for="landline" class="field prepend-icon">
+                <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
+                <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
+                </label>
+            </label>
+        </div>
+
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="connectRealName" class="field-label"><em class="text-danger">*</em>联系人姓名</label>
+            <label for="connectRealName" class="field prepend-icon">
+                <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
+                <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="connectPhone" class="field-label"><em class="text-danger">*</em>联系人手机号</label>
+            <label for="connectPhone" class="field prepend-icon">
+                <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
+                <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
             <label for="isDisabled" class="field-label"><em class="text-danger">*</em>是否由法人代表申请</label>
             <label class="field select">
                 <select id="isLegalPersonApple" name="isLegalPersonApple">
@@ -190,14 +85,150 @@
             </label>
         </div>
     </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="agentPersonName" class="field-label"><em class="text-danger">*</em>经办人姓名</label>
+            <label for="agentPersonName" class="field prepend-icon">
+                <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input required letterOrChinese" />
+                <label for="agentPersonName" class="field-icon"><i class="fa fa-user"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
+            <label for="agentPersonNo" class="field prepend-icon">
+                <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required"  />
+                <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="agentPersonPhone" class="field-label"><em class="text-danger">*</em>经办人电话</label>
+            <label for="agentPersonPhone" class="field prepend-icon">
+                <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone required" />
+                <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row" id="legalPersonContainer">
+        <div class="col-md-4">
+            <label for="legalPerson" class="field-label"><em class="text-danger">*</em>法人姓名</label>
+            <label for="legalPerson" class="field prepend-icon">
+                <input type="text" name="legalPerson" id="legalPerson" class="gui-input letterOrChinese required" />
+                <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="legalPersonNo" class="field-label"><em class="text-danger">*</em>法人身份证号</label>
+            <label for="legalPersonNo" class="field prepend-icon">
+                <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input required" />
+                <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="legalPersonPhone" class="field-label"><em class="text-danger">*</em>法人手机号</label>
+            <label for="legalPersonPhone" class="field prepend-icon">
+                <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone required" />
+                <label for="legalPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="companyFoundTime" class="field-label">企业成立时间</label>
+            <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
+                <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
+                <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="industry" class="field-label">所属行业</label>
+            <label class="field select">
+                <select id="industry" name="industry" class="required">
+                    <option value="">请选择</option>
+                </select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="affiliatedEnterprise" class="field-label">关联企业</label>
+            <label for="affiliatedEnterprise" class="field prepend-icon">
+                <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
+                <label for="affiliatedEnterprise" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="registeredCapital" class="field-label">注册资本</label>
+            <div class="smart-widget sm-right">
+                <label for="registeredCapital" class="field prepend-icon">
+                    <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
+                    <label for="registeredCapital" class="field-icon"><i class="fa fa-jpy"></i>
+                    </label>
+                </label>
+                <label for="registeredCapital" class="button">万</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="officeNumber" class="field-label">办公人数</label>
+            <label for="officeNumber" class="field prepend-icon">
+                <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
+                <label for="officeNumber" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="unifiedCreditCode" class="field-label">统一信用代码</label>
+            <label for="unifiedCreditCode" class="field prepend-icon">
+                <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
+                <label for="unifiedCreditCode" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="registeredCapital" class="field-label">经营面积</label>
+            <div class="smart-widget sm-right">
+                <label for="operatingArea" class="field prepend-icon">
+                    <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
+                    <label for="operatingArea" class="field-icon"><i class="fa fa-jpy"></i>
+                    </label>
+                </label>
+                <label for="operatingArea" class="button">㎡</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="productPurpose" class="field-label">设备用途</label>
+            <label for="productPurpose" class="field prepend-icon">
+                <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
+                <label for="productPurpose" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
+            <label for="unitInsuredNumber" class="field prepend-icon">
+                <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
+                <label for="unitInsuredNumber" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
 
     <div class="section row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="section-divider mv40" id="spy2">
                 <span>公司经营地址</span>
             </div>
             <div class="section row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="section">
                         <label class="field select">
                             <select id="province" name="province" class="required">
@@ -223,81 +254,62 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <label for="address" class="field prepend-icon">
-                        <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入公司详细地址"></textarea>
+                        <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入公司详细地址(例如街道门号信息)"></textarea>
                         <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
                     </label>
+                    <label class="block mt15 switch switch-primary pull-right">
+                        <input type="checkbox" name="isDefaultConsignAddress" id="isDefaultConsignAddress" value="1">
+                        <label for="isDefaultConsignAddress" data-on="是" data-off="否"></label>
+                        <span>设为收货地址</span>
+                    </label>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="section-divider mv40" id="spy2">
-                <span>法人信息</span>
-            </div>
-            <div class="section">
-##                <label for="legalPerson" class="field-label">法人姓名</label>
-                <label for="legalPerson" class="field prepend-icon">
-                    <input type="text" name="legalPerson" id="legalPerson" class="gui-input letterOrChinese" placeholder="输入法人姓名" />
-                    <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
-                    </label>
-                </label>
-            </div>
-            <div class="section">
-##                <label for="legalPersonNo" class="field-label">法人身份证号</label>
-                <label for="legalPersonNo" class="field prepend-icon">
-                    <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input" placeholder="输入法人身份证号" />
-                    <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
-                    </label>
-                </label>
-            </div>
-            <div class="section">
-##                <label for="legalPersonPhone" class="field-label">法人手机号</label>
-                <label for="legalPersonPhone" class="field prepend-icon">
-                    <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone" placeholder="输入法人手机号" />
-                    <label for="legalPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
-                    </label>
-                </label>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="section-divider mv40" id="spy2">
-                <span>经办人信息</span>
-            </div>
-            <div class="section">
-##                <label for="agentPersonName" class="field-label">经办人姓名</label>
-                <label for="agentPersonName" class="field prepend-icon">
-                    <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input letterOrChinese" placeholder="输入经办人姓名" />
-                    <label for="agentPersonName" class="field-icon"><i class="fa fa-user"></i>
-                    </label>
-                </label>
-            </div>
-            <div class="section">
-##                <label for="agentPersonNo" class="field-label">经办人身份证号码</label>
-                <label for="agentPersonNo" class="field prepend-icon">
-                    <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input" placeholder="输入经办人身份证号码" />
-                    <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
-                    </label>
-                </label>
-            </div>
-            <div class="section">
-##                <label for="agentPersonPhone" class="field-label">经办人电话</label>
-                <label for="agentPersonPhone" class="field prepend-icon">
-                    <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone" placeholder="输入经办人手机号" />
-                    <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
-                    </label>
-                </label>
             </div>
         </div>
     </div>
 
     <div class="section row">
-        <div class="col-md-12">
-            <label for="remark" class="field-label">备注</label>
-            <label for="remark" class="field prepend-icon">
-                <textarea class="gui-textarea" id="remark" name="remark" style="height: 170px;" placeholder="输入备注"></textarea>
-                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-            </label>
+        <div class="col-md-4">
+            <div class="section-divider mv40" id="spy2">
+                <span>申请额度信息</span>
+            </div>
+            <div class="section">
+                <label for="firstApplyAmount" class="field-label"><em class="text-danger">*</em>首期申请额度</label>
+                <label for="firstApplyAmount" class="field prepend-icon">
+                    <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="gui-input required moneyNumber" />
+                    <label for="firstApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+                </label>
+            </div>
+            <div class="section">
+                <label for="remark" class="field-label"><em class="text-danger">*</em>后期申请额度</label>
+                <label for="laterApplyAmount" class="field prepend-icon">
+                    <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="gui-input required moneyNumber" />
+                    <label for="laterApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="section-divider mv40" id="spy2">
+                <span>备注</span>
+            </div>
+            <div class="section">
+##                <label for="remark" class="field-label">备注</label>
+                <label for="remark" class="field prepend-icon">
+                    <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
+                    <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+                </label>
+            </div>
         </div>
     </div>
+
+##    <div class="section row">
+##        <div class="col-md-12">
+##            <label for="remark" class="field-label">备注</label>
+##            <label for="remark" class="field prepend-icon">
+##                <textarea class="gui-textarea" id="remark" name="remark" style="height: 170px;" placeholder="输入备注"></textarea>
+##                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##            </label>
+##        </div>
+##    </div>
 </div>
