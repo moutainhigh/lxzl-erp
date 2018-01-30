@@ -5,7 +5,6 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -30,7 +29,7 @@ public class CustomerCompany extends BasePO {
     @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     private String connectPhone;   //紧急联系人手机号
-    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class,QueryCustomerGroup.class})
+    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String companyName;   //公司名称
     private String companyAbb;   //公司简称
     private Integer province;   //省份ID，省份ID
