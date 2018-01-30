@@ -18,9 +18,9 @@ public class InterfaceCustomerAccountLogParam extends BasePageParam {
 
     @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {QueryCustomerNoGroup.class})
     private String CustomerNo;
-    private Integer accountLogType;
-    private Date startTime;
-    private Date endTime;
+    private Integer customerAccountLogType;
+    private Date queryStartTime;
+    private Date queryEndTime;
 
     @NotNull(message = ErrorCode.BUSINESS_APP_ID_NOT_NULL)
     private String erpAppId;   //业务系统APP ID由ERP系统生成，提供给业务系统
@@ -36,29 +36,17 @@ public class InterfaceCustomerAccountLogParam extends BasePageParam {
         CustomerNo = customerNo;
     }
 
-    public Integer getAccountLogType() {
-        return accountLogType;
-    }
+    public Integer getCustomerAccountLogType() { return customerAccountLogType; }
 
-    public void setAccountLogType(Integer accountLogType) {
-        this.accountLogType = accountLogType;
-    }
+    public void setCustomerAccountLogType(Integer customerAccountLogType) { this.customerAccountLogType = customerAccountLogType; }
 
-    public Date getStartTime() {
-        return startTime;
-    }
+    public Date getQueryStartTime() { return queryStartTime; }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+    public void setQueryStartTime(Date queryStartTime) { this.queryStartTime = queryStartTime; }
 
-    public Date getEndTime() {
-        return endTime;
-    }
+    public Date getQueryEndTime() { return queryEndTime; }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+    public void setQueryEndTime(Date queryEndTime) { this.queryEndTime = queryEndTime; }
 
     public String getErpAppId() {
         return erpAppId;

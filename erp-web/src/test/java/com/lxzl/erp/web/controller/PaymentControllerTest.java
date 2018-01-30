@@ -64,7 +64,7 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         param.setCustomerNo("CC201712161455119301332");
         param.setPageNo(1);
         param.setPageSize(10);
-        param.setAccountLogType(5);
+        param.setCustomerAccountLogType(5);
         TestResult testResult = getJsonTestResult("/payment/weixinQueryCustomerAccountLogPage", param);
     }
 }

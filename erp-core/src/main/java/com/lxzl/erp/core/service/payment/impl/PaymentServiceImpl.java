@@ -530,16 +530,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ServiceResult<String, CustomerAccountLogSummary> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param) {
-
         ServiceResult<String,  CustomerAccountLogSummary> result = new ServiceResult<>();
 
         CustomerAccountLogParam customerAccountLogParam = new CustomerAccountLogParam();
         customerAccountLogParam.setPageSize(param.getPageSize());
         customerAccountLogParam.setPageNo(param.getPageNo());
         customerAccountLogParam.setBusinessCustomerNo(param.getCustomerNo());
-        customerAccountLogParam.setCustomerAccountLogType(param.getAccountLogType());
-        customerAccountLogParam.setQueryStartTime(param.getStartTime());
-        customerAccountLogParam.setQueryEndTime(param.getEndTime());
+        customerAccountLogParam.setCustomerAccountLogType(param.getCustomerAccountLogType());
+        customerAccountLogParam.setQueryStartTime(param.getQueryStartTime());
+        customerAccountLogParam.setQueryEndTime(param.getQueryEndTime());
         customerAccountLogParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         customerAccountLogParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
 
