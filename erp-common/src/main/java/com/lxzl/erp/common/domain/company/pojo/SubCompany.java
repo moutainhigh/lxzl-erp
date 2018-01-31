@@ -17,6 +17,7 @@ public class SubCompany extends BasePO {
     private Integer subCompanyId;   //唯一标识
     @NotEmpty(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL, groups = {AddGroup.class})
     private String subCompanyName;   //子公司名称
+    private String subCompanyCode;   //分公司编码
     private Integer subCompanyType;   //公司类型1为总公司
     private Integer province;   //省份ID，对应字典ID
     private Integer city;   //城市ID，对应字典ID
@@ -173,4 +174,8 @@ public class SubCompany extends BasePO {
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
     }
+
+    public String getSubCompanyCode() { return subCompanyCode; }
+
+    public void setSubCompanyCode(String subCompanyCode) { this.subCompanyCode = subCompanyCode; }
 }
