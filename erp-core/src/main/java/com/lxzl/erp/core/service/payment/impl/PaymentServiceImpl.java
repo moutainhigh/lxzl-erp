@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.PaymentSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PaymentResult;
+import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -508,6 +509,60 @@ public class PaymentServiceImpl implements PaymentService {
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountLogPageURL, requestJson, headerBuilder, "UTF-8");
 
             logger.info("query Customer Account Log Page response:{}", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
+                Map<String,String> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+
+                CustomerAccountLogSummary customerAccountLogSummary = JSONUtil.parseObject(map.get("customerAccountLogSummary"), CustomerAccountLogSummary.class);
+                Page<CustomerAccountLogPage> customerAccountLogPage = JSONUtil.parseObject(map.get("customerAccountLogPage"), Page.class);
+                List<CustomerAccountLogPage> customerAccountLogPageList = customerAccountLogPage.getItemList();
+                customerAccountLogSummary.setCustomerAccountLogPage(customerAccountLogPageList);
+
+                result.setResult(customerAccountLogSummary);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }
+            throw new BusinessException(paymentResult.getDescription());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ServiceResult<String, CustomerAccountLogSummary> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param) {
+        ServiceResult<String,  CustomerAccountLogSummary> result = new ServiceResult<>();
+
+        CustomerAccountLogParam customerAccountLogParam = new CustomerAccountLogParam();
+        customerAccountLogParam.setPageSize(param.getPageSize());
+        customerAccountLogParam.setPageNo(param.getPageNo());
+        customerAccountLogParam.setBusinessCustomerNo(param.getCustomerNo());
+        customerAccountLogParam.setCustomerAccountLogType(param.getCustomerAccountLogType());
+        customerAccountLogParam.setQueryStartTime(param.getQueryStartTime());
+        customerAccountLogParam.setQueryEndTime(param.getQueryEndTime());
+        customerAccountLogParam.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        customerAccountLogParam.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+
+            String requestJson;
+            JSONObject jsonObject;
+            if(customerAccountLogParam.getCustomerAccountLogType() == null){
+                requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
+                jsonObject=JSON.parseObject(requestJson);
+                jsonObject.remove("customerAccountLogType");
+                jsonObject.remove("count");
+                requestJson = jsonObject.toJSONString();
+            }else{
+                requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
+                jsonObject=JSON.parseObject(requestJson);
+                jsonObject.remove("count");
+                requestJson = jsonObject.toJSONString();
+            }
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountLogPageURL, requestJson, headerBuilder, "UTF-8");
+
+            logger.info("weixin Query Customer Account Log Page response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 Map<String,String> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);

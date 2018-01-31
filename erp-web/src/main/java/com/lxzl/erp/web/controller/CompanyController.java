@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.erpInterface.subCompany.InterfaceSubCompanyQueryParam;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -39,7 +40,7 @@ public class CompanyController {
     }
 
     @RequestMapping(value = "pageSubCompany", method = RequestMethod.POST)
-    public Result pageSubCompany(@RequestBody SubCompanyQueryParam subCompanyQueryParam, BindingResult validResult) {
+    public Result pageSubCompany(@RequestBody InterfaceSubCompanyQueryParam subCompanyQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<SubCompany>> serviceResult = companyService.subCompanyPage(subCompanyQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

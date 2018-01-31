@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.domain.company.pojo.CompanyDepartmentTree;
 import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
+import com.lxzl.erp.common.domain.erpInterface.subCompany.InterfaceSubCompanyQueryParam;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface CompanyService {
 
     ServiceResult<String, SubCompany> getSubCompanyById(Integer subCompanyId);
 
-    ServiceResult<String, Page<SubCompany>> subCompanyPage(SubCompanyQueryParam subCompanyQueryParam);
+    ServiceResult<String, Page<SubCompany>> subCompanyPage(InterfaceSubCompanyQueryParam subCompanyQueryParam);
 
     ServiceResult<String, List<Department>> getDepartmentList(DepartmentQueryParam departmentQueryParam);
 
