@@ -571,9 +571,17 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         StatementOrder statementOrder = ConverterUtil.convert(statementOrderDO, StatementOrder.class);
+
+        StatementOrderDetail returnReferStatementOrderDetail = null;
+
         if (statementOrder != null && CollectionUtil.isNotEmpty(statementOrder.getStatementOrderDetailList())) {
+            Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrder.getStatementOrderDetailList(), "statementOrderDetailId");
+
             for (StatementOrderDetail statementOrderDetail : statementOrder.getStatementOrderDetailList()) {
-                convertStatementOrderDetailOtherInfo(statementOrderDetail);
+                if (statementOrderDetail.getReturnReferId() != null) {
+                    returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
+                }
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
             }
         }
 
@@ -597,11 +605,16 @@ public class StatementServiceImpl implements StatementService {
 
         Integer customerId = null;
         if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+            StatementOrderDetail returnReferStatementOrderDetail = null;
+            Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrder.getStatementOrderDetailList(), "statementOrderDetailId");
             for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
                 if (customerId == null) {
                     customerId = statementOrderDetail.getCustomerId();
                 }
-                convertStatementOrderDetailOtherInfo(statementOrderDetail);
+                if (statementOrderDetail.getReturnReferId() != null) {
+                    returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
+                }
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
 
                 statementOrder.setStatementAmount(BigDecimalUtil.add(statementOrder.getStatementAmount(), statementOrderDetail.getStatementDetailAmount()));
                 statementOrder.setStatementPaidAmount(BigDecimalUtil.add(statementOrder.getStatementPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
@@ -629,7 +642,7 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-    private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail) {
+    private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail) {
         if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
             OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
             statementOrderDetail.setOrderNo(orderDO.getOrderNo());
@@ -640,6 +653,7 @@ public class StatementServiceImpl implements StatementService {
                         statementOrderDetail.setItemCount(orderProductDO.getProductCount());
                         statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
                         statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                        break;
                     }
                 }
             }
@@ -650,11 +664,16 @@ public class StatementServiceImpl implements StatementService {
                         statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
                         statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
                         statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                        break;
                     }
                 }
             }
         }
         if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
+            OrderDO orderDO = null;
+            if (returnReferStatementOrderDetail != null) {
+                orderDO = orderMapper.findByOrderId(returnReferStatementOrderDetail.getOrderId());
+            }
             ReturnOrderDO returnOrderDO = returnOrderMapper.findById(statementOrderDetail.getOrderId());
             statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
             if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderProductDOList())) {
@@ -664,7 +683,17 @@ public class StatementServiceImpl implements StatementService {
                         if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
                             statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
                         }
+                        statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                         statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
+                        if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                                if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                                    statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                                    statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -672,8 +701,18 @@ public class StatementServiceImpl implements StatementService {
                 for (ReturnOrderMaterialDO returnOrderMaterialDO : returnOrderDO.getReturnOrderMaterialDOList()) {
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
                         Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
+                        statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                         statementOrderDetail.setItemName(material.getMaterialName());
                         statementOrderDetail.setItemCount(returnOrderMaterialDO.getRealReturnMaterialCount());
+                        if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                                if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                                    statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                                    statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -18,6 +18,7 @@ public class StatementOrderDetail extends BasePO {
     private Integer orderId;   //订单ID
     private Integer orderItemType;        // 订单项类型，1为商品，2为物料
     private Integer orderItemReferId;    // 订单项关联ID
+    private Integer returnReferId;     // 退款的时候，关联的结算单detail ID
     private Integer statementDetailType;        // 结算单明细类型
     private Integer statementDetailPhase;   // 结算单期数
     private Date statementExpectPayTime;    // 结算单预计支付时间
@@ -389,5 +390,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementDetailOverduePhaseCount(Integer statementDetailOverduePhaseCount) {
         this.statementDetailOverduePhaseCount = statementDetailOverduePhaseCount;
+    }
+
+    public Integer getReturnReferId() {
+        return returnReferId;
+    }
+
+    public void setReturnReferId(Integer returnReferId) {
+        this.returnReferId = returnReferId;
     }
 }
