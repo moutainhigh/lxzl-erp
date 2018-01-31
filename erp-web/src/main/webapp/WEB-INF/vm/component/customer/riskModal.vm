@@ -6,7 +6,7 @@
         <form method="post" id="riskCustomerForm" description="风控授信">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="creditAmount" class="field-label">授信额度</label>
                         <label for="creditAmount" class="field prepend-icon">
                             <input type="text" name="creditAmount" id="creditAmount" class="gui-input required moneyNumber" maxlength="7">
@@ -14,7 +14,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="returnVisitFrequency" class="field-label">回访频率</label>
                         <label for="returnVisitFrequency" class="field prepend-icon">
                             <input type="text" name="returnVisitFrequency" id="returnVisitFrequency" class="gui-input required number" maxlength="7">
@@ -22,11 +22,21 @@
                             </label>
                         </label>
                     </div>
+                    <div class="col-md-4">
+                        <label for="isFullDeposit" class="field-label">是否是全额押金客户</label>
+                        <label for="isFullDeposit" class="field select">
+                            <select class="required" name="isFullDeposit">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
                 </div>
                 <div class="section row">
                     <div class="col-md-4">
                         <label for="singleLimitPrice" class="field-label">限制单台设备价值</label>
-                        <label for="singleLimitPrice" class="field select">
+                        <label for="singleLimitPrice" class="field prepend-icon">
                             <input type="text" name="singleLimitPrice" id="singleLimitPrice" class="gui-input moneyNumber" maxlength="7">
                             <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
@@ -84,7 +94,7 @@
                     <div class="col-md-4">
                         <label for="appleDepositCycle" class="field-label">苹果押金期数</label>
                         <label for="appleDepositCycle" class="field prepend-icon">
-                            <input type="text" name="appleDepositCycle" id="appleDepositCycle" class="gui-input required number" maxlength="3">
+                            <input type="text" name="appleDepositCycle" id="appleDepositCycle" class="appleControl gui-input required number" maxlength="3">
                             <label for="appleDepositCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -92,7 +102,7 @@
                     <div class="col-md-4">
                         <label for="applePaymentCycle" class="field-label">苹果付款期数</label>
                         <label for="applePaymentCycle" class="field prepend-icon">
-                            <input type="text" name="applePaymentCycle" id="applePaymentCycle" class="gui-input required number" maxlength="3">
+                            <input type="text" name="applePaymentCycle" id="applePaymentCycle" class="appleControl gui-input required number" maxlength="3">
                             <label for="applePaymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -100,7 +110,7 @@
                     <div class="col-md-4">
                         <label for="applePayMode" class="field-label">苹果设备支付方式</label>
                         <label for="applePayMode" class="field select">
-                            <select class="required" name="applePayMode">
+                            <select class="appleControl required" name="applePayMode">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
@@ -111,7 +121,7 @@
                     <div class="col-md-4">
                         <label for="newDepositCycle" class="field-label">全新设备押金期数</label>
                         <label for="newDepositCycle" class="field prepend-icon">
-                            <input type="text" name="newDepositCycle" id="newDepositCycle" class="gui-input required moneyNumber" maxlength="7">
+                            <input type="text" name="newDepositCycle" id="newDepositCycle" class="newDepositControl gui-input required moneyNumber" maxlength="7">
                             <label for="newDepositCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -119,7 +129,7 @@
                     <div class="col-md-4">
                         <label for="newPaymentCycle" class="field-label">全新设备付款期数</label>
                         <label for="newPaymentCycle" class="field prepend-icon">
-                            <input type="text" name="newPaymentCycle" id="newPaymentCycle" class="gui-input required number" maxlength="10">
+                            <input type="text" name="newPaymentCycle" id="newPaymentCycle" class="newDepositControl gui-input required number" maxlength="10">
                             <label for="newPaymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -127,7 +137,7 @@
                     <div class="col-md-4">
                         <label for="newPayMode" class="field-label">全新设备支付方式</label>
                         <label for="newPayMode" class="field select">
-                            <select class="required" name="newPayMode">
+                            <select class="newDepositControl required" name="newPayMode">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
