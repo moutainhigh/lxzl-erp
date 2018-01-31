@@ -93,7 +93,7 @@ public class HttpClientControllerTest extends ERPUnTransactionalTest {
     @Test
     public void testChineseCharToEn() throws Exception {
 //        TestResult testResult = getJsonTestResult("/http/change","");
-        String value = MD5Util.encryptWithKey("laobao4110" + "Lxzl123456", ApplicationConfig.authKey);
+        String value = MD5Util.encryptWithKey("xiaoluyu" + "Lxzl123456", ApplicationConfig.authKey);
         System.out.println(value);
     }
 

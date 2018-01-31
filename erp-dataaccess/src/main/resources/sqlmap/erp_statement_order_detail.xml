@@ -262,4 +262,9 @@
 			(#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.returnReferId},#{statementOrderDetailDO.statementDetailType},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailOtherAmount},#{statementOrderDetailDO.statementDetailOtherPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailOverdueDays},#{statementOrderDetailDO.statementDetailOverduePhaseCount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
 		</foreach>
 	</insert>
+
+	<select id="findNoSettlementById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.id = #{statementOrderDetailId, jdbcType=INTEGER} AND esod.data_status = 1 AND esod.statement_detail_status = 0
+	</select>
 </mapper>

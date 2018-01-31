@@ -22,4 +22,6 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
     List<StatementOrderDO> findByCustomerId(@Param("customerId") Integer customerId);
 
     StatementOrderDO findByNo(@Param("statementOrderNo") String statementOrderNo);
+
+    StatementOrderDO findNoSettlementById(@Param("statementOrderId") Integer statementOrderId);
 }
