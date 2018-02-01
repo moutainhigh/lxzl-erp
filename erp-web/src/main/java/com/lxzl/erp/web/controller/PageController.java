@@ -586,6 +586,19 @@ public class PageController extends BaseController {
     }
 
 
+    //充值记录
+    @RequestMapping("/recharge-manage/list")
+    public String rechargeManageList() {
+        return "/rechargeManage/rechargeList";
+    }
+
+    //站内信息
+    @RequestMapping("/site-message/list")
+    public String siteMessageList() {
+        return "/siteMessageManage/siteMessageList";
+    }
+
+
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
