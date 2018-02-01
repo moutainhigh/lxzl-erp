@@ -185,7 +185,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         }
         //校验状态
         StatementOrderCorrectDO dbStatementOrderCorrectDO = dbStatementOrderCorrectDOList.get(0);
-        if (!dbStatementOrderCorrectDO.getStatementOrderCorrectStatus().equals(StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT) || !dbStatementOrderCorrectDO.getStatementOrderCorrectStatus().equals(StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT)) {
+        if (!dbStatementOrderCorrectDO.getStatementOrderCorrectStatus().equals(StatementOrderCorrectStatus.VERIFY_STATUS_PENDING) || !dbStatementOrderCorrectDO.getStatementOrderCorrectStatus().equals(StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT)) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING_OR_COMMIT);
             return serviceResult;
         }
