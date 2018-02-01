@@ -7,6 +7,9 @@
             <li>
                 <a href="#returnOrder" data-toggle="tab" aria-expanded="true">退货单</a>
             </li>
+            <li>
+                <a href="#rechargeList" data-toggle="tab" aria-expanded="true">充值流水</a>
+            </li>
         </ul>
     </div>
     <div class="panel-body">
@@ -154,6 +157,59 @@
                             </tbody>
                         </script>
                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="returnOrderListTable"></table>
+                    </div>
+                </div>
+                <div class="row br-t">
+                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                        #parse("component/pager.vm")
+                    </div>
+                </div>
+            </div>
+            <div id="rechargeList">
+                <div class="row section">
+                    <div class="table-responsive">
+                        <script type="text/html" id="rechargeListTpl">
+                            <thead>
+                            <tr class="bg-light">
+                                <th>编号</th>
+                                <th>充值类型</th>
+                                <th>客户编号</th>
+                                <th>客户名</th>
+                                <th>业务系统订单号</th>
+                                <th>发起充值时间</th>
+                                <th>充值金额</th>
+                                <th>充值状态</th>
+                                <th>简述</th>
+                                <th>充值详情</th>
+                                <th>充值公总号</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr>
+                                <td>{{chargeOrderNo}}</td>
+                                <td>{{chargeTypeValue}}</td>
+                                <td>{{businessCustomerNo}}</td>
+                                <td>{{customerName}}</td>
+                                <td>{{businessOrderNo}}</td>
+                                <td>{{#time}}{{chargeTime}}{{/time}}</td>
+                                <td>{{#price}}{{chargeAmountReal}}{{/price}}</td>
+                                <td>{{chargeStatusValue}}</td>
+                                <td>{{chargeName}}</td>
+                                <td>{{chargeDescription}}</td>
+                                <td>{{openId}}</td>
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="16" class="text-center">没有查询到收入统计</td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="rechargeListTable"></table>
                     </div>
                 </div>
                 <div class="row br-t">

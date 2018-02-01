@@ -71,6 +71,7 @@
                                         <dt>结算单总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
                                         <dt>已付总金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
                                         <dt>逾期金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>其它费用：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOtherAmount}}{{/price}}&nbsp;</dd>
                                     </dl>
                                 </div>
                             </div>
