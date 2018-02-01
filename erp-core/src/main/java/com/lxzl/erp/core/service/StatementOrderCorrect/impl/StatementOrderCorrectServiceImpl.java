@@ -274,6 +274,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : boolean
      */
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
 
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(businessNo);
