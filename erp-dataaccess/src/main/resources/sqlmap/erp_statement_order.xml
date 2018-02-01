@@ -24,6 +24,7 @@
 		<result column="statement_status" jdbcType="INTEGER" property="statementStatus" />
 		<result column="statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
 		<result column="statement_end_time" jdbcType="TIMESTAMP" property="statementEndTime" />
+		<result column="statement_correct_amount" jdbcType="DECIMAL" property="statementCorrectAmount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -76,7 +77,7 @@
 	<sql id="column_List">
 		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_other_amount,eso.statement_other_paid_amount,eso.statement_rent_deposit_amount,eso.statement_rent_deposit_paid_amount,eso.statement_rent_deposit_return_amount,
 		eso.statement_deposit_amount,eso.statement_deposit_paid_amount,eso.statement_deposit_return_amount,
-		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
+		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user,eso.statement_correct_amount
 	</sql>
 
 	<sql id="detail_column_List">
@@ -300,6 +301,9 @@
 			<if test="statementEndTime != null">
 				statement_end_time = #{statementEndTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="statementCorrectAmount != null">
+				statement_correct_amount = #{statementCorrectAmount,jdbcType=DECIMAL},
+			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
@@ -330,6 +334,6 @@
 	</update>
 	<select id="findNoSettlementById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_statement_order eso
-		WHERE eso.id = #{statementOrderId, jdbcType=INTEGER} AND eso.statement_status = 0 AND eso.data_status = 1
+		WHERE eso.id = #{statementOrderId, jdbcType=INTEGER} AND eso.data_status = 1 AND (eso.statement_status = 0 OR eso.statement_status = 4)
 	</select>
 </mapper>

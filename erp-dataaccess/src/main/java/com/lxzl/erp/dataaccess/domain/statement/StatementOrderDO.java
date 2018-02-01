@@ -29,6 +29,7 @@ public class StatementOrderDO extends BaseDO {
     private Integer statementStatus;
     private Date statementStartTime;
     private Date statementEndTime;
+    private BigDecimal statementCorrectAmount;  //结算单冲正金额
     private Integer dataStatus;
     private String remark;
     private List<StatementOrderDetailDO> statementOrderDetailDOList;
@@ -226,5 +227,13 @@ public class StatementOrderDO extends BaseDO {
 
     public void setStatementOtherPaidAmount(BigDecimal statementOtherPaidAmount) {
         this.statementOtherPaidAmount = statementOtherPaidAmount;
+    }
+
+    public BigDecimal getStatementCorrectAmount() {
+        return statementCorrectAmount;
+    }
+
+    public void setStatementCorrectAmount(BigDecimal statementCorrectAmount) {
+        this.statementCorrectAmount = statementCorrectAmount;
     }
 }

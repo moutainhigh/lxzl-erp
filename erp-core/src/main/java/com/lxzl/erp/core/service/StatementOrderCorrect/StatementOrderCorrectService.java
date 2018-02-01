@@ -4,13 +4,14 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
+import com.lxzl.erp.core.service.VerifyReceiver;
 
 /**
  * @Author : XiaoLuYu
  * @Date : Created in 2018/1/30
  * @Time : Created in 11:07
  */
-public interface StatementOrderCorrectService {
+public interface StatementOrderCorrectService extends VerifyReceiver {
     /**
     * 创建冲正单
     * @Author : XiaoLuYu

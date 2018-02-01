@@ -19,17 +19,17 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     public void createStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
 //        statementOrderCorrect.setStatementOrderId(22);
-        statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(123));
+        statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(100));
         statementOrderCorrect.setStatementCorrectReason("测试11");
         statementOrderCorrect.setRemark("测试11");
-        statementOrderCorrect.setStatementOrderDetailId(79);
+        statementOrderCorrect.setStatementOrderDetailId(80);
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
     }
 
     @Test
     public void commitStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-22-20180131-00004");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-23-20180201-00005");
         TestResult testResult = getJsonTestResult("/correct/commit", statementOrderCorrect);
     }
 

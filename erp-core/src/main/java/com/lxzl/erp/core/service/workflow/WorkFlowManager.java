@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.workflow;
 
 import com.lxzl.erp.common.constant.WorkflowType;
+import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectService;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
@@ -42,6 +43,8 @@ public class WorkFlowManager {
     private TransferOrderService transferOrderService;
     @Autowired
     private PeerDeploymentOrderService peerDeploymentOrderService;
+    @Autowired
+    private StatementOrderCorrectService statementOrderCorrectService;
 
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -64,6 +67,8 @@ public class WorkFlowManager {
         }else if(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO.equals(workflowType)
                 ||WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT.equals(workflowType)){
             return peerDeploymentOrderService;
+        }else if(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)){
+            return statementOrderCorrectService;
         }
         return null;
     }
