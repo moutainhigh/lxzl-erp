@@ -34,6 +34,7 @@ public class StatementOrder extends BasePO {
     private Integer statementStatus;   //结算状态，0未结算，1已结算
     private Date statementStartTime;   //结算开始时间，结算单明细最早的一个
     private Date statementEndTime;   //结算结束时间，结算单明细最晚的一个
+    private BigDecimal statementCorrectAmount;  //结算单冲正金额
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -274,5 +275,13 @@ public class StatementOrder extends BasePO {
 
     public void setStatementOtherPaidAmount(BigDecimal statementOtherPaidAmount) {
         this.statementOtherPaidAmount = statementOtherPaidAmount;
+    }
+
+    public BigDecimal getStatementCorrectAmount() {
+        return statementCorrectAmount;
+    }
+
+    public void setStatementCorrectAmount(BigDecimal statementCorrectAmount) {
+        this.statementCorrectAmount = statementCorrectAmount;
     }
 }
