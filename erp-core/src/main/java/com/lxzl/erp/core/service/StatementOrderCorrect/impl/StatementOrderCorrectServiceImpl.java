@@ -301,6 +301,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         if (verifyResult) {
 
             //结算单明细未付款金额
+            Date now = new Date();
             BigDecimal accountOrderDetailPaidAmount = BigDecimalUtil.sub(statementOrderDetail.getStatementDetailAmount(), statementOrderDetail.getStatementDetailPaidAmount());
             BigDecimal accountOrderDetailLastAmount = BigDecimalUtil.sub(accountOrderDetailPaidAmount, statementOrderCorrectDO.getStatementCorrectAmount());
             switch (accountOrderDetailLastAmount.compareTo(new BigDecimal(0))) {
@@ -313,6 +314,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 case -1:
                     statementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     statementOrderDetailMapper.update(ConverterUtil.convert(statementOrderDetail, StatementOrderDetailDO.class));
+                    statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
+                    statementOrderCorrectMapper.update(statementOrderCorrectDO);
                     return false;
 
             }
@@ -333,6 +336,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 case -1:
                     statementOrder.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     statementOrderMapper.update(ConverterUtil.convert(statementOrder, StatementOrderDO.class));
+                    statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
+                    statementOrderCorrectMapper.update(statementOrderCorrectDO);
                     return false;
             }
             statementOrder.setStatementCorrectAmount(BigDecimalUtil.add(statementOrder.getStatementCorrectAmount(), statementOrderCorrectDO.getStatementCorrectAmount()));
@@ -340,6 +345,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             statementOrderMapper.update(ConverterUtil.convert(statementOrder, StatementOrderDO.class));
 
             //结算冲正单跟新状态
+            statementOrderCorrectDO.setStatementCorrectSuccessTime(now);
             statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_SUCCEES);
             statementOrderCorrectMapper.update(statementOrderCorrectDO);
             return true;
