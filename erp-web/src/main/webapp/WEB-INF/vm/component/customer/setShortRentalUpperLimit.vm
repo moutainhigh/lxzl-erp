@@ -1,0 +1,22 @@
+<div id="inputRemrakModal" class="popup-basic admin-form mfp-with-anim">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+        </div>
+        <form method="post" class="inputForm">
+            <div class="panel-body p25">
+                <div class="section">
+                    <label for="monthRentPrice" class="field-label">设置短租上限金额</label>
+                    <label for="monthRentPrice" class="field prepend-icon">
+                        <input type="text" name="shortLimitReceivableAmount" id="shortLimitReceivableAmount" class="gui-input required moneyNumber" />
+                        <label for="monthRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                    </label>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
