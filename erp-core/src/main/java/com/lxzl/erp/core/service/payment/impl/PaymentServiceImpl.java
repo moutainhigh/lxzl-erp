@@ -298,9 +298,9 @@ public class PaymentServiceImpl implements PaymentService {
         CustomerDO customerName = customerMapper.findByName(chargeRecordParam.getCustomerName());
         CustomerDO customerNo = customerMapper.findByNo(chargeRecordParam.getBusinessCustomerNo());
 
-        if (chargeRecordParam.getCustomerName() != null) {
+        if (chargeRecordParam.getCustomerName() != null && chargeRecordParam.getCustomerName() != "") {
             chargeRecordParam.setBusinessCustomerNo(customerName.getCustomerNo());
-        } else if (chargeRecordParam.getBusinessCustomerNo() != null) {
+        } else if (chargeRecordParam.getBusinessCustomerNo() != null && chargeRecordParam.getBusinessCustomerNo() != "") {
             chargeRecordParam.setBusinessCustomerNo(customerNo.getCustomerNo());
             chargeRecordParam.setCustomerName(customerNo.getCustomerName());
         }
@@ -313,7 +313,7 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = null;
             JSONObject jsonObject = null;
-            if (chargeRecordParam.getCustomerName() != null && chargeRecordParam.getBusinessCustomerNo() != null) {
+            if ((chargeRecordParam.getCustomerName() != null && chargeRecordParam.getCustomerName() != "") && (chargeRecordParam.getBusinessCustomerNo() != null && chargeRecordParam.getBusinessCustomerNo() != "")) {
                 if (chargeRecordParam.getChargeType() != null) {
                     if (chargeRecordParam.getChargeStatus() != null) {
                         requestJson = FastJsonUtil.toJSONString(chargeRecordParam);

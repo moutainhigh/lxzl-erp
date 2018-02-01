@@ -319,6 +319,15 @@ public class PageController extends BaseController {
         return "/component/customer/manualAccountAmountModal";
     }
 
+    @RequestMapping("/customer/set-settlement-date-modal")
+    public String customerSetSettlementDateModal() {
+        return "/component/customer/setSettlementDateModal";
+    }
+    @RequestMapping("/customer/set-short-rental-upper-limit-modal")
+    public String customerSetShortRentalUpperLimit() {
+        return "/component/customer/setShortRentalUpperLimit";
+    }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
@@ -583,6 +592,19 @@ public class PageController extends BaseController {
     @RequestMapping("/statistics/income-list")
     public String statisticsIncomeList() {
         return "/statisticsManage/incomeList";
+    }
+
+
+    //充值记录
+    @RequestMapping("/recharge-manage/list")
+    public String rechargeManageList() {
+        return "/rechargeManage/rechargeList";
+    }
+
+    //站内信息
+    @RequestMapping("/site-message/list")
+    public String siteMessageList() {
+        return "/siteMessageManage/siteMessageList";
     }
 
 

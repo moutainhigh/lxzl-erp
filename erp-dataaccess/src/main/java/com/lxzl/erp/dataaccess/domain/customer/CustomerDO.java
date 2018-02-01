@@ -40,6 +40,8 @@ public class CustomerDO  extends BaseDO {
 	@Transient
 	private String verifyRemark;
 
+	private Integer isDefaultConsignAddress; //是否以地址作为收货地址,1是，0否
+
 	public Integer getId(){
 		return id;
 	}
@@ -206,5 +208,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setVerifyRemark(String verifyRemark) {
 		this.verifyRemark = verifyRemark;
+	}
+
+	public Integer getIsDefaultConsignAddress() {
+		return isDefaultConsignAddress;
+	}
+
+	public void setIsDefaultConsignAddress(Integer isDefaultConsignAddress) {
+		this.isDefaultConsignAddress = isDefaultConsignAddress;
 	}
 }

@@ -20,6 +20,7 @@ import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
+import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.transferOrder.TransferOrderQueryParam;
 import com.lxzl.erp.common.domain.warehouse.StockOrderQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
@@ -45,6 +46,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.TransferOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
@@ -857,6 +859,30 @@ public class GenerateNoSupport {
         }
     }
 
+    /**
+     * 结算冲正单号
+     */
+    public String generateStatementOrderCorrect(Integer statementOrderId) {
+        synchronized (this) {
+            Date currentTime = new Date();
+            StatementOrderCorrectQueryParam statementOrderCorrectQueryParam = new StatementOrderCorrectQueryParam();
+            Map<String, Object> maps = new HashMap<>();
+            statementOrderCorrectQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
+            statementOrderCorrectQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
+            maps.put("statementOrderCorrectQueryParam", statementOrderCorrectQueryParam);
+            Integer count = statementOrderCorrectMapper.listCount(maps);
+
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXSOC-");
+            builder.append(statementOrderId);
+            builder.append("-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
+            builder.append(String.format("%05d", count + 1));
+            return builder.toString();
+        }
+    }
 
     @Autowired
     private SupplierMapper supplierMapper;
@@ -910,4 +936,6 @@ public class GenerateNoSupport {
     private RepairOrderMapper repairOrderMapper;
     @Autowired
     private StatementPayOrderMapper statementPayOrderMapper;
+    @Autowired
+    private StatementOrderCorrectMapper statementOrderCorrectMapper;
 }

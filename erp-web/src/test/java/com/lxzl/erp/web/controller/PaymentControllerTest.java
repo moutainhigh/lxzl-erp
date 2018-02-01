@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author : kai
@@ -40,11 +41,12 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         ChargeRecordParam param = new ChargeRecordParam();
         param.setPageNo(1);
         param.setPageSize(10);
-//        param.setBusinessCustomerNo("LXCC-1000-20180124-13746");
-//        param.setCustomerName("新的测试数据");
+        param.setBusinessCustomerNo("");
+        param.setCustomerName("");
         param.setChargeType(2);
 //        param.setChargeStatus(20);
-//        param.setQueryEndTime(new Date());
+//        param.setQueryStartTime(new Date("1514908800000"));
+//        param.setQueryEndTime(new Date("1517500799999"));
         TestResult testResult = getJsonTestResult("/payment/queryChargeRecordParamPage", param);
     }
 

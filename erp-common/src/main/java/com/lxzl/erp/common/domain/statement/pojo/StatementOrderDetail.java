@@ -43,6 +43,7 @@ public class StatementOrderDetail extends BasePO {
     private Integer statementDetailStatus;   //结算状态，0未结算，1已结算
     private Date statementStartTime;   //结算开始时间
     private Date statementEndTime;   //结算结束时间
+    private BigDecimal statementDetailCorrectAmount;  //结算单冲正金额
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -398,5 +399,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setReturnReferId(Integer returnReferId) {
         this.returnReferId = returnReferId;
+    }
+
+    public BigDecimal getStatementDetailCorrectAmount() {
+        return statementDetailCorrectAmount;
+    }
+
+    public void setStatementDetailCorrectAmount(BigDecimal statementDetailCorrectAmount) {
+        this.statementDetailCorrectAmount = statementDetailCorrectAmount;
     }
 }

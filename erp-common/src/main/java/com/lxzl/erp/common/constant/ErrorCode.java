@@ -451,6 +451,7 @@ public class ErrorCode {
     public static final String STATEMENT_PAY_NOT_NULL = "J500091";
     public static final String OPEN_ID_NOT_NULL = "J500092";
     public static final String CUSTOMER_NAME_NOT_NULL = "J500093";
+    public static final String STATEMENT_ORDER_NOT_EXISTS = "J500094";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -591,7 +592,17 @@ public class ErrorCode {
     public static final String BANK_NO_ERROR  = "J1500033";
     public static final String PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH  = "J1500034";
 
-
+    public static final String CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT = "J1600001";
+    public static final String STATEMENT_ORDER_CORRECT_NOT_EXISTS = "J1600002";
+    public static final String STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING = "J1600003";
+    public static final String STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING_OR_COMMIT = "J1600004";
+    public static final String STATEMENT_ORDER_ID_NOT_NULL = "J1600005";
+    public static final String STATEMENT_ORDER_CORRECT_AMOUNT_NOT_NULL = "J1600006";
+    public static final String STATEMENT_ORDER_CORRECT_NO_NOT_NULL = "J1600007";
+    public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J1600008";
+    public static final String STATEMENT_ORDER_DETAIL_NOT_EXISTS = "J1600009";
+    public static final String STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID = "J1600010";
+    public static final String STATEMENT_ORDER_CORRECT_EXISTS = "J1600002";
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1034,6 +1045,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_PAY_NOT_NULL, "结算单支付方式不能为空");
         MAP.put(OPEN_ID_NOT_NULL, "公众唯一标识不能为空");
         MAP.put(CUSTOMER_NAME_NOT_NULL, "客户名称不能为空");
+        MAP.put(STATEMENT_ORDER_NOT_EXISTS, "结算单不存在");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1175,8 +1187,17 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO, "同行调拨单优惠金额需大于等于0");
         MAP.put(PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH, "查找到的设备数量与该同行调拨单下设备数量不相等");
 
-
-
+        MAP.put(CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT, "冲正金额大于实际金额");
+        MAP.put(STATEMENT_ORDER_CORRECT_NOT_EXISTS, "结算冲正单不存在");
+        MAP.put(STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING, "结算单不是待提交状态");
+        MAP.put(STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING_OR_COMMIT, "结算单不是待提交状态或者提交状态");
+        MAP.put(STATEMENT_ORDER_ID_NOT_NULL, "结算单ID不能为空");
+        MAP.put(STATEMENT_ORDER_CORRECT_AMOUNT_NOT_NULL, "冲正金额不能为空");
+        MAP.put(STATEMENT_ORDER_CORRECT_NO_NOT_NULL, "冲正单号不能为空");
+        MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单项ID不能为空");
+        MAP.put(STATEMENT_ORDER_DETAIL_NOT_EXISTS, "结算单明细记录不存在");
+        MAP.put(STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID, "结算单ID不对应结算单项ID");
+        MAP.put(STATEMENT_ORDER_CORRECT_EXISTS, "结算冲正单已存在");
 
     }
 

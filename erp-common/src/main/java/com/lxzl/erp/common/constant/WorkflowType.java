@@ -57,4 +57,8 @@ public class WorkflowType {
      * 同行调拨单出审批
      */
     public static Integer WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT = 12;
+    /**
+     * 结算单冲正
+     */
+    public static Integer WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT = 13;
 }
