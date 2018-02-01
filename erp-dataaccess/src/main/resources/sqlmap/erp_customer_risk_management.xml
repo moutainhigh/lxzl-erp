@@ -294,21 +294,29 @@
 			</if>
 
 			<if test="(isFullDeposit == null || isFullDeposit == 0)  &amp;&amp; isLimitNew == 1 &amp;&amp; isLimitApple == 1">
-				deposit_cycle = null,
-				payment_cycle = null,
 				apple_deposit_cycle = null,
 				apple_payment_cycle = null,
 				new_deposit_cycle = null,
 				new_payment_cycle = null,
 				apple_pay_mode = null,
-				pay_mode = null,
 				new_pay_mode = null,
 				is_limit_apple = 1,
 				is_limit_new = 1,
-				single_limit_price = null,
 				is_full_deposit = 0,
 				<if test="customerId != null">
 					customer_id = #{customerId,jdbcType=INTEGER},
+				</if>
+				<if test="depositCycle != null">
+					deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+				</if>
+				<if test="paymentCycle != null">
+					payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+				</if>
+				<if test="singleLimitPrice != null">
+					single_limit_price = #{singleLimitPrice,jdbcType=DECIMAL},
+				</if>
+				<if test="payMode != null">
+					pay_mode = #{payMode,jdbcType=INTEGER},
 				</if>
 				<if test="creditAmount != null">
 					credit_amount = #{creditAmount,jdbcType=DECIMAL},
