@@ -593,6 +593,14 @@ public class PageController extends BaseController {
     public String statisticsIncomeList() {
         return "/statisticsManage/incomeList";
     }
+    @RequestMapping("/detail/unreceivable-list")
+    public String detailManageUnReceivableList() {
+        return "/statisticsManage/detailUnreceivableList";
+    }
+    @RequestMapping("/statistics/unreceivable-list")
+    public String statisticsManageUnReceivableList() {
+        return "/statisticsManage/statisticsUnreceivableList";
+    }
 
 
     //充值记录
@@ -600,6 +608,7 @@ public class PageController extends BaseController {
     public String rechargeManageList() {
         return "/rechargeManage/rechargeList";
     }
+
 
     //站内信息
     @RequestMapping("/site-message/list")

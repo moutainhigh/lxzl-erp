@@ -41,9 +41,9 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         ChargeRecordParam param = new ChargeRecordParam();
         param.setPageNo(1);
         param.setPageSize(10);
-        param.setBusinessCustomerNo("");
+        param.setBusinessCustomerNo("LXCC-1000-20180201-00003");
         param.setCustomerName("");
-        param.setChargeType(2);
+//        param.setChargeType(2);
 //        param.setChargeStatus(20);
 //        param.setQueryStartTime(new Date("1514908800000"));
 //        param.setQueryEndTime(new Date("1517500799999"));
@@ -53,10 +53,10 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryCustomerAccountLogPage() throws Exception {
         CustomerAccountLogParam param = new CustomerAccountLogParam();
-        param.setBusinessCustomerNo("CC201712161455119301332");
+        param.setBusinessCustomerNo("LXCC-1000-20180201-00003");
         param.setPageNo(1);
         param.setPageSize(10);
-        param.setCustomerAccountLogType(5);
+//        param.setCustomerAccountLogType(5);
         TestResult testResult = getJsonTestResult("/payment/queryCustomerAccountLogPage", param);
     }
 

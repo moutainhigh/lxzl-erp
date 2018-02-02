@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-统计管理-未收明细列表</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </a>
+                                {{/acitonCommonButtons}}
+                            </script>
+
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="col-md-9 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="salesmanName" id="salesmanName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入业务员姓名">
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="rentLengthType" id="rentLengthType"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId"></select>
+                                    </div>
+                                </div>
+##                                <div class="form-group pull-right mn mr10" style="width: 210px;">
+##                                    <input type="hidden" name="startTime" id="startTime" />
+##                                    <input type="hidden" name="endTime" id="endTime" />
+##                                    <div class="input-group date" id="timePicker">
+##                                        <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
+##                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+##                                    </div>
+##                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr class="bg-light">
+                                <th>客户编号</th>
+                                <th>客户姓名</th>
+                                <th>业务类型</th>
+                                <th>分公司</th>
+                                <th>业务员</th>
+                                <th>未收金额</th>
+                                <th>逾期期数</th>
+                                <th>订单项ID</th>
+                                <th>订单项类型</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr>
+                                <td>{{customerNo}}</td>
+                                <td>{{customerName}}</td>
+                                <td>{{rentLengthTypeValue}}</td>
+                                <td>{{subCompanyName}}</td>
+                                <td>{{orderSellerName}}</td>
+                                <td>￥{{#price}}{{unReceivable}}{{/price}}</td>
+                                <td>{{overduePhaseCount}}</td>
+                                <td>{{orderItemReferId}}</td>
+                                <td>{{orderItemTypeValue}}</td>
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="16" class="text-center">没有查询到收入统计</td>
+                            </tr>
+                            {{/listData}}
+                            <tr>
+                                <td>合计</td>
+                                <td id="totalCount" colspan="5"></td>
+                                <td id="totalUnReceivable" colspan="3"></td>
+                            </tr>
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js', 'manage.statistics.detail.unreceivable.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    StatisticsDetailUnReceivable.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+
+</body>
+</html>
