@@ -1,7 +1,6 @@
 package com.lxzl.erp.worker.quartz;
 
 import com.lxzl.erp.core.service.statement.StatementService;
-import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.core.quartz.job.BaseJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -14,8 +13,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component("statementOrderJob")
-public class StatementOrderJob extends BaseJob {
+/**
+ * 描述: ${DESCRIPTION}
+ *
+ * @author gaochao
+ * @date 2018-02-01 19:57
+ */
+@Component("statementOverdueJob")
+public class StatementOverdueJob extends BaseJob {
 
     private static final Logger log = LoggerFactory.getLogger(StatementOrderJob.class);
 
@@ -27,10 +32,9 @@ public class StatementOrderJob extends BaseJob {
         JobKey key = context.getJobDetail().getKey();
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
         String jobSays = dataMap.getString("jobSays");
-        log.info("Instance {} of statementOrderJob says: {} ", key, jobSays);
+        log.info("Instance {} of StatementOverdueJob says: {} ", key, jobSays);
         Date currentTime = new Date();
-        Date startTime = DateUtil.addMinute(currentTime, -90);
-        statementService.handleNoPaidStatementOrder(startTime, currentTime);
+        statementService.handleOverdueStatementOrder(null, currentTime);
         return "success";
     }
 

@@ -18,7 +18,7 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[3];
+        _operations = new org.apache.axis.description.OperationDesc[4];
         _initOperationDesc1();
     }
 
@@ -64,6 +64,19 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         _operations[2] = oper;
 
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("AddSEorder");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://tempuri.org/", "order"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrder"), FormSEOrder.class, false, false);
+        param.setOmittable(true);
+        param.setNillable(true);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ServiceResult"));
+        oper.setReturnClass(ServiceResult.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("http://tempuri.org/", "AddSEorderResult"));
+        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[3] = oper;
+
     }
 
     public BasicHttpBinding_IERPServiceStub() throws org.apache.axis.AxisFault {
@@ -95,6 +108,15 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
             Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
             Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
             Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ArrayOfFormSeorderEntry");
+            cachedSerQNames.add(qName);
+            cls = FormSeorderEntry[].class;
+            cachedSerClasses.add(cls);
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry");
+            qName2 = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry");
+            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+
             qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ArrayOfItemNumber");
             cachedSerQNames.add(qName);
             cls = ItemNumber[].class;
@@ -114,6 +136,20 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
             qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormOrganization");
             cachedSerQNames.add(qName);
             cls = FormOrganization.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrder");
+            cachedSerQNames.add(qName);
+            cls = FormSEOrder.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry");
+            cachedSerQNames.add(qName);
+            cls = FormSeorderEntry.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -290,6 +326,40 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
         setRequestHeaders(_call);
         setAttachments(_call);
  try {        Object _resp = _call.invoke(new Object[] {cust});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            try {
+                return (ServiceResult) _resp;
+            } catch (Exception _exception) {
+                return (ServiceResult) org.apache.axis.utils.JavaUtils.convert(_resp, ServiceResult.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public ServiceResult addSEorder(FormSEOrder order) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[3]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("http://tempuri.org/IERPService/AddSEorder");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("http://tempuri.org/", "AddSEorder"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        Object _resp = _call.invoke(new Object[] {order});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;

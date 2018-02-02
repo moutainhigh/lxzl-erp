@@ -1,13 +1,11 @@
 package com.lxzl.erp.core.service.statistics;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statistics.HomeRentParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
 import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
-import com.lxzl.erp.common.domain.statistics.pojo.StatisticsUnReceivable;
-import com.lxzl.erp.common.domain.statistics.pojo.UnReceivable;
+import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.se.core.service.BaseService;
 
 /**
@@ -30,4 +28,11 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, UnReceivable> queryUnReceivable(UnReceivablePageParam unReceivablePageParam);
 
     ServiceResult<String, StatisticsUnReceivable> queryStatisticsUnReceivable(StatisticsUnReceivablePageParam statisticsUnReceivablePageParam);
+
+    ServiceResult<String, StatisticsUnReceivableForSubCompany> queryStatisticsUnReceivableForSubCompany();
+
+    ServiceResult<String, StatisticsHomeByRentLengthType> queryLongRent(HomeRentParam homeRentParam);
+
+    ServiceResult<String, StatisticsHomeByRentLengthType> queryShortRent(HomeRentParam homeRentParam);
+
 }

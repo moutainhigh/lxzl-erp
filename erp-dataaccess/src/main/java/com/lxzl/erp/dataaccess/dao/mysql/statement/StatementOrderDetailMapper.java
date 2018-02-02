@@ -1,7 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
-import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -26,5 +26,5 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
 
     List<StatementOrderDetailDO> listAllForStatistics(@Param("maps") Map<String, Object> paramMap);
 
-    StatementOrderDetailDO findNoSettlementById(@Param("statementOrderDetailId") Integer statementOrderDetailId);
+    List<StatementOrderDetailDO> listAllForHome(@Param("maps") Map<String, Object> paramMap);
 }

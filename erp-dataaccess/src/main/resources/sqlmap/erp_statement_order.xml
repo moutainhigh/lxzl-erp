@@ -242,6 +242,102 @@
 		ORDER BY statement_main.statement_expect_pay_time ASC, esod.statement_expect_pay_time ASC
 	</select>
 
+	<select id="listSaleCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eso.id) FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		<where>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
+				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
+				and eso.statement_status in (0,4)
+			</if>
+			<choose>
+				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
+					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
+				</when>
+				<otherwise>
+					and eso.statement_status in (0,4,8,16,20)
+				</otherwise>
+			</choose>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
+				<![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderQueryParam.statementExpectPayStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null">
+				<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listSalePage" resultMap="StatementOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			ec.customer_name AS customer_name
+		</trim>
+		FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		<where>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
+				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
+				and eso.statement_status in (0,4)
+			</if>
+			<choose>
+				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
+					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
+				</when>
+				<otherwise>
+					and eso.statement_status in (0,4,8,16)
+				</otherwise>
+			</choose>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
+				<![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderQueryParam.statementExpectPayStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null ">
+				<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+		</where>
+		ORDER BY eso.statement_expect_pay_time
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
 	<sql id="set_column_sql">
 		<set>
 			<if test="statementOrderNo != null">
@@ -332,8 +428,4 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO">
 		UPDATE erp_statement_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-	<select id="findNoSettlementById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_statement_order eso
-		WHERE eso.id = #{statementOrderId, jdbcType=INTEGER} AND eso.data_status = 1 AND (eso.statement_status = 0 OR eso.statement_status = 4)
-	</select>
 </mapper>

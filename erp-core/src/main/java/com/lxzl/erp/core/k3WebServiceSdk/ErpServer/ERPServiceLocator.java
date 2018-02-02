@@ -23,7 +23,7 @@ public class ERPServiceLocator extends org.apache.axis.client.Service implements
 
     // Use to get a proxy class for BasicHttpBinding_IERPService
     private String BasicHttpBinding_IERPService_address = "http://103.239.207.170:9090/ERPService.svc";
-    //private java.lang.String BasicHttpBinding_IERPService_address = "http://localhost:2401/ERPService.svc";
+
     public String getBasicHttpBinding_IERPServiceAddress() {
         return BasicHttpBinding_IERPService_address;
     }

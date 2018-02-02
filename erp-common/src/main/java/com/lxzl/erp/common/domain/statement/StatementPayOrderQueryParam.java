@@ -14,6 +14,7 @@ public class StatementPayOrderQueryParam extends BasePageParam {
 
     private Date createStartTime;
     private Date createEndTime;
+    private Integer payStatus;
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -29,5 +30,13 @@ public class StatementPayOrderQueryParam extends BasePageParam {
 
     public void setCreateEndTime(Date createEndTime) {
         this.createEndTime = createEndTime;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
     }
 }

@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.statistics.HomeRentParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
 import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
@@ -39,6 +40,37 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = new StatisticsUnReceivablePageParam();
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
     }
+
+    @Test
+    public void queryStatisticsUnReceivableForSubCompany() throws Exception {
+        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivableForSubCompany", null);
+    }
+
+
+
+
+    @Test
+    public void queryLongRent() throws Exception {
+        HomeRentParam homeRentParam = new HomeRentParam();
+        homeRentParam.setStartTime(getFistByMonth());
+        homeRentParam.setEndTime(getEndByMonth());
+        TestResult testResult = getJsonTestResult("/statistics/queryLongRent", homeRentParam);
+    }
+
+    @Test
+    public void queryShortRent() throws Exception {
+        HomeRentParam homeRentParam = new HomeRentParam();
+        homeRentParam.setStartTime(getFistByMonth());
+        homeRentParam.setEndTime(getEndByMonth());
+        TestResult testResult = getJsonTestResult("/statistics/queryShortRent", homeRentParam);
+    }
+
+
+
+
+
+
+
     private Date getFistByMonth(){
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, 0);

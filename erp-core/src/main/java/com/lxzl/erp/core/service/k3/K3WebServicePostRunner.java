@@ -55,7 +55,6 @@ public class K3WebServicePostRunner implements Runnable {
             try {
                 service = s.getBasicHttpBinding_IERPService();
             } catch (ServiceException e) {
-
                 e.printStackTrace();
             }
             if (PostK3Type.POST_K3_TYPE_PRODUCT.equals(postK3Type)) {
@@ -66,6 +65,8 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addOrganization((FormOrganization) postData);
             } else if (PostK3Type.POST_K3_TYPE_SUPPLIER.equals(postK3Type)) {
                 response = service.addSupply((FormSupply) postData);
+            }else if (PostK3Type.POST_K3_TYPE_ORDER.equals(postK3Type)) {
+                response = service.addSEorder((FormSEOrder) postData);
             }
             //修改推送记录
             if ("0".equals(response.getStatus())) {
