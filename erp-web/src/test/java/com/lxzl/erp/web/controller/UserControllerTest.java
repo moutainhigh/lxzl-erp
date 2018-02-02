@@ -47,8 +47,8 @@ public class UserControllerTest extends ERPUnTransactionalTest {
     @Test
     public void login() throws Exception {
         LoginParam loginParam = new LoginParam();
-        loginParam.setUserName("eddie");
-        loginParam.setPassword("eddie");
+        loginParam.setUserName("xiaoluyu");
+        loginParam.setPassword("Lxzl123456");
         TestResult testResult = getJsonTestResult("/user/login",loginParam);
     }
 

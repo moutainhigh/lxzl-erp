@@ -13,7 +13,7 @@ import java.util.Date;
  * @Time : Created in 20:05
  */
 @Component
-public class userLoginLogSupport {
+public class UserLoginLogSupport {
 
     @Autowired
     UserLoginLogMapper userLoginLogMapper;
