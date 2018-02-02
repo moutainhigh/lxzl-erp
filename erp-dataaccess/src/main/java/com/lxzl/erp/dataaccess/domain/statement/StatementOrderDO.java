@@ -26,6 +26,7 @@ public class StatementOrderDO extends BaseDO {
     private BigDecimal statementRentPaidAmount;
     private Date statementPaidTime;
     private BigDecimal statementOverdueAmount;
+    private BigDecimal statementOverduePaidAmount;
     private Integer statementStatus;
     private Date statementStartTime;
     private Date statementEndTime;
@@ -235,5 +236,13 @@ public class StatementOrderDO extends BaseDO {
 
     public void setStatementCorrectAmount(BigDecimal statementCorrectAmount) {
         this.statementCorrectAmount = statementCorrectAmount;
+    }
+
+    public BigDecimal getStatementOverduePaidAmount() {
+        return statementOverduePaidAmount;
+    }
+
+    public void setStatementOverduePaidAmount(BigDecimal statementOverduePaidAmount) {
+        this.statementOverduePaidAmount = statementOverduePaidAmount;
     }
 }
