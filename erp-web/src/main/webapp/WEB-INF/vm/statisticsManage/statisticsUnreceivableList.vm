@@ -41,30 +41,30 @@
                                     <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
-                                </div>
+##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+##                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+##                                </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="salesmanName" id="salesmanName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入业务员姓名">
                                 </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="rentLengthType" id="rentLengthType"></select>
-                                    </div>
-                                </div>
+##                                <div class="form-group pull-right mn mr10">
+##                                    <div class="input-group">
+##                                        <select class="form-control input-sm bradius" name="rentLengthType" id="rentLengthType"></select>
+##                                    </div>
+##                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId"></select>
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <input type="hidden" name="startTime" id="startTime" />
-                                    <input type="hidden" name="endTime" id="endTime" />
-                                    <div class="input-group date" id="timePicker">
-                                        <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
-                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                </div>
+##                                <div class="form-group pull-right mn mr10" style="width: 210px;">
+##                                    <input type="hidden" name="startTime" id="startTime" />
+##                                    <input type="hidden" name="endTime" id="endTime" />
+##                                    <div class="input-group date" id="timePicker">
+##                                        <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
+##                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+##                                    </div>
+##                                </div>
                             </form>
                         </div>
                     </div>
@@ -75,44 +75,36 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th>客户编号</th>
-                                <th>客户姓名</th>
-                                <th>业务类型</th>
-                                <th>分公司</th>
-                                <th>业务员</th>
-                                <th>设备押金</th>
-                                <th>租金押金</th>
-                                <th>退设备押金</th>
-                                <th>退租金押金</th>
-                                <th>租金</th>
-                                <th>其它收入</th>
-                                <th>预付租金</th>
-                                <th>收入</th>
-                                <th>支付时间</th>
-                                <th>订单项ID</th>
-                                <th>订单项类型</th>
+                                <th>分公司名称</th>
+                                <th>业务员姓名</th>
+                                <th>上月租金</th>
+                                <th>长租未收</th>
+                                <th>短租未收</th>
+                                <th>合计未收</th>
+                                <th>未收占比</th>
+                                <th>总客户数</th>
+                                <th>短租未收客户数</th>
+                                <th>长租未收客户数</th>
+                                <th>短租合作客户数</th>
+                                <th>长租在租客户数</th>
                             </tr>
                             </thead>
                             <tbody>
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{customerNo}}</td>
-                                <td>{{customerName}}</td>
-                                <td>{{rentLengthTypeValue}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{orderSellerName}}</td>
-                                <td>￥{{#price}}{{depositPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{rentDepositPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{returnDepositPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{returnRentDepositPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{rentAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{otherPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{prepayRentAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{incomeAmount}}{{/price}}</td>
-                                <td>{{#time}}{{payTime}}{{/time}}</td>
-                                <td>{{orderItemReferId}}</td>
-                                <td>{{orderItemTypeValue}}</td>
+                                <td>{{#price}}{{lastMonthRent}}{{/price}}</td>
+                                <td>{{#price}}{{unReceivableLong}}{{/price}}</td>
+                                <td>{{#price}}{{unReceivableShort}}{{/price}}</td>
+                                <td>{{#price}}{{unReceivable}}{{/price}}</td>
+                                <td>{{unReceivablePercentage}}%</td>
+                                <td>{{customerCount}}</td>
+                                <td>{{unReceivableCustomerCountShort}}</td>
+                                <td>{{unReceivableCustomerCountLong}}</td>
+                                <td>{{rentedCustomerCountShort}}</td>
+                                <td>{{rentingCustomerCountLong}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
@@ -122,21 +114,17 @@
                             {{/listData}}
                             <tr>
                                 <td>合计</td>
-                                <td id="totalCount" colspan="4"></td>
-                            ##                                    <td></td>
-                            ##                                    <td></td>
-                            ##                                    <td></td>
-                                <td id="totalDeposit"></td>
-                                <td id="totalRentDeposit"></td>
-                                <td id="totalReturnDeposit"></td>
-                                <td id="totalReturnRentDeposit"></td>
-                                <td id="totalRent"></td>
-                                <td id="totalOtherPaid"></td>
-                                <td id="totalPrepayRent"></td>
-                                <td id="totalIncome"></td>
-                                <td id="statisticsIncomeDetailPage"></td>
-                                <td></td>
-                                <td></td>
+                                <td id="totalCount">总条数</td>
+                                <td id="totalLastMonthRent">上月租金</td>
+                                <td id="totalUnReceivableLong">长租未收</td>
+                                <td id="totalUnReceivableShort">短租未收</td>
+                                <td id="totalUnReceivable">合计未收</td>
+                                <td id="totalUnReceivablePercentage">未收占比</td>
+                                <td id="totalCustomerCount">总客户数</td>
+                                <td id="totalUnReceivableCustomerCountShort">短租未收客户数</td>
+                                <td id="totalUnReceivableCustomerCountLong">长租未收客户数</td>
+                                <td id="totalRentedCustomerCountShort">短租合作客户数</td>
+                                <td id="totalRentingCustomerCountLong">长租在租客户数</td>
                             </tr>
                             {{/dataSource}}
                             </tbody>
@@ -161,13 +149,13 @@
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js', 'manage.statistics.income.js');
+    management_load_script('${staticManagement}/js', 'manage.statistics.total.unreceivable.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
     Rental.init();
     Layout.init();
-    StatisticsIncomeManage.init();
+    StatisticsTotalUnreceivable.init();
 
     //UI效果初始化
     Core.init();

@@ -9,7 +9,7 @@
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
-<div id="main">
+    <div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
 
@@ -108,8 +108,8 @@
                             {{/listData}}
                             <tr>
                                 <td>合计</td>
-                                <td id="totalCount" colspan="5"></td>
-                                <td id="totalUnReceivable" colspan="3"></td>
+                                <td id="totalCount" colspan="4"></td>
+                                <td id="totalUnReceivable" colspan="4"></td>
                             </tr>
                             {{/dataSource}}
                             </tbody>
@@ -131,21 +131,21 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
-<script type="text/javascript">
-    management_load_script('${staticManagement}/js', 'manage.statistics.detail.unreceivable.js');
-</script>
-<script type="text/javascript">
-    //功能事件初始化
-    Rental.init();
-    Layout.init();
-    StatisticsDetailUnReceivable.init();
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js', 'manage.statistics.detail.unreceivable.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        StatisticsDetailUnReceivable.init();
 
-    //UI效果初始化
-    Core.init();
-    Demo.init();
-</script>
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
 
 </body>
 </html>
