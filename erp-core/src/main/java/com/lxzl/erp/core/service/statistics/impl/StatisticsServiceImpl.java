@@ -2,11 +2,14 @@ package com.lxzl.erp.core.service.statistics.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.constant.RentLengthType;
+import com.lxzl.erp.common.constant.StatementDetailType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
+import com.lxzl.erp.common.domain.statistics.HomeRentParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
 import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
 import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
@@ -24,6 +27,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIDeclaration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -181,12 +185,101 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, StatisticsUnReceivableForSubCompany> queryStatisticsUnReceivableForSubCompany() {
+        ServiceResult<String, StatisticsUnReceivableForSubCompany> result = new ServiceResult<>();
+        StatisticsUnReceivableForSubCompany statisticsUnReceivableForSubCompany = statisticsMapper.queryStatisticsUnReceivableCountForSubCompany();
+        List<StatisticsUnReceivableDetailForSubCompany> statisticsUnReceivableDetailForSubCompanyList = statisticsMapper.queryStatisticsUnReceivableForSubCompany();
+        statisticsUnReceivableForSubCompany.setStatisticsUnReceivableDetailForSubCompanyList(statisticsUnReceivableDetailForSubCompanyList);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(statisticsUnReceivableForSubCompany);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, StatisticsHomeByRentLengthType> queryLongRent(HomeRentParam homeRentParam) {
+        ServiceResult<String, StatisticsHomeByRentLengthType> serviceResult = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        homeRentParam.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_LONG);
+        maps.put("homeRentParam", homeRentParam);
+        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForHome(maps);
+        BigDecimal rentDeposit = BigDecimal.ZERO;//租金押金
+        BigDecimal deposit = BigDecimal.ZERO;//设备押金
+        BigDecimal returnRentDeposit = BigDecimal.ZERO;//退租金押金
+        BigDecimal returnDeposit = BigDecimal.ZERO;//退设备押金
+        BigDecimal rent = BigDecimal.ZERO;//租金
+        BigDecimal prepayRent = BigDecimal.ZERO;//预付租金
+        BigDecimal rentIncome = BigDecimal.ZERO;//租金收入
+        BigDecimal otherAmount = BigDecimal.ZERO;//其他费用
+        if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                rentDeposit = BigDecimalUtil.add(rentDeposit,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                deposit = BigDecimalUtil.add(deposit,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                //计算查询区间内租金费用
+                BigDecimal rentAmount = calculateRentAmount(homeRentParam.getStartTime(), homeRentParam.getEndTime(), statementOrderDetailDO);
+                //计算查询区间内预付租金费用
+                BigDecimal prepayRentAmount = calculatePrepayRentAmount(homeRentParam.getEndTime(), statementOrderDetailDO);
+
+                returnRentDeposit = BigDecimalUtil.add(returnRentDeposit,statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                returnDeposit = BigDecimalUtil.add(returnDeposit,statementOrderDetailDO.getStatementDetailDepositReturnAmount());
+                rent = BigDecimalUtil.add(rent,rentAmount);
+                prepayRent = BigDecimalUtil.add(prepayRent,prepayRentAmount);
+                otherAmount = BigDecimalUtil.add(otherAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentIncome = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+            }
+        }
+        statisticsHomeByRentLengthType.setRentDeposit(rentDeposit);
+        statisticsHomeByRentLengthType.setReturnRentDeposit(returnRentDeposit);
+        statisticsHomeByRentLengthType.setReturnDeposit(returnDeposit);
+        statisticsHomeByRentLengthType.setDeposit(deposit);
+        statisticsHomeByRentLengthType.setRent(rent);
+        statisticsHomeByRentLengthType.setPrepayRent(prepayRent);
+        statisticsHomeByRentLengthType.setOtherAmount(otherAmount);
+        statisticsHomeByRentLengthType.setRentIncome(rentIncome);
+        //净增台数(新增减退租)
+        statisticsHomeByRentLengthType.setIncreaseProductCount(statisticsHomeByRentLengthType.getProductCountByNewCustomer()+statisticsHomeByRentLengthType.getProductCountByOldCustomer()-statisticsHomeByRentLengthType.getReturnProductCount());
+        statisticsHomeByRentLengthType.setTotalOrderCount(statisticsHomeByRentLengthType.getOrderCountByNewCustomer()+statisticsHomeByRentLengthType.getOrderCountByOldCustomer());
+        statisticsHomeByRentLengthType.setTotalProductCount(statisticsHomeByRentLengthType.getProductCountByNewCustomer()+statisticsHomeByRentLengthType.getProductCountByOldCustomer());
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(statisticsHomeByRentLengthType);
+        return serviceResult;
+    }
+    @Override
+    public ServiceResult<String, StatisticsHomeByRentLengthType> queryShortRent(HomeRentParam homeRentParam) {
+        ServiceResult<String, StatisticsHomeByRentLengthType> serviceResult = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        homeRentParam.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        maps.put("homeRentParam", homeRentParam);
+        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForHome(maps);
+        BigDecimal rentIncome = BigDecimal.ZERO;//租金收入
+        if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                if(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())){
+                    rentIncome = BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount());
+                }
+            }
+        }
+        statisticsHomeByRentLengthType.setRentIncome(rentIncome);
+        statisticsHomeByRentLengthType.setTotalOrderCount(statisticsHomeByRentLengthType.getOrderCountByNewCustomer()+statisticsHomeByRentLengthType.getOrderCountByOldCustomer());
+        statisticsHomeByRentLengthType.setTotalProductCount(statisticsHomeByRentLengthType.getProductCountByNewCustomer()+statisticsHomeByRentLengthType.getProductCountByOldCustomer());
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(statisticsHomeByRentLengthType);
+        return serviceResult;
+    }
     private BigDecimal calculateRentAmount(Date startTime, Date endTime, StatementOrderDetailDO statementOrderDetailDO) {
         //比较日期大小确定统计起始时间，结束时间
         //起始时间为MAX[统计起始时间，结算开始时间]
         //结束时间为MIN[统计结束时间，结算结束时间]
-        Date start = DateUtil.daysBetween(startTime, statementOrderDetailDO.getStatementStartTime()) > 0 ? startTime : statementOrderDetailDO.getStatementStartTime();
-        Date end = DateUtil.daysBetween(endTime, statementOrderDetailDO.getStatementEndTime()) > 0 ? statementOrderDetailDO.getStatementEndTime() : endTime;
+        if(!StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())){
+            return BigDecimal.ZERO;
+        }
+        Date start = startTime.compareTo(statementOrderDetailDO.getStatementStartTime()) > 0 ? startTime : statementOrderDetailDO.getStatementStartTime();
+        Date end = endTime.compareTo(statementOrderDetailDO.getStatementEndTime()) < 0 ? endTime : statementOrderDetailDO.getStatementEndTime();
+
         if (OrderRentType.RENT_TYPE_MONTH.equals(statementOrderDetailDO.getRentType())) {
             return BigDecimalUtil.mul(amountSupport.calculateRentAmount(start, end, statementOrderDetailDO.getGoodsUnitAmount()), new BigDecimal(statementOrderDetailDO.getGoodsCount()));
         } else if (OrderRentType.RENT_TYPE_DAY.equals(statementOrderDetailDO.getRentType())) {
@@ -203,6 +296,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         if (DateUtil.daysBetween(statementOrderDetailDO.getStatementEndTime(), endTime) >= 0) {
             return BigDecimal.ZERO;
         }
+        if(!StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())){
+            return BigDecimal.ZERO;
+        }
         BigDecimal amount = BigDecimalUtil.mul(amountSupport.calculateRentAmount(statementOrderDetailDO.getStatementStartTime(), endTime, statementOrderDetailDO.getGoodsUnitAmount()), new BigDecimal(statementOrderDetailDO.getGoodsCount()));
 //        System.out.println("结算金额已交的为"+statementOrderDetailDO.getStatementDetailRentPaidAmount()+"元");
 //        System.out.println("结算日起，至统计结束时间为止，需交金额为"+amount+"元");
@@ -213,10 +309,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private CustomerMapper customerMapper;
-
     @Autowired
     private ProductEquipmentMapper productEquipmentMapper;
-
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
