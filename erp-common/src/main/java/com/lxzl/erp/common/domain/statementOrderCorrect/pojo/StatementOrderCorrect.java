@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.statementOrderCorrect.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.BaseCommitParam;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatementOrderCorrect extends BasePO {
+public class StatementOrderCorrect extends BaseCommitParam {
 
 	private Integer statementOrderCorrectId;   //唯一标识
 	@NotNull(message = ErrorCode.STATEMENT_ORDER_CORRECT_NO_NOT_NULL , groups = {CommitGroup.class, UpdateGroup.class,CancelGroup.class,QueryGroup.class})
