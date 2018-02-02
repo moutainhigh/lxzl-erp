@@ -617,6 +617,25 @@ public class PageController extends BaseController {
     }
 
 
+    //换货单
+    @RequestMapping("/change-order/list")
+    public String changeOrderManageList() {
+        return "/changeOrderManage/changeOrderList";
+    }
+    @RequestMapping("/change-order/detail")
+    public String changeOrderManageDetail() {
+        return "/changeOrderManage/changeOrderDetail";
+    }
+    @RequestMapping("/change-order/add")
+    public String changeOrderManageAdd() {
+        return "/changeOrderManage/changeOrderAdd";
+    }
+    @RequestMapping("/change-order/edit")
+    public String changeOrderManageEdit() {
+        return "/changeOrderManage/changeOrderEdit";
+    }
+
+
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
