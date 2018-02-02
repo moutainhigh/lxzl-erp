@@ -20,11 +20,13 @@ import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIDeclaration;
@@ -32,10 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -107,13 +106,17 @@ public class StatisticsServiceImpl implements StatisticsService {
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 String key = statementOrderDetailDO.getOrderItemReferId() + "-" + statementOrderDetailDO.getOrderItemType();
+                //计算查询区间内租金费用
+                BigDecimal rentAmount = calculateRentAmount(statisticsIncomePageParam.getStartTime(), statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
+                //计算查询区间内预付租金费用
+                BigDecimal prepayRentAmount = calculatePrepayRentAmount(statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
+                //统计总租金及总预付租金
+                totalRent = BigDecimalUtil.add(totalRent, rentAmount);
+                totalPrepayRent = BigDecimalUtil.add(totalPrepayRent, prepayRentAmount);
+                totalOtherPaid = BigDecimalUtil.add(totalOtherPaid, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
                 //如果在返回列表中有数据，则处理租金及预付租金字段
                 if (statisticsIncomeDetailMap.containsKey(key)) {
                     StatisticsIncomeDetail statisticsIncomeDetail = statisticsIncomeDetailMap.get(key);
-                    //计算查询区间内租金费用
-                    BigDecimal rentAmount = calculateRentAmount(statisticsIncomePageParam.getStartTime(), statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
-                    //计算查询区间内预付租金费用
-                    BigDecimal prepayRentAmount = calculatePrepayRentAmount(statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
 
                     statisticsIncomeDetail.setRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getRentAmount(), rentAmount));
                     statisticsIncomeDetail.setPrepayRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getPrepayRentAmount(), prepayRentAmount));
@@ -126,11 +129,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                     BigDecimal out = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
 
                     statisticsIncomeDetail.setIncomeAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsIncomeDetail.getIncomeAmount(), in), out));
-
-                    //统计总租金及总预付租金
-                    totalRent = BigDecimalUtil.add(totalRent, rentAmount);
-                    totalPrepayRent = BigDecimalUtil.add(totalPrepayRent, prepayRentAmount);
-                    totalOtherPaid = BigDecimalUtil.add(totalOtherPaid, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
                 }
             }
         }
@@ -190,6 +188,23 @@ public class StatisticsServiceImpl implements StatisticsService {
         ServiceResult<String, StatisticsUnReceivableForSubCompany> result = new ServiceResult<>();
         StatisticsUnReceivableForSubCompany statisticsUnReceivableForSubCompany = statisticsMapper.queryStatisticsUnReceivableCountForSubCompany();
         List<StatisticsUnReceivableDetailForSubCompany> statisticsUnReceivableDetailForSubCompanyList = statisticsMapper.queryStatisticsUnReceivableForSubCompany();
+        Map<Integer,StatisticsUnReceivableDetailForSubCompany> map = ListUtil.listToMap(statisticsUnReceivableDetailForSubCompanyList,"subCompanyId");
+        List<StatisticsUnReceivableDetailForSubCompany> orderList = new ArrayList<>();
+        Map<String,Object> maps = new HashMap<>();
+        maps.put("start",0);
+        maps.put("pageSize",Integer.MAX_VALUE);
+        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(maps);
+        if(CollectionUtil.isNotEmpty(subCompanyDOList)){
+            for(SubCompanyDO subCompanyDO : subCompanyDOList){
+                if(map.containsKey(subCompanyDO.getId())){
+                    orderList.add(map.get(subCompanyDO.getId()));
+                }else{
+
+                }
+            }
+        }
+
+
         statisticsUnReceivableForSubCompany.setStatisticsUnReceivableDetailForSubCompanyList(statisticsUnReceivableDetailForSubCompanyList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(statisticsUnReceivableForSubCompany);
@@ -319,4 +334,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     private StatementOrderDetailMapper statementOrderDetailMapper;
     @Autowired
     private AmountSupport amountSupport;
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
 }

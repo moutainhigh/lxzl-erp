@@ -133,6 +133,9 @@
 		OR
 		(#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
 		AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
+		OR
+		(esod.statement_start_time >= #{maps.incomeQueryParam.startTime}
+		AND #{maps.incomeQueryParam.endTime} >= esod.statement_end_time)
 		)
 	</select>
 

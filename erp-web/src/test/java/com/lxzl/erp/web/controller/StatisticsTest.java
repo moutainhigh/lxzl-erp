@@ -25,6 +25,8 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void queryIncome() throws Exception {
         StatisticsIncomePageParam statisticsIncomePageParam = new StatisticsIncomePageParam();
+        statisticsIncomePageParam.setPageNo(1);
+        statisticsIncomePageParam.setPageSize(1);
         statisticsIncomePageParam.setStartTime(getFistByMonth());
         statisticsIncomePageParam.setEndTime(getEndByMonth());
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);

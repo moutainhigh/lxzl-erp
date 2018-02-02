@@ -22,6 +22,12 @@ public class StatisticsUnReceivableDetailForSubCompany {
     private Integer rentedCustomerCountShort;  //短租合作客户数
     private Integer rentingCustomerCountLong;  //长租在租客户数
 
+    public StatisticsUnReceivableDetailForSubCompany(){}
+
+    public StatisticsUnReceivableDetailForSubCompany(Integer subCompanyId,String subCompanyName){
+
+    }
+
     public Integer getSubCompanyId() {
         return subCompanyId;
     }
