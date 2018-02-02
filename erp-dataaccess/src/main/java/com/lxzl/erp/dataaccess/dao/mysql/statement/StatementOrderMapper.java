@@ -12,6 +12,10 @@ import java.util.Map;
 @Repository
 public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
 
+    List<StatementOrderDO> listSalePage(@Param("maps") Map<String, Object> paramMap);
+
+    Integer listSaleCount(@Param("maps") Map<String, Object> paramMap);
+
     List<StatementOrderDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);

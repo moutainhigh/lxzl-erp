@@ -553,8 +553,8 @@ public class StatementServiceImpl implements StatementService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderQueryParam", interfaceStatementOrderQueryParam);
-        Integer totalCount = statementOrderMapper.listCount(maps);
-        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listPage(maps);
+        Integer totalCount = statementOrderMapper.listSaleCount(maps);
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listSalePage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
         Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, interfaceStatementOrderQueryParam.getPageNo(), interfaceStatementOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
