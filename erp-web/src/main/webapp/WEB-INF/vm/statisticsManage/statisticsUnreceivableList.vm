@@ -95,10 +95,10 @@
                             <tr>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{orderSellerName}}</td>
-                                <td>{{#price}}{{lastMonthRent}}{{/price}}</td>
-                                <td>{{#price}}{{unReceivableLong}}{{/price}}</td>
-                                <td>{{#price}}{{unReceivableShort}}{{/price}}</td>
-                                <td>{{#price}}{{unReceivable}}{{/price}}</td>
+                                <td>￥{{#price}}{{lastMonthRent}}{{/price}}</td>
+                                <td>￥{{#price}}{{unReceivableLong}}{{/price}}</td>
+                                <td>￥{{#price}}{{unReceivableShort}}{{/price}}</td>
+                                <td>￥{{#price}}{{unReceivable}}{{/price}}</td>
                                 <td>{{unReceivablePercentage}}%</td>
                                 <td>{{customerCount}}</td>
                                 <td>{{unReceivableCustomerCountShort}}</td>
@@ -114,17 +114,17 @@
                             {{/listData}}
                             <tr>
                                 <td>合计</td>
-                                <td id="totalCount">总条数</td>
-                                <td id="totalLastMonthRent">上月租金</td>
-                                <td id="totalUnReceivableLong">长租未收</td>
-                                <td id="totalUnReceivableShort">短租未收</td>
-                                <td id="totalUnReceivable">合计未收</td>
-                                <td id="totalUnReceivablePercentage">未收占比</td>
-                                <td id="totalCustomerCount">总客户数</td>
-                                <td id="totalUnReceivableCustomerCountShort">短租未收客户数</td>
-                                <td id="totalUnReceivableCustomerCountLong">长租未收客户数</td>
-                                <td id="totalRentedCustomerCountShort">短租合作客户数</td>
-                                <td id="totalRentingCustomerCountLong">长租在租客户数</td>
+                                <td id="totalCount"></td>
+                                <td id="totalLastMonthRent"></td>
+                                <td id="totalUnReceivableLong"></td>
+                                <td id="totalUnReceivableShort"></td>
+                                <td id="totalUnReceivable"></td>
+                                <td id="totalUnReceivablePercentage"></td>
+                                <td id="totalCustomerCount"></td>
+                                <td id="totalUnReceivableCustomerCountShort"></td>
+                                <td id="totalUnReceivableCustomerCountLong"></td>
+                                <td id="totalRentedCustomerCountShort"></td>
+                                <td id="totalRentingCustomerCountLong"></td>
                             </tr>
                             {{/dataSource}}
                             </tbody>
