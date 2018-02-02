@@ -369,15 +369,15 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
     private ServiceResult<String, String> verify(StatementOrderCorrect statementOrderCorrect, Integer statementOrderDetailId, BigDecimal statementCorrectAmount) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算单明细是否存在
-        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findNoSettlementById(statementOrderDetailId);
-        if (statementOrderDetailDO == null) {
+        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetailId);
+        if (statementOrderDetailDO == null|| StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
 
         //判断结算单是否存在
-        StatementOrderDO statementOrderDO = statementOrderMapper.findNoSettlementById(statementOrderDetailDO.getStatementOrderId());
-        if (statementOrderDO == null) {
+        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+        if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDO.getStatementStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return serviceResult;
         }

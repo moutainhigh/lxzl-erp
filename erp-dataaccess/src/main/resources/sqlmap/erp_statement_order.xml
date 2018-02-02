@@ -428,8 +428,4 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO">
 		UPDATE erp_statement_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-	<select id="findNoSettlementById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_statement_order eso
-		WHERE eso.id = #{statementOrderId, jdbcType=INTEGER} AND eso.data_status = 1 AND (eso.statement_status = 0 OR eso.statement_status = 4)
-	</select>
 </mapper>
