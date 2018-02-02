@@ -485,6 +485,15 @@ public class StatementServiceImpl implements StatementService {
 
     void updateStatementOrderResult(StatementOrderDO statementOrderDO, BigDecimal otherAmount, BigDecimal rentAmount, BigDecimal rentDepositAmount, BigDecimal depositAmount, Date currentTime, Integer loginUserId) {
 
+
+
+        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
+            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+
+            }
+        }
+
+
         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
         statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementOtherPaidAmount(), otherAmount));
         statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentPaidAmount(), rentAmount));
@@ -1300,11 +1309,9 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
 
-                BigDecimal originalDetailOverdueAmount = statementOrderDetailDO.getStatementDetailOverdueAmount();
                 // 以下均为逾期处理，overdueDays 为逾期天数，开始算逾期。
                 BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(0.003)), new BigDecimal(overdueDays));
                 statementOrderDetailDO.setStatementDetailOverdueAmount(detailOverdueAmount);
-                statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailAmount(), detailOverdueAmount), originalDetailOverdueAmount));
                 statementOrderDetailDO.setStatementDetailOverdueDays(overdueDays);
                 statementOrderDetailDO.setStatementDetailOverduePhaseCount(statementOrderOverduePhaseCount);
                 statementOrderDetailMapper.update(statementOrderDetailDO);

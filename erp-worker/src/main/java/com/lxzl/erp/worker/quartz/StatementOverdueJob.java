@@ -1,5 +1,6 @@
 package com.lxzl.erp.worker.quartz;
 
+import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.se.core.quartz.job.BaseJob;
 import org.quartz.JobDataMap;
@@ -34,6 +35,9 @@ public class StatementOverdueJob extends BaseJob {
         String jobSays = dataMap.getString("jobSays");
         log.info("Instance {} of StatementOverdueJob says: {} ", key, jobSays);
         Date currentTime = new Date();
+        // 每天1点执行，前一天以前的数据
+        currentTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(currentTime, -1);
+        currentTime = com.lxzl.se.common.util.date.DateUtil.getEndOfDay(currentTime);
         statementService.handleOverdueStatementOrder(null, currentTime);
         return "success";
     }
