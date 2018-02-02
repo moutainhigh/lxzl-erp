@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.k3WebServiceSdk.ErpServer;
 
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormOrganization;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSupply;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
 
 public class IERPServiceProxy implements IERPService {
   private String _endpoint = null;
@@ -65,6 +62,12 @@ public class IERPServiceProxy implements IERPService {
     if (iERPService == null)
       _initIERPServiceProxy();
     return iERPService.addOrganization(cust);
+  }
+  
+  public ServiceResult addSEorder(FormSEOrder order) throws java.rmi.RemoteException{
+    if (iERPService == null)
+      _initIERPServiceProxy();
+    return iERPService.addSEorder(order);
   }
   
   

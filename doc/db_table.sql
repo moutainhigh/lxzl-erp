@@ -2732,6 +2732,16 @@ CREATE TABLE `erp_k3_mapping_material_type` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3配件类型映射';
 
+
+DROP TABLE if exists `erp_k3_mapping_sub_company`;
+CREATE TABLE `erp_k3_mapping_sub_company` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_sub_company_code` varchar(64) COMMENT 'erp的分公司编码',
+  `k3_sub_company_code` varchar(64) COMMENT 'K3分公司编码',
+  `sub_company_name` varchar(64) COMMENT '分公司名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3分公司映射';
+
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',

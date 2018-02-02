@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class K3SupplierConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) {
         Supplier supplier = (Supplier) data;
         FormSupply formSupply = new FormSupply();
         formSupply.setNumber("999232229999");

@@ -2,10 +2,7 @@ package com.lxzl.erp.core.service.k3;
 
 import com.lxzl.erp.common.constant.PostK3Type;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
-import com.lxzl.erp.core.service.k3.converter.impl.K3CustomerConverter;
-import com.lxzl.erp.core.service.k3.converter.impl.K3MaterialConverter;
-import com.lxzl.erp.core.service.k3.converter.impl.K3ProductConverter;
-import com.lxzl.erp.core.service.k3.converter.impl.K3SupplierConverter;
+import com.lxzl.erp.core.service.k3.converter.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +23,9 @@ public class PostK3ServiceManager {
         if(PostK3Type.POST_K3_TYPE_SUPPLIER.equals(postType)){
             return k3SupplierConverter;
         }
+        if(PostK3Type.POST_K3_TYPE_ORDER.equals(postType)){
+            return k3OrderConverter;
+        }
         return null;
     }
 
@@ -37,4 +37,6 @@ public class PostK3ServiceManager {
     private K3MaterialConverter k3MaterialConverter;
     @Autowired
     private K3SupplierConverter k3SupplierConverter;
+    @Autowired
+    private K3OrderConverter k3OrderConverter;
 }
