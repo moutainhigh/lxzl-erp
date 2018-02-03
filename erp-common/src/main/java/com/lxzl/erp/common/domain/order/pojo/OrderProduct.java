@@ -10,33 +10,33 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderProduct extends BasePO {
-    private Integer orderProductId;
-    private Integer orderId;
-    private Integer rentType;
-    private Integer rentTimeLength;
-    private Integer rentLengthType;
-    private Integer productId;
-    private String productName;
-    private Integer productSkuId;
-    private String productSkuName;
-    private Integer productCount;
-    private BigDecimal productUnitAmount;
-    private BigDecimal productAmount;
-    private BigDecimal rentDepositAmount;
-    private BigDecimal depositAmount;
-    private BigDecimal creditDepositAmount;
+    private Integer orderProductId;             // 订单商品项ID
+    private Integer orderId;                    // 订单ID
+    private Integer rentType;                   // 租赁类型，1按天，2按月
+    private Integer rentTimeLength;             // 租赁时长
+    private Integer rentLengthType;             // 1短租，2长租
+    private Integer productId;                  // 商品ID
+    private String productName;                 // 商品名称
+    private Integer productSkuId;               // 商品配置ID
+    private String productSkuName;              // 配置名称
+    private Integer productCount;               // 商品数量
+    private BigDecimal productUnitAmount;       // 单价
+    private BigDecimal productAmount;           // 总价
+    private BigDecimal rentDepositAmount;       // 租金押金
+    private BigDecimal depositAmount;           // 设备押金
+    private BigDecimal creditDepositAmount;     // 授信额度
     private BigDecimal insuranceAmount;
-    private String productSkuSnapshot;
+    private String productSkuSnapshot;          // 商品快照
     private Integer dataStatus;
-    private String remark;
+    private String remark;                      // 备注信息
     private List<ProductSkuProperty> productSkuPropertyList;
-    private Integer depositCycle;
-    private Integer paymentCycle;
-    private Integer payMode;
-    private Integer isNewProduct;
+    private Integer depositCycle;               // 押金期数
+    private Integer paymentCycle;               // 租金期数
+    private Integer payMode;                    // 付款方式，1先付后用，2先用后付
+    private Integer isNewProduct;               // 是否全新，1是0否
     private List<OrderProductEquipment> orderProductEquipmentList;
 
-    private BigDecimal firstNeedPayAmount;
+    private BigDecimal firstNeedPayAmount;      // 首付金额
 
     public Integer getOrderProductId() {
         return orderProductId;
