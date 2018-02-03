@@ -186,24 +186,44 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public ServiceResult<String, StatisticsUnReceivableForSubCompany> queryStatisticsUnReceivableForSubCompany() {
         ServiceResult<String, StatisticsUnReceivableForSubCompany> result = new ServiceResult<>();
-        StatisticsUnReceivableForSubCompany statisticsUnReceivableForSubCompany = statisticsMapper.queryStatisticsUnReceivableCountForSubCompany();
-        List<StatisticsUnReceivableDetailForSubCompany> statisticsUnReceivableDetailForSubCompanyList = statisticsMapper.queryStatisticsUnReceivableForSubCompany();
-        Map<Integer,StatisticsUnReceivableDetailForSubCompany> map = ListUtil.listToMap(statisticsUnReceivableDetailForSubCompanyList,"subCompanyId");
-        List<StatisticsUnReceivableDetailForSubCompany> orderList = new ArrayList<>();
-        Map<String,Object> maps = new HashMap<>();
-        maps.put("start",0);
-        maps.put("pageSize",Integer.MAX_VALUE);
-        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(maps);
-        if(CollectionUtil.isNotEmpty(subCompanyDOList)){
-            for(SubCompanyDO subCompanyDO : subCompanyDOList){
-                if(map.containsKey(subCompanyDO.getId())){
-                    orderList.add(map.get(subCompanyDO.getId()));
-                }else{
+        StatisticsUnReceivableForSubCompany statisticsUnReceivableForSubCompany = new StatisticsUnReceivableForSubCompany();
 
-                }
+        BigDecimal totalLastMonthRent = BigDecimal.ZERO;  //总上月租金
+        BigDecimal totalUnReceivableLong= BigDecimal.ZERO;  //总长租未收
+        BigDecimal totalUnReceivableShort= BigDecimal.ZERO;  //总短租未收
+        BigDecimal totalUnReceivable= BigDecimal.ZERO;  //总合计未收
+        Integer totalCustomerCount = 0 ;  //总客户数
+        Integer totalUnReceivableCustomerCountShort = 0 ;  //短租未收客户数
+        Integer totalUnReceivableCustomerCountLong = 0 ;  //长租未收客户数
+        Integer totalRentedCustomerCountShort = 0 ;  //短租合作客户数
+        Integer totalRentingCustomerCountLong = 0 ;  //长租在租客户数
+        List<StatisticsUnReceivableDetailForSubCompany> statisticsUnReceivableDetailForSubCompanyList = statisticsMapper.querySubCompanyInfo();
+        if(CollectionUtil.isNotEmpty(statisticsUnReceivableDetailForSubCompanyList)){
+            for(StatisticsUnReceivableDetailForSubCompany statisticsUnReceivableDetailForSubCompany : statisticsUnReceivableDetailForSubCompanyList ){
+                totalLastMonthRent = BigDecimalUtil.add(totalLastMonthRent,statisticsUnReceivableDetailForSubCompany.getLastMonthRent());
+                totalUnReceivableLong = BigDecimalUtil.add(totalUnReceivableLong,statisticsUnReceivableDetailForSubCompany.getUnReceivableLong());
+                totalUnReceivableShort = BigDecimalUtil.add(totalUnReceivableShort,statisticsUnReceivableDetailForSubCompany.getUnReceivableShort());
+                totalUnReceivable = BigDecimalUtil.add(totalUnReceivable,statisticsUnReceivableDetailForSubCompany.getUnReceivable());
+                Integer customerCount = statisticsUnReceivableDetailForSubCompany.getRentedCustomerCountShort()+statisticsUnReceivableDetailForSubCompany.getRentingCustomerCountLong();
+                statisticsUnReceivableDetailForSubCompany.setCustomerCount(customerCount);
+                totalCustomerCount = totalCustomerCount + customerCount;
+                totalUnReceivableCustomerCountShort = totalUnReceivableCustomerCountShort + statisticsUnReceivableDetailForSubCompany.getUnReceivableCustomerCountShort();
+                totalUnReceivableCustomerCountLong = totalUnReceivableCustomerCountLong + statisticsUnReceivableDetailForSubCompany.getUnReceivableCustomerCountLong();
+                totalRentedCustomerCountShort = totalRentedCustomerCountShort + statisticsUnReceivableDetailForSubCompany.getRentedCustomerCountShort();
+                totalRentingCustomerCountLong = totalRentingCustomerCountLong + statisticsUnReceivableDetailForSubCompany.getRentingCustomerCountLong();
+                statisticsUnReceivableDetailForSubCompany.setUnReceivablePercentage(getPercentage(statisticsUnReceivableDetailForSubCompany.getUnReceivable(),statisticsUnReceivableDetailForSubCompany.getLastMonthRent()));
             }
         }
-
+        statisticsUnReceivableForSubCompany.setTotalLastMonthRent(totalLastMonthRent );
+        statisticsUnReceivableForSubCompany.setTotalUnReceivableLong(totalUnReceivableLong);
+        statisticsUnReceivableForSubCompany.setTotalUnReceivableShort(totalUnReceivableShort);
+        statisticsUnReceivableForSubCompany.setTotalUnReceivable(totalUnReceivable);
+        statisticsUnReceivableForSubCompany.setTotalCustomerCount(totalCustomerCount );
+        statisticsUnReceivableForSubCompany.setTotalUnReceivableCustomerCountShort(totalUnReceivableCustomerCountShort );
+        statisticsUnReceivableForSubCompany.setTotalUnReceivableCustomerCountLong(totalUnReceivableCustomerCountLong );
+        statisticsUnReceivableForSubCompany.setTotalRentedCustomerCountShort(totalRentedCustomerCountShort );
+        statisticsUnReceivableForSubCompany.setTotalRentingCustomerCountLong(totalRentingCustomerCountLong );
+        statisticsUnReceivableForSubCompany.setTotalUnReceivablePercentage(getPercentage(statisticsUnReceivableForSubCompany.getTotalUnReceivable(),statisticsUnReceivableForSubCompany.getTotalLastMonthRent()));
 
         statisticsUnReceivableForSubCompany.setStatisticsUnReceivableDetailForSubCompanyList(statisticsUnReceivableDetailForSubCompanyList);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -211,6 +231,21 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
+    /**
+     *
+     * @param d1 被除数
+     * @param d2 除数
+     * @return
+     */
+    private Double getPercentage(BigDecimal d1 , BigDecimal d2){
+        if(BigDecimal.ZERO.compareTo(d2)==0){
+            return 0d;
+        }else{
+            BigDecimal b1 = BigDecimalUtil.mul(new BigDecimal(100),d1);
+            BigDecimal per = BigDecimalUtil.div(b1,d2,2);
+            return per.doubleValue();
+        }
+    }
     @Override
     public ServiceResult<String, StatisticsHomeByRentLengthType> queryLongRent(HomeRentParam homeRentParam) {
         ServiceResult<String, StatisticsHomeByRentLengthType> serviceResult = new ServiceResult<>();
