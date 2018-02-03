@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatement
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -1271,6 +1272,57 @@ public class StatementServiceImpl implements StatementService {
             }
         }
 
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<StatementOrder>> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
+        ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
+        Integer totalCount = statementOrderMapper.listMonthCount(maps);
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listMonthPage(maps);
+        List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
+        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, List<StatementOrder>> queryStatementOrderMonthDetail(String customerNo , Date month) {
+        ServiceResult<String, List<StatementOrder>> result = new ServiceResult<>();
+
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if(customerDO == null){
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.findByCustomerNo(customerDO.getCustomerNo(),month);
+        if (statementOrderDOList == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
+
+        StatementOrderDetail returnReferStatementOrderDetail = null;
+
+        if (statementOrderList != null ) {
+            for(int i=0;i<statementOrderList.size();i++){
+                Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrderList.get(i).getStatementOrderDetailList(), "statementOrderDetailId");
+                for (StatementOrderDetail statementOrderDetail : statementOrderList.get(i).getStatementOrderDetailList()) {
+                    if (statementOrderDetail.getReturnReferId() != null) {
+                        returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
+                    }
+                    convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+                }
+            }
+        }
+        result.setResult(statementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
