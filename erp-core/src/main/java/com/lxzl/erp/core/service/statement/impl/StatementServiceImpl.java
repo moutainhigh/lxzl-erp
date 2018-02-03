@@ -1302,6 +1302,10 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+        if(month == null){
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_NULL);
+            return result;
+        }
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.findByCustomerNo(customerDO.getCustomerNo(),month);
         if (statementOrderDOList == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);

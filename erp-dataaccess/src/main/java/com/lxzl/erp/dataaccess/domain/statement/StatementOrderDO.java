@@ -38,6 +38,9 @@ public class StatementOrderDO extends BaseDO {
     @Transient
     private String customerName;
 
+    @Transient
+    private String customerNo;
+
     public Integer getId() {
         return id;
     }
@@ -244,5 +247,13 @@ public class StatementOrderDO extends BaseDO {
 
     public void setStatementOverduePaidAmount(BigDecimal statementOverduePaidAmount) {
         this.statementOverduePaidAmount = statementOverduePaidAmount;
+    }
+
+    public String getCustomerNo() {
+        return customerNo;
+    }
+
+    public void setCustomerNo(String customerNo) {
+        this.customerNo = customerNo;
     }
 }
