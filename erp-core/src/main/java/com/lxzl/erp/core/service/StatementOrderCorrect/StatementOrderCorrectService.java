@@ -27,7 +27,7 @@ public interface StatementOrderCorrectService extends VerifyReceiver {
      * @param : statementOrderCorrect
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> commitStatementOrderCorrect(String statementOrderCorrectNo,String remark);
+    ServiceResult<String,String> commitStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect);
     /**
     * 修改冲正单
     * @Author : XiaoLuYu
