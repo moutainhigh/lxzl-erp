@@ -88,10 +88,10 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> commitStatementOrderCorrect(String statementOrderCorrectNo, String remark) {
+    public ServiceResult<String, String> commitStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(statementOrderCorrectNo);
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
         if (CollectionUtil.isEmpty(statementOrderCorrectDOList)) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_NOT_EXISTS);
             return serviceResult;
@@ -111,15 +111,24 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         dbStatementOrderCorrectDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         statementOrderCorrectMapper.update(dbStatementOrderCorrectDO);
 
-        //走工作流
-        ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectNo, userSupport.getCurrentUserId(), "结算冲正单", remark);
-        if (!ErrorCode.SUCCESS.equals(workflowServiceResult.getErrorCode())) {
-            serviceResult.setErrorCode(workflowServiceResult.getErrorCode());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
+        } else if (needVerifyResult.getResult()) {
+            //走工作流
+            statementOrderCorrect.setVerifyMatters("结算冲正单");
+            ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrect.getStatementCorrectNo(), statementOrderCorrect.getVerifyUserId(), statementOrderCorrect.getVerifyMatters(), statementOrderCorrect.getRemark());
+            if (!ErrorCode.SUCCESS.equals(workflowServiceResult.getErrorCode())) {
+                serviceResult.setErrorCode(workflowServiceResult.getErrorCode());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return serviceResult;
+            }
+        }else {
+            receiveVerifyResult(true, statementOrderCorrect.getStatementCorrectNo());
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(statementOrderCorrectNo);
+        serviceResult.setResult(statementOrderCorrect.getStatementCorrectNo());
         return serviceResult;
     }
 
@@ -370,14 +379,14 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算单明细是否存在
         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetailId);
-        if (statementOrderDetailDO == null|| StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+        if (statementOrderDetailDO == null|| StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
 
         //判断结算单是否存在
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-        if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDO.getStatementStatus())) {
+        if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return serviceResult;
         }

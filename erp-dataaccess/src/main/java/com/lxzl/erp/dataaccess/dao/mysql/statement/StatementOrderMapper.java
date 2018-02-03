@@ -27,4 +27,10 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
 
     StatementOrderDO findByNo(@Param("statementOrderNo") String statementOrderNo);
 
+    Integer listMonthCount(@Param("maps") Map<String, Object> paramMap);
+
+    List<StatementOrderDO> listMonthPage(@Param("maps") Map<String, Object> paramMap);
+
+    List<StatementOrderDO> findByCustomerNo(@Param("customerNo") String customerNo,@Param("month") Date month);
+
 }

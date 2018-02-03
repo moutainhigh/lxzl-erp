@@ -4,11 +4,15 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -126,4 +130,20 @@ public interface StatementService extends BaseService {
      * @return 是否处理成功
      */
     ServiceResult<String, Boolean> handleNoPaidStatementOrder(Date startTime, Date endTime);
+
+    /**
+     * 结算单月对帐分页查询
+     *
+     * @param statementOrderMonthQueryParam
+     * @return
+     */
+    ServiceResult<String, Page<StatementOrder>> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam);
+
+    /**
+     * 结算单月对帐详情
+     *
+     * @param customerNo
+     * @return
+     */
+    ServiceResult<String, List<StatementOrder>> queryStatementOrderMonthDetail(String customerNo , Date month);
 }
