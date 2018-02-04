@@ -14,24 +14,24 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatisticsHomeByRentLengthType {
 
-    private Integer newCustomerCount;   //长租新增客户数
-    private Integer oldCustomerCount;   //长租老客户数
-    private Integer orderCountByNewCustomer;   //新客户下单订单数
-    private Integer orderCountByOldCustomer;   //老客户下单订单数
-    private Integer totalOrderCount;   //下单订单总数（新客户下单订单数+老客户下单订单数）
-    private Integer productCountByNewCustomer;   //老客户下单台数
-    private Integer productCountByOldCustomer;   //新客户下单台数
-    private Integer totalProductCount;   //下单总台数（新客户下单台数+老客户下单台数）
-    private Integer returnProductCount;   //退租台数
-    private Integer increaseProductCount;   //净增台数(新增减退租)
-    private BigDecimal rentDeposit;   //租金押金
-    private BigDecimal deposit;   //设备押金
-    private BigDecimal returnDeposit;   //退设备押金
-    private BigDecimal returnRentDeposit;   //退租金押金
-    private BigDecimal rent;   //租金
-    private BigDecimal prepayRent;   //预付租金
-    private BigDecimal otherAmount;   //其他费用
-    private BigDecimal rentIncome;   //租金收入(长租时为：租金+预付租金+租金押金+设备押金-退押金)(短租时为：租金+预付租金)
+    private Integer newCustomerCount = 0 ;   //长租新增客户数
+    private Integer oldCustomerCount = 0 ;   //长租老客户数
+    private Integer orderCountByNewCustomer = 0 ;   //新客户下单订单数
+    private Integer orderCountByOldCustomer = 0 ;   //老客户下单订单数
+    private Integer totalOrderCount = 0 ;   //下单订单总数（新客户下单订单数+老客户下单订单数）
+    private Integer productCountByNewCustomer = 0 ;   //老客户下单台数
+    private Integer productCountByOldCustomer = 0 ;   //新客户下单台数
+    private Integer totalProductCount = 0 ;   //下单总台数（新客户下单台数+老客户下单台数）
+    private Integer returnProductCount = 0 ;   //退租台数
+    private Integer increaseProductCount = 0 ;   //净增台数(新增减退租)
+    private BigDecimal rentDeposit = BigDecimal.ZERO;   //租金押金
+    private BigDecimal deposit = BigDecimal.ZERO;   //设备押金
+    private BigDecimal returnDeposit = BigDecimal.ZERO;   //退设备押金
+    private BigDecimal returnRentDeposit = BigDecimal.ZERO;   //退租金押金
+    private BigDecimal rent = BigDecimal.ZERO;   //租金
+    private BigDecimal prepayRent = BigDecimal.ZERO;   //预付租金
+    private BigDecimal otherAmount = BigDecimal.ZERO;   //其他费用
+    private BigDecimal rentIncome = BigDecimal.ZERO;   //租金收入(长租时为：租金+预付租金+租金押金+设备押金-退押金)(短租时为：租金+预付租金)
 
     private Date timeNode;   //时间节点
 
