@@ -239,15 +239,15 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-##                            <th>编号</th>
+                        ##                            <th>编号</th>
                             <th>名称</th>
                             <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
-##                            <th>租赁价格</th>
-##                            <th>描述</th>
-##                            <th>图片</th>
-##                            <th>在租数量</th>
+                        ##                            <th>租赁价格</th>
+                        ##                            <th>描述</th>
+                        ##                            <th>图片</th>
+                        ##                            <th>在租数量</th>
                             <th>可退数量</th>
                             <th>退货数量</th>
                             <th class="text-right">操作</th>
@@ -263,18 +263,18 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-##                            <td>{{materialNo}}</td>
+                        ##                            <td>{{materialNo}}</td>
                             <td>{{materialName}}</td>
                             <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>{{materialPriceFormat}}</td>
-##                            <td>
-##                                <p>日租：￥{{dayRentPriceFormat}}</p>
-##                                <p>月租：￥{{monthRentPriceFormat}}</p>
-##                            </td>
-##                            <td>{{materialDesc}}</td>
-##                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-##                            <td>{{rentCount}}</td>
+                        ##                            <td>
+                        ##                                <p>日租：￥{{dayRentPriceFormat}}</p>
+                        ##                                <p>月租：￥{{monthRentPriceFormat}}</p>
+                        ##                            </td>
+                        ##                            <td>{{materialDesc}}</td>
+                        ##                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                        ##                            <td>{{rentCount}}</td>
                             <td>{{canProcessCount}}</td>
                             <td>
                                 <label class="field prepend-icon mw200">
