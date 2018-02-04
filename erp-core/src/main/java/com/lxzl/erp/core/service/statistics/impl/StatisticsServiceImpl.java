@@ -280,11 +280,26 @@ public class StatisticsServiceImpl implements StatisticsService {
                 statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
             }
         }
+        addNoPassed(homeRentByTimeParam.getTimeDimensionType(),statisticsHomeByRentLengthTypeList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;
     }
-
+    private void addNoPassed(Integer timeDimensionType, List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList){
+        List<Date> noPassedDateList = null;
+        if(timeDimensionType.equals(TimeDimensionType.TIME_DIMENSION_TYPE_MONTH)){
+            noPassedDateList = DateUtil.getCurrentMonthNoPassedDay();
+        }else if(timeDimensionType.equals(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR)){
+            noPassedDateList = DateUtil.getCurrentYearNoPassedMonth();
+        }
+        if(CollectionUtil.isNotEmpty(noPassedDateList)){
+            for(Date date : noPassedDateList){
+                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = new StatisticsHomeByRentLengthType();
+                statisticsHomeByRentLengthType.setTimeNode(date);
+                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+            }
+        }
+    }
     private class TimePairs{
         Date startTime;
         Date endTime;
@@ -395,6 +410,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
             }
         }
+        addNoPassed(homeRentByTimeParam.getTimeDimensionType(),statisticsHomeByRentLengthTypeList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;

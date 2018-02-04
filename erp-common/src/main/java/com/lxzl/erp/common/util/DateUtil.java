@@ -229,6 +229,26 @@ public class DateUtil {
         }
         return dateList;
     }
+
+    /**
+     * 获取当前日期当年目前未到的所有月
+     * 如当前日期为2018-05-06，本接口返回的日期列表为2018-06-01，2018-07-01，2018-08-01，2018-09-01，2018-10-01，2018-11-01，2018-12-01
+     * @return Date
+     */
+    public static List<Date> getCurrentYearNoPassedMonth(){
+        List<Date> dateList = new ArrayList<>();
+        Date currentMonth = getMonthByOffset(0);
+        Calendar thisMonth = Calendar.getInstance();
+        thisMonth.setTime(currentMonth);
+        Date nextMonth = getMonthByOffset(1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(nextMonth);
+        while (thisMonth.get(Calendar.YEAR)==calendar.get(Calendar.YEAR)){
+            dateList.add(calendar.getTime());
+            calendar.add(Calendar.MONTH,1);
+        }
+        return dateList;
+    }
     /**
      * 获取当前日期当月目前所有天
      * @return Date
@@ -248,6 +268,25 @@ public class DateUtil {
         }
         return dateList;
     }
+    /**
+     * 获取当前日期当月目前未到的所有天
+     * @return Date
+     */
+    public static List<Date> getCurrentMonthNoPassedDay(){
+
+        List<Date> dateList = new ArrayList<>();
+        Date currentDay = getDayByOffset(0);
+        Calendar thisDay = Calendar.getInstance();
+        thisDay.setTime(currentDay);
+        Calendar nextDay = Calendar.getInstance();
+        Date next = getDayByOffset(1);
+        nextDay.setTime(next);
+        while (thisDay.get(Calendar.MONTH)==nextDay.get(Calendar.MONTH)){
+            dateList.add(nextDay.getTime());
+            nextDay.add(Calendar.DAY_OF_MONTH,1);
+        }
+        return dateList;
+    }
     public static void main(String[] args) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        List<Date> dateList = getCurrentYearPassedMonth();
@@ -259,6 +298,14 @@ public class DateUtil {
 //        for(Date date : dateList2){
 //            System.out.println(simpleDateFormat.format(date));
 //        }
-        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
+//        List<Date> dateList3 = getCurrentYearNoPassedMonth();
+//        for(Date date : dateList3){
+//            System.out.println(simpleDateFormat.format(date));
+//        }
+        List<Date> dateList4 = getCurrentMonthNoPassedDay();
+        for(Date date : dateList4){
+            System.out.println(simpleDateFormat.format(date));
+        }
+//        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
     }
 }
