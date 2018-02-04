@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
 import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,9 +27,12 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     public void queryIncome() throws Exception {
         StatisticsIncomePageParam statisticsIncomePageParam = new StatisticsIncomePageParam();
         statisticsIncomePageParam.setPageNo(1);
-        statisticsIncomePageParam.setPageSize(1);
-        statisticsIncomePageParam.setStartTime(getFistByMonth());
-        statisticsIncomePageParam.setEndTime(getEndByMonth());
+        statisticsIncomePageParam.setPageSize(100);
+        SimpleDateFormat sdf =   new SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
+        Date start = sdf.parse( " 2008-07-10 19:20:00 " );
+        Date end = sdf.parse( " 2028-07-10 19:20:00 " );
+        statisticsIncomePageParam.setStartTime(start);
+        statisticsIncomePageParam.setEndTime(end);
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
     @Test
@@ -47,9 +51,6 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     public void queryStatisticsUnReceivableForSubCompany() throws Exception {
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivableForSubCompany", null);
     }
-
-
-
 
     @Test
     public void queryLongRent() throws Exception {

@@ -34,4 +34,6 @@ public interface StatisticsMapper extends BaseMysqlDAO {
     StatisticsUnReceivableForSubCompany queryStatisticsUnReceivableCountForSubCompany();
 
     List<StatisticsUnReceivableDetailForSubCompany> queryStatisticsUnReceivableForSubCompany();
+
+    List<StatisticsUnReceivableDetailForSubCompany> querySubCompanyInfo();
 }
