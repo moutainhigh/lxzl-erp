@@ -99,6 +99,17 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING);
             return serviceResult;
         }
+
+        StatementOrderDO statementOrderDO = statementOrderMapper.findById(dbStatementOrderCorrectDO.getStatementOrderId());
+        if (statementOrderDO == null) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
+            return serviceResult;
+        }
+
         //修改状态
         Date now = new Date();
         dbStatementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT);
