@@ -354,8 +354,8 @@
         COUNT(DISTINCT old_customer_table.buyer_customer_id) old_customer_count  ,
         COUNT(DISTINCT (CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_new_customer,
         COUNT(DISTINCT (CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_old_customer,
-        SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.product_count ELSE 0 END) product_count_by_new_customer,
-        SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.product_count ELSE 0 END) product_count_by_old_customer,
+        IFNULL(SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.product_count ELSE 0 END),0) product_count_by_new_customer,
+        IFNULL(SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.product_count ELSE 0 END),0) product_count_by_old_customer,
         (
         SELECT COUNT(*) FROM (
 SELECT DISTINCT(erop.id) id FROM erp_return_order_product erop

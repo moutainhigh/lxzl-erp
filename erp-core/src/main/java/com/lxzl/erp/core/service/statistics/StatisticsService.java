@@ -1,12 +1,11 @@
 package com.lxzl.erp.core.service.statistics;
 
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.statistics.HomeRentParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
-import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
+import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.se.core.service.BaseService;
+
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -35,4 +34,7 @@ public interface StatisticsService extends BaseService {
 
     ServiceResult<String, StatisticsHomeByRentLengthType> queryShortRent(HomeRentParam homeRentParam);
 
+    ServiceResult<String, List<StatisticsHomeByRentLengthType>> queryLongRentByTime(HomeRentByTimeParam homeRentByTimeParam);
+
+    ServiceResult<String, List<StatisticsHomeByRentLengthType>> queryShortRentByTime(HomeRentByTimeParam homeRentByTimeParam);
 }

@@ -1,10 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.statistics.HomeRentParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
-import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
+import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -91,7 +88,24 @@ public class StatisticsController extends BaseController {
     public Result queryShortRent(@RequestBody @Validated HomeRentParam homeRentParam, BindingResult validResult) {
         return resultGenerator.generate(statisticsService.queryShortRent(homeRentParam));
     }
-
+    /**
+     * 设备长租统计（时间维度）
+     * @param homeRentByTimeParam
+     * @return
+     */
+    @RequestMapping(value = "queryLongRentByTime", method = RequestMethod.POST)
+    public Result queryLongRentByTime(@RequestBody @Validated HomeRentByTimeParam homeRentByTimeParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryLongRentByTime(homeRentByTimeParam));
+    }
+    /**
+     * 设备短租统计（时间维度）
+     * @param homeRentByTimeParam
+     * @return
+     */
+    @RequestMapping(value = "queryShortRentByTime", method = RequestMethod.POST)
+    public Result queryShortRentByTime(@RequestBody @Validated HomeRentByTimeParam homeRentByTimeParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryShortRentByTime(homeRentByTimeParam));
+    }
     @Autowired
     private ResultGenerator resultGenerator;
 

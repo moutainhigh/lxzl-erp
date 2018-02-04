@@ -22,7 +22,6 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
         statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(100));
         statementOrderCorrect.setStatementCorrectReason("测试225");
         statementOrderCorrect.setRemark("测试225");
-        statementOrderCorrect.setStatementOrderDetailId(81);
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
     }
 
@@ -39,7 +38,6 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     public void updateStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
         statementOrderCorrect.setStatementCorrectNo("LXSOC-22-20180131-00005");
-        statementOrderCorrect.setStatementOrderDetailId(79);
         statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(11));
         statementOrderCorrect.setStatementCorrectReason("测试22");
         statementOrderCorrect.setRemark("测试22");

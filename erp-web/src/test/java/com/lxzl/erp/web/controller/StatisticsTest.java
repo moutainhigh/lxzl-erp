@@ -2,10 +2,8 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.domain.statistics.HomeRentParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
-import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
+import com.lxzl.erp.common.constant.TimeDimensionType;
+import com.lxzl.erp.common.domain.statistics.*;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -68,13 +66,19 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         homeRentParam.setEndTime(getEndByMonth());
         TestResult testResult = getJsonTestResult("/statistics/queryShortRent", homeRentParam);
     }
+    @Test
+    public void queryLongRentByTime() throws Exception {
+        HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
+        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
+        TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
+    }
 
-
-
-
-
-
-
+    @Test
+    public void queryShortRentByTime() throws Exception {
+        HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
+        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
+        TestResult testResult = getJsonTestResult("/statistics/queryShortRentByTime", homeRentByTimeParam);
+    }
     private Date getFistByMonth(){
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, 0);
