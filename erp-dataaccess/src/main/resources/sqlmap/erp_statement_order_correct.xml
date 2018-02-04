@@ -39,6 +39,11 @@
 		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.data_status = 1 and statement_order_correct_status = 2
 	</select>
 
+	<select id="findStatementOrderIdAndItemId" resultMap="StatementOrderCorrectDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.data_status = 1 and statement_order_correct_status = 2
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(esoc.id) FROM erp_statement_order_correct esoc
 		<where>

@@ -3,8 +3,6 @@ package com.lxzl.erp.core.service.StatementOrderCorrect.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.util.BigDecimalUtil;
@@ -14,7 +12,6 @@ import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectServ
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
-import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
@@ -51,12 +48,12 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> createStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         //查看结算单详情,结算单是否存在,校验冲正金额是否超出结算金额
-        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect, null, statementOrderCorrect.getStatementCorrectAmount());
+        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect);
         if (!verifyServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
             return verifyServiceResult;
         }
@@ -65,6 +62,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         Date now = new Date();
         StatementOrderCorrectDO statementOrderCorrectDO = ConverterUtil.convert(statementOrderCorrect, StatementOrderCorrectDO.class);
         statementOrderCorrectDO.setStatementCorrectNo(generateNoSupport.generateStatementOrderCorrect(statementOrderCorrectDO.getStatementOrderId()));
+        statementOrderCorrectDO.setStatementCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderCorrectDO.getStatementCorrectRentAmount(), statementOrderCorrectDO.getStatementCorrectRentDepositAmount()), statementOrderCorrectDO.getStatementCorrectDepositAmount()), statementOrderCorrectDO.getStatementCorrectOtherAmount()), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
         statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.VERIFY_STATUS_PENDING);
         statementOrderCorrectDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         statementOrderCorrectDO.setCreateTime(now);
@@ -87,18 +85,17 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> commitStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
-        if (CollectionUtil.isEmpty(statementOrderCorrectDOList)) {
+        StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
+        if (dbStatementOrderCorrectDO == null) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_NOT_EXISTS);
             return serviceResult;
         }
-        //判断状态
-        StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectDOList.get(0);
-        if ( !StatementOrderCorrectStatus.VERIFY_STATUS_PENDING.equals(dbStatementOrderCorrectDO.getStatementOrderCorrectStatus())) {
+
+        if (!StatementOrderCorrectStatus.VERIFY_STATUS_PENDING.equals(dbStatementOrderCorrectDO.getStatementOrderCorrectStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING);
             return serviceResult;
         }
@@ -124,7 +121,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return serviceResult;
             }
-        }else {
+        } else {
             receiveVerifyResult(true, statementOrderCorrect.getStatementCorrectNo());
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -141,29 +138,28 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
-        List<StatementOrderCorrectDO> dbStatementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
-        if (CollectionUtil.isEmpty(dbStatementOrderCorrectDOList)) {
+        StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
+        if (dbStatementOrderCorrectDO == null) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_NOT_EXISTS);
             return serviceResult;
         }
-        //判断状态
-        StatementOrderCorrectDO dbStatementOrderCorrectDO = dbStatementOrderCorrectDOList.get(0);
-        if ( !StatementOrderCorrectStatus.VERIFY_STATUS_PENDING.equals(dbStatementOrderCorrectDO.getStatementOrderCorrectStatus())) {
+        if (!StatementOrderCorrectStatus.VERIFY_STATUS_PENDING.equals(dbStatementOrderCorrectDO.getStatementOrderCorrectStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING);
             return serviceResult;
         }
         //校验结算单和冲正金额是否超出结算金额
-        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect, null, statementOrderCorrect.getStatementCorrectAmount());
+        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect);
         if (!ErrorCode.SUCCESS.equals(verifyServiceResult.getErrorCode())) {
             return verifyServiceResult;
         }
         //跟新
         Date now = new Date();
         StatementOrderCorrectDO statementOrderCorrectDO = ConverterUtil.convert(statementOrderCorrect, StatementOrderCorrectDO.class);
+        statementOrderCorrectDO.setStatementCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderCorrectDO.getStatementCorrectRentAmount(), statementOrderCorrectDO.getStatementCorrectRentDepositAmount()), statementOrderCorrectDO.getStatementCorrectDepositAmount()), statementOrderCorrectDO.getStatementCorrectOtherAmount()), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
         statementOrderCorrectDO.setId(dbStatementOrderCorrectDO.getId());
         statementOrderCorrectDO.setUpdateTime(now);
         statementOrderCorrectDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -183,17 +179,16 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> cancelStatementOrderCorrect(String statementOrderCorrectNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算冲正单是否存在
-        List<StatementOrderCorrectDO> dbStatementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(statementOrderCorrectNo);
-        if (CollectionUtil.isEmpty(dbStatementOrderCorrectDOList)) {
+        StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrectNo);
+        if (dbStatementOrderCorrectDO == null) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_NOT_EXISTS);
             return serviceResult;
         }
         //校验状态
-        StatementOrderCorrectDO dbStatementOrderCorrectDO = dbStatementOrderCorrectDOList.get(0);
         if (!StatementOrderCorrectStatus.VERIFY_STATUS_PENDING.equals(dbStatementOrderCorrectDO.getStatementOrderCorrectStatus()) || !StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT.equals(dbStatementOrderCorrectDO.getStatementOrderCorrectStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING_OR_COMMIT);
             return serviceResult;
@@ -231,20 +226,13 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
     @Override
     public ServiceResult<String, StatementOrderCorrect> queryStatementOrderCorrectDetailByNo(String statementOrderCorrectNo) {
         ServiceResult<String, StatementOrderCorrect> serviceResult = new ServiceResult<>();
-        Map<String, Object> maps = new HashMap<>();
-        StatementOrderCorrectQueryParam statementOrderCorrectQueryParam = new StatementOrderCorrectQueryParam();
-        statementOrderCorrectQueryParam.setStatementCorrectNo(statementOrderCorrectNo);
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("statementOrderCorrectQueryParam", statementOrderCorrectQueryParam);
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderCorrectAndStatementOrderByQueryParam(maps);
-        List<StatementOrderCorrect> statementOrderCorrectList = null;
-        if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
-            statementOrderCorrectList = ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class);
+        StatementOrderCorrectDO statementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrectNo);
+        if (statementOrderCorrectDO == null) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_NOT_EXISTS);
+            return serviceResult;
         }
-        StatementOrderCorrect statementOrderCorrect = statementOrderCorrectList.get(0);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(statementOrderCorrect);
+        serviceResult.setResult(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
         return serviceResult;
     }
 
@@ -283,16 +271,12 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : boolean
      */
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
 
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findByNo(businessNo);
-        if (CollectionUtil.isEmpty(statementOrderCorrectDOList)) {
-            return false;
-        }
         //校验结算冲正单是否存在记录和是否是已结算状态
-        StatementOrderCorrectDO statementOrderCorrectDO = statementOrderCorrectDOList.get(0);
-        if ( !StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT.equals(statementOrderCorrectDO.getStatementOrderCorrectStatus())) {
+        StatementOrderCorrectDO statementOrderCorrectDO = statementOrderCorrectMapper.findByNo(businessNo);
+        if (statementOrderCorrectDO == null || !StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT.equals(statementOrderCorrectDO.getStatementOrderCorrectStatus())) {
             return false;
         }
         //校验结算单是否存在记录和是否是已结算状态
@@ -320,32 +304,81 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Date : Created in 2018/1/30 17:24
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    private ServiceResult<String, String> verify(StatementOrderCorrect statementOrderCorrect, Integer statementOrderDetailId, BigDecimal statementCorrectAmount) {
-
-        // TODO 待办事项，重新验证
+    private ServiceResult<String, String> verify(StatementOrderCorrect statementOrderCorrect) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        //查看结算单明细是否存在
-        /*StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetailId);
-        if (statementOrderDetailDO == null|| StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS);
+
+        if (statementOrderCorrect == null || statementOrderCorrect.getStatementOrderId() == null || statementOrderCorrect.getStatementOrderItemId() == null) {
+            serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return serviceResult;
         }
 
         //判断结算单是否存在
-        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-        if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
+        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderCorrect.getStatementOrderId());
+        if (statementOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        //保存结算单id
-        statementOrderCorrect.setStatementOrderId(statementOrderDetailDO.getStatementOrderId());
-        BigDecimal statementPaidAmount = statementOrderDetailDO.getStatementDetailAmount();
-        //校验冲正金额是否超出结算金额
+        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
+            return serviceResult;
+        }
 
-        if (statementCorrectAmount.compareTo(statementPaidAmount) > 0) {
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(statementOrderDO.getId(), statementOrderCorrect.getStatementOrderItemId());
+
+        String rentTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrect.getStatementOrderItemId();
+        String rentDepositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
+        String depositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
+        String otherTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-" + statementOrderCorrect.getStatementOrderItemId();
+        String overdueTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrect.getStatementOrderItemId();
+
+        // 不同类型不同订单项的冲正金额
+        Map<String, BigDecimal> itemTypeAmountMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
+            for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
+                // 不同订单项的冲正金额
+                itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentTypeAmountKey), statementOrderCorrectDO.getStatementCorrectRentAmount()));
+                itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentDepositTypeAmountKey), statementOrderCorrectDO.getStatementCorrectRentDepositAmount()));
+                itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(depositTypeAmountKey), statementOrderCorrectDO.getStatementCorrectDepositAmount()));
+                itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderCorrectDO.getStatementCorrectOtherAmount()));
+                itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
+            }
+            // 加上本次不同
+            itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentTypeAmountKey), statementOrderCorrect.getStatementCorrectRentAmount()));
+            itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentDepositTypeAmountKey), statementOrderCorrect.getStatementCorrectRentDepositAmount()));
+            itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(depositTypeAmountKey), statementOrderCorrect.getStatementCorrectDepositAmount()));
+            itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderCorrect.getStatementCorrectOtherAmount()));
+            itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderCorrect.getStatementCorrectOverdueAmount()));
+
+            if (statementOrderCorrect.getStatementCorrectNo() != null) {
+                // 如果为修改，把历史的减掉
+                StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
+                itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectRentAmount()));
+                itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentDepositTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectRentDepositAmount()));
+                itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(depositTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectDepositAmount()));
+                itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(otherTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectOtherAmount()));
+                itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(overdueTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectOverdueAmount()));
+            }
+        }
+
+        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
+            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                continue;
+            }
+            itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentTypeAmountKey), statementOrderDetailDO.getStatementDetailRentAmount()));
+            itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentDepositTypeAmountKey), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
+            itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(depositTypeAmountKey), statementOrderDetailDO.getStatementDetailDepositAmount()));
+            itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderDetailDO.getStatementDetailOtherAmount()));
+            itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderDetailDO.getStatementDetailOverdueAmount()));
+        }
+
+        if (BigDecimalUtil.compare(itemTypeAmountMap.get(rentTypeAmountKey), BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(itemTypeAmountMap.get(rentDepositTypeAmountKey), BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(itemTypeAmountMap.get(depositTypeAmountKey), BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(itemTypeAmountMap.get(otherTypeAmountKey), BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(itemTypeAmountMap.get(overdueTypeAmountKey), BigDecimal.ZERO) < 0) {
             serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
             return serviceResult;
-        }*/
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -364,8 +397,5 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
-
-    @Autowired
-    private StatementOrderDetailMapper statementOrderDetailMapper;
 
 }
