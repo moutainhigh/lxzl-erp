@@ -175,7 +175,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         maps.put("statisticsUnReceivablePageParam", statisticsUnReceivablePageParam);
 
         StatisticsUnReceivable statisticsUnReceivable = statisticsMapper.queryStatisticsUnReceivableCount(maps);
+        statisticsUnReceivable.setTotalCustomerCount(statisticsUnReceivable.getTotalRentedCustomerCountShort()+statisticsUnReceivable.getTotalRentingCustomerCountLong());
+        statisticsUnReceivable.setTotalUnReceivablePercentage(getPercentage(statisticsUnReceivable.getTotalUnReceivable(),statisticsUnReceivable.getTotalLastMonthRent()));
         List<StatisticsUnReceivableDetail> statisticsUnReceivableDetailList = statisticsMapper.queryStatisticsUnReceivable(maps);
+        if(CollectionUtil.isNotEmpty(statisticsUnReceivableDetailList)){
+            for(StatisticsUnReceivableDetail statisticsUnReceivableDetail : statisticsUnReceivableDetailList){
+                statisticsUnReceivableDetail.setCustomerCount(statisticsUnReceivableDetail.getRentedCustomerCountShort()+statisticsUnReceivableDetail.getRentingCustomerCountLong());
+                statisticsUnReceivableDetail.setUnReceivablePercentage(getPercentage(statisticsUnReceivableDetail.getUnReceivable(),statisticsUnReceivableDetail.getLastMonthRent()));
+            }
+        }
         Page<StatisticsUnReceivableDetail> page = new Page<>(statisticsUnReceivableDetailList, statisticsUnReceivable.getTotalCount(), statisticsUnReceivablePageParam.getPageNo(), statisticsUnReceivablePageParam.getPageSize());
         statisticsUnReceivable.setStatisticsUnReceivableDetailPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);

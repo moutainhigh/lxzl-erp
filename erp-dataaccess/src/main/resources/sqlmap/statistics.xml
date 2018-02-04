@@ -244,90 +244,87 @@
         <result column="renting_customer_count_long" jdbcType="INTEGER" property="rentingCustomerCountLong" />
     </resultMap>
     <select id="queryStatisticsUnReceivableCount" resultMap="StatisticsUnReceivable" parameterType="map">
-        SELECT COUNT(DISTINCT (eu.id)) total_count,
+        select count(DISTINCT esod.order_seller_id) total_count ,
+        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) total_rented_customer_count_short,
+        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=2 AND esod.order_status=20 THEN esod.buyer_customer_id ELSE NULL END)) total_renting_customer_count_long,
+        COUNT(DISTINCT
+        (CASE WHEN esod.rent_length_type=1 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.buyer_customer_id ELSE NULL END )) total_un_receivable_customer_count_short ,
+        COUNT(DISTINCT
+        (CASE WHEN esod.rent_length_type=2 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.buyer_customer_id ELSE NULL END ))  total_un_receivable_customer_count_long,
         SUM(CASE WHEN esod.statement_expect_pay_time >=(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 1 MONTH ),'%Y-%m-%d 00:00:00'))
-        AND(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 0 MONTH ),'%Y-%m-%d 00:00:00'))>esod.statement_expect_pay_time
-        THEN esod.statement_detail_amount ELSE 0 END ) total_last_month_rent,
-        (SUM(CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=1 AND esod.statement_detail_status=0  THEN esod.statement_detail_amount ELSE 0 END ) +
-        SUM(CASE WHEN esod.order_item_type = 2 AND eom.rent_length_type=1 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END )) total_un_receivable_short,
-        (SUM(CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=2 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) +
-        SUM(CASE WHEN esod.order_item_type = 2 AND eom.rent_length_type=2 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END )) total_un_receivable_long,
-        SUM(CASE WHEN esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) total_un_receivable,
-        IFNULL(SUM(CASE WHEN esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END )/SUM(CASE WHEN esod.statement_expect_pay_time >=(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 1 MONTH ),'%Y-%m-%d 00:00:00'))
         AND (SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 0 MONTH ),'%Y-%m-%d 00:00:00'))>esod.statement_expect_pay_time
-        THEN esod.statement_detail_amount ELSE 0 END ),0)*100 total_un_receivable_percentage,
-        COUNT(DISTINCT ec.id) total_customer_count,
-        COUNT(DISTINCT (CASE WHEN eop.rent_length_type=1 AND (eo1.order_status=20 OR eo1.order_status=24 OR eo1.order_status=32) THEN eo1.buyer_customer_id
-        WHEN eom.rent_length_type=1 AND (eo2.order_status=20 OR eo2.order_status=24 OR eo2.order_status=32) THEN eo2.buyer_customer_id ELSE NULL END)) total_rented_customer_count_short,
-        COUNT(DISTINCT (CASE WHEN eop.rent_length_type=2 AND eo1.order_status=20 THEN eo1.buyer_customer_id
-        WHEN eom.rent_length_type=2 AND eo2.order_status=20 THEN eo2.buyer_customer_id ELSE NULL END)) total_renting_customer_count_long,
-        COUNT(DISTINCT
-        (CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=1 AND esod.statement_detail_status=0  THEN esod.customer_id
-        WHEN esod.order_item_type = 2 AND eom.rent_length_type=1 AND esod.statement_detail_status=0  THEN esod.customer_id
-        ELSE NULL END )) total_un_receivable_customer_count_short ,
-        COUNT(DISTINCT
-        (CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=2 AND esod.statement_detail_status=0  THEN esod.customer_id
-        WHEN esod.order_item_type = 2 AND eom.rent_length_type=2 AND esod.statement_detail_status=0  THEN esod.customer_id
-        ELSE NULL END )) total_un_receivable_customer_count_long
+        THEN esod.statement_detail_amount ELSE 0 END ) total_last_month_rent,
+        SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.statement_detail_amount ELSE 0 END ) total_un_receivable_short,
+        SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.statement_detail_amount ELSE 0 END ) total_un_receivable_long,
+        SUM(CASE WHEN esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.statement_detail_amount ELSE 0 END ) total_un_receivable
+
+        from (SELECT esod.id,MIN(esod.statement_detail_amount) statement_detail_amount,MIN(esod.statement_expect_pay_time) statement_expect_pay_time,
+        (CASE WHEN eo1.order_sub_company_id IS NOT NULL THEN eo1.order_sub_company_id WHEN eo2.order_sub_company_id IS NOT NULL THEN eo2.order_sub_company_id END)
+        sub_company_id ,
+        (CASE WHEN eo1.order_seller_id IS NOT NULL THEN eo1.order_seller_id WHEN eo2.order_seller_id IS NOT NULL THEN eo2.order_seller_id END)
+        order_seller_id ,
+        (CASE WHEN eop.rent_length_type IS NOT NULL THEN eop.rent_length_type WHEN eom.rent_length_type IS NOT NULL THEN eom.rent_length_type END)
+        rent_length_type ,
+        (CASE WHEN eo1.order_status IS NOT NULL THEN eo1.order_status WHEN eo2.order_status IS NOT NULL THEN eo2.order_status END)
+        order_status ,
+        (CASE WHEN eo1.buyer_customer_id IS NOT NULL THEN eo1.buyer_customer_id WHEN eo2.buyer_customer_id IS NOT NULL THEN eo2.buyer_customer_id END)
+        buyer_customer_id ,
+        MIN(esod.statement_detail_status) statement_detail_status
         FROM erp_statement_order_detail esod
-        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
-        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
-        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
-        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
-        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
-        LEFT JOIN erp_customer ec ON eu.id=ec.owner AND ec.data_status=1
-        WHERE esod.data_status = 1 AND esod.order_type = 1 AND NOW()>esod.statement_expect_pay_time
+        LEFT JOIN  erp_order_product eop ON eop.id=esod.order_item_refer_id AND esod.order_item_type=1 AND eop.data_status=1
+        LEFT JOIN  erp_order_material eom ON eom.id=esod.order_item_refer_id AND esod.order_item_type=2 AND eom.data_status=1
+        LEFT JOIN erp_order eo1 ON eo1.id = eop.order_id AND eo1.data_status=1
+        LEFT JOIN erp_order eo2 ON eo2.id = eom.order_id AND eo2.data_status=1
+        WHERE esod.order_type=1 AND esod.data_status=1
         <if test="maps.statisticsUnReceivablePageParam.subCompanyId!=null">
             AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.statisticsUnReceivablePageParam.subCompanyId}
         </if>
         <if test="maps.statisticsUnReceivablePageParam.salesmanName!=null&amp;&amp; maps.statisticsUnReceivablePageParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.statisticsUnReceivablePageParam.salesmanName}','%' )
         </if>
+        GROUP BY esod.id) esod
     </select>
     <select id="queryStatisticsUnReceivable" resultMap="StatisticsUnReceivableDetail" parameterType="map">
-        SELECT eu.id order_seller_id,MIN(eu.real_name) order_seller_name,
-        (SUM(CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=1 AND esod.statement_detail_status=0  THEN esod.statement_detail_amount ELSE 0 END ) +
-        SUM(CASE WHEN esod.order_item_type = 2 AND eom.rent_length_type=1 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END )) un_receivable_short,
-        (SUM(CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=2 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) +
-        SUM(CASE WHEN esod.order_item_type = 2 AND eom.rent_length_type=2 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END )) un_receivable_long,
-        SUM(CASE WHEN esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) un_receivable,
+        select esod.order_seller_id,
+        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
+        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
+        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=2 AND esod.order_status=20 THEN esod.buyer_customer_id ELSE NULL END)) renting_customer_count_long,
         COUNT(DISTINCT
-        (CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=1 AND esod.statement_detail_status=0  THEN esod.customer_id
-        WHEN esod.order_item_type = 2 AND eom.rent_length_type=1 AND esod.statement_detail_status=0  THEN esod.customer_id
-        ELSE NULL END )) un_receivable_customer_count_short ,
+        (CASE WHEN esod.rent_length_type=1 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.buyer_customer_id ELSE NULL END )) un_receivable_customer_count_short ,
         COUNT(DISTINCT
-        (CASE WHEN esod.order_item_type = 1 AND eop.rent_length_type=2 AND esod.statement_detail_status=0  THEN esod.customer_id
-        WHEN esod.order_item_type = 2 AND eom.rent_length_type=2 AND esod.statement_detail_status=0  THEN esod.customer_id
-        ELSE NULL END )) un_receivable_customer_count_long,
+        (CASE WHEN esod.rent_length_type=2 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.buyer_customer_id ELSE NULL END ))  un_receivable_customer_count_long,
         SUM(CASE WHEN esod.statement_expect_pay_time >=(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 1 MONTH ),'%Y-%m-%d 00:00:00'))
-        AND(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 0 MONTH ),'%Y-%m-%d 00:00:00'))>esod.statement_expect_pay_time
-        THEN esod.statement_detail_amount ELSE 0 END ) last_month_rent,
-        IFNULL(SUM(CASE WHEN esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END )/SUM(CASE WHEN esod.statement_expect_pay_time >=(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 1 MONTH ),'%Y-%m-%d 00:00:00'))
         AND (SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 0 MONTH ),'%Y-%m-%d 00:00:00'))>esod.statement_expect_pay_time
-        THEN esod.statement_detail_amount ELSE 0 END ),0)*100 un_receivable_percentage,
-        COUNT(DISTINCT ec.id) customer_count,
-        COUNT(DISTINCT (CASE WHEN eop.rent_length_type=1 AND (eo1.order_status=20 OR eo1.order_status=24 OR eo1.order_status=32) THEN eo1.buyer_customer_id
-        WHEN eom.rent_length_type=1 AND (eo2.order_status=20 OR eo2.order_status=24 OR eo2.order_status=32) THEN eo2.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
-        COUNT(DISTINCT (CASE WHEN eop.rent_length_type=2 AND eo1.order_status=20 THEN eo1.buyer_customer_id
-        WHEN eom.rent_length_type=2 AND eo2.order_status=20 THEN eo2.buyer_customer_id ELSE NULL END)) renting_customer_count_long,
-        MIN(esc.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,MIN(esod.create_time) esod_create_time
+        THEN esod.statement_detail_amount ELSE 0 END ) last_month_rent,
+        SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.statement_detail_amount ELSE 0 END ) un_receivable_short,
+        SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.statement_detail_amount ELSE 0 END ) un_receivable_long,
+        SUM(CASE WHEN esod.statement_detail_status=0 AND NOW()>esod.statement_expect_pay_time THEN esod.statement_detail_amount ELSE 0 END ) un_receivable
+        from (SELECT esod.id,MIN(esod.statement_detail_amount) statement_detail_amount,MIN(esod.statement_expect_pay_time) statement_expect_pay_time,
+        (CASE WHEN eo1.order_sub_company_id IS NOT NULL THEN eo1.order_sub_company_id WHEN eo2.order_sub_company_id IS NOT NULL THEN eo2.order_sub_company_id END)
+        sub_company_id ,
+        (CASE WHEN eo1.order_seller_id IS NOT NULL THEN eo1.order_seller_id WHEN eo2.order_seller_id IS NOT NULL THEN eo2.order_seller_id END)
+        order_seller_id ,
+        (CASE WHEN eop.rent_length_type IS NOT NULL THEN eop.rent_length_type WHEN eom.rent_length_type IS NOT NULL THEN eom.rent_length_type END)
+        rent_length_type ,
+        (CASE WHEN eo1.order_status IS NOT NULL THEN eo1.order_status WHEN eo2.order_status IS NOT NULL THEN eo2.order_status END)
+        order_status ,
+        (CASE WHEN eo1.buyer_customer_id IS NOT NULL THEN eo1.buyer_customer_id WHEN eo2.buyer_customer_id IS NOT NULL THEN eo2.buyer_customer_id END)
+        buyer_customer_id ,
+        MIN(esod.statement_detail_status) statement_detail_status
         FROM erp_statement_order_detail esod
-        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
-        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
-        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
-        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
-        LEFT JOIN erp_sub_company esc ON esc.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) AND esc.data_status = 1
-        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
-        LEFT JOIN erp_customer ec ON eu.id=ec.owner AND ec.data_status=1
-        WHERE  esod.data_status = 1 AND esod.order_type = 1 AND NOW()>esod.statement_expect_pay_time
+        LEFT JOIN  erp_order_product eop ON eop.id=esod.order_item_refer_id AND esod.order_item_type=1 AND eop.data_status=1
+        LEFT JOIN  erp_order_material eom ON eom.id=esod.order_item_refer_id AND esod.order_item_type=2 AND eom.data_status=1
+        LEFT JOIN erp_order eo1 ON eo1.id = eop.order_id AND eo1.data_status=1
+        LEFT JOIN erp_order eo2 ON eo2.id = eom.order_id AND eo2.data_status=1
+        WHERE esod.order_type=1 AND esod.data_status=1
         <if test="maps.statisticsUnReceivablePageParam.subCompanyId!=null">
             AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.statisticsUnReceivablePageParam.subCompanyId}
         </if>
         <if test="maps.statisticsUnReceivablePageParam.salesmanName!=null&amp;&amp; maps.statisticsUnReceivablePageParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.statisticsUnReceivablePageParam.salesmanName}','%' )
         </if>
-        GROUP BY eu.id
-        ORDER BY esod_create_time ASC
+        GROUP BY esod.id) esod
+        group by esod.order_seller_id
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
