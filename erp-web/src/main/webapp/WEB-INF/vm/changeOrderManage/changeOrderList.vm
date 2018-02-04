@@ -147,7 +147,7 @@
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{returnOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-returnorderno="{{returnOrderNo}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{changeOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{changeOrderNo}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -185,8 +185,7 @@
     management_load_script('${staticManagement}/js',
             'manage.change.order.handle.mixin.js',
             'manage.change.order.js',
-            'manage.order.picking.js',
-            'modal.submit.audit.js');
+            'manage.order.picking.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
