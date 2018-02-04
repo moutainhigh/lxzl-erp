@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS db_lxzl_payment_gateway DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS lxzl_erp DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE lxzl_erp;
 
 DROP TABLE if exists `erp_user`;
@@ -1824,8 +1824,12 @@ CREATE TABLE `erp_statement_order_correct` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `statement_correct_no` varchar(100) NOT NULL COMMENT '冲正单号',
   `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
-  `statement_order_detail_id` int(20) NOT NULL COMMENT '结算单项ID',
+  `statement_order_item_id` int(20) NOT NULL COMMENT '结算单订单项ID',
   `statement_correct_amount` decimal(15,2) NOT NULL COMMENT '冲正金额',
+  `statement_correct_rent_amount` decimal(15,2) NOT NULL COMMENT '冲正租金金额',
+  `statement_correct_deposit_amount` decimal(15,2) NOT NULL COMMENT '冲正押金金额',
+  `statement_correct_other_amount` decimal(15,2) NOT NULL COMMENT '冲正其他金额',
+  `statement_correct_overdue_amount` decimal(15,2) NOT NULL COMMENT '冲正逾期金额',
   `statement_correct_reason` varchar(500) NOT NULL COMMENT '冲正原因',
   `statement_order_correct_status` int(20) COMMENT '结算冲正单状态，0-待提交，1-审核中，2-冲正成功，3-冲正失败，4-取消冲正',
   `statement_correct_success_time` datetime DEFAULT NULL COMMENT '冲正成功时间',

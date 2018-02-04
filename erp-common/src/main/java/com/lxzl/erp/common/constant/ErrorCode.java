@@ -453,6 +453,7 @@ public class ErrorCode {
     public static final String CUSTOMER_NAME_NOT_NULL = "J500093";
     public static final String STATEMENT_ORDER_NOT_EXISTS = "J500094";
     public static final String STATEMENT_ORDER_NOT_NULL = "J500095";
+    public static final String STATEMENT_PAY_AMOUNT_ERROR = "J500096";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1048,6 +1049,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_NAME_NOT_NULL, "客户名称不能为空");
         MAP.put(STATEMENT_ORDER_NOT_EXISTS, "结算单不存在");
         MAP.put(STATEMENT_ORDER_NOT_NULL, "月份结算单不能为空");
+        MAP.put(STATEMENT_PAY_AMOUNT_ERROR, "结算单金额有误，请检查");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

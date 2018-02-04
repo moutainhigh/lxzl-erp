@@ -56,7 +56,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         //查看结算单详情,结算单是否存在,校验冲正金额是否超出结算金额
-        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect, statementOrderCorrect.getStatementOrderDetailId(), statementOrderCorrect.getStatementCorrectAmount());
+        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect, null, statementOrderCorrect.getStatementCorrectAmount());
         if (!verifyServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
             return verifyServiceResult;
         }
@@ -157,7 +157,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             return serviceResult;
         }
         //校验结算单和冲正金额是否超出结算金额
-        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect, statementOrderCorrect.getStatementOrderDetailId(), statementOrderCorrect.getStatementCorrectAmount());
+        ServiceResult<String, String> verifyServiceResult = verify(statementOrderCorrect, null, statementOrderCorrect.getStatementCorrectAmount());
         if (!ErrorCode.SUCCESS.equals(verifyServiceResult.getErrorCode())) {
             return verifyServiceResult;
         }
@@ -300,63 +300,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
             return false;
         }
-        StatementOrder statementOrder = ConverterUtil.convert(statementOrderDO, StatementOrder.class);
-        //校验结算单明细是否存在记录和是否是已结算状态
-        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderCorrectDO.getStatementOrderDetailId());
-        if (statementOrderDetailDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-            return false;
-        }
-        StatementOrderDetail statementOrderDetail = ConverterUtil.convert(statementOrderDetailDO, StatementOrderDetail.class);
+        // TODO 待办事项 成功后的逻辑
         if (verifyResult) {
-
-            //结算单明细未付款金额
-            Date now = new Date();
-            BigDecimal accountOrderDetailPaidAmount = BigDecimalUtil.sub(statementOrderDetail.getStatementDetailAmount(), statementOrderDetail.getStatementDetailPaidAmount());
-            BigDecimal accountOrderDetailLastAmount = BigDecimalUtil.sub(accountOrderDetailPaidAmount, statementOrderCorrectDO.getStatementCorrectAmount());
-            switch (accountOrderDetailLastAmount.compareTo(new BigDecimal(0))) {
-                case 1:
-                    statementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
-                    break;
-                case 0:
-                    statementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-                    break;
-                case -1:
-                    statementOrderDetail.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                    statementOrderDetailMapper.update(ConverterUtil.convert(statementOrderDetail, StatementOrderDetailDO.class));
-                    statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
-                    statementOrderCorrectMapper.update(statementOrderCorrectDO);
-                    return false;
-
-            }
-            statementOrderDetail.setStatementDetailCorrectAmount(BigDecimalUtil.add(statementOrderDetail.getStatementDetailCorrectAmount(), statementOrderCorrectDO.getStatementCorrectAmount()));
-            statementOrderDetail.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetail.getStatementDetailAmount(), statementOrderCorrectDO.getStatementCorrectAmount()));
-            statementOrderDetailMapper.update(ConverterUtil.convert(statementOrderDetail, StatementOrderDetailDO.class));
-
-            //结算单未付款金额
-            BigDecimal accountOrderPaidAmount = BigDecimalUtil.sub(statementOrder.getStatementAmount(), statementOrder.getStatementPaidAmount());
-            BigDecimal accountOrderLastAmount = BigDecimalUtil.sub(accountOrderPaidAmount, statementOrderCorrectDO.getStatementCorrectAmount());
-            switch (accountOrderLastAmount.compareTo(new BigDecimal(0))) {
-                case 1:
-                    statementOrder.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
-                    break;
-                case 0:
-                    statementOrder.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-                    break;
-                case -1:
-                    statementOrder.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-                    statementOrderMapper.update(ConverterUtil.convert(statementOrder, StatementOrderDO.class));
-                    statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
-                    statementOrderCorrectMapper.update(statementOrderCorrectDO);
-                    return false;
-            }
-            statementOrder.setStatementCorrectAmount(BigDecimalUtil.add(statementOrder.getStatementCorrectAmount(), statementOrderCorrectDO.getStatementCorrectAmount()));
-            statementOrder.setStatementAmount(BigDecimalUtil.sub(statementOrder.getStatementAmount(), statementOrderCorrectDO.getStatementCorrectAmount()));
-            statementOrderMapper.update(ConverterUtil.convert(statementOrder, StatementOrderDO.class));
-
-            //结算冲正单跟新状态
-            statementOrderCorrectDO.setStatementCorrectSuccessTime(now);
-            statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_SUCCEES);
-            statementOrderCorrectMapper.update(statementOrderCorrectDO);
             return true;
         } else {
             statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.VERIFY_STATUS_PENDING);
@@ -376,9 +321,11 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     private ServiceResult<String, String> verify(StatementOrderCorrect statementOrderCorrect, Integer statementOrderDetailId, BigDecimal statementCorrectAmount) {
+
+        // TODO 待办事项，重新验证
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //查看结算单明细是否存在
-        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetailId);
+        /*StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetailId);
         if (statementOrderDetailDO == null|| StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS);
             return serviceResult;
@@ -398,7 +345,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         if (statementCorrectAmount.compareTo(statementPaidAmount) > 0) {
             serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
             return serviceResult;
-        }
+        }*/
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

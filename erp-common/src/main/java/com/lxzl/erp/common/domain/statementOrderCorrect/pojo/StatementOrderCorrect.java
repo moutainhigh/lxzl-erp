@@ -26,8 +26,13 @@ public class StatementOrderCorrect extends BaseCommitParam {
 	@Min(value = 1, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	@NotNull(message = ErrorCode.STATEMENT_ORDER_CORRECT_AMOUNT_NOT_NULL , groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectAmount;   //冲正金额
+	private BigDecimal statementCorrectRentAmount;
+	private BigDecimal statementCorrectRentDepositAmount;
+	private BigDecimal statementCorrectDepositAmount;
+	private BigDecimal statementCorrectOtherAmount;
+	private BigDecimal statementCorrectOverdueAmount;
 	@NotNull(message = ErrorCode.STATEMENT_ORDER_DETAIL_ID_NOT_NULL , groups = {AddGroup.class, UpdateGroup.class})
-	private Integer statementOrderDetailId;   //结算单项ID
+	private Integer statementOrderItemId;   //结算单订单项ID
 	private String statementCorrectReason;   //冲正原因
 	private Integer statementOrderCorrectStatus;   //结算冲正单状态，0-待提交，1-审核中，2-审核通过（待冲正），3-冲正成功，4-冲正失败，5-取消冲正
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -38,8 +43,6 @@ public class StatementOrderCorrect extends BaseCommitParam {
 	private String updateUser;   //修改人
 	private Date statementCorrectSuccessTime;   //冲正成功时间
 	private String statementCorrectFailReason;   //冲正失败原因（建议格式为 错误代码:错误描述）
-
-	private StatementOrderDetail statementOrderDetail;   //结算单详情
 
 	public Integer getStatementOrderCorrectId(){
 		return statementOrderCorrectId;
@@ -153,19 +156,51 @@ public class StatementOrderCorrect extends BaseCommitParam {
 		this.statementCorrectFailReason = statementCorrectFailReason;
 	}
 
-	public Integer getStatementOrderDetailId() {
-		return statementOrderDetailId;
+	public BigDecimal getStatementCorrectRentAmount() {
+		return statementCorrectRentAmount;
 	}
 
-	public void setStatementOrderDetailId(Integer statementOrderDetailId) {
-		this.statementOrderDetailId = statementOrderDetailId;
+	public void setStatementCorrectRentAmount(BigDecimal statementCorrectRentAmount) {
+		this.statementCorrectRentAmount = statementCorrectRentAmount;
 	}
 
-	public StatementOrderDetail getStatementOrderDetail() {
-		return statementOrderDetail;
+	public BigDecimal getStatementCorrectDepositAmount() {
+		return statementCorrectDepositAmount;
 	}
 
-	public void setStatementOrderDetail(StatementOrderDetail statementOrderDetail) {
-		this.statementOrderDetail = statementOrderDetail;
+	public void setStatementCorrectDepositAmount(BigDecimal statementCorrectDepositAmount) {
+		this.statementCorrectDepositAmount = statementCorrectDepositAmount;
+	}
+
+	public BigDecimal getStatementCorrectOtherAmount() {
+		return statementCorrectOtherAmount;
+	}
+
+	public void setStatementCorrectOtherAmount(BigDecimal statementCorrectOtherAmount) {
+		this.statementCorrectOtherAmount = statementCorrectOtherAmount;
+	}
+
+	public BigDecimal getStatementCorrectOverdueAmount() {
+		return statementCorrectOverdueAmount;
+	}
+
+	public void setStatementCorrectOverdueAmount(BigDecimal statementCorrectOverdueAmount) {
+		this.statementCorrectOverdueAmount = statementCorrectOverdueAmount;
+	}
+
+	public Integer getStatementOrderItemId() {
+		return statementOrderItemId;
+	}
+
+	public void setStatementOrderItemId(Integer statementOrderItemId) {
+		this.statementOrderItemId = statementOrderItemId;
+	}
+
+	public BigDecimal getStatementCorrectRentDepositAmount() {
+		return statementCorrectRentDepositAmount;
+	}
+
+	public void setStatementCorrectRentDepositAmount(BigDecimal statementCorrectRentDepositAmount) {
+		this.statementCorrectRentDepositAmount = statementCorrectRentDepositAmount;
 	}
 }
