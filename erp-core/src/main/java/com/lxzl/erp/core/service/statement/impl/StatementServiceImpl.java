@@ -357,12 +357,6 @@ public class StatementServiceImpl implements StatementService {
         BigDecimal payOverdueAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDO.getStatementOverduePaidAmount());
         BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(payRentAmount, payRentDepositAmount), payDepositAmount), payOtherAmount), payOverdueAmount);
 
-        // 备用
-        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementPaidAmount()) != 0) {
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
-            return result;
-        }
-
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderId(statementOrderDO.getId());
         if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
             for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
@@ -389,6 +383,12 @@ public class StatementServiceImpl implements StatementService {
                 && BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) <= 0
                 && BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) <= 0
                 && BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) <= 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+
+        // 冲正后的结算单金额，必须要与现有的结算单金额相同
+        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementPaidAmount()) != 0) {
             result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
             return result;
         }
@@ -523,12 +523,6 @@ public class StatementServiceImpl implements StatementService {
         BigDecimal payOverdueAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDO.getStatementOverduePaidAmount());
         BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(payRentAmount, payRentDepositAmount), payDepositAmount), payOtherAmount), payOverdueAmount);
 
-        // 备用
-        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementPaidAmount()) != 0) {
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
-            return result;
-        }
-
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderId(statementOrderDO.getId());
         if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
             for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
@@ -555,6 +549,12 @@ public class StatementServiceImpl implements StatementService {
                 && BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) <= 0
                 && BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) <= 0
                 && BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) <= 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+
+        // 冲正后的结算单金额，必须要与现有的结算单金额相同
+        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementPaidAmount()) != 0) {
             result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
             return result;
         }
