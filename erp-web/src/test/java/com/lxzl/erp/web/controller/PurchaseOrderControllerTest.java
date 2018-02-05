@@ -704,6 +704,12 @@ public class PurchaseOrderControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveMaterialPrice", updatePurchaseReceiveMaterialPriceParam);
     }
     @Test
+    public void updatePurchaseReceiveMaterialPriceJson() throws Exception {
+        UpdatePurchaseReceiveMaterialPriceParam updatePurchaseReceiveMaterialPriceParam =
+                JSON.parseObject("{\"purchaseReceiveOrderMaterialId\":448,\"purchaseReceiveOrderMaterialPriceList\":[{\"count\":\"998\",\"price\":\"20\"},{\"count\":\"2\",\"price\":\"5\"}]}",UpdatePurchaseReceiveMaterialPriceParam.class);
+        TestResult testResult = getJsonTestResult("/purchaseOrder/updatePurchaseReceiveMaterialPrice", updatePurchaseReceiveMaterialPriceParam);
+    }
+    @Test
     public void updatePurchaseReceiveEquipmentPrice() throws Exception {
         UpdatePurchaseReceiveEquipmentPriceParam updatePurchaseReceiveEquipmentPriceParam = new UpdatePurchaseReceiveEquipmentPriceParam();
         updatePurchaseReceiveEquipmentPriceParam.setPurchaseReceiveOrderNo("LXPR-1000-20180127-0204");
