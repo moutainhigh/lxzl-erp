@@ -233,7 +233,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, ProductEquipment> doReturnEquipment(DoReturnEquipmentParam doReturnEquipmentParam) {
         ServiceResult<String, ProductEquipment> serviceResult = new ServiceResult<>();
         //校验退还单是否存在
@@ -294,16 +294,18 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         productEquipmentMapper.update(productEquipmentDO);
         //修改设备散料状态，次新
         bulkMaterialMapper.returnEquipment(productEquipmentDO.getEquipmentNo());
-        //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
-        if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId()).getRentType())) {
+        //由于按天租赁无需授信额度，需交押金，当订单按月赁时，修改客户已用授信额度
+        OrderProductDO orderProductDO =  orderProductDOMap.get(orderProductEquipmentDO.getOrderProductId());
+//        if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
             CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
-            BigDecimal amount = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), productEquipmentDO.getEquipmentPrice());
+            BigDecimal unitAmount = BigDecimalUtil.div(orderProductDO.getCreditDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),2);
+            BigDecimal amount = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), unitAmount);
             if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)<0){
                 amount = BigDecimal.ZERO;
             }
             customerRiskManagementDO.setCreditAmountUsed(amount);
             customerRiskManagementMapper.update(customerRiskManagementDO);
-        }
+//        }
         //修改订单,全部归还状态，最后一件归还时间
         if (rentEquipmentCount == 1 && rentBulkMaterialCount == 0) {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
@@ -469,10 +471,12 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
                 return serviceResult;
             }
 
-            //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
-            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId()).getRentType())) {
-                customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), bulkMaterialDO.getBulkMaterialPrice()));
-            }
+            //由于按天租赁无需授信额度，需交押金，所以当订单按月租赁时，修改客户已用授信额度
+            OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId());
+            BigDecimal unitAmount = BigDecimalUtil.div(orderMaterialDO.getCreditDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),2);
+//            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+                customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(),unitAmount));
+//            }
             ReturnOrderMaterialDO returnOrderMaterialDO = null;
             //修改退还物料项表,实际退还物料数量,修改时间，修改人
             //如果待保存的退还物料项列表里有这个物料了，说明这个物料在新建退还单中没有，而且目前已经入过至少退一个了，那么就累加实际退还字段即可
