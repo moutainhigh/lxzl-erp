@@ -4,11 +4,15 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageContent;
+import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
 import com.lxzl.erp.common.domain.supplier.SupplierQueryParam;
 import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.DingdingPropertiesUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.supplier.SupplierService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
@@ -49,6 +53,12 @@ public class SupplierServiceImpl implements SupplierService {
     @Autowired
     private AreaCityMapper areaCityMapper;
 
+    @Autowired
+    private DingdingService dingdingService;
+
+    DingdingSendTextMessageRequest request = new DingdingSendTextMessageRequest();
+    DingdingSendTextMessageContent content = new DingdingSendTextMessageContent();
+
     @Override
     public ServiceResult<String, Page<Supplier>> getSupplier(SupplierQueryParam supplierQueryParam) {
         ServiceResult<String, Page<Supplier>> result = new ServiceResult<>();
@@ -81,6 +91,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public ServiceResult<String, String> addSupplier(Supplier supplier) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         String verifyCode = verifySupplier(supplier);
@@ -97,6 +108,10 @@ public class SupplierServiceImpl implements SupplierService {
         String checkName = supplier.getSupplierName().trim();
         SupplierDO nameSupplierDO = supplierMapper.findByName(checkName);
         if (nameSupplierDO != null) {
+//            request.setMsgtype("text");
+//            content.setContent("SupplierServiceImpl addSupplier is ERROR : " + ErrorCode.getMessage(ErrorCode.SUPPLIER_IS_EXISTS));
+//            request.setText(content);
+//            String response = dingdingService.sendUserGroupMessage(DingdingPropertiesUtil.DINGDING_USER_GROUP_DEPARTMENT_DEVELOPER, request);
             result.setErrorCode(ErrorCode.SUPPLIER_IS_EXISTS);
             return result;
         }
