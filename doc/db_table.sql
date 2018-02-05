@@ -1827,6 +1827,7 @@ CREATE TABLE `erp_statement_order_correct` (
   `statement_order_item_id` int(20) NOT NULL COMMENT '结算单订单项ID',
   `statement_correct_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正金额',
   `statement_correct_rent_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正租金金额',
+  `statement_correct_rent_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正租金押金金额',
   `statement_correct_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正押金金额',
   `statement_correct_other_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正其他金额',
   `statement_correct_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正逾期金额',
