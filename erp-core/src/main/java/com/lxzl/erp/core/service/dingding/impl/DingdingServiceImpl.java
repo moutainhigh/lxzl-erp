@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 /**
  * 描述: ${DESCRIPTION}
  *
- * @author gaochao
- * @date 2017-10-25 20:10
+ * @author kai
+ * @date 2018-02-05 15:00
  */
 @Service("dingdingService")
 public class DingdingServiceImpl implements DingdingService {
@@ -45,7 +45,6 @@ public class DingdingServiceImpl implements DingdingService {
         } catch (Exception e) {
             logger.error("dingding send message error,{}", e);
         }
-
         return respContent;
     }
 }
