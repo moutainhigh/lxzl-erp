@@ -62,7 +62,9 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         Date now = new Date();
         StatementOrderCorrectDO statementOrderCorrectDO = ConverterUtil.convert(statementOrderCorrect, StatementOrderCorrectDO.class);
         statementOrderCorrectDO.setStatementCorrectNo(generateNoSupport.generateStatementOrderCorrect(statementOrderCorrectDO.getStatementOrderId()));
-        statementOrderCorrectDO.setStatementCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderCorrectDO.getStatementCorrectRentAmount(), statementOrderCorrectDO.getStatementCorrectRentDepositAmount()), statementOrderCorrectDO.getStatementCorrectDepositAmount()), statementOrderCorrectDO.getStatementCorrectOtherAmount()), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
+        statementOrderCorrectDO.setStatementCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderCorrectDO.getStatementCorrectRentAmount(),
+                statementOrderCorrectDO.getStatementCorrectRentDepositAmount()), statementOrderCorrectDO.getStatementCorrectDepositAmount()),
+                statementOrderCorrectDO.getStatementCorrectOtherAmount()), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
         statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.VERIFY_STATUS_PENDING);
         statementOrderCorrectDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         statementOrderCorrectDO.setCreateTime(now);

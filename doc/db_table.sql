@@ -1827,6 +1827,7 @@ CREATE TABLE `erp_statement_order_correct` (
   `statement_order_item_id` int(20) NOT NULL COMMENT '结算单订单项ID',
   `statement_correct_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正金额',
   `statement_correct_rent_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正租金金额',
+  `statement_correct_rent_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正租金押金金额',
   `statement_correct_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正押金金额',
   `statement_correct_other_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正其他金额',
   `statement_correct_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正逾期金额',
@@ -2748,6 +2749,17 @@ CREATE TABLE `erp_k3_mapping_sub_company` (
   `sub_company_name` varchar(64) COMMENT '分公司名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3分公司映射';
+
+DROP TABLE if exists `erp_k3_mapping_department`;
+CREATE TABLE `erp_k3_mapping_department` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_department_id` int(20) COMMENT 'erp的部门ID',
+  `k3_department_code` varchar(64) COMMENT 'K3部门编码',
+  `department_name` varchar(200) COMMENT '部门名称',
+  `sub_company_id` int(20) COMMENT 'erp的分公司ID',
+  `sub_company_name` varchar(200) COMMENT '分公司名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3部门映射';
 
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (

@@ -1,16 +1,20 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
+import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.order.pojo.OrderTimeAxis;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSeorderEntry;
@@ -21,18 +25,27 @@ import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderTimeAxisMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
+import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO;
+import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +53,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 
 @Service
@@ -92,32 +106,57 @@ public class K3OrderConverter implements ConvertK3DataService {
             fetchStyleNumber = "FJH02";
         }
         formSEOrder.setFetchStyleNumber(fetchStyleNumber);// 交货方式  FJH01 客户自提 FJH02 送货上门 FJH03 物流发货
-        //todo 部门使用制单人部门还是业务员部门，一个人有两个部门的时候，该字段怎么填
-        formSEOrder.setDeptNumber("01.06");// 部门代码
-        formSEOrder.setDeptName("深圳-租赁业务部");// 部门名称
-        //todo 业务代码是什么
-        formSEOrder.setEmpNumber("00.0001");// 业务代码
+        List<RoleDO> roleDOList = roleMapper.findByUserId(erpOrder.getOrderSellerId());
+        for(int i = 0 ; i < roleDOList.size() ; i++){
+            RoleDO roleDO = roleDOList.get(i);
+            K3MappingDepartmentDO k3MappingDepartmentDO = k3MappingDepartmentMapper.findByErpId(roleDO.getDepartmentId());
+            if(i==0){
+                if(k3MappingDepartmentDO!=null){
+                    formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
+                    formSEOrder.setDeptName(k3MappingDepartmentDO.getDepartmentName());
+                }
+            }else{
+                DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
+                if(DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())){
+                    formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
+                    formSEOrder.setDeptName(k3MappingDepartmentDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
+                }
+            }
+        }
+
+//        formSEOrder.setDeptNumber("01.06");// 部门代码
+//        formSEOrder.setDeptName("深圳-租赁业务部");// 部门名称
+        Integer subCompanyId = userSupport.getCompanyIdByUser(erpOrder.getOrderSellerId());
+        SubCompanyDO sellerSubCompanyDO = subCompanyMapper.findById(subCompanyId);
+        String empNumber = k3Support.getK3CityCode(sellerSubCompanyDO.getSubCompanyCode())+"."+erpOrder.getOrderSellerId();
+        formSEOrder.setEmpNumber(empNumber);// 业务员代码
 
         formSEOrder.setEmpName(erpOrder.getOrderSellerName());// 业务员名称
         formSEOrder.setBillerName(erpOrder.getCreateUserRealName());// 制单人
-        //todo 我们取不到主管
-        formSEOrder.setManagerNumber("00.0001");//  主管代码
-        formSEOrder.setManagerName("胡祚雄");//  主管名称
-        ServiceResult<String ,WorkflowLink> workflowLinkServiceResult = workflowService.getWorkflowLink(WorkflowType.WORKFLOW_TYPE_ORDER_INFO,erpOrder.getOrderNo());
-        if(ErrorCode.SUCCESS.equals(workflowLinkServiceResult.getErrorCode())){
-            WorkflowLink workflowLink = workflowLinkServiceResult.getResult();
-            Calendar checkDate= Calendar.getInstance();
-            checkDate.setTime(workflowLink.getUpdateTime());
-            //todo 不用审核的话是否需要审核日期及审核人
-            formSEOrder.setCheckDate(new GregorianCalendar(2018,1,28));// 审核日期
-            formSEOrder.setCheckerName(workflowLink.getCurrentVerifyUserName());// 审核人
-        }else{
+        //主管用业务员代替
+        formSEOrder.setManagerNumber(empNumber);//  主管代码
+        formSEOrder.setManagerName(erpOrder.getOrderSellerName());//  主管名称
 
+        //取待发货状态的订单的时间轴节点
+        List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisMapper.findByOrderId(erpOrder.getOrderId());
+        if(CollectionUtil.isNotEmpty(orderTimeAxisDOList)){
+            for(OrderTimeAxisDO orderTimeAxisDO : orderTimeAxisDOList){
+                if(OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderTimeAxisDO.getOrderStatus())){
+                    Calendar checkDate = Calendar.getInstance();
+                    checkDate.setTime(orderTimeAxisDO.getCreateTime());
+                    formSEOrder.setCheckDate(checkDate);// 审核日期
+                    User user = CommonCache.userMap.get(Integer.parseInt(String.valueOf(orderTimeAxisDO.getCreateUser())));
+                    formSEOrder.setCheckerName(user.getRealName());// 审核人
+                }
+            }
         }
 
+
         formSEOrder.setExplanation(erpOrder.getRemark());// 摘要
-        //todo 不知道怎么给,我们之分长租和短租
+        //todo 我们长租和短租是单项的属性
+        String orderTypeNumber = "";
         formSEOrder.setOrderTypeNumber("L");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
+
         formSEOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
         formSEOrder.setOrderFromNumber("XX");// 订单来源 XS	线上 XX 线下
         formSEOrder.setDeliveryName(erpOrder.getOrderConsignInfo().getConsigneeName());// 提货人
@@ -149,9 +188,11 @@ public class K3OrderConverter implements ConvertK3DataService {
         formSEOrder.setCompanyNumber(k3MappingSubCompanyDO.getK3SubCompanyCode());//
 
         formSEOrder.setAreaPS("租赁");// 销售/租赁
-        //todo 对账部门代码及对账部门的填写
-        formSEOrder.setAcctDeptNumber("01.06");// 对账部门代码
-        formSEOrder.setAcctDeptName("深圳-租赁业务部");// 对账部门
+        //对账部门代码填写订单部门
+        formSEOrder.setAcctDeptNumber(formSEOrder.getDeptNumber());// 对账部门代码
+        formSEOrder.setAcctDeptName(formSEOrder.getDeptName());// 对账部门
+//        formSEOrder.setAcctDeptNumber("01.06");// 对账部门代码
+//        formSEOrder.setAcctDeptName("深圳-租赁业务部");// 对账部门
         if(erpOrder.getHighTaxRate()!=null&&erpOrder.getHighTaxRate()>0){
             formSEOrder.setInvoiceType("01");// 01:专票/02:普票/03:收据
         }else{
@@ -191,12 +232,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                         formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
                     }
                     formSeorderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
-                    //todo 我们税率是两种可以并存的，这样给数据会有偏差
-                    if(erpOrder.getHighTaxRate()!=null&&erpOrder.getHighTaxRate()>0){
-                        formSeorderEntry.setAddRate(new BigDecimal(17) );//  税率
-                    }else{
-                        formSeorderEntry.setAddRate(new BigDecimal(6) );//  税率
-                    }
+                    //计算平均税率
+                    BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
+                    formSeorderEntry.setAddRate(rate);//  税率
                     formSeorderEntry.setAmount(orderProduct.getProductAmount());//  含税租赁金额
 
                     formSeorderEntry.setDate(startTime);//  租赁开始日期
@@ -205,7 +243,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setSFMonthCount(new BigDecimal(orderProduct.getPaymentCycle()));//  首付月数
                     formSeorderEntry.setPayMonthCount(new BigDecimal(orderProduct.getPaymentCycle()) );// 付款月数
                     formSeorderEntry.setSFAmount(orderProduct.getFirstNeedPayAmount());//  首付租金
-                    //todo 暂时与设备配置名称用一个值
+                    //暂时与设备配置名称用一个值
                     formSeorderEntry.setEQConfigNumber(orderProduct.getProductSkuName());//  设备配置代码
                     formSeorderEntry.setEQConfigName(orderProduct.getProductSkuName());//  设备配置名称
                     formSeorderEntry.setStartDate(startTime);//  起算日期
@@ -251,12 +289,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                         formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderMaterial.getRentTimeLength()));//  租赁月数
                     }
                     formSeorderEntry.setPrice(orderMaterial.getMaterialUnitAmount());//  含税单价
-                    //todo 我们税率是两种可以并存的，这样给数据会有偏差
-                    if(erpOrder.getHighTaxRate()!=null&&erpOrder.getHighTaxRate()>0){
-                        formSeorderEntry.setAddRate(new BigDecimal(17) );//  税率
-                    }else{
-                        formSeorderEntry.setAddRate(new BigDecimal(6) );//  税率
-                    }
+                    //计算平均税率
+                    BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
+
                     formSeorderEntry.setAmount(orderMaterial.getMaterialAmount());//  含税租赁金额
                     formSeorderEntry.setDate(startTime);//  租赁开始日期
                     formSeorderEntry.setEndDate(endTime);//  租赁截止日期
@@ -270,7 +305,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setYJAmount(BigDecimalUtil.add(orderMaterial.getDepositAmount(),orderMaterial.getRentDepositAmount()));//  押金金额
                     //todo 单项的首付和首付合计有什么区别
                     formSeorderEntry.setPayAmountTotal(new BigDecimal(0));// 首付合计
-
+                    formSeorderEntry.setAddRate(rate);//  税率
                     formSeorderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值
                     formSeorderEntry.setEQAmount(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()),materialDO.getMaterialPrice()));//  设备价值
                     formSeorderEntry.setSupplyNumber("");//  同行供应商
@@ -300,8 +335,6 @@ public class K3OrderConverter implements ConvertK3DataService {
     @Autowired
     private K3Support k3Support;
     @Autowired
-    private WorkflowService workflowService;
-    @Autowired
     private SubCompanyMapper subCompanyMapper;
     @Autowired
     private K3MappingSubCompanyMapper k3MappingSubCompanyMapper;
@@ -325,4 +358,12 @@ public class K3OrderConverter implements ConvertK3DataService {
     private ProductMapper productMapper;
     @Autowired
     private ProductSkuMapper productSkuMapper;
+    @Autowired
+    private DepartmentMapper departmentMapper;
+    @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
+    private K3MappingDepartmentMapper k3MappingDepartmentMapper;
+    @Autowired
+    private OrderTimeAxisMapper orderTimeAxisMapper;
 }

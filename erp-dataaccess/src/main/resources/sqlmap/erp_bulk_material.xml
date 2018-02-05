@@ -108,7 +108,7 @@
 				and ebm.data_status = 1
 			</if>
 		</where>
-		order by  ebm.create_time desc
+		order by ebm.id desc
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 	<select id="listByPurchaseReceiveOrderMaterialIdCount" resultType="java.lang.Integer" parameterType="map">
@@ -594,5 +594,12 @@
 		) ebm2
 		ON ebm1.id = ebm2.id SET ebm1.bulk_material_status = #{maps.bulkMaterialStatus,jdbcType=INTEGER} , ebm1.update_time = #{maps.updateTime,jdbcType=TIMESTAMP} , ebm1.update_user = #{maps.updateUser,jdbcType=VARCHAR}
 	</update>
-
+	<update id="updateBatchPurchasePrice" parameterType="map">
+		UPDATE erp_bulk_material ebm
+		SET ebm.purchase_price = #{purchasePrice} , ebm.update_time = #{updateTime} , ebm.update_user = #{updateUser}
+		where ebm.id in
+		<foreach collection="idList" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</update>
 </mapper>

@@ -177,7 +177,7 @@ public class PaymentServiceImpl implements PaymentService {
         ServiceResult<String, String> result = new ServiceResult<>();
         WeixinPayParam param = new WeixinPayParam();
         param.setBusinessCustomerNo(customerNo);
-        param.setAmount(new BigDecimal(0.01));
+        param.setAmount(payAmount);
         param.setPayName("凌雄租赁");
         param.setPayDescription("凌雄租赁商品");
         param.setOpenId(openId);
