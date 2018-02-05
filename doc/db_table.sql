@@ -2750,6 +2750,17 @@ CREATE TABLE `erp_k3_mapping_sub_company` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3分公司映射';
 
+DROP TABLE if exists `erp_k3_mapping_department`;
+CREATE TABLE `erp_k3_mapping_department` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_department_id` int(20) COMMENT 'erp的部门ID',
+  `k3_department_code` varchar(64) COMMENT 'K3部门编码',
+  `department_name` varchar(200) COMMENT '部门名称',
+  `sub_company_id` int(20) COMMENT 'erp的分公司ID',
+  `sub_company_name` varchar(200) COMMENT '分公司名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3部门映射';
+
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',

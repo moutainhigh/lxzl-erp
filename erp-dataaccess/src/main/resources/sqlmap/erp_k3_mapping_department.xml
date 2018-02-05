@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingDepartmentMapper">
+
+	<resultMap id="K3MappingDepartmentDO" type="com.lxzl.erp.dataaccess.domain.k3.K3MappingDepartmentDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="erp_department_id" jdbcType="INTEGER" property="erpDepartmentId" />
+		<result column="k3_department_code" jdbcType="VARCHAR" property="k3DepartmentCode" />
+		<result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+	</resultMap>
+
+	<sql id="column_List">
+		ekmd.id,ekmd.erp_department_id,ekmd.k3_department_code,ekmd.department_name,ekmd.sub_company_id,ekmd.sub_company_name
+	</sql>
+
+	<select id="findById" resultMap="K3MappingDepartmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_department ekmd 
+		WHERE ekmd.id = #{id, jdbcType=INTEGER}
+	</select>
+
+	<select id="findByErpId" resultMap="K3MappingDepartmentDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_department ekmd
+		WHERE ekmd.erp_department_id = #{erpId, jdbcType=INTEGER}
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ekmd.id) FROM erp_k3_mapping_department ekmd 
+
+	</select>
+
+	<select id="listPage" resultMap="K3MappingDepartmentDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_department ekmd
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="erpDepartmentId != null">
+				erp_department_id = #{erpDepartmentId,jdbcType=INTEGER},
+			</if>
+			<if test="k3DepartmentCode != null">
+				k3_department_code = #{k3DepartmentCode,jdbcType=VARCHAR},
+			</if>
+			<if test="departmentName != null">
+				department_name = #{departmentName,jdbcType=VARCHAR},
+			</if>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="subCompanyName != null">
+				sub_company_name = #{subCompanyName,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingDepartmentDO">
+		INSERT INTO erp_k3_mapping_department <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingDepartmentDO">
+		UPDATE erp_k3_mapping_department <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
