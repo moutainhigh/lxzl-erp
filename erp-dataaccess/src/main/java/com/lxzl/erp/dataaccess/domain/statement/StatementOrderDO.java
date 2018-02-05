@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.statement;
 
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
@@ -14,6 +15,7 @@ public class StatementOrderDO extends BaseDO {
     private Integer customerId;
     private Date statementExpectPayTime;
     private BigDecimal statementAmount;
+    private BigDecimal statementPaidAmount;   //结算单已付金额
     private BigDecimal statementOtherAmount;   // 结算单其他金额
     private BigDecimal statementOtherPaidAmount;    // 结算单其他已支付金额
     private BigDecimal statementRentDepositAmount;
@@ -71,6 +73,15 @@ public class StatementOrderDO extends BaseDO {
 
     public void setStatementAmount(BigDecimal statementAmount) {
         this.statementAmount = statementAmount;
+    }
+
+
+    public BigDecimal getStatementPaidAmount() {
+        return statementPaidAmount == null || BigDecimal.ZERO.equals(statementPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementRentPaidAmount, statementDepositPaidAmount), statementRentDepositPaidAmount),statementOtherPaidAmount) : statementPaidAmount;
+    }
+
+    public void setStatementPaidAmount(BigDecimal statementPaidAmount) {
+        this.statementPaidAmount = statementPaidAmount;
     }
 
     public Integer getStatementStatus() {
