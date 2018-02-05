@@ -365,7 +365,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Material> doReturnMaterial(DoReturnMaterialParam doReturnMaterialParam) {
         ServiceResult<String, Material> serviceResult = new ServiceResult<>();
         //校验退还单是否存在
@@ -422,6 +422,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 
         //待更新的散料列表
         List<BulkMaterialDO> bulkMaterialDOListForUpdate = new ArrayList<>();
+        //待更新的客户风控信息
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
         //待更新的退还物料项列表
         Map<Integer, ReturnOrderMaterialDO> returnOrderMaterialDOMapForUpdate = new HashMap<>();
         //待保存的退还物料项列表
@@ -469,15 +471,7 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 
             //由于按天租赁无需授信额度，需交押金，所以当订单按月或按天租赁时，修改客户已用授信额度
             if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDOMap.get(orderMaterialBulkDO.getOrderMaterialId()).getRentType())) {
-                //待更新的客户风控信息
-                CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(returnOrderDO.getCustomerId());
-                BigDecimal amount = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), bulkMaterialDO.getBulkMaterialPrice());
-                if(BigDecimalUtil.compare(amount,BigDecimal.ZERO)<0){
-                    amount = BigDecimal.ZERO;
-                }
-                customerRiskManagementDO.setCreditAmountUsed(amount);
-                //更新客户风控信息
-                customerRiskManagementMapper.update(customerRiskManagementDO);
+                customerRiskManagementDO.setCreditAmountUsed(BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), bulkMaterialDO.getBulkMaterialPrice()));
             }
             ReturnOrderMaterialDO returnOrderMaterialDO = null;
             //修改退还物料项表,实际退还物料数量,修改时间，修改人
@@ -574,6 +568,8 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
         returnOrderDO.setUpdateTime(now);
         returnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         returnOrderMapper.update(returnOrderDO);
+        //更新客户风控信息
+        customerRiskManagementMapper.update(customerRiskManagementDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
