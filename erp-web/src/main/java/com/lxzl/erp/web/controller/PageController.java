@@ -714,6 +714,11 @@ public class PageController extends BaseController {
     public String chooseCustomerCanReturnMaterialModal() {
         return "/component/customer/chooseCanReturnMaterial";
     }
+    //选择客户可换物料
+    @RequestMapping("/customer-can-change-material-modal/choose")
+    public String chooseCustomerCanChangeMaterialModal() {
+        return "/component/customer/chooseCanChangeMaterial";
+    }
 
     //选择客户地址
     @RequestMapping("/customer-address-modal/choose")

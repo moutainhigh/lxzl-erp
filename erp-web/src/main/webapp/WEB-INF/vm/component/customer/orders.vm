@@ -165,7 +165,7 @@
                     </div>
                 </div>
             </div>
-            <div id="rechargeList">
+            <div id="rechargeList" class="tab-pane">
                 <div class="row section">
                     <div class="table-responsive">
                         <script type="text/html" id="rechargeListTpl">

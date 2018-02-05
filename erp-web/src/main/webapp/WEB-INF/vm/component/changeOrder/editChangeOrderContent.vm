@@ -20,8 +20,6 @@
                 <div class="form-group field">
                     <label class="col-md-3 control-label" style="visibility: hidden;">收货地址</label>
                     <div class="col-md-9">
-                    ##                        #parse("component/customer/address.vm")
-
                         <div class="panel" id="customerAddressPannel">
                             <div class="panel-heading">
                                 <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
@@ -56,67 +54,53 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">是否计费</label>
+                    <label class="col-md-3 control-label">换货原因</label>
                     <div class="col-md-9">
                         <div class="input-group" style="width: 100%;">
-                            <select class="form-control required" name="isCharging">
-                                <option value="">请选择</option>
-                                <option value="1">是</option>
-                                <option value="0">否</option>
-                            </select>
+                            <select class="form-control required" name="changeReasonType" id="changeReasonType"></select>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">退货方式</label>
+                    <label class="col-md-3 control-label">换货方式</label>
                     <div class="col-md-9">
                         <div class="input-group" style="width: 100%;">
-                            <select class="form-control required" name="returnMode">
-                                <option value="">请选择</option>
-                                <option value="1">上门取件</option>
-                                <option value="2">邮寄</option>
-                            </select>
+                            <select class="form-control required" name="changeMode"></select>
                         </div>
                     </div>
                 </div>
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">换货日期</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group date" id="changeTimePicker">
+##                            <input id="changeTime" name="changeTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择换货日期" />
+##                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+##                        </div>
+##                    </div>
+##                </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">退货日期</label>
-                    <div class="col-md-9">
-                        <div class="input-group date" id="returnTimePicker">
-                            <input id="returnTime" name="returnTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择退货日期" />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">退货原因</label>
+                    <label class="col-md-3 control-label">换货原因描述</label>
                     <div class="col-md-9">
                         <div class="input-group" style="width: 100%;">
-                            <select class="form-control required" name="returnReasonType" id="returnReasonType">
-                                <option value="">请选择</option>
-                            </select>
+                            <textarea class="form-control" id="changeReason" name="changeReason" rows="3"></textarea>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">业务员</label>
-                    <div class="col-md-9">
-                        <div class="input-group bringContainer">
-                            <input type="hidden" id="owner" name="owner" bringFiled="owner" class="form-control required" />
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
-                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>企业客户</span>
-                        </div>
-                    </div>
-                </div>
-
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">业务员</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group bringContainer">
+##                            <input type="hidden" id="owner" name="owner" bringFiled="owner" class="form-control required" />
+##                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
+##                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>企业客户</span>
+##                        </div>
+##                    </div>
+##                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
@@ -170,16 +154,15 @@
                             <th>类别</th>
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
-                            <th>可退数量</th>
-                            <th>退货数量</th>
+                            <th>可换数量</th>
+                            <th>换货数量</th>
                             <th class="text-right">操作</th>
-
                         </tr>
                         </thead>
                         <tbody>
                         {{#listData}}
                         <tr class="productRow skuRow" productRowKey="{{productId}}">
-                            <td>
+                            <td {{#destChangeProductInfo}}rowSpan="2" class="br-r"{{/destChangeProductInfo}}>
                                 <label class="option block mn">
                                     <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
                                     <span class="checkbox mn"></span>
@@ -189,20 +172,31 @@
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>
-                            <td>{{canProcessCount}}</td>
-                            <td>
+                            <td {{#destChangeProductInfo}}rowSpan="2" class="br-l"{{/destChangeProductInfo}}>{{canProcessCount}}</td>
+                            <td {{#destChangeProductInfo}}rowSpan="2"{{/destChangeProductInfo}}>
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                    <input type="text" name="returnProductSkuCount-{{skuId}}" value="{{returnProductSkuCount}}" class="returnProductSkuCount form-control required number pl10" placeholder="输入退货数量" />
+                                    <input type="text" name="changeProductSkuCount-{{skuId}}" value="{{changeProductSkuCount}}" class="changeProductSkuCount form-control required number pl10" placeholder="输入换货数量" />
                                 </label>
                             </td>
-                            <td class="text-right">
+                            <td {{#destChangeProductInfo}}rowSpan="2"{{/destChangeProductInfo}} class="text-right">
                                 <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs chooseDestChangeProduct" data-skuid="{{skuId}}" data-productid="{{productId}}">选择更换商品</a>
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                 </div>
                             </td>
                         </tr>
+                        {{#destChangeProductInfo}}
+                            {{#destChangeProductData}}
+                            <tr class="bg-light" productRowKey="{{productId}}">
+                                <td>{{productName}}</td>
+                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                <td>{{propertiesToStr}}</td>
+                            </tr>
+                            {{/destChangeProductData}}
+                        {{/destChangeProductInfo}}
                         {{/listData}}
                         {{^listData}}
                         <tr>
@@ -239,17 +233,12 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                        ##                            <th>编号</th>
                             <th>名称</th>
                             <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
-                        ##                            <th>租赁价格</th>
-                        ##                            <th>描述</th>
-                        ##                            <th>图片</th>
-                        ##                            <th>在租数量</th>
-                            <th>可退数量</th>
-                            <th>退货数量</th>
+                            <th>可换数量</th>
+                            <th>换货数量</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -257,38 +246,39 @@
                         {{#dataSource}}
                         {{#listData}}
                         <tr class="materialRow">
-                            <td>
+                            <td {{#destChangeMaterialInfo}}rowSpan="2" class="br-r"{{/destChangeMaterialInfo}}>
                                 <label class="option block mn">
                                     <input type="checkbox" name="checkItem" value="{{materialNo}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                        ##                            <td>{{materialNo}}</td>
                             <td>{{materialName}}</td>
                             <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                             <td>{{materialTypeStr}}</td>
-                            <td>{{materialPriceFormat}}</td>
-                        ##                            <td>
-                        ##                                <p>日租：￥{{dayRentPriceFormat}}</p>
-                        ##                                <p>月租：￥{{monthRentPriceFormat}}</p>
-                        ##                            </td>
-                        ##                            <td>{{materialDesc}}</td>
-                        ##                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                        ##                            <td>{{rentCount}}</td>
-                            <td>{{canProcessCount}}</td>
-                            <td>
+                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                            <td {{#destChangeMaterialInfo}}rowSpan="2" class="br-l"{{/destChangeMaterialInfo}}>{{canProcessCount}}</td>
+                            <td {{#destChangeMaterialInfo}}rowSpan="2"{{/destChangeMaterialInfo}}>
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                    <input type="text" name="returnMaterialCount-{{materialNo}}" value="{{returnMaterialCount}}" class="returnMaterialCount form-control required number pl10" placeholder="输入退货数量" />
+                                    <input type="text" name="changeMaterialCount-{{materialNo}}" value="{{changeMaterialCount}}" class="changeMaterialCount form-control required number pl10" placeholder="输入换货数量" />
                                 </label>
                             </td>
-                            <td class="text-right">
+                            <td {{#destChangeMaterialInfo}}rowSpan="2"{{/destChangeMaterialInfo}} class="text-right">
                                 <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs chooseDestChangeMaterial" data-materialno="{{materialNo}}">选择更换配件</a>
                                     <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
                                 </div>
                             </td>
                         </tr>
+                        {{#destChangeMaterialInfo}}
+                        <tr class="bg-light">
+                            <td>{{materialName}}</td>
+                            <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
+                            <td>{{materialTypeStr}}</td>
+                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                        </tr>
+                        {{/destChangeMaterialInfo}}
                         {{/listData}}
                         {{^listData}}
                         <tr>

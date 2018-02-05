@@ -117,8 +117,8 @@
                     </div>
                     <div class="panel-menu">
                         <div class="chart-legend">
-                            <a type="button" class="longRentByTimeBtn legend-item btn btn-sm btn-default mr10" data-timeDimensionType="1">当月</a>
-                            <a type="button" class="longRentByTimeBtn legend-item btn btn-sm btn-default btn-info " data-timeDimensionType="2">当年</a>
+                            <a type="button" class="longRentByTimeBtn legend-item btn btn-sm btn-default mr10" data-timeDimensionType="1">本月</a>
+                            <a type="button" class="longRentByTimeBtn legend-item btn btn-sm btn-default btn-info " data-timeDimensionType="2">本年</a>
                         </div>
                     </div>
                     <div class="panel-body pn">
@@ -132,8 +132,8 @@
                     </div>
                     <div class="panel-menu">
                         <div class="chart-legend">
-                            <a type="button" class="shortRentByTimeBtn legend-item btn btn-sm btn-default mr10" data-timeDimensionType="1">当月</a>
-                            <a type="button" class="shortRentByTimeBtn legend-item btn btn-sm btn-default btn-info " data-timeDimensionType="2">当年</a>
+                            <a type="button" class="shortRentByTimeBtn legend-item btn btn-sm btn-default mr10" data-timeDimensionType="1">本月</a>
+                            <a type="button" class="shortRentByTimeBtn legend-item btn btn-sm btn-default btn-info " data-timeDimensionType="2">本年</a>
                         </div>
                     </div>
                     <div class="panel-body pn">
@@ -150,6 +150,9 @@
 
     <!-- Charts JS -->
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/highcharts/highcharts.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/highcharts/highcharts-more.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/highcharts/modules/exporting.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/highcharts/highcharts-zh_CN.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/circles/circles.js"></script>
     <script type="text/javascript" src="${staticCommon}/vendor/plugins/raphael/raphael.js"></script>
 

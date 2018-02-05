@@ -35,7 +35,10 @@
                 'modal.choose.customer.js',
                 'modal.choose.customer.business.js',
                 'modal.choose.rent.product.js',
-                'modal.choose.can.return.material.js',
+                'modal.choose.product.js',
+//                'modal.choose.can.return.material.js',
+                'modal.choose.can.change.material.js',
+                'modal.choose.material.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'modal.input.address.js',
@@ -49,7 +52,7 @@
         //功能事件初始化
         Rental.init();
         Layout.init();
-//        AddChangeOrder.init();
+        AddChangeOrder.init();
 
         //UI效果初始化
         Core.init();
