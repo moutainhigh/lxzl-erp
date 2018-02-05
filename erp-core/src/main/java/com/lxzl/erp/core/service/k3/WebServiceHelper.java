@@ -34,8 +34,14 @@ public class WebServiceHelper {
                 return;
             }
             Object postData = convertK3DataService.getK3PostWebServiceData(postK3OperatorType,data);
+            if(postData == null){
+                logger.error("=============【 PostWebServiceHelper ERROR 】=============");
+                logger.error("【 ERROR INFO 】Have no record for postK3Type : " + postK3Type);
+                return;
+            }
             threadPoolTaskExecutor.execute(new K3WebServicePostRunner(postK3Type, postData, k3SendRecordMapper));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("=============【 PostWebServiceHelper ERROR 】=============");
             logger.error("【 ERROR INFO 】" + e);
         }

@@ -50,7 +50,7 @@ public class K3CustomerConverter implements ConvertK3DataService{
             k3MappingCustomerDO.setCustomerName(customer.getCustomerName());
             k3MappingCustomerDO.setErpCustomerCode(customer.getCustomerNo());
 
-            String customerNumber = cityCode + "."+customer.getCustomerNo();
+            String customerNumber = cityCode + "."+customer.getCustomerId();
             k3MappingCustomerDO.setK3CustomerCode(customerNumber);
             k3MappingCustomerMapper.save(k3MappingCustomerDO);
         }
