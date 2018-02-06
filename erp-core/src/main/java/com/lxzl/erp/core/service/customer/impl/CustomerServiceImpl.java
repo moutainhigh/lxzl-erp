@@ -1902,7 +1902,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             //判断联合开发员是否是总公司
-            boolean headUser = userSupport.isHeadUser(customer.getUnionUser());
+            booleanheadUser = userSupport.isHeadUser(customer.getUnionUser());
             if (headUser){
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY);
                 return serviceResult;

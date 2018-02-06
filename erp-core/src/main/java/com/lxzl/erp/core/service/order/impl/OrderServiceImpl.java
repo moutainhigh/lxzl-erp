@@ -2046,13 +2046,14 @@ public class OrderServiceImpl implements OrderService {
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
-                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)
-                        && BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0) {
-                    return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
-                } else {
+
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
                     BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount());
                     thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProduct.getDepositAmount());
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
+                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0){
+                        return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
                 }
             }
         }
@@ -2104,13 +2105,13 @@ public class OrderServiceImpl implements OrderService {
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
-                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)
-                        && BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0) {
-                    return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
-                } else {
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
                     BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount());
                     thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterial.getDepositAmount());
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
+                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0){
+                        return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
                 }
             }
         }
