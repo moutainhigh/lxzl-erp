@@ -16,6 +16,7 @@ public class ChangeOrderProductDO extends BaseDO {
     private String destChangeProductSkuSnapshot;
     private Integer dataStatus;
     private String remark;
+    private Integer isNew;
 
     public Integer getId() {
         return id;
@@ -105,4 +106,11 @@ public class ChangeOrderProductDO extends BaseDO {
         this.remark = remark;
     }
 
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
+    }
 }
