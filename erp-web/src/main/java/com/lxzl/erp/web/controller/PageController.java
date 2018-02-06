@@ -587,6 +587,15 @@ public class PageController extends BaseController {
     public String statementOrderDetail() {
         return "/statementOrderManage/statementOrderDetail";
     }
+    // 对账单
+    @RequestMapping("/monthly-statement-order/list")
+    public String monthStatementOrderList() {
+        return "/statementOrderManage/monthlyStatementOrderList";
+    }
+    @RequestMapping("/monthly-statement-order/detail")
+    public String monthStatementOrderDetail() {
+        return "/statementOrderManage/monthlyStatementOrderDetail";
+    }
 
     //统计
     @RequestMapping("/statistics/income-list")
