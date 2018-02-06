@@ -598,7 +598,17 @@ public class PageController extends BaseController {
         return "/siteMessageManage/siteMessageList";
     }
 
+    //站内信息收件箱
+    @RequestMapping("/site-message/inbox-list")
+    public String inboxList() {
+        return "/siteMessageManage/inboxList";
+    }
 
+    //站内信息发件箱
+    @RequestMapping("/site-message/outbox-list")
+    public String outboxList() {
+        return "/siteMessageManage/outboxList";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
