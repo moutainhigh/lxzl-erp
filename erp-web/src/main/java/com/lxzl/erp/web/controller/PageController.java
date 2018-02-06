@@ -587,6 +587,15 @@ public class PageController extends BaseController {
     public String statementOrderDetail() {
         return "/statementOrderManage/statementOrderDetail";
     }
+    // 对账单
+    @RequestMapping("/monthly-statement-order/list")
+    public String monthStatementOrderList() {
+        return "/statementOrderManage/monthlyStatementOrderList";
+    }
+    @RequestMapping("/monthly-statement-order/detail")
+    public String monthStatementOrderDetail() {
+        return "/statementOrderManage/monthlyStatementOrderDetail";
+    }
 
     //统计
     @RequestMapping("/statistics/income-list")
@@ -616,6 +625,17 @@ public class PageController extends BaseController {
         return "/siteMessageManage/siteMessageList";
     }
 
+    //站内信息收件箱
+    @RequestMapping("/site-message/inbox-list")
+    public String inboxList() {
+        return "/siteMessageManage/inboxList";
+    }
+    //站内信息发件箱
+    @RequestMapping("/site-message/outbox-list")
+    public String outboxList() {
+        return "/siteMessageManage/outboxList";
+    }
+
 
     //换货单
     @RequestMapping("/change-order/list")
@@ -634,8 +654,6 @@ public class PageController extends BaseController {
     public String changeOrderManageEdit() {
         return "/changeOrderManage/changeOrderEdit";
     }
-
-
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
