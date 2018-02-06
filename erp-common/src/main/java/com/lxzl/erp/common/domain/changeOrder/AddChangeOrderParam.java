@@ -34,6 +34,8 @@ public class AddChangeOrderParam {
     private Integer changeMode;   //换货方式，1-上门取件，2邮寄
     @NotNull(message = ErrorCode.CHANGE_ORDER_START_RENT_TIME_NOT_NULL)
     private Date rentStartTime; // 起租时间
+    @NotNull(message = ErrorCode.OWNER_NOT_NULL)
+    private Integer owner; // 业务员ID
 
     public String getCustomerNo() {
         return customerNo;
@@ -105,5 +107,13 @@ public class AddChangeOrderParam {
 
     public void setRentStartTime(Date rentStartTime) {
         this.rentStartTime = rentStartTime;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 }

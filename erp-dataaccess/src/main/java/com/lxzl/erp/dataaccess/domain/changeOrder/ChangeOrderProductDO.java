@@ -17,6 +17,7 @@ public class ChangeOrderProductDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private Integer isNew;
+    private Integer owner;
 
     public Integer getId() {
         return id;
@@ -112,5 +113,13 @@ public class ChangeOrderProductDO extends BaseDO {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 }

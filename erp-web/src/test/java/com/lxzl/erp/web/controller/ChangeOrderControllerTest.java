@@ -18,6 +18,7 @@ public class ChangeOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void add() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
+        addChangeOrderParam.setOwner(500006);
         addChangeOrderParam.setCustomerNo("LXCC-1000-20180129-00062");
         addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         addChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
@@ -42,6 +43,7 @@ public class ChangeOrderControllerTest extends ERPTransactionalTest {
     public void addMaterial() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
         addChangeOrderParam.setCustomerNo("C201711152010206581143");
+        addChangeOrderParam.setOwner(500006);
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
