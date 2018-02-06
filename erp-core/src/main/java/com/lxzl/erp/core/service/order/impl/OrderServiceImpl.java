@@ -2051,7 +2051,7 @@ public class OrderServiceImpl implements OrderService {
                     BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount());
                     thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProduct.getDepositAmount());
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
-                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0){
+                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0){
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
@@ -2109,7 +2109,7 @@ public class OrderServiceImpl implements OrderService {
                     BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount());
                     thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterial.getDepositAmount());
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
-                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0){
+                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0){
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
