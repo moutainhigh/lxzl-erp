@@ -25,6 +25,7 @@ import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -42,6 +43,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -1963,6 +1965,12 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setBuyerCustomerId(customerDO.getId());
 
+        // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
+        List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
+
+        BigDecimal totalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
+        BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
+
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
             return ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS;
@@ -1972,7 +1980,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Integer deliveryBetweenDays = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectDeliveryTime(), order.getRentStartTime());
         if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
-            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+            return ErrorCode.ORDER_RENT_START_TIME_ERROR;
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             Map<String, OrderProduct> orderProductMap = new HashMap<>();
@@ -2031,6 +2039,22 @@ public class OrderServiceImpl implements OrderService {
                 } else {
                     orderProductMap.put(key, orderProduct);
                 }
+
+                // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
+                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType()) && orderProduct.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
+                        && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
+                    return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
+                }
+
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount());
+                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProduct.getDepositAmount());
+                    totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
+                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0){
+                        return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
+                }
             }
         }
 
@@ -2073,6 +2097,21 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.ORDER_MATERIAL_LIST_REPEAT;
                 } else {
                     orderMaterialMap.put(key, orderMaterial);
+                }
+
+                // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
+                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType()) && orderMaterial.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
+                        && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
+                    return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
+                }
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount());
+                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterial.getDepositAmount());
+                    totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
+                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0){
+                        return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
                 }
             }
         }
@@ -2157,4 +2196,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private StatementOrderSupport statementOrderSupport;
 }

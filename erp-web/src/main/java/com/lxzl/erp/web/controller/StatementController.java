@@ -75,8 +75,8 @@ public class StatementController extends BaseController {
     }
 
     @RequestMapping(value = "page", method = RequestMethod.POST)
-    public Result page(@RequestBody InterfaceStatementOrderQueryParam interfaceStatementOrderQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(interfaceStatementOrderQueryParam);
+    public Result page(@RequestBody StatementOrderQueryParam statementOrderQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

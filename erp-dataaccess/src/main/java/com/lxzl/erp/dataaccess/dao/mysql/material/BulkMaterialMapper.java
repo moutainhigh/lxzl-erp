@@ -5,6 +5,8 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -56,5 +58,8 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
     Integer updateBatchStatusByTransferOrderId(@Param("maps")Map<String, Object> maps);
 
     Integer updateBatchStatusByTransferOrderProductEquipment(@Param("maps")Map<String, Object> maps);
+
+    Integer updateBatchPurchasePrice(@Param("purchasePrice")BigDecimal purchasePrice , @Param("updateUser")String updateUser , @Param("updateTime")Date updateTime,
+             @Param("idList")List idList);
 
 }

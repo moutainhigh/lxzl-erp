@@ -7,6 +7,7 @@
 		<result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo" />
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
 		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
 		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="statement_amount" jdbcType="DECIMAL" property="statementAmount" />
 		<result column="statement_other_amount" jdbcType="DECIMAL" property="statementOtherAmount" />
@@ -157,12 +158,15 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 				and eso.statement_status in (0,4)
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+				<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
+			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16,20)
+					and eso.statement_status in (0,4,8,16)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -211,6 +215,9 @@
 				</if>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 					and eso.statement_status in (0,4)
+				</if>
+				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+					<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
 				</if>
 				<choose>
 					<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
@@ -262,12 +269,15 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 				and eso.statement_status in (0,4)
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+				<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
+			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16,20)
+					and eso.statement_status in (0,4,8,16)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -310,6 +320,9 @@
 			</if>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 				and eso.statement_status in (0,4)
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+				<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
 			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
@@ -440,21 +453,21 @@
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 
 		<where>
-			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != ''">
-				and ec.customer_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerNo}','%' )
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
 			</if>
-			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerId != null">
-				and eso.customer_id = #{maps.statementOrderQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
-				and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerName}','%' )
 			</if>
 			<choose>
-				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.month != null">
-					<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderQueryParam.month}, '%Y-%m') ]]>
+				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.month != null">
+				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.month}, '%Y-%m') ]]>
 				</when>
 				<otherwise>
-					<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
+				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
 				</otherwise>
 			</choose>
 			<if test="maps.isQueryAll == null">
@@ -482,15 +495,16 @@
 		SUM(eso.statement_other_paid_amount) as statement_other_paid_amount,
 		SUM(eso.statement_correct_amount) as statement_correct_amount,
 		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
-		ec.customer_name AS customer_name
+		ec.customer_name AS customer_name,
+		ec.customer_no AS customer_no
 		FROM erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 		<where>
 			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
-				and ec.customer_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerNo}','%' )
+				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
 			</if>
-			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerId != null">
-				and eso.customer_id = #{maps.statementOrderQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != ''">
 				and ec.customer_name like
@@ -535,7 +549,8 @@
 		SUM(eso.statement_other_paid_amount) as statement_other_paid_amount,
 		SUM(eso.statement_correct_amount) as statement_correct_amount,
 		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
-		ec.customer_name AS customer_name
+		ec.customer_name AS customer_name,
+		ec.customer_no AS customer_no
 		FROM
 		erp_statement_order eso
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id

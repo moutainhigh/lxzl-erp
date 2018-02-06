@@ -2,12 +2,11 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.domain.statistics.HomeRentParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
-import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
+import com.lxzl.erp.common.constant.TimeDimensionType;
+import com.lxzl.erp.common.domain.statistics.*;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,9 +25,12 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     public void queryIncome() throws Exception {
         StatisticsIncomePageParam statisticsIncomePageParam = new StatisticsIncomePageParam();
         statisticsIncomePageParam.setPageNo(1);
-        statisticsIncomePageParam.setPageSize(1);
-        statisticsIncomePageParam.setStartTime(getFistByMonth());
-        statisticsIncomePageParam.setEndTime(getEndByMonth());
+        statisticsIncomePageParam.setPageSize(100);
+        SimpleDateFormat sdf =   new SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
+        Date start = sdf.parse( " 2008-07-10 19:20:00 " );
+        Date end = sdf.parse( " 2028-07-10 19:20:00 " );
+        statisticsIncomePageParam.setStartTime(start);
+        statisticsIncomePageParam.setEndTime(end);
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
     @Test
@@ -40,6 +42,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void queryStatisticsUnReceivable() throws Exception {
         StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = new StatisticsUnReceivablePageParam();
+        statisticsUnReceivablePageParam.setSubCompanyId(1);
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
     }
 
@@ -47,9 +50,6 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     public void queryStatisticsUnReceivableForSubCompany() throws Exception {
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivableForSubCompany", null);
     }
-
-
-
 
     @Test
     public void queryLongRent() throws Exception {
@@ -66,13 +66,19 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         homeRentParam.setEndTime(getEndByMonth());
         TestResult testResult = getJsonTestResult("/statistics/queryShortRent", homeRentParam);
     }
+    @Test
+    public void queryLongRentByTime() throws Exception {
+        HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
+        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
+        TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
+    }
 
-
-
-
-
-
-
+    @Test
+    public void queryShortRentByTime() throws Exception {
+        HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
+        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
+        TestResult testResult = getJsonTestResult("/statistics/queryShortRentByTime", homeRentByTimeParam);
+    }
     private Date getFistByMonth(){
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, 0);

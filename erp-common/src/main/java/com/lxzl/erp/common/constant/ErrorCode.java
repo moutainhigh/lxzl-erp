@@ -55,6 +55,7 @@ public class ErrorCode {
     public static final String BUSINESS_APP_ID_NOT_NULL = "J100026";
     public static final String BUSINESS_APP_SECRET_NOT_NULL = "J100027";
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
+    public static final String OWNER_NOT_NULL = "J100029";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -359,6 +360,10 @@ public class ErrorCode {
     public static final String RETURN_REASON_TYPE_NOT_NULL = "J400112";
     public static final String ORDER_EXPECT_DELIVERY_TIME_ERROR = "J400113";
     public static final String ORDER_NO_NOT_NULL = "J400114";
+    public static final String ORDER_RENT_START_TIME_ERROR = "J400115";
+    public static final String CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT = "J400116";
+    public static final String CHANGE_SRC_DEST_SHOULD_SAME_TYPE = "J400117";
+    public static final String CHANGE_ORDER_START_RENT_TIME_NOT_NULL = "J400118";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -452,6 +457,10 @@ public class ErrorCode {
     public static final String OPEN_ID_NOT_NULL = "J500092";
     public static final String CUSTOMER_NAME_NOT_NULL = "J500093";
     public static final String STATEMENT_ORDER_NOT_EXISTS = "J500094";
+    public static final String STATEMENT_ORDER_NOT_NULL = "J500095";
+    public static final String STATEMENT_PAY_AMOUNT_ERROR = "J500096";
+    public static final String CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER = "J500097";
+    public static final String CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500098";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -652,6 +661,7 @@ public class ErrorCode {
         MAP.put(USER_NEW_PASSWORD_NOT_NULL, "新密码不能为空");
         MAP.put(USER_OWNER_NOT_EXISTS, "不存在填写的开发员，请查询清楚");
         MAP.put(USER_UNION_NOT_EXISTS, "不存在填写的联合开发员，请查询清楚");
+        MAP.put(OWNER_NOT_NULL, "业务员不能为空");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -928,6 +938,7 @@ public class ErrorCode {
         MAP.put(ORDER_REFUND_STATUS_ERROR, "退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS, "支付记录不存在");
         MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单没有租赁开始时间");
+        MAP.put(ORDER_RENT_START_TIME_ERROR, "订单起租日期不能小于送货日期，并且不能大于超过2天");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房该商品库存不足。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该配件库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
@@ -991,6 +1002,9 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价格的倍数");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请仔细检查");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
+        MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT, "只能更换相同商品");
+        MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_TYPE, "只能更换相同类型配件");
+        MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "起租时间不能为空");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
@@ -1046,6 +1060,10 @@ public class ErrorCode {
         MAP.put(OPEN_ID_NOT_NULL, "公众唯一标识不能为空");
         MAP.put(CUSTOMER_NAME_NOT_NULL, "客户名称不能为空");
         MAP.put(STATEMENT_ORDER_NOT_EXISTS, "结算单不存在");
+        MAP.put(STATEMENT_ORDER_NOT_NULL, "月份结算单不能为空");
+        MAP.put(STATEMENT_PAY_AMOUNT_ERROR, "结算单金额有误，请检查");
+        MAP.put(CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER, "客户存在有未支付逾期的结算单");
+        MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

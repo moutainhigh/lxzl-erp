@@ -106,7 +106,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser,String verifyMatters, String commitRemark) {
+    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters, String commitRemark) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
@@ -130,7 +130,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         String workflowLinkNo;
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
-            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser,verifyMatters, currentTime);
+            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser, verifyMatters, currentTime);
+            workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
         } else {
             String errorCode = continueWorkflowLink(workflowLinkDO, commitRemark, verifyUser, currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
@@ -140,7 +141,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         }
 
-        messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, MessageContant.WORKFLOW_COMMIT_CONTENT, verifyUser);
+        messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), verifyUser);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkNo);
@@ -174,9 +175,9 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
 
-        if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())
+        if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())
                 || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())
-                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())){
+                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())) {
             result.setErrorCode(ErrorCode.VERIFY_STATUS_ERROR);
             return result;
         }
@@ -187,7 +188,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
 
         List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
-        if(workflowLinkDetailDOList != null && workflowLinkDetailDOList.size() > 1){
+        if (workflowLinkDetailDOList != null && workflowLinkDetailDOList.size() > 1) {
             WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
             workflowLinkDetailDO.setWorkflowPreviousNodeId(previousWorkflowLinkDetailDO.getWorkflowCurrentNodeId());
             workflowLinkDetailDO.setWorkflowStep(previousWorkflowLinkDetailDO.getWorkflowStep() + 1);
@@ -425,7 +426,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(nextWorkflowNodeDO.getWorkflowStep());
-                messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, MessageContant.WORKFLOW_COMMIT_CONTENT, nextVerifyUser);
+                messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), nextVerifyUser);
             } else {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
                 noticeBusinessModule = true;
@@ -461,7 +462,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDetailDO.setCreateTime(currentTime);
                 workflowLinkDetailMapper.save(workflowLinkDetailDO);
                 workflowLinkDO.setWorkflowStep(previousWorkflowNodeDO.getWorkflowStep());
-                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, MessageContant.WORKFLOW_VERIFY_BACK_CONTENT, workflowLinkDetailDO.getVerifyUser());
+                messageService.superSendMessage(MessageContant.WORKFLOW_VERIFY_BACK_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), workflowLinkDetailDO.getVerifyUser());
             } else {
                 // 如果第一步就驳回了，那么就相当于驳回到根部
                 noticeBusinessModule = true;
@@ -516,7 +517,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 生成工作流线，只适用于首次创建
      */
-    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser,String verifyMatters, Date currentTime) {
+    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser, String verifyMatters, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowTemplateDO == null) {
             return null;

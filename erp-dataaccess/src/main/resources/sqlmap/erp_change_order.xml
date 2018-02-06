@@ -107,7 +107,7 @@
 		SELECT <include refid="column_List"/> FROM erp_change_order eco 
 		WHERE eco.id = #{id, jdbcType=INTEGER} AND eco.data_status = 1 
 	</select>
-	<select id="findByNo" resultMap="ChangeOrderDO" parameterType="java.lang.Integer">
+	<select id="findByNo" resultMap="ChangeOrderDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="consign_info_column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,eu.real_name AS ownerName
 		,eac.city_name AS ecoci_cityName, ead.district_name AS ecoci_districtName, eap.province_name AS ecoci_provinceName,ec.customer_name AS customerName
 		FROM erp_change_order eco

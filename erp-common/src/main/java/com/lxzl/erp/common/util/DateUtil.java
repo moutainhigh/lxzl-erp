@@ -5,10 +5,7 @@ import com.lxzl.se.common.exception.BusinessException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -170,5 +167,145 @@ public class DateUtil {
             e.printStackTrace();
         }
         return date;
+    }
+    /**
+     * 获取某天
+     * @param offset 0-当天，1-明天，-1 昨天，依次类推
+     * @return
+     */
+    public static Date getDayByOffset(Integer offset) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        // 获取前月的第一天
+        Calendar cale = Calendar.getInstance();
+        cale.add(Calendar.DAY_OF_MONTH, offset);
+        String day = format.format(cale.getTime());
+        Date date = null;
+        try {
+            date = format.parse(day);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+    /**
+     * 获取当年的第一天
+     * @return
+     */
+    public static Date getCurrYearFirst(){
+        Calendar currCal=Calendar.getInstance();
+        int currentYear = currCal.get(Calendar.YEAR);
+        return getYearFirst(currentYear);
+    }
+    /**
+     * 获取某年第一天日期
+     * @param year 年份
+     * @return Date
+     */
+    public static Date getYearFirst(int year){
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        Date currYearFirst = calendar.getTime();
+        return currYearFirst;
+    }
+
+    /**
+     * 获取当前日期当年目前所有月
+     * 如当前日期为2018-05-06，本接口返回的日期列表为2018-01-01，2018-02-01，2018-01-01，2018-023-01，2018-04-01，2018-05-01
+     * @return Date
+     */
+    public static List<Date> getCurrentYearPassedMonth(){
+        Date yearFirstDay = getCurrYearFirst();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(yearFirstDay);
+        List<Date> dateList = new ArrayList<>();
+        dateList.add(calendar.getTime());
+        while(true){
+            calendar.add(Calendar.MONTH,1);
+            if(calendar.getTimeInMillis()>System.currentTimeMillis()){
+                break;
+            }
+            dateList.add(calendar.getTime());
+        }
+        return dateList;
+    }
+
+    /**
+     * 获取当前日期当年目前未到的所有月
+     * 如当前日期为2018-05-06，本接口返回的日期列表为2018-06-01，2018-07-01，2018-08-01，2018-09-01，2018-10-01，2018-11-01，2018-12-01
+     * @return Date
+     */
+    public static List<Date> getCurrentYearNoPassedMonth(){
+        List<Date> dateList = new ArrayList<>();
+        Date currentMonth = getMonthByOffset(0);
+        Calendar thisMonth = Calendar.getInstance();
+        thisMonth.setTime(currentMonth);
+        Date nextMonth = getMonthByOffset(1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(nextMonth);
+        while (thisMonth.get(Calendar.YEAR)==calendar.get(Calendar.YEAR)){
+            dateList.add(calendar.getTime());
+            calendar.add(Calendar.MONTH,1);
+        }
+        return dateList;
+    }
+    /**
+     * 获取当前日期当月目前所有天
+     * @return Date
+     */
+    public static List<Date> getCurrentMonthPassedDay(){
+        Date monthFirstDay = getMonthByOffset(0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(monthFirstDay);
+        List<Date> dateList = new ArrayList<>();
+        dateList.add(calendar.getTime());
+        while(true){
+            calendar.add(Calendar.DAY_OF_MONTH,1);
+            if(calendar.getTimeInMillis()>System.currentTimeMillis()){
+                break;
+            }
+            dateList.add(calendar.getTime());
+        }
+        return dateList;
+    }
+    /**
+     * 获取当前日期当月目前未到的所有天
+     * @return Date
+     */
+    public static List<Date> getCurrentMonthNoPassedDay(){
+
+        List<Date> dateList = new ArrayList<>();
+        Date currentDay = getDayByOffset(0);
+        Calendar thisDay = Calendar.getInstance();
+        thisDay.setTime(currentDay);
+        Calendar nextDay = Calendar.getInstance();
+        Date next = getDayByOffset(1);
+        nextDay.setTime(next);
+        while (thisDay.get(Calendar.MONTH)==nextDay.get(Calendar.MONTH)){
+            dateList.add(nextDay.getTime());
+            nextDay.add(Calendar.DAY_OF_MONTH,1);
+        }
+        return dateList;
+    }
+    public static void main(String[] args) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        List<Date> dateList = getCurrentYearPassedMonth();
+//        for(Date date : dateList){
+//            System.out.println(simpleDateFormat.format(date));
+//        }
+
+//        List<Date> dateList2 = getCurrentMonthPassedDay();
+//        for(Date date : dateList2){
+//            System.out.println(simpleDateFormat.format(date));
+//        }
+//        List<Date> dateList3 = getCurrentYearNoPassedMonth();
+//        for(Date date : dateList3){
+//            System.out.println(simpleDateFormat.format(date));
+//        }
+        List<Date> dateList4 = getCurrentMonthNoPassedDay();
+        for(Date date : dateList4){
+            System.out.println(simpleDateFormat.format(date));
+        }
+//        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
     }
 }

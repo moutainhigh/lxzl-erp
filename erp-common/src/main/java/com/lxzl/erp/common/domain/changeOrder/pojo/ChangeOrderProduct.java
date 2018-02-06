@@ -1,8 +1,10 @@
 package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.util.validate.constraints.In;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +36,9 @@ public class ChangeOrderProduct extends BasePO {
     private String updateUser;   //修改人
 
     private Integer canProcessCount;    //可换数量
+    @NotNull(message = ErrorCode.IS_NEW_VALUE_ERROR)
+    @In(value = {CommonConstant.NO,CommonConstant.YES}, message = ErrorCode.IS_NEW_VALUE_ERROR)
+    private Integer isNew;
 
 
     public Integer getChangeOrderProductId() {
@@ -162,5 +167,13 @@ public class ChangeOrderProduct extends BasePO {
 
     public void setCanProcessCount(Integer canProcessCount) {
         this.canProcessCount = canProcessCount;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 }
