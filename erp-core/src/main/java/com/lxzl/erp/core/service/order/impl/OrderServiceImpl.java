@@ -1967,9 +1967,6 @@ public class OrderServiceImpl implements OrderService {
 
         // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
-        if(CollectionUtil.isNotEmpty(overdueStatementOrderList)){
-            return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
-        }
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
@@ -1980,7 +1977,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Integer deliveryBetweenDays = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectDeliveryTime(), order.getRentStartTime());
         if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
-            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+            return ErrorCode.ORDER_RENT_START_TIME_ERROR;
         }
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             Map<String, OrderProduct> orderProductMap = new HashMap<>();
@@ -2039,6 +2036,13 @@ public class OrderServiceImpl implements OrderService {
                 } else {
                     orderProductMap.put(key, orderProduct);
                 }
+
+                // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
+                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType()) && orderProduct.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
+                        && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
+                    return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
+                }
             }
         }
 
@@ -2081,6 +2085,13 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.ORDER_MATERIAL_LIST_REPEAT;
                 } else {
                     orderMaterialMap.put(key, orderMaterial);
+                }
+
+                // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
+                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType()) && orderMaterial.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
+                        && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
+                    return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
             }
         }

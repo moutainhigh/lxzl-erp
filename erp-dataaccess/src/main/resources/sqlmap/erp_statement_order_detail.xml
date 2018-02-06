@@ -97,6 +97,7 @@
 	<select id="listPage" resultMap="StatementOrderDetailDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod 
 		<where>
+
 			<if test="true">
 				AND esod.data_status = 1
 			</if>
