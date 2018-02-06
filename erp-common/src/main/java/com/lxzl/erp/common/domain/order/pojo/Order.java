@@ -12,66 +12,66 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Order extends BasePO {
 
-    private Integer orderId;
-    private String orderNo;
-    private Integer deliveryMode;
-    private Integer buyerCustomerId;
-    private Date expectDeliveryTime;
-    private Date rentStartTime;
-    private Integer depositCycle;
-    private Integer paymentCycle;
-    private BigDecimal totalDepositAmount;
-    private BigDecimal totalMustDepositAmount;
-    private BigDecimal totalCreditDepositAmount;
-    private BigDecimal totalRentDepositAmount;
+    private Integer orderId;                    // 订单号
+    private String orderNo;                     // 订单编号
+    private Integer deliveryMode;               // 发货方式，1快递，2自提，3凌雄配送
+    private Integer buyerCustomerId;            // 客户ID
+    private Date expectDeliveryTime;            // 预计发货时间
+    private Date rentStartTime;                 // 起租时间
+    private Integer depositCycle;               // 押金期数（无需填写）
+    private Integer paymentCycle;               // 付款期数（无需填写）
+    private BigDecimal totalDepositAmount;      // 总押金
+    private BigDecimal totalMustDepositAmount;  // 必付押金（无需填写）
+    private BigDecimal totalCreditDepositAmount;    // 总授信押金
+    private BigDecimal totalRentDepositAmount;      // 总租金押金
     private BigDecimal totalInsuranceAmount;
-    private Integer totalProductCount;
-    private BigDecimal totalProductAmount;
-    private BigDecimal totalProductDepositAmount;
-    private BigDecimal totalProductCreditDepositAmount;
-    private BigDecimal totalProductRentDepositAmount;
-    private Integer totalMaterialCount;
-    private BigDecimal totalMaterialAmount;
-    private BigDecimal totalMaterialDepositAmount;
-    private BigDecimal totalMaterialCreditDepositAmount;
-    private BigDecimal totalMaterialRentDepositAmount;
-    private BigDecimal totalOrderAmount;
-    private BigDecimal totalPaidOrderAmount;
-    private BigDecimal totalDiscountAmount;
-    private BigDecimal logisticsAmount;
-    private Integer orderSellerId;
-    private Integer orderSubCompanyId;
-    private Integer orderStatus;
-    private BigDecimal firstNeedPayAmount;
-    private Integer payStatus;
-    private Date payTime;
-    private Date deliveryTime;
-    private Date confirmDeliveryTime;
-    private Date expectReturnTime;
-    private Date actualReturnTime;
-    private Integer highTaxRate;
-    private Integer lowTaxRate;
-    private String buyerRemark;
+    private Integer totalProductCount;              // 总设备数
+    private BigDecimal totalProductAmount;          // 总设备金额
+    private BigDecimal totalProductDepositAmount;   // 总设备押金金额
+    private BigDecimal totalProductCreditDepositAmount;    // 总授信押金
+    private BigDecimal totalProductRentDepositAmount;       // 总租金押金
+    private Integer totalMaterialCount;                 // 总配件数量
+    private BigDecimal totalMaterialAmount;             // 总配件金额
+    private BigDecimal totalMaterialDepositAmount;      // 总配件押金金额
+    private BigDecimal totalMaterialCreditDepositAmount;    // 总配件授信押金金额
+    private BigDecimal totalMaterialRentDepositAmount;      // 总配件租金押金金额
+    private BigDecimal totalOrderAmount;                    // 订单总金额
+    private BigDecimal totalPaidOrderAmount;                // 已支付订单总金额
+    private BigDecimal totalDiscountAmount;                 // 总优惠金额
+    private BigDecimal logisticsAmount;                     // 运费
+    private Integer orderSellerId;                          // 业务员ID
+    private Integer orderSubCompanyId;                      // 分公司ID
+    private Integer orderStatus;                            // 订单状态
+    private BigDecimal firstNeedPayAmount;                      // 首付租金
+    private Integer payStatus;                                  // 支付状态
+    private Date payTime;                                       // 支付时间
+    private Date deliveryTime;                                  // 发货时间
+    private Date confirmDeliveryTime;                           // 确认发货时间
+    private Date expectReturnTime;                              // 预计归还时间
+    private Date actualReturnTime;                              // 实际归还时间
+    private Integer highTaxRate;                                // 17%税率占比
+    private Integer lowTaxRate;                                 // 6%税率占比
+    private String buyerRemark;                                 // 租户备注
     private Integer dataStatus;
-    private String remark;
-    private Date createTime;
+    private String remark;                                      // 备注信息
+    private Date createTime;                                    // 订单创建时间
 
     private Integer customerConsignId;
-    private String buyerCustomerNo;
-    private String buyerCustomerName;
-    private String orderSellerName;
-    private String orderSubCompanyName;
+    private String buyerCustomerNo;                             // 客户编号
+    private String buyerCustomerName;                           // 客户姓名
+    private String orderSellerName;                             // 业务员姓名
+    private String orderSubCompanyName;                         // 分公司名称
 
 
-    private List<OrderProduct> orderProductList;
-    private List<OrderMaterial> orderMaterialList;
-    private OrderConsignInfo orderConsignInfo;
+    private List<OrderProduct> orderProductList;                // 订单商品项
+    private List<OrderMaterial> orderMaterialList;              // 订单配件项
+    private OrderConsignInfo orderConsignInfo;                  // 收货地址信息
 
     private List<OrderTimeAxis> orderTimeAxisList;
 
     // 审核人和提交审核信息,只提供给审核的时候用
-    private Integer verifyUser;
-    private String commitRemark;
+    private Integer verifyUser;                                 // 审核人ID
+    private String commitRemark;                                // 提交审核备注
 
     private StatementOrder statementOrder;
 
