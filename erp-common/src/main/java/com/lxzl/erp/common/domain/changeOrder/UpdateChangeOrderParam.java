@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,6 +34,10 @@ public class UpdateChangeOrderParam {
     @In(value = {ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR, ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_MAIL}, message = ErrorCode.RETURN_OR_CHANGE_MODE_ERROR)
     @NotNull(message = ErrorCode.RETURN_OR_CHANGE_MODE_NOT_NULL)
     private Integer changeMode;   //换货方式，1-上门取件，2邮寄
+    @NotNull(message = ErrorCode.CHANGE_ORDER_START_RENT_TIME_NOT_NULL)
+    private Date rentStartTime; // 起租时间
+    @NotNull(message = ErrorCode.OWNER_NOT_NULL)
+    private Integer owner; // 业务员ID
 
     public String getChangeOrderNo() {
         return changeOrderNo;
@@ -96,5 +101,21 @@ public class UpdateChangeOrderParam {
 
     public void setChangeReasonType(Integer changeReasonType) {
         this.changeReasonType = changeReasonType;
+    }
+
+    public Date getRentStartTime() {
+        return rentStartTime;
+    }
+
+    public void setRentStartTime(Date rentStartTime) {
+        this.rentStartTime = rentStartTime;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 }
