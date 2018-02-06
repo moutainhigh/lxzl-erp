@@ -74,15 +74,15 @@
                         </div>
                     </div>
                 </div>
-##                <div class="form-group field">
-##                    <label class="col-md-3 control-label">换货日期</label>
-##                    <div class="col-md-9">
-##                        <div class="input-group date" id="changeTimePicker">
-##                            <input id="changeTime" name="changeTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择换货日期" />
-##                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-##                        </div>
-##                    </div>
-##                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">换货日期</label>
+                    <div class="col-md-9">
+                        <div class="input-group date" id="rentStartTimePicker">
+                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择换货日期" />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">换货原因描述</label>
                     <div class="col-md-9">
@@ -91,16 +91,16 @@
                         </div>
                     </div>
                 </div>
-##                <div class="form-group field">
-##                    <label class="col-md-3 control-label">业务员</label>
-##                    <div class="col-md-9">
-##                        <div class="input-group bringContainer">
-##                            <input type="hidden" id="owner" name="owner" bringFiled="owner" class="form-control required" />
-##                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
-##                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>企业客户</span>
-##                        </div>
-##                    </div>
-##                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">业务员</label>
+                    <div class="col-md-9">
+                        <div class="input-group bringContainer">
+                            <input type="hidden" id="owner" name="owner" bringFiled="owner" class="form-control required" />
+                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
+                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>企业客户</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
@@ -190,7 +190,7 @@
                         {{#destChangeProductInfo}}
                             {{#destChangeProductData}}
                             <tr class="bg-light" productRowKey="{{productId}}">
-                                <td>{{productName}}</td>
+                                <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
                                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                 <td>{{propertiesToStr}}</td>
@@ -273,7 +273,7 @@
                         </tr>
                         {{#destChangeMaterialInfo}}
                         <tr class="bg-light">
-                            <td>{{materialName}}</td>
+                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
                             <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>{{#price}}{{materialPrice}}{{/price}}</td>

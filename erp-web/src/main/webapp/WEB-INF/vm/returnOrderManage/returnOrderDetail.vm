@@ -22,7 +22,7 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <h5>退还单编号：<small id="returnOrderNo"></small></h5>
+                                    <h5>退货单编号：<small id="returnOrderNo"></small></h5>
                                 </div>
                                 <div class="col-md-8 text-right">
                                     <script type="text/html" id="actionButtonsTpl">
@@ -61,25 +61,25 @@
                                    </div>
                                    <div class="col-md-4">
                                        <dl class="dl-horizontal">
-                                           <dt class="mb10">订单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
-                                           <dt class="mb10">业务员</dt><dd>{{ownerName}}&nbsp;</dd>
-                                           <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                           <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                           <dt class="mb10">备注</dt><dd>{{remark}}</dd>
-                                       </dl>
-                                   </div>
-                                   <div class="col-md-4">
-                                       <dl class="dl-horizontal">
-                                           <dt class="">退还商品总数</dt>
+                                           <dt class="">退货商品总数</dt>
                                            <dd>预计：{{totalReturnProductCount}}&nbsp;</dd>
                                            <dd class="mb10">实际：{{realTotalReturnProductCount}}&nbsp;</dd>
-                                           <dt >退还配件总数</dt>
+                                           <dt >退货配件总数</dt>
                                            <dd>预计：{{totalReturnMaterialCount}}&nbsp;</dd>
                                            <dd class="mb10">实际：{{realTotalReturnMaterialCount}}&nbsp;</dd>
                                            <dt class="mb10">是否计费</dt><dd>{{isChargingStr}}</dd>
                                            <dt class="mb10">服务费</dt><dd>￥{{#price}}{{serviceCost}}{{/price}}</dd>
                                            <dt class="mb10">损坏费用</dt><dd>￥{{#price}}{{damageCost}}{{/price}}</dd>
                                            <dt class="mb10">租赁总费用</dt><dd>￥{{#price}}{{totalRentCost}}{{/price}}</dd>
+                                       </dl>
+                                   </div>
+                                   <div class="col-md-4">
+                                       <dl class="dl-horizontal">
+                                           <dt class="mb10">退货单状态</dt><dd>{{returnOrderStatusValue}}&nbsp;</dd>
+                                           <dt class="mb10">业务员</dt><dd>{{ownerName}}&nbsp;</dd>
+                                           <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
+                                           <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                           <dt class="mb10">备注</dt><dd>{{remark}}</dd>
                                        </dl>
                                    </div>
                                </div>
@@ -154,7 +154,7 @@
                                                 <td colspan="8" class="pn br-n" style="height:0;">
                                                     <div class="panel m15 affixPanel"  style="display: none;">
                                                         <div class="panel-heading pn ph8">
-                                                            <span>已退还设备：<span class="equimentListCount"></span></span>
+                                                            <span>已退货设备：<span class="equimentListCount"></span></span>
                                                         </div>
                                                         <div class="panel-body pn">
                                                             <table class="table">
@@ -183,7 +183,7 @@
                                             <tr><td class="br-r text-left">{{equipmentNo}}</td></tr>
                                             {{/equipmentList}}
                                             {{^equipmentList}}
-                                            <tr><td class="br-r text-left">无退还设备信息</td></tr>
+                                            <tr><td class="br-r text-left">无退货设备信息</td></tr>
                                             {{/equipmentList}}
                                         </script>
 
@@ -246,7 +246,7 @@
                                                 <td colspan="11" class="pn br-n" style="height:0;">
                                                     <div class="panel m15 affixPanel"  style="display: none;">
                                                         <div class="panel-heading pn ph8">
-                                                            <span>已退还配件：<span class="materialListCount"></span></span>
+                                                            <span>已退货配件：<span class="materialListCount"></span></span>
                                                         </div>
                                                         <div class="panel-body pn">
                                                             <table class="table">
@@ -276,7 +276,7 @@
                                             <tr><td class="br-r text-left">{{bulkMaterialNo}}</td></tr>
                                             {{/bulkMaterialList}}
                                             {{^bulkMaterialList}}
-                                            <tr><td class="br-r text-left">无退还配件信息</td></tr>
+                                            <tr><td class="br-r text-left">无退货配件信息</td></tr>
                                             {{/bulkMaterialList}}
                                         </script>
 
