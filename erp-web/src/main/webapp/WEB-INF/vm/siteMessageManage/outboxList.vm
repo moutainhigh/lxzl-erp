@@ -90,6 +90,11 @@
 ##                                </td>
                             </tr>
                             {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="7" class="text-center">没有查询到信息</td>
+                            </tr>
+                            {{/listData}}
                             {{/dataSource}}
                             </tbody>
                         </script>

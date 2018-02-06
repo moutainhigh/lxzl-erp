@@ -22,6 +22,7 @@ public class StatementOrderQueryParam extends BasePageParam {
     private Date statementExpectPayStartTime;
     private Date statementExpectPayEndTime;
     private Integer isNeedToPay;
+    private Integer isOverdue;
     private String orderNo;
     private String returnOrderNo;
     private String changeOrderNo;
@@ -130,5 +131,13 @@ public class StatementOrderQueryParam extends BasePageParam {
 
     public void setIsNeedToPay(Integer isNeedToPay) {
         this.isNeedToPay = isNeedToPay;
+    }
+
+    public Integer getIsOverdue() {
+        return isOverdue;
+    }
+
+    public void setIsOverdue(Integer isOverdue) {
+        this.isOverdue = isOverdue;
     }
 }
