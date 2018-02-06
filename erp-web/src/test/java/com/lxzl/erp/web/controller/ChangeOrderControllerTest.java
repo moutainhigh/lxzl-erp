@@ -1,6 +1,5 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChangeOrderControllerTest extends ERPTransactionalTest {
+public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void add() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
@@ -61,38 +60,32 @@ public class ChangeOrderControllerTest extends ERPTransactionalTest {
     }
     @Test
     public void update() throws Exception {
-        UpdateChangeOrderParam addChangeOrderParam = new UpdateChangeOrderParam();
-        addChangeOrderParam.setChangeOrderNo("CO201712192043341871711");
-        addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
+        UpdateChangeOrderParam updateChangeOrderParam = new UpdateChangeOrderParam();
+        updateChangeOrderParam.setChangeOrderNo("LXCO-701388-20180206-00002");
+        updateChangeOrderParam.setOwner(500006);
+        updateChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
+        updateChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
-        changeOrderConsignInfo.setAddress("这是一个测试地址2");
+        changeOrderConsignInfo.setAddress("这是一个测试地址123123");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
-        changeOrderConsignInfo.setConsigneeName("张三");
-        addChangeOrderParam.setChangeOrderConsignInfo(changeOrderConsignInfo);
+        changeOrderConsignInfo.setConsigneeName("陈凯");
+        updateChangeOrderParam.setChangeOrderConsignInfo(changeOrderConsignInfo);
 
         List<ChangeOrderProduct> changeOrderProductList = new ArrayList<>();
         ChangeOrderProduct changeOrderProduct = new ChangeOrderProduct();
-        //这里在每次【测试】时要修改
-        changeOrderProduct.setChangeOrderProductId(10);
-        changeOrderProduct.setSrcChangeProductSkuId(40);
-        changeOrderProduct.setDestChangeProductSkuId(40);
-        changeOrderProduct.setChangeProductSkuCount(3);
+//        changeOrderProduct.setSrcChangeProductSkuId(65);
+        changeOrderProduct.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+        changeOrderProduct.setSrcChangeProductSkuId(217);
+        changeOrderProduct.setDestChangeProductSkuId(216);
+        changeOrderProduct.setChangeProductSkuCount(1);
         changeOrderProductList.add(changeOrderProduct);
-        addChangeOrderParam.setChangeOrderProductList(changeOrderProductList);
-
-        List<ChangeOrderMaterial> changeOrderMaterialList = new ArrayList<>();
-        ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
-        changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
-        changeOrderMaterial.setDestChangeMaterialNo("M201711201356145971009");
-        changeOrderMaterial.setChangeMaterialCount(3);
-        changeOrderMaterialList.add(changeOrderMaterial);
-        addChangeOrderParam.setChangeOrderMaterialList(changeOrderMaterialList);
-        TestResult testResult = getJsonTestResult("/changeOrder/update",addChangeOrderParam);
+        updateChangeOrderParam.setChangeOrderProductList(changeOrderProductList);
+        TestResult testResult = getJsonTestResult("/changeOrder/update",updateChangeOrderParam);
     }
     @Test
     public void commit() throws Exception {
         ChangeOrderCommitParam changeOrderCommitParam = new ChangeOrderCommitParam();
-        changeOrderCommitParam.setChangeOrderNo("CO201712231731362891843");
+        changeOrderCommitParam.setChangeOrderNo("LXCO-701388-20180206-00003");
         changeOrderCommitParam.setVerifyUserId(500006);
         changeOrderCommitParam.setRemark("审核备注");
         TestResult testResult = getJsonTestResult("/changeOrder/commit",changeOrderCommitParam);
@@ -101,7 +94,7 @@ public class ChangeOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void stockUpForChange() throws Exception {
         StockUpForChangeParam stockUpForChangeParam = new StockUpForChangeParam();
-        stockUpForChangeParam.setChangeOrderNo("CO201712231731362891843");
+        stockUpForChangeParam.setChangeOrderNo("LXCO-701388-20180206-00003");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null and current_warehouse_id = 4000002
 
         //查询可用设备
@@ -144,7 +137,7 @@ public class ChangeOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void cancel() throws Exception {
         ChangeOrder changeOrder = new ChangeOrder();
-        changeOrder.setChangeOrderNo("CO201712161841403121305");
+        changeOrder.setChangeOrderNo("LXCO-701388-20180206-00002");
         TestResult testResult = getJsonTestResult("/changeOrder/cancel",changeOrder);
     }
     @Test
