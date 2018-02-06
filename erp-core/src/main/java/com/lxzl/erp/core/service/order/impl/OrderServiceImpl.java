@@ -1968,6 +1968,9 @@ public class OrderServiceImpl implements OrderService {
         // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
 
+        BigDecimal totalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
+        BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
+
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
             return ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS;
@@ -2043,6 +2046,14 @@ public class OrderServiceImpl implements OrderService {
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)
+                        && BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0) {
+                    return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                } else {
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount());
+                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProduct.getDepositAmount());
+                    totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
+                }
             }
         }
 
@@ -2092,6 +2103,14 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
+                }
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)
+                        && BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) <= 0) {
+                    return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                } else {
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount());
+                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterial.getDepositAmount());
+                    totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
                 }
             }
         }
