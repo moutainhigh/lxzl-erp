@@ -14,6 +14,8 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderDetailQueryParam extends BasePageParam {
 
+    private Integer isNeedToPay;
+    private Integer isOverdue;
     private Integer rentLengthType;
     private Integer customerId;
     private Date createStartTime;
@@ -49,5 +51,21 @@ public class StatementOrderDetailQueryParam extends BasePageParam {
 
     public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
+    }
+
+    public Integer getIsNeedToPay() {
+        return isNeedToPay;
+    }
+
+    public void setIsNeedToPay(Integer isNeedToPay) {
+        this.isNeedToPay = isNeedToPay;
+    }
+
+    public Integer getIsOverdue() {
+        return isOverdue;
+    }
+
+    public void setIsOverdue(Integer isOverdue) {
+        this.isOverdue = isOverdue;
     }
 }

@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
@@ -41,6 +42,7 @@ public class StatementOrderSupport {
     }
 
     public BigDecimal getShortRentReceivable(Integer customerId) {
-
+        StatementOrderDetailQueryParam param = new StatementOrderDetailQueryParam();
+        return null;
     }
 }
