@@ -41,9 +41,9 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         ChargeRecordParam param = new ChargeRecordParam();
         param.setPageNo(1);
         param.setPageSize(10);
-        param.setBusinessCustomerNo("LXCC-1000-20180201-00003");
-        param.setCustomerName("");
-//        param.setChargeType(2);
+//        param.setBusinessCustomerNo("LXCC10002018010500023");
+//        param.setCustomerName("腾讯");
+        param.setChargeType(2);
 //        param.setChargeStatus(20);
 //        param.setQueryStartTime(new Date("1514908800000"));
 //        param.setQueryEndTime(new Date("1517500799999"));
