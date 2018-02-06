@@ -360,6 +360,9 @@ public class ErrorCode {
     public static final String ORDER_EXPECT_DELIVERY_TIME_ERROR = "J400113";
     public static final String ORDER_NO_NOT_NULL = "J400114";
     public static final String ORDER_RENT_START_TIME_ERROR = "J400115";
+    public static final String CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT = "J400116";
+    public static final String CHANGE_SRC_DEST_SHOULD_SAME_TYPE = "J400117";
+    public static final String CHANGE_ORDER_START_RENT_TIME_NOT_NULL = "J400118";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -997,6 +1000,9 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价格的倍数");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请仔细检查");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
+        MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT, "只能更换相同商品");
+        MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_TYPE, "只能更换相同类型配件");
+        MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "起租时间不能为空");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");

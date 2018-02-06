@@ -504,7 +504,7 @@
             <if test="totalMaterialCount != null">
                 total_material_count = #{totalMaterialCount, jdbcType=INTEGER},
             </if>
-            <if test="totalProductAmount != null">
+            <if test="totalMaterialAmount != null">
                 total_material_amount = #{totalMaterialAmount, jdbcType=DECIMAL},
             </if>
             <if test="totalMaterialDepositAmount != null">

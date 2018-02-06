@@ -1,23 +1,26 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.changeOrder.*;
 import com.lxzl.erp.common.domain.changeOrder.pojo.*;
+import com.lxzl.erp.common.util.DateUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
+public class ChangeOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void add() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
-        addChangeOrderParam.setCustomerNo("CC201712222002354621424");
+        addChangeOrderParam.setCustomerNo("LXCC-1000-20180129-00062");
         addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
+        addChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
@@ -27,9 +30,10 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest{
         List<ChangeOrderProduct> changeOrderProductList = new ArrayList<>();
         ChangeOrderProduct changeOrderProduct = new ChangeOrderProduct();
 //        changeOrderProduct.setSrcChangeProductSkuId(65);
-        changeOrderProduct.setSrcChangeProductSkuId(63);
-        changeOrderProduct.setDestChangeProductSkuId(63);
-        changeOrderProduct.setChangeProductSkuCount(2);
+        changeOrderProduct.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
+        changeOrderProduct.setSrcChangeProductSkuId(217);
+        changeOrderProduct.setDestChangeProductSkuId(216);
+        changeOrderProduct.setChangeProductSkuCount(1);
         changeOrderProductList.add(changeOrderProduct);
         addChangeOrderParam.setChangeOrderProductList(changeOrderProductList);
         TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
