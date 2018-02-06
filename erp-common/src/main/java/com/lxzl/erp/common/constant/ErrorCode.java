@@ -55,6 +55,7 @@ public class ErrorCode {
     public static final String BUSINESS_APP_ID_NOT_NULL = "J100026";
     public static final String BUSINESS_APP_SECRET_NOT_NULL = "J100027";
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
+    public static final String OWNER_NOT_NULL = "J100029";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -660,6 +661,7 @@ public class ErrorCode {
         MAP.put(USER_NEW_PASSWORD_NOT_NULL, "新密码不能为空");
         MAP.put(USER_OWNER_NOT_EXISTS, "不存在填写的开发员，请查询清楚");
         MAP.put(USER_UNION_NOT_EXISTS, "不存在填写的联合开发员，请查询清楚");
+        MAP.put(OWNER_NOT_NULL, "业务员不能为空");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");

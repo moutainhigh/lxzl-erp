@@ -37,6 +37,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -47,6 +48,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -82,7 +84,11 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
-
+        UserDO owner = userMapper.findByUserId(addChangeOrderParam.getOwner());
+        if(owner==null){
+            serviceResult.setErrorCode(ErrorCode.OWNER_NOT_NULL);
+            return serviceResult;
+        }
         //用户在租sku统计
         Map<String, Object> findRentMap = customerOrderSupport.getCustomerAllMap(customerDO.getId());
         List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findRentMap);
@@ -173,6 +179,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderProductDO.setSrcChangeProductSkuSnapshot(JSON.toJSONString(srcProduct));
                 changeOrderProductDO.setDestChangeProductSkuSnapshot(JSON.toJSONString(destProduct));
                 changeOrderProductDO.setIsNew(changeOrderProduct.getIsNew());
+                changeOrderProductDO.setOwner(addChangeOrderParam.getOwner());
                 changeOrderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 changeOrderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
                 changeOrderProductDO.setCreateTime(now);
@@ -327,7 +334,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         changeOrderDO.setChangeReason(addChangeOrderParam.getChangeReason());
         changeOrderDO.setChangeMode(addChangeOrderParam.getChangeMode());
         changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT);
-        changeOrderDO.setOwner(userSupport.getCurrentUserId());
+        changeOrderDO.setOwner(addChangeOrderParam.getOwner());
         changeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         changeOrderDO.setRemark(addChangeOrderParam.getRemark());
         changeOrderDO.setCreateTime(now);
@@ -1576,4 +1583,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     private PermissionSupport permissionSupport;
     @Autowired
     private MaterialService materialService;
+    @Autowired
+    private UserMapper userMapper;
 }
