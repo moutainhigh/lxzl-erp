@@ -25,6 +25,7 @@ import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
@@ -42,6 +43,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -1963,6 +1965,12 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setBuyerCustomerId(customerDO.getId());
 
+        // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
+        List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
+        if(CollectionUtil.isNotEmpty(overdueStatementOrderList)){
+            return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
+        }
+
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
             return ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS;
@@ -2157,4 +2165,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private StatementOrderSupport statementOrderSupport;
 }
