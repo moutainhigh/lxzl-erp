@@ -81,6 +81,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public ServiceResult<String, String> addSupplier(Supplier supplier) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         String verifyCode = verifySupplier(supplier);

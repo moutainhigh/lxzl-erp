@@ -19,17 +19,18 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     public void createStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
 //        statementOrderCorrect.setStatementOrderId(22);
-        statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(123));
-        statementOrderCorrect.setStatementCorrectReason("测试11");
-        statementOrderCorrect.setRemark("测试11");
-        statementOrderCorrect.setStatementOrderDetailId(79);
+        statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(100));
+        statementOrderCorrect.setStatementCorrectReason("测试225");
+        statementOrderCorrect.setRemark("测试225");
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
     }
 
     @Test
     public void commitStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-22-20180131-00004");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-24-20180202-00007");
+        statementOrderCorrect.setVerifyUserId(500030);
+        statementOrderCorrect.setRemark("aaaaaaa");
         TestResult testResult = getJsonTestResult("/correct/commit", statementOrderCorrect);
     }
 
@@ -37,7 +38,6 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     public void updateStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
         statementOrderCorrect.setStatementCorrectNo("LXSOC-22-20180131-00005");
-        statementOrderCorrect.setStatementOrderDetailId(79);
         statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(11));
         statementOrderCorrect.setStatementCorrectReason("测试22");
         statementOrderCorrect.setRemark("测试22");

@@ -1,9 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.statistics.StatisticsIncomePageParam;
-import com.lxzl.erp.common.domain.statistics.StatisticsUnReceivablePageParam;
-import com.lxzl.erp.common.domain.statistics.UnReceivablePageParam;
+import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -64,7 +62,50 @@ public class StatisticsController extends BaseController {
     public Result queryStatisticsUnReceivable(@RequestBody StatisticsUnReceivablePageParam statisticsUnReceivablePageParam) {
         return resultGenerator.generate(statisticsService.queryStatisticsUnReceivable(statisticsUnReceivablePageParam));
     }
-
+    /**
+     * 未收汇总，分公司维度
+     * @return
+     */
+    @RequestMapping(value = "queryStatisticsUnReceivableForSubCompany", method = RequestMethod.POST)
+    public Result queryStatisticsUnReceivableForSubCompany() {
+        return resultGenerator.generate(statisticsService.queryStatisticsUnReceivableForSubCompany());
+    }
+    /**
+     * 设备长租统计
+     * @param homeRentParam
+     * @return
+     */
+    @RequestMapping(value = "queryLongRent", method = RequestMethod.POST)
+    public Result queryLongRent(@RequestBody @Validated HomeRentParam homeRentParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryLongRent(homeRentParam));
+    }
+    /**
+     * 设备短租统计
+     * @param homeRentParam
+     * @return
+     */
+    @RequestMapping(value = "queryShortRent", method = RequestMethod.POST)
+    public Result queryShortRent(@RequestBody @Validated HomeRentParam homeRentParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryShortRent(homeRentParam));
+    }
+    /**
+     * 设备长租统计（时间维度）
+     * @param homeRentByTimeParam
+     * @return
+     */
+    @RequestMapping(value = "queryLongRentByTime", method = RequestMethod.POST)
+    public Result queryLongRentByTime(@RequestBody @Validated HomeRentByTimeParam homeRentByTimeParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryLongRentByTime(homeRentByTimeParam));
+    }
+    /**
+     * 设备短租统计（时间维度）
+     * @param homeRentByTimeParam
+     * @return
+     */
+    @RequestMapping(value = "queryShortRentByTime", method = RequestMethod.POST)
+    public Result queryShortRentByTime(@RequestBody @Validated HomeRentByTimeParam homeRentByTimeParam, BindingResult validResult) {
+        return resultGenerator.generate(statisticsService.queryShortRentByTime(homeRentByTimeParam));
+    }
     @Autowired
     private ResultGenerator resultGenerator;
 

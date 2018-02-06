@@ -36,7 +36,7 @@ public class StatementPaySupport {
      * @param currentTime
      * @return
      */
-    public StatementPayOrderDO saveStatementPayOrder(Integer statementOrderId, BigDecimal payAmount, BigDecimal payRentAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal otherAmount, Integer payType, Integer loginUserId, Date currentTime) {
+    public StatementPayOrderDO saveStatementPayOrder(Integer statementOrderId, BigDecimal payAmount, BigDecimal payRentAmount, BigDecimal payRentDepositAmount, BigDecimal payDepositAmount, BigDecimal otherAmount, BigDecimal overdueAmount,Integer payType, Integer loginUserId, Date currentTime) {
         if (BigDecimalUtil.compare(payAmount, BigDecimal.ZERO) <= 0) {
             return null;
         }
@@ -48,6 +48,7 @@ public class StatementPaySupport {
         statementPayOrderDO.setPayRentDepositAmount(payRentDepositAmount);
         statementPayOrderDO.setPayDepositAmount(payDepositAmount);
         statementPayOrderDO.setOtherAmount(otherAmount);
+        statementPayOrderDO.setOverdueAmount(overdueAmount);
         statementPayOrderDO.setPayType(payType);
         statementPayOrderDO.setPayStatus(PayStatus.PAY_STATUS_PAYING);
         statementPayOrderDO.setPayTime(currentTime);

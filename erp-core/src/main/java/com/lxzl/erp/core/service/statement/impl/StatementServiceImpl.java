@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatement
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipment
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -41,6 +43,7 @@ import com.lxzl.erp.dataaccess.domain.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO;
+import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -102,7 +105,22 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
 
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId());
+
+        CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
+        if (customerDO == null) {
+            return null;
+        }
+        Integer statementDays;
+        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+        if (dataDictionaryDO == null) {
+            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+        } else {
+            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
+        }
+        if (customerDO.getStatementDate() != null) {
+            statementDays = customerDO.getStatementDate();
+        }
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
@@ -138,7 +156,23 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
 
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, loginUser.getUserId());
+
+        CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
+        if (customerDO == null) {
+            return null;
+        }
+        Integer statementDays;
+        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+        if (dataDictionaryDO == null) {
+            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+        } else {
+            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
+        }
+        if (customerDO.getStatementDate() != null) {
+            statementDays = customerDO.getStatementDate();
+        }
+
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
@@ -157,27 +191,11 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-    private List<StatementOrderDetailDO> generateStatementDetailList(OrderDO orderDO, Date currentTime, Integer loginUserId) {
+    private List<StatementOrderDetailDO> generateStatementDetailList(OrderDO orderDO, Date currentTime, Integer statementDays, Integer loginUserId) {
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
         Date rentStartTime = orderDO.getRentStartTime();
         Integer buyerCustomerId = orderDO.getBuyerCustomerId();
-        CustomerDO customerDO = customerMapper.findById(buyerCustomerId);
-        if (customerDO == null) {
-            return null;
-        }
         Integer orderId = orderDO.getId();
-        Integer statementDays;
-        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-        if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
-        } else {
-            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
-        }
-        if (customerDO.getStatementDate() != null) {
-            statementDays = customerDO.getStatementDate();
-        }
-        // 其他费用，包括运费、等费用
-        BigDecimal otherAmount = orderDO.getLogisticsAmount();
 
         // 商品生成结算单
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
@@ -187,16 +205,11 @@ public class StatementServiceImpl implements StatementService {
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPaymentCycle(), orderProductDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 // 无论什么时候交租金，押金必须当天缴纳
-                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), otherAmount, currentTime, loginUserId);
+                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId);
                 if (depositDetail != null) {
                     depositDetail.setStatementDetailPhase(0);
-                    if (BigDecimalUtil.compare(BigDecimalUtil.add(orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount()), BigDecimal.ZERO) != 0) {
-                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
-                    } else {
-                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
-                    }
+                    depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
                     addStatementOrderDetailDOList.add(depositDetail);
-                    otherAmount = BigDecimal.ZERO;
                 }
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(orderProductDO.getRentType(), orderProductDO.getRentTimeLength(), orderProductDO.getPayMode(), rentStartTime, orderProductDO.getProductAmount(), buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), currentTime, loginUserId);
@@ -250,16 +263,11 @@ public class StatementServiceImpl implements StatementService {
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
                 // 无论什么时候交租金，押金必须当天缴纳
-                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), otherAmount, currentTime, loginUserId);
+                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId);
                 if (depositDetail != null) {
                     depositDetail.setStatementDetailPhase(0);
-                    if (BigDecimalUtil.compare(BigDecimalUtil.add(orderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount()), BigDecimal.ZERO) != 0) {
-                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
-                    } else {
-                        depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
-                    }
+                    depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
                     addStatementOrderDetailDOList.add(depositDetail);
-                    otherAmount = BigDecimal.ZERO;
                 }
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(orderMaterialDO.getRentType(), orderMaterialDO.getRentTimeLength(), orderMaterialDO.getPaymentCycle(), orderMaterialDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
@@ -308,6 +316,18 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
+
+        // 其他费用，包括运费、等费用
+        BigDecimal otherAmount = orderDO.getLogisticsAmount();
+
+        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+            // 其他费用统一结算
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_OTHER, BigInteger.ZERO.intValue(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId);
+            if (thisStatementOrderDetailDO != null) {
+                thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
+                addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
+            }
+        }
         return addStatementOrderDetailDOList;
     }
 
@@ -330,11 +350,48 @@ public class StatementServiceImpl implements StatementService {
         }
 
         CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
-        BigDecimal payRentAmount = BigDecimalUtil.add(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount()), statementOrderDO.getStatementOverdueAmount());
+        BigDecimal payRentAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount());
         BigDecimal payRentDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDO.getStatementRentDepositPaidAmount());
         BigDecimal payDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDO.getStatementDepositPaidAmount());
-        BigDecimal otherAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDO.getStatementOtherPaidAmount());
-        BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(payRentAmount, payRentDepositAmount), payDepositAmount), otherAmount);
+        BigDecimal payOtherAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDO.getStatementOtherPaidAmount());
+        BigDecimal payOverdueAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDO.getStatementOverduePaidAmount());
+        BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(payRentAmount, payRentDepositAmount), payDepositAmount), payOtherAmount), payOverdueAmount);
+
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderId(statementOrderDO.getId());
+        if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
+            for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
+                payRentAmount = BigDecimalUtil.sub(payRentAmount, statementOrderCorrectDO.getStatementCorrectRentAmount());
+                payRentDepositAmount = BigDecimalUtil.sub(payRentDepositAmount, statementOrderCorrectDO.getStatementCorrectRentDepositAmount());
+                payDepositAmount = BigDecimalUtil.sub(payDepositAmount, statementOrderCorrectDO.getStatementCorrectDepositAmount());
+                payOtherAmount = BigDecimalUtil.sub(payOtherAmount, statementOrderCorrectDO.getStatementCorrectOtherAmount());
+                payOverdueAmount = BigDecimalUtil.sub(payOverdueAmount, statementOrderCorrectDO.getStatementCorrectOverdueAmount());
+                totalAmount = BigDecimalUtil.sub(totalAmount, statementOrderCorrectDO.getStatementCorrectAmount());
+            }
+        }
+        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) < 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) <= 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+
+        // 冲正后的结算单金额，必须要与现有的结算单金额相同
+        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementAmount()) != 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
 
         boolean haveOldRecord = false;
         StatementPayOrderDO statementPayOrderLastRecord = statementPaySupport.getLastRecord(statementOrderDO.getId());
@@ -360,7 +417,7 @@ public class StatementServiceImpl implements StatementService {
         if (haveOldRecord) {
             statementPayOrderDO = statementPayOrderLastRecord;
         } else {
-            statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, StatementOrderPayType.PAY_TYPE_WEIXIN, loginUserId, currentTime);
+            statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, StatementOrderPayType.PAY_TYPE_WEIXIN, loginUserId, currentTime);
         }
 
         if (statementPayOrderDO == null) {
@@ -370,7 +427,7 @@ public class StatementServiceImpl implements StatementService {
         }
 
         logger.info("wechat pay customer: {} , orderNo: {} , payRentAmount: {} , payRentDepositAmount: {} , payDepositAmount: {} , otherAmount: {} , totalAmount: {} , ",
-                customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), payRentAmount, payDepositAmount, otherAmount, totalAmount);
+                customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), payRentAmount, payDepositAmount, payOtherAmount, totalAmount);
         ServiceResult<String, String> wechatPayResult = paymentService.wechatPay(customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getRemark(), totalAmount, openId, ip, loginUserId);
         if (!ErrorCode.SUCCESS.equals(wechatPayResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -410,7 +467,13 @@ public class StatementServiceImpl implements StatementService {
         }
 
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementPayOrderDO.getStatementOrderId());
-        updateStatementOrderResult(statementOrderDO, statementPayOrderDO.getOtherAmount(), statementPayOrderDO.getPayRentAmount(), statementPayOrderDO.getPayRentDepositAmount(), statementPayOrderDO.getPayDepositAmount(), currentTime, loginUserId);
+
+        BigDecimal payRentAmount = statementPayOrderDO.getPayRentAmount();
+        BigDecimal payRentDepositAmount = statementPayOrderDO.getPayRentDepositAmount();
+        BigDecimal payDepositAmount = statementPayOrderDO.getPayDepositAmount();
+        BigDecimal otherAmount = statementPayOrderDO.getOtherAmount();
+        BigDecimal overdueAmount = statementPayOrderDO.getOverdueAmount();
+        updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, overdueAmount, currentTime, loginUserId);
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -453,18 +516,56 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
-        BigDecimal payRentAmount = BigDecimalUtil.add(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount()), statementOrderDO.getStatementOverdueAmount());
+        BigDecimal payRentAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount());
         BigDecimal payRentDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDO.getStatementRentDepositPaidAmount());
         BigDecimal payDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDO.getStatementDepositPaidAmount());
-        BigDecimal otherAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDO.getStatementOtherPaidAmount());
-        BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(payRentAmount, payRentDepositAmount), payDepositAmount), otherAmount);
-        StatementPayOrderDO statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, StatementOrderPayType.PAY_TYPE_BALANCE, loginUser.getUserId(), currentTime);
+        BigDecimal payOtherAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDO.getStatementOtherPaidAmount());
+        BigDecimal payOverdueAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDO.getStatementOverduePaidAmount());
+        BigDecimal totalAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(payRentAmount, payRentDepositAmount), payDepositAmount), payOtherAmount), payOverdueAmount);
+
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderId(statementOrderDO.getId());
+        if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
+            for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
+                payRentAmount = BigDecimalUtil.sub(payRentAmount, statementOrderCorrectDO.getStatementCorrectRentAmount());
+                payRentDepositAmount = BigDecimalUtil.sub(payRentDepositAmount, statementOrderCorrectDO.getStatementCorrectRentDepositAmount());
+                payDepositAmount = BigDecimalUtil.sub(payDepositAmount, statementOrderCorrectDO.getStatementCorrectDepositAmount());
+                payOtherAmount = BigDecimalUtil.sub(payOtherAmount, statementOrderCorrectDO.getStatementCorrectOtherAmount());
+                payOverdueAmount = BigDecimalUtil.sub(payOverdueAmount, statementOrderCorrectDO.getStatementCorrectOverdueAmount());
+                totalAmount = BigDecimalUtil.sub(totalAmount, statementOrderCorrectDO.getStatementCorrectAmount());
+            }
+        }
+        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) < 0
+                || BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) < 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) <= 0
+                && BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) <= 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+
+        // 冲正后的结算单金额，必须要与现有的结算单金额相同
+        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementAmount()) != 0) {
+            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            return result;
+        }
+
+        StatementPayOrderDO statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, StatementOrderPayType.PAY_TYPE_BALANCE, loginUser.getUserId(), currentTime);
         if (statementPayOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
-        ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getRemark(), payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount);
+        ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getRemark(), BigDecimalUtil.add(payRentAmount, payOverdueAmount), payRentDepositAmount, payDepositAmount, payOtherAmount);
         if (!ErrorCode.SUCCESS.equals(paymentResult.getErrorCode()) || !paymentResult.getResult()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(paymentResult.getErrorCode());
@@ -477,56 +578,95 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-        updateStatementOrderResult(statementOrderDO, otherAmount, payRentAmount, payRentDepositAmount, payDepositAmount, currentTime, loginUser.getUserId());
+        updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, currentTime, loginUser.getUserId());
         result.setResult(true);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
-    void updateStatementOrderResult(StatementOrderDO statementOrderDO, BigDecimal otherAmount, BigDecimal rentAmount, BigDecimal rentDepositAmount, BigDecimal depositAmount, Date currentTime, Integer loginUserId) {
+    void updateStatementOrderResult(StatementOrderDO statementOrderDO, BigDecimal rentAmount, BigDecimal rentDepositAmount, BigDecimal depositAmount, BigDecimal otherAmount, BigDecimal overdueAmount, Date currentTime, Integer loginUserId) {
 
         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
         statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementOtherPaidAmount(), otherAmount));
         statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentPaidAmount(), rentAmount));
         statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositPaidAmount(), rentDepositAmount));
         statementOrderDO.setStatementDepositPaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositPaidAmount(), depositAmount));
+        statementOrderDO.setStatementOverduePaidAmount(BigDecimalUtil.add(statementOrderDO.getStatementOverduePaidAmount(), overdueAmount));
         statementOrderDO.setStatementPaidTime(currentTime);
         statementOrderDO.setUpdateTime(currentTime);
         statementOrderDO.setUpdateUser(loginUserId.toString());
         statementOrderMapper.update(statementOrderDO);
         Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
 
-        // 订单项应付租金金额
-        Map<Integer, BigDecimal> statementOrderDetailNeedPayMap = new HashMap<>();
-        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
-            if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-                BigDecimal needStatementDetailRentPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                statementOrderDetailNeedPayMap.put(statementOrderDetailDO.getId(), BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId()), needStatementDetailRentPayAmount));
-            }
-            if (StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT.equals(statementOrderDetailDO.getStatementDetailType())
-                    && BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailAmount(), BigDecimal.ZERO) < 0
-                    && statementOrderDetailDO.getReturnReferId() != null) {
-                statementOrderDetailNeedPayMap.put(statementOrderDetailDO.getReturnReferId(), BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getReturnReferId()), statementOrderDetailDO.getStatementDetailAmount()));
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderId(statementOrderDO.getId());
+
+        // 处理冲正的金额
+        Map<String, BigDecimal> itemTypeAmountMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
+            for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
+                String rentTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+                itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentTypeAmountKey), statementOrderCorrectDO.getStatementCorrectRentAmount()));
+                String rentDepositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+                itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentDepositTypeAmountKey), statementOrderCorrectDO.getStatementCorrectRentDepositAmount()));
+                String depositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+                itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(depositTypeAmountKey), statementOrderCorrectDO.getStatementCorrectDepositAmount()));
+                String otherTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+                itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderCorrectDO.getStatementCorrectOtherAmount()));
+                String overdueTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+                itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
             }
         }
-
 
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                 statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-                statementOrderDetailDO.setStatementDetailRentPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(), statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId())));
-                BigDecimal needStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
-                statementOrderDetailDO.setStatementDetailRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), needStatementDetailRentDepositPayAmount));
-                BigDecimal needStatementDetailDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-                statementOrderDetailDO.setStatementDetailDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), needStatementDetailDepositPayAmount));
-                BigDecimal needStatementDetailOtherPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOtherAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                statementOrderDetailDO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), needStatementDetailOtherPayAmount));
+
+                BigDecimal noPaidStatementDetailRentPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                BigDecimal needStatementDetailRentPayAmount = BigDecimal.ZERO;
+                if (BigDecimalUtil.compare(noPaidStatementDetailRentPayAmount, BigDecimal.ZERO) > 0) {
+                    needStatementDetailRentPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentPayAmount, itemTypeAmountMap.get(StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderDetailDO.getOrderItemReferId()));
+                    statementOrderDetailDO.setStatementDetailRentPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(), needStatementDetailRentPayAmount));
+                }
+
+                BigDecimal noPaidStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                if (BigDecimalUtil.compare(noPaidStatementDetailRentDepositPayAmount, BigDecimal.ZERO) > 0) {
+                    BigDecimal needStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentDepositPayAmount, itemTypeAmountMap.get(StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderDetailDO.getOrderItemReferId()));
+                    statementOrderDetailDO.setStatementDetailRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), needStatementDetailRentDepositPayAmount));
+                }
+
+                BigDecimal noPaidStatementDetailDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                if (BigDecimalUtil.compare(noPaidStatementDetailDepositPayAmount, BigDecimal.ZERO) > 0) {
+                    BigDecimal needStatementDetailDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailDepositPayAmount, itemTypeAmountMap.get(StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderDetailDO.getOrderItemReferId()));
+                    statementOrderDetailDO.setStatementDetailDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), needStatementDetailDepositPayAmount));
+                }
+
+                BigDecimal noPaidStatementDetailOtherPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOtherAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                if (BigDecimalUtil.compare(noPaidStatementDetailOtherPayAmount, BigDecimal.ZERO) > 0) {
+                    BigDecimal needStatementDetailOtherPayAmount = BigDecimalUtil.sub(noPaidStatementDetailOtherPayAmount, itemTypeAmountMap.get(StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-" + statementOrderDetailDO.getOrderItemReferId()));
+                    statementOrderDetailDO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), needStatementDetailOtherPayAmount));
+                }
+
+                BigDecimal noPaidStatementDetailOverduePayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOverdueAmount(), statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                if (BigDecimalUtil.compare(noPaidStatementDetailOverduePayAmount, BigDecimal.ZERO) > 0) {
+                    BigDecimal needStatementDetailOverduePayAmount;
+                    BigDecimal correctOverdueAmount = itemTypeAmountMap.get(StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderDetailDO.getOrderItemReferId());
+                    correctOverdueAmount = correctOverdueAmount == null ? BigDecimal.ZERO : correctOverdueAmount;
+                    if (BigDecimalUtil.compare(noPaidStatementDetailOverduePayAmount, correctOverdueAmount) >= 0) {
+                        needStatementDetailOverduePayAmount = BigDecimalUtil.sub(noPaidStatementDetailOverduePayAmount, correctOverdueAmount);
+                    } else {
+                        needStatementDetailOverduePayAmount = BigDecimal.ZERO;
+                        itemTypeAmountMap.put(StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderDetailDO.getOrderItemReferId(), BigDecimalUtil.sub(correctOverdueAmount, noPaidStatementDetailOverduePayAmount));
+                    }
+                    statementOrderDetailDO.setStatementDetailOverduePaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOverduePaidAmount(), needStatementDetailOverduePayAmount));
+                }
+
                 statementOrderDetailDO.setStatementDetailPaidTime(currentTime);
                 statementOrderDetailDO.setUpdateTime(currentTime);
                 statementOrderDetailDO.setUpdateUser(loginUserId.toString());
                 statementOrderDetailMapper.update(statementOrderDetailDO);
-                BigDecimal orderPaidAmount = BigDecimalUtil.add(statementOrderDetailNeedPayMap.get(statementOrderDetailDO.getId()), needStatementDetailOtherPayAmount);
-                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), orderPaidAmount));
+
+                // 已支付的租金
+                orderPaidMap.put(statementOrderDetailDO.getOrderId(), BigDecimalUtil.add(orderPaidMap.get(statementOrderDetailDO.getOrderId()), needStatementDetailRentPayAmount));
             }
         }
 
@@ -534,6 +674,9 @@ public class StatementServiceImpl implements StatementService {
             Integer orderId = entry.getKey();
             BigDecimal paidAmount = entry.getValue();
             OrderDO orderDO = orderMapper.findByOrderId(orderId);
+            if (orderDO == null) {
+                continue;
+            }
             if (!PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
                 orderDO.setPayStatus(PayStatus.PAY_STATUS_PAID);
             }
@@ -553,8 +696,8 @@ public class StatementServiceImpl implements StatementService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderQueryParam", interfaceStatementOrderQueryParam);
-        Integer totalCount = statementOrderMapper.listCount(maps);
-        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listPage(maps);
+        Integer totalCount = statementOrderMapper.listSaleCount(maps);
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listSalePage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
         Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, interfaceStatementOrderQueryParam.getPageNo(), interfaceStatementOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -1206,6 +1349,7 @@ public class StatementServiceImpl implements StatementService {
         maps.put("pageSize", Integer.MAX_VALUE);
         statementPayOrderQueryParam.setCreateStartTime(startTime);
         statementPayOrderQueryParam.setCreateEndTime(endTime);
+        statementPayOrderQueryParam.setPayStatus(PayStatus.PAY_STATUS_PAYING);
         maps.put("statementPayOrderQueryParam", statementPayOrderQueryParam);
         List<StatementPayOrderDO> statementPayOrderDOList = statementPayOrderMapper.listPage(maps);
         if (CollectionUtil.isNotEmpty(statementPayOrderDOList)) {
@@ -1216,12 +1360,12 @@ public class StatementServiceImpl implements StatementService {
                     Integer payType = StatementOrderPayType.PAY_TYPE_WEIXIN.equals(statementPayOrderDO.getPayType()) ? 2 : 4;
                     ServiceResult<String, PayResult> queryPayResult = paymentService.queryPayResult(statementPayOrderDO.getStatementPayOrderNo(), payType, customerDO.getCustomerNo());
                     if (!ErrorCode.SUCCESS.equals(queryPayResult.getErrorCode())) {
-                        logger.error("查询结算单有误，请检查，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo());
+                        logger.error("查询结算单有误，请检查，{}，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo(), queryPayResult.getErrorCode());
                         continue;
                     }
                     PayResult payResult = queryPayResult.getResult();
                     if (!CommonConstant.COMMON_CONSTANT_YES.toString().equals(payResult.getStatus())
-                            || (!PayStatus.PAY_STATUS_PAID.toString().equals(payResult.getPayStatus()) && PayStatus.PAY_STATUS_FAILED.toString().equals(payResult.getPayStatus()))) {
+                            || (!PayStatus.PAY_STATUS_PAID.toString().equals(payResult.getPayStatus()) && !PayStatus.PAY_STATUS_FAILED.toString().equals(payResult.getPayStatus()))) {
                         logger.error("查询结算单还没有结果，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo());
                         continue;
                     }
@@ -1230,9 +1374,10 @@ public class StatementServiceImpl implements StatementService {
                     param.setAmount(new BigDecimal(payResult.getRespAmount()));
                     param.setBusinessOrderNo(payResult.getBusinessOrderNo());
                     param.setOrderNo(payResult.getBusinessOrderNo());
+                    param.setNotifyStatus(PayStatus.PAY_STATUS_PAID.toString().equals(payResult.getPayStatus()) ? "1" : PayStatus.PAY_STATUS_FAILED.toString().equals(payResult.getPayStatus()) ? "2" : null);
                     ServiceResult<String, String> weixinPayCallbackResult = weixinPayCallback(param);
                     if (!ErrorCode.SUCCESS.equals(weixinPayCallbackResult.getErrorCode())) {
-                        logger.error("更新结算单有误，请检查，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo());
+                        logger.error("更新结算单有误，请检查，{}，{}，{}", statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getStatementOrderNo(), weixinPayCallbackResult.getErrorCode());
                         continue;
                     }
                 } catch (Exception e) {
@@ -1241,6 +1386,61 @@ public class StatementServiceImpl implements StatementService {
             }
         }
 
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<StatementOrder>> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
+        ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
+        Integer totalCount = statementOrderMapper.listMonthCount(maps);
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listMonthPage(maps);
+        List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
+        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, List<StatementOrder>> queryStatementOrderMonthDetail(String customerNo, Date month) {
+        ServiceResult<String, List<StatementOrder>> result = new ServiceResult<>();
+
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        if (month == null) {
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_NULL);
+            return result;
+        }
+        List<StatementOrderDO> statementOrderDOList = statementOrderMapper.findByCustomerNo(customerDO.getCustomerNo(), month);
+        if (statementOrderDOList == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
+
+        StatementOrderDetail returnReferStatementOrderDetail = null;
+
+        if (statementOrderList != null) {
+            for (int i = 0; i < statementOrderList.size(); i++) {
+                Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrderList.get(i).getStatementOrderDetailList(), "statementOrderDetailId");
+                for (StatementOrderDetail statementOrderDetail : statementOrderList.get(i).getStatementOrderDetailList()) {
+                    if (statementOrderDetail.getReturnReferId() != null) {
+                        returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
+                    }
+                    convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+                }
+            }
+        }
+        result.setResult(statementOrderList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -1307,7 +1507,11 @@ public class StatementServiceImpl implements StatementService {
 
                 totalOverdueAmount = BigDecimalUtil.add(totalOverdueAmount, detailOverdueAmount);
             }
-            statementOrderDO.setStatementOverdueAmount(totalOverdueAmount);
+
+            BigDecimal originalOverdueAmount = statementOrderDO.getStatementOverdueAmount();
+            BigDecimal nowOverdueAmount = BigDecimalUtil.add(totalOverdueAmount,statementOrderDO.getStatementOverduePaidAmount());
+            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), nowOverdueAmount), originalOverdueAmount));
+            statementOrderDO.setStatementOverdueAmount(nowOverdueAmount);
             statementOrderMapper.update(statementOrderDO);
         }
     }
@@ -1354,6 +1558,7 @@ public class StatementServiceImpl implements StatementService {
                         statementOrderDO.setStatementAmount(BigDecimal.ZERO);
                         statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), diffAmount));
                     }
+                    statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
                     // 结算单不能为负数
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementRentAmount(), BigDecimal.ZERO) < 0) {
                         BigDecimal diffAmount = BigDecimalUtil.sub(BigDecimal.ZERO, statementOrderDO.getStatementRentAmount());
@@ -1362,12 +1567,11 @@ public class StatementServiceImpl implements StatementService {
                     }
                     statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
-                    statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
                     statementOrderDO.setStatementOtherAmount(BigDecimalUtil.add(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
                     if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }
-                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
+                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     }
                     if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
@@ -1399,7 +1603,7 @@ public class StatementServiceImpl implements StatementService {
                 return statementMonthCount;
             }
             statementMonthCount = rentTimeLength / paymentCycle;
-            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1))) {
+            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (CommonConstant.SYSTEM_STATEMENT_DATE.equals(statementDay) && startDay <= 10)) {
                 statementMonthCount++;
             }
             return statementMonthCount;
@@ -1437,14 +1641,21 @@ public class StatementServiceImpl implements StatementService {
      * 计算多期中的第一期明细
      */
     StatementOrderDetailDO calculateFirstStatementOrderDetail(Integer rentType, Integer rentLength, Integer statementDays, Integer paymentCycle, Integer payMode, Date rentStartTime, BigDecimal unitAmount, Integer itemCount, Integer customerId, Integer orderId, Integer orderItemType, Integer orderItemReferId, Date currentTime, Integer loginUserId) {
-
+        Calendar rentStartTimeCalendar = Calendar.getInstance();
+        rentStartTimeCalendar.setTime(rentStartTime);
+        // 如果结算日为31日，并且租期在10日前，交到前一个月的即可
+        if (CommonConstant.SYSTEM_STATEMENT_DATE.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
+            paymentCycle--;
+        }
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, paymentCycle);
         Calendar statementEndTimeCalendar = Calendar.getInstance();
         statementEndTimeCalendar.setTime(statementEndTime);
         int statementEndMonthDays = DateUtil.getActualMaximum(statementEndTime);
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             // 不做任何动作，只是当天
+            statementEndTime = rentStartTime;
         } else if (statementDays > statementEndMonthDays) {
+            // 判断月份天数小于31的情况
             statementEndTimeCalendar.set(Calendar.DAY_OF_MONTH, statementEndMonthDays);
             statementEndTime = statementEndTimeCalendar.getTime();
         } else {
@@ -1643,4 +1854,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private StatementPayOrderMapper statementPayOrderMapper;
+
+    @Autowired
+    private StatementOrderCorrectMapper statementOrderCorrectMapper;
 }

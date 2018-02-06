@@ -244,6 +244,20 @@
                 </div>
 
                 <div class="p25 ptn">
+                    <div class="panel">
+                        <div class="panel-heading pn ph8">
+                            <span>客户图片上传信息</span>
+                        </div>
+                        <div class="panel-body nano nano-default affix rtlnao" style="max-height: 430px" id="customerImgNano">
+                            <div class="nano-content">
+                                #parse("component/customerBusiness/imageInfo.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="p25 ptn">
                     <div class="row">
                         #parse("component/customer/riskInfo.vm")
                     </div>
@@ -261,19 +275,6 @@
                     <div class="row">
                         <div class="col-md-12">
                             #parse("component/customer/orders.vm")
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p25 ptn">
-                    <div class="panel">
-                        <div class="panel-heading pn ph8">
-                            <span>客户图片上传信息</span>
-                        </div>
-                        <div class="panel-body nano nano-default affix rtlnao" style="max-height: 430px" id="customerImgNano">
-                            <div class="nano-content">
-                                #parse("component/customerBusiness/imageInfo.vm")
-                            </div>
                         </div>
                     </div>
                 </div>

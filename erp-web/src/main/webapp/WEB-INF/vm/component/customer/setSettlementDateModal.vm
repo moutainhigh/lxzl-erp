@@ -1,0 +1,23 @@
+<div id="inputRemrakModal" class="popup-basic admin-form mfp-with-anim">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+        </div>
+        <form method="post" class="inputForm">
+            <div class="panel-body p25">
+                <div class="section">
+                    <label for="userName" class="field-label">选择结算时间</label>
+                    <label class="field select">
+                        <select id="statementDate" name="statementDate">
+                        </select>
+                        <i class="arrow"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

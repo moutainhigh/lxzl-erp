@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -90,5 +92,15 @@ public class StatementController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "queryStatementOrderCheckParam", method = RequestMethod.POST)
+    public Result queryStatementOrderCheckParam(@RequestBody StatementOrderMonthQueryParam statementOrderMonthQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrderCheckParam(statementOrderMonthQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
+    @RequestMapping(value = "queryStatementOrderMonthDetail", method = RequestMethod.POST)
+    public Result queryStatementOrderMonthDetail(@RequestBody StatementOrderMonthQueryParam statementOrderMonthQueryParam, BindingResult validResult) {
+        ServiceResult<String, List<StatementOrder>> serviceResult = statementService.queryStatementOrderMonthDetail(statementOrderMonthQueryParam.getStatementOrderCustomerNo(),statementOrderMonthQueryParam.getMonth());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

@@ -3,11 +3,15 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
+import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -20,7 +24,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createNew() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setOrderNo("LXO-20180129-731475-00110");
+        param.setOrderNo("LXO-20180123-701359-00081");
         TestResult testResult = getJsonTestResult("/statementOrder/createNew", param);
     }
 
@@ -80,5 +84,30 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
         param.setOrderNo("LXO2018010570133800034");
         TestResult testResult = getJsonTestResult("/statementOrder/detailByOrderId", param);
+    }
+
+    @Test
+    public void queryStatementOrderCheckParam() throws Exception {
+        String str = "2018-1-15";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date rentStartTime = sdf.parse(str);
+        StatementOrderMonthQueryParam param = new StatementOrderMonthQueryParam();
+        param.setPageNo(1);
+        param.setPageSize(10);
+//        param.setStatementOrderCustomerName("庄凯麟勿动");
+        param.setStatementOrderCustomerNo("LXCC-1000-20180131-13764");
+//        param.setMonth(rentStartTime);
+        TestResult testResult = getJsonTestResult("/statementOrder/queryStatementOrderCheckParam", param);
+    }
+
+    @Test
+    public void queryStatementOrderMonthDetail() throws Exception {
+        String str = "2018-01-01";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date rentStartTime = sdf.parse(str);
+        StatementOrderMonthQueryParam param = new StatementOrderMonthQueryParam();
+        param.setStatementOrderCustomerNo("LXCC-1000-20180131-13764");
+        param.setMonth(new Date());
+        TestResult testResult = getJsonTestResult("/statementOrder/queryStatementOrderMonthDetail", param);
     }
 }

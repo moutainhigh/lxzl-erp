@@ -17,6 +17,7 @@ public class StatementPayOrderDO  extends BaseDO {
 	private BigDecimal payRentDepositAmount;
 	private BigDecimal payDepositAmount;
 	private BigDecimal otherAmount;
+	private BigDecimal overdueAmount;
 	private Date payTime;
 	private Date endTime;
 	private Integer dataStatus;
@@ -142,4 +143,11 @@ public class StatementPayOrderDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public BigDecimal getOverdueAmount() {
+		return overdueAmount;
+	}
+
+	public void setOverdueAmount(BigDecimal overdueAmount) {
+		this.overdueAmount = overdueAmount;
+	}
 }

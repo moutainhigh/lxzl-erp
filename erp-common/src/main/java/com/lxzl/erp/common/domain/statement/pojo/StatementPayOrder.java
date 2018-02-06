@@ -19,6 +19,7 @@ public class StatementPayOrder extends BasePO {
 	private BigDecimal payRentDepositAmount;   //支付租金押金金额
 	private BigDecimal payDepositAmount;   //支付押金金额
 	private BigDecimal otherAmount;   //支付其他金额
+	private BigDecimal overdueAmount;	// 支付逾期金额
 	private Date payTime;   //支付时间，即发起支付时间
 	private Date endTime;   //结束时间，即收到返回时间
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
@@ -181,4 +182,11 @@ public class StatementPayOrder extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public BigDecimal getOverdueAmount() {
+		return overdueAmount;
+	}
+
+	public void setOverdueAmount(BigDecimal overdueAmount) {
+		this.overdueAmount = overdueAmount;
+	}
 }

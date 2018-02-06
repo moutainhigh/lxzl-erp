@@ -16,5 +16,8 @@ public interface StatementOrderCorrectMapper extends BaseMysqlDAO<StatementOrder
 	//通过查询参数查询 结算单 结算冲正单信息
     List<StatementOrderCorrectDO> findStatementOrderCorrectAndStatementOrderByQueryParam(@Param("maps") Map<String, Object> maps);
 
-	List<StatementOrderCorrectDO> findByNo(@Param("statementCorrectNo") String statementCorrectNo);
+    List<StatementOrderCorrectDO> findStatementOrderId(@Param("statementOrderId") Integer statementOrderId);
+    List<StatementOrderCorrectDO> findStatementOrderIdAndItemId(@Param("statementOrderId") Integer statementOrderId, @Param("orderItemId") Integer orderItemId);
+
+	StatementOrderCorrectDO findByNo(@Param("statementCorrectNo") String statementCorrectNo);
 }

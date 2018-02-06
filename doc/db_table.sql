@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS db_lxzl_payment_gateway DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS lxzl_erp DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE lxzl_erp;
 
 DROP TABLE if exists `erp_user`;
@@ -1824,10 +1824,15 @@ CREATE TABLE `erp_statement_order_correct` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `statement_correct_no` varchar(100) NOT NULL COMMENT '冲正单号',
   `statement_order_id` int(20) NOT NULL COMMENT '结算单ID',
-  `statement_order_detail_id` int(20) NOT NULL COMMENT '结算单项ID',
-  `statement_correct_amount` decimal(15,2) NOT NULL COMMENT '冲正金额',
+  `statement_order_item_id` int(20) NOT NULL COMMENT '结算单订单项ID',
+  `statement_correct_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正金额',
+  `statement_correct_rent_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正租金金额',
+  `statement_correct_rent_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正租金押金金额',
+  `statement_correct_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正押金金额',
+  `statement_correct_other_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正其他金额',
+  `statement_correct_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '冲正逾期金额',
   `statement_correct_reason` varchar(500) NOT NULL COMMENT '冲正原因',
-  `statement_order_correct_status` int(20) COMMENT '结算冲正单状态，0-待提交，1-审核中，2-审核通过（待冲正），3-冲正成功，4-冲正失败，5-取消冲正',
+  `statement_order_correct_status` int(20) COMMENT '结算冲正单状态，0-待提交，1-审核中，2-冲正成功，3-冲正失败，4-取消冲正',
   `statement_correct_success_time` datetime DEFAULT NULL COMMENT '冲正成功时间',
   `statement_correct_fail_reason` varchar(500) DEFAULT NULL COMMENT '冲正失败原因（建议格式为 错误代码:错误描述）',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -1858,6 +1863,7 @@ CREATE TABLE `erp_statement_order` (
   `statement_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
   `statement_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单逾期金额，结算单明细逾期总和',
+  `statement_overdue_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的逾期金额',
   `statement_correct_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单冲正金额',
   `statement_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
   `statement_start_time` date NOT NULL COMMENT '结算开始时间，结算单明细最早的一个',
@@ -1918,6 +1924,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
   `statement_detail_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单逾期金额',
+  `statement_detail_overdue_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单已支付逾期金额',
   `statement_detail_overdue_days` int(20) COMMENT '逾期天数',
   `statement_detail_overdue_phase_count` int(20) COMMENT '逾期期数',
   `statement_detail_correct_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单冲正金额',
@@ -1947,6 +1954,7 @@ CREATE TABLE `erp_statement_pay_order` (
   `pay_rent_deposit_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付租金押金金额',
   `pay_deposit_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付押金金额',
   `other_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付其他金额',
+  `overdue_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付逾期金额',
   `pay_time` datetime DEFAULT NULL COMMENT '支付时间，即发起支付时间',
   `end_time` datetime DEFAULT NULL COMMENT '结束时间，即收到返回时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -2731,6 +2739,27 @@ CREATE TABLE `erp_k3_mapping_material_type` (
   `material_type_name` varchar(64) COMMENT '配件类型名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3配件类型映射';
+
+
+DROP TABLE if exists `erp_k3_mapping_sub_company`;
+CREATE TABLE `erp_k3_mapping_sub_company` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_sub_company_code` varchar(64) COMMENT 'erp的分公司编码',
+  `k3_sub_company_code` varchar(64) COMMENT 'K3分公司编码',
+  `sub_company_name` varchar(64) COMMENT '分公司名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3分公司映射';
+
+DROP TABLE if exists `erp_k3_mapping_department`;
+CREATE TABLE `erp_k3_mapping_department` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_department_id` int(20) COMMENT 'erp的部门ID',
+  `k3_department_code` varchar(64) COMMENT 'K3部门编码',
+  `department_name` varchar(200) COMMENT '部门名称',
+  `sub_company_id` int(20) COMMENT 'erp的分公司ID',
+  `sub_company_name` varchar(200) COMMENT '分公司名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3部门映射';
 
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (

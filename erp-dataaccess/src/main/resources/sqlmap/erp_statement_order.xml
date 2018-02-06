@@ -7,6 +7,7 @@
 		<result column="statement_order_no" jdbcType="VARCHAR" property="statementOrderNo" />
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
 		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
 		<result column="statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
 		<result column="statement_amount" jdbcType="DECIMAL" property="statementAmount" />
 		<result column="statement_other_amount" jdbcType="DECIMAL" property="statementOtherAmount" />
@@ -24,6 +25,7 @@
 		<result column="statement_status" jdbcType="INTEGER" property="statementStatus" />
 		<result column="statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
 		<result column="statement_end_time" jdbcType="TIMESTAMP" property="statementEndTime" />
+		<result column="statement_correct_amount" jdbcType="DECIMAL" property="statementCorrectAmount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -60,6 +62,7 @@
 		<result column="detail_statement_detail_rent_paid_amount" jdbcType="DECIMAL" property="statementDetailRentPaidAmount" />
 		<result column="detail_statement_detail_paid_time" jdbcType="TIMESTAMP" property="statementDetailPaidTime" />
 		<result column="detail_statement_detail_overdue_amount" jdbcType="DECIMAL" property="statementDetailOverdueAmount" />
+		<result column="detail_statement_detail_overdue_paid_amount" jdbcType="DECIMAL" property="statementDetailOverduePaidAmount" />
 		<result column="detail_statement_detail_overdue_days" jdbcType="INTEGER" property="statementDetailOverdueDays" />
 		<result column="detail_statement_detail_overdue_phase_count" jdbcType="INTEGER" property="statementDetailOverduePhaseCount" />
 		<result column="detail_statement_detail_status" jdbcType="INTEGER" property="statementDetailStatus" />
@@ -76,7 +79,7 @@
 	<sql id="column_List">
 		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_other_amount,eso.statement_other_paid_amount,eso.statement_rent_deposit_amount,eso.statement_rent_deposit_paid_amount,eso.statement_rent_deposit_return_amount,
 		eso.statement_deposit_amount,eso.statement_deposit_paid_amount,eso.statement_deposit_return_amount,
-		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user
+		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user,eso.statement_correct_amount
 	</sql>
 
 	<sql id="detail_column_List">
@@ -84,7 +87,7 @@
 		esod.order_item_type as detail_order_item_type,esod.order_item_refer_id as detail_order_item_refer_id,esod.return_refer_id as detail_return_refer_id,esod.statement_detail_type as detail_statement_detail_type,esod.statement_detail_phase as detail_statement_detail_phase,esod.statement_expect_pay_time as detail_statement_expect_pay_time,
 		esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_other_amount as detail_statement_detail_other_amount,esod.statement_detail_other_paid_amount as detail_statement_detail_other_paid_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,
 		esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time as detail_statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount as detail_statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount as detail_statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount as detail_statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time as detail_statement_detail_deposit_return_time,
-		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_overdue_days as detail_statement_detail_overdue_days,esod.statement_detail_overdue_phase_count as detail_statement_detail_overdue_phase_count,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
+		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount as detail_statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days as detail_statement_detail_overdue_days,esod.statement_detail_overdue_phase_count as detail_statement_detail_overdue_phase_count,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
@@ -241,6 +244,102 @@
 		ORDER BY statement_main.statement_expect_pay_time ASC, esod.statement_expect_pay_time ASC
 	</select>
 
+	<select id="listSaleCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(eso.id) FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		<where>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
+				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
+				and eso.statement_status in (0,4)
+			</if>
+			<choose>
+				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
+					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
+				</when>
+				<otherwise>
+					and eso.statement_status in (0,4,8,16,20)
+				</otherwise>
+			</choose>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
+				<![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderQueryParam.statementExpectPayStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null">
+				<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listSalePage" resultMap="StatementOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			ec.customer_name AS customer_name
+		</trim>
+		FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		<where>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
+				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
+				and eso.statement_status in (0,4)
+			</if>
+			<choose>
+				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
+					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
+				</when>
+				<otherwise>
+					and eso.statement_status in (0,4,8,16)
+				</otherwise>
+			</choose>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
+				<![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderQueryParam.statementExpectPayStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayEndTime != null ">
+				<![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderQueryParam.statementExpectPayEndTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+		</where>
+		ORDER BY eso.statement_expect_pay_time
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
 	<sql id="set_column_sql">
 		<set>
 			<if test="statementOrderNo != null">
@@ -300,6 +399,9 @@
 			<if test="statementEndTime != null">
 				statement_end_time = #{statementEndTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="statementCorrectAmount != null">
+				statement_correct_amount = #{statementCorrectAmount,jdbcType=DECIMAL},
+			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
@@ -328,8 +430,127 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO">
 		UPDATE erp_statement_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-	<select id="findNoSettlementById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_statement_order eso
-		WHERE eso.id = #{statementOrderId, jdbcType=INTEGER} AND eso.statement_status = 0 AND eso.data_status = 1
+
+	<select id="listMonthCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT COUNT(test.total)
+		FROM (
+		SELECT
+		COUNT(eso.customer_id) as total
+		FROM
+		erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+
+		<where>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<choose>
+				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.month != null">
+				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.month}, '%Y-%m') ]]>
+				</when>
+				<otherwise>
+				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
+				</otherwise>
+			</choose>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+		</where>
+		GROUP BY eso.customer_id) test
+
+	</select>
+
+	<select id="listMonthPage" resultMap="StatementOrderDO" parameterType="map">
+		SELECT
+		eso.customer_id,
+		SUM(eso.statement_amount) as statement_amount,
+		SUM(eso.statement_rent_deposit_amount) as statement_rent_deposit_amount,
+		SUM(eso.statement_rent_deposit_paid_amount) as statement_rent_deposit_paid_amount,
+		SUM(eso.statement_rent_deposit_return_amount) as statement_rent_deposit_return_amount,
+		SUM(eso.statement_deposit_amount) as statement_deposit_amount,
+		SUM(eso.statement_deposit_paid_amount) as statement_deposit_paid_amount,
+		SUM(eso.statement_deposit_return_amount) as statement_deposit_return_amount,
+		SUM(eso.statement_rent_amount) as statement_rent_amount,
+		SUM(eso.statement_rent_paid_amount) as statement_rent_paid_amount,
+		SUM(eso.statement_overdue_amount) as statement_overdue_amount,
+		SUM(eso.statement_other_amount) as statement_other_amount,
+		SUM(eso.statement_other_paid_amount) as statement_other_paid_amount,
+		SUM(eso.statement_correct_amount) as statement_correct_amount,
+		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
+		ec.customer_name AS customer_name,
+		ec.customer_no AS customer_no
+		FROM erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+		<where>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerNo != ''">
+				and ec.customer_no like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerNo}','%' )
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerId != null">
+				and eso.customer_id = #{maps.statementOrderMonthQueryParam.statementOrderCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderMonthQueryParam.statementOrderCustomerName != ''">
+				and ec.customer_name like
+				CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerName}','%' )
+			</if>
+			<choose>
+				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.month != null">
+					and
+					<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.month}, '%Y-%m') ]]>
+				</when>
+				<otherwise>
+					and <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
+				</otherwise>
+			</choose>
+			<if test="maps.isQueryAll == null">
+				and eso.data_status = 1
+			</if>
+		</where>
+		GROUP BY eso.customer_id
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findByCustomerNo" resultMap="StatementOrderDO">
+		SELECT statement_main.*
+		<trim prefix=",">
+			<include refid="detail_column_List"/>
+		</trim>
+		from
+		(SELECT
+		eso.customer_id,
+		SUM(eso.statement_amount) as statement_amount,
+		SUM(eso.statement_rent_deposit_amount) as statement_rent_deposit_amount,
+		SUM(eso.statement_rent_deposit_paid_amount) as statement_rent_deposit_paid_amount,
+		SUM(eso.statement_rent_deposit_return_amount) as statement_rent_deposit_return_amount,
+		SUM(eso.statement_deposit_amount) as statement_deposit_amount,
+		SUM(eso.statement_deposit_paid_amount) as statement_deposit_paid_amount,
+		SUM(eso.statement_deposit_return_amount) as statement_deposit_return_amount,
+		SUM(eso.statement_rent_amount) as statement_rent_amount,
+		SUM(eso.statement_rent_paid_amount) as statement_rent_paid_amount,
+		SUM(eso.statement_overdue_amount) as statement_overdue_amount,
+		SUM(eso.statement_other_amount) as statement_other_amount,
+		SUM(eso.statement_other_paid_amount) as statement_other_paid_amount,
+		SUM(eso.statement_correct_amount) as statement_correct_amount,
+		SUM(eso.statement_overdue_paid_amount) as statement_overdue_paid_amount,
+		ec.customer_name AS customer_name,
+		ec.customer_no AS customer_no
+		FROM
+		erp_statement_order eso
+		INNER JOIN erp_customer ec on eso.customer_id = ec.id
+
+		WHERE
+		date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format(#{month}, '%Y-%m')
+		and eso.data_status=1
+		and ec.customer_no = #{customerNo, jdbcType=VARCHAR}
+		GROUP BY
+		eso.customer_id) as statement_main
+		LEFT JOIN erp_statement_order_detail esod ON statement_main.customer_id = esod.customer_id AND esod.data_status = 1
+		where date_format(esod.statement_expect_pay_time,'%Y-%m') = date_format(#{month} , '%Y-%m');
+
 	</select>
 </mapper>

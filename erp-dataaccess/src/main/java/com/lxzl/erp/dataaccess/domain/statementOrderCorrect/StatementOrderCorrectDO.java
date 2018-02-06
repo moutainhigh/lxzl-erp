@@ -12,15 +12,18 @@ public class StatementOrderCorrectDO  extends BaseDO {
 	private String statementCorrectNo;
 	private Integer statementOrderId;
 	private BigDecimal statementCorrectAmount;
+	private BigDecimal statementCorrectRentAmount;
+	private BigDecimal statementCorrectRentDepositAmount;
+	private BigDecimal statementCorrectDepositAmount;
+	private BigDecimal statementCorrectOtherAmount;
+	private BigDecimal statementCorrectOverdueAmount;
 	private String statementCorrectReason;
 	private Integer statementOrderCorrectStatus;
 	private Integer dataStatus;
 	private String remark;
 	private Date statementCorrectSuccessTime;
 	private String statementCorrectFailReason;
-	private Integer statementOrderDetailId;   //结算单项ID
-
-	private StatementOrderDetailDO statementOrderDetailDO;
+	private Integer statementOrderItemId;   //结算单订单项ID
 
 	public Integer getId(){
 		return id;
@@ -102,19 +105,51 @@ public class StatementOrderCorrectDO  extends BaseDO {
 		this.statementCorrectFailReason = statementCorrectFailReason;
 	}
 
-	public Integer getStatementOrderDetailId() {
-		return statementOrderDetailId;
+	public BigDecimal getStatementCorrectRentAmount() {
+		return statementCorrectRentAmount;
 	}
 
-	public void setStatementOrderDetailId(Integer statementOrderDetailId) {
-		this.statementOrderDetailId = statementOrderDetailId;
+	public void setStatementCorrectRentAmount(BigDecimal statementCorrectRentAmount) {
+		this.statementCorrectRentAmount = statementCorrectRentAmount;
 	}
 
-	public StatementOrderDetailDO getStatementOrderDetailDO() {
-		return statementOrderDetailDO;
+	public BigDecimal getStatementCorrectDepositAmount() {
+		return statementCorrectDepositAmount;
 	}
 
-	public void setStatementOrderDetailDO(StatementOrderDetailDO statementOrderDetailDO) {
-		this.statementOrderDetailDO = statementOrderDetailDO;
+	public void setStatementCorrectDepositAmount(BigDecimal statementCorrectDepositAmount) {
+		this.statementCorrectDepositAmount = statementCorrectDepositAmount;
+	}
+
+	public BigDecimal getStatementCorrectOtherAmount() {
+		return statementCorrectOtherAmount;
+	}
+
+	public void setStatementCorrectOtherAmount(BigDecimal statementCorrectOtherAmount) {
+		this.statementCorrectOtherAmount = statementCorrectOtherAmount;
+	}
+
+	public BigDecimal getStatementCorrectOverdueAmount() {
+		return statementCorrectOverdueAmount;
+	}
+
+	public void setStatementCorrectOverdueAmount(BigDecimal statementCorrectOverdueAmount) {
+		this.statementCorrectOverdueAmount = statementCorrectOverdueAmount;
+	}
+
+	public Integer getStatementOrderItemId() {
+		return statementOrderItemId;
+	}
+
+	public void setStatementOrderItemId(Integer statementOrderItemId) {
+		this.statementOrderItemId = statementOrderItemId;
+	}
+
+	public BigDecimal getStatementCorrectRentDepositAmount() {
+		return statementCorrectRentDepositAmount;
+	}
+
+	public void setStatementCorrectRentDepositAmount(BigDecimal statementCorrectRentDepositAmount) {
+		this.statementCorrectRentDepositAmount = statementCorrectRentDepositAmount;
 	}
 }

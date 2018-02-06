@@ -24,7 +24,7 @@ public class WebServiceHelper {
     @Autowired
     private K3SendRecordMapper k3SendRecordMapper;
 
-    public void post(Integer postK3Type, Object data) {
+    public void post(Integer postK3OperatorType , Integer postK3Type, Object data) {
 
         try {
             ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(postK3Type);
@@ -33,9 +33,15 @@ public class WebServiceHelper {
                 logger.error("【 ERROR INFO 】Non implementation class for postK3Type : " + postK3Type);
                 return;
             }
-            Object postData = convertK3DataService.getK3PostWebServiceData(data);
+            Object postData = convertK3DataService.getK3PostWebServiceData(postK3OperatorType,data);
+            if(postData == null){
+                logger.error("=============【 PostWebServiceHelper ERROR 】=============");
+                logger.error("【 ERROR INFO 】Have no record for postK3Type : " + postK3Type);
+                return;
+            }
             threadPoolTaskExecutor.execute(new K3WebServicePostRunner(postK3Type, postData, k3SendRecordMapper));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("=============【 PostWebServiceHelper ERROR 】=============");
             logger.error("【 ERROR INFO 】" + e);
         }

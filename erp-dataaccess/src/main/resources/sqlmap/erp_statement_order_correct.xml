@@ -6,8 +6,13 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="statement_correct_no" jdbcType="VARCHAR" property="statementCorrectNo" />
 		<result column="statement_order_id" jdbcType="INTEGER" property="statementOrderId" />
-		<result column="statement_order_detail_id" jdbcType="INTEGER" property="statementOrderDetailId" />
+		<result column="statement_order_item_id" jdbcType="INTEGER" property="statementOrderItemId" />
 		<result column="statement_correct_amount" jdbcType="DECIMAL" property="statementCorrectAmount" />
+		<result column="statement_correct_rent_amount" jdbcType="DECIMAL" property="statementCorrectRentAmount" />
+		<result column="statement_correct_rent_deposit_amount" jdbcType="DECIMAL" property="statementCorrectRentDepositAmount" />
+		<result column="statement_correct_deposit_amount" jdbcType="DECIMAL" property="statementCorrectDepositAmount" />
+		<result column="statement_correct_other_amount" jdbcType="DECIMAL" property="statementCorrectOtherAmount" />
+		<result column="statement_correct_overdue_amount" jdbcType="DECIMAL" property="statementCorrectOverdueAmount" />
 		<result column="statement_correct_reason" jdbcType="VARCHAR" property="statementCorrectReason" />
 		<result column="statement_order_correct_status" jdbcType="INTEGER" property="statementOrderCorrectStatus" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
@@ -18,64 +23,25 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="statement_correct_success_time" jdbcType="TIMESTAMP" property="statementCorrectSuccessTime" />
 		<result column="statement_correct_fail_reason" jdbcType="VARCHAR" property="statementCorrectFailReason" />
-		<association resultMap="StatementOrderDetailDO" property="statementOrderDetailDO"/>
 	</resultMap>
-
-	<resultMap id="StatementOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO">
-		<id column="detail_id" jdbcType="INTEGER" property="id" />
-		<result column="detail_statement_order_id" jdbcType="INTEGER" property="statementOrderId" />
-		<result column="detail_customer_id" jdbcType="INTEGER" property="customerId" />
-		<result column="detail_order_type" jdbcType="INTEGER" property="orderType" />
-		<result column="detail_order_id" jdbcType="INTEGER" property="orderId" />
-		<result column="detail_order_item_type" jdbcType="INTEGER" property="orderItemType" />
-		<result column="detail_order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
-		<result column="detail_return_refer_id" jdbcType="INTEGER" property="returnReferId" />
-		<result column="detail_statement_detail_phase" jdbcType="INTEGER" property="statementDetailPhase" />
-		<result column="detail_statement_detail_type" jdbcType="INTEGER" property="statementDetailType" />
-		<result column="detail_statement_expect_pay_time" jdbcType="TIMESTAMP" property="statementExpectPayTime" />
-		<result column="detail_statement_detail_amount" jdbcType="DECIMAL" property="statementDetailAmount" />
-		<result column="detail_statement_detail_other_amount" jdbcType="DECIMAL" property="statementDetailOtherAmount" />
-		<result column="detail_statement_detail_other_paid_amount" jdbcType="DECIMAL" property="statementDetailOtherPaidAmount" />
-		<result column="detail_statement_detail_rent_deposit_amount" jdbcType="DECIMAL" property="statementDetailRentDepositAmount" />
-		<result column="detail_statement_detail_rent_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailRentDepositPaidAmount" />
-		<result column="detail_statement_detail_rent_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailRentDepositReturnAmount" />
-		<result column="detail_statement_detail_rent_deposit_return_time" jdbcType="TIMESTAMP" property="statementDetailRentDepositReturnTime" />
-		<result column="detail_statement_detail_deposit_amount" jdbcType="DECIMAL" property="statementDetailDepositAmount" />
-		<result column="detail_statement_detail_deposit_paid_amount" jdbcType="DECIMAL" property="statementDetailDepositPaidAmount" />
-		<result column="detail_statement_detail_deposit_return_amount" jdbcType="DECIMAL" property="statementDetailDepositReturnAmount" />
-		<result column="detail_statement_detail_deposit_return_time" jdbcType="TIMESTAMP" property="statementDetailDepositReturnTime" />
-		<result column="detail_statement_detail_rent_amount" jdbcType="DECIMAL" property="statementDetailRentAmount" />
-		<result column="detail_statement_detail_rent_paid_amount" jdbcType="DECIMAL" property="statementDetailRentPaidAmount" />
-		<result column="detail_statement_detail_paid_time" jdbcType="TIMESTAMP" property="statementDetailPaidTime" />
-		<result column="detail_statement_detail_overdue_amount" jdbcType="DECIMAL" property="statementDetailOverdueAmount" />
-		<result column="detail_statement_detail_overdue_days" jdbcType="INTEGER" property="statementDetailOverdueDays" />
-		<result column="detail_statement_detail_overdue_phase_count" jdbcType="INTEGER" property="statementDetailOverduePhaseCount" />
-		<result column="detail_statement_detail_status" jdbcType="INTEGER" property="statementDetailStatus" />
-		<result column="detail_statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
-		<result column="detail_statement_end_time" jdbcType="TIMESTAMP" property="statementEndTime" />
-		<result column="detail_data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="detail_remark" jdbcType="VARCHAR" property="remark" />
-		<result column="detail_create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="detail_create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
-	</resultMap>
-
-	<sql id="detail_column_List">
-		esod.id as detail_id,esod.statement_order_id as detail_statement_order_id,esod.customer_id as detail_customer_id,esod.order_type as detail_order_type,esod.order_id as detail_order_id ,
-		esod.order_item_type as detail_order_item_type,esod.order_item_refer_id as detail_order_item_refer_id,esod.return_refer_id as detail_return_refer_id,esod.statement_detail_type as detail_statement_detail_type,esod.statement_detail_phase as detail_statement_detail_phase,esod.statement_expect_pay_time as detail_statement_expect_pay_time,
-		esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_other_amount as detail_statement_detail_other_amount,esod.statement_detail_other_paid_amount as detail_statement_detail_other_paid_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,
-		esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time as detail_statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount as detail_statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount as detail_statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount as detail_statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time as detail_statement_detail_deposit_return_time,
-		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_overdue_days as detail_statement_detail_overdue_days,esod.statement_detail_overdue_phase_count as detail_statement_detail_overdue_phase_count,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
-	</sql>
 
 	<sql id="column_List">
-		esoc.id,esoc.statement_correct_no,esoc.statement_order_id,esoc.statement_correct_amount,esoc.statement_correct_reason,esoc.statement_order_correct_status,esoc.data_status,esoc.remark,esoc.create_time,esoc.create_user,esoc.update_time,esoc.update_user,esoc.statement_correct_success_time,esoc.statement_correct_fail_reason,esoc.statement_order_detail_id
+		esoc.id,esoc.statement_correct_no,esoc.statement_order_id,esoc.statement_correct_amount,esoc.statement_correct_rent_amount,esoc.statement_correct_rent_deposit_amount,esoc.statement_correct_deposit_amount,esoc.statement_correct_other_amount,esoc.statement_correct_overdue_amount,esoc.statement_correct_reason,esoc.statement_order_correct_status,esoc.data_status,esoc.remark,esoc.create_time,esoc.create_user,esoc.update_time,esoc.update_user,esoc.statement_correct_success_time,esoc.statement_correct_fail_reason,esoc.statement_order_item_id
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderCorrectDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc 
 		WHERE esoc.id = #{id, jdbcType=INTEGER} AND esoc.data_status = 1 
+	</select>
+
+	<select id="findStatementOrderId" resultMap="StatementOrderCorrectDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.data_status = 1 and statement_order_correct_status = 2
+	</select>
+
+	<select id="findStatementOrderIdAndItemId" resultMap="StatementOrderCorrectDO" parameterType="java.util.Map">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.data_status = 1 and statement_order_correct_status = 2
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -86,9 +52,6 @@
 			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderId != null">
 				AND esoc.statement_order_id = #{maps.statementOrderCorrectQueryParam.statementOrderId,jdbcType=INTEGER}
-			</if>
-			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderDetailId != null">
-				AND esoc.statement_order_detail_id = #{maps.statementOrderCorrectQueryParam.statementOrderDetailId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderCorrectStatus != null">
 				AND esoc.statement_order_correct_status = #{maps.statementOrderCorrectQueryParam.statementOrderCorrectStatus,jdbcType=INTEGER}
@@ -114,9 +77,6 @@
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderId != null">
 				AND esoc.statement_order_id = #{maps.statementOrderCorrectQueryParam.statementOrderId,jdbcType=INTEGER}
 			</if>
-			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderDetailId != null">
-				AND esoc.statement_order_detail_id = #{maps.statementOrderCorrectQueryParam.statementOrderDetailId,jdbcType=INTEGER}
-			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderCorrectStatus != null ">
 				AND esoc.statement_order_correct_status = #{maps.statementOrderCorrectQueryParam.statementOrderCorrectStatus,jdbcType=INTEGER}
 			</if>
@@ -141,11 +101,26 @@
 			<if test="statementOrderId != null">
 				statement_order_id = #{statementOrderId,jdbcType=INTEGER},
 			</if>
-			<if test="statementOrderDetailId != null">
-				statement_order_detail_id = #{statementOrderDetailId,jdbcType=INTEGER},
+			<if test="statementOrderItemId != null">
+				statement_order_item_id = #{statementOrderItemId,jdbcType=INTEGER},
 			</if>
 			<if test="statementCorrectAmount != null">
 				statement_correct_amount = #{statementCorrectAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementCorrectRentAmount != null">
+				statement_correct_rent_amount = #{statementCorrectRentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementCorrectRentDepositAmount != null">
+				statement_correct_rent_depost_amount = #{statementCorrectRentDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementCorrectDepositAmount != null">
+				statement_correct_deposit_amount = #{statementCorrectDepositAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementCorrectOtherAmount != null">
+				statement_correct_other_amount = #{statementCorrectOtherAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="statementCorrectOverdueAmount != null">
+				statement_correct_overdue_amount = #{statementCorrectOverdueAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="statementCorrectReason != null">
 				statement_correct_reason = #{statementCorrectReason,jdbcType=VARCHAR},
@@ -193,17 +168,13 @@
 	</select>
 
 	<select id="findStatementOrderCorrectAndStatementOrderByQueryParam" resultMap="StatementOrderCorrectDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="detail_column_List"/> FROM erp_statement_order_correct esoc
-		LEFT JOIN erp_statement_order_detail esod ON esod.id = esoc.statement_order_detail_id AND esod.data_status=1
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
 		<where>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != ''">
 				AND esoc.statement_correct_no = #{maps.statementOrderCorrectQueryParam.statementCorrectNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderId != null">
 				AND esoc.statement_order_id = #{maps.statementOrderCorrectQueryParam.statementOrderId,jdbcType=INTEGER}
-			</if>
-			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderDetailId != null">
-				AND esoc.statement_order_detail_id = #{maps.statementOrderCorrectQueryParam.statementOrderDetailId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementOrderCorrectStatus != null">
 				AND esoc.statement_order_correct_status = #{maps.statementOrderCorrectQueryParam.statementOrderCorrectStatus,jdbcType=INTEGER}

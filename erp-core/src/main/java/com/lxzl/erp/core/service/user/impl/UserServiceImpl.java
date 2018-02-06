@@ -16,6 +16,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.userLoginLog.impl.support.UserLoginLogSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
@@ -59,10 +60,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Autowired
     private UserSupport userSupport;
 
+    @Autowired
+    private UserLoginLogSupport userLoginLogSupport;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, User> login(LoginParam loginParam, String ip) {
         ServiceResult<String, User> result = new ServiceResult<>();
+        userLoginLogSupport.addUserLoginLog(loginParam.getUserName(),ip,null);
         UserDO userDO = userMapper.findByUsername(loginParam.getUserName());
         if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);

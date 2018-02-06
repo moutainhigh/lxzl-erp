@@ -177,7 +177,7 @@ public class PaymentServiceImpl implements PaymentService {
         ServiceResult<String, String> result = new ServiceResult<>();
         WeixinPayParam param = new WeixinPayParam();
         param.setBusinessCustomerNo(customerNo);
-        param.setAmount(new BigDecimal(0.01));
+        param.setAmount(payAmount);
         param.setPayName("凌雄租赁");
         param.setPayDescription("凌雄租赁商品");
         param.setOpenId(openId);
@@ -298,9 +298,10 @@ public class PaymentServiceImpl implements PaymentService {
         CustomerDO customerName = customerMapper.findByName(chargeRecordParam.getCustomerName());
         CustomerDO customerNo = customerMapper.findByNo(chargeRecordParam.getBusinessCustomerNo());
 
-        if (chargeRecordParam.getCustomerName() != null && chargeRecordParam.getCustomerName() != "") {
+
+        if (customerName != null) {
             chargeRecordParam.setBusinessCustomerNo(customerName.getCustomerNo());
-        } else if (chargeRecordParam.getBusinessCustomerNo() != null && chargeRecordParam.getBusinessCustomerNo() != "") {
+        } else if (customerNo != null) {
             chargeRecordParam.setBusinessCustomerNo(customerNo.getCustomerNo());
             chargeRecordParam.setCustomerName(customerNo.getCustomerName());
         }
@@ -403,6 +404,11 @@ public class PaymentServiceImpl implements PaymentService {
                 }
                 chargeRecordPage.setItemList(chargeRecordList);
                 result.setResult(chargeRecordPage);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                return result;
+            }else if("J000031".equals(paymentResult.getCode())){
+                Page<ChargeRecord> page = new Page<>();
+                result.setResult(page);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }

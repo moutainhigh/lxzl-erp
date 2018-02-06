@@ -1519,10 +1519,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     serviceResult.setErrorCode(ErrorCode.EQUIPMENT_NOT_EXISTS);
                     return serviceResult;
                 }
-                //累加原采购价，减去原采购价
+                //累加当前采购价，减去原采购价
                 totalAmount = BigDecimalUtil.add(totalAmount, productEquipment.getPurchasePrice());
                 totalAmount = BigDecimalUtil.sub(totalAmount, productEquipmentDO.getPurchasePrice());
-                //累加原采购价，减去原采购价
+                //累加当前采购价，减去原采购价
                 totalPurchaseAmount = BigDecimalUtil.add(totalPurchaseAmount, productEquipment.getPurchasePrice());
                 totalPurchaseAmount = BigDecimalUtil.sub(totalPurchaseAmount, productEquipmentDO.getPurchasePrice());
                 productEquipmentDO.setPurchasePrice(productEquipment.getPurchasePrice());
@@ -1685,6 +1685,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             serviceResult.setErrorCode(ErrorCode.PURCHASE_RECEIVE_ORDER_STATUS_CAN_NOT_UPDATE);
             return serviceResult;
         }
+
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findById(purchaseReceiveOrderDO.getPurchaseOrderId());
+        //累加采购单总价
+        BigDecimal totalPurchaseAmount = purchaseOrderDO.getPurchaseOrderAmountReal() == null ? BigDecimal.ZERO : purchaseOrderDO.getPurchaseOrderAmountReal();
+
         List<PurchaseReceiveOrderMaterialPrice> purchaseReceiveOrderMaterialPriceList = updatePurchaseReceiveMaterialPriceParam.getPurchaseReceiveOrderMaterialPriceList();
         Integer total = 0;
         for (PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice : purchaseReceiveOrderMaterialPriceList) {
@@ -1701,17 +1706,36 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         int index = 0;
         for (PurchaseReceiveOrderMaterialPrice purchaseReceiveOrderMaterialPrice : purchaseReceiveOrderMaterialPriceList) {
             int count = purchaseReceiveOrderMaterialPrice.getCount();
+            List<Integer> updateIdList = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 BulkMaterialDO bulkMaterialDO = bulkMaterialDOList.get(index++);
-                //累加原采购价，减去原采购价
+                //累加当前采购价，减去原采购价
                 totalAmount = BigDecimalUtil.add(totalAmount, purchaseReceiveOrderMaterialPrice.getPrice());
                 totalAmount = BigDecimalUtil.sub(totalAmount, bulkMaterialDO.getPurchasePrice());
-                bulkMaterialDO.setPurchasePrice(purchaseReceiveOrderMaterialPrice.getPrice());
-                bulkMaterialDO.setUpdateTime(now);
-                bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                //累加当前采购价，减去原采购价
+                totalPurchaseAmount = BigDecimalUtil.add(totalPurchaseAmount, purchaseReceiveOrderMaterialPrice.getPrice());
+                totalPurchaseAmount = BigDecimalUtil.sub(totalPurchaseAmount, bulkMaterialDO.getPurchasePrice());
+//                bulkMaterialDO.setPurchasePrice(purchaseReceiveOrderMaterialPrice.getPrice());
+//                bulkMaterialDO.setUpdateTime(now);
+//                bulkMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                updateIdList.add(bulkMaterialDO.getId());
+            }
+            if(CollectionUtil.isNotEmpty(updateIdList)){
+                SqlLogInterceptor.setExecuteSql("skip print bulkMaterialMapper.updateBatchPurchasePrice  sql ......");
+                bulkMaterialMapper.updateBatchPurchasePrice(purchaseReceiveOrderMaterialPrice.getPrice(),userSupport.getCurrentUserId().toString(),now,updateIdList);
             }
         }
-        bulkMaterialMapper.updateList(bulkMaterialDOList);
+//        bulkMaterialMapper.updateList(bulkMaterialDOList);
+
+        purchaseReceiveOrderDO.setTotalAmount(totalAmount);
+        purchaseReceiveOrderDO.setUpdateTime(now);
+        purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
+
+        purchaseOrderDO.setPurchaseOrderAmountReal(totalPurchaseAmount);
+        purchaseOrderDO.setUpdateTime(now);
+        purchaseOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        purchaseOrderMapper.update(purchaseOrderDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(purchaseReceiveOrderMaterialDO.getId());
         return serviceResult;
