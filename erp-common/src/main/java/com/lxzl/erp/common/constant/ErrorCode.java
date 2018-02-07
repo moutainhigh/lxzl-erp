@@ -1008,7 +1008,7 @@ public class ErrorCode {
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT, "只能更换相同商品");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_TYPE, "只能更换相同类型配件");
-        MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "起租时间不能为空");
+        MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "换货单换货时间不能为空");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
