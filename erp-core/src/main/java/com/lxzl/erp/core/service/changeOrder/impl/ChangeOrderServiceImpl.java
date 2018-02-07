@@ -630,7 +630,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
             for(String materialNoAndIsNew : destMaterialCountMap.keySet()){
                 String[] keys = materialNoAndIsNew.split("_");
-                Integer destMaterialNo = Integer.parseInt(keys[0]);
+                String destMaterialNo = keys[0];
                 Integer isNew = Integer.parseInt(keys[1]);
                 Integer changeCount = destMaterialCountMap.get(materialNoAndIsNew);
                 Material material = materialMap.get(destMaterialNo);
