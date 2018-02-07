@@ -781,7 +781,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     public ServiceResult<String, String> stockUpForChange(StockUpForChangeParam param) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
-        if (StringUtil.isEmpty(param.getEquipmentNo()) && param.getOrderMaterialId()==null) {
+        if (StringUtil.isEmpty(param.getEquipmentNo()) && param.getChangeOrderMaterialId()==null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
