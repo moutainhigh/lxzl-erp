@@ -968,14 +968,14 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         changeOrderProductEquipmentDO.setSrcEquipmentNo(srcProductEquipmentDO.getEquipmentNo());
 
         //计算差价
-        BigDecimal diff = getDiff(orderDO, srcProductEquipmentDO, destProductEquipmentDO);
-        changeOrderProductEquipmentDO.setPriceDiff(diff);
+//        BigDecimal diff = getDiff(orderDO, srcProductEquipmentDO, destProductEquipmentDO);
+//        changeOrderProductEquipmentDO.setPriceDiff(diff);
         changeOrderProductEquipmentDO.setUpdateTime(now);
         changeOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         changeOrderProductEquipmentMapper.update(changeOrderProductEquipmentDO);
         //更新换货单实际换货商品总数，总差价，状态
         changeOrderDO.setRealTotalChangeProductCount(changeOrderDO.getRealTotalChangeProductCount() + 1);
-        changeOrderDO.setTotalPriceDiff(BigDecimalUtil.add(changeOrderDO.getTotalPriceDiff(), diff));
+//        changeOrderDO.setTotalPriceDiff(BigDecimalUtil.add(changeOrderDO.getTotalPriceDiff(), diff));
         changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS);
         changeOrderMapper.update(changeOrderDO);
         //更新订单商品设备表，实际归还时间，实际租金；添加订单商品设备，预计归还时间
@@ -1486,8 +1486,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 serviceResult.setErrorCode(ErrorCode.STOCK_FINISH_THIS_ITEM);
                 return serviceResult;
             }
-            CustomerDO customerDO = customerMapper.findByNo(changeOrderDO.getCustomerNo());
-            UserDO owner = userMapper.findByUserId(customerDO.getOwner());
+            UserDO owner = userMapper.findByUserId(changeOrderDO.getOwner());
             Integer subCompanyId = userSupport.getCompanyIdByUser(owner.getId());
             WarehouseDO currentWarehouse = warehouseSupport.getSubCompanyWarehouse(subCompanyId);
             if (currentWarehouse == null) {
