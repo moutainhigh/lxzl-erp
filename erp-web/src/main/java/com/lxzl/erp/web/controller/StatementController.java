@@ -100,7 +100,13 @@ public class StatementController extends BaseController {
 
     @RequestMapping(value = "queryStatementOrderMonthDetail", method = RequestMethod.POST)
     public Result queryStatementOrderMonthDetail(@RequestBody StatementOrderMonthQueryParam statementOrderMonthQueryParam, BindingResult validResult) {
-        ServiceResult<String, List<StatementOrder>> serviceResult = statementService.queryStatementOrderMonthDetail(statementOrderMonthQueryParam.getStatementOrderCustomerNo(),statementOrderMonthQueryParam.getMonth());
+        ServiceResult<String, StatementOrder> serviceResult = statementService.queryStatementOrderMonthDetail(statementOrderMonthQueryParam.getStatementOrderCustomerNo(),statementOrderMonthQueryParam.getMonthTime());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "batchPay", method = RequestMethod.POST)
+    public Result batchPay(@RequestBody List<StatementOrderPayParam> param, BindingResult validResult) {
+        ServiceResult<String, List<String>> serviceResult = statementService.batchPayStatementOrder(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

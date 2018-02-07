@@ -17,7 +17,7 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private String statementOrderCustomerName;
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
-    private Date month;
+    private Date monthTime;
 
     public Integer getStatementOrderCustomerId() { return statementOrderCustomerId; }
 
@@ -27,9 +27,9 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
 
     public void setStatementOrderCustomerNo(String statementOrderCustomerNo) { this.statementOrderCustomerNo = statementOrderCustomerNo; }
 
-    public Date getMonth() { return month; }
+    public Date getMonthTime() { return monthTime; }
 
-    public void setMonth(Date month) { this.month = month; }
+    public void setMonthTime(Date monthTime) { this.monthTime = monthTime; }
 
     public String getStatementOrderCustomerName() { return statementOrderCustomerName; }
 

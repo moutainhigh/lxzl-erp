@@ -66,7 +66,7 @@
 		AND ebm.current_equipment_id IS NULL AND ebm.data_status = 1
 		WHERE eo.data_status=1 AND eo.buyer_customer_id = #{customerId}
 	</select>
-	<select id="findRentByCustomerIdAndMaterialId" resultMap="BulkMaterialDO" parameterType="java.lang.String">
+	<select id="findRentByCustomerIdAndMaterialId" resultMap="BulkMaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_order eo INNER JOIN erp_bulk_material ebm ON eo.order_no=ebm.order_no WHERE eo.data_status=1
 		AND eo.buyer_customer_id = #{customerId} AND ebm.material_id = #{materialId}
 	</select>
@@ -584,7 +584,12 @@
 		where ebm.bulk_material_no = etomb.bulk_material_no AND etomb.data_status = 1
 		and etomb.transfer_order_id = #{maps.transferOrderId, jdbcType=INTEGER}
 	</update>
-
+	<update id="updateBatchDestStatusByChangeOrderMaterialId" parameterType="map">
+		update erp_bulk_material ebm,erp_change_order_material_bulk ecomb
+		set ebm.bulk_material_status = #{maps.bulkMaterialStatus, jdbcType=INTEGER},ebm.update_time = #{maps.updateTime,jdbcType=TIMESTAMP},ebm.update_user = #{maps.updateUser,jdbcType=VARCHAR}
+		where ebm.id = ecomb.dest_bulk_material_id AND ecomb.data_status = 1
+		and ecomb.change_order_material_id = #{maps.changeOrderMaterialId, jdbcType=INTEGER}
+	</update>
 	<update id="updateBatchStatusByTransferOrderProductEquipment" parameterType="map">
 		UPDATE erp_bulk_material ebm1 INNER JOIN
 		(

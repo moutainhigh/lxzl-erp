@@ -63,7 +63,7 @@
                             <thead>
                             <tr class="">
                                 <th class="hidden-xs">选择</th>
-                                <th class="hidden-xs">星标</th>
+                                <th class="hidden-xs">状态</th>
                                 <th class="hidden-xs">发件人</th>
                                 <th class="hidden-xs">主题</th>
                                 <th class="hidden-xs">内容</th>
@@ -81,13 +81,7 @@
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </td>
-                                <td class="hidden-xs">
-                                    <span class="rating block mn pull-left">
-                                        <input class="rating-input" id="r1" type="radio" name="custom">
-                                        <label class="rating-star" for="r1"><i class="fa fa-star va-m"></i>
-                                        </label>
-                                    </span>
-                                </td>
+                                <td class="{{readClass}}">{{readStatus}}</td>
                                 <td class="">{{senderName}}</td>
                                 <td class="hidden-xs">{{title}}</td>
                                 <td class="">{{messageText}}</td>

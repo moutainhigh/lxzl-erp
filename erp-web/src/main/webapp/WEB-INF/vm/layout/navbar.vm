@@ -39,7 +39,7 @@
                         <span class="fw600 pl5 lh30"> 消息提醒</span>
                         <span class="label label-warning label-sm pull-right lh20 h-20 mt5 mr5">{{messageCount}}</span>
                     </li>
-                    {{#messageList}}
+                    <!-- {{#messageList}}
                     <li class="p10 br-t item-1">
                         <div class="media">
                             <a class="media-left" href="#"> <img src="${staticCommon}/assets/img/avatars/2.jpg" class="mw40" alt="holder-img"> </a>
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </li>
-                    {{/messageList}}
+                    {{/messageList}} -->
                 {{/messageData}}
             </script>
             <ul class="dropdown-menu dropdown-hover dropdown-persist pn w350 bg-white animated animated-shorter fadeIn" role="menu" id="navbarMessageList"></ul>

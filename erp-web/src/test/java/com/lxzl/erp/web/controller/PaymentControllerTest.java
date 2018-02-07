@@ -53,7 +53,7 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryCustomerAccountLogPage() throws Exception {
         CustomerAccountLogParam param = new CustomerAccountLogParam();
-        param.setBusinessCustomerNo("LXCC-1000-20180201-00003");
+        param.setBusinessCustomerNo("LXCC-1000-20180206-00022");
         param.setPageNo(1);
         param.setPageSize(10);
 //        param.setCustomerAccountLogType(5);

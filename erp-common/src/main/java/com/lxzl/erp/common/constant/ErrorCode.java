@@ -241,6 +241,7 @@ public class ErrorCode {
     public static final String SUPPLIER_NAME_IS_NULL = "J300070";
     public static final String BENEFICIARY_ACCOUNT_IS_LENGTH = "J300071";
     public static final String SUPPLIER_CODE_IS_LENGTH= "J300072";
+    public static final String STOCK_FINISH_THIS_ITEM = "J300073";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -461,6 +462,8 @@ public class ErrorCode {
     public static final String STATEMENT_PAY_AMOUNT_ERROR = "J500096";
     public static final String CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER = "J500097";
     public static final String CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500098";
+    public static final String STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE = "J500099";
+    public static final String STATEMENT_ORDER_STATUS_IS_ERROR = "J500100";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -919,6 +922,7 @@ public class ErrorCode {
         MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话相同");
         MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
         MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
+        MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1004,7 +1008,7 @@ public class ErrorCode {
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT, "只能更换相同商品");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_TYPE, "只能更换相同类型配件");
-        MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "起租时间不能为空");
+        MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "换货单换货时间不能为空");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
@@ -1064,6 +1068,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_PAY_AMOUNT_ERROR, "结算单金额有误，请检查");
         MAP.put(CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER, "客户存在有未支付逾期的结算单");
         MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
+        MAP.put(STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE, "批量支付结算单客户必须相同才能支付");
+        MAP.put(STATEMENT_ORDER_STATUS_IS_ERROR, "批量支付结算单必须是未支付状态");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
