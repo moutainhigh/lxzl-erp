@@ -1285,23 +1285,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-//        //用户在租sku统计
-//        Map<String, Object> findSkuRentMap = customerOrderSupport.getCustomerAllMap(changeOrderDO.getCustomerId());
-//        List<ProductSkuDO> oldProductSkuDOList = productSkuMapper.findSkuRent(findSkuRentMap);
-//        Map<Integer, ProductSkuDO> oldSkuCountMap = new HashMap<>();
-//        if (CollectionUtil.isNotEmpty(oldProductSkuDOList)) {
-//            for (ProductSkuDO productSkuDO : oldProductSkuDOList) {
-//                oldSkuCountMap.put(productSkuDO.getId(), productSkuDO);
-//            }
-//        }
-//        //用户在租配件统计
-//        List<MaterialDO> oldMaterialDOList = materialMapper.findMaterialRent(findSkuRentMap);
-//        Map<Integer, MaterialDO> oldMaterialCountMap = new HashMap<>();
-//        if (CollectionUtil.isNotEmpty(oldMaterialDOList)) {
-//            for (MaterialDO materialDO : oldMaterialDOList) {
-//                oldMaterialCountMap.put(materialDO.getId(), materialDO);
-//            }
-//        }
         changeOrder = ConverterUtil.convert(changeOrderDO, ChangeOrder.class);
         //填写退还商品项可换数量字段，用于修改接口提示
         List<ChangeOrderProduct> changeOrderProductList = changeOrder.getChangeOrderProductList();
@@ -1485,8 +1468,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             bulkMaterialMapper.updateEquipmentBulkMaterialStatus(productEquipmentDO.getEquipmentNo(), BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
         }
         // 如果输入进来的配件ID 为当前订单项需要的，那么就匹配
-        if (param.getOrderMaterialId()!=null) {
-            ChangeOrderMaterialDO changeOrderMaterialDO = changeOrderMaterialMapper.findById(param.getOrderMaterialId());
+        if (param.getChangeOrderMaterialId()!=null) {
+            ChangeOrderMaterialDO changeOrderMaterialDO = changeOrderMaterialMapper.findById(param.getChangeOrderMaterialId());
             if(changeOrderMaterialDO==null||!param.getChangeOrderNo().equals(changeOrderMaterialDO.getChangeOrderNo())){
                 serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return serviceResult;
@@ -1544,7 +1527,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             maps.put("bulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
             maps.put("updateTime",now);
             maps.put("updateUser",userSupport.getCurrentUserId().toString());
-            maps.put("changeOrderMaterialId",param.getOrderMaterialId());
+            maps.put("changeOrderMaterialId",param.getChangeOrderMaterialId());
             //批量更新散料状态
             bulkMaterialMapper.updateBatchDestStatusByChangeOrderMaterialId(maps);
         }
@@ -1573,8 +1556,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             bulkMaterialMapper.updateEquipmentBulkMaterialStatus(changeOrderProductEquipmentDO.getDestEquipmentNo(), BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         }
         // 如果输入进来的配件ID 为当前订单项需要的，那么就匹配
-        if (param.getOrderMaterialId()!=null) {
-            ChangeOrderMaterialDO changeOrderMaterialDO = changeOrderMaterialMapper.findById(param.getOrderMaterialId());
+        if (param.getChangeOrderMaterialId()!=null) {
+            ChangeOrderMaterialDO changeOrderMaterialDO = changeOrderMaterialMapper.findById(param.getChangeOrderMaterialId());
             if(changeOrderMaterialDO==null||!param.getChangeOrderNo().equals(changeOrderMaterialDO.getChangeOrderNo())){
                 serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return serviceResult;
@@ -1584,8 +1567,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             Map<String,Object> maps = new HashMap<>();
             maps.put("bulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
             maps.put("updateTime",now);
-            maps.put("updatUser",userSupport.getCurrentUserId().toString());
-            maps.put("changeOrderMaterialId",param.getOrderMaterialId());
+            maps.put("updateUser",userSupport.getCurrentUserId().toString());
+            maps.put("changeOrderMaterialId",param.getChangeOrderMaterialId());
             //批量更新散料状态
             bulkMaterialMapper.updateBatchDestStatusByChangeOrderMaterialId(maps);
         }
