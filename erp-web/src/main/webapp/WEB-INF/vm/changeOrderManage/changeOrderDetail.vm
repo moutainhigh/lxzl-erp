@@ -156,7 +156,7 @@
                                             {{#destChangeProductInfo}}
                                             {{#destChangeProductData}}
                                             <tr class="bg-light" productRowKey="{{productId}}">
-                                                <td>{{productName}}</td>
+                                                <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
                                                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                                 <td>{{propertiesToStr}}</td>
@@ -193,16 +193,10 @@
                                         <script type="text/html" id="materialDataListTpl">
                                             <thead>
                                             <tr>
-                                                <th>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkAll" value="">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </th>
                                                 <th>名称</th>
                                                 <th>品牌</th>
                                                 <th>类型</th>
-##                                                <th>配件价值</th>
+                                                <th>配件价值</th>
                                                 <th class="text-center">实际/预计（换货数量）</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
@@ -214,7 +208,7 @@
                                                 <td>{{materialName}}</td>
                                                 <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                                                 <td>{{materialTypeStr}}</td>
-                                                <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                                <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                                 <td {{#destChangeMaterialInfo}}rowSpan="2" class="br-l text-center"{{/destChangeMaterialInfo}}>{{realChangeMaterialCount}}/{{changeMaterialCount}}</td>
                                                 <td {{#destChangeMaterialInfo}}rowSpan="2"{{/destChangeMaterialInfo}} class="text-right">
                                                     <div class="btn-group text-right">
@@ -222,6 +216,7 @@
                                                         <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
                                                            data-materialno="{{materialNo}}"
                                                            data-materialid="{{materialId}}"
+                                                           data-changeOrderMaterialId="{{changeOrderMaterialId}}"
                                                            data-no="{{no}}"
                                                            data-realchangematerialcount="{{realChangeMaterialCount}}">{{text}}</a>
                                                         {{/rowActionButtons}}
@@ -231,10 +226,10 @@
                                             </tr>
                                             {{#destChangeMaterialInfo}}
                                             <tr class="bg-light">
-                                                <td>{{materialName}}</td>
+                                                <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
                                                 <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                                                 <td>{{materialTypeStr}}</td>
-                                                <td>{{#price}}{{materialPrice}}{{/price}}</td>
+                                                <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
                                             </tr>
                                             {{/destChangeMaterialInfo}}
                                             {{/listData}}
