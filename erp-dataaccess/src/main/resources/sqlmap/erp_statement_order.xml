@@ -480,8 +480,8 @@
 				and ec.customer_name like CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerName}','%' )
 			</if>
 			<choose>
-				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.month != null">
-				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.month}, '%Y-%m') ]]>
+				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.monthTime != null">
+				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.monthTime}, '%Y-%m') ]]>
 				</when>
 				<otherwise>
 				and	 <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
@@ -528,9 +528,9 @@
 				CONCAT('%','${maps.statementOrderMonthQueryParam.statementOrderCustomerName}','%' )
 			</if>
 			<choose>
-				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.month != null">
+				<when test="maps.statementOrderMonthQueryParam != null &amp;&amp; maps.statementOrderMonthQueryParam.monthTime != null">
 					and
-					<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.month}, '%Y-%m') ]]>
+					<![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( #{maps.statementOrderMonthQueryParam.monthTime}, '%Y-%m') ]]>
 				</when>
 				<otherwise>
 					and <![CDATA[ date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format( now(), '%Y-%m') ]]>
@@ -573,13 +573,13 @@
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 
 		WHERE
-		date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format(#{month}, '%Y-%m')
+		date_format(eso.statement_expect_pay_time,'%Y-%m') = date_format(#{monthTime}, '%Y-%m')
 		and eso.data_status=1
 		and ec.customer_no = #{customerNo, jdbcType=VARCHAR}
 		GROUP BY
 		eso.customer_id) as statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.customer_id = esod.customer_id AND esod.data_status = 1
-		where date_format(esod.statement_expect_pay_time,'%Y-%m') = date_format(#{month} , '%Y-%m');
+		where date_format(esod.statement_expect_pay_time,'%Y-%m') = date_format(#{monthTime} , '%Y-%m');
 
 	</select>
 </mapper>

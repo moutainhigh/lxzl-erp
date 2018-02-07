@@ -154,6 +154,6 @@ public interface StatementService extends BaseService {
      * @param customerNo
      * @return
      */
-    ServiceResult<String, List<StatementOrder>> queryStatementOrderMonthDetail(String customerNo , Date month);
+    ServiceResult<String, StatementOrder> queryStatementOrderMonthDetail(String customerNo , Date month);
 
 }

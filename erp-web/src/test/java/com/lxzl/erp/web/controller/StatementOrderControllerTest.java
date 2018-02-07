@@ -98,8 +98,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         param.setPageNo(1);
         param.setPageSize(10);
 //        param.setStatementOrderCustomerName("庄凯麟勿动");
-        param.setStatementOrderCustomerNo("LXCC-1000-20180131-13764");
-//        param.setMonth(rentStartTime);
+//        param.setStatementOrderCustomerNo("LXCC-1000-20180131-13764");
+        param.setMonthTime(rentStartTime);
         TestResult testResult = getJsonTestResult("/statementOrder/queryStatementOrderCheckParam", param);
     }
 
@@ -109,8 +109,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date rentStartTime = sdf.parse(str);
         StatementOrderMonthQueryParam param = new StatementOrderMonthQueryParam();
-        param.setStatementOrderCustomerNo("LXCC-1000-20180131-13764");
-        param.setMonth(new Date());
+        param.setStatementOrderCustomerNo("LXCC-1000-20180202-00010");
+        param.setMonthTime(rentStartTime);
         TestResult testResult = getJsonTestResult("/statementOrder/queryStatementOrderMonthDetail", param);
     }
 

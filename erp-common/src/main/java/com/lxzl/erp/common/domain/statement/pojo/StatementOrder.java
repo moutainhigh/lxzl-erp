@@ -49,6 +49,8 @@ public class StatementOrder extends BasePO {
     private Integer owner;		//数据归属人，跟单员
     private String ownerName; //业务员姓名
 
+    private Date monthTime; //月时间
+
     public Integer getStatementOrderId() {
         return statementOrderId;
     }
@@ -280,4 +282,8 @@ public class StatementOrder extends BasePO {
     public String getOwnerName() { return ownerName; }
 
     public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+
+    public Date getMonthTime() { return monthTime; }
+
+    public void setMonthTime(Date monthTime) { this.monthTime = monthTime; }
 }
