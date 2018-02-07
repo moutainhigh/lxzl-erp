@@ -149,8 +149,7 @@
                                                 <td {{#destChangeProductInfo}}rowSpan="2" class="br-l text-center"{{/destChangeProductInfo}}>{{realChangeProductSkuCount}}/{{changeProductSkuCount}}</td>
                                                 <td {{#destChangeProductInfo}}rowSpan="2"{{/destChangeProductInfo}} class="text-right">
                                                     <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs chooseDestChangeProduct" data-skuid="{{skuId}}" data-productid="{{productId}}">选择更换商品</a>
-                                                        <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                                        <a href="#" type="button" class="btn btn-default btn-xs viewStockEquipment" data-skuid="{{skuId}}" data-productid="{{productId}}">查看已备货设备</a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -176,20 +175,20 @@
                                     </div>
                                 </div>
                                 <div id="purchaseOrderMaterialItems" class="tab-pane">
-                                    <div class="panel-menu p12 br-n br-b">
-                                        <div class="row">
-                                            <div class="pull-left ml10">
-                                                <div class="btn-group" id="actionCommonButtons">
-                                                    <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择配件">
-                                                        <i class="fa fa-plus"></i> 选择配件
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除配件">
-                                                        <i class="fa fa-trash-o"></i> 删除
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+##                                    <div class="panel-menu p12 br-n br-b">
+##                                        <div class="row">
+##                                            <div class="pull-left ml10">
+##                                                <div class="btn-group" id="actionCommonButtons">
+##                                                    <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择配件">
+##                                                        <i class="fa fa-plus"></i> 选择配件
+##                                                    </button>
+##                                                    <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除配件">
+##                                                        <i class="fa fa-trash-o"></i> 删除
+##                                                    </button>
+##                                                </div>
+##                                            </div>
+##                                        </div>
+##                                    </div>
                                     <div class="table-responsive">
                                         <script type="text/html" id="materialDataListTpl">
                                             <thead>
@@ -203,7 +202,7 @@
                                                 <th>名称</th>
                                                 <th>品牌</th>
                                                 <th>类型</th>
-                                                <th>配件价值</th>
+##                                                <th>配件价值</th>
                                                 <th class="text-center">实际/预计（换货数量）</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
@@ -219,8 +218,14 @@
                                                 <td {{#destChangeMaterialInfo}}rowSpan="2" class="br-l text-center"{{/destChangeMaterialInfo}}>{{realChangeMaterialCount}}/{{changeMaterialCount}}</td>
                                                 <td {{#destChangeMaterialInfo}}rowSpan="2"{{/destChangeMaterialInfo}} class="text-right">
                                                     <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs chooseDestChangeMaterial" data-materialno="{{materialNo}}">选择更换配件</a>
-                                                        <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}">删除</a>
+                                                        {{#rowActionButtons}}
+                                                        <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                           data-materialno="{{materialNo}}"
+                                                           data-materialid="{{materialId}}"
+                                                           data-no="{{no}}"
+                                                           data-realchangematerialcount="{{realChangeMaterialCount}}">{{text}}</a>
+                                                        {{/rowActionButtons}}
+                                                        <a href="#" type="button" class="btn btn-default btn-xs viewStockMaterial" data-materialno="{{materialNo}}">查看已备货配件</a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -267,7 +272,9 @@
                 'manage.change.order.handle.mixin.js',
                 'manage.change.order.detail.js',
                 'manage.order.item.render.js',
-                'manage.order.util.js');
+                'manage.order.util.js',
+                'manage.order.picking.js',
+                'modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
