@@ -1527,7 +1527,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             maps.put("bulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_BUSY);
             maps.put("updateTime",now);
             maps.put("updateUser",userSupport.getCurrentUserId().toString());
-            maps.put("changeOrderMaterialId",param.getOrderMaterialId());
+            maps.put("changeOrderMaterialId",param.getChangeOrderMaterialId());
             //批量更新散料状态
             bulkMaterialMapper.updateBatchDestStatusByChangeOrderMaterialId(maps);
         }
@@ -1567,7 +1567,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             Map<String,Object> maps = new HashMap<>();
             maps.put("bulkMaterialStatus",BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
             maps.put("updateTime",now);
-            maps.put("updatUser",userSupport.getCurrentUserId().toString());
+            maps.put("updateUser",userSupport.getCurrentUserId().toString());
             maps.put("changeOrderMaterialId",param.getChangeOrderMaterialId());
             //批量更新散料状态
             bulkMaterialMapper.updateBatchDestStatusByChangeOrderMaterialId(maps);
