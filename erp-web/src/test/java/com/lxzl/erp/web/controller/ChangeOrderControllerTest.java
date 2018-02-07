@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
@@ -36,6 +37,36 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         changeOrderProduct.setChangeProductSkuCount(1);
         changeOrderProductList.add(changeOrderProduct);
         addChangeOrderParam.setChangeOrderProductList(changeOrderProductList);
+        TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
+    }
+
+    @Test
+    public void addJson() throws Exception {
+        String json = "{\n" +
+                "  \"customerNo\": \"CP201712060843154191841\",\n" +
+                "  \"changeReasonType\": \"1\",\n" +
+                "  \"changeReason\": \"有损坏\",\n" +
+                "  \"remark\": \"测试，勿动\",\n" +
+                "  \"changeMode\": \"1\",\n" +
+                "  \"rentStartTime\": 1517961600000,\n" +
+                "  \"owner\": \"500029\",\n" +
+                "  \"changeOrderConsignInfo\": {\n" +
+                "    \"consigneeName\": \"黎文彬\",\n" +
+                "    \"consigneePhone\": \"18033402833\",\n" +
+                "    \"province\": 19,\n" +
+                "    \"city\": 202,\n" +
+                "    \"district\": 1956,\n" +
+                "    \"address\": \"车公庙安华工业区\"\n" +
+                "  },\n" +
+                "  \"changeOrderProductList\": [{\n" +
+                "    \"changeProductSkuIdSrc\": 72,\n" +
+                "    \"changeProductSkuIdDest\": 72,\n" +
+                "    \"isNew\": 0,\n" +
+                "    \"changeProductSkuCount\": \"1\"\n" +
+                "  }],\n" +
+                "  \"changeOrderMaterialList\": []\n" +
+                "}";
+        AddChangeOrderParam addChangeOrderParam = JSON.parseObject(json,AddChangeOrderParam.class);
         TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
     }
     @Test
@@ -101,7 +132,6 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         //SELECT * FROM  `erp_stock_order_equipment`  esoe  LEFT JOIN `erp_product_equipment` epe ON esoe.equipment_no = epe.equipment_no WHERE epe.sku_id=63 AND epe.equipment_status=1
         stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017122310024");
 //        stockUpForChangeParam.setMaterialNo("M201711201356145971009");
-        stockUpForChangeParam.setMaterialCount(1);
         stockUpForChangeParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult testResult = getJsonTestResult("/changeOrder/stockUpForChange",stockUpForChangeParam);
     }

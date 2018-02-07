@@ -73,6 +73,7 @@
 		<result column="ecop_real_change_product_sku_count" jdbcType="INTEGER" property="realChangeProductSkuCount" />
 		<result column="ecop_src_change_product_sku_snapshot" jdbcType="VARCHAR" property="srcChangeProductSkuSnapshot" />
 		<result column="ecop_dest_change_product_sku_snapshot" jdbcType="VARCHAR" property="destChangeProductSkuSnapshot" />
+		<result column="ecop_is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="ecop_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="ecop_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="ecop_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -81,7 +82,7 @@
 		<result column="ecop_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 	<sql id="product_column_List">
-		ecop.id AS ecop_id,ecop.change_order_id AS ecop_change_order_id,ecop.change_order_no AS ecop_change_order_no,ecop.src_change_product_sku_id AS ecop_src_change_product_sku_id,ecop.dest_change_product_sku_id AS ecop_dest_change_product_sku_id,ecop.change_product_sku_count AS ecop_change_product_sku_count,ecop.real_change_product_sku_count AS ecop_real_change_product_sku_count,ecop.src_change_product_sku_snapshot AS ecop_src_change_product_sku_snapshot,ecop.dest_change_product_sku_snapshot AS ecop_dest_change_product_sku_snapshot,ecop.data_status AS ecop_data_status,ecop.remark AS ecop_remark,ecop.create_time AS ecop_create_time,ecop.create_user AS ecop_create_user,ecop.update_time AS ecop_update_time,ecop.update_user AS ecop_update_user
+		ecop.id AS ecop_id,ecop.change_order_id AS ecop_change_order_id,ecop.change_order_no AS ecop_change_order_no,ecop.src_change_product_sku_id AS ecop_src_change_product_sku_id,ecop.dest_change_product_sku_id AS ecop_dest_change_product_sku_id,ecop.change_product_sku_count AS ecop_change_product_sku_count,ecop.real_change_product_sku_count AS ecop_real_change_product_sku_count,ecop.src_change_product_sku_snapshot AS ecop_src_change_product_sku_snapshot,ecop.dest_change_product_sku_snapshot AS ecop_dest_change_product_sku_snapshot,ecop.is_new AS ecop_is_new,ecop.data_status AS ecop_data_status,ecop.remark AS ecop_remark,ecop.create_time AS ecop_create_time,ecop.create_user AS ecop_create_user,ecop.update_time AS ecop_update_time,ecop.update_user AS ecop_update_user
 	</sql>
 	<resultMap id="ChangeOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderMaterialDO">
 		<id column="ecom_id" jdbcType="INTEGER" property="id" />
@@ -93,6 +94,7 @@
 		<result column="ecom_real_change_material_count" jdbcType="INTEGER" property="realChangeMaterialCount" />
 		<result column="ecom_src_change_material_snapshot" jdbcType="VARCHAR" property="srcChangeMaterialSnapshot" />
 		<result column="ecom_dest_change_material_snapshot" jdbcType="VARCHAR" property="destChangeMaterialSnapshot" />
+		<result column="ecom_is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="ecom_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="ecom_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="ecom_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -101,7 +103,7 @@
 		<result column="ecom_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 	<sql id="material_column_List">
-		ecom.id AS ecom_id,ecom.change_order_id AS ecom_change_order_id,ecom.change_order_no AS ecom_change_order_no,ecom.src_change_material_id AS ecom_src_change_material_id,ecom.dest_change_material_id AS ecom_dest_change_material_id,ecom.change_material_count AS ecom_change_material_count,ecom.real_change_material_count AS ecom_real_change_material_count,ecom.src_change_material_snapshot AS ecom_src_change_material_snapshot,ecom.dest_change_material_snapshot AS ecom_dest_change_material_snapshot,ecom.data_status AS ecom_data_status,ecom.remark AS ecom_remark,ecom.create_time AS ecom_create_time,ecom.create_user AS ecom_create_user,ecom.update_time AS ecom_update_time,ecom.update_user AS ecom_update_user
+		ecom.id AS ecom_id,ecom.change_order_id AS ecom_change_order_id,ecom.change_order_no AS ecom_change_order_no,ecom.src_change_material_id AS ecom_src_change_material_id,ecom.dest_change_material_id AS ecom_dest_change_material_id,ecom.change_material_count AS ecom_change_material_count,ecom.real_change_material_count AS ecom_real_change_material_count,ecom.src_change_material_snapshot AS ecom_src_change_material_snapshot,ecom.dest_change_material_snapshot AS ecom_dest_change_material_snapshot,ecom.is_new AS ecom_is_new,ecom.data_status AS ecom_data_status,ecom.remark AS ecom_remark,ecom.create_time AS ecom_create_time,ecom.create_user AS ecom_create_user,ecom.update_time AS ecom_update_time,ecom.update_user AS ecom_update_user
 	</sql>
 	<select id="findById" resultMap="ChangeOrderDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_change_order eco 
