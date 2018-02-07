@@ -13,7 +13,7 @@ public class StockUpForChangeParam implements Serializable {
     @NotBlank(message = ErrorCode.CHANGE_ORDER_NO_NOT_NULL)
     private String changeOrderNo;
     private String equipmentNo;
-    private Integer orderMaterialId;
+    private Integer changeOrderMaterialId;
     @NotNull(message = ErrorCode.PARAM_IS_ERROR)
     private Integer operationType;
 
@@ -33,12 +33,12 @@ public class StockUpForChangeParam implements Serializable {
         this.equipmentNo = equipmentNo;
     }
 
-    public Integer getOrderMaterialId() {
-        return orderMaterialId;
+    public Integer getChangeOrderMaterialId() {
+        return changeOrderMaterialId;
     }
 
-    public void setOrderMaterialId(Integer orderMaterialId) {
-        this.orderMaterialId = orderMaterialId;
+    public void setChangeOrderMaterialId(Integer changeOrderMaterialId) {
+        this.changeOrderMaterialId = changeOrderMaterialId;
     }
 
     public Integer getOperationType() {
