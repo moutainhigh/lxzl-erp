@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -57,6 +58,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -580,6 +582,64 @@ public class StatementServiceImpl implements StatementService {
 
         updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, currentTime, loginUser.getUserId());
         result.setResult(true);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, List<String>> batchPayStatementOrder(List<StatementOrderPayParam> param) {
+        ServiceResult<String, List<String>> result = new ServiceResult<>();
+
+        Integer customerId = null;
+        List<StatementOrderDO> newStatementOrderDO = new ArrayList<>();
+        for(int i = 0;i<param.size();i++){
+            StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(param.get(i).getStatementOrderNo());
+            if (statementOrderDO == null) {
+                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                return result;
+            }
+            if(statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT && statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART){
+                result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_ERROR);
+                return result;
+            }
+            if(customerId == null){
+                customerId = statementOrderDO.getCustomerId();
+            }
+            if(!customerId.equals(statementOrderDO.getCustomerId())){
+                result.setErrorCode(ErrorCode.STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE);
+                return result;
+            }
+            newStatementOrderDO.add(statementOrderDO);
+        }
+
+        Collections.sort(newStatementOrderDO, new Comparator<StatementOrderDO>(){
+            @Override
+            public int compare(StatementOrderDO o1, StatementOrderDO o2) {
+                Date dt1 = o1.getStatementExpectPayTime();
+                Date dt2 = o2.getStatementExpectPayTime();
+                if (dt1.getTime() > dt2.getTime()) {
+                    return 1;
+                } else if (dt1.getTime() < dt2.getTime()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        List<String> data = new ArrayList<>();
+        for(int i=0;i<newStatementOrderDO.size();i++){
+            ServiceResult<String, Boolean> pay = payStatementOrder(newStatementOrderDO.get(i).getStatementOrderNo());
+            if(ErrorCode.SUCCESS.equals(pay.getErrorCode())){
+                data.add(i,newStatementOrderDO.get(i).getStatementOrderNo()+ "：支付" + ErrorCode.getMessage(ErrorCode.SUCCESS));
+            }else {
+                data.add(i,newStatementOrderDO.get(i).getStatementOrderNo()+ "：支付失败:" + ErrorCode.getMessage(pay.getErrorCode()));
+                break;
+            }
+        }
+
+        result.setResult(data);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

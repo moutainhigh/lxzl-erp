@@ -46,6 +46,8 @@ public class StatementOrder extends BasePO {
 
     private List<StatementOrderDetail> statementOrderDetailList;
 
+    private Integer owner;		//数据归属人，跟单员
+    private String ownerName; //业务员姓名
 
     public Integer getStatementOrderId() {
         return statementOrderId;
@@ -155,65 +157,49 @@ public class StatementOrder extends BasePO {
         return statementOrderDetailList;
     }
 
-    public void setStatementOrderDetailList(List<StatementOrderDetail> statementOrderDetailList) {
-        this.statementOrderDetailList = statementOrderDetailList;
-    }
+    public void setStatementOrderDetailList(List<StatementOrderDetail> statementOrderDetailList) { this.statementOrderDetailList = statementOrderDetailList; }
 
     public Date getStatementExpectPayTime() {
         return statementExpectPayTime;
     }
 
-    public void setStatementExpectPayTime(Date statementExpectPayTime) {
-        this.statementExpectPayTime = statementExpectPayTime;
-    }
+    public void setStatementExpectPayTime(Date statementExpectPayTime) { this.statementExpectPayTime = statementExpectPayTime; }
 
     public BigDecimal getStatementRentDepositAmount() {
         return statementRentDepositAmount;
     }
 
-    public void setStatementRentDepositAmount(BigDecimal statementRentDepositAmount) {
-        this.statementRentDepositAmount = statementRentDepositAmount;
-    }
+    public void setStatementRentDepositAmount(BigDecimal statementRentDepositAmount) { this.statementRentDepositAmount = statementRentDepositAmount; }
 
     public BigDecimal getStatementRentDepositPaidAmount() {
         return statementRentDepositPaidAmount;
     }
 
-    public void setStatementRentDepositPaidAmount(BigDecimal statementRentDepositPaidAmount) {
-        this.statementRentDepositPaidAmount = statementRentDepositPaidAmount;
-    }
+    public void setStatementRentDepositPaidAmount(BigDecimal statementRentDepositPaidAmount) { this.statementRentDepositPaidAmount = statementRentDepositPaidAmount; }
 
     public BigDecimal getStatementRentDepositReturnAmount() {
         return statementRentDepositReturnAmount;
     }
 
-    public void setStatementRentDepositReturnAmount(BigDecimal statementRentDepositReturnAmount) {
-        this.statementRentDepositReturnAmount = statementRentDepositReturnAmount;
-    }
+    public void setStatementRentDepositReturnAmount(BigDecimal statementRentDepositReturnAmount) { this.statementRentDepositReturnAmount = statementRentDepositReturnAmount; }
 
     public BigDecimal getStatementRentAmount() {
         return statementRentAmount;
     }
 
-    public void setStatementRentAmount(BigDecimal statementRentAmount) {
-        this.statementRentAmount = statementRentAmount;
-    }
+    public void setStatementRentAmount(BigDecimal statementRentAmount) { this.statementRentAmount = statementRentAmount; }
 
     public BigDecimal getStatementRentPaidAmount() {
         return statementRentPaidAmount;
     }
 
-    public void setStatementRentPaidAmount(BigDecimal statementRentPaidAmount) {
-        this.statementRentPaidAmount = statementRentPaidAmount;
-    }
+    public void setStatementRentPaidAmount(BigDecimal statementRentPaidAmount) { this.statementRentPaidAmount = statementRentPaidAmount; }
 
     public BigDecimal getStatementOverdueAmount() {
         return statementOverdueAmount;
     }
 
-    public void setStatementOverdueAmount(BigDecimal statementOverdueAmount) {
-        this.statementOverdueAmount = statementOverdueAmount;
-    }
+    public void setStatementOverdueAmount(BigDecimal statementOverdueAmount) { this.statementOverdueAmount = statementOverdueAmount; }
 
     public Date getStatementPaidTime() {
         return statementPaidTime;
@@ -235,65 +221,49 @@ public class StatementOrder extends BasePO {
         return statementDepositAmount;
     }
 
-    public void setStatementDepositAmount(BigDecimal statementDepositAmount) {
-        this.statementDepositAmount = statementDepositAmount;
-    }
+    public void setStatementDepositAmount(BigDecimal statementDepositAmount) { this.statementDepositAmount = statementDepositAmount; }
 
     public BigDecimal getStatementDepositPaidAmount() {
         return statementDepositPaidAmount;
     }
 
-    public void setStatementDepositPaidAmount(BigDecimal statementDepositPaidAmount) {
-        this.statementDepositPaidAmount = statementDepositPaidAmount;
-    }
+    public void setStatementDepositPaidAmount(BigDecimal statementDepositPaidAmount) { this.statementDepositPaidAmount = statementDepositPaidAmount; }
 
     public BigDecimal getStatementDepositReturnAmount() {
         return statementDepositReturnAmount;
     }
 
-    public void setStatementDepositReturnAmount(BigDecimal statementDepositReturnAmount) {
-        this.statementDepositReturnAmount = statementDepositReturnAmount;
-    }
+    public void setStatementDepositReturnAmount(BigDecimal statementDepositReturnAmount) { this.statementDepositReturnAmount = statementDepositReturnAmount; }
 
     public BigDecimal getStatementPaidAmount() {
         return statementPaidAmount == null || BigDecimal.ZERO.equals(statementPaidAmount) ? BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementRentPaidAmount, statementDepositPaidAmount), statementRentDepositPaidAmount),statementOtherPaidAmount) : statementPaidAmount;
     }
 
-    public void setStatementPaidAmount(BigDecimal statementPaidAmount) {
-        this.statementPaidAmount = statementPaidAmount;
-    }
+    public void setStatementPaidAmount(BigDecimal statementPaidAmount) { this.statementPaidAmount = statementPaidAmount; }
 
     public BigDecimal getStatementOtherAmount() {
         return statementOtherAmount;
     }
 
-    public void setStatementOtherAmount(BigDecimal statementOtherAmount) {
-        this.statementOtherAmount = statementOtherAmount;
-    }
+    public void setStatementOtherAmount(BigDecimal statementOtherAmount) { this.statementOtherAmount = statementOtherAmount; }
 
     public BigDecimal getStatementOtherPaidAmount() {
         return statementOtherPaidAmount;
     }
 
-    public void setStatementOtherPaidAmount(BigDecimal statementOtherPaidAmount) {
-        this.statementOtherPaidAmount = statementOtherPaidAmount;
-    }
+    public void setStatementOtherPaidAmount(BigDecimal statementOtherPaidAmount) { this.statementOtherPaidAmount = statementOtherPaidAmount; }
 
     public BigDecimal getStatementCorrectAmount() {
         return statementCorrectAmount;
     }
 
-    public void setStatementCorrectAmount(BigDecimal statementCorrectAmount) {
-        this.statementCorrectAmount = statementCorrectAmount;
-    }
+    public void setStatementCorrectAmount(BigDecimal statementCorrectAmount) { this.statementCorrectAmount = statementCorrectAmount; }
 
     public BigDecimal getStatementOverduePaidAmount() {
         return statementOverduePaidAmount;
     }
 
-    public void setStatementOverduePaidAmount(BigDecimal statementOverduePaidAmount) {
-        this.statementOverduePaidAmount = statementOverduePaidAmount;
-    }
+    public void setStatementOverduePaidAmount(BigDecimal statementOverduePaidAmount) { this.statementOverduePaidAmount = statementOverduePaidAmount; }
 
     public String getCustomerNo() {
         return customerNo;
@@ -302,4 +272,12 @@ public class StatementOrder extends BasePO {
     public void setCustomerNo(String customerNo) {
         this.customerNo = customerNo;
     }
+
+    public Integer getOwner() { return owner; }
+
+    public void setOwner(Integer owner) { this.owner = owner; }
+
+    public String getOwnerName() { return ownerName; }
+
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 }

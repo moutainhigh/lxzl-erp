@@ -461,6 +461,8 @@ public class ErrorCode {
     public static final String STATEMENT_PAY_AMOUNT_ERROR = "J500096";
     public static final String CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER = "J500097";
     public static final String CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500098";
+    public static final String STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE = "J500099";
+    public static final String STATEMENT_ORDER_STATUS_IS_ERROR = "J500100";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1064,6 +1066,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_PAY_AMOUNT_ERROR, "结算单金额有误，请检查");
         MAP.put(CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER, "客户存在有未支付逾期的结算单");
         MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
+        MAP.put(STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE, "批量支付结算单客户必须相同才能支付");
+        MAP.put(STATEMENT_ORDER_STATUS_IS_ERROR, "批量支付结算单必须是未支付状态");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

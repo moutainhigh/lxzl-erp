@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
@@ -53,6 +54,14 @@ public interface StatementService extends BaseService {
      * @return 是否支付成功
      */
     ServiceResult<String, Boolean> payStatementOrder(String statementOrderNo);
+
+    /**
+     * 批量支付结算单
+     *
+     * @param
+     * @return
+     */
+    ServiceResult<String, List<String>> batchPayStatementOrder(List<StatementOrderPayParam> param);
 
     /**
      * 微信支付结算单
@@ -146,4 +155,5 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, List<StatementOrder>> queryStatementOrderMonthDetail(String customerNo , Date month);
+
 }

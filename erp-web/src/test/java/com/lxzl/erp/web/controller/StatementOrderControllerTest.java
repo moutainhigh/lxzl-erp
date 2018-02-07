@@ -11,7 +11,9 @@ import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -60,7 +62,8 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void page() throws Exception {
-        StatementOrderPayParam param = new StatementOrderPayParam();
+        StatementOrderQueryParam param = new StatementOrderQueryParam();
+        param.setOwnerName("皮");
         TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
 
@@ -75,7 +78,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detail() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("SN201801032246450301585");
+        param.setStatementOrderNo("LXSO-731490-20180101-00087");
         TestResult testResult = getJsonTestResult("/statementOrder/detail", param);
     }
 
@@ -109,5 +112,28 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
         param.setStatementOrderCustomerNo("LXCC-1000-20180131-13764");
         param.setMonth(new Date());
         TestResult testResult = getJsonTestResult("/statementOrder/queryStatementOrderMonthDetail", param);
+    }
+
+    @Test
+    public void batchPay() throws Exception {
+        List<StatementOrderPayParam> param = new ArrayList<>();
+
+        StatementOrderPayParam pay1 = new StatementOrderPayParam();
+        pay1.setStatementOrderNo("LXSO-731490-20180701-00082");
+        pay1.setStatementOrderPayType(StatementOrderPayType.PAY_TYPE_BALANCE);
+
+        StatementOrderPayParam pay2 = new StatementOrderPayParam();
+        pay2.setStatementOrderNo("LXSO-731490-20180401-00081");
+        pay2.setStatementOrderPayType(StatementOrderPayType.PAY_TYPE_BALANCE);
+
+        StatementOrderPayParam pay3 = new StatementOrderPayParam();
+        pay3.setStatementOrderNo("LXSO-731490-20180103-00086");
+        pay3.setStatementOrderPayType(StatementOrderPayType.PAY_TYPE_BALANCE);
+
+        param.add(pay1);
+        param.add(pay2);
+        param.add(pay3);
+
+        TestResult testResult = getJsonTestResult("/statementOrder/batchPay", param);
     }
 }
