@@ -241,6 +241,7 @@ public class ErrorCode {
     public static final String SUPPLIER_NAME_IS_NULL = "J300070";
     public static final String BENEFICIARY_ACCOUNT_IS_LENGTH = "J300071";
     public static final String SUPPLIER_CODE_IS_LENGTH= "J300072";
+    public static final String STOCK_FINISH_THIS_ITEM = "J300073";
 
     public static final String ORDER_PRODUCT_LIST_NOT_NULL = "J400000";
     public static final String ORDER_CUSTOMER_CONSIGN_NOT_NULL = "J400001";
@@ -921,6 +922,7 @@ public class ErrorCode {
         MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话相同");
         MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
         MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
+        MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
