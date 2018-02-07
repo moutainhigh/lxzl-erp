@@ -689,17 +689,17 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(InterfaceStatementOrderQueryParam interfaceStatementOrderQueryParam) {
+    public ServiceResult<String, Page<StatementOrder>> queryStatementOrder(StatementOrderQueryParam statementOrderQueryParam) {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(interfaceStatementOrderQueryParam.getPageNo(), interfaceStatementOrderQueryParam.getPageSize());
+        PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("statementOrderQueryParam", interfaceStatementOrderQueryParam);
+        maps.put("statementOrderQueryParam", statementOrderQueryParam);
         Integer totalCount = statementOrderMapper.listSaleCount(maps);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listSalePage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
-        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, interfaceStatementOrderQueryParam.getPageNo(), interfaceStatementOrderQueryParam.getPageSize());
+        Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;

@@ -359,6 +359,7 @@ public class ErrorCode {
     public static final String RETURN_REASON_TYPE_NOT_NULL = "J400112";
     public static final String ORDER_EXPECT_DELIVERY_TIME_ERROR = "J400113";
     public static final String ORDER_NO_NOT_NULL = "J400114";
+    public static final String ORDER_RENT_START_TIME_ERROR = "J400115";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -454,6 +455,8 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_NOT_EXISTS = "J500094";
     public static final String STATEMENT_ORDER_NOT_NULL = "J500095";
     public static final String STATEMENT_PAY_AMOUNT_ERROR = "J500096";
+    public static final String CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER = "J500097";
+    public static final String CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500098";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -930,6 +933,7 @@ public class ErrorCode {
         MAP.put(ORDER_REFUND_STATUS_ERROR, "退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS, "支付记录不存在");
         MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单没有租赁开始时间");
+        MAP.put(ORDER_RENT_START_TIME_ERROR, "订单起租日期不能小于送货日期，并且不能大于超过2天");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房该商品库存不足。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该配件库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
@@ -1050,6 +1054,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_NOT_EXISTS, "结算单不存在");
         MAP.put(STATEMENT_ORDER_NOT_NULL, "月份结算单不能为空");
         MAP.put(STATEMENT_PAY_AMOUNT_ERROR, "结算单金额有误，请检查");
+        MAP.put(CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER, "客户存在有未支付逾期的结算单");
+        MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

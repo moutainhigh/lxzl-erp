@@ -158,12 +158,15 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 				and eso.statement_status in (0,4)
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+				<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
+			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16,20)
+					and eso.statement_status in (0,4,8,16)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -212,6 +215,9 @@
 				</if>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 					and eso.statement_status in (0,4)
+				</if>
+				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+					<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
 				</if>
 				<choose>
 					<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
@@ -263,12 +269,15 @@
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 				and eso.statement_status in (0,4)
 			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+				<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
+			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16,20)
+					and eso.statement_status in (0,4,8,16)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -311,6 +320,9 @@
 			</if>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderQueryParam.isNeedToPay == 1">
 				and eso.statement_status in (0,4)
+			</if>
+			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.isOverdue != null &amp;&amp; maps.statementOrderQueryParam.isOverdue == 1">
+				<![CDATA[ and eso.statement_overdue_amount > 0 ]]>
 			</if>
 			<choose>
 				<when test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != null &amp;&amp; maps.statementOrderQueryParam.statementOrderStatus != 1">

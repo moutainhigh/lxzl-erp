@@ -1895,13 +1895,6 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //判断开发员是否是总公司
-        boolean headUser = userSupport.isHeadUser(customer.getOwner());
-        if (headUser){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY);
-            return serviceResult;
-        }
-
         if (customer.getUnionUser() != null){
             UserDO userUnionDO = userMapper.findByUserId(customer.getUnionUser());
             if (userUnionDO == null){
@@ -1909,7 +1902,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             //判断联合开发员是否是总公司
-            headUser = userSupport.isHeadUser(customer.getUnionUser());
+            boolean headUser = userSupport.isHeadUser(customer.getUnionUser());
             if (headUser){
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY);
                 return serviceResult;

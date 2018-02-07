@@ -86,8 +86,28 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(esod.id) FROM erp_statement_order_detail esod 
+		SELECT count(esod.id) FROM erp_statement_order_detail esod
+		LEFT JOIN erp_order_product eop ON esod.order_item_refer_id = eop.id AND esod.order_item_type = 1
+		LEFT JOIN erp_order_material eom ON esod.order_item_refer_id = eom.id AND esod.order_item_type = 2
 		<where>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.rentLengthType != null">
+				and (eop.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER} OR eom.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER})
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+				and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay == 1">
+				and esod.statement_detail_status = 0
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isOverdue != null &amp;&amp; maps.statementOrderDetailQueryParam.isOverdue == 1">
+				<![CDATA[ and esod.statement_detail_overdue_amount > 0 ]]>
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND esod.data_status = 1
 			</if>
@@ -95,8 +115,28 @@
 	</select>
 
 	<select id="listPage" resultMap="StatementOrderDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod 
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		LEFT JOIN erp_order_product eop ON esod.order_item_refer_id = eop.id AND esod.order_item_type = 1
+		LEFT JOIN erp_order_material eom ON esod.order_item_refer_id = eom.id AND esod.order_item_type = 2
 		<where>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.rentLengthType != null">
+				and (eop.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER} OR eom.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER})
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
+				and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay == 1">
+				and esod.statement_detail_status = 0
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isOverdue != null &amp;&amp; maps.statementOrderDetailQueryParam.isOverdue == 1">
+				<![CDATA[ and esod.statement_detail_overdue_amount > 0 ]]>
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
+				<![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
+				<![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+			</if>
 			<if test="true">
 				AND esod.data_status = 1
 			</if>

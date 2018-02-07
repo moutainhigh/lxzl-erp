@@ -63,6 +63,7 @@
                             <thead>
                             <tr class="">
                                 <th class="hidden-xs">选择</th>
+                                <th class="hidden-xs"></th>
                                 <th class="hidden-xs">发件人</th>
                                 <th class="hidden-xs">主题</th>
                                 <th class="hidden-xs">内容</th>
