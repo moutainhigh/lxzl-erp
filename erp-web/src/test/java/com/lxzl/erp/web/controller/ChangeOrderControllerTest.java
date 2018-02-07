@@ -72,7 +72,9 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
-        addChangeOrderParam.setCustomerNo("C201711152010206581143");
+        addChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
+        addChangeOrderParam.setCustomerNo("LXCC-1000-20180130-00063");
+        addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         addChangeOrderParam.setOwner(500006);
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址");
@@ -82,9 +84,10 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
 
         List<ChangeOrderMaterial> changeOrderMaterialList = new ArrayList<>();
         ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
-        changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
-        changeOrderMaterial.setDestChangeMaterialNo("M201711201356145971009");
+        changeOrderMaterial.setSrcChangeMaterialNo("M201712250956366751399");
+        changeOrderMaterial.setDestChangeMaterialNo("M201711201457288791418");
         changeOrderMaterial.setChangeMaterialCount(3);
+        changeOrderMaterial.setIsNew(CommonConstant.COMMON_CONSTANT_NO);
         changeOrderMaterialList.add(changeOrderMaterial);
         addChangeOrderParam.setChangeOrderMaterialList(changeOrderMaterialList);
         TestResult testResult = getJsonTestResult("/changeOrder/add",addChangeOrderParam);
@@ -114,9 +117,45 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/changeOrder/update",updateChangeOrderParam);
     }
     @Test
+    public void updateJson() throws Exception {
+        String json = "{\n" +
+                "  \"changeOrderNo\": \"LXCO-700032-20180206-00004\",\n" +
+                "  \"customerNo\": \"CP201712060843154191841\",\n" +
+                "  \"changeReasonType\": \"1\",\n" +
+                "  \"changeReason\": \"升级\",\n" +
+                "  \"remark\": \"测试，勿动\",\n" +
+                "  \"changeMode\": \"1\",\n" +
+                "  \"rentStartTime\": 1517875200000,\n" +
+                "  \"owner\": \"500029\",\n" +
+                "  \"changeOrderConsignInfo\": {\n" +
+                "    \"consigneeName\": \"黎文彬\",\n" +
+                "    \"consigneePhone\": \"13638699632\",\n" +
+                "    \"province\": 1,\n" +
+                "    \"city\": 1,\n" +
+                "    \"district\": 1,\n" +
+                "    \"address\": \"茶飘香\"\n" +
+                "  },\n" +
+                "  \"changeOrderProductList\": [{\n" +
+                "    \"srcChangeProductSkuId\": 72,\n" +
+                "    \"destChangeProductSkuId\": 72,\n" +
+                "    \"isNew\": 0,\n" +
+                "    \"changeProductSkuCount\": 1,\n" +
+                "    \"changeOrderProductId\": 25\n" +
+                "  }],\n" +
+                "  \"changeOrderMaterialList\": [{\n" +
+                "    \"srcChangeMaterialNo\": \"M201711291745413251585\",\n" +
+                "    \"destChangeMaterialNo\": \"M201711291745413251585\",\n" +
+                "    \"isNew\": 0,\n" +
+                "    \"changeMaterialCount\": \"1\"\n" +
+                "  }]\n" +
+                "}";
+        UpdateChangeOrderParam updateChangeOrderParam = JSON.parseObject(json,UpdateChangeOrderParam.class);
+        TestResult testResult = getJsonTestResult("/changeOrder/update",updateChangeOrderParam);
+    }
+    @Test
     public void commit() throws Exception {
         ChangeOrderCommitParam changeOrderCommitParam = new ChangeOrderCommitParam();
-        changeOrderCommitParam.setChangeOrderNo("LXCO-701388-20180206-00003");
+        changeOrderCommitParam.setChangeOrderNo("LXCO-701389-20180207-00006");
         changeOrderCommitParam.setVerifyUserId(500006);
         changeOrderCommitParam.setRemark("审核备注");
         TestResult testResult = getJsonTestResult("/changeOrder/commit",changeOrderCommitParam);
@@ -125,13 +164,13 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void stockUpForChange() throws Exception {
         StockUpForChangeParam stockUpForChangeParam = new StockUpForChangeParam();
-        stockUpForChangeParam.setChangeOrderNo("LXCO-701388-20180206-00003");
+        stockUpForChangeParam.setChangeOrderNo("LXCO-701389-20180207-00006");
         //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null and current_warehouse_id = 4000002
 
         //查询可用设备
         //SELECT * FROM  `erp_stock_order_equipment`  esoe  LEFT JOIN `erp_product_equipment` epe ON esoe.equipment_no = epe.equipment_no WHERE epe.sku_id=63 AND epe.equipment_status=1
-        stockUpForChangeParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017122310024");
-//        stockUpForChangeParam.setMaterialNo("M201711201356145971009");
+//        stockUpForChangeParam.setEquipmentNo("LX-1000-Ideapad320S-20180206-16200");
+        stockUpForChangeParam.setChangeOrderMaterialId(13);
         stockUpForChangeParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult testResult = getJsonTestResult("/changeOrder/stockUpForChange",stockUpForChangeParam);
     }
@@ -173,7 +212,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detail() throws Exception {
         ChangeOrder changeOrder = new ChangeOrder();
-        changeOrder.setChangeOrderNo("LXCO-700053-20180116-00001");
+        changeOrder.setChangeOrderNo("LXCO-701389-20180207-00005");
         TestResult testResult = getJsonTestResult("/changeOrder/detail",changeOrder);
     }
     @Test

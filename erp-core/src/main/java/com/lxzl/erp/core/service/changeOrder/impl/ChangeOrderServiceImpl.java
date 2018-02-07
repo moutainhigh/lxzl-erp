@@ -40,7 +40,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -248,7 +247,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 }
                 if(!materialMap.containsKey(changeOrderMaterial.getDestChangeMaterialNo())){
                     ServiceResult<String, Material> materialResult = materialService.queryMaterialByNo(changeOrderMaterial.getDestChangeMaterialNo());
-                    if (!ErrorCode.SUCCESS.equals(materialResult.getErrorCode()) || materialResult.getResult() == null) {
+                    if (!ErrorCode.SUCCESS.equals(materialResult.getErrorCode()) || materialResult.getResult() == null||CommonConstant.COMMON_CONSTANT_NO.equals(materialResult.getResult().getIsRent())) {
                         serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                         return serviceResult;
                     }
@@ -309,7 +308,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
             for(String materialNoAndIsNew : destMaterialCountMap.keySet()){
                 String[] keys = materialNoAndIsNew.split("_");
-                Integer destMaterialNo = Integer.parseInt(keys[0]);
+                String destMaterialNo = keys[0];
                 Integer isNew = Integer.parseInt(keys[1]);
                 Integer changeCount = destMaterialCountMap.get(materialNoAndIsNew);
                 Material material = materialMap.get(destMaterialNo);
@@ -1449,7 +1448,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
 
             //保存换货单设备项
             ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = new ChangeOrderProductEquipmentDO();
-            ChangeOrderProductDO changeOrderProductDO = changeOrderProductDOListMap.get(productEquipmentDO.getSkuId()).get(0);
+            ChangeOrderProductDO changeOrderProductDO = changeOrderProductDOListMap.get(key).get(0);
             changeOrderProductEquipmentDO.setChangeOrderProductId(changeOrderProductDO.getId());
             changeOrderProductEquipmentDO.setChangeOrderId(changeOrderProductDO.getChangeOrderId());
             changeOrderProductEquipmentDO.setChangeOrderNo(changeOrderProductDO.getChangeOrderNo());
