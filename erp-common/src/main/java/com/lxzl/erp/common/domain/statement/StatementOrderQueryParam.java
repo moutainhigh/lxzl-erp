@@ -29,6 +29,9 @@ public class StatementOrderQueryParam extends BasePageParam {
     private Date createStartTime;
     private Date createEndTime;
 
+    private Integer owner;		//数据归属人，跟单员
+    private String ownerName; //业务员姓名
+
     public Date getCreateStartTime() {
         return createStartTime;
     }
@@ -57,33 +60,25 @@ public class StatementOrderQueryParam extends BasePageParam {
         return statementOrderStatus;
     }
 
-    public void setStatementOrderStatus(Integer statementOrderStatus) {
-        this.statementOrderStatus = statementOrderStatus;
-    }
+    public void setStatementOrderStatus(Integer statementOrderStatus) { this.statementOrderStatus = statementOrderStatus; }
 
     public Date getStatementExpectPayStartTime() {
         return statementExpectPayStartTime;
     }
 
-    public void setStatementExpectPayStartTime(Date statementExpectPayStartTime) {
-        this.statementExpectPayStartTime = statementExpectPayStartTime;
-    }
+    public void setStatementExpectPayStartTime(Date statementExpectPayStartTime) { this.statementExpectPayStartTime = statementExpectPayStartTime; }
 
     public Date getStatementExpectPayEndTime() {
         return statementExpectPayEndTime;
     }
 
-    public void setStatementExpectPayEndTime(Date statementExpectPayEndTime) {
-        this.statementExpectPayEndTime = statementExpectPayEndTime;
-    }
+    public void setStatementExpectPayEndTime(Date statementExpectPayEndTime) { this.statementExpectPayEndTime = statementExpectPayEndTime; }
 
     public String getStatementOrderCustomerName() {
         return statementOrderCustomerName;
     }
 
-    public void setStatementOrderCustomerName(String statementOrderCustomerName) {
-        this.statementOrderCustomerName = statementOrderCustomerName;
-    }
+    public void setStatementOrderCustomerName(String statementOrderCustomerName) { this.statementOrderCustomerName = statementOrderCustomerName; }
 
     public String getOrderNo() {
         return orderNo;
@@ -113,17 +108,13 @@ public class StatementOrderQueryParam extends BasePageParam {
         return statementOrderCustomerId;
     }
 
-    public void setStatementOrderCustomerId(Integer statementOrderCustomerId) {
-        this.statementOrderCustomerId = statementOrderCustomerId;
-    }
+    public void setStatementOrderCustomerId(Integer statementOrderCustomerId) { this.statementOrderCustomerId = statementOrderCustomerId; }
 
     public String getStatementOrderCustomerNo() {
         return statementOrderCustomerNo;
     }
 
-    public void setStatementOrderCustomerNo(String statementOrderCustomerNo) {
-        this.statementOrderCustomerNo = statementOrderCustomerNo;
-    }
+    public void setStatementOrderCustomerNo(String statementOrderCustomerNo) { this.statementOrderCustomerNo = statementOrderCustomerNo; }
 
     public Integer getIsNeedToPay() {
         return isNeedToPay;
@@ -140,4 +131,12 @@ public class StatementOrderQueryParam extends BasePageParam {
     public void setIsOverdue(Integer isOverdue) {
         this.isOverdue = isOverdue;
     }
+
+    public Integer getOwner() { return owner; }
+
+    public void setOwner(Integer owner) { this.owner = owner; }
+
+    public String getOwnerName() { return ownerName; }
+
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 }

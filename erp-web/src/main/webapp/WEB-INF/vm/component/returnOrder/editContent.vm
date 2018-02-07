@@ -111,8 +111,8 @@
                     <div class="col-md-9">
                         <div class="input-group bringContainer">
                             <input type="hidden" id="owner" name="owner" bringFiled="owner" class="form-control required" />
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
-                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>企业客户</span>
+                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择业务员" />
+                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>业务员</span>
                         </div>
                     </div>
                 </div>

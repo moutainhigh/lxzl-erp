@@ -60,14 +60,14 @@
     </div>
     <div class="section row">
         <div class="col-md-4">
-            <label for="connectRealName" class="field-label"><em class="text-danger">*</em>联系人姓名</label>
+            <label for="connectRealName" class="field-label"><em class="text-danger">*</em>紧急联系人姓名</label>
             <label for="connectRealName" class="field prepend-icon">
                 <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
                 <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
             </label>
         </div>
         <div class="col-md-4">
-            <label for="connectPhone" class="field-label"><em class="text-danger">*</em>联系人手机号</label>
+            <label for="connectPhone" class="field-label"><em class="text-danger">*</em>紧急联系人手机号</label>
             <label for="connectPhone" class="field prepend-icon">
                 <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
                 <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>

@@ -12,6 +12,7 @@
 		<result column="real_change_product_sku_count" jdbcType="INTEGER" property="realChangeProductSkuCount" />
 		<result column="src_change_product_sku_snapshot" jdbcType="VARCHAR" property="srcChangeProductSkuSnapshot" />
 		<result column="dest_change_product_sku_snapshot" jdbcType="VARCHAR" property="destChangeProductSkuSnapshot" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -21,7 +22,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecop.id,ecop.change_order_id,ecop.change_order_no,ecop.src_change_product_sku_id,ecop.dest_change_product_sku_id,ecop.change_product_sku_count,ecop.real_change_product_sku_count,ecop.src_change_product_sku_snapshot,ecop.dest_change_product_sku_snapshot,ecop.data_status,ecop.remark,ecop.create_time,ecop.create_user,ecop.update_time,ecop.update_user
+		ecop.id,ecop.change_order_id,ecop.change_order_no,ecop.src_change_product_sku_id,ecop.dest_change_product_sku_id,ecop.change_product_sku_count,ecop.real_change_product_sku_count,ecop.src_change_product_sku_snapshot,ecop.dest_change_product_sku_snapshot,ecop.is_new,ecop.data_status,ecop.remark,ecop.create_time,ecop.create_user,ecop.update_time,ecop.update_user
 	</sql>
 
 	<select id="findById" resultMap="ChangeOrderProductDO" parameterType="java.lang.Integer">
@@ -78,6 +79,9 @@
 			<if test="destChangeProductSkuSnapshot != null">
 				dest_change_product_sku_snapshot = #{destChangeProductSkuSnapshot,jdbcType=VARCHAR},
 			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=VARCHAR},
+			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
@@ -109,12 +113,12 @@
 
 	<insert id="batchSave" parameterType="java.util.List">
 		insert into erp_change_order_product
-		(change_order_id,change_order_no,src_change_product_sku_id,dest_change_product_sku_id,change_product_sku_count,real_change_product_sku_count,src_change_product_sku_snapshot,dest_change_product_sku_snapshot,data_status,remark,create_time,create_user,update_time,update_user)
+		(change_order_id,change_order_no,src_change_product_sku_id,dest_change_product_sku_id,change_product_sku_count,real_change_product_sku_count,src_change_product_sku_snapshot,dest_change_product_sku_snapshot,is_new,data_status,remark,create_time,create_user,update_time,update_user)
 		values
 		<foreach collection="changeOrderProductDOList" item="changeOrderProductDO" index="index" separator =",">
 			(
 			#{changeOrderId},#{changeOrderNo},#{changeOrderProductDO.srcChangeProductSkuId},#{changeOrderProductDO.destChangeProductSkuId},#{changeOrderProductDO.changeProductSkuCount},
-			#{changeOrderProductDO.realChangeProductSkuCount},#{changeOrderProductDO.srcChangeProductSkuSnapshot},#{changeOrderProductDO.destChangeProductSkuSnapshot},
+			#{changeOrderProductDO.realChangeProductSkuCount},#{changeOrderProductDO.srcChangeProductSkuSnapshot},#{changeOrderProductDO.destChangeProductSkuSnapshot},#{changeOrderProductDO.isNew},
 			#{changeOrderProductDO.dataStatus},#{changeOrderProductDO.remark},
 			#{changeOrderProductDO.createTime},#{changeOrderProductDO.createUser},#{changeOrderProductDO.updateTime},#{changeOrderProductDO.updateUser}
 			)
@@ -171,6 +175,12 @@
 			dest_change_product_sku_snapshot =
 			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
 				when #{item.id,jdbcType=INTEGER} then #{item.destChangeProductSkuSnapshot,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			is_new =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.isNew,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">

@@ -354,6 +354,7 @@ public class PaymentServiceImpl implements PaymentService {
                         requestJson = FastJsonUtil.toJSONString(chargeRecordParam);
                         jsonObject = JSON.parseObject(requestJson);
                         jsonObject.remove("customerName");
+                        jsonObject.remove("businessCustomerNo");
                         jsonObject.remove("count");
                         requestJson = jsonObject.toJSONString();
                     } else {
@@ -361,6 +362,7 @@ public class PaymentServiceImpl implements PaymentService {
                         jsonObject = JSON.parseObject(requestJson);
                         jsonObject.remove("chargeStatus");
                         jsonObject.remove("customerName");
+                        jsonObject.remove("businessCustomerNo");
                         jsonObject.remove("count");
                         requestJson = jsonObject.toJSONString();
                     }
@@ -370,6 +372,7 @@ public class PaymentServiceImpl implements PaymentService {
                         jsonObject = JSON.parseObject(requestJson);
                         jsonObject.remove("chargeType");
                         jsonObject.remove("customerName");
+                        jsonObject.remove("businessCustomerNo");
                         jsonObject.remove("count");
                         requestJson = jsonObject.toJSONString();
                     } else {
@@ -378,6 +381,7 @@ public class PaymentServiceImpl implements PaymentService {
                         jsonObject.remove("chargeStatus");
                         jsonObject.remove("chargeType");
                         jsonObject.remove("customerName");
+                        jsonObject.remove("businessCustomerNo");
                         jsonObject.remove("count");
                         requestJson = jsonObject.toJSONString();
                     }

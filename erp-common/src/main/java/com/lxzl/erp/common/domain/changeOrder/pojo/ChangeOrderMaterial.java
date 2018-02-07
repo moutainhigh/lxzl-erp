@@ -1,11 +1,13 @@
 package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.AddChangeOrderGroup;
 import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdateChangeOrderGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Min;
@@ -44,6 +46,9 @@ public class ChangeOrderMaterial  extends BasePO {
 
 
     private Integer canProcessCount;
+    @NotNull(message = ErrorCode.IS_NEW_VALUE_ERROR)
+    @In(value = {CommonConstant.NO,CommonConstant.YES}, message = ErrorCode.IS_NEW_VALUE_ERROR)
+    private Integer isNew;
 
     public Integer getChangeOrderMaterialId() {
         return changeOrderMaterialId;
@@ -187,5 +192,13 @@ public class ChangeOrderMaterial  extends BasePO {
 
     public void setCanProcessCount(Integer canProcessCount) {
         this.canProcessCount = canProcessCount;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 }
