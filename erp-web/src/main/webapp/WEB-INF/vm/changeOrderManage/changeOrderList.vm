@@ -197,7 +197,8 @@
         management_load_script('${staticManagement}/js',
                 'manage.change.order.handle.mixin.js',
                 'manage.change.order.js',
-                'manage.order.picking.js');
+                'manage.order.picking.js',
+                'modal.input.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
