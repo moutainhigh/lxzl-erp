@@ -40,7 +40,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -248,7 +247,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 }
                 if(!materialMap.containsKey(changeOrderMaterial.getDestChangeMaterialNo())){
                     ServiceResult<String, Material> materialResult = materialService.queryMaterialByNo(changeOrderMaterial.getDestChangeMaterialNo());
-                    if (!ErrorCode.SUCCESS.equals(materialResult.getErrorCode()) || materialResult.getResult() == null) {
+                    if (!ErrorCode.SUCCESS.equals(materialResult.getErrorCode()) || materialResult.getResult() == null||CommonConstant.COMMON_CONSTANT_NO.equals(materialResult.getResult().getIsRent())) {
                         serviceResult.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                         return serviceResult;
                     }
@@ -309,7 +308,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
             for(String materialNoAndIsNew : destMaterialCountMap.keySet()){
                 String[] keys = materialNoAndIsNew.split("_");
-                Integer destMaterialNo = Integer.parseInt(keys[0]);
+                String destMaterialNo = keys[0];
                 Integer isNew = Integer.parseInt(keys[1]);
                 Integer changeCount = destMaterialCountMap.get(materialNoAndIsNew);
                 Material material = materialMap.get(destMaterialNo);
@@ -630,7 +629,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
             for(String materialNoAndIsNew : destMaterialCountMap.keySet()){
                 String[] keys = materialNoAndIsNew.split("_");
-                Integer destMaterialNo = Integer.parseInt(keys[0]);
+                String destMaterialNo = keys[0];
                 Integer isNew = Integer.parseInt(keys[1]);
                 Integer changeCount = destMaterialCountMap.get(materialNoAndIsNew);
                 Material material = materialMap.get(destMaterialNo);
@@ -969,14 +968,14 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         changeOrderProductEquipmentDO.setSrcEquipmentNo(srcProductEquipmentDO.getEquipmentNo());
 
         //计算差价
-        BigDecimal diff = getDiff(orderDO, srcProductEquipmentDO, destProductEquipmentDO);
-        changeOrderProductEquipmentDO.setPriceDiff(diff);
+//        BigDecimal diff = getDiff(orderDO, srcProductEquipmentDO, destProductEquipmentDO);
+//        changeOrderProductEquipmentDO.setPriceDiff(diff);
         changeOrderProductEquipmentDO.setUpdateTime(now);
         changeOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         changeOrderProductEquipmentMapper.update(changeOrderProductEquipmentDO);
         //更新换货单实际换货商品总数，总差价，状态
         changeOrderDO.setRealTotalChangeProductCount(changeOrderDO.getRealTotalChangeProductCount() + 1);
-        changeOrderDO.setTotalPriceDiff(BigDecimalUtil.add(changeOrderDO.getTotalPriceDiff(), diff));
+//        changeOrderDO.setTotalPriceDiff(BigDecimalUtil.add(changeOrderDO.getTotalPriceDiff(), diff));
         changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS);
         changeOrderMapper.update(changeOrderDO);
         //更新订单商品设备表，实际归还时间，实际租金；添加订单商品设备，预计归还时间
@@ -1449,7 +1448,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
 
             //保存换货单设备项
             ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = new ChangeOrderProductEquipmentDO();
-            ChangeOrderProductDO changeOrderProductDO = changeOrderProductDOListMap.get(productEquipmentDO.getSkuId()).get(0);
+            ChangeOrderProductDO changeOrderProductDO = changeOrderProductDOListMap.get(key).get(0);
             changeOrderProductEquipmentDO.setChangeOrderProductId(changeOrderProductDO.getId());
             changeOrderProductEquipmentDO.setChangeOrderId(changeOrderProductDO.getChangeOrderId());
             changeOrderProductEquipmentDO.setChangeOrderNo(changeOrderProductDO.getChangeOrderNo());
@@ -1487,8 +1486,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 serviceResult.setErrorCode(ErrorCode.STOCK_FINISH_THIS_ITEM);
                 return serviceResult;
             }
-            CustomerDO customerDO = customerMapper.findByNo(changeOrderDO.getCustomerNo());
-            UserDO owner = userMapper.findByUserId(customerDO.getOwner());
+            UserDO owner = userMapper.findByUserId(changeOrderDO.getOwner());
             Integer subCompanyId = userSupport.getCompanyIdByUser(owner.getId());
             WarehouseDO currentWarehouse = warehouseSupport.getSubCompanyWarehouse(subCompanyId);
             if (currentWarehouse == null) {

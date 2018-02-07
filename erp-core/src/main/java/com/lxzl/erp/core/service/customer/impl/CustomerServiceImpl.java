@@ -1837,39 +1837,22 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //创建客户变更记录
-        //如果开发员改变，
-        /*if (!userDOOwner.equals(userOwner)){
-            if (userDOUnion == null && (userUnion == null || userUnion != null)){
-                //并且数据中联合开发员是null且传入的联合开发员为null或者不为null
-                createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
-            }else if (userDOUnion.equals(userUnion) || !userDOUnion.equals(userUnion)){
-                createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
-            }
+        //如果开发员改变
+        if (!userDOOwner.equals(userOwner)){
+            //如果传入联合开发员为null或者不为null，都可以以传入的联合开发员为传递值
+            createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
         }
+
+        //如果开发员未改变
         if (userDOOwner.equals(userOwner)){
+            //联合开发员本来为空同时传入的联合开发员不为空
             if (userDOUnion == null && (userUnion != null)){
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
             }else if (!userDOUnion.equals(userUnion)) {
+                //联合开发员不为空，只有传入的联合开发员不同时，传入为null，也视为不同
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
             }
-        }*/
-
-//        if (!userDOOwner.equals(userOwner) && (userDOUnion == null && userUnion == null)){
-//            //如果开发员改变，并且联合开发员传入的为null且数据中联合开发员也是null
-//            createCustomerUpdateLog(customerDO.getId(), userOwner, userDOUnion, now);
-//        }else if(!userDOOwner.equals(userOwner) && (userUnion == null || userDOUnion.equals(userUnion))) {
-//            //如果开发员改变，并且联合开发员传入的为null既联合开发员未改变
-//            createCustomerUpdateLog(customerDO.getId(), userOwner, userDOUnion, now);
-//        }else if (!userDOOwner.equals(userOwner) && !userDOUnion.equals(userUnion)){
-//            //如果开发员员和联合开发员都改变了
-//            createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
-//        }else if (userDOOwner.equals(userOwner) && !userDOUnion.equals(userUnion)){
-//            //如果开发员未改变，并且联合开发员改变了
-//            createCustomerUpdateLog(customerDO.getId(), userDOOwner, userUnion, now);
-//        }else if (userDOOwner.equals(userOwner) && (userDOUnion == null && !userDOUnion.equals(userUnion)){
-//            //如果开发员未改变，并且联合开发员传入的不为null且数据中联合开发员也是null
-//            createCustomerUpdateLog(customerDO.getId(), userDOOwner, userUnion, now);
-//        }
+        }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
