@@ -139,4 +139,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderMaterialBulkDO">
 		UPDATE erp_change_order_material_bulk <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+
+	<update id="deleteByChangeOrderMaterialId">
+		UPDATE erp_change_order_material_bulk SET data_status = 2,update_user=#{updateUser},update_time=#{updateTime} WHERE change_order_material_id = #{changeOrderMaterialId, jdbcType=INTEGER}
+	</update>
 </mapper>

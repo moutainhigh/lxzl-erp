@@ -4,11 +4,11 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
-import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
+import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -580,6 +580,64 @@ public class StatementServiceImpl implements StatementService {
 
         updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, currentTime, loginUser.getUserId());
         result.setResult(true);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, List<String>> batchPayStatementOrder(List<StatementOrderPayParam> param) {
+        ServiceResult<String, List<String>> result = new ServiceResult<>();
+
+        Integer customerId = null;
+        List<StatementOrderDO> newStatementOrderDO = new ArrayList<>();
+        for(int i = 0;i<param.size();i++){
+            StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(param.get(i).getStatementOrderNo());
+            if (statementOrderDO == null) {
+                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                return result;
+            }
+            if(statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT && statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART){
+                result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_ERROR);
+                return result;
+            }
+            if(customerId == null){
+                customerId = statementOrderDO.getCustomerId();
+            }
+            if(!customerId.equals(statementOrderDO.getCustomerId())){
+                result.setErrorCode(ErrorCode.STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE);
+                return result;
+            }
+            newStatementOrderDO.add(statementOrderDO);
+        }
+
+        Collections.sort(newStatementOrderDO, new Comparator<StatementOrderDO>(){
+            @Override
+            public int compare(StatementOrderDO o1, StatementOrderDO o2) {
+                Date dt1 = o1.getStatementExpectPayTime();
+                Date dt2 = o2.getStatementExpectPayTime();
+                if (dt1.getTime() > dt2.getTime()) {
+                    return 1;
+                } else if (dt1.getTime() < dt2.getTime()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        List<String> data = new ArrayList<>();
+        for(int i=0;i<newStatementOrderDO.size();i++){
+            ServiceResult<String, Boolean> pay = payStatementOrder(newStatementOrderDO.get(i).getStatementOrderNo());
+            if(ErrorCode.SUCCESS.equals(pay.getErrorCode())){
+                data.add(i,newStatementOrderDO.get(i).getStatementOrderNo()+ "：支付" + ErrorCode.getMessage(ErrorCode.SUCCESS));
+            }else {
+                data.add(i,newStatementOrderDO.get(i).getStatementOrderNo()+ "：支付失败:" + ErrorCode.getMessage(pay.getErrorCode()));
+                break;
+            }
+        }
+
+        result.setResult(data);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -1393,6 +1451,10 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public ServiceResult<String, Page<StatementOrder>> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
+
+        if(statementOrderMonthQueryParam.getMonthTime() == null){
+            statementOrderMonthQueryParam.setMonthTime(new Date());
+        }
         PageQuery pageQuery = new PageQuery(statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
@@ -1402,14 +1464,22 @@ public class StatementServiceImpl implements StatementService {
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listMonthPage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
         Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
+
+        List<StatementOrder> newList = new ArrayList<>();
+        for(int i=0;i<page.getItemList().size();i++){
+            StatementOrder statementOrder = page.getItemList().get(i);
+            statementOrder.setMonthTime(statementOrderMonthQueryParam.getMonthTime());
+            newList.add(statementOrder);
+        }
+        page.setItemList(newList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
     }
 
     @Override
-    public ServiceResult<String, List<StatementOrder>> queryStatementOrderMonthDetail(String customerNo, Date month) {
-        ServiceResult<String, List<StatementOrder>> result = new ServiceResult<>();
+    public ServiceResult<String, StatementOrder> queryStatementOrderMonthDetail(String customerNo, Date month) {
+        ServiceResult<String, StatementOrder> result = new ServiceResult<>();
 
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if (customerDO == null) {
@@ -1425,22 +1495,32 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
+        StatementOrderDO statementOrderDO = statementOrderDOList.get(0);
+        List<StatementOrderDetailDO> statementOrderDetailDOList = new ArrayList<>();
+        StatementOrderDetailDO statementOrderDetailDO = new StatementOrderDetailDO();
+        for(int i=0;i<statementOrderDOList.size();i++){
+            List<StatementOrderDetailDO>  list = statementOrderDOList.get(i).getStatementOrderDetailDOList();
+            for(int j=0;j<list.size();j++){
+                statementOrderDetailDO = list.get(j);
+            }
+            statementOrderDetailDOList.add(statementOrderDetailDO);
+        }
+        statementOrderDO.setStatementOrderDetailDOList(statementOrderDetailDOList);
+
+        StatementOrder statementOrder = ConverterUtil.convert(statementOrderDO, StatementOrder.class);
 
         StatementOrderDetail returnReferStatementOrderDetail = null;
+        if (statementOrder != null && CollectionUtil.isNotEmpty(statementOrder.getStatementOrderDetailList())) {
+            Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrder.getStatementOrderDetailList(), "statementOrderDetailId");
 
-        if (statementOrderList != null) {
-            for (int i = 0; i < statementOrderList.size(); i++) {
-                Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrderList.get(i).getStatementOrderDetailList(), "statementOrderDetailId");
-                for (StatementOrderDetail statementOrderDetail : statementOrderList.get(i).getStatementOrderDetailList()) {
-                    if (statementOrderDetail.getReturnReferId() != null) {
-                        returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
-                    }
-                    convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+            for (StatementOrderDetail statementOrderDetail : statementOrder.getStatementOrderDetailList()) {
+                if (statementOrderDetail.getReturnReferId() != null) {
+                    returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
                 }
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
             }
         }
-        result.setResult(statementOrderList);
+        result.setResult(statementOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

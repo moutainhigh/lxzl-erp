@@ -59,6 +59,8 @@ public interface BulkMaterialMapper extends BaseMysqlDAO<BulkMaterialDO> {
 
     Integer updateBatchStatusByTransferOrderProductEquipment(@Param("maps")Map<String, Object> maps);
 
+    Integer updateBatchDestStatusByChangeOrderMaterialId(@Param("maps")Map<String, Object> maps);
+
     Integer updateBatchPurchasePrice(@Param("purchasePrice")BigDecimal purchasePrice , @Param("updateUser")String updateUser , @Param("updateTime")Date updateTime,
              @Param("idList")List idList);
 
