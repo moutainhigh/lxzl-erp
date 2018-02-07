@@ -1741,7 +1741,9 @@ CREATE TABLE `erp_change_order_material` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index_src_change_material_id` (`src_change_material_id`),
+  KEY `index_dest_change_material_id` (`dest_change_material_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='租赁换货配件项表';
 
 DROP TABLE if exists `erp_change_order_material_bulk`;

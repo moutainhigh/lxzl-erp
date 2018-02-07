@@ -104,7 +104,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-1000-20180127-00057");
         customer.setOwner(500025);
-        customer.setUnionUser(500029);
+//        customer.setUnionUser(500029);
         customer.setIsDefaultConsignAddress(1);
         CustomerCompany customerCompany = new CustomerCompany();
 
@@ -117,16 +117,18 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompanyNeed.setRentLength(24);
         customerCompanyNeedFirstList.add(customerCompanyNeed);
 
+
         customerCompany.setCustomerOrigin(1);
         customerCompany.setCompanyName("彭测试公司名104AA");
         customerCompany.setConnectRealName("测试紧急联系人");
-        customerCompany.setConnectPhone("185663245781");
+        customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试");
         customerCompany.setProductPurpose("测试设备用途");
         //加入首次租赁设备
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
-
-
+        customerCompany.setIsLegalPersonApple(0);
+        customerCompany.setLegalPersonPhone("13866253152");
+        customerCompany.setAgentPersonPhone("13866253151");
 //        Image image1 = new Image();
 //        image1.setImgId(28);
 //        customerCompany.setBusinessLicensePictureImage(image1);
