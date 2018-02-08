@@ -105,7 +105,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-1000-20180127-00057");
         customer.setOwner(500025);
-        customer.setUnionUser(500029);
+//        customer.setUnionUser(500029);
         customer.setIsDefaultConsignAddress(1);
         CustomerCompany customerCompany = new CustomerCompany();
 

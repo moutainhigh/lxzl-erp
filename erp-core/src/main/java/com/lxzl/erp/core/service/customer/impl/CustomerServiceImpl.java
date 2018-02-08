@@ -1855,7 +1855,7 @@ public class CustomerServiceImpl implements CustomerService {
             //联合开发员本来为空同时传入的联合开发员不为空
             if (userDOUnion == null && (userUnion != null)){
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
-            }else if (!userDOUnion.equals(userUnion)) {
+            }else if (userDOUnion != null && !userDOUnion.equals(userUnion)) {
                 //联合开发员不为空，只有传入的联合开发员不同时，传入为null，也视为不同
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
             }
