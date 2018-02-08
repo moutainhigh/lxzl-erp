@@ -20,6 +20,7 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
@@ -1373,5 +1374,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
     @Autowired
     private MaterialSupport materialSupport;
 
+    @Autowired
+    private PermissionSupport permissionSupport;
 }
 

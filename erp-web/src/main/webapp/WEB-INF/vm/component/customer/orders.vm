@@ -10,6 +10,9 @@
             <li>
                 <a href="#rechargeList" data-toggle="tab" aria-expanded="true">充值记录</a>
             </li>
+            <li>
+                <a href="#accoutList" data-toggle="tab" aria-expanded="true">账户流水</a>
+            </li>
         </ul>
     </div>
     <div class="panel-body">
@@ -218,6 +221,7 @@
                     </div>
                 </div>
             </div>
+            <div id="accountList" class="tab-pane"></div>
         </div>
     </div>
 </div>

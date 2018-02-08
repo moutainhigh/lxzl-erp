@@ -599,6 +599,15 @@
 		) ebm2
 		ON ebm1.id = ebm2.id SET ebm1.bulk_material_status = #{maps.bulkMaterialStatus,jdbcType=INTEGER} , ebm1.update_time = #{maps.updateTime,jdbcType=TIMESTAMP} , ebm1.update_user = #{maps.updateUser,jdbcType=VARCHAR}
 	</update>
+	<update id="updateBatchStatusByChangeOrderMaterialId" parameterType="map">
+		UPDATE erp_bulk_material ebm1 INNER JOIN
+		(
+		SELECT <include refid="column_List"/> FROM erp_bulk_material ebm INNER JOIN erp_transfer_order_product_equipment etope
+		ON ebm.current_equipment_no = etope.product_equipment_no AND ebm.data_status = 1
+		WHERE etope.transfer_order_id = #{maps.transferOrderId,jdbcType=INTEGER}  AND etope.data_status = 1
+		) ebm2
+		ON ebm1.id = ebm2.id SET ebm1.bulk_material_status = #{maps.bulkMaterialStatus,jdbcType=INTEGER} , ebm1.update_time = #{maps.updateTime,jdbcType=TIMESTAMP} , ebm1.update_user = #{maps.updateUser,jdbcType=VARCHAR}
+	</update>
 	<update id="updateBatchPurchasePrice" parameterType="map">
 		UPDATE erp_bulk_material ebm
 		SET ebm.purchase_price = #{purchasePrice} , ebm.update_time = #{updateTime} , ebm.update_user = #{updateUser}

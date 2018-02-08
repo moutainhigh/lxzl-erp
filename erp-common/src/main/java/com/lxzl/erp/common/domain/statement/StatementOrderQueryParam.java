@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -31,6 +32,9 @@ public class StatementOrderQueryParam extends BasePageParam {
 
     private Integer owner;		//数据归属人，跟单员
     private String ownerName; //业务员姓名
+
+    //控制数据权限
+    private List<Integer> passiveUserIdList;
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -139,4 +143,8 @@ public class StatementOrderQueryParam extends BasePageParam {
     public String getOwnerName() { return ownerName; }
 
     public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
 }

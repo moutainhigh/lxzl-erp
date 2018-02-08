@@ -15,5 +15,7 @@ public interface ChangeOrderProductEquipmentMapper extends BaseMysqlDAO<ChangeOr
 
 	List<ChangeOrderProductEquipmentDO> findByChangeOrderNo(@Param("changeOrderNo") String changeOrderNo);
 
-	ChangeOrderProductEquipmentDO findByChangeOrderNoAndEquipmentNo(@Param("changeOrderNo") String changeOrderNo,@Param("destEquipmentNo") String equipmentNo);
+	ChangeOrderProductEquipmentDO findByChangeOrderNoAndDestEquipmentNo(@Param("changeOrderNo") String changeOrderNo,@Param("destEquipmentNo") String equipmentNo);
+
+	ChangeOrderProductEquipmentDO findByChangeOrderNoAndSrcEquipmentNo(@Param("changeOrderNo") String changeOrderNo,@Param("destEquipmentNo") String equipmentNo);
 }

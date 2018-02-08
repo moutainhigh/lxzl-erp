@@ -42,6 +42,8 @@ public class Customer extends BasePO {
 	private BigDecimal shortLimitReceivableAmount; //短租应收上限
 	@NotNull(message = ErrorCode.STATEMENT_DATE_NOT_NULL , groups = {AddCustomerStatementDateGroup.class})
 	private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
+	private String passReason; //通过原因
+	private String failReason; //拒绝原因
 
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
@@ -49,7 +51,6 @@ public class Customer extends BasePO {
 	private String unionAreaCityName; //联合城市名
 	private String unionAreaDistrictName; //联合地区名
 	private String verifyRemark;	//审核备注
-
 
 	@Valid
 	private CustomerPerson customerPerson;
@@ -65,7 +66,6 @@ public class Customer extends BasePO {
 
 //	@NotNull(message = ErrorCode.CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class})
 	private Integer isDefaultConsignAddress; //是否以地址作为收货地址,1是，0否
-
 
 
 	public Integer getCustomerId() {
@@ -322,5 +322,21 @@ public class Customer extends BasePO {
 
 	public void setIsDefaultConsignAddress(Integer isDefaultConsignAddress) {
 		this.isDefaultConsignAddress = isDefaultConsignAddress;
+	}
+
+	public String getPassReason() {
+		return passReason;
+	}
+
+	public void setPassReason(String passReason) {
+		this.passReason = passReason;
+	}
+
+	public String getFailReason() {
+		return failReason;
+	}
+
+	public void setFailReason(String failReason) {
+		this.failReason = failReason;
 	}
 }

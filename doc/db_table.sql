@@ -338,6 +338,8 @@ CREATE TABLE `erp_customer` (
   `short_limit_receivable_amount` decimal(15,2) COMMENT '短租应收上限',
   `statement_date` int(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定',
   `customer_status` int(4) NOT NULL DEFAULT '0' COMMENT '客户状态，0初始化，1资料提交，2审核通过，3资料驳回',
+  `pass_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '通过原因',
+  `fail_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '拒绝原因',
   `first_apply_amount` decimal(15,2) DEFAULT '0.00' COMMENT '首期申请额度',
   `later_apply_amount` decimal(15,2) DEFAULT '0.00' COMMENT '后期申请额度',
   `is_disabled` int(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',

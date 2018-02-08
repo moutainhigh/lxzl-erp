@@ -19,7 +19,7 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，1不可用；0可用
 
-    private List<Integer> passiveUserIdList;
+    private List<Integer> permissionUserIdList;
 
     public Integer getCustomerId() {
         return customerId;
@@ -101,14 +101,6 @@ public class CustomerPersonQueryParam extends BasePageParam {
         this.connectPhone = connectPhone;
     }
 
-    public List<Integer> getPassiveUserIdList() {
-        return passiveUserIdList;
-    }
-
-    public void setPassiveUserIdList(List<Integer> passiveUserIdList) {
-        this.passiveUserIdList = passiveUserIdList;
-    }
-
     public Integer getIsDisabled() {
         return isDisabled;
     }
@@ -124,4 +116,8 @@ public class CustomerPersonQueryParam extends BasePageParam {
     public void setCustomerStatus(Integer customerStatus) {
         this.customerStatus = customerStatus;
     }
+
+    public List<Integer> getPermissionUserIdList() { return permissionUserIdList; }
+
+    public void setPermissionUserIdList(List<Integer> permissionUserIdList) { this.permissionUserIdList = permissionUserIdList; }
 }
