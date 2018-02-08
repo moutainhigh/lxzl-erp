@@ -16,23 +16,17 @@ public class PermissionParam implements Serializable {
         return permissionUserIdList;
     }
 
-    public void setPermissionUserIdList(List<Integer> permissionUserIdList) {
-        this.permissionUserIdList = permissionUserIdList;
-    }
+    public void setPermissionUserIdList(List<Integer> permissionUserIdList) { this.permissionUserIdList = permissionUserIdList; }
 
     public List<Integer> getPermissionWarehouseIdList() {
         return permissionWarehouseIdList;
     }
 
-    public void setPermissionWarehouseIdList(List<Integer> permissionWarehouseIdList) {
-        this.permissionWarehouseIdList = permissionWarehouseIdList;
-    }
+    public void setPermissionWarehouseIdList(List<Integer> permissionWarehouseIdList) { this.permissionWarehouseIdList = permissionWarehouseIdList; }
 
     public Integer getPermissionSubCompanyId() {
         return permissionSubCompanyId;
     }
 
-    public void setPermissionSubCompanyId(Integer permissionSubCompanyId) {
-        this.permissionSubCompanyId = permissionSubCompanyId;
-    }
+    public void setPermissionSubCompanyId(Integer permissionSubCompanyId) { this.permissionSubCompanyId = permissionSubCompanyId; }
 }

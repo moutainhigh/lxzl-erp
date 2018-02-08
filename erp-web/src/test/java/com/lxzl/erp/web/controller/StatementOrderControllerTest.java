@@ -63,7 +63,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void page() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
-        param.setOwnerName("皮");
+
         TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
 
