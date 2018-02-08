@@ -133,7 +133,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到同行调拨单</td>
+                                <td valign="top" colspan="14" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
