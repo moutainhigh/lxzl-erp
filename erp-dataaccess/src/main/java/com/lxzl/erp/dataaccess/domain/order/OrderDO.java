@@ -17,6 +17,9 @@ public class OrderDO extends BaseDO {
     private Integer buyerCustomerId;
     private Date expectDeliveryTime;
     private Date rentStartTime;
+    private Integer rentType;                   // 租赁类型，1按天，2按月
+    private Integer rentTimeLength;             // 租赁时长
+    private Integer rentLengthType;             // 1短租，2长租
     private BigDecimal totalDepositAmount;
     private BigDecimal totalMustDepositAmount;
     private BigDecimal totalCreditDepositAmount;
@@ -457,5 +460,29 @@ public class OrderDO extends BaseDO {
 
     public void setDeliveryMode(Integer deliveryMode) {
         this.deliveryMode = deliveryMode;
+    }
+
+    public Integer getRentType() {
+        return rentType;
+    }
+
+    public void setRentType(Integer rentType) {
+        this.rentType = rentType;
+    }
+
+    public Integer getRentTimeLength() {
+        return rentTimeLength;
+    }
+
+    public void setRentTimeLength(Integer rentTimeLength) {
+        this.rentTimeLength = rentTimeLength;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
     }
 }
