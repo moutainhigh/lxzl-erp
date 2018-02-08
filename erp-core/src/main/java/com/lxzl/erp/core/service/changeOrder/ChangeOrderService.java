@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
-import com.lxzl.erp.common.domain.purchase.UpdateReceiveMaterialRemarkParam;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
 public interface ChangeOrderService extends VerifyReceiver {
@@ -45,4 +44,8 @@ public interface ChangeOrderService extends VerifyReceiver {
     ServiceResult<String,String> updateChangeMaterialRemark(UpdateChangeMaterialRemarkParam updateChangeMaterialRemarkParam);
 
     ServiceResult<String,String> confirmChangeOrder(String changeOrderNo);
+
+    ServiceResult<String,String> updateEquipmentPriceDiff(UpdateEquipmentPriceDiffParam updateEquipmentPriceDiffParam);
+
+    ServiceResult<String,String> updateBulkPriceDiff(UpdateBulkPriceDiffParam updateBulkPriceDiffParam);
 }

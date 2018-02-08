@@ -1,16 +1,20 @@
 package com.lxzl.erp.common.domain.changeOrder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
+import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdatePriceDiffGroup;
 
-import java.io.Serializable;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeOrderMaterialBulk extends BasePO {
-
+    @NotNull(message = ErrorCode.ID_NOT_NULL,groups = {UpdatePriceDiffGroup.class})
     private Integer changeOrderMaterialBulkId;   //唯一标识
     private Integer changeOrderMaterialId;   //租赁换货物料项ID
     private Integer changeOrderId;   //换货ID
@@ -22,7 +26,9 @@ public class ChangeOrderMaterialBulk extends BasePO {
     private Integer destBulkMaterialId;   //目标散料ID
     private String destBulkMaterialNo;   //目标散料编号
     private String orderNo;   //订单编号
-    private BigDecimal priceDiff;   //差价，可以是正值或负值，差价计算标准为每月
+    @Min(value=0,message = ErrorCode.DIFF_PRICE_ERROR, groups = {UpdatePriceDiffGroup.class})
+    @NotNull(message = ErrorCode.DIFF_PRICE_ERROR, groups = {UpdatePriceDiffGroup.class})
+    private BigDecimal priceDiff;   //差价
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -32,6 +38,7 @@ public class ChangeOrderMaterialBulk extends BasePO {
 
     private BulkMaterial srcBulkMaterial;
     private BulkMaterial destBulkMaterial;
+    private OrderMaterial orderMaterial;
 
     public Integer getChangeOrderMaterialBulkId() {
         return changeOrderMaterialBulkId;
@@ -191,5 +198,13 @@ public class ChangeOrderMaterialBulk extends BasePO {
 
     public void setDestBulkMaterial(BulkMaterial destBulkMaterial) {
         this.destBulkMaterial = destBulkMaterial;
+    }
+
+    public OrderMaterial getOrderMaterial() {
+        return orderMaterial;
+    }
+
+    public void setOrderMaterial(OrderMaterial orderMaterial) {
+        this.orderMaterial = orderMaterial;
     }
 }
