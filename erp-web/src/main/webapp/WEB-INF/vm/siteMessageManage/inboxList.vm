@@ -16,7 +16,7 @@
             <section id="content_wrapper">
                 #parse("layout/topbarDropmenu.vm")
                 #parse("layout/topbar.vm")
-                <section id="content" class="animated fadeIn table-layout" style="width: 99%;">
+                <section id="content" class="animated fadeIn table-layout">
                     #parse("component/loading.vm")
 
                     <script  type="text/html" id="messageMenuTpl">
@@ -45,66 +45,70 @@
                     <aside class="tray pn va-t tray250" data-tray-height="match"  id="messageMenu" style="border-right: 1px solid #e0e0e0;"></aside>
 
                     <!-- 列表 -->
-                    <div class="tray pn va-t panel-primary panel-border panel top">
+                    <div class="tray tray-center pn va-t p20 posr">
+                        <div class="panel-primary panel-border panel top">
                         <!-- message toolbar header -->
-                        <div class="pv10 pl15 bg-white pr10 br-b">
-                            <div class="row">
-                                <!-- toolbar left btn group -->
-                                <div class="hidden-xs hidden-sm col-md-3 va-m pln">
-                                    <div class="btn-group" id="actionCommonButtons">
-                                        <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                            <div class="panel-menu p12">
+                                <div class="row">
+                                    <!-- toolbar left btn group -->
+                                    <div class="col-md-6">
+                                        <div class="btn-group" id="actionCommonButtons">
+                                            <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- message listings table -->
-                        <script  type="text/html" id="dataListTpl">
-                            <thead>
-                            <tr class="">
-                                <th class="hidden-xs">选择</th>
-                                <th class="hidden-xs">状态</th>
-                                <th class="hidden-xs">发件人</th>
-                                <th class="hidden-xs">主题</th>
-                                <th class="hidden-xs">内容</th>
-                                <th class="text-center">时间</th>
-                                <th class="hidden-xs">操作</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {{#dataSource}}
-                            {{#listData}}
-                            <tr class="message-unread">
-                                <td class="hidden-xs">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="mobileos" value="FR">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </td>
-                                <td class="{{readClass}}">{{readStatus}}</td>
-                                <td class="">{{senderName}}</td>
-                                <td class="hidden-xs">{{title}}</td>
-                                <td class="">{{messageText}}</td>
-                                <td class="text-center hidden-xs">{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
-                                <td>
-                                    <a href="" type="button" class="btn btn-default btn-xs" data-orderno="">查看</a>
-                                </td>
-                            </tr>
-                            {{/listData}}
-                            {{^listData}}
-                            <tr>
-                                <td valign="top" colspan="7" class="text-center">没有查询到信息</td>
-                            </tr>
-                            {{/listData}}
-                            {{/dataSource}}
-                            </tbody>
-                        </script>
-                        <table class="table admin-form theme-warning tc-checkbox-1" id="dataListTable"></table>
+                            <!-- message listings table -->
+                            <div class="panel-body pn">
+                                <script  type="text/html" id="dataListTpl">
+                                <thead>
+                                <tr class="">
+                                    <th>选择</th>
+                                    <th>状态</th>
+                                    <th>发件人</th>
+                                    <th>主题</th>
+                                    <th>内容</th>
+                                    <th class="text-center">时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#dataSource}}
+                                {{#listData}}
+                                <tr class="message-unread">
+                                    <td>
+                                        <label class="option block mn">
+                                            <input type="checkbox" name="mobileos" value="FR">
+                                            <span class="checkbox mn"></span>
+                                        </label>
+                                    </td>
+                                    <td class="{{readClass}}">{{readStatus}}</td>
+                                    <td>{{senderName}}</td>
+                                    <td><div class="message-title">{{title}}</div></td>
+                                    <td><div class="message-text">{{messageText}}</div></td>
+                                    <td class="text-center">{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
+                                    <td>
+                                        <a href="" type="button" class="btn btn-default btn-xs" data-orderno="">查看</a>
+                                    </td>
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="7" class="text-center">没有查询到信息</td>
+                                </tr>
+                                {{/listData}}
+                                {{/dataSource}}
+                                </tbody>
+                            </script>
+                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                            </div>
 
-                        <div class="panel-footer">
-                            <div class="row">
-                                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                                    #parse("component/pager.vm")
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                        #parse("component/pager.vm")
+                                    </div>
                                 </div>
                             </div>
                         </div>

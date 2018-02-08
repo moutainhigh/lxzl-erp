@@ -16,33 +16,35 @@
         <section id="content_wrapper">
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
-            <section id="content" class="animated fadeIn table-layout" style="width: 99%;">
-                #parse("component/loading.vm")
+            <section id="content" class="animated fadeIn table-layout">
+                <div style="padding:0;">
+                    #parse("component/loading.vm")
 
-                <script  type="text/html" id="messageMenuTpl">
-                    {{#hasSendMessage}}
-                    <div class="ph15 pv10 br-b br-light" style="width: 270px;">
-                        <button id="quick-compose" type="button" class="btn btn-danger light btn-block fw600">写信</button>
-                    </div>
-                    {{/hasSendMessage}}
-                    <div class="p10">
-                        <h4 class="ph10 mt10 mb5">菜单</h4>
-                        {{#hasMenuButtons}}
-                        <ul class="nav nav-messages p5" role="menu">
-                            {{#buttonSource}}
-                            {{#buttonList}}
-                            <li class="">
-                                <a href="${ctx}{{menuUrl}}" class="fw600 p10 animated animated-short fadeInDown {{iClass}}">
-                                    <span class="fa fa-envelope pr5"></span>{{menuName}}
-                                </a>
-                            </li>
-                            {{/buttonList}}
-                            {{/buttonSource}}
-                        </ul>
-                        {{/hasMenuButtons}}
-                    </div>
-                </script>
-                <aside class="tray pn va-t tray250" data-tray-height="match"  id="messageMenu"></aside>
+                    <script  type="text/html" id="messageMenuTpl">
+                        {{#hasSendMessage}}
+                        <div class="ph15 pv10 br-b br-light" style="width: 270px;">
+                            <button id="quick-compose" type="button" class="btn btn-danger light btn-block fw600">写信</button>
+                        </div>
+                        {{/hasSendMessage}}
+                        <div class="p10">
+                            <h4 class="ph10 mt10 mb5">菜单</h4>
+                            {{#hasMenuButtons}}
+                            <ul class="nav nav-messages p5" role="menu">
+                                {{#buttonSource}}
+                                {{#buttonList}}
+                                <li class="">
+                                    <a href="${ctx}{{menuUrl}}" class="fw600 p10 animated animated-short fadeInDown {{iClass}}">
+                                        <span class="fa fa-envelope pr5"></span>{{menuName}}
+                                    </a>
+                                </li>
+                                {{/buttonList}}
+                                {{/buttonSource}}
+                            </ul>
+                            {{/hasMenuButtons}}
+                        </div>
+                    </script>
+                    <aside class="tray pn va-t tray250" data-tray-height="match"  id="messageMenu" style="border-right: 1px solid rgb(224, 224, 224)";></aside>
+                </div>
             </section>
         </section>
 
