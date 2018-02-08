@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PermissionParam;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -26,6 +27,8 @@ public class PermissionSupport {
     private UserMapper userMapper;
     @Autowired
     private WarehouseService warehouseService;
+    @Autowired
+    private UserRoleService userRoleService;
 
     /**
      * 获取可观察用户列表
@@ -83,12 +86,16 @@ public class PermissionSupport {
     }
 
     public PermissionParam getPermissionParam(Integer... permissionTypes) {
+        Integer userId = userSupport.getCurrentUserId();
+        //超级管理员不加权限控制
+        if(userRoleService.isSuperAdmin(userId)){
+            return null;
+        }
         Set<Integer> permissionSet = new HashSet<>();
         for (Integer permissionType : permissionTypes) {
             permissionSet.add(permissionType);
         }
         PermissionParam permissionParam = new PermissionParam();
-        Integer userId = userSupport.getCurrentUserId();
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_USER)) {
             permissionParam.setPermissionUserIdList(getCanAccessPassiveUserList(userId));
         }

@@ -126,7 +126,7 @@
                                     {{/listData}}
                                     {{^listData}}
                                     <tr>
-                                        <td valign="top" colspan="14">没有查询到SKU</td>
+                                        <td valign="top" colspan="14">无数据</td>
                                     </tr>
                                     {{/listData}}
                                 </script>

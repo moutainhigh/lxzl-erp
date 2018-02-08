@@ -654,6 +654,22 @@ public class PageController extends BaseController {
     public String changeOrderManageEdit() {
         return "/changeOrderManage/changeOrderEdit";
     }
+    @RequestMapping("/change-order/equiment-list")
+    public String changeOrderManageEquimentList() {
+        return "/component/changeOrder/equimentList";
+    }
+    @RequestMapping("/change-order/bulk-material-list")
+    public String changeOrderMaterialList() {
+        return "/component/changeOrder/bulkMaterialList";
+    }
+    @RequestMapping("/change-order/material-in-storage")
+    public String changeOrderMaterialInStorage() {
+        return "/component/changeOrder/materialInStorage";
+    }
+    @RequestMapping("/change-order/complete-input")
+    public String changeOrderCompleteInput() {
+        return "/component/changeOrder/completeInput";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
