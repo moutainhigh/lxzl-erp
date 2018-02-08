@@ -43,4 +43,6 @@ public interface ChangeOrderService extends VerifyReceiver {
     ServiceResult<String,String> updateChangeEquipmentRemark(UpdateChangeEquipmentRemarkParam updateChangeEquipmentRemarkParam);
 
     ServiceResult<String,String> updateChangeMaterialRemark(UpdateChangeMaterialRemarkParam updateChangeMaterialRemarkParam);
+
+    ServiceResult<String,String> confirmChangeOrder(String changeOrderNo);
 }

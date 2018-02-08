@@ -260,6 +260,12 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/changeOrder/updateChangeMaterialRemark",updateChangeMaterialRemarkParam);
     }
     @Test
+    public void confirmChangeOrder() throws Exception {
+        ChangeOrder changeOrder = new ChangeOrder();
+        changeOrder.setChangeOrderNo("LXCO-701389-20180207-00006");
+        TestResult testResult = getJsonTestResult("/changeOrder/confirmChangeOrder",changeOrder);
+    }
+    @Test
     public void processNoChangeEquipment() throws Exception {
 
     }

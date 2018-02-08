@@ -201,21 +201,6 @@ public class ChangeOrderController {
         return resultGenerator.generate(changeOrderService.processNoChangeEquipment(processNoChangeEquipmentParam));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * 换货单换回设备备注
      *
@@ -240,18 +225,18 @@ public class ChangeOrderController {
         ServiceResult<String, String> serviceResult = changeOrderService.updateChangeMaterialRemark(updateChangeMaterialRemarkParam);
         return resultGenerator.generate(serviceResult);
     }
-//    /**
-//     * 换货单验货完成提交
-//     *
-//     * @param purchaseReceiveOrder
-//     * @param validResult
-//     * @return
-//     */
-//    @RequestMapping(value = "confirmChangeReceiveOrder", method = RequestMethod.POST)
-//    public Result commitPurchaseReceiveOrder(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrder purchaseReceiveOrder, BindingResult validResult) {
-//        ServiceResult<String, String> serviceResult = purchaseOrderService.commitPurchaseReceiveOrder(purchaseReceiveOrder);
-//        return resultGenerator.generate(serviceResult);
-//    }
+    /**
+     * 换货单验货完成提交
+     *
+     * @param changeOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "confirmChangeOrder", method = RequestMethod.POST)
+    public Result confirmChangeOrder(@RequestBody @Validated(IdGroup.class) ChangeOrder changeOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = changeOrderService.confirmChangeOrder(changeOrder.getChangeOrderNo());
+        return resultGenerator.generate(serviceResult);
+    }
 //
 //    /**
 //     * 采购收货单商品项设备分页

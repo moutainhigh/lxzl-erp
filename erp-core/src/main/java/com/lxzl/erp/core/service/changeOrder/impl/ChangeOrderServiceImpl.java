@@ -1216,7 +1216,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         }
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderProductEquipmentDO.getChangeOrderNo());
         if(!ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS.equals(changeOrderDO.getChangeOrderStatus())&&
-                !ChangeOrderStatus.CHANGE_ORDER_STATUS_CHECKED.equals(changeOrderDO.getChangeOrderStatus())){
+                !ChangeOrderStatus.CHANGE_ORDER_STATUS_CONFIRM.equals(changeOrderDO.getChangeOrderStatus())){
             serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK);
             return serviceResult;
         }
@@ -1238,7 +1238,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         }
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderMaterialDO.getChangeOrderNo());
         if(!ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS.equals(changeOrderDO.getChangeOrderStatus())&&
-                !ChangeOrderStatus.CHANGE_ORDER_STATUS_CHECKED.equals(changeOrderDO.getChangeOrderStatus())){
+                !ChangeOrderStatus.CHANGE_ORDER_STATUS_CONFIRM.equals(changeOrderDO.getChangeOrderStatus())){
             serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK);
             return serviceResult;
         }
@@ -1246,6 +1246,28 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         changeOrderMaterialDO.setUpdateTime(new Date());
         changeOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         changeOrderMaterialMapper.update(changeOrderMaterialDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> confirmChangeOrder(String changeOrderNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderNo);
+        if(changeOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(!ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS.equals(changeOrderDO.getChangeOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_CAN_NOT_CONFIRM);
+            return serviceResult;
+        }
+        changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_CONFIRM);
+        changeOrderDO.setUpdateTime(new Date());
+        changeOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        changeOrderMapper.update(changeOrderDO);
+
+        serviceResult.setResult(changeOrderNo);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
