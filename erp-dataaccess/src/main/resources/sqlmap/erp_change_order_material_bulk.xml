@@ -35,21 +35,15 @@
 		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb 
 		WHERE ecomb.id = #{id, jdbcType=INTEGER} AND ecomb.data_status = 1 
 	</select>
-	<select id="listByChangeOrderPickUp" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.Integer">
+	<select id="findByChangeOrderMaterialId" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb
-		WHERE ecomb.change_order_id = #{changeOrderId, jdbcType=INTEGER} AND ecomb.src_bulk_material_id IS NULL AND ecomb.data_status = 1
+		WHERE ecomb.change_order_material_id = #{change-order-material-id, jdbcType=INTEGER} AND ecomb.data_status = 1
 	</select>
 	<select id="findByChangeOrderNo" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> ,ebmd.material_id AS dest_material_id,ebms.material_id AS src_material_id  FROM erp_change_order_material_bulk ecomb
 		LEFT JOIN erp_bulk_material ebms ON ebms.id = ecomb.src_bulk_material_id AND ebms.data_status = 1
 		LEFT JOIN erp_bulk_material ebmd ON ebmd.id = ecomb.dest_bulk_material_id AND ebmd.data_status = 1
 		WHERE ecomb.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecomb.data_status = 1
-	</select>
-	<select id="findByChangeOrderNoAndEquipmentNo" resultMap="ChangeOrderMaterialBulkDO">
-		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb
-		LEFT JOIN erp_bulk_material ebm ON ebm.bulk_material_id = ecomb.dest_bulk_material_id AND ebm.data_status =1
-		WHERE ecomb.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecomb.data_status = 1
-		AND ebm.material_no = #{materialNo, jdbcType=VARCHAR}
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecomb.id) FROM erp_change_order_material_bulk ecomb
@@ -138,10 +132,5 @@
 
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.changeOrder.ChangeOrderMaterialBulkDO">
 		UPDATE erp_change_order_material_bulk <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
-	</update>
-
-
-	<update id="deleteByChangeOrderMaterialId">
-		UPDATE erp_change_order_material_bulk SET data_status = 2,update_user=#{updateUser},update_time=#{updateTime} WHERE change_order_material_id = #{changeOrderMaterialId, jdbcType=INTEGER}
 	</update>
 </mapper>

@@ -174,11 +174,21 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         stockUpForChangeParam.setOperationType(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD);
         TestResult testResult = getJsonTestResult("/changeOrder/stockUpForChange",stockUpForChangeParam);
     }
+    @Test
+    public void stockUpForChangeJson() throws Exception {
+        String json = "{\n" +
+                "  \"changeOrderNo\": \"LXCO-700032-20180206-00004\",\n" +
+                "  \"equipmentNo\": \"LX-1000--20180205-05943\",\n" +
+                "  \"operationType\": 3\n" +
+                "}";
+        StockUpForChangeParam stockUpForChangeParam = JSON.parseObject(json,StockUpForChangeParam.class);
+        TestResult testResult = getJsonTestResult("/changeOrder/stockUpForChange",stockUpForChangeParam);
+    }
 
     @Test
     public void delivery() throws Exception {
         ChangeOrder changeOrder = new ChangeOrder();
-        changeOrder.setChangeOrderNo("CO201712231731362891843");
+        changeOrder.setChangeOrderNo("LXCO-701389-20180207-00006");
         TestResult testResult = getJsonTestResult("/changeOrder/delivery",changeOrder);
     }
     @Test
@@ -192,9 +202,9 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void doChangeMaterial() throws Exception {
         ChangeOrderMaterial changeOrderMaterial = new ChangeOrderMaterial();
-        changeOrderMaterial.setChangeOrderMaterialId(7);
-        changeOrderMaterial.setSrcChangeMaterialNo("M201711201356145971009");
-        changeOrderMaterial.setRealChangeMaterialCount(2);
+        changeOrderMaterial.setChangeOrderMaterialId(13);
+        changeOrderMaterial.setSrcChangeMaterialNo("M201712250956366751399");
+        changeOrderMaterial.setRealChangeMaterialCount(1);
         TestResult testResult = getJsonTestResult("/changeOrder/doChangeMaterial",changeOrderMaterial);
     }
     @Test
@@ -232,6 +242,22 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         ChangeBulkPageParam changeBulkPageParam = new ChangeBulkPageParam();
         changeBulkPageParam.setChangeOrderMaterialId(7);
         TestResult testResult = getJsonTestResult("/changeOrder/pageChangeOrderMaterialBulk",changeBulkPageParam);
+    }
+
+    @Test
+    public void updateChangeEquipmentRemark() throws Exception {
+        UpdateChangeEquipmentRemarkParam updateChangeEquipmentRemarkParam = new UpdateChangeEquipmentRemarkParam();
+        updateChangeEquipmentRemarkParam.setChangeOrderNo("CO201712231731362891843");
+        updateChangeEquipmentRemarkParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017122310019");
+        updateChangeEquipmentRemarkParam.setRemark("这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊");
+        TestResult testResult = getJsonTestResult("/changeOrder/updateChangeEquipmentRemark",updateChangeEquipmentRemarkParam);
+    }
+    @Test
+    public void updateChangeMaterialRemark() throws Exception {
+        UpdateChangeMaterialRemarkParam updateChangeMaterialRemarkParam = new UpdateChangeMaterialRemarkParam();
+        updateChangeMaterialRemarkParam.setChangeOrderMaterialId(13);
+        updateChangeMaterialRemarkParam.setRemark("这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊这句话一共是十个字啊");
+        TestResult testResult = getJsonTestResult("/changeOrder/updateChangeMaterialRemark",updateChangeMaterialRemarkParam);
     }
     @Test
     public void processNoChangeEquipment() throws Exception {

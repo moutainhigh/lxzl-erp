@@ -53,6 +53,7 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1206,6 +1207,50 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
+    public ServiceResult<String, String> updateChangeEquipmentRemark(UpdateChangeEquipmentRemarkParam updateChangeEquipmentRemarkParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = changeOrderProductEquipmentMapper.findByChangeOrderNoAndSrcEquipmentNo(updateChangeEquipmentRemarkParam.getChangeOrderNo(),updateChangeEquipmentRemarkParam.getEquipmentNo());
+        if(changeOrderProductEquipmentDO == null){
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return serviceResult;
+        }
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderProductEquipmentDO.getChangeOrderNo());
+        if(!ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS.equals(changeOrderDO.getChangeOrderStatus())&&
+                !ChangeOrderStatus.CHANGE_ORDER_STATUS_CHECKED.equals(changeOrderDO.getChangeOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK);
+            return serviceResult;
+        }
+        changeOrderProductEquipmentDO.setRemark(updateChangeEquipmentRemarkParam.getRemark());
+        changeOrderProductEquipmentDO.setUpdateTime(new Date());
+        changeOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        changeOrderProductEquipmentMapper.update(changeOrderProductEquipmentDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateChangeMaterialRemark(UpdateChangeMaterialRemarkParam updateChangeMaterialRemarkParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ChangeOrderMaterialDO changeOrderMaterialDO = changeOrderMaterialMapper.findById(updateChangeMaterialRemarkParam.getChangeOrderMaterialId());
+        if(changeOrderMaterialDO==null){
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return serviceResult;
+        }
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderMaterialDO.getChangeOrderNo());
+        if(!ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS.equals(changeOrderDO.getChangeOrderStatus())&&
+                !ChangeOrderStatus.CHANGE_ORDER_STATUS_CHECKED.equals(changeOrderDO.getChangeOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK);
+            return serviceResult;
+        }
+        changeOrderMaterialDO.setRemark(updateChangeMaterialRemarkParam.getRemark());
+        changeOrderMaterialDO.setUpdateTime(new Date());
+        changeOrderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        changeOrderMaterialMapper.update(changeOrderMaterialDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> end(ChangeOrder changeOrder) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
@@ -1586,7 +1631,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         // 如果输入进来的设备skuID 为当前订单项需要的，那么就匹配
         if (StringUtil.isNotBlank(param.getEquipmentNo())) {
             //根据换货单号和设备号查找备货设备
-            ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = changeOrderProductEquipmentMapper.findByChangeOrderNoAndEquipmentNo(changeOrderDO.getChangeOrderNo(), param.getEquipmentNo());
+            ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = changeOrderProductEquipmentMapper.findByChangeOrderNoAndDestEquipmentNo(changeOrderDO.getChangeOrderNo(), param.getEquipmentNo());
             if (changeOrderProductEquipmentDO == null) {
                 serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return serviceResult;

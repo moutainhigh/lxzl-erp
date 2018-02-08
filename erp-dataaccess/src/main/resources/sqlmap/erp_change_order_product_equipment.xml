@@ -39,14 +39,20 @@
 		WHERE ecope.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecope.data_status = 1
 	</select>
 
-	<select id="findByChangeOrderNoAndEquipmentNo" resultMap="ChangeOrderProductEquipmentDO">
+	<select id="findByChangeOrderNoAndDestEquipmentNo" resultMap="ChangeOrderProductEquipmentDO">
 		SELECT <include refid="column_List"/>,eped.sku_id dest_sku_id,epes.sku_id src_sku_id  FROM erp_change_order_product_equipment ecope
 		LEFT JOIN erp_product_equipment eped ON eped.id=ecope.dest_equipment_id AND eped.data_status = 1
 		LEFT JOIN erp_product_equipment epes ON epes.id=ecope.src_equipment_id AND epes.data_status = 1
 		WHERE ecope.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecope.data_status = 1
 		AND ecope.dest_equipment_no = #{destEquipmentNo, jdbcType=VARCHAR}
 	</select>
-
+	<select id="findByChangeOrderNoAndSrcEquipmentNo" resultMap="ChangeOrderProductEquipmentDO">
+		SELECT <include refid="column_List"/>,eped.sku_id dest_sku_id,epes.sku_id src_sku_id  FROM erp_change_order_product_equipment ecope
+		LEFT JOIN erp_product_equipment eped ON eped.id=ecope.dest_equipment_id AND eped.data_status = 1
+		LEFT JOIN erp_product_equipment epes ON epes.id=ecope.src_equipment_id AND epes.data_status = 1
+		WHERE ecope.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ecope.data_status = 1
+		AND ecope.src_equipment_no = #{destEquipmentNo, jdbcType=VARCHAR}
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecope.id) FROM erp_change_order_product_equipment ecope 
 		<where>

@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterialBulk;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
+import com.lxzl.erp.common.domain.purchase.UpdateReceiveMaterialRemarkParam;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
 public interface ChangeOrderService extends VerifyReceiver {
@@ -38,4 +39,8 @@ public interface ChangeOrderService extends VerifyReceiver {
     ServiceResult<String, String> doChangeMaterial(ChangeOrderMaterial changeOrderMaterial);
 
     ServiceResult<String, String> processNoChangeEquipment(ProcessNoChangeEquipmentParam processNoChangeEquipmentParam);
+
+    ServiceResult<String,String> updateChangeEquipmentRemark(UpdateChangeEquipmentRemarkParam updateChangeEquipmentRemarkParam);
+
+    ServiceResult<String,String> updateChangeMaterialRemark(UpdateChangeMaterialRemarkParam updateChangeMaterialRemarkParam);
 }

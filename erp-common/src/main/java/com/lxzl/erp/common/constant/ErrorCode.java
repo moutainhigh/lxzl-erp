@@ -365,6 +365,7 @@ public class ErrorCode {
     public static final String CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT = "J400116";
     public static final String CHANGE_SRC_DEST_SHOULD_SAME_TYPE = "J400117";
     public static final String CHANGE_ORDER_START_RENT_TIME_NOT_NULL = "J400118";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK = "J400119";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1009,6 +1010,7 @@ public class ErrorCode {
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT, "只能更换相同商品");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_TYPE, "只能更换相同类型配件");
         MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "换货单换货时间不能为空");
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK, "此时不允许修改换货备注");
 
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
