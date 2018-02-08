@@ -668,7 +668,7 @@ public class PageController extends BaseController {
     }
     @RequestMapping("/change-order/complete-input")
     public String changeOrderCompleteInput() {
-        return "/component/returnOrder/inputEndInfoModal";
+        return "/component/changeOrder/completeInput";
     }
 
     //选择仓库Modal
