@@ -76,6 +76,7 @@
 			</foreach>
 		</if>
 	</sql>
+
 	<sql id="customer_company_control">
 		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
 			AND
@@ -113,6 +114,24 @@
 			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
 				#{item}
 			</foreach>
+		</if>
+	</sql>
+
+	<sql id="statement_order_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(eso.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
 		</if>
 	</sql>
 
