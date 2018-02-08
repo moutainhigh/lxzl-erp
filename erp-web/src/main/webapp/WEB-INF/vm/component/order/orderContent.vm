@@ -40,6 +40,24 @@
                     </div>
                 </div>
                 <div class="form-group field">
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">租赁类型</label>
+                        <div class="col-md-6">
+                            <div>
+                                <select class="form-control bradius required" name="rentType" id="rentType"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">租赁时长</label>
+                        <div class="col-md-6">
+                            <div>
+                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number required" type="text" placeholder="输入租赁时长" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
                     <label class="col-md-3 control-label">送货日期</label>
                     <div class="col-md-3">
                         <div class="input-group date" id="createExpectDeliveryTimePicker">
@@ -55,6 +73,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group field">
                     <label class="col-md-3 control-label">税率</label>
                     <div class="col-md-3">
@@ -140,8 +159,8 @@
                             <th>商品价值</th>
                             <th>商品单价</th>
                             <th>租赁数量</th>
-                            <th>租赁类型</th>
-                            <th>租赁时长</th>
+##                            <th>租赁类型</th>
+##                            <th>租赁时长</th>
                             <th>设备押金</th>
                             <th>支付方式</th>
                             <th class="text-right">操作</th>
@@ -182,24 +201,24 @@
                                     <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
-                            <td>
-                                <label class="field select">
-                                    <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
-                                        <option value="">选择租赁类型</option>
-                                        {{#rentTypeList}}
-                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-                                        {{/rentTypeList}}
-                                    </select>
-                                    <i class="arrow"></i>
-                                </label>
-                            </td>
-                            <td>
-                                <div class="mw200">
-                                    <label class="field prepend-icon">
-                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
-                                    </label>
-                                </div>
-                            </td>
+##                            <td>
+##                                <label class="field select">
+##                                    <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
+##                                        <option value="">选择租赁类型</option>
+##                                        {{#rentTypeList}}
+##                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+##                                        {{/rentTypeList}}
+##                                    </select>
+##                                    <i class="arrow"></i>
+##                                </label>
+##                            </td>
+##                            <td>
+##                                <div class="mw200">
+##                                    <label class="field prepend-icon">
+##                                        <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
+##                                    </label>
+##                                </div>
+##                            </td>
                             <td>
                                 {{#showDepositAmount}}
                                 <label class="field prepend-icon">
@@ -269,8 +288,8 @@
                             <th>配件价值</th>
                             <th>配件单价</th>
                             <th>数量</th>
-                            <th>租赁类型</th>
-                            <th>租赁时长</th>
+##                            <th>租赁类型</th>
+##                            <th>租赁时长</th>
                             <th>设备押金</th>
                             <th>支付方式</th>
                             <th class="text-right">操作</th>
@@ -310,24 +329,24 @@
                                     <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
-                            <td>
-                                <label class="field select">
-                                    <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
-                                        <option value="">选择租赁类型</option>
-                                        {{#rentTypeList}}
-                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-                                        {{/rentTypeList}}
-                                    </select>
-                                    <i class="arrow"></i>
-                                </label>
-                            </td>
-                            <td>
-                                <div class="mw200">
-                                    <label class="field prepend-icon">
-                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
-                                    </label>
-                                </div>
-                            </td>
+##                            <td>
+##                                <label class="field select">
+##                                    <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
+##                                        <option value="">选择租赁类型</option>
+##                                        {{#rentTypeList}}
+##                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+##                                        {{/rentTypeList}}
+##                                    </select>
+##                                    <i class="arrow"></i>
+##                                </label>
+##                            </td>
+##                            <td>
+##                                <div class="mw200">
+##                                    <label class="field prepend-icon">
+##                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
+##                                    </label>
+##                                </div>
+##                            </td>
                             <td>
                                 {{#showDepositAmount}}
                                 <label class="field prepend-icon">
