@@ -1093,6 +1093,9 @@ CREATE TABLE `erp_order` (
   `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
   `expect_delivery_time` datetime NOT NULL COMMENT '送货时间',
+  `rent_type` int(20) NOT NULL COMMENT '租赁类型',
+  `rent_time_length` int(20) NOT NULL COMMENT '租赁时长',
+  `rent_length_type` int(20) NOT NULL COMMENT '租赁时长类型',
   `rent_start_time` datetime NOT NULL COMMENT '起租时间',
   `total_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '应该支付的押金金额（系统生成）',
   `total_must_deposit_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '必须要支付的押金金额（系统先生成，支持修改）',
@@ -2755,6 +2758,15 @@ CREATE TABLE `erp_k3_mapping_sub_company` (
   `sub_company_name` varchar(64) COMMENT '分公司名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3分公司映射';
+
+DROP TABLE if exists `erp_k3_mapping_user`;
+CREATE TABLE `erp_k3_mapping_user` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_user_code` varchar(64) COMMENT 'erp的用户编码',
+  `k3_user_code` varchar(64) COMMENT 'K3用户编码',
+  `user_real_name` varchar(64) COMMENT '用户名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3用户映射';
 
 DROP TABLE if exists `erp_k3_mapping_department`;
 CREATE TABLE `erp_k3_mapping_department` (
