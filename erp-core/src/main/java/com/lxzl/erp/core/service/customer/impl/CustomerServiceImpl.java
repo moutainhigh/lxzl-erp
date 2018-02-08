@@ -239,6 +239,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+
         //校验法人手机号,经办人电话,紧急联系人手机号
         if(customer.getCustomerCompany().getIsLegalPersonApple() == 0){
             if(customer.getCustomerCompany().getLegalPersonPhone().equals(customer.getCustomerCompany().getAgentPersonPhone()) ){
@@ -1836,6 +1837,10 @@ public class CustomerServiceImpl implements CustomerService {
                     customerDO.setUnionUser(customer.getUnionUser());
                 }
             }
+        }
+
+        if (userUnion == null && userDOUnion != null){
+            customerDO.setUnionUser(customer.getUnionUser());
         }
 
         //创建客户变更记录

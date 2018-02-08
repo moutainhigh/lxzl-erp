@@ -466,6 +466,8 @@ public class ErrorCode {
     public static final String CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500098";
     public static final String STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE = "J500099";
     public static final String STATEMENT_ORDER_STATUS_IS_ERROR = "J500100";
+    public static final String AGENT_PERSON_NAME_NOT_NULL = "J500101";
+    public static final String AGENT_PERSON_NO_NOT_NULL = "J500102";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1074,6 +1076,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
         MAP.put(STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE, "批量支付结算单客户必须相同才能支付");
         MAP.put(STATEMENT_ORDER_STATUS_IS_ERROR, "批量支付结算单必须是未支付状态");
+        MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
+        MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

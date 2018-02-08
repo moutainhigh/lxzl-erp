@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -60,23 +61,21 @@ public class CustomerCompany extends BasePO {
 //    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
+    @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonName;  //经办人姓名
     @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     private String agentPersonPhone;  //经办人电话
+    @NotBlank(message = ErrorCode.AGENT_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonNo;  //经办人身份证号码
     private String unifiedCreditCode;  //统一信用代码
     private Double operatingArea; //经营面积
     private Integer unitInsuredNumber; //单位参保人数
     private String affiliatedEnterprise; //关联企业
 
-
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
-
-
-
 
     @Valid
 //    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
