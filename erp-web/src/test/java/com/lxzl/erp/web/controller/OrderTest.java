@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.DeliveryMode;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
@@ -30,14 +31,18 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testCreateOrder() throws Exception {
         Order order = new Order();
 
+        order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
         order.setLogisticsAmount(new BigDecimal(12));
         order.setBuyerRemark("仔细包装，别弄坏了");
+        order.setRentStartTime(new Date());
+        order.setExpectDeliveryTime(new Date());
+
+        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentTimeLength(6);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderProduct.setRentType(OrderRentType.RENT_TYPE_MONTH);
-        orderProduct.setRentTimeLength(6);
         orderProduct.setProductSkuId(40);
         orderProduct.setProductCount(5);
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
@@ -50,8 +55,6 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderMaterial.setRentType(OrderRentType.RENT_TYPE_MONTH);
-        orderMaterial.setRentTimeLength(6);
         orderMaterial.setMaterialId(5);
         orderMaterial.setMaterialCount(3);
         orderMaterial.setInsuranceAmount(new BigDecimal(20));

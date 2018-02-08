@@ -117,7 +117,7 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="16" class="text-center">没有查询到收入统计</td>
+                                    <td valign="top" colspan="16" class="text-center">无数据</td>
                                 </tr>
                                 {{/listData}}
                                 <tr>

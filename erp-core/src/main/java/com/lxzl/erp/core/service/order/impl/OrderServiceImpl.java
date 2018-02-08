@@ -1800,7 +1800,6 @@ public class OrderServiceImpl implements OrderService {
                 }
                 Product product = productServiceResult.getResult();
                 orderProductDO.setProductName(product.getProductName());
-                orderProductDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
                 ProductSku productSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
                 if (productSku == null) {
                     throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
@@ -1887,7 +1886,6 @@ public class OrderServiceImpl implements OrderService {
                     throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
                 }
                 orderMaterialDO.setMaterialName(material.getMaterialName());
-                orderMaterialDO.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
                 BigDecimal depositAmount = BigDecimal.ZERO;
                 BigDecimal creditDepositAmount = BigDecimal.ZERO;
                 BigDecimal rentDepositAmount = BigDecimal.ZERO;
@@ -1982,6 +1980,14 @@ public class OrderServiceImpl implements OrderService {
         if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
             return ErrorCode.ORDER_RENT_START_TIME_ERROR;
         }
+        if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
+            return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
+        }
+        if (!OrderRentType.inThisScope(order.getRentType())) {
+            return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
+        }
+        order.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && order.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
             Map<String, OrderProduct> orderProductMap = new HashMap<>();
             int oldProductCount = 0, newProductCount = 0;
@@ -1990,12 +1996,6 @@ public class OrderServiceImpl implements OrderService {
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
                     return ErrorCode.ORDER_PRODUCT_COUNT_ERROR;
-                }
-                if (orderProduct.getRentType() == null || orderProduct.getRentTimeLength() == null || orderProduct.getRentTimeLength() <= 0) {
-                    return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
-                }
-                if (!OrderRentType.inThisScope(orderProduct.getRentType())) {
-                    return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProduct.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null) {
@@ -2055,6 +2055,11 @@ public class OrderServiceImpl implements OrderService {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
+
+
+                orderProduct.setRentType(order.getRentType());
+                orderProduct.setRentTimeLength(order.getRentTimeLength());
+                orderProduct.setRentLengthType(order.getRentLengthType());
             }
         }
 
@@ -2063,12 +2068,6 @@ public class OrderServiceImpl implements OrderService {
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
                 if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
                     return ErrorCode.ORDER_MATERIAL_COUNT_ERROR;
-                }
-                if (orderMaterial.getRentType() == null || orderMaterial.getRentTimeLength() == null || orderMaterial.getRentTimeLength() <= 0) {
-                    return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
-                }
-                if (!OrderRentType.inThisScope(orderMaterial.getRentType())) {
-                    return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
                 }
                 if (orderMaterial.getMaterialId() == null || orderMaterial.getMaterialCount() == null) {
                     return ErrorCode.PARAM_IS_NOT_ENOUGH;
@@ -2113,6 +2112,10 @@ public class OrderServiceImpl implements OrderService {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
+
+                orderMaterial.setRentType(order.getRentType());
+                orderMaterial.setRentTimeLength(order.getRentTimeLength());
+                orderMaterial.setRentLengthType(order.getRentLengthType());
             }
         }
         return ErrorCode.SUCCESS;

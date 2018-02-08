@@ -19,6 +19,7 @@ import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementPaySupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementReturnSupport;
@@ -754,6 +755,8 @@ public class StatementServiceImpl implements StatementService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderQueryParam", statementOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+
         Integer totalCount = statementOrderMapper.listSaleCount(maps);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listSalePage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
@@ -1937,4 +1940,7 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private StatementOrderCorrectMapper statementOrderCorrectMapper;
+
+    @Autowired
+    private PermissionSupport permissionSupport;
 }

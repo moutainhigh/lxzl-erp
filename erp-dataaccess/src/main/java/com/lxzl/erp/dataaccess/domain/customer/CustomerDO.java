@@ -25,6 +25,8 @@ public class CustomerDO  extends BaseDO {
 
 	private BigDecimal firstApplyAmount;		// 首期申请额度
 	private BigDecimal laterApplyAmount;		// 后期申请额度
+	private String passReason; //通过原因
+	private String failReason; //拒绝原因
 
 	@Transient
 	private CustomerCompanyDO customerCompanyDO;
@@ -216,5 +218,21 @@ public class CustomerDO  extends BaseDO {
 
 	public void setIsDefaultConsignAddress(Integer isDefaultConsignAddress) {
 		this.isDefaultConsignAddress = isDefaultConsignAddress;
+	}
+
+	public String getPassReason() {
+		return passReason;
+	}
+
+	public void setPassReason(String passReason) {
+		this.passReason = passReason;
+	}
+
+	public String getFailReason() {
+		return failReason;
+	}
+
+	public void setFailReason(String failReason) {
+		this.failReason = failReason;
 	}
 }

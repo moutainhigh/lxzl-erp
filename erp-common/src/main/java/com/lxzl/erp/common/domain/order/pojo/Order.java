@@ -18,6 +18,9 @@ public class Order extends BasePO {
     private Integer buyerCustomerId;            // 客户ID
     private Date expectDeliveryTime;            // 预计发货时间
     private Date rentStartTime;                 // 起租时间
+    private Integer rentType;                   // 租赁类型，1按天，2按月
+    private Integer rentTimeLength;             // 租赁时长
+    private Integer rentLengthType;             // 1短租，2长租
     private Integer depositCycle;               // 押金期数（无需填写）
     private Integer paymentCycle;               // 付款期数（无需填写）
     private BigDecimal totalDepositAmount;      // 总押金
@@ -513,5 +516,29 @@ public class Order extends BasePO {
 
     public void setStatementOrder(StatementOrder statementOrder) {
         this.statementOrder = statementOrder;
+    }
+
+    public Integer getRentType() {
+        return rentType;
+    }
+
+    public void setRentType(Integer rentType) {
+        this.rentType = rentType;
+    }
+
+    public Integer getRentTimeLength() {
+        return rentTimeLength;
+    }
+
+    public void setRentTimeLength(Integer rentTimeLength) {
+        this.rentTimeLength = rentTimeLength;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
     }
 }

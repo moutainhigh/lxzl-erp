@@ -305,6 +305,7 @@
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
+			<include refid="permission_sql.statement_order_control"/>
 		</where>
 	</select>
 
@@ -364,6 +365,7 @@
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
+			<include refid="permission_sql.statement_order_control"/>
 		</where>
 		ORDER BY eso.statement_expect_pay_time
 		LIMIT #{maps.start},#{maps.pageSize}

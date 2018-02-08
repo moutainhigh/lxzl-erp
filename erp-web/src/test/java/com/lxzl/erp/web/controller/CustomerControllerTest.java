@@ -266,7 +266,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180127-00057");
+        customer.setCustomerNo("LXCC-1000-20180129-00060");
         customer.setIsDefaultConsignAddress(1);
 
         TestResult result = getJsonTestResult("/customer/commitCustomer", customer);
@@ -275,9 +275,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void verifyCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180127-00055");
-        customer.setCustomerStatus(CustomerStatus.STATUS_REJECT);
-        customer.setVerifyRemark("资料驳回的备注");
+        customer.setCustomerNo("LXCC-1000-20180129-00060");
+        customer.setCustomerStatus(CustomerStatus.STATUS_PASS);
+//        customer.setVerifyRemark("资料驳回的备注，请一定要填写好看的数据");
+        customer.setVerifyRemark("资料通过的备注，请一定要多多珍惜这个数据");
+
         TestResult result = getJsonTestResult("/customer/verifyCustomer", customer);
     }
 
@@ -295,17 +297,32 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerPerson() throws Exception {
         CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
-//        customerPersonQueryParam.setPageNo(1);
-//        customerPersonQueryParam.setPageSize(40);
-        customerPersonQueryParam.setIsDisabled(0);
-        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
+        customerPersonQueryParam.setPageNo(1);
+        customerPersonQueryParam.setPageSize(15);
+//        customerPersonQueryParam.setIsDisabled(0);
+//        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
     }
 
     @Test
+    public void testPageCustomerPerson() throws Exception {
+        String str = " {\n" +
+                "        \"pageNo\": 1,\n" +
+                "            \"pageSize\": 15,\n" +
+                "            \"realName\": \"\",\n" +
+                "            \"phone\": \"\",\n" +
+                "            \"customerNo\": \"\"\n" +
+                "    }";
+
+        CustomerPersonQueryParam customerPersonQueryParam = FastJsonUtil.toBean(str, CustomerPersonQueryParam.class);
+        TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
+    }
+
+
+    @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180129-00061");
+        customer.setCustomerNo("LXCC-1000-20180129-00060");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }

@@ -120,7 +120,7 @@
                                     {{/listData}}
                                     {{^listData}}
                                     <tr>
-                                        <td valign="top" colspan="8" class="text-center">没有查询到设备</td>
+                                        <td valign="top" colspan="8" class="text-center">无数据</td>
                                     </tr>
                                     {{/listData}}
                                 {{/dataSource}}

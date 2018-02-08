@@ -576,6 +576,8 @@ public class CustomerServiceImpl implements CustomerService {
             //1.租赁设备明细
             String customerCompanyNeedFirstJson = customerCompanyDO.getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
+
+            //todo 后面需要放开的字段
             //对租赁设备进行判断
             /*if(CollectionUtil.isEmpty(customerCompanyNeedList)){
                 result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL);
@@ -693,11 +695,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if (CustomerStatus.STATUS_REJECT.equals(customerStatus) && StringUtil.isNotBlank(verifyRemark)) {
-            customerDO.setRemark(customerDO.getRemark() + verifyRemark);
+            customerDO.setFailReason(verifyRemark);
         }
 
         if (CustomerStatus.STATUS_PASS.equals(customerStatus) && StringUtil.isNotBlank(verifyRemark)) {
-            customerDO.setRemark(customerDO.getRemark() + verifyRemark);
+            customerDO.setPassReason(verifyRemark);
         }
 
         customerDO.setCustomerStatus(customerStatus);

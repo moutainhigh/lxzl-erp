@@ -109,7 +109,7 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="14" class="text-center">没有查询到配件信息</td>
+                                    <td valign="top" colspan="14" class="text-center">无数据</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}
