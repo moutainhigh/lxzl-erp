@@ -242,6 +242,7 @@
             <if test="maps.isQueryAll == null">
                 and epe.data_status = 1
             </if>
+            <include refid="permission_sql.product_equipment_control"/>
         </where>
         LIMIT #{maps.start},#{maps.pageSize}
         ) product_equipment
@@ -253,6 +254,8 @@
         select count(epe.id)
         from erp_product_equipment epe
         INNER JOIN erp_product ep ON epe.product_id = ep.id
+        INNER JOIN erp_warehouse ewc ON epe.current_warehouse_id = ewc.id
+        INNER JOIN erp_warehouse ewo ON epe.owner_warehouse_id = ewo.id
         <where>
             <if test="maps.productEquipmentQueryParam != null &amp;&amp; maps.productEquipmentQueryParam.productEquipmentId != null">
                 and epe.id = #{maps.productEquipmentQueryParam.productEquipmentId, jdbcType=INTEGER}
@@ -293,6 +296,7 @@
             <if test="maps.isQueryAll == null">
                 and epe.data_status = 1
             </if>
+            <include refid="permission_sql.product_equipment_control"/>
         </where>
     </select>
 

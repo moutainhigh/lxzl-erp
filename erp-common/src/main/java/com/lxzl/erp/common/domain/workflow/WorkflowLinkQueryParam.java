@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: 查询工作流
@@ -22,6 +23,9 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     private Integer currentVerifyUser;
     private Date createStartTime;
     private Date createEndTime;
+
+    //控制数据权限
+    private List<Integer> passiveUserIdList;
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -94,4 +98,8 @@ public class WorkflowLinkQueryParam extends BasePageParam implements Serializabl
     public void setVerifyMatters(String verifyMatters) {
         this.verifyMatters = verifyMatters;
     }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
 }

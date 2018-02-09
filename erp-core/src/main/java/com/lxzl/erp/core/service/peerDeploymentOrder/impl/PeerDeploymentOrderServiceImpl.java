@@ -23,6 +23,7 @@ import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -752,6 +753,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("peerDeploymentOrderQueryParam", peerDeploymentOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY,PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = peerDeploymentOrderMapper.findPeerDeploymentOrderCountByParams(maps);
         List<PeerDeploymentOrderDO> peerDeploymentOrderDOList = peerDeploymentOrderMapper.findPeerDeploymentOrderByParams(maps);
@@ -1260,5 +1262,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
     private ProductEquipmentMapper productEquipmentMapper;
     @Autowired
     private BulkMaterialMapper bulkMaterialMapper;
+    @Autowired
+    private PermissionSupport permissionSupport;
 
 }

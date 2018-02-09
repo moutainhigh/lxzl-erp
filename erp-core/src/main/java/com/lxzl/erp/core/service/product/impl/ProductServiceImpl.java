@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.product.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.PermissionType;
 import com.lxzl.erp.common.constant.ProductEquipmentStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -13,6 +14,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductImageConverter;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -577,6 +579,7 @@ public class ProductServiceImpl implements ProductService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY,PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = productEquipmentMapper.listCount(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listPage(maps);
@@ -1179,4 +1182,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private GenerateNoSupport generateNoSupport;
+
+    @Autowired
+    private PermissionSupport permissionSupport;
 }

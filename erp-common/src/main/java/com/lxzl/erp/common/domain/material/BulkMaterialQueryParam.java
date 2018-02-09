@@ -6,6 +6,7 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -30,6 +31,11 @@ public class BulkMaterialQueryParam extends BasePageParam {
     private Integer isOnEquipment;
 
     private Integer isNew;
+
+    //控制数据权限
+    private List<Integer> passiveUserIdList;//控制数据权限
+    private List<Integer> warehouseIdList;//控制数据权限
+    private Integer subCompanyId;
 
 
     public Integer getMaterialId() {
@@ -135,4 +141,16 @@ public class BulkMaterialQueryParam extends BasePageParam {
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
     }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
+
+    public Integer getSubCompanyId() { return subCompanyId; }
+
+    public void setSubCompanyId(Integer subCompanyId) { this.subCompanyId = subCompanyId; }
+
+    public List<Integer> getWarehouseIdList() { return warehouseIdList; }
+
+    public void setWarehouseIdList(List<Integer> warehouseIdList) { this.warehouseIdList = warehouseIdList; }
 }

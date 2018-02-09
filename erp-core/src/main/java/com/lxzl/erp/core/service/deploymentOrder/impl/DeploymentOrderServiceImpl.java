@@ -19,6 +19,7 @@ import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
@@ -810,6 +811,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("deploymentOrderQueryParam", param);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY,PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = deploymentOrderMapper.listCount(maps);
         List<DeploymentOrderDO> list = deploymentOrderMapper.listPage(maps);
         Page<DeploymentOrder> page = new Page<>(ConverterUtil.convertList(list, DeploymentOrder.class), totalCount, param.getPageNo(), param.getPageSize());
@@ -986,4 +988,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private PermissionSupport permissionSupport;
 }

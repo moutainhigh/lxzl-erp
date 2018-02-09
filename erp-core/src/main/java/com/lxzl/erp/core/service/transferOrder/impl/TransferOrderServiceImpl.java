@@ -953,6 +953,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("transferOrderQueryParam", transferOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER,PermissionType.PERMISSION_TYPE_SUB_COMPANY_ALL));
 
         Integer totalCount = transferOrderMapper.findTransferOrderCountByParams(maps);
         List<TransferOrderDO> transferOrderDOList = transferOrderMapper.findTransferOrderByParams(maps);

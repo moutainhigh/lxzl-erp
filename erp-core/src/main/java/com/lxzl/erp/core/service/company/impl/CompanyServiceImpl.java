@@ -319,4 +319,21 @@ public class CompanyServiceImpl implements CompanyService {
         return result;
 
     }
+
+    @Override
+    public ServiceResult<String, List<SubCompany>> subCompanyAll() {
+        ServiceResult<String, List<SubCompany>> result = new ServiceResult<>();
+
+        SubCompanyQueryParam param = new SubCompanyQueryParam();
+
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("subCompanyQueryParam", param);
+        List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(paramMap);
+        result.setResult(ConverterUtil.convertList(subCompanyDOList, SubCompany.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 }

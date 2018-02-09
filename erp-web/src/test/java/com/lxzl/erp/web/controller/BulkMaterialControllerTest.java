@@ -48,4 +48,11 @@ public class BulkMaterialControllerTest extends ERPUnTransactionalTest {
         materialQueryParam.setMaterialMode("Intel core I5 5200");
         TestResult result = getJsonTestResult("/material/queryAllMaterial",materialQueryParam);
     }
+    @Test
+    public void queryAllBulkMaterial() throws Exception{
+        BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
+        bulkMaterialQueryParam.setPageNo(1);
+        bulkMaterialQueryParam.setPageSize(10);
+        TestResult result = getJsonTestResult("/material/queryAllBulkMaterial",bulkMaterialQueryParam);
+    }
 }

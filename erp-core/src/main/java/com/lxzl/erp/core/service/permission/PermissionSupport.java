@@ -3,8 +3,10 @@ package com.lxzl.erp.core.service.permission;
 import com.lxzl.erp.common.constant.PermissionType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PermissionParam;
+import com.lxzl.erp.common.domain.company.pojo.SubCompany;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
@@ -29,6 +31,8 @@ public class PermissionSupport {
     private WarehouseService warehouseService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private CompanyService companyService;
 
     /**
      * 获取可观察用户列表
@@ -48,6 +52,19 @@ public class PermissionSupport {
         return passiveUserIdList;
     }
 
+    public List<Integer> getCanAccessSubCompanyAllList() {
+        ServiceResult<String, List<SubCompany>> subCompanyAll = companyService.subCompanyAll();
+        List<SubCompany> subCompanyList = subCompanyAll.getResult();
+        List<Integer> passiveSubCompanyIdList = new ArrayList<>();;
+
+        if (CollectionUtil.isNotEmpty(subCompanyList)) {
+            for (SubCompany subCompany : subCompanyList) {
+                passiveSubCompanyIdList.add(subCompany.getSubCompanyId());
+            }
+        }
+        return passiveSubCompanyIdList;
+    }
+
     /**
      * 获取可查看仓库列表
      *
@@ -64,6 +81,23 @@ public class PermissionSupport {
             }
         }
         return warehouseIdList;
+    }
+
+    /**
+     * 根据仓库获取可查看公司
+     *
+     * @return
+     */
+    public List<Integer> getCanAccessSubCompanyIdList() {
+        ServiceResult<String, List<Warehouse>> warehouseListResult = warehouseService.getAvailableWarehouse();
+        List<Warehouse> warehouseList = warehouseListResult.getResult();
+        List<Integer> subCompanyIdList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(warehouseList)) {
+            for (Warehouse warehouse : warehouseList) {
+                subCompanyIdList.add(warehouse.getSubCompanyId());
+            }
+        }
+        return subCompanyIdList;
     }
 
     /**
@@ -104,11 +138,17 @@ public class PermissionSupport {
                 permissionParam.setPermissionWarehouseIdList(getCanAccessWarehouseIdList());
             }
         }
+        if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_ALL)) {
+            permissionParam.setPermissionSubCompanyIdList(getCanAccessSubCompanyAllList());
+        }
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE)) {
             permissionParam.setPermissionSubCompanyId(getCanAccessSubCompanyForService(userId));
         }
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY)) {
             permissionParam.setPermissionSubCompanyId(getCanAccessSubCompany(userId));
+        }
+        if (permissionSet.contains(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY)) {
+            permissionParam.setPermissionSubCompanyIdList(getCanAccessSubCompanyIdList());
         }
         return permissionParam;
     }

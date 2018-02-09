@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.material.impl;
 import com.lxzl.erp.common.constant.BulkMaterialStatus;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.PermissionType;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.BulkMaterialQueryParam;
@@ -19,6 +20,7 @@ import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.MaterialImageConverter;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.material.*;
@@ -104,6 +106,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Autowired
     private ProductSkuPropertyMapper productSkuPropertyMapper;
+
+    @Autowired
+    private PermissionSupport permissionSupport;
 
     @Override
     public ServiceResult<String, List<MaterialImg>> uploadImage(MultipartFile[] files) {
@@ -509,6 +514,7 @@ public class MaterialServiceImpl implements MaterialService {
         maps.put("pageSize", pageQuery.getPageSize());
         bulkMaterialQueryParam.setIsOnEquipment(CommonConstant.COMMON_CONSTANT_NO);
         maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY,PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = bulkMaterialMapper.listCount(maps);
         List<BulkMaterialDO> bulkMaterialDOList = bulkMaterialMapper.listPage(maps);

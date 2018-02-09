@@ -1,6 +1,8 @@
 package com.lxzl.erp.web.service;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.ERPUnTransactionalTest;
+import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -22,7 +24,6 @@ import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.web.init.ReadExcelUtils;
-import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProductTest extends BaseUnTransactionalTest {
+public class ProductTest extends ERPUnTransactionalTest {
 
     @Autowired
     private ProductService productService;
@@ -283,11 +284,11 @@ public class ProductTest extends BaseUnTransactionalTest {
     }
 
     @Test
-    public void testQueryProductEquipment() {
+    public void testQueryProductEquipment() throws Exception {
         ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
         productEquipmentQueryParam.setPageNo(1);
         productEquipmentQueryParam.setPageSize(10);
-        ServiceResult<String, Page<ProductEquipment>> result = productService.queryAllProductEquipment(productEquipmentQueryParam);
+        TestResult testResult = getJsonTestResult("/product/queryAllProductEquipment",productEquipmentQueryParam);
     }
 
     @Test

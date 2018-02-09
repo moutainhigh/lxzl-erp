@@ -228,7 +228,7 @@ public class TransferOrderControllerTest extends ERPUnTransactionalTest {
     public void pageTransferOrder() throws Exception{
         TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
 //        transferOrderQueryParam.setTransferOrderName("庄凯麟");
-        transferOrderQueryParam.setTransferOrderNo("LXT400000120");
+//        transferOrderQueryParam.setTransferOrderNo("LXT400000120");
         TestResult testResult = getJsonTestResult("/transferOrder/pageTransferOrder", transferOrderQueryParam);
     }
 

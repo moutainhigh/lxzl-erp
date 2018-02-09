@@ -27,7 +27,7 @@ import java.util.List;
  * @author kai
  * @date 2018-1-15 09:40
  */
-public class PeerDeploymentOrderControllerTest extends ERPTransactionalTest {
+public class PeerDeploymentOrderControllerTest extends ERPUnTransactionalTest {
 
     /**
      * Test 创建同行调拨单
@@ -239,9 +239,9 @@ public class PeerDeploymentOrderControllerTest extends ERPTransactionalTest {
     public void page() throws Exception {
         PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam = new PeerDeploymentOrderQueryParam();
         peerDeploymentOrderQueryParam.setPageNo(1);
-        peerDeploymentOrderQueryParam.setPageSize(5);
+        peerDeploymentOrderQueryParam.setPageSize(10);
 //        peerDeploymentOrderQueryParam.setRentType(2);
-        peerDeploymentOrderQueryParam.setPeerDeploymentOrderNo("-0452");
+//        peerDeploymentOrderQueryParam.setPeerDeploymentOrderNo("-0452");
         TestResult testResult = getJsonTestResult("/peerDeploymentOrder/page",peerDeploymentOrderQueryParam);
     }
 

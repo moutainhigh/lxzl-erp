@@ -163,6 +163,7 @@
 			<if test="maps.isQueryAll == null">
 				and ewl.data_status = 1
 			</if>
+			<include refid="permission_sql.workflow_control"/>
 		</where>
 	</select>
 
@@ -201,6 +202,7 @@
 				<if test="maps.isQueryAll == null">
 					and ewl.data_status = 1
 				</if>
+				<include refid="permission_sql.workflow_control"/>
 			</where>
 			order by ewl.id DESC
 			LIMIT #{maps.start},#{maps.pageSize}

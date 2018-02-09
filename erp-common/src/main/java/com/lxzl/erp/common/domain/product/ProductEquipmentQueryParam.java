@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductEquipmentQueryParam extends BasePageParam implements Serializable {
@@ -22,6 +23,11 @@ public class ProductEquipmentQueryParam extends BasePageParam implements Seriali
 
     private Integer currentWarehouseId;
     private Integer ownerWarehouseId;
+
+    //控制数据权限
+    private List<Integer> passiveUserIdList;//控制数据权限
+    private Integer subCompanyId;
+    private List<Integer> warehouseIdList;//控制数据权限
 
     public Integer getProductEquipmentId() {
         return productEquipmentId;
@@ -118,4 +124,16 @@ public class ProductEquipmentQueryParam extends BasePageParam implements Seriali
     public void setOwnerWarehouseId(Integer ownerWarehouseId) {
         this.ownerWarehouseId = ownerWarehouseId;
     }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
+
+    public Integer getSubCompanyId() { return subCompanyId; }
+
+    public void setSubCompanyId(Integer subCompanyId) { this.subCompanyId = subCompanyId; }
+
+    public List<Integer> getWarehouseIdList() { return warehouseIdList; }
+
+    public void setWarehouseIdList(List<Integer> warehouseIdList) { this.warehouseIdList = warehouseIdList; }
 }

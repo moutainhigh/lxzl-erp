@@ -316,7 +316,8 @@
 	</select>
 
 	<select id="findPeerDeploymentOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(id) FROM erp_peer_deployment_order epdo
+		SELECT count(epdo.id) FROM erp_peer_deployment_order epdo
+		INNER JOIN erp_warehouse ew on ew.id = epdo.warehouse_id
 		<where>
 			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != null &amp;&amp; maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != '' ">
 				and epdo.peer_deployment_order_no = #{maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo,jdbcType=VARCHAR}
@@ -351,14 +352,18 @@
 			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
+			<include refid="permission_sql.peer_deployment_order_control"/>
 		</where>
 	</select>
 
 	<select id="findPeerDeploymentOrderByParams" resultMap="PeerDeploymentOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> , <include refid="product_column_List"/>, <include refid="material_column_List"/>,
-		ew.warehouse_name,ew.warehouse_no,ep.peer_name,ep.peer_no,em.material_no
+		SELECT main.*, <include refid="product_column_List"/>, <include refid="material_column_List"/>,
+		ep.peer_name,ep.peer_no,em.material_no
 		FROM (
-		SELECT <include refid="column_List"/> FROM erp_peer_deployment_order epdo
+		SELECT <include refid="column_List"/> ,
+		ew.warehouse_name,ew.warehouse_no
+		FROM erp_peer_deployment_order epdo
+		INNER JOIN erp_warehouse ew on ew.id = epdo.warehouse_id
 		<where>
 			<if test="maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != null &amp;&amp; maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo != '' ">
 				and epdo.peer_deployment_order_no LIKE CONCAT('%','${maps.peerDeploymentOrderQueryParam.peerDeploymentOrderNo}','%' )
@@ -393,15 +398,15 @@
 			<if test="maps.isQueryAll == null">
 				and epdo.data_status = 1
 			</if>
+			<include refid="permission_sql.peer_deployment_order_control"/>
 		</where>
 		order by epdo.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}
-		) epdo
-		LEFT JOIN erp_peer_deployment_order_product epdop on epdop.peer_deployment_order_id = epdo.id and epdop.data_status=1
-		LEFT JOIN erp_peer_deployment_order_material epdom on epdom.peer_deployment_order_id = epdo.id and epdom.data_status=1
-		LEFT JOIN erp_warehouse ew ON ew.id = epdo.warehouse_id AND ew.data_status =1
-		LEFT JOIN erp_peer ep ON ep.id = epdo.peer_id AND ep.data_status =1
+		) main
+		LEFT JOIN erp_peer_deployment_order_product epdop on epdop.peer_deployment_order_id = main.id and epdop.data_status=1
+		LEFT JOIN erp_peer_deployment_order_material epdom on epdom.peer_deployment_order_id = main.id and epdom.data_status=1
+		LEFT JOIN erp_peer ep ON ep.id = main.peer_id AND ep.data_status =1
 		LEFT JOIN erp_material em ON em.id = epdom.material_id AND em.data_status = 1
-		order by epdo.create_time desc
+		order by main.create_time desc
 	</select>
 </mapper>

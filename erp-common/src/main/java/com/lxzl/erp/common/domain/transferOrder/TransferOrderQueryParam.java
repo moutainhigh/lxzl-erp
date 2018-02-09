@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -22,6 +23,10 @@ public class TransferOrderQueryParam extends BasePageParam {
     private Integer warehouseId;   //仓库ID，哪个库房转移
     private Date createStartTime;
     private Date createEndTime;
+
+    //控制数据权限
+    private List<Integer> passiveUserIdList;//控制数据权限
+    private List<Integer> warehouseIdList;//控制数据权限
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -86,4 +91,12 @@ public class TransferOrderQueryParam extends BasePageParam {
     public void setWarehouseId(Integer warehouseId) {
         this.warehouseId = warehouseId;
     }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
+
+    public List<Integer> getWarehouseIdList() { return warehouseIdList; }
+
+    public void setWarehouseIdList(List<Integer> warehouseIdList) { this.warehouseIdList = warehouseIdList; }
 }

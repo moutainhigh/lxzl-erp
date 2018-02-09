@@ -167,7 +167,8 @@
 	</select>
 
 	<select id="findTransferOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(id) FROM erp_transfer_order eto
+		SELECT count(eto.id) FROM erp_transfer_order eto
+		INNER JOIN erp_warehouse ew ON ew.id = eto.warehouse_id AND ew.data_status =1
 		<where>
 			<if test="maps.transferOrderQueryParam.transferOrderNo != null &amp;&amp; maps.transferOrderQueryParam.transferOrderNo != '' ">
 				and eto.transfer_order_no = #{maps.transferOrderQueryParam.transferOrderNo, jdbcType=VARCHAR}
@@ -196,14 +197,16 @@
 			<if test="maps.isQueryAll == null">
 				and eto.data_status = 1
 			</if>
+			<include refid="permission_sql.transfer_order_control"/>
 		</where>
 	</select>
 
 	<select id="findTransferOrderByParams" resultMap="TransferOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="product_column_List"/>,<include refid="material_column_List"/>,ew.warehouse_name
+		SELECT main.*,<include refid="product_column_List"/>,<include refid="material_column_List"/>
 		FROM (
-		SELECT <include refid="column_List"/>
+		SELECT <include refid="column_List"/>,ew.warehouse_name as warehouse_name
 		FROM erp_transfer_order eto
+		INNER JOIN erp_warehouse ew ON ew.id = eto.warehouse_id AND ew.data_status =1
 		<where>
 			<if test="maps.transferOrderQueryParam.transferOrderNo != null &amp;&amp; maps.transferOrderQueryParam.transferOrderNo != '' ">
 				and eto.transfer_order_no LIKE CONCAT('%','${maps.transferOrderQueryParam.transferOrderNo}','%' )
@@ -232,13 +235,13 @@
 			<if test="maps.isQueryAll == null">
 				and eto.data_status = 1
 			</if>
+			<include refid="permission_sql.transfer_order_control"/>
 		</where>
 		order by eto.create_time desc
 		LIMIT #{maps.start},#{maps.pageSize}
-		) eto
-		LEFT JOIN erp_transfer_order_product etop on etop.transfer_order_id = eto.id and etop.data_status=1
-		LEFT JOIN erp_transfer_order_material etom on etom.transfer_order_id = eto.id and etom.data_status=1
-		LEFT JOIN erp_warehouse ew ON ew.id = eto.warehouse_id AND ew.data_status =1
-		order by eto.create_time desc
+		) main
+		LEFT JOIN erp_transfer_order_product etop on etop.transfer_order_id = main.id and etop.data_status=1
+		LEFT JOIN erp_transfer_order_material etom on etom.transfer_order_id = main.id and etom.data_status=1
+		order by main.create_time desc
 	</select>
 </mapper>

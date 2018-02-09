@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.deploymentOrder;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -20,6 +21,10 @@ public class DeploymentOrderQueryParam extends BasePageParam {
     private Integer deploymentOrderStatus;   //调配单状态，0未提交，1审批中，2处理中，3确认收货
     private Date createStartTime;
     private Date createEndTime;
+
+    private List<Integer> passiveUserIdList;//控制数据权限
+    private List<Integer> passiveSubCompanyIdList;;
+    private List<Integer> warehouseIdList;//控制数据权限
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -81,7 +86,17 @@ public class DeploymentOrderQueryParam extends BasePageParam {
         return deploymentOrderStatus;
     }
 
-    public void setDeploymentOrderStatus(Integer deploymentOrderStatus) {
-        this.deploymentOrderStatus = deploymentOrderStatus;
-    }
+    public void setDeploymentOrderStatus(Integer deploymentOrderStatus) { this.deploymentOrderStatus = deploymentOrderStatus; }
+
+    public List<Integer> getPassiveSubCompanyIdList() { return passiveSubCompanyIdList; }
+
+    public void setPassiveSubCompanyIdList(List<Integer> passiveSubCompanyIdList) { this.passiveSubCompanyIdList = passiveSubCompanyIdList; }
+
+    public List<Integer> getWarehouseIdList() { return warehouseIdList; }
+
+    public void setWarehouseIdList(List<Integer> warehouseIdList) { this.warehouseIdList = warehouseIdList; }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author : XiaoLuYu
@@ -24,13 +25,14 @@ public class PeerDeploymentOrderQueryParam extends BasePageParam {
     private Date createStartTime;
     private Date createEndTime;
 
+    private List<Integer> passiveUserIdList;//控制数据权限
+    private Integer subCompanyId;
+
     public String getPeerDeploymentOrderNo() {
         return peerDeploymentOrderNo;
     }
 
-    public void setPeerDeploymentOrderNo(String peerDeploymentOrderNo) {
-        this.peerDeploymentOrderNo = peerDeploymentOrderNo;
-    }
+    public void setPeerDeploymentOrderNo(String peerDeploymentOrderNo) { this.peerDeploymentOrderNo = peerDeploymentOrderNo; }
 
     public Integer getPeerId() {
         return peerId;
@@ -84,9 +86,7 @@ public class PeerDeploymentOrderQueryParam extends BasePageParam {
         return peerDeploymentOrderStatus;
     }
 
-    public void setPeerDeploymentOrderStatus(Integer peerDeploymentOrderStatus) {
-        this.peerDeploymentOrderStatus = peerDeploymentOrderStatus;
-    }
+    public void setPeerDeploymentOrderStatus(Integer peerDeploymentOrderStatus) { this.peerDeploymentOrderStatus = peerDeploymentOrderStatus; }
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -103,4 +103,12 @@ public class PeerDeploymentOrderQueryParam extends BasePageParam {
     public void setCreateEndTime(Date createEndTime) {
         this.createEndTime = createEndTime;
     }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
+
+    public Integer getSubCompanyId() { return subCompanyId; }
+
+    public void setSubCompanyId(Integer subCompanyId) { this.subCompanyId = subCompanyId; }
 }

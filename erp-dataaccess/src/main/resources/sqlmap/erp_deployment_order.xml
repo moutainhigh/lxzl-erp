@@ -121,7 +121,9 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(edo.id) FROM erp_deployment_order edo 
+		SELECT count(edo.id) FROM erp_deployment_order edo
+		INNER JOIN erp_warehouse ews ON ews.id = edo.src_warehouse_id AND ews.data_status = 1
+		INNER JOIN erp_warehouse ewt ON ewt.id = edo.target_warehouse_id AND ewt.data_status = 1
 		<where>
 			<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != ''">
 				and edo.id = #{maps.deploymentOrderQueryParam.deploymentOrderId, jdbcType=INTEGER}
@@ -150,10 +152,12 @@
 			<if test="maps.isQueryAll == null">
 				and edo.data_status = 1
 			</if>
+			<include refid="permission_sql.deployment_order_control"/>
 		</where>
 	</select>
 
-	<select id="listPage" resultMap="DeploymentOrderDO" parameterType="map">SELECT deployment_order_main.*
+	<select id="listPage" resultMap="DeploymentOrderDO" parameterType="map">
+		SELECT deployment_order_main.*
 		<trim prefix=",">
 			<include refid="product_column_List" />
 		</trim>
@@ -166,8 +170,8 @@
 				ews.warehouse_name AS src_warehouse_name, ewt.warehouse_name AS target_warehouse_name
 			</trim>
 			FROM erp_deployment_order edo
-			LEFT JOIN erp_warehouse ews ON ews.id = edo.src_warehouse_id AND ews.data_status = 1
-			LEFT JOIN erp_warehouse ewt ON ewt.id = edo.target_warehouse_id AND ewt.data_status = 1
+			INNER JOIN erp_warehouse ews ON ews.id = edo.src_warehouse_id AND ews.data_status = 1
+			INNER JOIN erp_warehouse ewt ON ewt.id = edo.target_warehouse_id AND ewt.data_status = 1
 			<where>
 				<if test="maps.deploymentOrderQueryParam != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != null &amp;&amp; maps.deploymentOrderQueryParam.deploymentOrderId != ''">
 					and edo.id = #{maps.deploymentOrderQueryParam.deploymentOrderId, jdbcType=INTEGER}
@@ -190,10 +194,12 @@
 				<if test="maps.isQueryAll == null">
 					and edo.data_status = 1
 				</if>
+				<include refid="permission_sql.deployment_order_control"/>
 				ORDER BY edo.id DESC
 			</where>
 			LIMIT #{maps.start},#{maps.pageSize}
-		) deployment_order_main LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
+		) deployment_order_main
+		LEFT  JOIN erp_deployment_order_product edop ON edop.deployment_order_id = deployment_order_main.id AND edop.data_status = 1
 		LEFT  JOIN erp_deployment_order_material edom ON edom.deployment_order_id = deployment_order_main.id AND edom.data_status = 1
 		ORDER BY deployment_order_main.id DESC
 	</select>

@@ -135,5 +135,141 @@
 		</if>
 	</sql>
 
+	<sql id="workflow_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ewl.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ewl.current_verify_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+		</if>
+	</sql>
+
+	<sql id="peer_deployment_order_control">
+		<if test="maps.permissionParam!=null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(epdo.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyId!= null" >
+				OR (
+				ew.sub_company_id = #{maps.permissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+			)
+		</if>
+	</sql>
+
+	<sql id="deployment_order_control">
+		<if test="maps.permissionParam != null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(edo.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyIdList != null" >
+				OR (ews.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ewt.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			)
+		</if>
+	</sql>
+
+	<sql id="product_equipment_control">
+		<if test="maps.permissionParam!=null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(epe.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyIdList != null" >
+				OR (ewc.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ewo.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			)
+		</if>
+	</sql>
+
+	<sql id="bulk_material_control">
+		<if test="maps.permissionParam!=null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ebm.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyIdList != null" >
+				OR (ewc.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ewo.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			)
+		</if>
+	</sql>
+
+	<sql id="transfer_order_control">
+		<if test="maps.permissionParam!=null">
+			AND (
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(eto.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyIdList!= null" >
+				or (ew.sub_company_id in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionSubCompanyIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				)
+			</if>
+			)
+		</if>
+	</sql>
 
 </mapper>

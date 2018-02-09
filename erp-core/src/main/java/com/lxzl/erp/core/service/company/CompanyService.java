@@ -37,4 +37,6 @@ public interface CompanyService {
 
     ServiceResult<String, Integer> deleteDepartment(Integer departmentId);
 
+    ServiceResult<String, List<SubCompany>> subCompanyAll();
+
 }

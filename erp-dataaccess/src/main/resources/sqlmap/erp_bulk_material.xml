@@ -120,7 +120,9 @@
 		WHERE esobm.item_refer_id = #{maps.purchaseReceiveOrderMaterialBulkPageParam.purchaseReceiveOrderMaterialId} AND ebm.data_status = 1
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ebm.id) FROM erp_bulk_material ebm 
+		SELECT count(ebm.id) FROM erp_bulk_material ebm
+		INNER JOIN erp_warehouse ewc ON ebm.current_warehouse_id = ewc.id
+		INNER JOIN erp_warehouse ewo ON ebm.owner_warehouse_id = ewo.id
 		<where>
 			<if test="maps.bulkMaterialQueryParam != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != null &amp;&amp; maps.bulkMaterialQueryParam.materialId != ''">
 				AND ebm.material_id = #{maps.bulkMaterialQueryParam.materialId, jdbcType=INTEGER}
@@ -164,6 +166,7 @@
 			<if test="maps.isQueryAll == null">
 				and ebm.data_status = 1
 			</if>
+			<include refid="permission_sql.bulk_material_control"/>
 		</where>
 	</select>
 
@@ -213,6 +216,7 @@
 			<if test="maps.isQueryAll == null">
 				and ebm.data_status = 1
 			</if>
+			<include refid="permission_sql.bulk_material_control"/>
 		</where>
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>

@@ -16,6 +16,7 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.message.MessageService;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
@@ -103,6 +104,9 @@ public class WorkflowServiceImpl implements WorkflowService {
     private DeploymentOrderMapper deploymentOrderMapper;
     @Autowired
     private WarehouseMapper warehouseMapper;
+
+    @Autowired
+    private PermissionSupport permissionSupport;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -308,6 +312,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("start", pageQuery.getStart());
         paramMap.put("pageSize", pageQuery.getPageSize());
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
+        //只有创建人与审核人查看自己数据
+        paramMap.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
         Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
@@ -328,6 +335,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("start", pageQuery.getStart());
         paramMap.put("pageSize", pageQuery.getPageSize());
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
+        paramMap.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
         Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());
