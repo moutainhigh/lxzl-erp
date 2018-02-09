@@ -272,12 +272,14 @@
                             </td>
                         </tr>
                         {{#destChangeMaterialInfo}}
-                        <tr class="bg-light">
-                            <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
-                            <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
-                            <td>{{materialTypeStr}}</td>
-                            <td>{{#price}}{{materialPrice}}{{/price}}</td>
-                        </tr>
+                            {{#destChangeMaterialData}}
+                            <tr class="bg-light">
+                                <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{materialName}}</td>
+                                <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
+                                <td>{{materialTypeStr}}</td>
+                                <td>￥{{#price}}{{materialPrice}}{{/price}}</td>
+                            </tr>
+                            {{/destChangeMaterialData}}
                         {{/destChangeMaterialInfo}}
                         {{/listData}}
                         {{^listData}}
