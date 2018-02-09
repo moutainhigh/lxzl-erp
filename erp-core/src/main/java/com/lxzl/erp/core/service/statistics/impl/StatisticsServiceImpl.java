@@ -313,12 +313,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         if(timeDimensionType.equals(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR)){
             List<Date> dateList = DateUtil.getCurrentYearPassedMonth();
             for(Date date : dateList){
-                timePairsList.add(new TimePairs(date,DateUtil.getMonthByOffset(1)));
+                timePairsList.add(new TimePairs(date,DateUtil.getMonthByOffset(date,1)));
             }
         }else if(timeDimensionType.equals(TimeDimensionType.TIME_DIMENSION_TYPE_MONTH)){
             List<Date> dateList = DateUtil.getCurrentMonthPassedDay();
             for(Date date : dateList){
-                timePairsList.add(new TimePairs(date,DateUtil.getDayByOffset(1)));
+                timePairsList.add(new TimePairs(date,DateUtil.getDayByOffset(date,1)));
             }
         }
         return timePairsList;

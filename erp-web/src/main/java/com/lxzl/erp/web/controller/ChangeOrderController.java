@@ -5,11 +5,9 @@ import com.lxzl.erp.common.domain.changeOrder.*;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrder;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderMaterial;
 import com.lxzl.erp.common.domain.changeOrder.pojo.ChangeOrderProductEquipment;
-import com.lxzl.erp.common.domain.purchase.UpdateReceiveEquipmentRemarkParam;
-import com.lxzl.erp.common.domain.purchase.UpdateReceiveMaterialRemarkParam;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.purchaseOrder.UpdateReceiveRemarkGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdatePriceDiffGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
@@ -237,56 +235,32 @@ public class ChangeOrderController {
         ServiceResult<String, String> serviceResult = changeOrderService.confirmChangeOrder(changeOrder.getChangeOrderNo());
         return resultGenerator.generate(serviceResult);
     }
-//
-//    /**
-//     * 采购收货单商品项设备分页
-//     *
-//     * @param purchaseReceiveOrderProductEquipmentPageParam
-//     * @param validResult
-//     * @return
-//     */
-//    @RequestMapping(value = "pageReceiveOrderProductEquipment", method = RequestMethod.POST)
-//    public Result pageReceiveOrderProductEquipment(@RequestBody @Validated PurchaseReceiveOrderProductEquipmentPageParam purchaseReceiveOrderProductEquipmentPageParam, BindingResult validResult) {
-//        ServiceResult<String, Page<ProductEquipment>> serviceResult = purchaseOrderService.pageReceiveOrderProductEquipment(purchaseReceiveOrderProductEquipmentPageParam);
-//        return resultGenerator.generate(serviceResult);
-//    }
-//
-//    /**
-//     * 修改采购收货单设备采购价格
-//     *
-//     * @param updateChangeEquipmentPriceParam
-//     * @param validResult
-//     * @return
-//     */
-//    @RequestMapping(value = "updatePurchaseReceiveEquipmentPrice", method = RequestMethod.POST)
-//    public Result updateReceiveEquipmentPrice(@RequestBody @Validated(ExtendGroup.class) UpdateChangeEquipmentPriceParam updateChangeEquipmentPriceParam, BindingResult validResult) {
-//        ServiceResult<String, String> serviceResult = purchaseOrderService.updateReceiveEquipmentPrice(updateChangeEquipmentPriceParam);
-//        return resultGenerator.generate(serviceResult);
-//    }
-//
-//    /**
-//     * 获取采购收货单物料价格
-//     *
-//     * @param purchaseReceiveOrderMaterial
-//     * @param validResult
-//     * @return
-//     */
-//    @RequestMapping(value = "getPurchaseReceiveMaterialPriceList", method = RequestMethod.POST)
-//    public Result getPurchaseReceiveMaterialPriceList(@RequestBody @Validated(IdGroup.class) PurchaseReceiveOrderMaterial purchaseReceiveOrderMaterial, BindingResult validResult) {
-//        ServiceResult<String, List<PurchaseReceiveOrderMaterialPrice>> serviceResult = purchaseOrderService.getPurchaseReceiveMaterialPriceList(purchaseReceiveOrderMaterial);
-//        return resultGenerator.generate(serviceResult);
-//    }
-//
-//    /**
-//     * 修改采购收货单物料价格
-//     *
-//     * @param updateChangeMaterialPriceParam
-//     * @param validResult
-//     * @return
-//     */
-//    @RequestMapping(value = "updatePurchaseReceiveMaterialPrice", method = RequestMethod.POST)
-//    public Result updatePurchaseReceiveMaterialPrice(@RequestBody @Validated(UpdateGroup.class) UpdateChangeMaterialPriceParam updateChangeMaterialPriceParam, BindingResult validResult) {
-//        ServiceResult<String, Integer> serviceResult = purchaseOrderService.updatePurchaseReceiveMaterialPrice(updateChangeMaterialPriceParam);
-//        return resultGenerator.generate(serviceResult);
-//    }
+
+
+    /**
+     * 修改换货设备差价
+     *
+     * @param updateEquipmentPriceDiffParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateEquipmentPriceDiff", method = RequestMethod.POST)
+    public Result updateEquipmentPriceDiff(@RequestBody @Validated(UpdatePriceDiffGroup.class) UpdateEquipmentPriceDiffParam updateEquipmentPriceDiffParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = changeOrderService.updateEquipmentPriceDiff(updateEquipmentPriceDiffParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 修改换货配件差价
+     *
+     * @param updateBulkPriceDiffParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateBulkPriceDiff", method = RequestMethod.POST)
+    public Result updateBulkPriceDiff(@RequestBody @Validated(UpdatePriceDiffGroup.class) UpdateBulkPriceDiffParam updateBulkPriceDiffParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = changeOrderService.updateBulkPriceDiff(updateBulkPriceDiffParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
 }

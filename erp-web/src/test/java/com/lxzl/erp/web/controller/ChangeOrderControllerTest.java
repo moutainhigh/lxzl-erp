@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.changeOrder.pojo.*;
 import com.lxzl.erp.common.util.DateUtil;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         addChangeOrderParam.setOwner(500006);
         addChangeOrderParam.setCustomerNo("LXCC-1000-20180129-00062");
         addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
-        addChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
+        addChangeOrderParam.setRentStartTime(DateUtil.getDayByCurrentOffset(1));
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
@@ -72,7 +73,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         AddChangeOrderParam addChangeOrderParam = new AddChangeOrderParam();
-        addChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
+        addChangeOrderParam.setRentStartTime(DateUtil.getDayByCurrentOffset(1));
         addChangeOrderParam.setCustomerNo("LXCC-1000-20180130-00063");
         addChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         addChangeOrderParam.setOwner(500006);
@@ -98,7 +99,7 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         updateChangeOrderParam.setChangeOrderNo("LXCO-701388-20180206-00002");
         updateChangeOrderParam.setOwner(500006);
         updateChangeOrderParam.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
-        updateChangeOrderParam.setRentStartTime(DateUtil.getDayByOffset(1));
+        updateChangeOrderParam.setRentStartTime(DateUtil.getDayByCurrentOffset(1));
         ChangeOrderConsignInfo changeOrderConsignInfo = new ChangeOrderConsignInfo();
         changeOrderConsignInfo.setAddress("这是一个测试地址123123");
         changeOrderConsignInfo.setConsigneePhone("13612342234");
@@ -264,6 +265,44 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         ChangeOrder changeOrder = new ChangeOrder();
         changeOrder.setChangeOrderNo("LXCO-701389-20180207-00006");
         TestResult testResult = getJsonTestResult("/changeOrder/confirmChangeOrder",changeOrder);
+    }
+    @Test
+    public void updateEquipmentDiffPrice() throws Exception {
+        UpdateEquipmentPriceDiffParam updateEquipmentPriceDiffParam = new UpdateEquipmentPriceDiffParam();
+        updateEquipmentPriceDiffParam.setChangeOrderNo("LXCO-700032-20180206-00004");
+        List<ChangeOrderProductEquipment> changeOrderProductEquipmentList = new ArrayList<>();
+        changeOrderProductEquipmentList.add(createChangeOrderProductEquipment(13,200));
+        changeOrderProductEquipmentList.add(createChangeOrderProductEquipment(14,300));
+        updateEquipmentPriceDiffParam.setChangeOrderProductEquipmentList(changeOrderProductEquipmentList);
+        TestResult testResult = getJsonTestResult("/changeOrder/updateEquipmentPriceDiff", updateEquipmentPriceDiffParam);
+    }
+    @Test
+    public void updateBulkPriceDiff() throws Exception {
+        UpdateBulkPriceDiffParam updateBulkPriceDiffParam = new UpdateBulkPriceDiffParam();
+        updateBulkPriceDiffParam.setChangeOrderNo("LXCO-700032-20180206-00004");
+        List<ChangeOrderMaterialBulk> changeOrderMaterialBulkList = new ArrayList<>();
+        changeOrderMaterialBulkList.add(createChangeOrderMaterialBulk(13,200));
+        changeOrderMaterialBulkList.add(createChangeOrderMaterialBulk(14,300));
+        updateBulkPriceDiffParam.setChangeOrderMaterialBulkList(changeOrderMaterialBulkList);
+        TestResult testResult = getJsonTestResult("/changeOrder/updateBulkPriceDiff", updateBulkPriceDiffParam);
+    }
+    private ChangeOrderProductEquipment createChangeOrderProductEquipment(Integer id , double priceDiff){
+        ChangeOrderProductEquipment changeOrderProductEquipment = new ChangeOrderProductEquipment();
+        changeOrderProductEquipment.setChangeOrderProductEquipmentId(id);
+        changeOrderProductEquipment.setPriceDiff(new BigDecimal(priceDiff));
+        return changeOrderProductEquipment;
+    }
+    private ChangeOrderMaterialBulk createChangeOrderMaterialBulk(Integer id , double priceDiff){
+        ChangeOrderMaterialBulk changeOrderMaterialBulk = new ChangeOrderMaterialBulk();
+        changeOrderMaterialBulk.setChangeOrderMaterialBulkId(id);
+        changeOrderMaterialBulk.setPriceDiff(new BigDecimal(priceDiff));
+        return changeOrderMaterialBulk;
+    }
+    @Test
+    public void updateBulkDiffPrice() throws Exception {
+        ChangeOrder changeOrder = new ChangeOrder();
+        changeOrder.setChangeOrderNo("LXCO-701389-20180207-00006");
+        TestResult testResult = getJsonTestResult("/changeOrder/updateBulkDiffPrice",changeOrder);
     }
     @Test
     public void processNoChangeEquipment() throws Exception {

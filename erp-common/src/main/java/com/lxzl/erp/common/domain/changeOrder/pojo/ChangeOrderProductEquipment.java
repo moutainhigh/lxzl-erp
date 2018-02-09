@@ -3,18 +3,20 @@ package com.lxzl.erp.common.domain.changeOrder.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
+import com.lxzl.erp.common.domain.validGroup.changeOrder.UpdatePriceDiffGroup;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangeOrderProductEquipment extends BasePO {
 
-
+    @NotNull(message = ErrorCode.ID_NOT_NULL,groups = {UpdatePriceDiffGroup.class})
     private Integer changeOrderProductEquipmentId;   //唯一标识
     private Integer changeOrderProductId;   //租赁换货商品项ID
     private Integer changeOrderId;   //换货ID
@@ -26,7 +28,9 @@ public class ChangeOrderProductEquipment extends BasePO {
     private String srcEquipmentNo;   //原设备编号
     private Integer destEquipmentId;   //目标设备ID
     private String destEquipmentNo;   //目标设备编号
-    private BigDecimal priceDiff;   //差价，可以是正值或负值，差价计算标准为每月
+    @Min(value=0,message = ErrorCode.DIFF_PRICE_ERROR, groups = {UpdatePriceDiffGroup.class})
+    @NotNull(message = ErrorCode.DIFF_PRICE_ERROR, groups = {UpdatePriceDiffGroup.class})
+    private BigDecimal priceDiff;   //差价
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -36,6 +40,8 @@ public class ChangeOrderProductEquipment extends BasePO {
 
     private ProductEquipment srcProductEquipment;
     private ProductEquipment destProductEquipment;
+
+    private OrderProduct orderProduct;
 
     public Integer getChangeOrderProductEquipmentId() {
         return changeOrderProductEquipmentId;
@@ -179,5 +185,13 @@ public class ChangeOrderProductEquipment extends BasePO {
 
     public void setDestProductEquipment(ProductEquipment destProductEquipment) {
         this.destProductEquipment = destProductEquipment;
+    }
+
+    public OrderProduct getOrderProduct() {
+        return orderProduct;
+    }
+
+    public void setOrderProduct(OrderProduct orderProduct) {
+        this.orderProduct = orderProduct;
     }
 }

@@ -24,4 +24,7 @@ public interface CustomerConsignInfoMapper extends BaseMysqlDAO<CustomerConsignI
 	void clearIsMainByCustomerId(@Param("customerId")Integer customerId);
 
     List<CustomerConsignInfoDO> findByCustomerId(@Param("customerId")Integer customerId);
+
+    List<CustomerConsignInfoDO> findByCustomerIdAndConsigneeNameAndConsigneePhoneAndAddress(@Param("customerId")Integer customerId,@Param("consigneeName")String consigneeName,
+																					  @Param("consigneePhone")String consigneePhone,@Param("address")String address);
 }

@@ -77,8 +77,8 @@ public class GenerateNoSupport {
         synchronized (this) {
             Map<String, Object> maps = new HashMap<>();
             OrderQueryParam orderQueryParam = new OrderQueryParam();
-            orderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            orderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            orderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            orderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("orderQueryParam", orderQueryParam);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             Integer orderCount = orderMapper.findOrderCountByParams(maps);
@@ -107,8 +107,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            productQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            productQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            productQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            productQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("productQueryParam", productQueryParam);
             Integer productCount = productMapper.findProductCountByParams(maps);
             StringBuilder builder = new StringBuilder();
@@ -135,8 +135,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
             Integer productCount = productEquipmentMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
@@ -165,8 +165,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            productEquipmentQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            productEquipmentQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
             Integer count = productEquipmentMapper.listCount(maps);
             for(int i = 0 ; i<productCount;i++){
@@ -198,8 +198,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            stockOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            stockOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            stockOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            stockOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("stockOrderQueryParam", stockOrderQueryParam);
             Integer count = stockOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
@@ -222,8 +222,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            statementPayOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            statementPayOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            statementPayOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            statementPayOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("statementPayOrderQueryParam", statementPayOrderQueryParam);
             Integer count = statementPayOrderMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
@@ -248,8 +248,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
             Integer count = bulkMaterialMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
@@ -277,8 +277,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
             Integer count = bulkMaterialMapper.listCount(maps);
             for(int i = 0 ; i < bulkCount ; i ++)
@@ -310,8 +310,8 @@ public class GenerateNoSupport {
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            materialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            materialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            materialQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            materialQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("materialQueryParam", materialQueryParam);
             Integer count = materialMapper.listCount(maps);
             StringBuilder builder = new StringBuilder();
@@ -335,8 +335,8 @@ public class GenerateNoSupport {
             //业务员所在的city_code
             String subCompanyCode = subCompanyMapper.findById(subCompanyId).getSubCompanyCode();
             CustomerQueryParam customerQueryParam = new CustomerQueryParam();
-            customerQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            customerQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            customerQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            customerQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("customerQueryParam", customerQueryParam);
@@ -370,8 +370,8 @@ public class GenerateNoSupport {
             WarehouseDO targetWarehouseDO = warehouseMapper.findById(targetWarehouseId);
             SubCompanyDO targetSubCompanyDO = subCompanyMapper.findById(targetWarehouseDO.getSubCompanyId());
             DeploymentOrderQueryParam deploymentOrderQueryParam = new DeploymentOrderQueryParam();
-            deploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            deploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            deploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            deploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("deploymentOrderQueryParam", deploymentOrderQueryParam);
@@ -399,8 +399,8 @@ public class GenerateNoSupport {
             String subCompanyCode = subCompanyDO.getSubCompanyCode();
             Map<String, Object> maps = new HashMap<>();
             PurchaseOrderQueryParam purchaseOrderQueryParam = new PurchaseOrderQueryParam();
-            purchaseOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            purchaseOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            purchaseOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            purchaseOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("purchaseOrderQueryParam", purchaseOrderQueryParam);
             Integer customerCompanyCount = purchaseOrderMapper.findPurchaseOrderCountByParams(maps);
@@ -426,8 +426,8 @@ public class GenerateNoSupport {
 
             Map<String, Object> maps = new HashMap<>();
             PurchaseDeliveryOrderQueryParam purchaseDeliveryOrderQueryParam = new PurchaseDeliveryOrderQueryParam();
-            purchaseDeliveryOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            purchaseDeliveryOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            purchaseDeliveryOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            purchaseDeliveryOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("purchaseDeliveryOrderQueryParam", purchaseDeliveryOrderQueryParam);
             Integer purchaseDeliveryOrderCount = purchaseDeliveryOrderMapper.findPurchaseDeliveryOrderCountByParams(maps);
@@ -455,8 +455,8 @@ public class GenerateNoSupport {
 
             Map<String, Object> maps = new HashMap<>();
             PurchaseReceiveOrderQueryParam purchaseReceiveOrderQueryParam = new PurchaseReceiveOrderQueryParam();
-            purchaseReceiveOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            purchaseReceiveOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            purchaseReceiveOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            purchaseReceiveOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("purchaseReceiveOrderQueryParam", purchaseReceiveOrderQueryParam);
             Integer purchaseReceiveOrderCount = purchaseReceiveOrderMapper.findPurchaseReceiveOrderCountByParams(maps);
@@ -478,8 +478,8 @@ public class GenerateNoSupport {
         Date currentTime = new Date();
         synchronized (this) {
             ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
-            param.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            param.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            param.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            param.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("productEquipmentQueryParam", param);
@@ -521,8 +521,8 @@ public class GenerateNoSupport {
     public String generateWorkflowLinkNo(Date currentTime, Integer commitUserId) {
         synchronized (this) {
             WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-            workflowLinkQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            workflowLinkQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            workflowLinkQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            workflowLinkQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("workflowQueryParam", workflowLinkQueryParam);
@@ -544,8 +544,8 @@ public class GenerateNoSupport {
     public String generateReturnOrderNo(Date currentTime, Integer customerId) {
         synchronized (this) {
             ReturnOrderPageParam returnOrderPageParam = new ReturnOrderPageParam();
-            returnOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            returnOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            returnOrderPageParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            returnOrderPageParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("returnOrderPageParam", returnOrderPageParam);
@@ -568,8 +568,8 @@ public class GenerateNoSupport {
     public String generateChangeOrderNo(Date currentTime, Integer customerId) {
         synchronized (this) {
             ChangeOrderPageParam changeOrderPageParam = new ChangeOrderPageParam();
-            changeOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            changeOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            changeOrderPageParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            changeOrderPageParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("changeOrderPageParam", changeOrderPageParam);
@@ -591,8 +591,8 @@ public class GenerateNoSupport {
     public String generateStatementOrderNo(Date expectPayTime, Integer customerId) {
         synchronized (this) {
             StatementOrderQueryParam statementOrderQueryParam = new StatementOrderQueryParam();
-            statementOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            statementOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            statementOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            statementOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("statementOrderQueryParam", statementOrderQueryParam);
@@ -614,8 +614,8 @@ public class GenerateNoSupport {
     public String generateRepairOrderNo(Date currentTime, String warehouseNo) {
         synchronized (this) {
             RepairOrderQueryParam repairOrderQueryParam = new RepairOrderQueryParam();
-            repairOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            repairOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            repairOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            repairOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("repairOrderQueryParam", repairOrderQueryParam);
@@ -641,8 +641,8 @@ public class GenerateNoSupport {
     public String generateBulkMaterialNo(Date currentTime, Integer warehouseId) {
         synchronized (this) {
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
@@ -670,8 +670,8 @@ public class GenerateNoSupport {
         Date currentTime = new Date();
         synchronized (this) {
             ProductEquipmentQueryParam param = new ProductEquipmentQueryParam();
-            param.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            param.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            param.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            param.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("productEquipmentQueryParam", param);
@@ -702,8 +702,8 @@ public class GenerateNoSupport {
         Date currentTime = new Date();
         synchronized (this) {
             BulkMaterialQueryParam bulkMaterialQueryParam = new BulkMaterialQueryParam();
-            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            bulkMaterialQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            bulkMaterialQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             Map<String, Object> maps = new HashMap<>();
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("bulkMaterialQueryParam", bulkMaterialQueryParam);
@@ -752,8 +752,8 @@ public class GenerateNoSupport {
         synchronized (this) {
             HashMap<String, Object> maps = new HashMap<>();
             AssembleOrderQueryParam assembleOrderQueryParam = new AssembleOrderQueryParam();
-            assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            assembleOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            assembleOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("assembleOrderQueryParam", assembleOrderQueryParam);
             Integer count = assembleOrderMapper.listCount(maps);
@@ -775,8 +775,8 @@ public class GenerateNoSupport {
         synchronized (this) {
             HashMap<String, Object> maps = new HashMap<>();
             TransferOrderQueryParam transferOrderQueryParam = new TransferOrderQueryParam();
-            transferOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            transferOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            transferOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            transferOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("transferOrderQueryParam", transferOrderQueryParam);
             Integer count = transferOrderMapper.findTransferOrderCountByParams(maps);
@@ -798,8 +798,8 @@ public class GenerateNoSupport {
         synchronized (this) {
             HashMap<String, Object> maps = new HashMap<>();
             PeerDeploymentOrderQueryParam peerDeploymentOrderQueryParam = new PeerDeploymentOrderQueryParam();
-            peerDeploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            peerDeploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            peerDeploymentOrderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            peerDeploymentOrderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("peerDeploymentOrderQueryParam", peerDeploymentOrderQueryParam);
             Integer count = peerDeploymentOrderMapper.listCount(maps);
@@ -825,8 +825,8 @@ public class GenerateNoSupport {
             Map<String, Object> maps = new HashMap<>();
             maps.put("start", 0);
             maps.put("pageSize", Integer.MAX_VALUE);
-            purchaseApplyOrderPageParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            purchaseApplyOrderPageParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            purchaseApplyOrderPageParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            purchaseApplyOrderPageParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("purchaseApplyOrderPageParam", purchaseApplyOrderPageParam);
             Integer count = purchaseApplyOrderMapper.listCount(maps);
@@ -867,8 +867,8 @@ public class GenerateNoSupport {
             Date currentTime = new Date();
             StatementOrderCorrectQueryParam statementOrderCorrectQueryParam = new StatementOrderCorrectQueryParam();
             Map<String, Object> maps = new HashMap<>();
-            statementOrderCorrectQueryParam.setCreateStartTime(DateUtil.getMonthByOffset(0));
-            statementOrderCorrectQueryParam.setCreateEndTime(DateUtil.getMonthByOffset(1));
+            statementOrderCorrectQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            statementOrderCorrectQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
             maps.put("statementOrderCorrectQueryParam", statementOrderCorrectQueryParam);
             Integer count = statementOrderCorrectMapper.listCount(maps);
