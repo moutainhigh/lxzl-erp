@@ -445,17 +445,18 @@ public class CustomerServiceImpl implements CustomerService {
 
         //如果客户选择了将详细地址作为收货地址
         if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
-            List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+            List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerIdAndConsigneeNameAndConsigneePhoneAndAddress(customerDO.getId(),newCustomerCompanyDO.getAgentPersonName(),newCustomerCompanyDO.getAgentPersonPhone(),newCustomerCompanyDO.getAddress());
             if (CollectionUtil.isEmpty(customerConsignInfoDOList)){
                 saveCustomerCompanyConsignInfo(customerDO,newCustomerCompanyDO,now,userSupport.getCurrentUserId());
             }
-            //判断不同地址的依据
-            for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList){
-                if (!customerConsignInfoDO.getAddress().equals(newCustomerCompanyDO.getAddress()) || !customerConsignInfoDO.getConsigneeName().equals(newCustomerCompanyDO.getConnectRealName())
-                        || !customerConsignInfoDO.getConsigneePhone().equals(newCustomerCompanyDO.getConnectPhone())){
-                    saveCustomerCompanyConsignInfo(customerDO,newCustomerCompanyDO,now,userSupport.getCurrentUserId());
-                }
-            }
+
+//            //判断不同地址的依据
+//            for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList){
+//                if (!customerConsignInfoDO.getAddress().equals(newCustomerCompanyDO.getAddress()) || !customerConsignInfoDO.getConsigneeName().equals(newCustomerCompanyDO.getAgentPersonName())
+//                        || !customerConsignInfoDO.getConsigneePhone().equals(newCustomerCompanyDO.getAgentPersonPhone())){
+//                    saveCustomerCompanyConsignInfo(customerDO,newCustomerCompanyDO,now,userSupport.getCurrentUserId());
+//                }
+//            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -524,16 +525,16 @@ public class CustomerServiceImpl implements CustomerService {
 
         //如果客户选择了将详细地址作为收货地址
         if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
-            List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+            List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerIdAndConsigneeNameAndConsigneePhoneAndAddress(customerDO.getId(),newCustomerPersonDO.getRealName(),newCustomerPersonDO.getPhone(),newCustomerPersonDO.getAddress());
             if (CollectionUtil.isEmpty(customerConsignInfoDOList)){
                 saveCustomerPersonConsignInfo(customerDO,newCustomerPersonDO,now,userSupport.getCurrentUserId());
             }
-            for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList){
-                if (!customerConsignInfoDO.getAddress().equals(newCustomerPersonDO.getAddress()) || !customerConsignInfoDO.getConsigneeName().equals(newCustomerPersonDO.getRealName())
-                        || !customerConsignInfoDO.getConsigneePhone().equals(newCustomerPersonDO.getPhone())){
-                    saveCustomerPersonConsignInfo(customerDO,newCustomerPersonDO,now,userSupport.getCurrentUserId());
-                }
-            }
+//            for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList){
+//                if (!customerConsignInfoDO.getAddress().equals(newCustomerPersonDO.getAddress()) || !customerConsignInfoDO.getConsigneeName().equals(newCustomerPersonDO.getRealName())
+//                        || !customerConsignInfoDO.getConsigneePhone().equals(newCustomerPersonDO.getPhone())){
+//                    saveCustomerPersonConsignInfo(customerDO,newCustomerPersonDO,now,userSupport.getCurrentUserId());
+//                }
+//            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1912,8 +1913,8 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerId(customerDO.getId());
         customerConsignInfo.setCustomerNo(customerDO.getCustomerNo());
-        customerConsignInfo.setConsigneeName(customerCompanyDO.getConnectRealName());
-        customerConsignInfo.setConsigneePhone(customerCompanyDO.getConnectPhone());
+        customerConsignInfo.setConsigneeName(customerCompanyDO.getAgentPersonName());
+        customerConsignInfo.setConsigneePhone(customerCompanyDO.getAgentPersonPhone());
         customerConsignInfo.setProvince(customerCompanyDO.getProvince());
         customerConsignInfo.setCity(customerCompanyDO.getCity());
         customerConsignInfo.setDistrict(customerCompanyDO.getDistrict());
@@ -1930,8 +1931,8 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setCustomerId(customerDO.getId());
         customerConsignInfo.setCustomerNo(customerDO.getCustomerNo());
-        customerConsignInfo.setConsigneeName(customerPersonDO.getConnectRealName());
-        customerConsignInfo.setConsigneePhone(customerPersonDO.getConnectPhone());
+        customerConsignInfo.setConsigneeName(customerPersonDO.getRealName());
+        customerConsignInfo.setConsigneePhone(customerPersonDO.getPhone());
         customerConsignInfo.setProvince(customerPersonDO.getProvince());
         customerConsignInfo.setCity(customerPersonDO.getCity());
         customerConsignInfo.setDistrict(customerPersonDO.getDistrict());
