@@ -239,6 +239,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+
         //校验法人手机号,经办人电话,紧急联系人手机号
         if(customer.getCustomerCompany().getIsLegalPersonApple() == 0){
             if(customer.getCustomerCompany().getLegalPersonPhone().equals(customer.getCustomerCompany().getAgentPersonPhone()) ){
@@ -1838,6 +1839,10 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
+        if (userUnion == null && userDOUnion != null){
+            customerDO.setUnionUser(customer.getUnionUser());
+        }
+
         //创建客户变更记录
         //如果开发员改变
         if (!userDOOwner.equals(userOwner)){
@@ -1850,7 +1855,7 @@ public class CustomerServiceImpl implements CustomerService {
             //联合开发员本来为空同时传入的联合开发员不为空
             if (userDOUnion == null && (userUnion != null)){
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
-            }else if (!userDOUnion.equals(userUnion)) {
+            }else if (userDOUnion != null && !userDOUnion.equals(userUnion)) {
                 //联合开发员不为空，只有传入的联合开发员不同时，传入为null，也视为不同
                 createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
             }

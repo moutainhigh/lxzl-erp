@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.changeOrder.pojo.*;
 import com.lxzl.erp.common.util.DateUtil;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -264,6 +265,44 @@ public class ChangeOrderControllerTest extends ERPUnTransactionalTest {
         ChangeOrder changeOrder = new ChangeOrder();
         changeOrder.setChangeOrderNo("LXCO-701389-20180207-00006");
         TestResult testResult = getJsonTestResult("/changeOrder/confirmChangeOrder",changeOrder);
+    }
+    @Test
+    public void updateEquipmentDiffPrice() throws Exception {
+        UpdateEquipmentPriceDiffParam updateEquipmentPriceDiffParam = new UpdateEquipmentPriceDiffParam();
+        updateEquipmentPriceDiffParam.setChangeOrderNo("LXCO-700032-20180206-00004");
+        List<ChangeOrderProductEquipment> changeOrderProductEquipmentList = new ArrayList<>();
+        changeOrderProductEquipmentList.add(createChangeOrderProductEquipment(13,200));
+        changeOrderProductEquipmentList.add(createChangeOrderProductEquipment(14,300));
+        updateEquipmentPriceDiffParam.setChangeOrderProductEquipmentList(changeOrderProductEquipmentList);
+        TestResult testResult = getJsonTestResult("/changeOrder/updateEquipmentPriceDiff", updateEquipmentPriceDiffParam);
+    }
+    @Test
+    public void updateBulkPriceDiff() throws Exception {
+        UpdateBulkPriceDiffParam updateBulkPriceDiffParam = new UpdateBulkPriceDiffParam();
+        updateBulkPriceDiffParam.setChangeOrderNo("LXCO-700032-20180206-00004");
+        List<ChangeOrderMaterialBulk> changeOrderMaterialBulkList = new ArrayList<>();
+        changeOrderMaterialBulkList.add(createChangeOrderMaterialBulk(13,200));
+        changeOrderMaterialBulkList.add(createChangeOrderMaterialBulk(14,300));
+        updateBulkPriceDiffParam.setChangeOrderMaterialBulkList(changeOrderMaterialBulkList);
+        TestResult testResult = getJsonTestResult("/changeOrder/updateBulkPriceDiff", updateBulkPriceDiffParam);
+    }
+    private ChangeOrderProductEquipment createChangeOrderProductEquipment(Integer id , double priceDiff){
+        ChangeOrderProductEquipment changeOrderProductEquipment = new ChangeOrderProductEquipment();
+        changeOrderProductEquipment.setChangeOrderProductEquipmentId(id);
+        changeOrderProductEquipment.setPriceDiff(new BigDecimal(priceDiff));
+        return changeOrderProductEquipment;
+    }
+    private ChangeOrderMaterialBulk createChangeOrderMaterialBulk(Integer id , double priceDiff){
+        ChangeOrderMaterialBulk changeOrderMaterialBulk = new ChangeOrderMaterialBulk();
+        changeOrderMaterialBulk.setChangeOrderMaterialBulkId(id);
+        changeOrderMaterialBulk.setPriceDiff(new BigDecimal(priceDiff));
+        return changeOrderMaterialBulk;
+    }
+    @Test
+    public void updateBulkDiffPrice() throws Exception {
+        ChangeOrder changeOrder = new ChangeOrder();
+        changeOrder.setChangeOrderNo("LXCO-701389-20180207-00006");
+        TestResult testResult = getJsonTestResult("/changeOrder/updateBulkDiffPrice",changeOrder);
     }
     @Test
     public void processNoChangeEquipment() throws Exception {

@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
@@ -38,7 +39,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("彭测试公司名104");
+        customerCompany.setCompanyName("彭测试公司名121");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("彭企业信息详细地址测试");
@@ -46,7 +47,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setRemark("记住这是公司的备注不是客户的备注");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
         customerCompany.setIsLegalPersonApple(1);
-        customerCompany.setAgentPersonPhone("1856632459a");
+        customerCompany.setAgentPersonPhone("18566324595");
         customerCompany.setAgentPersonNo("aaaaaaa");
         customerCompany.setAgentPersonName("woshi zhangshanaaaaaaaa");
         customerCompany.setLegalPersonPhone("12345678900");
@@ -129,6 +130,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setIsLegalPersonApple(0);
         customerCompany.setLegalPersonPhone("13866253152");
         customerCompany.setAgentPersonPhone("13866253151");
+        customerCompany.setAgentPersonName("火狐666");
+        customerCompany.setAgentPersonNo("422827199009080013");
 //        Image image1 = new Image();
 //        image1.setImgId(28);
 //        customerCompany.setBusinessLicensePictureImage(image1);

@@ -367,6 +367,10 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_START_RENT_TIME_NOT_NULL = "J400118";
     public static final String CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK = "J400119";
     public static final String CHANGE_ORDER_CAN_NOT_CONFIRM = "J400120";
+    public static final String CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_DIFF = "J400121";
+    public static final String CHANGE_ORDER_NOT_END_EQUIPMENT_DIFF_PRICE = "J400122";
+    public static final String CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE = "J400123";
+    public static final String DIFF_PRICE_ERROR = "J400124";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -466,6 +470,8 @@ public class ErrorCode {
     public static final String CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500098";
     public static final String STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE = "J500099";
     public static final String STATEMENT_ORDER_STATUS_IS_ERROR = "J500100";
+    public static final String AGENT_PERSON_NAME_NOT_NULL = "J500101";
+    public static final String AGENT_PERSON_NO_NOT_NULL = "J500102";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1013,7 +1019,10 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_START_RENT_TIME_NOT_NULL, "换货单换货时间不能为空");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_REMARK, "此时不允许修改换货备注");
         MAP.put(CHANGE_ORDER_CAN_NOT_CONFIRM, "此时不允许确认验货");
-
+        MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_UPDATE_DIFF, "此时不允许修改差价");
+        MAP.put(CHANGE_ORDER_NOT_END_EQUIPMENT_DIFF_PRICE, "设备差价没有全部填写，不可以结束");
+        MAP.put(CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE, "配件差价没有全部填写，不可以结束");
+        MAP.put(DIFF_PRICE_ERROR, "差价填写有误");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1074,6 +1083,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
         MAP.put(STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE, "批量支付结算单客户必须相同才能支付");
         MAP.put(STATEMENT_ORDER_STATUS_IS_ERROR, "批量支付结算单必须是未支付状态");
+        MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
+        MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

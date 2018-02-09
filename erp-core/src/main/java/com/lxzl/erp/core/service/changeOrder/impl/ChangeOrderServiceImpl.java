@@ -8,6 +8,8 @@ import com.lxzl.erp.common.domain.changeOrder.*;
 import com.lxzl.erp.common.domain.changeOrder.pojo.*;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductEquipment;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
@@ -32,9 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.*;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductEquipmentMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
@@ -43,9 +43,7 @@ import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -53,7 +51,6 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1176,6 +1173,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> processNoChangeEquipment(ProcessNoChangeEquipmentParam processNoChangeEquipmentParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -1251,6 +1249,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> confirmChangeOrder(String changeOrderNo) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrderNo);
@@ -1262,36 +1261,12 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_CAN_NOT_CONFIRM);
             return serviceResult;
         }
-        changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_CONFIRM);
-        changeOrderDO.setUpdateTime(new Date());
-        changeOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        changeOrderMapper.update(changeOrderDO);
 
-        serviceResult.setResult(changeOrderNo);
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> end(ChangeOrder changeOrder) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
-        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrder.getChangeOrderNo());
-        if (changeOrderDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
-            return serviceResult;
-        }
-        //不是处理中的换货单不允许结束
-        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_PROCESS.equals(changeOrderDO.getChangeOrderStatus())) {
-            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_STATUS_CAN_NOT_END);
-            return serviceResult;
-        }
-        //校验是否目标设备全部换了，有没换的不允许结束
+        //校验是否目标设备全部换了，有没换的不允许确认
         List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.findByChangeOrderNo(changeOrderDO.getChangeOrderNo());
         for (ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO : changeOrderProductEquipmentDOList) {
             if (changeOrderProductEquipmentDO.getSrcEquipmentId() == null) {
-                serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_END);
+                serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_CAN_NOT_CONFIRM);
                 return serviceResult;
             }
         }
@@ -1309,6 +1284,126 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 changeOrderMaterialBulkMapper.update(changeOrderMaterialBulkDO);
             }
         }
+        changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_CONFIRM);
+        changeOrderDO.setUpdateTime(now);
+        changeOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        changeOrderMapper.update(changeOrderDO);
+
+        serviceResult.setResult(changeOrderNo);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateEquipmentPriceDiff(UpdateEquipmentPriceDiffParam updateEquipmentPriceDiffParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(updateEquipmentPriceDiffParam.getChangeOrderNo());
+        if(changeOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.findByChangeOrderNo(changeOrderDO.getChangeOrderNo());
+        Map<Integer,ChangeOrderProductEquipmentDO> map = ListUtil.listToMap(changeOrderProductEquipmentDOList,"id");
+        List<ChangeOrderProductEquipment> changeOrderProductEquipmentList = updateEquipmentPriceDiffParam.getChangeOrderProductEquipmentList();
+        BigDecimal totalDiffPrice = changeOrderDO.getTotalPriceDiff();
+        Date now = new Date();
+        String userId = userSupport.getCurrentUserId().toString();
+        for(ChangeOrderProductEquipment changeOrderProductEquipment : changeOrderProductEquipmentList){
+            ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO = map.get(changeOrderProductEquipment.getChangeOrderProductEquipmentId());
+            if(changeOrderProductEquipmentDO==null){
+                serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return serviceResult;
+            }
+            BigDecimal oldPrice =  changeOrderProductEquipmentDO.getPriceDiff();
+            changeOrderProductEquipmentDO.setPriceDiff(changeOrderProductEquipment.getPriceDiff());
+            changeOrderProductEquipmentDO.setUpdateTime(now);
+            changeOrderProductEquipmentDO.setUpdateUser(userId);
+            changeOrderProductEquipmentMapper.update(changeOrderProductEquipmentDO);
+            totalDiffPrice = BigDecimalUtil.add(changeOrderProductEquipment.getPriceDiff(),BigDecimalUtil.sub(totalDiffPrice,oldPrice));
+        }
+        changeOrderDO.setTotalPriceDiff(totalDiffPrice);
+        changeOrderDO.setUpdateTime(now);
+        changeOrderDO.setUpdateUser(userId);
+        changeOrderMapper.update(changeOrderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateBulkPriceDiff(UpdateBulkPriceDiffParam updateBulkPriceDiffParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(updateBulkPriceDiffParam.getChangeOrderNo());
+        if(changeOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.findByChangeOrderNo(changeOrderDO.getChangeOrderNo());
+        Map<Integer,ChangeOrderMaterialBulkDO> map = ListUtil.listToMap(changeOrderMaterialBulkDOList,"id");
+        List<ChangeOrderMaterialBulk> changeOrderMaterialBulkList = updateBulkPriceDiffParam.getChangeOrderMaterialBulkList();
+        BigDecimal totalDiffPrice = changeOrderDO.getTotalPriceDiff();
+        Date now = new Date();
+        String userId = userSupport.getCurrentUserId().toString();
+        for(ChangeOrderMaterialBulk changeOrderMaterialBulk : changeOrderMaterialBulkList){
+            ChangeOrderMaterialBulkDO changeOrderMaterialBulkDO = map.get(changeOrderMaterialBulk.getChangeOrderMaterialBulkId());
+            if(changeOrderMaterialBulkDO==null){
+                serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return serviceResult;
+            }
+            BigDecimal oldPrice =  changeOrderMaterialBulkDO.getPriceDiff();
+            changeOrderMaterialBulkDO.setPriceDiff(changeOrderMaterialBulk.getPriceDiff());
+            changeOrderMaterialBulkDO.setUpdateTime(now);
+            changeOrderMaterialBulkDO.setUpdateUser(userId);
+            changeOrderMaterialBulkMapper.update(changeOrderMaterialBulkDO);
+            totalDiffPrice = BigDecimalUtil.add(changeOrderMaterialBulk.getPriceDiff(),BigDecimalUtil.sub(totalDiffPrice,oldPrice));
+        }
+        changeOrderDO.setTotalPriceDiff(totalDiffPrice);
+        changeOrderDO.setUpdateTime(now);
+        changeOrderDO.setUpdateUser(userId);
+        changeOrderMapper.update(changeOrderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> end(ChangeOrder changeOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        ChangeOrderDO changeOrderDO = changeOrderMapper.findByNo(changeOrder.getChangeOrderNo());
+        if (changeOrderDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        //不是验货完成的换货单不允许结束
+        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_CONFIRM.equals(changeOrderDO.getChangeOrderStatus())) {
+            serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_STATUS_CAN_NOT_END);
+            return serviceResult;
+        }
+        List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.findByChangeOrderNo(changeOrderDO.getChangeOrderNo());
+        List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.findByChangeOrderNo(changeOrderDO.getChangeOrderNo());
+
+        if(CollectionUtil.isNotEmpty(changeOrderProductEquipmentDOList)){
+            for(ChangeOrderProductEquipmentDO changeOrderProductEquipmentDO : changeOrderProductEquipmentDOList){
+                if(changeOrderProductEquipmentDO.getPriceDiff()==null){
+                    serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_END_EQUIPMENT_DIFF_PRICE);
+                    return serviceResult;
+                }
+            }
+        }
+        if(CollectionUtil.isNotEmpty(changeOrderMaterialBulkDOList)){
+            for(ChangeOrderMaterialBulkDO changeOrderMaterialBulkDO : changeOrderMaterialBulkDOList){
+                if(changeOrderMaterialBulkDO.getPriceDiff()==null){
+                    serviceResult.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE);
+                    return serviceResult;
+                }
+            }
+        }
+        Date now = new Date();
+
         //调用结算单接口
         ServiceResult<String, BigDecimal> statementResult = statementService.createChangeOrderStatement(changeOrderDO.getChangeOrderNo());
         if (!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())) {
@@ -1451,6 +1546,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         Integer totalCount = changeOrderProductEquipmentMapper.listCount(maps);
         List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.listPage(maps);
         List<ChangeOrderProductEquipment> changeOrderProductEquipmentList = ConverterUtil.convertList(changeOrderProductEquipmentDOList, ChangeOrderProductEquipment.class);
+
+        Map<Integer,OrderProductDO> cacheOrderProductDOMap = new HashMap<>();
         for (ChangeOrderProductEquipment changeOrderProductEquipment : changeOrderProductEquipmentList) {
             if (StringUtil.isNotEmpty(changeOrderProductEquipment.getSrcEquipmentNo())) {
                 ProductEquipmentDO srcProductEquipmentDO = productEquipmentMapper.findByEquipmentNo(changeOrderProductEquipment.getSrcEquipmentNo());
@@ -1459,6 +1556,18 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             if (StringUtil.isNotEmpty(changeOrderProductEquipment.getDestEquipmentNo())) {
                 ProductEquipmentDO destProductEquipmentDO = productEquipmentMapper.findByEquipmentNo(changeOrderProductEquipment.getDestEquipmentNo());
                 changeOrderProductEquipment.setDestProductEquipment(ConverterUtil.convert(destProductEquipmentDO, ProductEquipment.class));
+            }
+            if(StringUtil.isNotEmpty(changeOrderProductEquipment.getOrderNo())){
+                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(changeOrderProductEquipment.getOrderNo(),changeOrderProductEquipment.getSrcEquipmentNo());
+                Integer orderProductId = orderProductEquipmentDO.getOrderProductId();
+                if(!cacheOrderProductDOMap.containsKey(orderProductId)){
+                    OrderProductDO orderProductDO = orderProductMapper.findById(orderProductId);
+                    cacheOrderProductDOMap.put(orderProductId,orderProductDO);
+                }
+                OrderProductDO orderProductDO = cacheOrderProductDOMap.get(orderProductId);
+                //原配件取商品项里的新旧属性
+                changeOrderProductEquipment.getSrcProductEquipment().setIsNew(orderProductDO.getIsNewProduct());
+                changeOrderProductEquipment.setOrderProduct(ConverterUtil.convert(orderProductDO,OrderProduct.class));
             }
         }
         Page<ChangeOrderProductEquipment> page = new Page<>(changeOrderProductEquipmentList, totalCount, changeEquipmentPageParam.getPageNo(), changeEquipmentPageParam.getPageSize());
@@ -1481,6 +1590,8 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
         Integer totalCount = changeOrderMaterialBulkMapper.listCount(maps);
         List<ChangeOrderMaterialBulkDO> changeOrderMaterialBulkDOList = changeOrderMaterialBulkMapper.listPage(maps);
         List<ChangeOrderMaterialBulk> changeOrderMaterialBulkList = ConverterUtil.convertList(changeOrderMaterialBulkDOList, ChangeOrderMaterialBulk.class);
+
+        Map<Integer,OrderMaterialDO> cacheOrderMaterialDOMap = new HashMap<>();
         for (ChangeOrderMaterialBulk changeOrderMaterialBulk : changeOrderMaterialBulkList) {
             if (StringUtil.isNotEmpty(changeOrderMaterialBulk.getSrcBulkMaterialNo())) {
                 BulkMaterialDO srcBulkMaterialDO = bulkMaterialMapper.findByNo(changeOrderMaterialBulk.getSrcBulkMaterialNo());
@@ -1489,6 +1600,18 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             if (StringUtil.isNotEmpty(changeOrderMaterialBulk.getDestBulkMaterialNo())) {
                 BulkMaterialDO destBulkMaterialDO = bulkMaterialMapper.findByNo(changeOrderMaterialBulk.getDestBulkMaterialNo());
                 changeOrderMaterialBulk.setDestBulkMaterial(ConverterUtil.convert(destBulkMaterialDO, BulkMaterial.class));
+            }
+            if(StringUtil.isNotEmpty(changeOrderMaterialBulk.getOrderNo())){
+                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(changeOrderMaterialBulk.getOrderNo(),changeOrderMaterialBulk.getSrcBulkMaterialNo());
+                Integer orderMaterialId = orderMaterialBulkDO.getOrderMaterialId();
+                if(!cacheOrderMaterialDOMap.containsKey(orderMaterialId)){
+                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialId);
+                    cacheOrderMaterialDOMap.put(orderMaterialId,orderMaterialDO);
+                }
+                OrderMaterialDO orderMaterialDO = cacheOrderMaterialDOMap.get(orderMaterialId);
+                //原配件取商品项里的新旧属性
+                changeOrderMaterialBulk.getSrcBulkMaterial().setIsNew(orderMaterialDO.getIsNewMaterial());
+                changeOrderMaterialBulk.setOrderMaterial(ConverterUtil.convert(orderMaterialDO,OrderMaterial.class));
             }
         }
         Page<ChangeOrderMaterialBulk> page = new Page<>(changeOrderMaterialBulkList, totalCount, changeBulkPageParam.getPageNo(), changeBulkPageParam.getPageSize());
@@ -1727,8 +1850,6 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     @Autowired
     private ProductMapper productMapper;
     @Autowired
-    private OrderProductEquipmentMapper orderProductEquipmentMapper;
-    @Autowired
     private OrderProductMapper orderProductMapper;
     @Autowired
     private StatementService statementService;
@@ -1742,4 +1863,10 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
     private UserMapper userMapper;
     @Autowired
     private WarehouseSupport warehouseSupport;
+    @Autowired
+    private OrderProductEquipmentMapper orderProductEquipmentMapper;
+    @Autowired
+    private OrderMaterialBulkMapper orderMaterialBulkMapper;
+    @Autowired
+    private OrderMaterialMapper orderMaterialMapper;
 }
