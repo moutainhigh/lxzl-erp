@@ -69,7 +69,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void queryLongRentByTime() throws Exception {
         HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
-        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
+        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_MONTH);
         TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
     }
 
