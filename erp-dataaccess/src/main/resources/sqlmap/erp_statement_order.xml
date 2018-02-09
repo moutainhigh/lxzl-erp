@@ -492,6 +492,7 @@
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
+			<include refid="permission_sql.month_statement_order_control"/>
 		</where>
 		GROUP BY eso.customer_id) test
 
@@ -541,6 +542,7 @@
 			<if test="maps.isQueryAll == null">
 				and eso.data_status = 1
 			</if>
+			<include refid="permission_sql.month_statement_order_control"/>
 		</where>
 		GROUP BY eso.customer_id
 		LIMIT #{maps.start},#{maps.pageSize}

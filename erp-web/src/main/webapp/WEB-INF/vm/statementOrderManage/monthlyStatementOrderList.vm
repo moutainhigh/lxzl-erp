@@ -69,15 +69,14 @@
                                 {{/hasCommonActionButtons}}
                                 <th>客户编码</th>
                                 <th>客户</th>
-                                <th>结算单金额</th>
-                                <th>其它费用(运费等)</th>
-                                <th>押金金额</th>
-                                <th>结算单已付金额</th>
-                                <th>其它已付金额</th>
-                                <th>已付押金金额</th>
-                                <th>退还押金金额</th>
+                                <th>租金押金金额</th>
+                                <th>对账单押金金额</th>
+                                <th>对账单租金金额</th>
                                 <th>逾期金额</th>
-                                <th>结算单冲正金额</th>
+                                <th>其它费用（运费等）</th>
+                                <th>冲正金额</th>
+                                <th>对账单金额</th>
+                                <th>已支付金额</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -97,15 +96,14 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{customerNo}}</td>
                                 <td>{{customerName}}</td>
-                                <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{statementOhterAmount}}{{/price}}</td>
+                                <td>￥{{#price}}{{statementRentDepositAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{statementDepositAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{statementOtherPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{statementDepositPaidAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{statementDepositReturnAmount}}{{/price}}</td>
+                                <td>￥{{#price}}{{statementRentAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{statementOverdueAmount}}{{/price}}</td>
-                                <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
+                                <td>￥{{#price}}{{statementOtherAmount}}{{/price}}</td>
+                                <td>-￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
+                                <td>￥{{#price}}{{statementAmount}}{{/price}}</td>
+                                <td class="text-danger">￥{{#price}}{{statementPaidAmount}}{{/price}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">

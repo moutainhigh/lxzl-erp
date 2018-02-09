@@ -1458,6 +1458,8 @@ public class StatementServiceImpl implements StatementService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        
         Integer totalCount = statementOrderMapper.listMonthCount(maps);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listMonthPage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
