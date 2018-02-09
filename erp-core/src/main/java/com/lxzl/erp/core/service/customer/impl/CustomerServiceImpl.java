@@ -86,6 +86,14 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE);
                 return serviceResult;
             }
+            if(customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPersonNo())){
+                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
+                return serviceResult;
+            }
+            if(customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPerson())){
+                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
+                return serviceResult;
+            }
         }
 
         if(customerCompany.getIsLegalPersonApple() == 1){
@@ -240,17 +248,34 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCompany customerCompany = customer.getCustomerCompany();
 
         //校验法人手机号,经办人电话,紧急联系人手机号
-        if(customer.getCustomerCompany().getIsLegalPersonApple() == 0){
-            if(customer.getCustomerCompany().getLegalPersonPhone().equals(customer.getCustomerCompany().getAgentPersonPhone()) ){
+        if(CommonConstant.COMMON_CONSTANT_NO.equals(customerCompany.getIsLegalPersonApple())){
+            if(customerCompany.getLegalPersonPhone() != null && customerCompany.getLegalPersonPhone() != ""){
+                String regExp = "^1[0-9]{10}$";
+                Pattern pattern = Pattern.compile(regExp);
+                Matcher matcher = pattern.matcher(customerCompany.getLegalPersonPhone());
+                if(!matcher.matches() || customerCompany.getLegalPersonPhone().length()!= 11){
+                    serviceResult.setErrorCode(ErrorCode.PHONE_ERROR);
+                    return serviceResult;
+                }
+            }
+            if(customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone()) ){
                 serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
                 return serviceResult;
             }
-            if(customer.getCustomerCompany().getAgentPersonPhone().equals(customer.getCustomerCompany().getConnectPhone())){
+            if(customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())){
                 serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
                 return serviceResult;
             }
-            if(customer.getCustomerCompany().getConnectPhone().equals(customer.getCustomerCompany().getLegalPersonPhone())){
+            if(customerCompany.getConnectPhone().equals(customerCompany.getLegalPersonPhone())){
                 serviceResult.setErrorCode(ErrorCode.CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE);
+                return serviceResult;
+            }
+            if(customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPersonNo())){
+                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
+                return serviceResult;
+            }
+            if(customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPerson())){
+                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
                 return serviceResult;
             }
         }

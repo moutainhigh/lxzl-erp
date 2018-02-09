@@ -14,4 +14,6 @@ public interface K3MappingMaterialTypeMapper extends BaseMysqlDAO<K3MappingMater
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	K3MappingMaterialTypeDO findByErpCode(@Param("erpCode") String erpCode);
+
+    String findMaterialTypeIdByK3MaterialTypeCode(@Param("k3MaterialTypeCode")String k3MaterialTypeCode);
 }

@@ -199,4 +199,8 @@
         LIMIT #{maps.start},#{maps.pageSize}
         ORDER BY mo.create_time DESC
     </select>
+
+    <select id="findOrderProductByName" resultMap="OrderProductDO" parameterType="java.lang.String">
+        SELECT <include refid="set_column_sql"/> FROM erp_order_product WHERE product_name = #{productName} AND data_status = 1
+    </select>
 </mapper>

@@ -252,4 +252,8 @@
         SELECT #{userId} FROM dual
         ) a LEFT JOIN erp_user u ON a.user_id = u.id WHERE id IS NOT NULL
     </select>
+    <select id="findByUserRealName" parameterType="java.lang.String" resultMap="userResult">
+        SELECT <include refid="columnList" /> FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR} AND u.is_disabled = 0
+    </select>
+
 </mapper>

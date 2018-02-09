@@ -41,7 +41,7 @@
 
 	<select id="findStatementOrderIdAndItemId" resultMap="StatementOrderCorrectDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
-		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.data_status = 1 and statement_order_correct_status = 2
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.data_status = 1 and esoc.statement_order_correct_status = 2
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -111,7 +111,7 @@
 				statement_correct_rent_amount = #{statementCorrectRentAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="statementCorrectRentDepositAmount != null">
-				statement_correct_rent_depost_amount = #{statementCorrectRentDepositAmount,jdbcType=DECIMAL},
+				statement_correct_rent_deposit_amount = #{statementCorrectRentDepositAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="statementCorrectDepositAmount != null">
 				statement_correct_deposit_amount = #{statementCorrectDepositAmount,jdbcType=DECIMAL},

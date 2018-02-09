@@ -379,4 +379,8 @@
 	<select id="findMaterialIdCount" resultType="java.lang.Integer">
 		SELECT COUNT(*) FROM erp_material WHERE id = #{materialId}
 	</select>
+
+	<select id="findMaterialByName" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT material_no FROM erp_material WHERE material_name = #{materialName} AND data_status = 1
+	</select>
 </mapper>

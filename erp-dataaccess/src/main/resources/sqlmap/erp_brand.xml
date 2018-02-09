@@ -106,4 +106,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.basic.BrandDO">
 		UPDATE erp_brand <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findBrandIdByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT eb.id FROM erp_brand eb WHERE  eb.brand_name = #{brandName,jdbcType=VARCHAR}
+	</select>
+
 </mapper>

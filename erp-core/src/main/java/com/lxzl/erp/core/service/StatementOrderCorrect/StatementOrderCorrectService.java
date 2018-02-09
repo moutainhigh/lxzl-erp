@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.StatementOrderCorrect;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.core.service.VerifyReceiver;
@@ -27,7 +28,7 @@ public interface StatementOrderCorrectService extends VerifyReceiver {
      * @param : statementOrderCorrect
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> commitStatementOrderCorrect(StatementOrderCorrect statementOrderCorrect);
+    ServiceResult<String,String> commitStatementOrderCorrect(StatementOrderCorrectParam statementOrderCorrectParam);
     /**
     * 修改冲正单
     * @Author : XiaoLuYu

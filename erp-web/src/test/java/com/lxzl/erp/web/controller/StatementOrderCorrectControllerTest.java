@@ -29,7 +29,7 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     public void commitStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
         statementOrderCorrect.setStatementCorrectNo("LXSOC-24-20180202-00007");
-        statementOrderCorrect.setVerifyUserId(500030);
+//        statementOrderCorrect.setVerifyUserId(500030);
         statementOrderCorrect.setRemark("aaaaaaa");
         TestResult testResult = getJsonTestResult("/correct/commit", statementOrderCorrect);
     }

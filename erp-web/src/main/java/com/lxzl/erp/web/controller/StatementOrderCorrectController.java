@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
@@ -52,8 +53,8 @@ public class StatementOrderCorrectController {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     @RequestMapping(value = "commit",method = RequestMethod.POST)
-    public Result commitStatementOrderCorrect(@RequestBody @Validated(CommitGroup.class) StatementOrderCorrect statementOrderCorrect, BindingResult bindingResult){
-        ServiceResult<String,String> serviceResult = statementOrderCorrectService.commitStatementOrderCorrect(statementOrderCorrect);
+    public Result commitStatementOrderCorrect(@RequestBody @Validated(CommitGroup.class) StatementOrderCorrectParam statementOrderCorrectParam, BindingResult bindingResult){
+        ServiceResult<String,String> serviceResult = statementOrderCorrectService.commitStatementOrderCorrect(statementOrderCorrectParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 

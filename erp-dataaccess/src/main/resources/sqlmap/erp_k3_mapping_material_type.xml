@@ -53,4 +53,8 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialTypeDO">
 		UPDATE erp_k3_mapping_material_type <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findMaterialTypeIdByK3MaterialTypeCode" resultType="String" parameterType="java.lang.String">
+		SELECT ekmmt.erp_material_type_code FROM erp_k3_mapping_material_type ekmmt WHERE ekmmt.k3_material_type_code = #{k3MaterialTypeCode,jdbcType=VARCHAR}
+	</select>
 </mapper>

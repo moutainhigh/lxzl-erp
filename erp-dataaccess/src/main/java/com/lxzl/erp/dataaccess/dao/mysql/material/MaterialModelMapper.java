@@ -16,4 +16,6 @@ public interface MaterialModelMapper extends BaseMysqlDAO<MaterialModelDO> {
 
     MaterialModelDO findByTypeAndName(@Param("materialType") Integer materialType,
                                       @Param("modelName") String modelName);
+
+    Integer findMaterialModeIdlByModelName(@Param("modelName") String modelName);
 }

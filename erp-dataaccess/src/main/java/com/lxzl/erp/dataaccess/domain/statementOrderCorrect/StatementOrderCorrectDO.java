@@ -1,11 +1,13 @@
 package com.lxzl.erp.dataaccess.domain.statementOrderCorrect;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import java.util.Date;
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderCorrectDO  extends BaseDO {
 
 	private Integer id;

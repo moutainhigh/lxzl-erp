@@ -2,9 +2,7 @@ package com.lxzl.erp.common.domain.statementOrderCorrect.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.BaseCommitParam;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.CancelGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
@@ -17,21 +15,25 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatementOrderCorrect extends BaseCommitParam {
+public class StatementOrderCorrect extends BasePO {
 
 	private Integer statementOrderCorrectId;   //唯一标识
 	@NotNull(message = ErrorCode.STATEMENT_ORDER_CORRECT_NO_NOT_NULL , groups = {CommitGroup.class, UpdateGroup.class,CancelGroup.class,QueryGroup.class})
 	private String statementCorrectNo;   //冲正单号
 	private Integer statementOrderId;   //结算单ID
-	@Min(value = 1, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
-	@NotNull(message = ErrorCode.STATEMENT_ORDER_CORRECT_AMOUNT_NOT_NULL , groups = {AddGroup.class, UpdateGroup.class})
+	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectAmount;   //冲正金额
+	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectRentAmount;
+	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectRentDepositAmount;
+	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectDepositAmount;
+	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectOtherAmount;
+	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectOverdueAmount;
-	@NotNull(message = ErrorCode.STATEMENT_ORDER_DETAIL_ID_NOT_NULL , groups = {AddGroup.class, UpdateGroup.class})
+	@NotNull(message = ErrorCode.STATEMENT_ORDER_DETAIL_ID_NOT_NULL , groups = {AddGroup.class})
 	private Integer statementOrderItemId;   //结算单订单项ID
 	private String statementCorrectReason;   //冲正原因
 	private Integer statementOrderCorrectStatus;   //结算冲正单状态，0-待提交，1-审核中，2-审核通过（待冲正），3-冲正成功，4-冲正失败，5-取消冲正
