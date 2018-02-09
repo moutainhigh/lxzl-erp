@@ -20,6 +20,7 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Integer city;
 	private Integer district;
 	private String address;
+	private Integer defaultAddressReferId; //默认地址关联ID
 	private String legalPerson;
 	private String legalPersonNo;
 	private String businessLicenseNo;
@@ -348,4 +349,11 @@ public class CustomerCompanyDO  extends BaseDO {
 		this.affiliatedEnterprise = affiliatedEnterprise;
 	}
 
+	public Integer getDefaultAddressReferId() {
+		return defaultAddressReferId;
+	}
+
+	public void setDefaultAddressReferId(Integer defaultAddressReferId) {
+		this.defaultAddressReferId = defaultAddressReferId;
+	}
 }
