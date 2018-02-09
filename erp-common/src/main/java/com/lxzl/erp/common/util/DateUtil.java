@@ -149,11 +149,11 @@ public class DateUtil {
     }
 
     /**
-     * 获取某月第一天
+     * 获取当前月的偏移月
      * @param offset 0-当月，1-下月，-1 上月，依次类推
      * @return
      */
-    public static Date getMonthByOffset(Integer offset) {
+    public static Date getMonthByCurrentOffset(Integer offset) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         // 获取前月的第一天
         Calendar cale = Calendar.getInstance();
@@ -168,15 +168,60 @@ public class DateUtil {
         }
         return date;
     }
+
     /**
-     * 获取某天
-     * @param offset 0-当天，1-明天，-1 昨天，依次类推
+     * 获取某月的偏移月
+     * @param month 基准月
+     * @param offset 0-当月，1-下月，-1 上月，依次类推
      * @return
      */
-    public static Date getDayByOffset(Integer offset) {
+    public static Date getMonthByOffset(Date month , Integer offset) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         // 获取前月的第一天
         Calendar cale = Calendar.getInstance();
+        cale.setTime(month);
+        cale.add(Calendar.MONTH, offset);
+        cale.set(Calendar.DAY_OF_MONTH, 1);
+        String day = format.format(cale.getTime());
+        Date date = null;
+        try {
+            date = format.parse(day);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+    /**
+     * 获取当前日期的偏移日
+     * @param offset 0-当天，1-明天，-1 昨天，依次类推
+     * @return
+     */
+    public static Date getDayByCurrentOffset(Integer offset) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        // 获取前月的第一天
+        Calendar cale = Calendar.getInstance();
+        cale.add(Calendar.DAY_OF_MONTH, offset);
+        String day = format.format(cale.getTime());
+        Date date = null;
+        try {
+            date = format.parse(day);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    /**
+     * 获取某日期的偏移日
+     * @param baseDate 基准日期
+     * @param offset 0-当天，1-明天，-1 昨天，依次类推
+     * @return
+     */
+    public static Date getDayByOffset(Date baseDate , Integer offset) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        // 获取前月的第一天
+        Calendar cale = Calendar.getInstance();
+        cale.setTime(baseDate);
         cale.add(Calendar.DAY_OF_MONTH, offset);
         String day = format.format(cale.getTime());
         Date date = null;
@@ -237,10 +282,10 @@ public class DateUtil {
      */
     public static List<Date> getCurrentYearNoPassedMonth(){
         List<Date> dateList = new ArrayList<>();
-        Date currentMonth = getMonthByOffset(0);
+        Date currentMonth = getMonthByCurrentOffset(0);
         Calendar thisMonth = Calendar.getInstance();
         thisMonth.setTime(currentMonth);
-        Date nextMonth = getMonthByOffset(1);
+        Date nextMonth = getMonthByCurrentOffset(1);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(nextMonth);
         while (thisMonth.get(Calendar.YEAR)==calendar.get(Calendar.YEAR)){
@@ -254,7 +299,7 @@ public class DateUtil {
      * @return Date
      */
     public static List<Date> getCurrentMonthPassedDay(){
-        Date monthFirstDay = getMonthByOffset(0);
+        Date monthFirstDay = getMonthByCurrentOffset(0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(monthFirstDay);
         List<Date> dateList = new ArrayList<>();
@@ -275,11 +320,11 @@ public class DateUtil {
     public static List<Date> getCurrentMonthNoPassedDay(){
 
         List<Date> dateList = new ArrayList<>();
-        Date currentDay = getDayByOffset(0);
+        Date currentDay = getDayByCurrentOffset(0);
         Calendar thisDay = Calendar.getInstance();
         thisDay.setTime(currentDay);
         Calendar nextDay = Calendar.getInstance();
-        Date next = getDayByOffset(1);
+        Date next = getDayByCurrentOffset(1);
         nextDay.setTime(next);
         while (thisDay.get(Calendar.MONTH)==nextDay.get(Calendar.MONTH)){
             dateList.add(nextDay.getTime());
