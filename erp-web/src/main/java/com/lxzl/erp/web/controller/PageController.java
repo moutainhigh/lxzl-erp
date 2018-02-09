@@ -670,6 +670,10 @@ public class PageController extends BaseController {
     public String changeOrderCompleteInput() {
         return "/component/changeOrder/completeInput";
     }
+    @RequestMapping("/change-order/equipment-remark-modal")
+    public String changeOrderEquipmentRemarkModal() {
+        return "/component/changeOrder/equipmentRemark";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")

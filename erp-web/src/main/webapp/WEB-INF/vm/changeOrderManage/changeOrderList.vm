@@ -153,11 +153,23 @@
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
-                                    <div class="btn-group text-right">
-                                        {{#rowActionButtons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{changeOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{changeOrderNo}}">{{text}}</a>
-                                        {{/rowActionButtons}}
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            {{#rowActionButtons}}
+                                            <li>
+                                                <a href="${ctx}{{menuUrl}}?no={{changeOrderNo}}" type="button" class="{{class}}" data-no="{{changeOrderNo}}">{{text}}</a>
+                                            </li>
+                                            {{/rowActionButtons}}
+                                        </ul>
                                     </div>
+
+
+##                                    <div class="btn-group text-right">
+##                                        {{#rowActionButtons}}
+##                                        <a href="${ctx}{{menuUrl}}?no={{changeOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{changeOrderNo}}">{{text}}</a>
+##                                        {{/rowActionButtons}}
+##                                    </div>
                                 </td>
                                 {{/hasRowActionButtons}}
                             </tr>
