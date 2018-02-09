@@ -592,27 +592,27 @@ public class StatementServiceImpl implements StatementService {
 
         Integer customerId = null;
         List<StatementOrderDO> newStatementOrderDO = new ArrayList<>();
-        for(int i = 0;i<param.size();i++){
+        for (int i = 0; i < param.size(); i++) {
             StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(param.get(i).getStatementOrderNo());
             if (statementOrderDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
-            if(statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT && statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART){
+            if (statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT && statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART) {
                 result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_ERROR);
                 return result;
             }
-            if(customerId == null){
+            if (customerId == null) {
                 customerId = statementOrderDO.getCustomerId();
             }
-            if(!customerId.equals(statementOrderDO.getCustomerId())){
+            if (!customerId.equals(statementOrderDO.getCustomerId())) {
                 result.setErrorCode(ErrorCode.STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE);
                 return result;
             }
             newStatementOrderDO.add(statementOrderDO);
         }
 
-        Collections.sort(newStatementOrderDO, new Comparator<StatementOrderDO>(){
+        Collections.sort(newStatementOrderDO, new Comparator<StatementOrderDO>() {
             @Override
             public int compare(StatementOrderDO o1, StatementOrderDO o2) {
                 Date dt1 = o1.getStatementExpectPayTime();
@@ -628,12 +628,12 @@ public class StatementServiceImpl implements StatementService {
         });
 
         List<String> data = new ArrayList<>();
-        for(int i=0;i<newStatementOrderDO.size();i++){
+        for (int i = 0; i < newStatementOrderDO.size(); i++) {
             ServiceResult<String, Boolean> pay = payStatementOrder(newStatementOrderDO.get(i).getStatementOrderNo());
-            if(ErrorCode.SUCCESS.equals(pay.getErrorCode())){
-                data.add(i,newStatementOrderDO.get(i).getStatementOrderNo()+ "：支付" + ErrorCode.getMessage(ErrorCode.SUCCESS));
-            }else {
-                data.add(i,newStatementOrderDO.get(i).getStatementOrderNo()+ "：支付失败:" + ErrorCode.getMessage(pay.getErrorCode()));
+            if (ErrorCode.SUCCESS.equals(pay.getErrorCode())) {
+                data.add(i, newStatementOrderDO.get(i).getStatementOrderNo() + "：支付" + ErrorCode.getMessage(ErrorCode.SUCCESS));
+            } else {
+                data.add(i, newStatementOrderDO.get(i).getStatementOrderNo() + "：支付失败:" + ErrorCode.getMessage(pay.getErrorCode()));
                 break;
             }
         }
@@ -957,11 +957,6 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByReturnOrderId(returnOrderDO.getId());
-        if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
-            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
-            return result;
-        }
 
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
@@ -1038,12 +1033,12 @@ public class StatementServiceImpl implements StatementService {
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
                             if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
                                     needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductEquipmentDO.getProductEquipmentUnitAmount());
                                 }
                             } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProductDO.getPayMode())) {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
                                     BigDecimal firstAmount = BigDecimalUtil.div(BigDecimalUtil.mul(orderProductDO.getProductAmount(), new BigDecimal(0.3)), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
                                     // 30%期
                                     if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
@@ -1061,7 +1056,7 @@ public class StatementServiceImpl implements StatementService {
                                 }
                             } else {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
                                     int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
                                     needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(orderProductEquipmentDO.getProductEquipmentUnitAmount(), new BigDecimal(surplusDays)) : needPayAmount;
                                 }
@@ -1154,12 +1149,12 @@ public class StatementServiceImpl implements StatementService {
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
                             if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
                                     needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderMaterialBulkDO.getMaterialBulkUnitAmount());
                                 }
                             } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterialDO.getPayMode())) {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
                                     BigDecimal firstAmount = BigDecimalUtil.div(BigDecimalUtil.mul(orderMaterialDO.getMaterialAmount(), new BigDecimal(0.3)), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE);
                                     // 30%期
                                     if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
@@ -1177,7 +1172,7 @@ public class StatementServiceImpl implements StatementService {
                                 }
                             } else {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (!DateUtil.isSameDay(returnTime, statementDetailStartTime) && returnTime.getTime() > statementDetailStartTime.getTime()) {
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
                                     int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
                                     needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(orderMaterialBulkDO.getMaterialBulkUnitAmount(), new BigDecimal(surplusDays)) : needPayAmount;
                                 }
@@ -1455,7 +1450,7 @@ public class StatementServiceImpl implements StatementService {
     public ServiceResult<String, Page<StatementOrder>> queryStatementOrderCheckParam(StatementOrderMonthQueryParam statementOrderMonthQueryParam) {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
 
-        if(statementOrderMonthQueryParam.getMonthTime() == null){
+        if (statementOrderMonthQueryParam.getMonthTime() == null) {
             statementOrderMonthQueryParam.setMonthTime(new Date());
         }
         PageQuery pageQuery = new PageQuery(statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
@@ -1469,7 +1464,7 @@ public class StatementServiceImpl implements StatementService {
         Page<StatementOrder> page = new Page<>(statementOrderList, totalCount, statementOrderMonthQueryParam.getPageNo(), statementOrderMonthQueryParam.getPageSize());
 
         List<StatementOrder> newList = new ArrayList<>();
-        for(int i=0;i<page.getItemList().size();i++){
+        for (int i = 0; i < page.getItemList().size(); i++) {
             StatementOrder statementOrder = page.getItemList().get(i);
             statementOrder.setMonthTime(statementOrderMonthQueryParam.getMonthTime());
             newList.add(statementOrder);
@@ -1501,9 +1496,9 @@ public class StatementServiceImpl implements StatementService {
         StatementOrderDO statementOrderDO = statementOrderDOList.get(0);
         List<StatementOrderDetailDO> statementOrderDetailDOList = new ArrayList<>();
         StatementOrderDetailDO statementOrderDetailDO = new StatementOrderDetailDO();
-        for(int i=0;i<statementOrderDOList.size();i++){
-            List<StatementOrderDetailDO>  list = statementOrderDOList.get(i).getStatementOrderDetailDOList();
-            for(int j=0;j<list.size();j++){
+        for (int i = 0; i < statementOrderDOList.size(); i++) {
+            List<StatementOrderDetailDO> list = statementOrderDOList.get(i).getStatementOrderDetailDOList();
+            for (int j = 0; j < list.size(); j++) {
                 statementOrderDetailDO = list.get(j);
             }
             statementOrderDetailDOList.add(statementOrderDetailDO);
@@ -1582,7 +1577,7 @@ public class StatementServiceImpl implements StatementService {
                 }
 
                 // 以下均为逾期处理，overdueDays 为逾期天数，开始算逾期。
-                BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(0.003)), new BigDecimal(overdueDays));
+                BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(0.003)), new BigDecimal(overdueDays)).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_CEILING);
                 statementOrderDetailDO.setStatementDetailOverdueAmount(detailOverdueAmount);
                 statementOrderDetailDO.setStatementDetailOverdueDays(overdueDays);
                 statementOrderDetailDO.setStatementDetailOverduePhaseCount(statementOrderOverduePhaseCount);
@@ -1592,7 +1587,7 @@ public class StatementServiceImpl implements StatementService {
             }
 
             BigDecimal originalOverdueAmount = statementOrderDO.getStatementOverdueAmount();
-            BigDecimal nowOverdueAmount = BigDecimalUtil.add(totalOverdueAmount,statementOrderDO.getStatementOverduePaidAmount());
+            BigDecimal nowOverdueAmount = BigDecimalUtil.add(totalOverdueAmount, statementOrderDO.getStatementOverduePaidAmount());
             statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), nowOverdueAmount), originalOverdueAmount));
             statementOrderDO.setStatementOverdueAmount(nowOverdueAmount);
             statementOrderMapper.update(statementOrderDO);
