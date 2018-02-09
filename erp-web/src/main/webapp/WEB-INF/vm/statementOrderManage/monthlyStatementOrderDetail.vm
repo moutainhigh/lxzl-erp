@@ -21,6 +21,7 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-md-4">
+                                        <h5>客户姓名：<small id="customerName"></small></h5>
                                         <h5>客户编号：<small id="customerNo"></small></h5>
                                     </div>
                                     <div class="col-md-8 text-right">
@@ -43,32 +44,15 @@
                             <script type="text/html" id="orderBaseInfoTpl">
                                 {{#order}}
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 col-md-offset-8">
                                         <dl class="dl-horizontal">
-                                            <dt>客户姓名：</dt><dd class="mb5">{{customerName}}</dd>
-                                            <dt>结算单总金额：</dt><dd class="mb5">{{statementAmount}}</dd>
-                                            <dt>结算单已付金额：</dt><dd class="mb5">{{statementPaidAmount}}</dd>
-                                            <dt>其它费用：</dt><dd class="mb5">{{statementOhterAmount}}</dd>
-                                            <dt>其它已付金额：</dt><dd class="mb5">{{statementOtherPaidAmount}}</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <dl class="dl-horizontal">
-                                            <dt>租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>已付租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>退还租金押金：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositReturnAmount}}{{/price}}&nbsp;</dd>
-
-                                            <dt>结算押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>已付押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>退还押金：</dt><dd class="mb5">￥{{#price}}{{statementDepositReturnAmount}}{{/price}}&nbsp;</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <dl class="dl-horizontal">
-                                            <dt>结算单租金：</dt><dd class="mb5">￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>已付租金：</dt><dd class="mb5">￥{{#price}}{{statementRentPaidAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>逾期金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
-                                            <dt>结算单冲正金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementCorrectAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>结算单金额：</dt><dd class="mb5">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>租金押金金额：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>结算押金金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>结算单租金金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>逾期金额：</dt><dd class="mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>其它费用：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOtherAmount}}{{/price}}&nbsp;</dd>
+                                            <dt>已支付金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementPaidAmount}}{{/price}}&nbsp;</dd>
                                         </dl>
                                     </div>
                                 </div>
@@ -87,18 +71,19 @@
                                             <th>订单编号</th>
                                             <th>订单项类型</th>
                                             <th>商品名</th>
-                                            <th>商品数量</th>
+                                            <th>数量</th>
                                             <th>单价</th>
                                             <th>租赁方式</th>
                                             <th>期数</th>
                                             <th>结算单金额</th>
-                                            <th>预计支付时间</th>
-                                            <th>已付金额</th>
-                                            <th>结算支付时间</th>
+                                            <th>结算单租金</th>
+                                            <th>租金押金</th>
+                                            <th>结算押金</th>
                                             <th>逾期金额</th>
-                                            <th>退还租金押金</th>
-                                            <th>退还押金</th>
+                                            <th>其它费用</th>
+                                            <th>已付金额</th>
                                             <th>状态</th>
+                                            <th>结算支付时间</th>
                                             <th class="text-right">结算时间</th>
                                         </tr>
                                         </thead>
@@ -120,19 +105,14 @@
                                             <td>{{itemRentTypeValue}}</td>
                                             <td>{{statementDetailPhase}}</td>
                                             <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
-                                            <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-                                            <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
-                                            <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
+                                            <td>￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
                                             <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
-                                            <td>
-                                                <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
-                                                <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
-                                            </td>
-                                            <td>
-                                                <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
-                                                <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
-                                            </td>
+                                            <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
                                             <td>{{statementDetailStatusValue}}</td>
+                                            <td>{{#clockShorTime}}{{statementDetailPaidTime}}{{/clockShorTime}}</td>
                                             <td>
                                                 <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                                 <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
