@@ -46,6 +46,7 @@
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
                                         <dt>状态：</dt><dd class="mb5">{{statementOrderStatusValue}}&nbsp;</dd>
+                                        <dt>业务员：</dt><dd class="mb5">{{ownerName}}</dd>
                                         <dt>客户名：</dt><dd class="mb5">{{customerName}}</dd>
                                         <dt>预计支付时间：</dt><dd class="mb5">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</dd>
                                         <dt>实际支付时间：</dt><dd class="mb5">{{#time}}{{statementPaidTime}}{{/time}}</dd>
