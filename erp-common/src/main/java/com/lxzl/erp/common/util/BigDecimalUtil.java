@@ -7,6 +7,9 @@ public class BigDecimalUtil {
     public static final int SCALE = 5;
     public static final int STANDARD_SCALE = 2;
 
+
+    public static final BigDecimal MONEY_PRECISION = new BigDecimal(0.005);
+
     /**
      * 提供精确加法计算的add方法
      *
@@ -199,6 +202,19 @@ public class BigDecimalUtil {
     }
 
     public static int compare(BigDecimal value1, BigDecimal value2) {
+        value1 = value1 == null ? BigDecimal.ZERO : value1.setScale(BigDecimalUtil.SCALE, BigDecimal.ROUND_HALF_UP);
+        value2 = value2 == null ? BigDecimal.ZERO : value2.setScale(BigDecimalUtil.SCALE, BigDecimal.ROUND_HALF_UP);
         return value1.compareTo(value2);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(compare(new BigDecimal(18.01000001), new BigDecimal(18.01)));
+        System.out.println(compare(new BigDecimal(18.02000001), new BigDecimal(18.01)));
+        System.out.println(compare(new BigDecimal(18.00000001), new BigDecimal(18.01)));
+
+
+        System.out.println(compare(new BigDecimal(18.01), new BigDecimal(18.01000001)));
+        System.out.println(compare(new BigDecimal(18.01), new BigDecimal(18.02000001)));
+        System.out.println(compare(new BigDecimal(18.01), new BigDecimal(18.00000001)));
     }
 }

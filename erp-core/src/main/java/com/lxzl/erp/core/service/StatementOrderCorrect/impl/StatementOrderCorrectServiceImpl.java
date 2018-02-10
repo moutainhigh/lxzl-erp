@@ -182,7 +182,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             return serviceResult;
         }
         //校验结算单和冲正金额是否超出结算金额
-        ServiceResult<String, String> verifyServiceResult = verify(ConverterUtil.convert(dbStatementOrderCorrectDO,StatementOrderCorrect.class));
+        ServiceResult<String, String> verifyServiceResult = verify(ConverterUtil.convert(dbStatementOrderCorrectDO, StatementOrderCorrect.class));
         if (!ErrorCode.SUCCESS.equals(verifyServiceResult.getErrorCode())) {
             return verifyServiceResult;
         }
@@ -328,28 +328,36 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             if (BigDecimalUtil.compare(statementCorrectAmount, BigDecimal.ZERO) < 0) {
                 return false;
             }
+
+            //判断每次跟新是否超出
+            ServiceResult<String, String> result = commitVerify(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
+            if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                return false;
+            }
+            String rentTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+            String rentDepositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+            String depositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+            String otherTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OTHER + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+            String overdueTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrectDO.getStatementOrderItemId();
+            Map<String, BigDecimal> itemTypeAmountMap = getAllStatementOrderCorrectAmountMap(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
+
             //需要冲正的数据
-            BigDecimal statementCorrectRentDepositAmount = statementOrderCorrectDO.getStatementCorrectRentDepositAmount();
-            BigDecimal statementCorrectDepositAmount = statementOrderCorrectDO.getStatementCorrectDepositAmount();
-            BigDecimal statementCorrectRentAmount = statementOrderCorrectDO.getStatementCorrectRentAmount();
-            BigDecimal statementCorrectOverdueAmount = statementOrderCorrectDO.getStatementCorrectOverdueAmount();
-            BigDecimal statementCorrectOtherAmount = statementOrderCorrectDO.getStatementCorrectOtherAmount();
-            //多余的逾期金额
-            BigDecimal lastStatementDetailOverdueAmount = new BigDecimal(0);
+            BigDecimal statementCorrectRentDepositAmount = itemTypeAmountMap.get(rentDepositTypeAmountKey);
+            BigDecimal statementCorrectDepositAmount = itemTypeAmountMap.get(depositTypeAmountKey);
+            BigDecimal statementCorrectRentAmount = itemTypeAmountMap.get(rentTypeAmountKey);
+            BigDecimal statementCorrectOtherAmount = itemTypeAmountMap.get(otherTypeAmountKey);
+            BigDecimal statementCorrectOverdueAmount = itemTypeAmountMap.get(overdueTypeAmountKey);
+
+            BigDecimal thisCorrectAllAmount = BigDecimal.ZERO;
+
             // 不同类型不同订单项的冲正金额
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
-                //判断每次跟新是否超出
-                ServiceResult<String, String> result = commitVerify(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
-                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-                    return false;
-                }
                 //校验支付状态
                 if (statementOrderDetailDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return false;
+                    continue;
                 }
                 //判断商品是否存在
-                if (statementOrderDetailDO.getOrderItemType() == 1) {
+                if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetailDO.getOrderItemType())) {
                     OrderProductDO orderProductDO = orderProductMapper.findById(statementOrderDetailDO.getOrderItemReferId());
                     if (orderProductDO == null) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -357,136 +365,43 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     }
                 }
                 //判断物料是否存在
-                if (statementOrderDetailDO.getOrderItemType() == 2) {
+                if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetailDO.getOrderItemType())) {
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(statementOrderDetailDO.getOrderItemReferId());
                     if (orderMaterialDO == null) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return false;
                     }
                 }
-                //逾期金额
-                BigDecimal dbStatementDetailOverdueAmount = statementOrderDetailDO.getStatementDetailOverdueAmount();
-                BigDecimal dbStatementDetailOverduePaidAmount = statementOrderDetailDO.getStatementDetailOverduePaidAmount();
                 //需要付的逾期金额
-                BigDecimal realStatementDetailOverdueAmount = BigDecimalUtil.sub(dbStatementDetailOverdueAmount, dbStatementDetailOverduePaidAmount);
-                //冲正单金额
-                BigDecimal statementDetailCorrectAmount = statementOrderDetailDO.getStatementDetailCorrectAmount();
-                //结算单总金额
-                BigDecimal statementDetailAmount = statementOrderDetailDO.getStatementDetailAmount();
+                BigDecimal realStatementDetailOverdueAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOverdueAmount(), statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                // 历史冲正单金额
+                BigDecimal oldStatementDetailCorrectAmount = statementOrderDetailDO.getStatementDetailCorrectAmount();
+                // 本次冲正业务金额
+                BigDecimal thisCorrectBusinessDetailAmount = BigDecimal.ZERO;
                 //结算其他费用
                 if (StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER.equals(statementOrderDetailDO.getStatementDetailType())) {
-                    //判断冲正单传值是否正确
-                    if (BigDecimalUtil.compare(statementCorrectOtherAmount, BigDecimal.ZERO) < 0) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
-                    }
-                    //其他费用（运费等）
-                    BigDecimal dbStatementDetailOtherAmount = statementOrderDetailDO.getStatementDetailOtherAmount();
-                    BigDecimal dbStatementDetailOtherPaidAmount = statementOrderDetailDO.getStatementDetailOtherPaidAmount();
                     //需要付的其他费用（运费等）
-                    BigDecimal realStatementDetailOtherAmount = BigDecimalUtil.sub(dbStatementDetailOtherAmount, dbStatementDetailOtherPaidAmount);
+                    BigDecimal realStatementDetailOtherAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOtherAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount());
                     BigDecimal statementDetailOtherAmount = BigDecimalUtil.sub(realStatementDetailOtherAmount, statementCorrectOtherAmount);
                     if (BigDecimalUtil.compare(statementDetailOtherAmount, BigDecimal.ZERO) < 0) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return false;
                     }
-                    if (lastStatementDetailOverdueAmount != null) {
-                        lastStatementDetailOverdueAmount = BigDecimalUtil.add(lastStatementDetailOverdueAmount, realStatementDetailOverdueAmount);
-                    }
-                    if (lastStatementDetailOverdueAmount != null && BigDecimalUtil.compare(BigDecimalUtil.sub(lastStatementDetailOverdueAmount, statementCorrectOverdueAmount), BigDecimal.ZERO) <= 0) {
-                        statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, realStatementDetailOverdueAmount), statementCorrectOtherAmount));
-                        BigDecimal newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, realStatementDetailOverdueAmount), statementCorrectOtherAmount);
-                        //校验总金额是否合格和写入状态
-                        if (!verifyAmountAndSetStatus(statementOrderDetailDO, newStatementDetailCorrectAmount)) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return false;
-                        }
-                        statementOrderDetailDO.setStatementDetailAmount(newStatementDetailCorrectAmount);
-                    } else {
-                        BigDecimal newStatementDetailCorrectAmount = null;
-                        //当前要减去的逾期金额
-                        if (lastStatementDetailOverdueAmount == null) {
-                            statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(statementDetailCorrectAmount, statementCorrectOtherAmount));
-                            newStatementDetailCorrectAmount = BigDecimalUtil.sub(statementDetailAmount, statementCorrectOtherAmount);
-                        } else {
-                            BigDecimal statementDetailOverdueAmount = BigDecimalUtil.sub(realStatementDetailOverdueAmount, BigDecimalUtil.sub(lastStatementDetailOverdueAmount, statementCorrectOverdueAmount));
-                            statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, statementDetailOverdueAmount), statementCorrectOtherAmount));
-                            newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, statementDetailOverdueAmount), statementCorrectOtherAmount);
-                        }
-                        //校验总金额是否合格和写入状态
-                        if (!verifyAmountAndSetStatus(statementOrderDetailDO, newStatementDetailCorrectAmount)) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return false;
-                        }
-                        statementOrderDetailDO.setStatementDetailAmount(newStatementDetailCorrectAmount);
-                        lastStatementDetailOverdueAmount = null;
-                    }
-                    statementOrderDetailMapper.update(statementOrderDetailDO);
-                    //结算租金费用
+                    thisCorrectBusinessDetailAmount = statementCorrectOtherAmount;
                 } else if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                    //判断冲正单传值是否正确
-                    if (BigDecimalUtil.compare(statementCorrectRentAmount, BigDecimal.ZERO) < 0) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
-                    }
-                    BigDecimal dbStatementDetailRentAmount = statementOrderDetailDO.getStatementDetailRentAmount();
-                    BigDecimal dbStatementDetailRentPaidAmount = statementOrderDetailDO.getStatementDetailRentPaidAmount();
                     //需要付的租金
-                    BigDecimal realStatementDetailRentAmount = BigDecimalUtil.sub(dbStatementDetailRentAmount, dbStatementDetailRentPaidAmount);
+                    BigDecimal realStatementDetailRentAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
                     BigDecimal statementDetailRentAmount = BigDecimalUtil.sub(realStatementDetailRentAmount, statementCorrectRentAmount);
                     if (BigDecimalUtil.compare(statementDetailRentAmount, BigDecimal.ZERO) < 0) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return false;
                     }
-                    if (lastStatementDetailOverdueAmount != null) {
-                        lastStatementDetailOverdueAmount = BigDecimalUtil.add(lastStatementDetailOverdueAmount, realStatementDetailOverdueAmount);
-                    }
-                    if (lastStatementDetailOverdueAmount != null && BigDecimalUtil.compare(BigDecimalUtil.sub(lastStatementDetailOverdueAmount, statementCorrectOverdueAmount), BigDecimal.ZERO) <= 0) {
-                        statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, realStatementDetailOverdueAmount), statementCorrectRentAmount));
-                        BigDecimal newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, realStatementDetailOverdueAmount), statementCorrectRentAmount);
-                        //校验总金额是否合格和写入状态
-                        if (!verifyAmountAndSetStatus(statementOrderDetailDO, newStatementDetailCorrectAmount)) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return false;
-                        }
-                        statementOrderDetailDO.setStatementDetailAmount(newStatementDetailCorrectAmount);
-                    } else {
-                        BigDecimal newStatementDetailCorrectAmount = null;
-                        //当前要减去的逾期金额
-                        if (lastStatementDetailOverdueAmount == null) {
-                            statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(statementDetailCorrectAmount, statementCorrectRentAmount));
-                            newStatementDetailCorrectAmount = BigDecimalUtil.sub(statementDetailAmount, statementCorrectRentAmount);
-                        } else {
-                            BigDecimal statementDetailOverdueAmount = BigDecimalUtil.sub(realStatementDetailOverdueAmount, BigDecimalUtil.sub(lastStatementDetailOverdueAmount, statementCorrectOverdueAmount));
-                            statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, statementDetailOverdueAmount), statementCorrectRentAmount));
-                            newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, statementDetailOverdueAmount), statementCorrectRentAmount);
-                        }
-                        //校验总金额是否合格和写入状态
-                        if (!verifyAmountAndSetStatus(statementOrderDetailDO, newStatementDetailCorrectAmount)) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return false;
-                        }
-                        statementOrderDetailDO.setStatementDetailAmount(newStatementDetailCorrectAmount);
-                        lastStatementDetailOverdueAmount = null;
-                    }
-                    statementOrderDetailMapper.update(statementOrderDetailDO);
-                    //结算押金费用
+                    thisCorrectBusinessDetailAmount = statementCorrectRentAmount;
                 } else if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                    //判断冲正单传值是否正确
-                    if ((BigDecimalUtil.compare(statementCorrectDepositAmount, BigDecimal.ZERO) < 0 || BigDecimalUtil.compare(statementCorrectRentDepositAmount, BigDecimal.ZERO) < 0)) {
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
-                    }
-                    //租金押金
-                    BigDecimal dbStatementDetailRentDepositAmount = statementOrderDetailDO.getStatementDetailRentDepositAmount();
-                    BigDecimal dbStatementDetailRentDepositPaidAmount = statementOrderDetailDO.getStatementDetailRentDepositPaidAmount();
                     //需要付的租金押金
-                    BigDecimal realStatementDetailRentDepositAmount = BigDecimalUtil.sub(dbStatementDetailRentDepositAmount, dbStatementDetailRentDepositPaidAmount);
-                    //押金
-                    BigDecimal dbStatementDetailDepositAmount = statementOrderDetailDO.getStatementDetailDepositAmount();
-                    BigDecimal dbStatementDetailDepositPaidAmount = statementOrderDetailDO.getStatementDetailDepositPaidAmount();
+                    BigDecimal realStatementDetailRentDepositAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
                     //需要付的押金
-                    BigDecimal realStatementDetailDepositAmount = BigDecimalUtil.sub(dbStatementDetailDepositAmount, dbStatementDetailDepositPaidAmount);
+                    BigDecimal realStatementDetailDepositAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), statementOrderDetailDO.getStatementDetailDepositPaidAmount());
                     //冲正剩余的租金押金金额
                     BigDecimal statementDetailRentDepositAmount = BigDecimalUtil.sub(realStatementDetailRentDepositAmount, statementCorrectRentDepositAmount);
                     //冲正剩余的押金
@@ -499,94 +414,55 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return false;
                     }
-                    if (lastStatementDetailOverdueAmount != null) {
-                        lastStatementDetailOverdueAmount = BigDecimalUtil.add(lastStatementDetailOverdueAmount, realStatementDetailOverdueAmount);
-                    }
-                    if (lastStatementDetailOverdueAmount != null && BigDecimalUtil.compare(BigDecimalUtil.sub(lastStatementDetailOverdueAmount, statementCorrectOverdueAmount), BigDecimal.ZERO) <= 0) {
-                        statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, realStatementDetailOverdueAmount), statementCorrectRentDepositAmount), statementCorrectDepositAmount));
-                        BigDecimal newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, realStatementDetailOverdueAmount), statementCorrectRentDepositAmount), statementCorrectDepositAmount);
-                        //校验总金额是否合格和写入状态
-                        if (!verifyAmountAndSetStatus(statementOrderDetailDO, newStatementDetailCorrectAmount)) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return false;
-                        }
-                        statementOrderDetailDO.setStatementDetailAmount(newStatementDetailCorrectAmount);
-                    } else {
+                    thisCorrectBusinessDetailAmount = BigDecimalUtil.add(statementCorrectRentDepositAmount, statementCorrectDepositAmount);
+                }
 
-                        BigDecimal newStatementDetailCorrectAmount = null;
-                        //当前要减去的逾期金额
-                        if (lastStatementDetailOverdueAmount == null) {
-                            statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, statementCorrectRentDepositAmount), statementCorrectDepositAmount));
-                            newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, statementCorrectRentDepositAmount), statementCorrectDepositAmount);
-                        } else {
-                            BigDecimal statementDetailOverdueAmount = BigDecimalUtil.sub(realStatementDetailOverdueAmount, BigDecimalUtil.sub(lastStatementDetailOverdueAmount, statementCorrectOverdueAmount));
-                            statementOrderDetailDO.setStatementDetailCorrectAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailCorrectAmount, statementDetailOverdueAmount), statementCorrectRentDepositAmount), statementCorrectDepositAmount));
-                            newStatementDetailCorrectAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.sub(statementDetailAmount, statementDetailOverdueAmount), statementCorrectRentDepositAmount), statementCorrectDepositAmount);
-                        }
-                        //校验总金额是否合格和写入状态
-                        if (!verifyAmountAndSetStatus(statementOrderDetailDO, newStatementDetailCorrectAmount)) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                            return false;
-                        }
-                        statementOrderDetailDO.setStatementDetailAmount(newStatementDetailCorrectAmount);
-                        lastStatementDetailOverdueAmount = null;
-                    }
-                    statementOrderDetailMapper.update(statementOrderDetailDO);
+                // 本次冲正的预期金额
+                BigDecimal thisCorrectOverdueDetailAmount = BigDecimal.ZERO;
+                if (BigDecimalUtil.compare(statementCorrectOverdueAmount, BigDecimal.ZERO) > 0) {
+                    // 如果冲正金额大于逾期金额，那么就全冲
+                    thisCorrectOverdueDetailAmount = BigDecimalUtil.compare(statementCorrectOverdueAmount, realStatementDetailOverdueAmount) >= 0 ? realStatementDetailOverdueAmount : statementCorrectOverdueAmount;
+                    statementCorrectOverdueAmount = BigDecimalUtil.sub(statementCorrectOverdueAmount, thisCorrectOverdueDetailAmount);
+                }
 
+                // 本次冲正金额
+                BigDecimal thisCorrectDetailAmount = BigDecimalUtil.add(thisCorrectOverdueDetailAmount, thisCorrectBusinessDetailAmount);
+                statementOrderDetailDO.setStatementDetailCorrectAmount(thisCorrectDetailAmount);
+                // 先把历史冲正的还原回来，然后再减去本次冲正的
+                statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailAmount(), oldStatementDetailCorrectAmount), thisCorrectDetailAmount));
+                if (BigDecimalUtil.compare(statementOrderDetailDO.getStatementDetailAmount(), BigDecimal.ZERO) == 0) {
+                    statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED);
+                }
+                statementOrderDetailMapper.update(statementOrderDetailDO);
+                thisCorrectAllAmount = BigDecimalUtil.add(thisCorrectAllAmount, thisCorrectDetailAmount);
+
+                // 逾期金额如果冲多了，就要回滚
+                if (BigDecimalUtil.compare(statementCorrectOverdueAmount, BigDecimal.ZERO) < 0) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return false;
                 }
             }
 
-
-            //以下是校验金额是否超出以及跟新结算单
-            BigDecimal statementRentDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDO.getStatementRentDepositPaidAmount());
-            BigDecimal statementDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDO.getStatementDepositPaidAmount());
-            BigDecimal statementRentAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount());
-            BigDecimal statementOverdueAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDO.getStatementOverduePaidAmount());
-            BigDecimal statementOtherAmount = BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDO.getStatementOtherPaidAmount());
-            //已冲正 待付租金押金余额
-            BigDecimal realStatementDetailRentDepositAmount = BigDecimalUtil.sub(statementRentDepositAmount, statementCorrectRentDepositAmount);
-            //已冲正 待付押金余额
-            BigDecimal realStatementDetailDepositAmount = BigDecimalUtil.sub(statementDepositAmount, statementCorrectDepositAmount);
-            //已冲正 待付租金余额
-            BigDecimal realStatementDetailRentAmount = BigDecimalUtil.sub(statementRentAmount, statementCorrectRentAmount);
-            //已冲正 待付逾期金额余额
-            BigDecimal realStatementDetailOverdueAmount = BigDecimalUtil.sub(statementOverdueAmount, statementCorrectOverdueAmount);
-            //已冲正 待付其他费用（运费等）余额
-            BigDecimal realStatementDetailOtherAmount = BigDecimalUtil.sub(statementOtherAmount, statementCorrectOtherAmount);
-            //数据库结算单总额
-            BigDecimal dbStatementAmount = statementOrderDO.getStatementAmount();
-            //结算单总额
-            BigDecimal newStatementAmount = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.sub(dbStatementAmount, statementCorrectRentDepositAmount), statementCorrectDepositAmount), statementCorrectRentAmount), statementCorrectOverdueAmount), statementCorrectOtherAmount);
-            if (BigDecimalUtil.compare(realStatementDetailRentDepositAmount, BigDecimal.ZERO) < 0
-                    || BigDecimalUtil.compare(realStatementDetailDepositAmount, BigDecimal.ZERO) < 0
-                    || BigDecimalUtil.compare(realStatementDetailRentAmount, BigDecimal.ZERO) < 0
-                    || BigDecimalUtil.compare(realStatementDetailOverdueAmount, BigDecimal.ZERO) < 0
-                    || BigDecimalUtil.compare(realStatementDetailOtherAmount, BigDecimal.ZERO) < 0
-                    || BigDecimalUtil.compare(newStatementAmount, BigDecimal.ZERO) < 0
-                    ) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return false;
+            BigDecimal oldStatementCorrectAmount = statementOrderDO.getStatementCorrectAmount();
+            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), oldStatementCorrectAmount), thisCorrectAllAmount));
+            //更新结算单
+            if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
+                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED);
             }
-            //数据库结算单总额
-            BigDecimal dbStatementCorrectAmount = statementOrderDO.getStatementCorrectAmount();
-            //冲正单总额
-            BigDecimal newStatementCorrectAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(dbStatementCorrectAmount, statementCorrectRentDepositAmount), statementCorrectDepositAmount), statementCorrectRentAmount), statementCorrectOverdueAmount), statementCorrectOtherAmount);
-
-            //跟新结算单
-            if (BigDecimalUtil.compare(newStatementAmount, BigDecimal.ZERO) == 0) {
-                statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
-            }
-            statementOrderDO.setStatementAmount(newStatementAmount);
-            statementOrderDO.setStatementCorrectAmount(newStatementCorrectAmount);
+            statementOrderDO.setStatementCorrectAmount(thisCorrectAllAmount);
             statementOrderMapper.update(statementOrderDO);
 
             //跟新冲正单
             statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_SUCCESS);
             statementOrderCorrectDO.setStatementCorrectSuccessTime(now);
             statementOrderCorrectMapper.update(statementOrderCorrectDO);
+            return true;
+        } else {
+            statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
+            statementOrderCorrectDO.setStatementCorrectSuccessTime(now);
+            statementOrderCorrectMapper.update(statementOrderCorrectDO);
+            return true;
         }
-        return true;
-
     }
 
     /**
@@ -605,6 +481,14 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return serviceResult;
         }
+        if ((statementOrderCorrect.getStatementCorrectRentAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectRentDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectOtherAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOtherAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectOverdueAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOverdueAmount(), BigDecimal.ZERO) < 0)) {
+            serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_MORE_THEN_ZERO);
+            return serviceResult;
+        }
 
         //判断结算单是否存在
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderCorrect.getStatementOrderId());
@@ -616,9 +500,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
             return serviceResult;
         }
-
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(statementOrderDO.getId(), statementOrderCorrect.getStatementOrderItemId());
-
         String rentTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrect.getStatementOrderItemId();
         String rentDepositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
         String depositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
@@ -626,33 +507,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         String overdueTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_OVERDUE + "-" + statementOrderCorrect.getStatementOrderItemId();
 
         // 不同类型不同订单项的冲正金额
-        Map<String, BigDecimal> itemTypeAmountMap = new HashMap<>();
-        if (CollectionUtil.isNotEmpty(statementOrderCorrectDOList)) {
-            for (StatementOrderCorrectDO statementOrderCorrectDO : statementOrderCorrectDOList) {
-                // 不同订单项的冲正金额
-                itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentTypeAmountKey), statementOrderCorrectDO.getStatementCorrectRentAmount()));
-                itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentDepositTypeAmountKey), statementOrderCorrectDO.getStatementCorrectRentDepositAmount()));
-                itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(depositTypeAmountKey), statementOrderCorrectDO.getStatementCorrectDepositAmount()));
-                itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderCorrectDO.getStatementCorrectOtherAmount()));
-                itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderCorrectDO.getStatementCorrectOverdueAmount()));
-            }
-        }
-        // 加上本次不同
-        itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentTypeAmountKey), statementOrderCorrect.getStatementCorrectRentAmount()));
-        itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(rentDepositTypeAmountKey), statementOrderCorrect.getStatementCorrectRentDepositAmount()));
-        itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(depositTypeAmountKey), statementOrderCorrect.getStatementCorrectDepositAmount()));
-        itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderCorrect.getStatementCorrectOtherAmount()));
-        itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderCorrect.getStatementCorrectOverdueAmount()));
-
-        if (statementOrderCorrect.getStatementCorrectNo() != null) {
-            // 如果为修改，把历史的减掉
-            StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
-            itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectRentAmount()));
-            itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentDepositTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectRentDepositAmount()));
-            itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(depositTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectDepositAmount()));
-            itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(otherTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectOtherAmount()));
-            itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(overdueTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectOverdueAmount()));
-        }
+        Map<String, BigDecimal> itemTypeAmountMap = getAllStatementOrderCorrectAmountMap(statementOrderCorrect);
 
         BigDecimal statementDetailRentAmount = new BigDecimal(0);
         BigDecimal statementDetailRentPaidAmount = new BigDecimal(0);
@@ -730,8 +585,12 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_ERROR);
             return serviceResult;
         }
+        return verify(statementOrderCorrect);
+    }
 
-        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(statementOrderDO.getId(), statementOrderCorrect.getStatementOrderItemId());
+    private Map<String, BigDecimal> getAllStatementOrderCorrectAmountMap(StatementOrderCorrect statementOrderCorrect) {
+
+        List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderIdAndItemId(statementOrderCorrect.getStatementOrderId(), statementOrderCorrect.getStatementOrderItemId());
 
         String rentTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrect.getStatementOrderItemId();
         String rentDepositTypeAmountKey = StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrect.getStatementOrderItemId();
@@ -758,63 +617,18 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(otherTypeAmountKey), statementOrderCorrect.getStatementCorrectOtherAmount()));
         itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.add(itemTypeAmountMap.get(overdueTypeAmountKey), statementOrderCorrect.getStatementCorrectOverdueAmount()));
 
-        BigDecimal statementDetailAmount = new BigDecimal(0);
-        BigDecimal statementDetailCorrectAmount = new BigDecimal(0);
-        BigDecimal statementDetailRentAmount = new BigDecimal(0);
-        BigDecimal statementDetailRentPaidAmount = new BigDecimal(0);
-        BigDecimal statementDetailRentDepositAmount = new BigDecimal(0);
-        BigDecimal statementDetailRentDepositPaidAmount = new BigDecimal(0);
-        BigDecimal statementDetailDepositAmount = new BigDecimal(0);
-        BigDecimal statementDetailDepositPaidAmount = new BigDecimal(0);
-        BigDecimal statementDetailOtherAmount = new BigDecimal(0);
-        BigDecimal statementDetailOtherPaidAmount = new BigDecimal(0);
-        BigDecimal statementDetailOverdueAmount = new BigDecimal(0);
-        BigDecimal statementDetailOverduePaidAmount = new BigDecimal(0);
-        for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
-            if (!statementOrderDetailDO.getStatementOrderId().equals(statementOrderCorrect.getStatementOrderId()) || !statementOrderDetailDO.getOrderItemReferId().equals(statementOrderCorrect.getStatementOrderItemId())) {
-                continue;
-            }
-            statementDetailAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailAmount(), statementDetailAmount);
-            statementDetailCorrectAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailCorrectAmount(), statementDetailCorrectAmount);
-            statementDetailRentAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentAmount(), statementDetailRentAmount);
-            statementDetailRentPaidAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(), statementDetailRentPaidAmount);
-            statementDetailRentDepositAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositAmount(), statementDetailRentDepositAmount);
-            statementDetailRentDepositPaidAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementDetailRentDepositPaidAmount);
-            statementDetailDepositAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositAmount(), statementDetailDepositAmount);
-            statementDetailDepositPaidAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementDetailDepositPaidAmount);
-            statementDetailOtherAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherAmount(), statementDetailOtherAmount);
-            statementDetailOtherPaidAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), statementDetailOtherPaidAmount);
-            statementDetailOverdueAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOverdueAmount(), statementDetailOverdueAmount);
-            statementDetailOverduePaidAmount = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOverduePaidAmount(), statementDetailOverduePaidAmount);
-        }
-        statementDetailRentAmount = BigDecimalUtil.sub(statementDetailRentAmount, statementDetailRentPaidAmount);
-        statementDetailRentDepositAmount = BigDecimalUtil.sub(statementDetailRentDepositAmount, statementDetailRentDepositPaidAmount);
-        statementDetailDepositAmount = BigDecimalUtil.sub(statementDetailDepositAmount, statementDetailDepositPaidAmount);
-        statementDetailOtherAmount = BigDecimalUtil.sub(statementDetailOtherAmount, statementDetailOtherPaidAmount);
-        statementDetailOverdueAmount = BigDecimalUtil.sub(statementDetailOverdueAmount, statementDetailOverduePaidAmount);
+        // 注释，不能删除，以后开发修改的时候可以直接放开
+        /*if (statementOrderCorrect.getStatementCorrectNo() != null) {
+            // 如果为修改，把历史的减掉
+            StatementOrderCorrectDO dbStatementOrderCorrectDO = statementOrderCorrectMapper.findByNo(statementOrderCorrect.getStatementCorrectNo());
+            itemTypeAmountMap.put(rentTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectRentAmount()));
+            itemTypeAmountMap.put(rentDepositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(rentDepositTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectRentDepositAmount()));
+            itemTypeAmountMap.put(depositTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(depositTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectDepositAmount()));
+            itemTypeAmountMap.put(otherTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(otherTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectOtherAmount()));
+            itemTypeAmountMap.put(overdueTypeAmountKey, BigDecimalUtil.sub(itemTypeAmountMap.get(overdueTypeAmountKey), dbStatementOrderCorrectDO.getStatementCorrectOverdueAmount()));
+        }*/
 
-        if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementDetailRentAmount, itemTypeAmountMap.get(rentTypeAmountKey)), BigDecimal.ZERO) < 0) {
-            serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
-            return serviceResult;
-        }
-        if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementDetailRentDepositAmount, itemTypeAmountMap.get(rentDepositTypeAmountKey)), BigDecimal.ZERO) < 0) {
-            serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
-            return serviceResult;
-        }
-        if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementDetailDepositAmount, itemTypeAmountMap.get(depositTypeAmountKey)), BigDecimal.ZERO) < 0) {
-            serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
-            return serviceResult;
-        }
-        if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementDetailOtherAmount, itemTypeAmountMap.get(otherTypeAmountKey)), BigDecimal.ZERO) < 0) {
-            serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
-            return serviceResult;
-        }
-        if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementDetailOverdueAmount, itemTypeAmountMap.get(overdueTypeAmountKey)), BigDecimal.ZERO) < 0) {
-            serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT);
-            return serviceResult;
-        }
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
+        return itemTypeAmountMap;
     }
 
 

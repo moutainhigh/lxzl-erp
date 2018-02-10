@@ -59,20 +59,6 @@ public class StatementOrderCorrectController {
     }
 
     /**
-     * 修改冲正单
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/1/30 11:11
-     * @param : statementOrderCorrect
-    * @param : bindingResult
-     * @Return : com.lxzl.se.common.domain.Result
-     */
-    @RequestMapping(value = "update",method = RequestMethod.POST)
-    public Result updateStatementOrderCorrect(@RequestBody @Validated(UpdateGroup.class) StatementOrderCorrect statementOrderCorrect, BindingResult bindingResult){
-        ServiceResult<String,String> serviceResult = statementOrderCorrectService.updateStatementOrderCorrect(statementOrderCorrect);
-        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
-    }
-
-    /**
      * 取消冲正单
      * @Author : XiaoLuYu
      * @Date : Created in 2018/1/30 17:42

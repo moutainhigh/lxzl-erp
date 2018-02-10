@@ -22,6 +22,7 @@
 		<result column="statement_rent_paid_amount" jdbcType="DECIMAL" property="statementRentPaidAmount" />
 		<result column="statement_paid_time" jdbcType="TIMESTAMP" property="statementPaidTime" />
 		<result column="statement_overdue_amount" jdbcType="DECIMAL" property="statementOverdueAmount" />
+		<result column="statement_overdue_paid_amount" jdbcType="DECIMAL" property="statementOverduePaidAmount" />
 		<result column="statement_status" jdbcType="INTEGER" property="statementStatus" />
 		<result column="statement_start_time" jdbcType="TIMESTAMP" property="statementStartTime" />
 		<result column="statement_end_time" jdbcType="TIMESTAMP" property="statementEndTime" />
@@ -81,7 +82,7 @@
 	<sql id="column_List">
 		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_other_amount,eso.statement_other_paid_amount,eso.statement_rent_deposit_amount,eso.statement_rent_deposit_paid_amount,eso.statement_rent_deposit_return_amount,
 		eso.statement_deposit_amount,eso.statement_deposit_paid_amount,eso.statement_deposit_return_amount,
-		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user,eso.statement_correct_amount
+		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_overdue_paid_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user,eso.statement_correct_amount
 	</sql>
 
 	<sql id="detail_column_List">
@@ -420,6 +421,9 @@
             </if>
             <if test="statementOverdueAmount != null">
                 statement_overdue_amount = #{statementOverdueAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="statementOverduePaidAmount != null">
+				statement_overdue_paid_amount = #{statementOverduePaidAmount,jdbcType=DECIMAL},
             </if>
 			<if test="statementStatus != null">
 				statement_status = #{statementStatus,jdbcType=INTEGER},

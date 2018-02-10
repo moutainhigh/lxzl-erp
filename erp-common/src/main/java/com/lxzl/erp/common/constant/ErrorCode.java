@@ -626,6 +626,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID = "J1600010";
     public static final String STATEMENT_ORDER_CORRECT_EXISTS = "J1600011";
     public static final String STATEMENT_ORDER_CORRECT_FAIL = "J16000012";
+    public static final String CORRECT_AMOUNT_MORE_THEN_ZERO = "J16000013";
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1231,6 +1232,7 @@ public class ErrorCode {
         MAP.put(PEER_DEPLOYMENT_ORDER_DISCOUNT_MONEY_IS_ZERO, "同行调拨单优惠金额需大于等于0");
         MAP.put(PRODUCT_EQUIPMENT_MATCH_PEER_DEPLOYMENT_ORDER_NOT_ENOUGH, "查找到的设备数量与该同行调拨单下设备数量不相等");
 
+        MAP.put(CORRECT_AMOUNT_MORE_THEN_ZERO, "冲正金额必须大于0");
         MAP.put(CORRECT_AMOUNT_GREATER_THAN_REALITY_AMOUNT, "冲正金额大于实际金额");
         MAP.put(STATEMENT_ORDER_CORRECT_NOT_EXISTS, "结算冲正单不存在");
         MAP.put(STATEMENT_ORDER_CORRECT_STATUS_NOT_PENDING, "结算单不是待提交状态");

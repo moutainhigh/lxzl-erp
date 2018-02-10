@@ -91,7 +91,7 @@ public class StatementOrderDetail extends BasePO {
     }
 
     public BigDecimal getStatementDetailAmount() {
-        return BigDecimalUtil.add(statementDetailAmount, statementDetailOverdueAmount);
+        return statementDetailAmount;
     }
 
     public void setStatementDetailAmount(BigDecimal statementDetailAmount) {

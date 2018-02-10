@@ -1459,7 +1459,7 @@ public class StatementServiceImpl implements StatementService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderMonthQueryParam", statementOrderMonthQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
-        
+
         Integer totalCount = statementOrderMapper.listMonthCount(maps);
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.listMonthPage(maps);
         List<StatementOrder> statementOrderList = ConverterUtil.convertList(statementOrderDOList, StatementOrder.class);
@@ -1581,6 +1581,7 @@ public class StatementServiceImpl implements StatementService {
                 // 以下均为逾期处理，overdueDays 为逾期天数，开始算逾期。
                 BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(0.003)), new BigDecimal(overdueDays)).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_CEILING);
                 statementOrderDetailDO.setStatementDetailOverdueAmount(detailOverdueAmount);
+                statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailAmount(), detailOverdueAmount));
                 statementOrderDetailDO.setStatementDetailOverdueDays(overdueDays);
                 statementOrderDetailDO.setStatementDetailOverduePhaseCount(statementOrderOverduePhaseCount);
                 statementOrderDetailMapper.update(statementOrderDetailDO);
