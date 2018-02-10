@@ -132,17 +132,14 @@
         <mapper resource="sqlmap/erp_peer_deployment_order_material_bulk.xml" />
         <mapper resource="sqlmap/erp_peer_deployment_order_product.xml" />
         <mapper resource="sqlmap/erp_peer_deployment_order_product_equipment.xml" />
-
         <mapper resource="sqlmap/erp_material_type.xml" />
         <mapper resource="sqlmap/erp_statement_pay_order.xml" />
         <mapper resource="sqlmap/erp_statement_order_return_detail.xml" />
-
         <mapper resource="sqlmap/statistics.xml" />
-
         <mapper resource="sqlmap/erp_business_system_config.xml" />
         <mapper resource="sqlmap/erp_statement_order_correct.xml" />
-
         <mapper resource="sqlmap/erp_user_login_log.xml" />
+        <mapper resource="sqlmap/erp_statement_order_correct_detail.xml" />
     </mappers>
 
 </configuration>

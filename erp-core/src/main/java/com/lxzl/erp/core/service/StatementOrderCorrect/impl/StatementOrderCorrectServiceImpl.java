@@ -17,12 +17,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
+import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -304,7 +306,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
         //校验结算冲正单是否存在记录和是否是已结算状态
-        Date now = new Date();
+        Date currentTime = new Date();
         StatementOrderCorrectDO statementOrderCorrectDO = statementOrderCorrectMapper.findByNo(businessNo);
         ServiceResult<String, String> serviceResult = commitVerify(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
@@ -436,6 +438,32 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 statementOrderDetailMapper.update(statementOrderDetailDO);
                 thisCorrectAllAmount = BigDecimalUtil.add(thisCorrectAllAmount, thisCorrectDetailAmount);
 
+                // 保存冲正逾期的金额
+                if (BigDecimalUtil.compare(thisCorrectOverdueDetailAmount, BigDecimal.ZERO) > 0) {
+                    StatementOrderCorrectDetailDO statementOrderCorrectDetailDO = new StatementOrderCorrectDetailDO();
+                    statementOrderCorrectDetailDO.setStatementOrderCorrectId(statementOrderCorrectDO.getId());
+                    statementOrderCorrectDetailDO.setStatementOrderDetailId(statementOrderDetailDO.getId());
+                    statementOrderCorrectDetailDO.setStatementOrderDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OVERDUE);
+                    statementOrderCorrectDetailDO.setStatementCorrectAmount(thisCorrectOverdueDetailAmount);
+                    statementOrderCorrectDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    statementOrderCorrectDetailDO.setCreateTime(currentTime);
+                    statementOrderCorrectDetailDO.setUpdateTime(currentTime);
+                    statementOrderCorrectDetailMapper.save(statementOrderCorrectDetailDO);
+                }
+
+                // 保存冲正的其他金额
+                if (BigDecimalUtil.compare(thisCorrectBusinessDetailAmount, BigDecimal.ZERO) > 0) {
+                    StatementOrderCorrectDetailDO statementOrderCorrectDetailDO = new StatementOrderCorrectDetailDO();
+                    statementOrderCorrectDetailDO.setStatementOrderCorrectId(statementOrderCorrectDO.getId());
+                    statementOrderCorrectDetailDO.setStatementOrderDetailId(statementOrderDetailDO.getId());
+                    statementOrderCorrectDetailDO.setStatementOrderDetailType(statementOrderDetailDO.getStatementDetailType());
+                    statementOrderCorrectDetailDO.setStatementCorrectAmount(thisCorrectBusinessDetailAmount);
+                    statementOrderCorrectDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    statementOrderCorrectDetailDO.setCreateTime(currentTime);
+                    statementOrderCorrectDetailDO.setUpdateTime(currentTime);
+                    statementOrderCorrectDetailMapper.save(statementOrderCorrectDetailDO);
+                }
+
                 // 逾期金额如果冲多了，就要回滚
                 if (BigDecimalUtil.compare(statementCorrectOverdueAmount, BigDecimal.ZERO) < 0) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -454,12 +482,12 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
             //跟新冲正单
             statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_SUCCESS);
-            statementOrderCorrectDO.setStatementCorrectSuccessTime(now);
+            statementOrderCorrectDO.setStatementCorrectSuccessTime(currentTime);
             statementOrderCorrectMapper.update(statementOrderCorrectDO);
             return true;
         } else {
             statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
-            statementOrderCorrectDO.setStatementCorrectSuccessTime(now);
+            statementOrderCorrectDO.setStatementCorrectSuccessTime(currentTime);
             statementOrderCorrectMapper.update(statementOrderCorrectDO);
             return true;
         }
@@ -675,5 +703,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
     @Autowired
     private OrderMaterialMapper orderMaterialMapper;
+
+    @Autowired
+    private StatementOrderCorrectDetailMapper statementOrderCorrectDetailMapper;
 
 }

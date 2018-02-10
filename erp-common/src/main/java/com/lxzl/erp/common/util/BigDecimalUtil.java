@@ -33,6 +33,17 @@ public class BigDecimalUtil {
         return value1.add(value2);
     }
 
+    public static BigDecimal add(BigDecimal... value) {
+        BigDecimal totalValue = BigDecimal.ZERO;
+        for (BigDecimal v : value) {
+            if (v == null) {
+                v = new BigDecimal(0);
+            }
+            totalValue = totalValue.add(v);
+        }
+        return totalValue;
+    }
+
     /**
      * 提供精确减法运算的sub方法
      *

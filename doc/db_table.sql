@@ -1856,6 +1856,22 @@ CREATE TABLE `erp_statement_order_correct` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算冲正单';
 
+DROP TABLE if exists `erp_statement_order_correct_detail`;
+CREATE TABLE `erp_statement_order_correct_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `statement_order_correct_id` int(20) NOT NULL COMMENT '冲正单ID',
+  `statement_order_detail_id` int(20) NOT NULL COMMENT '结算单订单项ID',
+  `statement_order_detail_type` int(11) NOT NULL COMMENT '冲正单冲正类型',
+  `statement_correct_amount` decimal(15,2) NOT NULL COMMENT '冲正金额',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='结算冲正单冲正明细';
+
 DROP TABLE if exists `erp_statement_order`;
 CREATE TABLE `erp_statement_order` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
