@@ -13,7 +13,7 @@ import java.util.Map;
 @Repository
 public interface StatementOrderCorrectDetailMapper extends BaseMysqlDAO<StatementOrderCorrectDetailDO> {
 
-    StatementOrderCorrectDetailDO findByStatementDetailIdAndType(@Param("statementDetailId") Integer statementDetailId, @Param("statementDetailType") Integer statementDetailType);
+    List<StatementOrderCorrectDetailDO> findByStatementDetailIdAndType(@Param("statementDetailId") Integer statementDetailId, @Param("statementDetailType") Integer statementDetailType);
 
     List<StatementOrderCorrectDetailDO> listPage(@Param("maps") Map<String, Object> paramMap);
 

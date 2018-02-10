@@ -664,10 +664,14 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
 
                 // 查询有没有冲正业务金额
-                StatementOrderCorrectDetailDO statementOrderCorrectDetailDO = statementOrderCorrectDetailMapper.findByStatementDetailIdAndType(statementOrderDetailDO.getId(), statementOrderDetailDO.getStatementDetailType());
+                List<StatementOrderCorrectDetailDO> statementOrderCorrectDetailDOList = statementOrderCorrectDetailMapper.findByStatementDetailIdAndType(statementOrderDetailDO.getId(), statementOrderDetailDO.getStatementDetailType());
                 BigDecimal correctBusinessAmount = BigDecimal.ZERO;
-                if (statementOrderCorrectDetailDO != null && BigDecimalUtil.compare(statementOrderCorrectDetailDO.getStatementCorrectAmount(), BigDecimal.ZERO) > 0) {
-                    correctBusinessAmount = statementOrderCorrectDetailDO.getStatementCorrectAmount();
+                if (CollectionUtil.isNotEmpty(statementOrderCorrectDetailDOList)) {
+                    for (StatementOrderCorrectDetailDO statementOrderCorrectDetailDO : statementOrderCorrectDetailDOList) {
+                        if (statementOrderCorrectDetailDO != null && BigDecimalUtil.compare(statementOrderCorrectDetailDO.getStatementCorrectAmount(), BigDecimal.ZERO) > 0) {
+                            correctBusinessAmount = statementOrderCorrectDetailDO.getStatementCorrectAmount();
+                        }
+                    }
                 }
 
                 BigDecimal noPaidStatementDetailRentPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
@@ -700,10 +704,14 @@ public class StatementServiceImpl implements StatementService {
                     BigDecimal needStatementDetailOverduePayAmount;
 
                     // 查询有没有冲正逾期金额
-                    StatementOrderCorrectDetailDO statementOrderCorrectOverdueDetailDO = statementOrderCorrectDetailMapper.findByStatementDetailIdAndType(statementOrderDetailDO.getId(), StatementDetailType.STATEMENT_DETAIL_TYPE_OVERDUE);
+                    List<StatementOrderCorrectDetailDO> statementOrderCorrectOverdueDetailDOList = statementOrderCorrectDetailMapper.findByStatementDetailIdAndType(statementOrderDetailDO.getId(), StatementDetailType.STATEMENT_DETAIL_TYPE_OVERDUE);
                     BigDecimal correctOverdueAmount = BigDecimal.ZERO;
-                    if (statementOrderCorrectOverdueDetailDO != null && BigDecimalUtil.compare(statementOrderCorrectOverdueDetailDO.getStatementCorrectAmount(), BigDecimal.ZERO) > 0) {
-                        correctOverdueAmount = statementOrderCorrectOverdueDetailDO.getStatementCorrectAmount();
+                    if (CollectionUtil.isNotEmpty(statementOrderCorrectOverdueDetailDOList)) {
+                        for (StatementOrderCorrectDetailDO statementOrderCorrectDetailDO : statementOrderCorrectOverdueDetailDOList) {
+                            if (statementOrderCorrectDetailDO != null && BigDecimalUtil.compare(statementOrderCorrectDetailDO.getStatementCorrectAmount(), BigDecimal.ZERO) > 0) {
+                                correctOverdueAmount = statementOrderCorrectDetailDO.getStatementCorrectAmount();
+                            }
+                        }
                     }
                     if (BigDecimalUtil.compare(noPaidStatementDetailOverduePayAmount, correctOverdueAmount) >= 0) {
                         needStatementDetailOverduePayAmount = BigDecimalUtil.sub(noPaidStatementDetailOverduePayAmount, correctOverdueAmount);
