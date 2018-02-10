@@ -86,7 +86,7 @@
                                 <script type="text/html" id="dataListTpl">
                                     <thead>
                                     <tr class="bg-light">
-                                        <th>ID</th>
+##                                        <th>ID</th>
                                         <th>类型</th>
                                         <th>订单编号</th>
                                         <th>订单项类型</th>
@@ -112,7 +112,7 @@
                                     {{#dataSource}}
                                     {{#listData}}
                                     <tr>
-                                        <td>{{statementOrderDetailId}}</td>
+##                                        <td>{{statementOrderDetailId}}</td>
                                         <td>{{orderTypeValue}}</td>
                                         <td>{{orderNo}}</td>
                                         <td>{{orderItemTypeValue}}</td>
