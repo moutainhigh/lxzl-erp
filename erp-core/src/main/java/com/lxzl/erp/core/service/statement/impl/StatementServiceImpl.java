@@ -557,7 +557,7 @@ public class StatementServiceImpl implements StatementService {
         }
 
         // 冲正后的结算单金额，必须要与现有的结算单金额相同
-        if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementAmount()) != 0) {
+        if (BigDecimalUtil.compare(totalAmount, BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount())) != 0) {
             result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
             return result;
         }
