@@ -621,12 +621,13 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_ID_NOT_NULL = "J1600005";
     public static final String STATEMENT_ORDER_CORRECT_AMOUNT_NOT_NULL = "J1600006";
     public static final String STATEMENT_ORDER_CORRECT_NO_NOT_NULL = "J1600007";
-    public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J1600008";
+    public static final String STATEMENT_ORDER_REFER_ID_NOT_NULL = "J1600008";
     public static final String STATEMENT_ORDER_DETAIL_NOT_EXISTS = "J1600009";
     public static final String STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID = "J1600010";
     public static final String STATEMENT_ORDER_CORRECT_EXISTS = "J1600011";
     public static final String STATEMENT_ORDER_CORRECT_FAIL = "J16000012";
     public static final String CORRECT_AMOUNT_MORE_THEN_ZERO = "J16000013";
+    public static final String STATEMENT_ORDER_ITEM_ID_NOT_NULL = "J16000014";
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1240,7 +1241,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_ID_NOT_NULL, "结算单ID不能为空");
         MAP.put(STATEMENT_ORDER_CORRECT_AMOUNT_NOT_NULL, "冲正金额不能为空");
         MAP.put(STATEMENT_ORDER_CORRECT_NO_NOT_NULL, "冲正单号不能为空");
-        MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单项ID不能为空");
+        MAP.put(STATEMENT_ORDER_ITEM_ID_NOT_NULL, "结算单订单项ID不能为空");
+        MAP.put(STATEMENT_ORDER_REFER_ID_NOT_NULL, "结算单订单ID不能为空");
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_EXISTS, "结算单明细记录不存在");
         MAP.put(STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID, "结算单ID不对应结算单项ID");
         MAP.put(STATEMENT_ORDER_CORRECT_EXISTS, "结算冲正单已存在");

@@ -33,7 +33,9 @@ public class StatementOrderCorrect extends BasePO {
 	private BigDecimal statementCorrectOtherAmount;
 	@Min(value = 0, message = ErrorCode.COUNT_MORE_THAN_ZERO, groups = {AddGroup.class, UpdateGroup.class})
 	private BigDecimal statementCorrectOverdueAmount;
-	@NotNull(message = ErrorCode.STATEMENT_ORDER_DETAIL_ID_NOT_NULL , groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.STATEMENT_ORDER_REFER_ID_NOT_NULL , groups = {AddGroup.class})
+	private Integer statementOrderReferId;   //结算单订单ID
+	@NotNull(message = ErrorCode.STATEMENT_ORDER_ITEM_ID_NOT_NULL , groups = {AddGroup.class})
 	private Integer statementOrderItemId;   //结算单订单项ID
 	private String statementCorrectReason;   //冲正原因
 	private Integer statementOrderCorrectStatus;   //结算冲正单状态，0-待提交，1-审核中，2-审核通过（待冲正），3-冲正成功，4-冲正失败，5-取消冲正
@@ -204,5 +206,13 @@ public class StatementOrderCorrect extends BasePO {
 
 	public void setStatementCorrectRentDepositAmount(BigDecimal statementCorrectRentDepositAmount) {
 		this.statementCorrectRentDepositAmount = statementCorrectRentDepositAmount;
+	}
+
+	public Integer getStatementOrderReferId() {
+		return statementOrderReferId;
+	}
+
+	public void setStatementOrderReferId(Integer statementOrderReferId) {
+		this.statementOrderReferId = statementOrderReferId;
 	}
 }

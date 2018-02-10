@@ -26,6 +26,7 @@ public class StatementOrderCorrectDO  extends BaseDO {
 	private Date statementCorrectSuccessTime;
 	private String statementCorrectFailReason;
 	private Integer statementOrderItemId;   //结算单订单项ID
+	private Integer statementOrderReferId;   //结算单订单项ID
 
 	public Integer getId(){
 		return id;
@@ -153,5 +154,13 @@ public class StatementOrderCorrectDO  extends BaseDO {
 
 	public void setStatementCorrectRentDepositAmount(BigDecimal statementCorrectRentDepositAmount) {
 		this.statementCorrectRentDepositAmount = statementCorrectRentDepositAmount;
+	}
+
+	public Integer getStatementOrderReferId() {
+		return statementOrderReferId;
+	}
+
+	public void setStatementOrderReferId(Integer statementOrderReferId) {
+		this.statementOrderReferId = statementOrderReferId;
 	}
 }

@@ -7,6 +7,7 @@
 		<result column="statement_correct_no" jdbcType="VARCHAR" property="statementCorrectNo" />
 		<result column="statement_order_id" jdbcType="INTEGER" property="statementOrderId" />
 		<result column="statement_order_item_id" jdbcType="INTEGER" property="statementOrderItemId" />
+		<result column="statement_order_refer_id" jdbcType="INTEGER" property="statementOrderReferId" />
 		<result column="statement_correct_amount" jdbcType="DECIMAL" property="statementCorrectAmount" />
 		<result column="statement_correct_rent_amount" jdbcType="DECIMAL" property="statementCorrectRentAmount" />
 		<result column="statement_correct_rent_deposit_amount" jdbcType="DECIMAL" property="statementCorrectRentDepositAmount" />
@@ -26,12 +27,12 @@
 	</resultMap>
 
 	<sql id="column_List">
-		esoc.id,esoc.statement_correct_no,esoc.statement_order_id,esoc.statement_correct_amount,esoc.statement_correct_rent_amount,esoc.statement_correct_rent_deposit_amount,esoc.statement_correct_deposit_amount,esoc.statement_correct_other_amount,esoc.statement_correct_overdue_amount,esoc.statement_correct_reason,esoc.statement_order_correct_status,esoc.data_status,esoc.remark,esoc.create_time,esoc.create_user,esoc.update_time,esoc.update_user,esoc.statement_correct_success_time,esoc.statement_correct_fail_reason,esoc.statement_order_item_id
+		esoc.id,esoc.statement_correct_no,esoc.statement_order_id,esoc.statement_correct_amount,esoc.statement_correct_rent_amount,esoc.statement_correct_rent_deposit_amount,esoc.statement_correct_deposit_amount,esoc.statement_correct_other_amount,esoc.statement_correct_overdue_amount,esoc.statement_correct_reason,esoc.statement_order_correct_status,esoc.data_status,esoc.remark,esoc.create_time,esoc.create_user,esoc.update_time,esoc.update_user,esoc.statement_correct_success_time,esoc.statement_correct_fail_reason,esoc.statement_order_item_id,esoc.statement_order_refer_id
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderCorrectDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc 
-		WHERE esoc.id = #{id, jdbcType=INTEGER} AND esoc.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
+		WHERE esoc.id = #{id, jdbcType=INTEGER} AND esoc.data_status = 1
 	</select>
 
 	<select id="findStatementOrderId" resultMap="StatementOrderCorrectDO" parameterType="java.lang.Integer">
@@ -41,7 +42,7 @@
 
 	<select id="findStatementOrderIdAndItemId" resultMap="StatementOrderCorrectDO" parameterType="java.util.Map">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
-		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.data_status = 1 and esoc.statement_order_correct_status = 2
+		WHERE esoc.statement_order_id = #{statementOrderId, jdbcType=INTEGER} AND esoc.statement_order_item_id = #{orderItemId, jdbcType=INTEGER} AND esoc.statement_order_refer_id = #{orderReferId, jdbcType=INTEGER} AND esoc.data_status = 1 and esoc.statement_order_correct_status = 2
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -69,7 +70,7 @@
 	</select>
 
 	<select id="listPage" resultMap="StatementOrderCorrectDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc 
+		SELECT <include refid="column_List"/> FROM erp_statement_order_correct esoc
 		<where>
 			<if test="maps.statementOrderCorrectQueryParam != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != null &amp;&amp; maps.statementOrderCorrectQueryParam.statementCorrectNo != ''">
 				AND esoc.statement_correct_no = #{maps.statementOrderCorrectQueryParam.statementCorrectNo,jdbcType=VARCHAR}
@@ -103,6 +104,9 @@
 			</if>
 			<if test="statementOrderItemId != null">
 				statement_order_item_id = #{statementOrderItemId,jdbcType=INTEGER},
+			</if>
+			<if test="statementOrderReferId != null">
+				statement_order_refer_id = #{statementOrderReferId,jdbcType=INTEGER},
 			</if>
 			<if test="statementCorrectAmount != null">
 				statement_correct_amount = #{statementCorrectAmount,jdbcType=DECIMAL},
