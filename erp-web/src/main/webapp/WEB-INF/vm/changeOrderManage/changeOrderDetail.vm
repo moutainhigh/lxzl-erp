@@ -149,6 +149,14 @@
                                                 <td {{#destChangeProductInfo}}rowSpan="2" class="br-l text-center"{{/destChangeProductInfo}}>{{realChangeProductSkuCount}}/{{changeProductSkuCount}}</td>
                                                 <td {{#destChangeProductInfo}}rowSpan="2"{{/destChangeProductInfo}} class="text-right">
                                                     <div class="btn-group text-right">
+                                                        {{#rowActionButtons}}
+                                                        <a href="${ctx}{{menuUrl}}?id={{purchaseReceiveOrderProductId}}" type="button"
+                                                           class="btn btn-default btn-xs {{class}}"
+                                                           data-skuid="{{skuId}}"
+                                                           data-productid="{{productId}}"
+                                                           data-no="{{no}}"
+                                                           data-changeorderproductid="{{changeOrderProductId}}">{{text}}</a>
+                                                        {{/rowActionButtons}}
                                                         <a href="#" type="button"
                                                            class="btn btn-default btn-xs viewStockEquipment"
                                                            data-skuid="{{skuId}}"
@@ -279,6 +287,7 @@
                 'manage.change.order.detail.js',
                 'manage.change.order.equiment.list.js',
                 'manage.change.order.material.list.js',
+                'manage.change.order.update.equiment.diff.price.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'manage.order.picking.js',

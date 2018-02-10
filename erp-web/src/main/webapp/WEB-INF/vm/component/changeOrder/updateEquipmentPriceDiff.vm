@@ -1,0 +1,78 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseProductModal">
+
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>设备列表</span>
+        </div>
+        <form class="editForm">
+            <div class="panel-body pn">
+                <div class="table-responsive">
+                    <script type="text/html" class="dataListTpl">
+                        <thead>
+                        <tr>
+                            <th>设备标识</th>
+                            <th>设备编号</th>
+                            <th>设备归属仓库</th>
+                            <th>设备所在仓库</th>
+##                            <th>更换设备编号</th>
+##                            <th>更换设备归属仓库</th>
+##                            <th>更换设备所在仓库</th>
+                            <th>备注</th>
+                            <td>差价</td>
+                            {{#hasRowActionButtons}}
+                            <th class="text-right">操作</th>
+                            {{/hasRowActionButtons}}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="equipmentTr">
+                            <td>原设备</td>
+                            <td>{{srcEquipmentNo}}</td>
+                            <td>{{srcProductEquipment.ownerWarehouseName}}</td>
+                            <td>{{srcProductEquipment.currentWarehouseName}}</td>
+                            <td rowspan="2" class="br-l">{{remark}}</td>
+                            <td rowspan="2">
+                                <input type="hidden" name="changeOrderProductEquipmentId" value="{{changeOrderProductEquipmentId}}" class="changeOrderProductEquipmentId" />
+                                <label class="field prepend-icon">
+                                    <input type="text" name="priceDiff-{{changeOrderProductId}}" value="{{priceDiff}}" class="priceDiff form-control required moneyNumber" placeholder="输入差价" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>更换设备</td>
+                            <td>{{destEquipmentNo}}</td>
+                            <td>{{destProductEquipment.ownerWarehouseName}}</td>
+                            <td>{{destProductEquipment.currentWarehouseName}}</td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="8" class="text-center">没有查询到设备</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13 dataListTable"></table>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                        #parse("component/pager.vm")
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">保存<em style="font-size: 12px; font-style: inherit; margin-left: 5px;">(当前页面)</em></button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
