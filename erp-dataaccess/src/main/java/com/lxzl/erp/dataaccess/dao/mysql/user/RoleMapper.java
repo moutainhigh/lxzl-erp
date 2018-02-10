@@ -24,4 +24,6 @@ public interface RoleMapper extends BaseMysqlDAO<RoleDO> {
     List<RoleDO> findList(@Param("maps") Map<String, Object> map);
 
     Integer findListCount(@Param("maps") Map<String, Object> map);
+
+    Integer findByName(@Param("roleId") String roleId);
 }

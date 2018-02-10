@@ -31,6 +31,7 @@ public class User extends BasePO {
     private Date lastLoginTime;
     private String lastLoginIp;
     private String remark;
+    private Integer roleId;
 
     private List<Role> roleList;
 
@@ -136,6 +137,14 @@ public class User extends BasePO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
     public List<Role> getRoleList() {

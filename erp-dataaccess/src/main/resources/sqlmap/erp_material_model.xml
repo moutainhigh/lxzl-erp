@@ -111,4 +111,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.material.MaterialModelDO">
 		UPDATE erp_material_model <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findMaterialModeIdlByModelName" resultType="Integer" parameterType="java.lang.String">
+		SELECT emm.id FROM erp_material_model emm
+		WHERE emm.model_name = #{modelName, jdbcType=VARCHAR} AND emm.data_status = 1
+	</select>
 </mapper>

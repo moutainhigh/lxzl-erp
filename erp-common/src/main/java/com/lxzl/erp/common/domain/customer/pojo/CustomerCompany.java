@@ -37,7 +37,8 @@ public class CustomerCompany extends BasePO {
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-    private String address;   //详细地址
+    private String address;   //公司经营地址
+    private Integer defaultAddressReferId; //默认地址关联ID
     private Integer isLegalPersonApple;   //是否法人代表申请
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
@@ -541,4 +542,11 @@ public class CustomerCompany extends BasePO {
         this.otherDateImageList = otherDateImageList;
     }
 
+    public Integer getDefaultAddressReferId() {
+        return defaultAddressReferId;
+    }
+
+    public void setDefaultAddressReferId(Integer defaultAddressReferId) {
+        this.defaultAddressReferId = defaultAddressReferId;
+    }
 }

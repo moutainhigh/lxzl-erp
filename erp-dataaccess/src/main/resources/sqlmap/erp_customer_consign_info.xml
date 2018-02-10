@@ -20,7 +20,6 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="last_use_time" jdbcType="TIMESTAMP" property="lastUseTime" />
 
-
 		<result column="provinceName" jdbcType="VARCHAR" property="provinceName" />
 		<result column="cityName" jdbcType="VARCHAR" property="cityName" />
 		<result column="districtName" jdbcType="VARCHAR" property="districtName" />

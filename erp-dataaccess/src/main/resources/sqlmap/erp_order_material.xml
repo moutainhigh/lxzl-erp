@@ -153,4 +153,8 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
 		UPDATE erp_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findOrderMaterialByName" resultMap="OrderMaterialDO" parameterType="java.lang.String">
+		SELECT <include refid="set_column_sql"/> FROM erp_order_material WHERE material_name = #{materialName} AND data_status = 1
+	</select>
 </mapper>

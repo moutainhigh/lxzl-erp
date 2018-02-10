@@ -472,6 +472,8 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_STATUS_IS_ERROR = "J500100";
     public static final String AGENT_PERSON_NAME_NOT_NULL = "J500101";
     public static final String AGENT_PERSON_NO_NOT_NULL = "J500102";
+    public static final String LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO = "J500103";
+    public static final String LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME = "J500104";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -622,7 +624,8 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J1600008";
     public static final String STATEMENT_ORDER_DETAIL_NOT_EXISTS = "J1600009";
     public static final String STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID = "J1600010";
-    public static final String STATEMENT_ORDER_CORRECT_EXISTS = "J1600002";
+    public static final String STATEMENT_ORDER_CORRECT_EXISTS = "J1600011";
+    public static final String STATEMENT_ORDER_CORRECT_FAIL = "J16000012";
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -931,6 +934,8 @@ public class ErrorCode {
         MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
         MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
+        MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
+        MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1237,6 +1242,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_DETAIL_NOT_EXISTS, "结算单明细记录不存在");
         MAP.put(STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID, "结算单ID不对应结算单项ID");
         MAP.put(STATEMENT_ORDER_CORRECT_EXISTS, "结算冲正单已存在");
+        MAP.put(STATEMENT_ORDER_CORRECT_FAIL, "结算冲正单结算失败");
 
     }
 

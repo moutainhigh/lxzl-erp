@@ -18,4 +18,6 @@ public interface OrderProductMapper extends BaseMysqlDAO<OrderProductDO> {
     List<Map<String, Object>> queryLastPrice(@Param("customerId") Integer customerId,
                                              @Param("productId") Integer productId,
                                              @Param("isNewProduct") Integer isNewProduct);
+
+    List<OrderProductDO> findOrderProductByName(@Param("productName") String productName);
 }

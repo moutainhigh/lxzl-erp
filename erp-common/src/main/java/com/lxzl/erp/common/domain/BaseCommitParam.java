@@ -1,5 +1,8 @@
 package com.lxzl.erp.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BaseCommitParam {
 
     private Integer verifyUserId;

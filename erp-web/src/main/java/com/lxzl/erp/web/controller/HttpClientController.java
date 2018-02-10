@@ -6,8 +6,8 @@ import com.lxzl.erp.common.domain.getIpAndMac.pojo.IpAndMac;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.area.AreaService;
 import com.lxzl.erp.core.service.exclt.EXCLService;
-import com.lxzl.erp.core.service.exclt.ImportSupplierAndPeerXlsxDataSerivice;
-import com.lxzl.erp.core.service.exclt.ImportUserXlsxDataSerivice;
+import com.lxzl.erp.core.service.exclt.ImportSupplierAndPeerXlsxDataService;
+import com.lxzl.erp.core.service.exclt.ImportUserXlsxDataService;
 import com.lxzl.erp.core.service.getIpAndMac.IpAndMacService;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class HttpClientController {
     IpAndMacService ipAndMacService;
 
     @Autowired
-    ImportUserXlsxDataSerivice importUserXlsxDataSerivice;
+    ImportUserXlsxDataService importUserXlsxDataSerivice;
 
     @Autowired
-    ImportSupplierAndPeerXlsxDataSerivice importSupplierAndPeerXlsxDataSerivice;
+    ImportSupplierAndPeerXlsxDataService importSupplierAndPeerXlsxDataSerivice;
 
     /**
      * 获取邮政编号

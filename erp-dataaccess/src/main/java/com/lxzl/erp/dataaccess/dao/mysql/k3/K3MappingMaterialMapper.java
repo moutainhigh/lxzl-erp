@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.k3;
 
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialDO;import org.apache.ibatis.annotations.Param;
 import java.util.List;

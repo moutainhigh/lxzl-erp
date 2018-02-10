@@ -12,4 +12,6 @@ public interface BrandMapper extends BaseMysqlDAO<BrandDO> {
 	List<BrandDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	Integer findBrandIdByName(@Param("brandName") String brandName);
 }

@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.exclt.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
@@ -9,7 +10,7 @@ import com.lxzl.erp.common.domain.user.RoleQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.core.service.exclt.ImportUserXlsxDataSerivice;
+import com.lxzl.erp.core.service.exclt.ImportUserXlsxDataService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -19,6 +20,8 @@ import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
+import com.lxzl.se.common.util.secret.MD5Util;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -54,7 +57,7 @@ import java.util.regex.Pattern;
  * @Time : Created in 16:06
  */
 @Service
-public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivice {
+public class ImportUserXlsxDataServiceImpl implements ImportUserXlsxDataService {
 
     @Autowired
     RoleMapper roleMapper;
@@ -90,7 +93,7 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
     public ServiceResult<String, Map<String, String>> importData(String str) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ParseException {
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();
 
-        FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\用户信息2018-01-23.xlsx");
+        FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\用户信息模板20180206.xlsx");
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
         XSSFSheet xssfSheet = xssfWorkbook.getSheet("Sheet1");
         Map<String, String> map = creatMap();
@@ -122,7 +125,8 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
             }
             int j = 0;
             //每行的每个元素
-            aaa:for (int i = 0; i < xssfRow.getLastCellNum(); i++) {
+            aaa:
+            for (int i = 0; i < xssfRow.getLastCellNum(); i++) {
                 j = j++;
                 //查看是否是这列 并取出这列对应的属性名称
                 String stringCellValue = null;
@@ -157,10 +161,10 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
                     //以下都是一些文字的判断,以后还需要根据文件的内容不同增加或者重新设置
                     //这里转换类型都为String
                     String value = getValue(xssfCell);
-                    if(value == null ||  value ==""){
+                    if (value == null || value == "") {
                         continue aaa;
                     }
-                    if(value.equals("会计")){
+                    if (value.equals("会计")) {
                         System.out.println();
                     }
 
@@ -184,12 +188,15 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
                     //保存角色名称,后面要用
                     if (stringCellValue.equals("角色")) {
                         queryParam.put("roleName", value);
-                    }
 
+                    }
+                    if (value.equals("别永刚")) {
+                        System.out.println();
+                    }
                     //保存角色名称,后面要用
                     if (stringCellValue.equals("分公司")) {
                         queryParam.put("subCompanyName", value);
-                        if(value.equals("上海分公司")){
+                        if (value.equals("上海分公司")) {
                             System.out.println();
                         }
                     }
@@ -286,7 +293,7 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
             boolean flag = false;
             Map<Object, Object> map1 = new HashMap<>();
             Integer departmentId = null;
-            if (queryParam != null && queryParam.size()>0) {
+            if (queryParam != null && queryParam.size() > 0) {
                 //获取分公司id
                 HashMap<String, Object> subCompanyHashMap = new HashMap<>();
                 SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
@@ -363,16 +370,23 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
                     roleQueryParam.setDepartmentId(departmentId);
                     roleQueryParam.setFullRoleName(queryParam.get("roleName"));
                     roleQueryParamMap.put("roleQueryParam", roleQueryParam);
-                    Integer count = roleMapper.findListCount(roleQueryParamMap);
+                    roleQueryParamMap.put("start", 0);
+                    roleQueryParamMap.put("pageSize", Integer.MAX_VALUE);
+                    List<RoleDO> list = roleMapper.findList(roleQueryParamMap);
                     //如果没有就添加
+
+
                     //保存不存在的部門
-                    if (count == 0) {
+                    if (CollectionUtil.isEmpty(list)) {
                         Role role = new Role();
                         role.setRoleName(queryParam.get("roleName"));
                         role.setDepartmentId(departmentId);
                         role.setIsSuperAdmin(CommonConstant.COMMON_CONSTANT_NO);
                         role.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        userRoleService.addRole(role);
+                        ServiceResult<String, Integer> serviceResult1 = userRoleService.addRole(role);
+                        user.setRoleId(serviceResult1.getResult());
+                    } else {
+                        user.setRoleId(list.get(0).getId());
                     }
 
                 }
@@ -383,7 +397,12 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
                 serviceResult.setErrorCode("没有数据了");
                 return serviceResult;
             }
-
+//            if(user.getRealName().equals("谢朋叶")){
+//                System.out.println();
+//            }
+            String six = six();
+            user.setPassword(generateMD5Password(user.getUserName(), six, ApplicationConfig.authKey));
+            errorData.put(user.getUserName(), six);
             ServiceResult<String, Integer> serviceResult1 = userService.addUser(user);
         }
 
@@ -393,6 +412,33 @@ public class ImportUserXlsxDataSeriviceImpl implements ImportUserXlsxDataSerivic
 
     }
 
+
+    private String generateMD5Password(String username, String password, String md5Key) {
+        String value = MD5Util.encryptWithKey(username + password, md5Key);
+        return value;
+    }
+
+    public static String six() {
+        String a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        char[] rands = new char[2];
+        for (int i = 0; i < rands.length; i++) {
+            int rand = (int) (Math.random() * a.length());
+            rands[i] = a.charAt(rand);
+        }
+        String b = "0123456789";
+        char[] rands1 = new char[2];
+        for (int i = 0; i < rands1.length; i++) {
+            int rand = (int) (Math.random() * b.length());
+            rands1[i] = b.charAt(rand);
+        }
+        String c = "abcdefghijklmnopqrstuvwxyz";
+        char[] rands2 = new char[2];
+        for (int i = 0; i < rands1.length; i++) {
+            int rand = (int) (Math.random() * c.length());
+            rands2[i] = c.charAt(rand);
+        }
+        return String.valueOf(rands) + String.valueOf(rands1) + String.valueOf(rands2);
+    }
 
     private String getValue(XSSFCell xssfCell) {
         switch (xssfCell.getCellType()) {

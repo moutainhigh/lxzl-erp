@@ -27,4 +27,6 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> listAllForStatistics(@Param("maps") Map<String, Object> paramMap);
 
     List<StatementOrderDetailDO> listAllForHome(@Param("maps") Map<String, Object> paramMap);
+
+    List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId")Integer itemReferId,@Param("statementOrderId")Integer statementOrderId);
 }
