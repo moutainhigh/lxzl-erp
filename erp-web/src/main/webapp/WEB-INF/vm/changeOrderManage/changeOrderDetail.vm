@@ -288,6 +288,7 @@
                 'manage.change.order.equiment.list.js',
                 'manage.change.order.material.list.js',
                 'manage.change.order.update.equiment.diff.price.js',
+                'manage.change.order.update.material.diff.price.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'manage.order.picking.js',
