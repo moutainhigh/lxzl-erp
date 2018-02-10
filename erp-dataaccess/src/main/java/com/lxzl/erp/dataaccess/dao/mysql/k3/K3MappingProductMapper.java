@@ -13,5 +13,5 @@ public interface K3MappingProductMapper extends BaseMysqlDAO<K3MappingProductDO>
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-	K3MappingProductDO findByErpCode(@Param("erpCode") String erpCode);
+	K3MappingProductDO findByErpCode(@Param("erpProductCode") String erpCode,@Param("erpSkuCode") String erpSkuCode);
 }

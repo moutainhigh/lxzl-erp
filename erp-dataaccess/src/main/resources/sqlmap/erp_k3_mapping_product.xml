@@ -5,22 +5,24 @@
 	<resultMap id="K3MappingProductDO" type="com.lxzl.erp.dataaccess.domain.k3.K3MappingProductDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="erp_product_code" jdbcType="VARCHAR" property="erpProductCode" />
+		<result column="erp_sku_code" jdbcType="VARCHAR" property="erpSkuCode" />
 		<result column="k3_product_code" jdbcType="VARCHAR" property="k3ProductCode" />
+		<result column="k3_sku_code" jdbcType="VARCHAR" property="k3SkuCode" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
 	</resultMap>
 
 	<sql id="column_List">
-		ekmp.id,ekmp.erp_product_code,ekmp.k3_product_code,ekmp.product_name
+		ekmp.id,ekmp.erp_product_code,ekmp.erp_sku_code,ekmp.k3_product_code,ekmp.k3_sku_code,ekmp.product_name
 	</sql>
 
 	<select id="findById" resultMap="K3MappingProductDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_k3_mapping_product ekmp 
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_product ekmp
 		WHERE ekmp.id = #{id, jdbcType=INTEGER}
 	</select>
 
 	<select id="findByErpCode" resultMap="K3MappingProductDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> FROM erp_k3_mapping_product ekmp
-		WHERE ekmp.erp_product_code = #{erpCode, jdbcType=VARCHAR}
+		WHERE ekmp.erp_product_code = #{erpProductCode, jdbcType=VARCHAR} AND ekmp.erp_sku_code = #{erpSkuCode, jdbcType=VARCHAR}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -37,11 +39,17 @@
 			<if test="erpProductCode != null">
 				erp_product_code = #{erpProductCode,jdbcType=VARCHAR},
 			</if>
-			<if test="k3ProductCode != null">
-				k3_product_code = #{k3ProductCode,jdbcType=VARCHAR},
+			<if test="erpSkuCode != null">
+                erp_sku_code = #{erpSkuCode,jdbcType=VARCHAR},
 			</if>
-			<if test="productName != null">
-				product_name = #{productName,jdbcType=VARCHAR},
+            <if test="k3ProductCode != null">
+                k3_product_code = #{k3ProductCode,jdbcType=VARCHAR},
+            </if>
+			<if test="k3ProductCode != null">
+                k3_sku_code = #{k3ProductCode,jdbcType=VARCHAR},
+			</if>
+			<if test="k3SkuCode != null">
+				product_name = #{k3SkuCode,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>
