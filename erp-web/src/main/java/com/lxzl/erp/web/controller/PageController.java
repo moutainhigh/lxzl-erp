@@ -596,6 +596,19 @@ public class PageController extends BaseController {
     public String monthStatementOrderDetail() {
         return "/statementOrderManage/monthlyStatementOrderDetail";
     }
+    // 冲正单
+    @RequestMapping("/correct-order/list")
+    public String correctOrderList() {
+        return "/statementOrderManage/correctOrderList";
+    }
+    @RequestMapping("/correct-order/detail")
+    public String correctOrderDetail() {
+        return "/statementOrderManage/correctOrderDetail";
+    }
+    @RequestMapping("/correct-order/add")
+    public String addCorrectOrder() {
+        return "/component/statementOrder/addCorrectOrder";
+    }
 
     //统计
     @RequestMapping("/statistics/income-list")

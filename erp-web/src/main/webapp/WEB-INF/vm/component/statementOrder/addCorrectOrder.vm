@@ -1,0 +1,89 @@
+<div id="inputEndInfoModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+        </div>
+        <form method="post" class="inputForm">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-12">
+##                       <div class="col-md-6">
+##                           <label for="statementCorrectAmount" class="field-label">冲正金额</label>
+##                           <label for="statementCorrectAmount" class="field prepend-icon">
+##                               <input type="text" name="statementCorrectAmount" id="statementCorrectAmount" class="gui-input required moneyNumber" maxlength="10">
+##                               <label for="statementCorrectAmount" class="field-icon"><i class="fa fa-tag"></i>
+##                               </label>
+##                           </label>
+##                       </div>
+                        <label for="statementCorrectRentAmount" class="field-label">冲正租金金额</label>
+                        <label for="statementCorrectRentAmount" class="field prepend-icon">
+                            <input type="text" name="statementCorrectRentAmount" id="statementCorrectRentAmount" class="gui-input moneyNumber" maxlength="10">
+                            <label for="statementCorrectRentAmount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="statementCorrectRentDepositAmount" class="field-label">冲正租金押金金额</label>
+                        <label for="statementCorrectRentDepositAmount" class="field prepend-icon">
+                            <input type="text" name="statementCorrectRentDepositAmount" id="statementCorrectRentDepositAmount" class="gui-input moneyNumber" maxlength="10">
+                            <label for="statementCorrectRentDepositAmount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="statementCorrectDepositAmount" class="field-label">冲正押金金额</label>
+                        <label for="statementCorrectDepositAmount" class="field prepend-icon">
+                            <input type="text" name="statementCorrectDepositAmount" id="statementCorrectDepositAmount" class="gui-input moneyNumber" maxlength="10">
+                            <label for="statementCorrectDepositAmount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="statementCorrectOtherAmount" class="field-label">冲正其它金额</label>
+                        <label for="statementCorrectOtherAmount" class="field prepend-icon">
+                            <input type="text" name="statementCorrectOtherAmount" id="statementCorrectOtherAmount" class="gui-input moneyNumber" maxlength="10">
+                            <label for="statementCorrectOtherAmount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="statementCorrectOverdueAmount" class="field-label">冲正逾期金额</label>
+                        <label for="statementCorrectOverdueAmount" class="field prepend-icon">
+                            <input type="text" name="statementCorrectOverdueAmount" id="statementCorrectOverdueAmount" class="gui-input moneyNumber" maxlength="10">
+                            <label for="statementCorrectOverdueAmount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="statementCorrectReason" class="field-label">冲正原因</label>
+                        <label for="statementCorrectReason" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="statementCorrectReason" name="statementCorrectReason" placeholder="请输入备注"></textarea>
+                            <label for="statementCorrectReason" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="remark" class="field-label">备注</label>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -106,6 +106,9 @@
                                         <th>退还押金</th>
                                         <th>状态</th>
                                         <th class="text-right">结算时间</th>
+                                        {{#hasRowActionButtons}}
+                                        <th class="text-right">操作</th>
+                                        {{/hasRowActionButtons}}
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -145,6 +148,19 @@
                                             <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                             <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
                                         </td>
+                                        {{#hasRowActionButtons}}
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                {{#rowActionButtons}}
+                                                <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                   data-statementOrderId="{{statementOrderId}}"
+                                                   data-orderId="{{orderId}}"
+                                                   data-orderItemReferId="{{orderItemReferId}}"
+                                                   data-no="{{no}}">{{text}}</a>
+                                                {{/rowActionButtons}}
+                                            </div>
+                                        </td>
+                                        {{/hasRowActionButtons}}
                                     </tr>
                                     {{/listData}}
                                     {{^listData}}
@@ -172,7 +188,7 @@
 </div>
     #parse("layout/footer.vm")
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js', 'manage.statement.order.detail.js');
+    management_load_script('${staticManagement}/js', 'manage.statement.order.detail.js', 'manage.statement.correct.order.add.js', 'modal.input.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
