@@ -674,6 +674,14 @@ public class PageController extends BaseController {
     public String changeOrderEquipmentRemarkModal() {
         return "/component/changeOrder/equipmentRemark";
     }
+    @RequestMapping("/change-order/update-equipment-diff-price")
+    public String changeOrderUpdateEquipmentDiffPrice() {
+        return "/component/changeOrder/updateEquipmentPriceDiff";
+    }
+    @RequestMapping("/change-order/update-material-diff-price")
+    public String changeOrderUpdateMaterialDiffPrice() {
+        return "/component/changeOrder/updateMaterialPriceDiff";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
