@@ -44,6 +44,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = new StatisticsUnReceivablePageParam();
 //        statisticsUnReceivablePageParam.setSubCompanyId(1);
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
+
     }
 
     @Test
