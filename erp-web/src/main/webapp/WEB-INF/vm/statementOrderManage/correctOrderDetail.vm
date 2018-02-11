@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-结算单管理-结算单-详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <section id="content" class="animated fadeIn">
+                <form class="" id="detailForm">
+                    <div class="panel panel-primary panel-border top mb15">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5>冲正单编号：<small id="statementCorrectNo"></small></h5>
+                                </div>
+                                <div class="col-md-8 text-right">
+                                    <script type="text/html" id="actionButtonsTpl">
+                                        {{#acitonButtons}}
+                                        {{#showButton}}
+                                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                            <i class="{{iClass}}"></i> {{text}}
+                                        </a>
+                                        {{/showButton}}
+                                        {{/acitonButtons}}
+                                    </script>
+                                    <div class="btn-group" id="actionButtons"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="orderBaseInfo"></div>
+                        </div>
+                        <script type="text/html" id="orderBaseInfoTpl">
+                            {{#order}}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>状态：</dt><dd class="mb5">{{statementOrderCorrectStatusValue}}&nbsp;</dd>
+                                        <dt>冲正金额：</dt><dd class="mb5">{{#price}}{{statementCorrectAmount}}{{/price}}</dd>
+                                        <dt>冲正成功时间：</dt><dd class="mb5">{{#time}}{{statementCorrectSuccessTime}}{{/time}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>冲正原因：</dt><dd class="mb5">{{statementCorrectReason}}&nbsp;</dd>
+                                        {{#hasStatementCorrectFailReason}}<dt>冲正失败原因：</dt><dd class="mb5">{{statementCorrectFailReason}}&nbsp;</dd>{{/hasStatementCorrectFailReason}}
+                                        <dt>备注：</dt><dd class="mb5">{{remark}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>创建人：</dt><dd class="mb5">{{createUser}}&nbsp;</dd>
+                                        <dt>创建时间：</dt><dd class="mb5">{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                        <dt>修改人：</dt><dd class="text-danger mb5">{{updateUser}}&nbsp;</dd>
+                                        <dt>修改时间：</dt><dd class="text-danger mb5">{{#time}}{{updateTime}}{{/time}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            {{/order}}
+                        </script>
+
+                        <div class="panel-body hide" id="orderDetailInfo"></div>
+
+                        <script type="text/html" id="orderDetailInfoTpl">
+                            {{#order}}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>订单项关联ID：</dt><dd class="mb5">{{orderItemReferId}}&nbsp;</dd>
+                                        <dt>订单类型：</dt><dd class="mb5">{{orderTypeValue}}&nbsp;</dd>
+                                        <dt>订单项类型：</dt><dd class="mb5">{{orderItemTypeValue}}</dd>
+                                        <dt>商品名称：</dt><dd class="mb5">{{itemName}}&nbsp;</dd>
+                                        <dt>商品数量：</dt><dd class="mb5">{{itemCount}}&nbsp;</dd>
+                                        <dt>单价：</dt><dd class="mb5">￥{{#price}}{{unitAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>租赁方式：</dt><dd class="mb5">{{itemRentTypeValue}}&nbsp;</dd>
+                                        <dt>结算单详情类型：</dt><dd class="mb5">{{statementDetailTypeValue}}&nbsp;</dd>
+                                        <dt>期数：</dt><dd class="mb5">第{{statementDetailPhase}}期&nbsp;</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>结算单预计支付时间：</dt><dd class="mb5">{{#time}}{{statementExpectPayTime}}{{/time}}&nbsp;</dd>
+                                        <dt>结算单金额：</dt><dd class="mb5">￥{{#price}}{{statementDetailAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>结算单其它费用：</dt><dd class="mb5">￥{{#price}}{{statementDetailOtherAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>已付结算单其它费用：</dt><dd class="mb5">￥{{#price}}{{statementDetailOtherPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>结算单已支付金额：</dt><dd class="mb5">￥{{#price}}{{statementDetailPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>结算租金押金金额：</dt><dd class="mb5">￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}&nbsp;</dd>
+
+                                        <dt>已付租金押金金额：</dt><dd>{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}</dd>
+                                        <dt>退还租金押金金额：</dt><dd>{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</dd>
+                                        <dt>结算押金金额：</dt><dd>{{#price}}{{statementDetailDepositAmount}}{{/price}}</dd>
+                                        <dt>已付押金金额：</dt><dd>{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}</dd>
+                                        <dt>退还押金金额：</dt><dd>{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</dd>
+                                        <dt>结算单租金金额：</dt><dd>{{#price}}{{statementDetailRentAmount}}{{/price}}</dd>
+                                        <dt>租金已付金额：</dt><dd>{{#price}}{{statementDetailRentPaidAmount}}{{/price}}</dd>
+                                        <dt>结算单支付时间</dt> <dd>{{#time}}{{statementDetailPaidTime}}{{/time}}</dd>
+                                        <dt>逾期金额：</dt><dd>{{#price}}{{statementDetailOverdueAmount}}{{/price}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt>结算单状态：</dt><dd class="mb5">{{statementDetailStatusValue}}&nbsp;</dd>
+                                        <dt>结算开始时间：</dt><dd class="mb5">{{#time}}{{statementStartTime}}{{/time}}&nbsp;</dd>
+                                        <dt>结算结束时间：</dt><dd class="text-danger mb5">{{#time}}{{statementEndTime}}{{/time}}&nbsp;</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            {{/order}}
+                        </script>
+
+                        <div class="panel-footer clearfix">
+                            <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.statement.correct.order.handle.mixin.js',
+            'manage.statement.correct.order.detail.js',
+            'modal.input.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+
+    StatementCorrectOrderDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>
