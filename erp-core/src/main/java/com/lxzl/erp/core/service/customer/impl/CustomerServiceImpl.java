@@ -319,18 +319,32 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
 
         //如果客户选择了将详细地址作为收货地址
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress()) && customerCompanyDO.getDefaultAddressReferId() == null){
-            //如果默认地址选项有值，并且客户的默认地址关联ID为null
-            saveCustomerCompanyConsignInfo(customerDO,newCustomerCompanyDO,now,userSupport.getCurrentUserId());
-        }else if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress()) && customerCompanyDO.getDefaultAddressReferId() != null){
-            //如果默认地址选项没有值，并且客户的默认地址关联ID不为null
-            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
-            customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-            customerConsignInfoDO.setUpdateTime(now);
-            customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerConsignInfoMapper.update(customerConsignInfoDO);
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
+            if(customerCompanyDO.getDefaultAddressReferId() == null){
+                //如果默认地址选项有值，并且客户的默认地址关联ID为null
+                saveCustomerCompanyConsignInfo(customerDO,newCustomerCompanyDO,now,userSupport.getCurrentUserId());
+            }else{
+                CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
+                customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerConsignInfoMapper.update(customerConsignInfoDO);
+                newCustomerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
+            }
 
-            newCustomerCompanyDO.setDefaultAddressReferId(null);
+        }else if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())){
+            if(customerCompanyDO.getDefaultAddressReferId() == null){
+                saveCustomerCompanyConsignInfo(customerDO,newCustomerCompanyDO,now,userSupport.getCurrentUserId());
+                newCustomerCompanyDO.setDefaultAddressReferId(null);
+            }else{
+                //如果默认地址选项没有值，并且客户的默认地址关联ID不为null
+                CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
+                customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerConsignInfoMapper.update(customerConsignInfoDO);
+                newCustomerCompanyDO.setDefaultAddressReferId(null);
+            }
         }
 
         //判断首次所需设备 list转json
