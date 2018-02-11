@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.util.FastJsonUtil;
@@ -20,12 +21,12 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     @Test
     public void createStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementOrderId(1085);
-        statementOrderCorrect.setStatementOrderReferId(3000314);
-        statementOrderCorrect.setStatementOrderItemId(459);
-        statementOrderCorrect.setStatementCorrectRentAmount(new BigDecimal(15));
-        statementOrderCorrect.setStatementCorrectDepositAmount(new BigDecimal(0));
-        statementOrderCorrect.setStatementCorrectOverdueAmount(new BigDecimal(0.82));
+        statementOrderCorrect.setStatementOrderId(38);
+        statementOrderCorrect.setStatementOrderReferId(38);
+        statementOrderCorrect.setStatementOrderItemId(461);
+//        statementOrderCorrect.setStatementCorrectRentAmount(new BigDecimal(15));
+        statementOrderCorrect.setStatementCorrectAmount(new BigDecimal(0));
+//        statementOrderCorrect.setStatementCorrectOverdueAmount(new BigDecimal(0.82));
         statementOrderCorrect.setStatementCorrectReason("测试225");
         statementOrderCorrect.setRemark("测试225");
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
@@ -51,11 +52,11 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
 
     @Test
     public void commitStatementOrderCorrect() throws Exception {
-        StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-1085-20180210-00005");
-//        statementOrderCorrect.setVerifyUserId(500030);
-        statementOrderCorrect.setRemark("aaaaaaa");
-        TestResult testResult = getJsonTestResult("/correct/commit", statementOrderCorrect);
+        StatementOrderCorrectParam statementOrderCorrectParam = new StatementOrderCorrectParam();
+        statementOrderCorrectParam.setStatementCorrectNo("LXSOC-38-20180211-00003");
+        statementOrderCorrectParam.setVerifyUserId(500030);
+        statementOrderCorrectParam.setRemark("aaaaaaa");
+        TestResult testResult = getJsonTestResult("/correct/commit", statementOrderCorrectParam);
     }
 
     @Test
@@ -71,14 +72,14 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     @Test
     public void cancelStatementOrderCorrect() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-22-20180131-00004");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-1085-20180210-00005");
         TestResult testResult = getJsonTestResult("/correct/cancel", statementOrderCorrect);
     }
 
     @Test
     public void queryStatementOrderCorrectDetailByNo() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-22-20180131-00004");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-1085-20180210-00004");
         TestResult testResult = getJsonTestResult("/correct/query", statementOrderCorrect);
     }
 
