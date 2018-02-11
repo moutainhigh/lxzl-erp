@@ -1994,6 +1994,10 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, Integer> productNewStockMap = new HashMap<>();
             Map<Integer, Integer> productOldStockMap = new HashMap<>();
             for (OrderProduct orderProduct : order.getOrderProductList()) {
+                orderProduct.setRentType(order.getRentType());
+                orderProduct.setRentTimeLength(order.getRentTimeLength());
+                orderProduct.setRentLengthType(order.getRentLengthType());
+
                 if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
                     return ErrorCode.ORDER_PRODUCT_COUNT_ERROR;
                 }
@@ -2055,17 +2059,15 @@ public class OrderServiceImpl implements OrderService {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
-
-
-                orderProduct.setRentType(order.getRentType());
-                orderProduct.setRentTimeLength(order.getRentTimeLength());
-                orderProduct.setRentLengthType(order.getRentLengthType());
             }
         }
 
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
             Map<String, OrderMaterial> orderMaterialMap = new HashMap<>();
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                orderMaterial.setRentType(order.getRentType());
+                orderMaterial.setRentTimeLength(order.getRentTimeLength());
+                orderMaterial.setRentLengthType(order.getRentLengthType());
                 if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
                     return ErrorCode.ORDER_MATERIAL_COUNT_ERROR;
                 }
@@ -2112,10 +2114,6 @@ public class OrderServiceImpl implements OrderService {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
-
-                orderMaterial.setRentType(order.getRentType());
-                orderMaterial.setRentTimeLength(order.getRentTimeLength());
-                orderMaterial.setRentLengthType(order.getRentLengthType());
             }
         }
         return ErrorCode.SUCCESS;

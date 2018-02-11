@@ -295,7 +295,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customerCompanyQueryParam.setProductPurpose("测试");
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
-        customerCompanyQueryParam.setConnectPhone("13726273851");
+//        customerCompanyQueryParam.setConnectPhone("13726273851");
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
@@ -327,7 +327,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180209-00005");
+        customer.setCustomerNo("LXCC-1000-20180211-00060");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -335,7 +335,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180209-00005");
+        customer.setCustomerNo("LXCC-1000-20180211-00060");
         TestResult result = getJsonTestResult("/customer/detailCustomer", customer);
     }
 
