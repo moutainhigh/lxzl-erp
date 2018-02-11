@@ -871,7 +871,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //加入默认地址关联ID
-        if((customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null)){
+        if((customerDO.getCustomerCompanyDO().getDefaultAddressReferId() == null)){
             customerResult.setIsDefaultConsignAddress(CommonConstant.COMMON_CONSTANT_YES);
         }else{
             customerResult.setIsDefaultConsignAddress(CommonConstant.COMMON_CONSTANT_NO);
