@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
@@ -103,6 +104,7 @@ public class K3CustomerConverter implements ConvertK3DataService{
 //                new ItemNumber(false,"深圳","01","客户"),
 //                new ItemNumber(false,"aaaa什么","01.0002300000","客户")
 //        });
+        System.out.println(JSON.toJSONString(formOrganization,true));
         return formOrganization;
     }
 
