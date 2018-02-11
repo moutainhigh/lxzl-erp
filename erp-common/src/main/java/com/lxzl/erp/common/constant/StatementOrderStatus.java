@@ -1,7 +1,7 @@
 package com.lxzl.erp.common.constant;
 
 /**
- * 描述: ${DESCRIPTION}
+ * 描述: 结算单状态：0-初始化，4-部分结算完成，8-结算完成，16-无需结算，20-已冲正
  *
  * @author gaochao
  * @date 2017-12-12 9:00
