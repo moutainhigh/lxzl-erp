@@ -84,7 +84,7 @@
                                 <th>充值状态</th>
                                 <th>简述</th>
                                 <th>充值详情</th>
-                                <th>充值公总号</th>
+##                                <th>充值公总号</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -101,7 +101,7 @@
                                 <td>{{chargeStatusValue}}</td>
                                 <td>{{chargeName}}</td>
                                 <td>{{chargeDescription}}</td>
-                                <td>{{openId}}</td>
+##                                <td>{{openId}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
