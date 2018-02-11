@@ -846,7 +846,6 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderMapper.update(orderDO);
-        customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
         // 记录订单时间轴
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
 
