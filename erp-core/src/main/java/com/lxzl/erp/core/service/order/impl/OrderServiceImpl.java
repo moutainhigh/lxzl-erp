@@ -2020,7 +2020,8 @@ public class OrderServiceImpl implements OrderService {
                 oldProductCount = productOldStockMap.get(product.getProductId());
                 newProductCount = productNewStockMap.get(product.getProductId());
 
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
+                // 订单商品库存先去掉
+                /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
                     if ((newProductCount - orderProduct.getProductCount()) < 0) {
                         return ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT;
                     } else {
@@ -2034,7 +2035,7 @@ public class OrderServiceImpl implements OrderService {
                         oldProductCount = oldProductCount - orderProduct.getProductCount();
                         productOldStockMap.put(product.getProductId(), oldProductCount);
                     }
-                }
+                }*/
 
                 String key = orderProduct.getProductSkuId() + "-" + orderProduct.getRentType() + "-" + orderProduct.getRentTimeLength() + "-" + orderProduct.getIsNewProduct();
                 if (orderProductMap.get(key) != null) {
@@ -2083,7 +2084,8 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.ORDER_MATERIAL_AMOUNT_ERROR;
                 }
                 Material material = materialServiceResult.getResult();
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsNewMaterial())) {
+                // 配件库存判断先去掉
+                /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsNewMaterial())) {
                     if (material == null || material.getNewMaterialCount() == null || material.getNewMaterialCount() <= 0 || (material.getNewMaterialCount() - orderMaterial.getMaterialCount()) < 0) {
                         return ErrorCode.ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT;
                     }
@@ -2091,7 +2093,7 @@ public class OrderServiceImpl implements OrderService {
                     if (material == null || material.getOldMaterialCount() == null || material.getOldMaterialCount() <= 0 || (material.getOldMaterialCount() - orderMaterial.getMaterialCount()) < 0) {
                         return ErrorCode.ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT;
                     }
-                }
+                }*/
                 String key = orderMaterial.getMaterialId() + "-" + orderMaterial.getRentType() + "-" + orderMaterial.getRentTimeLength() + "-" + orderMaterial.getIsNewMaterial();
                 if (orderMaterialMap.get(key) != null) {
                     return ErrorCode.ORDER_MATERIAL_LIST_REPEAT;
