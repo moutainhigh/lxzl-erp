@@ -1579,11 +1579,13 @@ public class StatementServiceImpl implements StatementService {
                         }
                     }
                 }
+                BigDecimal originalDetailOverdueAmount = statementOrderDetailDO.getStatementDetailOverdueAmount();
+                BigDecimal originalDetailAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(),originalDetailOverdueAmount);
 
                 // 以下均为逾期处理，overdueDays 为逾期天数，开始算逾期。
-                BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(0.003)), new BigDecimal(overdueDays)).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_CEILING);
+                BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(originalDetailAmount, new BigDecimal(0.003)), new BigDecimal(overdueDays)).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP);
                 statementOrderDetailDO.setStatementDetailOverdueAmount(detailOverdueAmount);
-                statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailAmount(), detailOverdueAmount));
+                statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(originalDetailAmount, detailOverdueAmount));
                 statementOrderDetailDO.setStatementDetailOverdueDays(overdueDays);
                 statementOrderDetailDO.setStatementDetailOverduePhaseCount(statementOrderOverduePhaseCount);
                 statementOrderDetailMapper.update(statementOrderDetailDO);
@@ -1592,8 +1594,9 @@ public class StatementServiceImpl implements StatementService {
             }
 
             BigDecimal originalOverdueAmount = statementOrderDO.getStatementOverdueAmount();
+            BigDecimal originalAmount = BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),originalOverdueAmount);
             BigDecimal nowOverdueAmount = BigDecimalUtil.add(totalOverdueAmount, statementOrderDO.getStatementOverduePaidAmount());
-            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), nowOverdueAmount), originalOverdueAmount));
+            statementOrderDO.setStatementAmount(BigDecimalUtil.add(originalAmount, nowOverdueAmount));
             statementOrderDO.setStatementOverdueAmount(nowOverdueAmount);
             statementOrderMapper.update(statementOrderDO);
         }
