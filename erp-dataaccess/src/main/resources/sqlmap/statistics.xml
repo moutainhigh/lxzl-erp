@@ -32,22 +32,23 @@
     </resultMap>
 
     <select id="queryIncomeCount" resultMap="StatisticsIncome" parameterType="map">
-        SELECT COUNT(DISTINCT (esod.order_item_refer_id)) total_count,
-        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_rent_deposit_paid_amount ELSE 0 END ) total_rent_deposit,
-        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_deposit_paid_amount ELSE 0 END ) total_deposit,
-        SUM(esod.statement_detail_other_paid_amount) total_other_paid,
+        SELECT COUNT(DISTINCT eo.buyer_customer_id, eo.rent_length_type, eo.order_sub_company_id, eo.order_seller_id) total_count,
+        IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
+        IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,
+        IFNULL(SUM(esod.statement_detail_rent_paid_amount),0) rent_rmount,
+        IFNULL(SUM(esod.statement_detail_other_amount),0) other_paid_amount,
+        IFNULL(SUM(esod.statement_detail_correct_amount),0) correct_amount,
         SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) total_return_rent_deposit,
         SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) total_return_deposit
         FROM erp_statement_order_detail esod
-        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
-        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
+        LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status =1
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status =1
+        LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status =1
+        LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
         LEFT JOIN erp_statement_order_return_detail esord ON esod.id = esord.statement_order_id AND esord.data_status=1 AND esod.statement_detail_type = 4
-        AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>=esord.return_time
-        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
-        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
-        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
-        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
-        WHERE esod.data_status = 1 AND esod.order_type = 1
+        AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>esord.return_time
+        WHERE esod.order_type =1 AND esod.data_status=1 AND esod.statement_detail_status = 8
+
         <if test="maps.incomeQueryParam.rentLengthType!=null">
             AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
         </if>
@@ -62,47 +63,40 @@
         </if>
         AND (
         esord.return_time>=#{maps.incomeQueryParam.startTime}
-        AND #{maps.incomeQueryParam.endTime}>=esord.return_time
+        AND #{maps.incomeQueryParam.endTime}>esord.return_time
         OR
         (
         (#{maps.incomeQueryParam.startTime}>=esod.statement_start_time
         AND  esod.statement_end_time>= #{maps.incomeQueryParam.startTime})
         OR
-        (#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
+        (#{maps.incomeQueryParam.endTime}>esod.statement_start_time
         AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
         OR
         (esod.statement_start_time >= #{maps.incomeQueryParam.startTime}
-        AND  #{maps.incomeQueryParam.endTime} >= esod.statement_end_time)
+        AND  #{maps.incomeQueryParam.endTime} > esod.statement_end_time)
         )
         )
     </select>
 
     <select id="queryIncome" resultMap="StatisticsIncomeDetail" parameterType="map">
-        SELECT esod.order_item_refer_id,
-        MIN(esod.order_item_type) order_item_type,
-        MIN(CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type
-        WHEN esod.order_item_type = 2 THEN eom.rent_length_type END ) rent_length_type,
-        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_rent_deposit_paid_amount ELSE 0 END ) rent_deposit_paid_amount,
-        SUM(CASE WHEN esod.statement_detail_type = 2 THEN esod.statement_detail_deposit_paid_amount ELSE 0 END ) deposit_paid_amount,
-        SUM(esod.statement_detail_other_paid_amount) total_other_paid,
-        SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) return_rent_deposit_paid_amount,
-        SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) return_deposit_paid_amount,
-        MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,
-        MIN(esc.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,
-        MIN(ec.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,
-        MIN(ec.customer_no) customer_no,MIN(ec.customer_name)customer_name,
-        MIN(esod.statement_detail_paid_time) pay_time,MIN(esod.create_time) esod_create_time
+        SELECT eo.buyer_customer_id customer_id,MIN(ec.customer_no) customer_no,MIN(ec.customer_name) customer_name ,eo.rent_length_type,eo.order_sub_company_id sub_company_id,MIN(esc.sub_company_name)  sub_company_name,
+        eo.order_seller_id, MIN(eu.real_name) order_seller_name,
+        IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
+        IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,
+        IFNULL(SUM(esod.statement_detail_rent_paid_amount),0) rent_rmount,
+        IFNULL(SUM(esod.statement_detail_other_amount),0) other_paid_amount,
+        IFNULL(SUM(esod.statement_detail_correct_amount),0) correct_amount,
+        SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) total_return_rent_deposit,
+        SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) total_return_deposit
         FROM erp_statement_order_detail esod
-        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
-        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
+        LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status =1
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status =1
+        LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status =1
+        LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
         LEFT JOIN erp_statement_order_return_detail esord ON esod.id = esord.statement_order_id AND esord.data_status=1 AND esod.statement_detail_type = 4
-        AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>=esord.return_time
-        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
-        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
-        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
-        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
-        LEFT JOIN erp_sub_company esc ON esc.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) and esc.data_status = 1
-        WHERE esod.data_status = 1 AND esod.order_type = 1
+        AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>esord.return_time
+
+        WHERE esod.order_type =1 AND esod.data_status=1 AND esod.statement_detail_status = 8
         <if test="maps.incomeQueryParam.rentLengthType!=null">
             AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
         </if>
@@ -116,22 +110,22 @@
             AND eu.real_name LIKE CONCAT('%','${maps.incomeQueryParam.salesmanName}','%' )
         </if>
         AND (
-        esord.return_time>=#{maps.incomeQueryParam.startTime}
-        AND #{maps.incomeQueryParam.endTime}>=esord.return_time
-        OR
-        (
-        (#{maps.incomeQueryParam.startTime}>=esod.statement_start_time
-        AND  esod.statement_end_time>= #{maps.incomeQueryParam.startTime})
-        OR
-        (#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
-        AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
-        OR
-        (esod.statement_start_time >= #{maps.incomeQueryParam.startTime}
-        AND  #{maps.incomeQueryParam.endTime} >= esod.statement_end_time)
+            esord.return_time>=#{maps.incomeQueryParam.startTime}
+            AND #{maps.incomeQueryParam.endTime}>esord.return_time
+            OR
+            (
+            (#{maps.incomeQueryParam.startTime}>=esod.statement_start_time
+            AND  esod.statement_end_time>= #{maps.incomeQueryParam.startTime})
+            OR
+            (#{maps.incomeQueryParam.endTime}>=esod.statement_start_time
+            AND  esod.statement_end_time>= #{maps.incomeQueryParam.endTime})
+            OR
+            (esod.statement_start_time >= #{maps.incomeQueryParam.startTime}
+            AND  #{maps.incomeQueryParam.endTime} > esod.statement_end_time)
+            )
         )
-        )
-        GROUP BY order_item_refer_id
-        ORDER BY esod_create_time ASC
+        GROUP BY eo.buyer_customer_id,eo.rent_length_type,eo.order_sub_company_id,eo.order_seller_id
+        ORDER BY eo.order_sub_company_id,order_seller_id,buyer_customer_id,rent_length_type
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
@@ -364,22 +358,15 @@
         IFNULL(SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.product_count ELSE 0 END),0) product_count_by_new_customer,
         IFNULL(SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.product_count ELSE 0 END),0) product_count_by_old_customer,
         (
-        SELECT COUNT(*) FROM (
-SELECT DISTINCT(erop.id) id FROM erp_return_order_product erop
-
-LEFT JOIN erp_return_order ero ON ero.id= erop.return_order_id AND  ero.data_status =1
-
-LEFT JOIN erp_statement_order_detail esod_r ON esod_r.data_status=1 AND esod_r.order_type=4 AND esod_r.order_item_refer_id=erop.id
-
-LEFT JOIN erp_statement_order_detail esod ON esod.data_status=1 AND esod.id=esod_r.return_refer_id AND esod.order_type=1 AND esod.order_item_type = 1
-
-LEFT JOIN erp_order_product eop ON eop.data_status=1 AND eop.id=esod.order_item_refer_id
-
-WHERE erop.data_status=1 AND eop.rent_length_type=#{maps.homeRentParam.rentLengthType}
-AND ero.return_time>=#{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}>ero.return_time
-
-) long_erop_id LEFT JOIN erp_return_order_product_equipment erope ON erope.return_order_product_id = long_erop_id.id
-
+            SELECT COUNT(*) FROM (
+            SELECT DISTINCT(erop.id) id FROM erp_return_order_product erop
+            LEFT JOIN erp_return_order ero ON ero.id= erop.return_order_id AND  ero.data_status =1
+            LEFT JOIN erp_statement_order_detail esod_r ON esod_r.data_status=1 AND esod_r.order_type=4 AND esod_r.order_item_refer_id=erop.id
+            LEFT JOIN erp_statement_order_detail esod ON esod.data_status=1 AND esod.id=esod_r.return_refer_id AND esod.order_type=1 AND esod.order_item_type = 1
+            LEFT JOIN erp_order_product eop ON eop.data_status=1 AND eop.id=esod.order_item_refer_id
+            WHERE erop.data_status=1 AND eop.rent_length_type=#{maps.homeRentParam.rentLengthType}
+            AND ero.return_time>=#{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}>ero.return_time
+        ) long_erop_id LEFT JOIN erp_return_order_product_equipment erope ON erope.return_order_product_id = long_erop_id.id
         ) return_product_count
         FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1
         LEFT JOIN
