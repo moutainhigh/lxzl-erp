@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -18,6 +19,8 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     private Integer statementOrderCustomerId;
     private String statementOrderCustomerNo;
     private Date monthTime;
+
+    private List<Integer> passiveUserIdList;//控制数据权限
 
     public Integer getStatementOrderCustomerId() { return statementOrderCustomerId; }
 
@@ -34,4 +37,8 @@ public class StatementOrderMonthQueryParam extends BasePageParam {
     public String getStatementOrderCustomerName() { return statementOrderCustomerName; }
 
     public void setStatementOrderCustomerName(String statementOrderCustomerName) { this.statementOrderCustomerName = statementOrderCustomerName; }
+
+    public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
+
+    public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
 }
