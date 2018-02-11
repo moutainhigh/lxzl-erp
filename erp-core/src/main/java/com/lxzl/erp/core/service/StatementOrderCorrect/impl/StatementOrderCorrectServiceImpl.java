@@ -15,16 +15,20 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -139,21 +143,22 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
         } else {
-//            if (needVerifyResult.getResult()) {
-//            //走工作流
-//            statementOrderCorrectParam.setVerifyMatters("结算冲正单");
-//            ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectParam.getStatementCorrectNo(), statementOrderCorrectParam.getVerifyUserId(), statementOrderCorrectParam.getVerifyMatters(), statementOrderCorrectParam.getRemark());
-//            if (!ErrorCode.SUCCESS.equals(workflowServiceResult.getErrorCode())) {
-//                serviceResult.setErrorCode(workflowServiceResult.getErrorCode());
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                return serviceResult;
-//            }
-//        } else {
-            boolean result = receiveVerifyResult(true, statementOrderCorrectParam.getStatementCorrectNo());
-            if (!result) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_FAIL);
-                return serviceResult;
+            if (needVerifyResult.getResult()) {
+                //走工作流
+                statementOrderCorrectParam.setVerifyMatters("结算冲正单");
+                ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectParam.getStatementCorrectNo(), statementOrderCorrectParam.getVerifyUserId(), statementOrderCorrectParam.getVerifyMatters(), statementOrderCorrectParam.getRemark());
+                if (!ErrorCode.SUCCESS.equals(workflowServiceResult.getErrorCode())) {
+                    serviceResult.setErrorCode(workflowServiceResult.getErrorCode());
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return serviceResult;
+                }
+            } else {
+                boolean result = receiveVerifyResult(true, statementOrderCorrectParam.getStatementCorrectNo());
+                if (!result) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_FAIL);
+                    return serviceResult;
+                }
             }
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -263,6 +268,47 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_NOT_EXISTS);
             return serviceResult;
         }
+        Integer statementOrderId = statementOrderCorrectDO.getStatementOrderId();
+        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
+        if(statementOrderDO == null){
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        statementOrderCorrectDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
+
+        OrderProductDO orderProductDO = orderProductMapper.findById(statementOrderCorrectDO.getStatementOrderItemId());
+        if(orderProductDO == null){
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
+            return serviceResult;
+        }
+        statementOrderCorrectDO.setProductName(orderProductDO.getProductName());
+        ProductDO productDO = productMapper.findById(orderProductDO.getProductId());
+        if(productDO == null){
+            serviceResult.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
+            return serviceResult;
+        }
+        String createUser = orderProductDO.getCreateUser();
+        int createUserId = Integer.parseInt(createUser);
+        String updateUser = orderProductDO.getUpdateUser();
+        int updateUserId = Integer.parseInt(updateUser);
+
+        UserDO createUserDO = userMapper.findByUserId(createUserId);
+        if(createUserDO ==null){
+            serviceResult.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
+            return serviceResult;
+        }
+        String createUserName = createUserDO.getUserName();
+        statementOrderCorrectDO.setCreateUserName(createUserName);
+
+        UserDO updateUserDO = userMapper.findByUserId(updateUserId);
+        String updateUserName = updateUserDO.getUserName();
+        if(updateUserDO ==null){
+            serviceResult.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
+            return serviceResult;
+        }
+        statementOrderCorrectDO.setUpdateUserName(updateUserName);
+
+        statementOrderCorrectDO.setProductNo(productDO.getProductNo());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
         return serviceResult;
@@ -718,4 +764,9 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
     @Autowired
     private StatementOrderCorrectDetailMapper statementOrderCorrectDetailMapper;
 
+    @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 }

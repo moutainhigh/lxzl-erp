@@ -122,7 +122,16 @@ public class SupplierServiceImpl implements SupplierService {
 
         SupplierDO supplierDO = ConverterUtil.convert(supplier, SupplierDO.class);
         AreaCityDO areaCityDO = areaCityMapper.findById(supplierDO.getCity());
-        supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(areaCityDO.getCityCode()));
+        if(areaCityDO == null ){
+            result.setErrorCode(ErrorCode.CITY_NOT_EXISTS);
+            return result;
+        }
+        String cityCode = areaCityDO.getCityCode();
+        if(StringUtil.isEmpty(cityCode)){
+            result.setErrorCode(ErrorCode.CITY_NOT_EXISTS);
+            return result;
+        }
+        supplierDO.setSupplierNo(generateNoSupport.generateSupplierNo(cityCode));
         supplierDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         supplierDO.setUpdateUser(loginUser.getUserId().toString());
         supplierDO.setCreateUser(loginUser.getUserId().toString());

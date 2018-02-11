@@ -1785,6 +1785,10 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             changeOrderProductEquipmentDO.setUpdateTime(now);
             changeOrderProductEquipmentDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             changeOrderProductEquipmentMapper.update(changeOrderProductEquipmentDO);
+
+            ProductEquipmentDO productEquipmentDO = productEquipmentMapper.findByEquipmentNo(param.getEquipmentNo());
+            productEquipmentDO.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
+            productEquipmentMapper.update(productEquipmentDO);
             //更新散料状态
             bulkMaterialMapper.updateEquipmentBulkMaterialStatus(changeOrderProductEquipmentDO.getDestEquipmentNo(), BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
         }

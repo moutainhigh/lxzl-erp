@@ -48,6 +48,52 @@ public class StatementOrderCorrect extends BasePO {
 	private Date statementCorrectSuccessTime;   //冲正成功时间
 	private String statementCorrectFailReason;   //冲正失败原因（建议格式为 错误代码:错误描述）
 
+	private String createUserName;   //添加人
+	private String updateUserName;   //修改人
+	private String statementOrderNo;  //结算单编号
+	private String productName;  //商品名称
+	private String productNo;  //商品编号
+
+	public String getCreateUserName() {
+		return createUserName;
+	}
+
+	public void setCreateUserName(String createUserName) {
+		this.createUserName = createUserName;
+	}
+
+	public String getUpdateUserName() {
+		return updateUserName;
+	}
+
+	public void setUpdateUserName(String updateUserName) {
+		this.updateUserName = updateUserName;
+	}
+
+	public String getStatementOrderNo() {
+		return statementOrderNo;
+	}
+
+	public void setStatementOrderNo(String statementOrderNo) {
+		this.statementOrderNo = statementOrderNo;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getProductNo() {
+		return productNo;
+	}
+
+	public void setProductNo(String productNo) {
+		this.productNo = productNo;
+	}
+
 	public Integer getStatementOrderCorrectId(){
 		return statementOrderCorrectId;
 	}

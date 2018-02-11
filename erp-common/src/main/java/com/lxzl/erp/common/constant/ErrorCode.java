@@ -371,6 +371,7 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_NOT_END_EQUIPMENT_DIFF_PRICE = "J400122";
     public static final String CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE = "J400123";
     public static final String DIFF_PRICE_ERROR = "J400124";
+    public static final String STATEMENT_ORDER_PRODUCT_NOT_EXISTS = "J400125";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -474,6 +475,7 @@ public class ErrorCode {
     public static final String AGENT_PERSON_NO_NOT_NULL = "J500102";
     public static final String LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO = "J500103";
     public static final String LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME = "J500104";
+    public static final String CITY_NOT_EXISTS = "J500105";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1030,6 +1032,7 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_NOT_END_EQUIPMENT_DIFF_PRICE, "设备差价没有全部填写，不可以结束");
         MAP.put(CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE, "配件差价没有全部填写，不可以结束");
         MAP.put(DIFF_PRICE_ERROR, "差价填写有误");
+        MAP.put(STATEMENT_ORDER_PRODUCT_NOT_EXISTS, "订单商品不存在");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1092,6 +1095,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_STATUS_IS_ERROR, "批量支付结算单必须是未支付状态");
         MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
         MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
+        MAP.put(CITY_NOT_EXISTS, "城市不存在");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

@@ -51,7 +51,7 @@ public class ImportSupplierAndPeerXlsxDataServiceImpl implements ImportSupplierA
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Map<String, String>> importData(String str) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ServiceResult<String, Map<String, String>> serviceResult = new ServiceResult<>();
-        FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\销售订单 - 副本.xls");
+        FileInputStream fileIn = new FileInputStream("C:\\Users\\Administrator\\Desktop\\供应商.xlsx");
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
         XSSFSheet xssfSheet = xssfWorkbook.getSheet("Sheet1");
         Map<String, String> map = creatMap();
