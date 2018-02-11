@@ -21,11 +21,13 @@ public class K3WebServicePostRunner implements Runnable {
     private Object postData;
     private K3SendRecordMapper k3SendRecordMapper;
     private Integer postK3Type;
+    private K3SendRecordDO k3SendRecordDO;
 
-    public K3WebServicePostRunner(Integer postK3Type, Object postData, K3SendRecordMapper k3SendRecordMapper) {
+    public K3WebServicePostRunner(Integer postK3Type, Object postData, K3SendRecordMapper k3SendRecordMapper,K3SendRecordDO k3SendRecordDO ) {
         this.postData = postData;
         this.k3SendRecordMapper = k3SendRecordMapper;
         this.postK3Type = postK3Type;
+        this.k3SendRecordDO = k3SendRecordDO;
     }
 
     private void printSuccessLog(ServiceResult response) {
@@ -40,14 +42,7 @@ public class K3WebServicePostRunner implements Runnable {
     public void run() {
         ServiceResult response = null;
         try {
-            //创建推送记录，此时发送状态失败，接收状态失败
-            K3SendRecordDO k3SendRecordDO = new K3SendRecordDO();
-            k3SendRecordDO.setRecordType(postK3Type);
-            k3SendRecordDO.setRecordJson(JSON.toJSONString(postData));
-            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
-            k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
-            k3SendRecordDO.setSendTime(new Date());
-            k3SendRecordMapper.save(k3SendRecordDO);
+
             logger.info("【推送消息】" + JSON.toJSONString(postData));
             IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
 

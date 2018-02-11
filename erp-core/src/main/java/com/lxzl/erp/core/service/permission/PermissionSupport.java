@@ -122,7 +122,7 @@ public class PermissionSupport {
     public PermissionParam getPermissionParam(Integer... permissionTypes) {
         Integer userId = userSupport.getCurrentUserId();
         //超级管理员不加权限控制
-        if(userRoleService.isSuperAdmin(userId)){
+        if(userId==null||userRoleService.isSuperAdmin(userId)){
             return null;
         }
         Set<Integer> permissionSet = new HashSet<>();

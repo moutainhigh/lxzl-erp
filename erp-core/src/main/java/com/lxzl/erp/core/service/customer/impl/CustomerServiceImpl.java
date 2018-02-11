@@ -1086,6 +1086,48 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer detailCustomerTemp(String customerNo) {
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+        }
+
+        CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
+        List<Integer> dataAccessPassiveUserList = permissionSupport.getCanAccessPassiveUserList(userSupport.getCurrentUserId());
+
+
+        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+        //显示联合开发原的省，市，区
+        if (customerDO.getUnionUser() != null) {
+            Integer companyId = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
+            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
+            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        }
+        customerResult.setCustomerAccount(customerAccount);
+
+        if (customerDO.getCustomerCompanyDO() != null){
+            //加入默认地址关联ID
+            if(customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null){
+                customerResult.setIsDefaultConsignAddress(CommonConstant.COMMON_CONSTANT_YES);
+            }else{
+                customerResult.setIsDefaultConsignAddress(CommonConstant.COMMON_CONSTANT_NO);
+            }
+        }
+
+        if (customerResult.getOwner() != null) {
+            customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+        }
+        if (customerResult.getUnionUser() != null) {
+            customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
+        }
+
+        return customerResult;
+    }
+    @Override
     public ServiceResult<String, Customer> queryCustomerByNo(String customerNo) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
