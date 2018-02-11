@@ -31,9 +31,5 @@ public interface StatisticsMapper extends BaseMysqlDAO {
 
     StatisticsHomeByRentLengthType queryHomeByRentLengthType(@Param("maps") Map<String, Object> paramMap);
 
-    StatisticsUnReceivableForSubCompany queryStatisticsUnReceivableCountForSubCompany();
-
-    List<StatisticsUnReceivableDetailForSubCompany> queryStatisticsUnReceivableForSubCompany();
-
     List<StatisticsUnReceivableDetailForSubCompany> querySubCompanyInfo();
 }

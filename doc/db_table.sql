@@ -2745,9 +2745,11 @@ CREATE TABLE `erp_k3_mapping_supplier` (
 DROP TABLE if exists `erp_k3_mapping_product`;
 CREATE TABLE `erp_k3_mapping_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `erp_product_code` varchar(64) COMMENT 'erp商品编码',
-  `k3_product_code` varchar(64) COMMENT 'K3商品编码',
-  `product_name` varchar(64) COMMENT '商品名称',
+  `erp_product_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT 'erp商品编码',
+  `erp_sku_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT 'erp SKU编码',
+  `k3_product_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT 'K3商品编码',
+  `k3_sku_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT 'K3 sku编码',
+  `product_name` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '商品名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3商品映射';
 

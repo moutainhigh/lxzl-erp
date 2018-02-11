@@ -24,6 +24,8 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
     private String EQType;
 
+    private java.math.BigDecimal EQYJAmount;
+
     private java.util.Calendar endDate;
 
     private java.math.BigDecimal leaseMonthCount;
@@ -35,6 +37,8 @@ public class FormSeorderEntry  implements java.io.Serializable {
     private String number;
 
     private java.math.BigDecimal payAmountTotal;
+
+    private String payMethodNumber;
 
     private java.math.BigDecimal payMonthCount;
 
@@ -68,12 +72,14 @@ public class FormSeorderEntry  implements java.io.Serializable {
            String EQConfigNumber,
            java.math.BigDecimal EQPrice,
            String EQType,
+           java.math.BigDecimal EQYJAmount,
            java.util.Calendar endDate,
            java.math.BigDecimal leaseMonthCount,
            String name,
            String note,
            String number,
            java.math.BigDecimal payAmountTotal,
+           String payMethodNumber,
            java.math.BigDecimal payMonthCount,
            java.math.BigDecimal price,
            java.math.BigDecimal qty,
@@ -92,12 +98,14 @@ public class FormSeorderEntry  implements java.io.Serializable {
            this.EQConfigNumber = EQConfigNumber;
            this.EQPrice = EQPrice;
            this.EQType = EQType;
+           this.EQYJAmount = EQYJAmount;
            this.endDate = endDate;
            this.leaseMonthCount = leaseMonthCount;
            this.name = name;
            this.note = note;
            this.number = number;
            this.payAmountTotal = payAmountTotal;
+           this.payMethodNumber = payMethodNumber;
            this.payMonthCount = payMonthCount;
            this.price = price;
            this.qty = qty;
@@ -272,6 +280,26 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
+     * Gets the EQYJAmount value for this FormSeorderEntry.
+     * 
+     * @return EQYJAmount
+     */
+    public java.math.BigDecimal getEQYJAmount() {
+        return EQYJAmount;
+    }
+
+
+    /**
+     * Sets the EQYJAmount value for this FormSeorderEntry.
+     * 
+     * @param EQYJAmount
+     */
+    public void setEQYJAmount(java.math.BigDecimal EQYJAmount) {
+        this.EQYJAmount = EQYJAmount;
+    }
+
+
+    /**
      * Gets the endDate value for this FormSeorderEntry.
      * 
      * @return endDate
@@ -388,6 +416,26 @@ public class FormSeorderEntry  implements java.io.Serializable {
      */
     public void setPayAmountTotal(java.math.BigDecimal payAmountTotal) {
         this.payAmountTotal = payAmountTotal;
+    }
+
+
+    /**
+     * Gets the payMethodNumber value for this FormSeorderEntry.
+     * 
+     * @return payMethodNumber
+     */
+    public String getPayMethodNumber() {
+        return payMethodNumber;
+    }
+
+
+    /**
+     * Sets the payMethodNumber value for this FormSeorderEntry.
+     * 
+     * @param payMethodNumber
+     */
+    public void setPayMethodNumber(String payMethodNumber) {
+        this.payMethodNumber = payMethodNumber;
     }
 
 
@@ -626,6 +674,9 @@ public class FormSeorderEntry  implements java.io.Serializable {
             ((this.EQType==null && other.getEQType()==null) || 
              (this.EQType!=null &&
               this.EQType.equals(other.getEQType()))) &&
+            ((this.EQYJAmount==null && other.getEQYJAmount()==null) || 
+             (this.EQYJAmount!=null &&
+              this.EQYJAmount.equals(other.getEQYJAmount()))) &&
             ((this.endDate==null && other.getEndDate()==null) || 
              (this.endDate!=null &&
               this.endDate.equals(other.getEndDate()))) &&
@@ -644,6 +695,9 @@ public class FormSeorderEntry  implements java.io.Serializable {
             ((this.payAmountTotal==null && other.getPayAmountTotal()==null) || 
              (this.payAmountTotal!=null &&
               this.payAmountTotal.equals(other.getPayAmountTotal()))) &&
+            ((this.payMethodNumber==null && other.getPayMethodNumber()==null) || 
+             (this.payMethodNumber!=null &&
+              this.payMethodNumber.equals(other.getPayMethodNumber()))) &&
             ((this.payMonthCount==null && other.getPayMonthCount()==null) || 
              (this.payMonthCount!=null &&
               this.payMonthCount.equals(other.getPayMonthCount()))) &&
@@ -709,6 +763,9 @@ public class FormSeorderEntry  implements java.io.Serializable {
         if (getEQType() != null) {
             _hashCode += getEQType().hashCode();
         }
+        if (getEQYJAmount() != null) {
+            _hashCode += getEQYJAmount().hashCode();
+        }
         if (getEndDate() != null) {
             _hashCode += getEndDate().hashCode();
         }
@@ -726,6 +783,9 @@ public class FormSeorderEntry  implements java.io.Serializable {
         }
         if (getPayAmountTotal() != null) {
             _hashCode += getPayAmountTotal().hashCode();
+        }
+        if (getPayMethodNumber() != null) {
+            _hashCode += getPayMethodNumber().hashCode();
         }
         if (getPayMonthCount() != null) {
             _hashCode += getPayMonthCount().hashCode();
@@ -824,6 +884,13 @@ public class FormSeorderEntry  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("EQYJAmount");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "EQYJAmount"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "decimal"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("endDate");
         elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "EndDate"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
@@ -864,6 +931,13 @@ public class FormSeorderEntry  implements java.io.Serializable {
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "decimal"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("payMethodNumber");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "PayMethodNumber"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("payMonthCount");

@@ -1,9 +1,11 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
+import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -26,6 +28,24 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
         statementOrderCorrect.setStatementCorrectOverdueAmount(new BigDecimal(0.82));
         statementOrderCorrect.setStatementCorrectReason("测试225");
         statementOrderCorrect.setRemark("测试225");
+        TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
+    }
+    @Test
+    public void createStatementOrderCorrectJSON() throws Exception {
+        String str = "{\n" +
+                "\t\"statementOrderId\": 24,\n" +
+                "\t\"statementOrderReferId\": 3000183,\n" +
+                "\t\"statementOrderItemId\": 446,\n" +
+                "\t\"statementCorrectAmount\": \"1000\",\n" +
+                "\t\"statementCorrectRentAmount\": \"\",\n" +
+                "\t\"statementCorrectRentDepositAmount\": \"\",\n" +
+                "\t\"statementCorrectDepositAmount\": \"\",\n" +
+                "\t\"statementCorrectOtherAmount\": \"\",\n" +
+                "\t\"statementCorrectOverdueAmount\": \"\",\n" +
+                "\t\"statementCorrectReason\": \"\",\n" +
+                "\t\"remark\": \"\"\n" +
+                "}";
+        StatementOrderCorrect statementOrderCorrect = FastJsonUtil.toBean(str,StatementOrderCorrect.class);
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
     }
 

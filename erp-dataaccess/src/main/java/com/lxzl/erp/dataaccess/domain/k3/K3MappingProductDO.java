@@ -8,7 +8,9 @@ public class K3MappingProductDO  extends BaseDO {
 
 	private Integer id;
 	private String erpProductCode;
+	private String erpSkuCode;
 	private String k3ProductCode;
+	private String k3SkuCode;
 	private String productName;
 
 	public Integer getId(){
@@ -43,4 +45,19 @@ public class K3MappingProductDO  extends BaseDO {
 		this.productName = productName;
 	}
 
+	public String getErpSkuCode() {
+		return erpSkuCode;
+	}
+
+	public void setErpSkuCode(String erpSkuCode) {
+		this.erpSkuCode = erpSkuCode;
+	}
+
+	public String getK3SkuCode() {
+		return k3SkuCode;
+	}
+
+	public void setK3SkuCode(String k3SkuCode) {
+		this.k3SkuCode = k3SkuCode;
+	}
 }

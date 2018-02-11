@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -46,6 +47,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO;
 import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
+import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,24 +74,28 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setIsReplace(false);
         }
         K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByErpCode(erpOrder.getBuyerCustomerNo());
+//        if(k3MappingCustomerDO==null){
+//            CustomerDO customerDO = customerMapper.findByNo(erpOrder.getBuyerCustomerNo());
+//            Integer subCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
+//            SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
+//            String cityCode = k3Support.getK3CityCode(subCompanyDO.getSubCompanyCode());
+//            k3MappingCustomerDO = new K3MappingCustomerDO();
+//            k3MappingCustomerDO.setCustomerName(customerDO.getCustomerName());
+//            k3MappingCustomerDO.setErpCustomerCode(customerDO.getCustomerNo());
+//
+//            String customerNumber = cityCode + "."+customerDO.getCustomerNo();
+//            k3MappingCustomerDO.setK3CustomerCode(customerNumber);
+//            k3MappingCustomerMapper.save(k3MappingCustomerDO);
+//            formSEOrder.setCustNumber(customerNumber);// 客户代码
+//            formSEOrder.setCustName(customerDO.getCustomerName());// 客户名称
+//        }else{
         if(k3MappingCustomerDO==null){
-            CustomerDO customerDO = customerMapper.findByNo(erpOrder.getBuyerCustomerNo());
-            Integer subCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
-            String cityCode = k3Support.getK3CityCode(subCompanyDO.getSubCompanyCode());
-            k3MappingCustomerDO = new K3MappingCustomerDO();
-            k3MappingCustomerDO.setCustomerName(customerDO.getCustomerName());
-            k3MappingCustomerDO.setErpCustomerCode(customerDO.getCustomerNo());
+            throw new BusinessException("需要先同步客户信息");
+        }
 
-            String customerNumber = cityCode + "."+customerDO.getCustomerNo();
-            k3MappingCustomerDO.setK3CustomerCode(customerNumber);
-            k3MappingCustomerMapper.save(k3MappingCustomerDO);
-            formSEOrder.setCustNumber(customerNumber);// 客户代码
-            formSEOrder.setCustName(customerDO.getCustomerName());// 客户名称
-        }else{
             formSEOrder.setCustNumber(k3MappingCustomerDO.getK3CustomerCode());// 客户代码
             formSEOrder.setCustName(k3MappingCustomerDO.getCustomerName());// 客户名称
-        }
+//        }
 
         formSEOrder.setFetchStyleNumber("");
         formSEOrder.setDeptNumber("");
@@ -129,7 +135,8 @@ public class K3OrderConverter implements ConvertK3DataService {
         Integer subCompanyId = userSupport.getCompanyIdByUser(erpOrder.getOrderSellerId());
         SubCompanyDO sellerSubCompanyDO = subCompanyMapper.findById(subCompanyId);
         String empNumber = k3Support.getK3CityCode(sellerSubCompanyDO.getSubCompanyCode())+"."+erpOrder.getOrderSellerId();
-        formSEOrder.setEmpNumber(empNumber);// 业务员代码
+//        todo
+        formSEOrder.setEmpNumber("00.0001");// 业务员代码
 
         formSEOrder.setEmpName(erpOrder.getOrderSellerName());// 业务员名称
         formSEOrder.setBillerName(erpOrder.getCreateUserRealName());// 制单人
@@ -151,8 +158,8 @@ public class K3OrderConverter implements ConvertK3DataService {
             }
         }
 
-
-        formSEOrder.setExplanation(erpOrder.getRemark());// 摘要
+        String remark = erpOrder.getRemark()==null?"":erpOrder.getRemark();
+        formSEOrder.setExplanation(remark);// 摘要
         if(RentLengthType.RENT_LENGTH_TYPE_SHORT == erpOrder.getRentLengthType()){
             formSEOrder.setOrderTypeNumber("D");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
         }else if(RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()){
@@ -165,8 +172,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                 erpOrder.getOrderConsignInfo().getDistrictName() + " "+erpOrder.getOrderConsignInfo().getAddress();
         formSEOrder.setDeliveryAddress(address);// 交货地址
         formSEOrder.setDeliverPhone(erpOrder.getOrderConsignInfo().getConsigneePhone());// 收货人电话
-        //todo 我们先付信息是订单项信息
-        formSEOrder.setPayMethodNumber("01");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+
 
         /// <summary>
         /// 分公司
@@ -234,6 +240,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
                     //计算平均税率
                     BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
+                    rate = rate.setScale(2,BigDecimal.ROUND_HALF_UP);
                     formSeorderEntry.setAddRate(rate);//  税率
                     formSeorderEntry.setAmount(orderProduct.getProductAmount());//  含税租赁金额
 
@@ -247,13 +254,21 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setEQConfigNumber(orderProduct.getProductSkuName());//  设备配置代码
                     formSeorderEntry.setEQConfigName(orderProduct.getProductSkuName());//  设备配置名称
                     formSeorderEntry.setStartDate(startTime);//  起算日期
-                    formSeorderEntry.setYJAmount(BigDecimalUtil.add(orderProduct.getDepositAmount(),orderProduct.getRentDepositAmount()));//  押金金额
-                    //todo 单项的首付和首付合计有什么区别
-                    formSeorderEntry.setPayAmountTotal(new BigDecimal(1170));// 首付合计
+                    formSeorderEntry.setYJAmount(orderProduct.getRentDepositAmount());//  租金押金金额
+                    formSeorderEntry.setEQYJAmount(orderProduct.getDepositAmount());//  设备押金金额
+                    formSeorderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderProduct.getFirstNeedPayAmount(),orderProduct.getDepositAmount(),orderProduct.getRentDepositAmount()));//首付合计
                     ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
                     formSeorderEntry.setEQPrice(productSkuDO.getSkuPrice());//  单台设备价值
                     formSeorderEntry.setEQAmount( BigDecimalUtil.mul(productSkuDO.getSkuPrice(),new BigDecimal(orderProduct.getProductCount())));//  设备价值
                     formSeorderEntry.setSupplyNumber("");//  同行供应商
+                    if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProduct.getPayMode())){
+                        formSeorderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+                        formSEOrder.setPayMethodNumber("03");//订单里也要
+                    }else if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProduct.getPayMode())){
+                        formSeorderEntry.setPayMethodNumber("01");
+                        formSEOrder.setPayMethodNumber("03");//订单里也要
+                    }
+
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())){
                         formSeorderEntry.setStdPrice(productSkuDO.getDayRentPrice());//  设备标准租金
                     }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType())){
@@ -302,16 +317,21 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setEQConfigNumber("");//  设备配置代码
                     formSeorderEntry.setEQConfigName("");//  设备配置名称
                     formSeorderEntry.setStartDate( startTime);//  起算日期
-                    formSeorderEntry.setYJAmount(orderMaterial.getRentDepositAmount());//  押金金额
-                    //todo 设备全额押金张工还没给
-//                    BigDecimalUtil.add(orderMaterial.getDepositAmount(),
-                    //todo 单项的首付和首付合计有什么区别
-//                    BigDecimal totalFirst = BigDecimalUtil.add(BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount()));
-                    formSeorderEntry.setPayAmountTotal(orderMaterial.getRentDepositAmount());// 首付合计
+                    formSeorderEntry.setYJAmount(orderMaterial.getRentDepositAmount());//  租金押金金额
+                    formSeorderEntry.setEQYJAmount(orderMaterial.getDepositAmount());//设备押金金额
+                    formSeorderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderMaterial.getFirstNeedPayAmount(),orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount()));// 首付合计
+                    rate = rate.setScale(2,BigDecimal.ROUND_HALF_UP);
                     formSeorderEntry.setAddRate(rate);//  税率
                     formSeorderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值
                     formSeorderEntry.setEQAmount(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()),materialDO.getMaterialPrice()));//  设备价值
                     formSeorderEntry.setSupplyNumber("");//  同行供应商
+                    if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterial.getPayMode())){
+                        formSeorderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+                        formSEOrder.setPayMethodNumber("03");//订单里也要
+                    }else if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterial.getPayMode())){
+                        formSeorderEntry.setPayMethodNumber("01");
+                        formSEOrder.setPayMethodNumber("03");//订单里也要
+                    }
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType())){
                         formSeorderEntry.setStdPrice(materialDO.getDayRentPrice());//  设备标准租金
                     }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType())){
@@ -332,6 +352,7 @@ public class K3OrderConverter implements ConvertK3DataService {
             }
             formSEOrder.setEntrys(list);
         }
+        System.out.println(JSON.toJSONString(formSEOrder,true));
         return formSEOrder;
     }
 

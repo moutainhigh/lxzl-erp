@@ -32,18 +32,14 @@ public class BigDecimalUtil {
         }
         return value1.add(value2);
     }
-
-    public static BigDecimal add(BigDecimal... value) {
-        BigDecimal totalValue = BigDecimal.ZERO;
-        for (BigDecimal v : value) {
-            if (v == null) {
-                v = new BigDecimal(0);
-            }
-            totalValue = totalValue.add(v);
+    public static BigDecimal addAll(BigDecimal ... values) {
+        BigDecimal result = BigDecimal.ZERO;
+        for(BigDecimal value : values){
+            value = value==null?BigDecimal.ZERO:value;
+            result = result.add(value);
         }
-        return totalValue;
+        return result;
     }
-
     /**
      * 提供精确减法运算的sub方法
      *
@@ -93,8 +89,8 @@ public class BigDecimalUtil {
     /**
      * 提供（相对）精确的除法运算。当发生除不尽的情况时，由scale参数指定精度，以后的数字四舍五入。
      *
-     * @param v1    被除数
-     * @param v2    除数
+     * @param value1    被除数
+     * @param value2    除数
      * @param scale 表示表示需要精确到小数点以后几位。
      * @return 两个参数的商
      */
