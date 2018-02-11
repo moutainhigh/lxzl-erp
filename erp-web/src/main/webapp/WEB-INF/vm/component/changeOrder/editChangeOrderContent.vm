@@ -96,8 +96,8 @@
                     <div class="col-md-9">
                         <div class="input-group bringContainer">
                             <input type="hidden" id="owner" name="owner" bringFiled="owner" class="form-control required" />
-                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择客户" />
-                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>企业客户</span>
+                            <input id="ownerName" name="ownerName" bringFiled="ownerName" class="form-control required" type="text" readonly placeholder="请选择业务员" />
+                            <span class="input-group-addon cursor chooseOwnerName" id="chooseOwnerName"><i class="fa fa-search mr5"></i>业务员</span>
                         </div>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="skuId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                    <input type="text" name="changeProductSkuCount-{{skuId}}" value="{{changeProductSkuCount}}" class="changeProductSkuCount form-control required number pl10" placeholder="输入换货数量" />
+                                    <input type="text" name="changeProductSkuCount-{{skuId}}" value="{{changeProductSkuCount}}" class="changeProductSkuCount form-control required checkInteger pl10" placeholder="输入换货数量" />
                                 </label>
                             </td>
                             <td {{#destChangeProductInfo}}rowSpan="2"{{/destChangeProductInfo}} class="text-right">
@@ -261,7 +261,7 @@
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                    <input type="text" name="changeMaterialCount-{{materialNo}}" value="{{changeMaterialCount}}" class="changeMaterialCount form-control required number pl10" placeholder="输入换货数量" />
+                                    <input type="text" name="changeMaterialCount-{{materialNo}}" value="{{changeMaterialCount}}" class="changeMaterialCount form-control required checkInteger pl10" placeholder="输入换货数量" />
                                 </label>
                             </td>
                             <td {{#destChangeMaterialInfo}}rowSpan="2"{{/destChangeMaterialInfo}} class="text-right">

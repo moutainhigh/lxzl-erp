@@ -89,7 +89,7 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>编号</th>
+                                <th>换货单编号</th>
                                 <th>客户编号</th>
                                 <th>起租时间</th>
 ##                                <th>商品总数</th>

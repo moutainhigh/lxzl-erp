@@ -44,7 +44,9 @@
                                     <div class="form-group pull-right mn mr10" style="width: 120px;">
                                         <input type="text" name="statementOrderNo" id="statementOrderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="结算单编号">
                                     </div>
-
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                    </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <input type="text" name="statementOrderCustomerName" id="statementOrderCustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
                                     </div>

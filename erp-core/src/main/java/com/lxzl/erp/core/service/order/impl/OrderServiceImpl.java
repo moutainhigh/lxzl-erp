@@ -1994,6 +1994,10 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, Integer> productNewStockMap = new HashMap<>();
             Map<Integer, Integer> productOldStockMap = new HashMap<>();
             for (OrderProduct orderProduct : order.getOrderProductList()) {
+                orderProduct.setRentType(order.getRentType());
+                orderProduct.setRentTimeLength(order.getRentTimeLength());
+                orderProduct.setRentLengthType(order.getRentLengthType());
+
                 if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
                     return ErrorCode.ORDER_PRODUCT_COUNT_ERROR;
                 }
@@ -2048,24 +2052,22 @@ public class OrderServiceImpl implements OrderService {
                 }
 
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
-                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount());
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount()), new BigDecimal(order.getRentTimeLength()));
                     thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProduct.getDepositAmount());
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
-                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0){
+                    if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
-
-
-                orderProduct.setRentType(order.getRentType());
-                orderProduct.setRentTimeLength(order.getRentTimeLength());
-                orderProduct.setRentLengthType(order.getRentLengthType());
             }
         }
 
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
             Map<String, OrderMaterial> orderMaterialMap = new HashMap<>();
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                orderMaterial.setRentType(order.getRentType());
+                orderMaterial.setRentTimeLength(order.getRentTimeLength());
+                orderMaterial.setRentLengthType(order.getRentLengthType());
                 if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
                     return ErrorCode.ORDER_MATERIAL_COUNT_ERROR;
                 }
@@ -2105,17 +2107,13 @@ public class OrderServiceImpl implements OrderService {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
-                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount());
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount()), new BigDecimal(order.getRentTimeLength()));
                     thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterial.getDepositAmount());
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
-                    if(BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0){
+                    if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
-
-                orderMaterial.setRentType(order.getRentType());
-                orderMaterial.setRentTimeLength(order.getRentTimeLength());
-                orderMaterial.setRentLengthType(order.getRentLengthType());
             }
         }
         return ErrorCode.SUCCESS;
