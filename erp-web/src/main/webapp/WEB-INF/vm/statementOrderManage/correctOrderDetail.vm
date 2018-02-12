@@ -46,15 +46,20 @@
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
                                         <dt>状态：</dt><dd class="mb5">{{statementOrderCorrectStatusValue}}&nbsp;</dd>
-                                        <dt>冲正金额：</dt><dd class="mb5">{{#price}}{{statementCorrectAmount}}{{/price}}</dd>
                                         <dt>冲正成功时间：</dt><dd class="mb5">{{#time}}{{statementCorrectSuccessTime}}{{/time}}</dd>
+                                        <dt>冲正原因：</dt><dd class="mb5">{{statementCorrectReason}}&nbsp;</dd>
+                                        {{#hasStatementCorrectFailReason}}<dt>冲正失败原因：</dt><dd class="mb5">{{statementCorrectFailReason}}&nbsp;</dd>{{/hasStatementCorrectFailReason}}
+                                        <dt>备注：</dt><dd class="mb5">{{remark}}&nbsp;</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt>冲正原因：</dt><dd class="mb5">{{statementCorrectReason}}&nbsp;</dd>
-                                        {{#hasStatementCorrectFailReason}}<dt>冲正失败原因：</dt><dd class="mb5">{{statementCorrectFailReason}}&nbsp;</dd>{{/hasStatementCorrectFailReason}}
-                                        <dt>备注：</dt><dd class="mb5">{{remark}}&nbsp;</dd>
+                                        <dt>冲正金额：</dt><dd class="mb5">￥{{#price}}{{statementCorrectAmount}}{{/price}}</dd>
+                                        <dt>冲正租金：</dt><dd class="mb5">￥{{#price}}{{statementCorrectRentAmount}}{{/price}}</dd>
+                                        <dt>冲正租金押金：</dt><dd class="mb5">￥{{#price}}{{statementCorrectRentDepositAmount}}{{/price}}</dd>
+                                        <dt>冲正押金：</dt><dd class="mb5">￥{{#price}}{{statementCorrectDepositAmount}}{{/price}}</dd>
+                                        <dt>冲正其它费用：</dt><dd class="mb5">￥{{#price}}{{statementCorrectOtherAmount}}{{/price}}</dd>
+                                        <dt>冲正逾期费用：</dt><dd class="mb5">￥{{#price}}{{statementCorrectOverdueAmount}}{{/price}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -69,7 +74,7 @@
                             {{/order}}
                         </script>
 
-                        <div class="panel-body hide" id="orderDetailInfo"></div>
+##                        <div class="panel-body hide" id="orderDetailInfo"></div>
 
                         <script type="text/html" id="orderDetailInfoTpl">
                             {{#order}}
