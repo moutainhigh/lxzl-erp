@@ -14,4 +14,6 @@ public interface K3MappingBrandMapper extends BaseMysqlDAO<K3MappingBrandDO> {
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	K3MappingBrandDO findByErpCode(@Param("erpCode") String erpCode);
+
+	K3MappingBrandDO findByK3Code(@Param("k3Code") String k3Code);
 }

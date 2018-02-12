@@ -15,11 +15,15 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
-import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -89,10 +93,12 @@ public class K3ServiceImpl implements K3Service {
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     order.setOrderConsignInfo(orderConsignInfo);
                     String measureList = obj.get("MeasureList").toString();
-                    List<OrderMaterial> orderMaterialList = JSON.parseObject(measureList, List.class);
+                    List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
+                    convertOrderMaterial(orderMaterialList);
                     order.setOrderMaterialList(orderMaterialList);
                     String productList = obj.get("ProductList").toString();
-                    List<OrderProduct> orderProductList = JSON.parseObject(productList, List.class);
+                    List<OrderProduct> orderProductList = JSON.parseArray(productList, OrderProduct.class);
+                    convertOrderProduct(orderProductList);
                     order.setOrderProductList(orderProductList);
 
                     orderList.add(order);
@@ -106,6 +112,56 @@ public class K3ServiceImpl implements K3Service {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    private void convertOrderProduct(List<OrderProduct> orderProductList) {
+        if (CollectionUtil.isNotEmpty(orderProductList)) {
+            for (int i = 0; i < orderProductList.size(); i++) {
+                OrderProduct orderProduct = orderProductList.get(i);
+                String productNumber = orderProduct.getProductNumber();
+                if (StringUtil.isBlank(productNumber)) {
+                    continue;
+                }
+                String[] number = productNumber.split(".");
+                if (number.length >= 2) {
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByK3Code(number[1]);
+                    if (k3MappingCategoryDO != null) {
+                        orderProduct.setBrandName(k3MappingCategoryDO.getCategoryName());
+                    }
+                }
+                if (number.length >= 3) {
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByK3Code(number[1]);
+                    if (k3MappingBrandDO != null) {
+                        orderProduct.setBrandName(k3MappingBrandDO.getBrandName());
+                    }
+                }
+            }
+        }
+    }
+
+    private void convertOrderMaterial(List<OrderMaterial> orderMaterialList) {
+        if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+            for (int i = 0; i < orderMaterialList.size(); i++) {
+                OrderMaterial orderMaterial = orderMaterialList.get(i);
+                String fNumber = orderMaterial.getFNumber();
+                if (StringUtil.isBlank(fNumber)) {
+                    continue;
+                }
+                String[] number = fNumber.split(".");
+                if (number.length >= 2) {
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByK3Code(number[1]);
+                    if (k3MappingCategoryDO != null) {
+                        orderMaterial.setMaterialTypeStr(k3MappingCategoryDO.getCategoryName());
+                    }
+                }
+                if (number.length >= 3) {
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByK3Code(number[1]);
+                    if (k3MappingBrandDO != null) {
+                        orderMaterial.setBrandName(k3MappingBrandDO.getBrandName());
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -135,10 +191,12 @@ public class K3ServiceImpl implements K3Service {
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     order.setOrderConsignInfo(orderConsignInfo);
                     String measureList = obj.get("MeasureList").toString();
-                    List<OrderMaterial> orderMaterialList = JSON.parseObject(measureList, List.class);
+                    List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
+                    convertOrderMaterial(orderMaterialList);
                     order.setOrderMaterialList(orderMaterialList);
                     String productList = obj.get("ProductList").toString();
-                    List<OrderProduct> orderProductList = JSON.parseObject(productList, List.class);
+                    List<OrderProduct> orderProductList = JSON.parseArray(productList, OrderProduct.class);
+                    convertOrderProduct(orderProductList);
                     order.setOrderProductList(orderProductList);
 
                     if (orderNo.equals(order.getOrderNo())) {
@@ -156,4 +214,11 @@ public class K3ServiceImpl implements K3Service {
         result.setResult(CollectionUtil.isNotEmpty(orderList) ? orderList.get(0) : null);
         return result;
     }
+
+
+    @Autowired
+    private K3MappingBrandMapper k3MappingBrandMapper;
+
+    @Autowired
+    private K3MappingCategoryMapper k3MappingCategoryMapper;
 }

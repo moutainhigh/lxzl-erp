@@ -36,6 +36,10 @@ public class OrderMaterial extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private String materialTypeStr;	// 配件类型
+	private String brandName;                   // 品牌
+
+	private String FNumber;	// 配件代码
 
 	private BigDecimal firstNeedPayAmount;
 
@@ -254,5 +258,29 @@ public class OrderMaterial extends BasePO {
 
 	public void setFEntryID(Integer FEntryID) {
 		this.FEntryID = FEntryID;
+	}
+
+	public String getMaterialTypeStr() {
+		return materialTypeStr;
+	}
+
+	public void setMaterialTypeStr(String materialTypeStr) {
+		this.materialTypeStr = materialTypeStr;
+	}
+
+	public String getFNumber() {
+		return FNumber;
+	}
+
+	public void setFNumber(String FNumber) {
+		this.FNumber = FNumber;
+	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
 	}
 }

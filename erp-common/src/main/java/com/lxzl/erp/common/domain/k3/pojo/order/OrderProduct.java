@@ -32,6 +32,9 @@ public class OrderProduct extends BasePO {
     private Integer paymentCycle;               // 租金期数
     private Integer payMode;                    // 付款方式，1先付后用，2先用后付
     private Integer isNewProduct;               // 是否全新，1是0否
+    private String productNumber;               // 商品编码
+    private String categoryName;                // 类型
+    private String brandName;                   // 品牌
 
     private BigDecimal firstNeedPayAmount;      // 首付金额
 
@@ -233,5 +236,29 @@ public class OrderProduct extends BasePO {
 
     public void setFEntryID(Integer FEntryID) {
         this.FEntryID = FEntryID;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getProductNumber() {
+        return productNumber;
+    }
+
+    public void setProductNumber(String productNumber) {
+        this.productNumber = productNumber;
     }
 }

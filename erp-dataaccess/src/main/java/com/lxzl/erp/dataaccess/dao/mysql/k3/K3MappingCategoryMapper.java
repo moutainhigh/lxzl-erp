@@ -14,4 +14,6 @@ public interface K3MappingCategoryMapper extends BaseMysqlDAO<K3MappingCategoryD
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	K3MappingCategoryDO findByErpCode(@Param("erpCode") String erpCode);
+
+	K3MappingCategoryDO findByK3Code(@Param("k3Code") String k3Code);
 }
