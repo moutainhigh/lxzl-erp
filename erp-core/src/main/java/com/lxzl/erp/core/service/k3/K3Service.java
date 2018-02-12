@@ -20,4 +20,6 @@ public interface K3Service {
      * @return 订单列表
      */
     ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param);
+
+    ServiceResult<String, Order> queryOrder(String orderNo);
 }

@@ -30,7 +30,7 @@ public class K3Controller extends BaseController {
 
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody K3OrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, Order> serviceResult = new ServiceResult<>(ErrorCode.SUCCESS, new Order());
+        ServiceResult<String, Order> serviceResult = k3Service.queryOrder(param.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
