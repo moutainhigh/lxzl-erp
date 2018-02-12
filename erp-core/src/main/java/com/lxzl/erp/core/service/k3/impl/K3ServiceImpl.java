@@ -16,6 +16,7 @@ import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,22 +38,46 @@ public class K3ServiceImpl implements K3Service {
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
-        PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
 
         List<Order> orderList = new ArrayList<>();
+        Integer maxCount;
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
             JSONObject jsonObject = JSON.parseObject(requestJson);
+            // 过滤
+            if (StringUtil.isBlank(param.getOrderNo())) {
+                jsonObject.remove("orderNo");
+            }
+            if (StringUtil.isBlank(param.getBuyerRealName())) {
+                jsonObject.remove("buyerRealName");
+            }
+            if (StringUtil.isBlank(param.getBuyerCustomerNo())) {
+                jsonObject.remove("buyerCustomerNo");
+            }
+            if (param.getSubCompanyId() == null) {
+                jsonObject.remove("subCompanyId");
+            }
+            if (param.getRentType() == null) {
+                jsonObject.remove("rentType");
+            }
+            if (param.getCreateStartTime() == null) {
+                jsonObject.remove("createStartTime");
+            }
+            if (param.getCreateEndTime() == null) {
+                jsonObject.remove("createEndTime");
+            }
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post("http://103.239.207.170:9090/api/OrderSearch", requestJson, headerBuilder, "UTF-8");
 
             logger.info("query charge page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
 
-            List<JSONObject> k3OrderList = (List<JSONObject>) postResult.get("Data");
+            JSONObject orderBills = (JSONObject) postResult.get("Data");
+            List<JSONObject> k3OrderList = (List<JSONObject>) orderBills.get("bills");
+            maxCount = (Integer) orderBills.get("maxCount");
 
             if (CollectionUtil.isNotEmpty(k3OrderList)) {
                 for (JSONObject obj : k3OrderList) {
@@ -75,7 +100,7 @@ public class K3ServiceImpl implements K3Service {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
         }
-        Page<Order> page = new Page<>(orderList, param.getPageSize(), param.getPageNo(), param.getPageSize());
+        Page<Order> page = new Page<>(orderList, maxCount, param.getPageNo(), param.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
@@ -83,17 +108,15 @@ public class K3ServiceImpl implements K3Service {
 
     @Override
     public ServiceResult<String, Order> queryOrder(String orderNo) {
-        K3OrderQueryParam param = new K3OrderQueryParam();
-        param.setOrderNo(orderNo);
         ServiceResult<String, Order> result = new ServiceResult<>();
 
         List<Order> orderList = new ArrayList<>();
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
-            String requestJson = FastJsonUtil.toJSONString(param);
-            JSONObject jsonObject = JSON.parseObject(requestJson);
-            requestJson = jsonObject.toJSONString();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("orderNo", orderNo);
+            String requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post("http://103.239.207.170:9090/api/OrderSearch", requestJson, headerBuilder, "UTF-8");
 
             logger.info("query charge page response:{}", response);
@@ -115,7 +138,7 @@ public class K3ServiceImpl implements K3Service {
                     List<OrderProduct> orderProductList = JSON.parseObject(productList, List.class);
                     order.setOrderProductList(orderProductList);
 
-                    if(param.getOrderNo().equals(order.getOrderNo())){
+                    if (orderNo.equals(order.getOrderNo())) {
                         orderList.add(order);
                         break;
                     }

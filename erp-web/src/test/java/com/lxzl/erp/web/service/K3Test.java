@@ -21,7 +21,12 @@ public class K3Test extends ERPUnTransactionalTest {
     public void testGetData() {
         K3OrderQueryParam param = new K3OrderQueryParam();
         param.setPageNo(1);
-        param.setPageSize(20);
+        param.setPageSize(10);
         k3Service.queryAllOrder(param);
+    }
+
+    @Test
+    public void queryOrder() {
+        k3Service.queryOrder("LXSE2017101714");
     }
 }
