@@ -91,6 +91,7 @@ public class K3ServiceImpl implements K3Service {
                     Order order = JSON.parseObject(orderBill, Order.class);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
+                    orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
                     String measureList = obj.get("MeasureList").toString();
                     List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
@@ -189,6 +190,7 @@ public class K3ServiceImpl implements K3Service {
                     Order order = JSON.parseObject(orderBill, Order.class);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
+                    orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
                     String measureList = obj.get("MeasureList").toString();
                     List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
