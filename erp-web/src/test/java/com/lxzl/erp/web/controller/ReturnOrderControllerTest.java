@@ -73,27 +73,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void createJson() throws Exception {
-        String json = "{\n" +
-                "\t\"customerNo\": \"CP201712060843154191841\",\n" +
-                "\t\"isCharging\": \"1\",\n" +
-                "\t\"remark\": \"退货\",\n" +
-                "\t\"returnMode\": \"1\",\n" +
-                "\t\"returnTime\": 1516492800000,\n" +
-                "\t\"returnReasonType\": \"1\",\n" +
-                "\t\"returnOrderConsignInfo\": {\n" +
-                "\t\t\"consigneeName\": \"黎文彬\",\n" +
-                "\t\t\"consigneePhone\": \"13638699632\",\n" +
-                "\t\t\"province\": 1,\n" +
-                "\t\t\"city\": 1,\n" +
-                "\t\t\"district\": 1,\n" +
-                "\t\t\"address\": \"茶飘香\"\n" +
-                "\t},\n" +
-                "\t\"returnOrderProductList\": [{\n" +
-                "\t\t\"returnProductSkuId\": 215,\n" +
-                "\t\t\"returnProductSkuCount\": \"1\"\n" +
-                "\t}],\n" +
-                "\t\"returnOrderMaterialList\": []\n" +
-                "}\n";
+        String json = "{\"customerNo\":\"LXCC-1000-20180130-00063\",\"isCharging\":\"1\",\"remark\":\"\",\"returnMode\":\"1\",\"returnTime\":1518134400000,\"returnReasonType\":\"1\",\"owner\":\"500030\",\"returnOrderConsignInfo\":{\"consigneeName\":\"晓晓\",\"consigneePhone\":\"18566479745\",\"province\":6,\"city\":47,\"district\":530,\"address\":\"鹏鹏测试地址\"},\"returnOrderProductList\":[],\"returnOrderMaterialList\":[{\"returnMaterialNo\":\"M201712250956366751399\",\"returnMaterialCount\":\"1\"},{\"returnMaterialNo\":\"M201712250956366751399\"}]}";
         AddReturnOrderParam addReturnOrderParam = JSON.parseObject(json, AddReturnOrderParam.class);
         TestResult testResult = getJsonTestResult("/returnOrder/add", addReturnOrderParam);
     }
@@ -200,6 +180,12 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         returnOrder.setServiceCost(new BigDecimal(100));
         returnOrder.setDamageCost(BigDecimal.ZERO);
         returnOrder.setIsDamage(CommonConstant.YES);
+        TestResult testResult = getJsonTestResult("/returnOrder/end", returnOrder);
+    }
+    @Test
+    public void endJson() throws Exception {
+        String json = "{\"serviceCost\":\"0\",\"damageCost\":\"0\",\"isDamage\":\"0\",\"returnTime\":1518307200000,\"remark\":\"\",\"returnOrderNo\":\"LXRO-700032-20180122-00014\"}";
+        ReturnOrder returnOrder = JSON.parseObject(json,ReturnOrder.class);
         TestResult testResult = getJsonTestResult("/returnOrder/end", returnOrder);
     }
 

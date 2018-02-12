@@ -50,13 +50,13 @@
         WHERE esod.order_type =1 AND esod.data_status=1 AND esod.statement_detail_status = 8
 
         <if test="maps.incomeQueryParam.rentLengthType!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
+            AND eo.rent_length_type = #{maps.incomeQueryParam.rentLengthType}
         </if>
         <if test="maps.incomeQueryParam.customerName!=null&amp;&amp; maps.incomeQueryParam.customerName != ''">
             AND ec.customer_name LIKE CONCAT('%','${maps.incomeQueryParam.customerName}','%' )
         </if>
         <if test="maps.incomeQueryParam.subCompanyId!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.incomeQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
         </if>
         <if test="maps.incomeQueryParam.salesmanName!=null&amp;&amp; maps.incomeQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.incomeQueryParam.salesmanName}','%' )
@@ -95,16 +95,15 @@
         LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
         LEFT JOIN erp_statement_order_return_detail esord ON esod.id = esord.statement_order_id AND esord.data_status=1 AND esod.statement_detail_type = 4
         AND esord.return_time>=#{maps.incomeQueryParam.startTime} AND #{maps.incomeQueryParam.endTime}>esord.return_time
-
         WHERE esod.order_type =1 AND esod.data_status=1 AND esod.statement_detail_status = 8
         <if test="maps.incomeQueryParam.rentLengthType!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.incomeQueryParam.rentLengthType}
+            AND eo.rent_length_type = #{maps.incomeQueryParam.rentLengthType}
         </if>
         <if test="maps.incomeQueryParam.customerName!=null&amp;&amp; maps.incomeQueryParam.customerName != ''">
             AND ec.customer_name LIKE CONCAT('%','${maps.incomeQueryParam.customerName}','%' )
         </if>
         <if test="maps.incomeQueryParam.subCompanyId!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.incomeQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
         </if>
         <if test="maps.incomeQueryParam.salesmanName!=null&amp;&amp; maps.incomeQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.incomeQueryParam.salesmanName}','%' )

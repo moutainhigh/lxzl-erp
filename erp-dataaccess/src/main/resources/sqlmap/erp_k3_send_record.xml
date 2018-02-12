@@ -10,15 +10,20 @@
 		<result column="send_result" jdbcType="INTEGER" property="sendResult" />
 		<result column="receive_result" jdbcType="INTEGER" property="receiveResult" />
 		<result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+		<result column="record_refer_id" jdbcType="INTEGER" property="recordReferId" />
 	</resultMap>
 
 	<sql id="column_List">
-		eksr.id,eksr.record_type,eksr.record_json,eksr.response_json,eksr.send_result,eksr.receive_result,eksr.send_time
+		eksr.id,eksr.record_type,eksr.record_json,eksr.response_json,eksr.send_result,eksr.receive_result,eksr.send_time,eksr.record_refer_id
 	</sql>
 
 	<select id="findById" resultMap="K3SendRecordDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr 
 		WHERE eksr.id = #{id, jdbcType=INTEGER}
+	</select>
+	<select id="findByReferIdAndType" resultMap="K3SendRecordDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr
+		WHERE eksr.record_refer_id = #{referId, jdbcType=INTEGER} and eksr.record_type =  #{type, jdbcType=INTEGER}
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -49,6 +54,9 @@
 			</if>
 			<if test="sendTime != null">
 				send_time = #{sendTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recordReferId != null">
+				record_refer_id = #{recordReferId,jdbcType=TIMESTAMP},
 			</if>
 		</set>
 	</sql>
