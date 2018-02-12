@@ -16,6 +16,7 @@
                             <th>更换设备编号</th>
                             <th>更换设备归属仓库</th>
                             <th>更换设备所在仓库</th>
+                            <th>备注</th>
                             {{#hasRowActionButtons}}
                             <th class="text-right">操作</th>
                             {{/hasRowActionButtons}}
@@ -31,6 +32,7 @@
                             <td>{{destEquipmentNo}}</td>
                             <td>{{destProductEquipment.ownerWarehouseName}}</td>
                             <td>{{destProductEquipment.currentWarehouseName}}</td>
+                            <td>{{remark}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}

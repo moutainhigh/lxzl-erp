@@ -22,6 +22,7 @@
                             <th>更换散料当前仓库</th>
                             <th>更换散料品牌</th>
                             <th>更换散料面值大小</th>
+                            <th>备注</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -41,6 +42,8 @@
                             <td>{{destBulkMaterial.currentWarehouseName}}</td>
                             <td>{{destBulkMaterial.brandName}}</td>
                             <td>{{#memorysize}}{{destBulkMaterial.materialCapacityValue}}{{/memorysize}}</td>
+
+                            <td>{{remark}}</td>
 
                         </tr>
                         {{/listData}}

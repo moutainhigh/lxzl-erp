@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-订单管理-订单列表-订单详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <form class="" id="orderDetailForm">
+                <div class="panel panel-primary panel-border top mb15">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>订单编号：<small id="orderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-orderno="{{orderNo}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div id="orderBaseInfo"></div>
+                    </div>
+                    <script type="text/html" id="orderBaseInfoTpl">
+                        {{#order}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label>创建时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#time}}{{createTime}}{{/time}}</dd>
+
+                                    <dt><label  style="letter-spacing: 0.33em">创建人</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5" >{{orderSellerName}}</dd>
+
+                                    <dt><label>订单归属</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderSubCompanyName}}</dd>
+
+                                    <dt><label>配送方式</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{deliveryModeValue}}&nbsp;</dd>
+
+                                    <dt><label>配送日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label>客户名称</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{buyerCustomerName}}&nbsp;</dd>
+
+                                    <dt><label>客户编号</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{buyerCustomerNo}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.33em">收货人</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderConsignInfo.consigneeName}}&nbsp;</dd>
+
+                                    <dt><label>联系方式</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderConsignInfo.consigneePhone}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 1em">地址</label><span class="mr5">：</span></dt>
+                                    <dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label style="letter-spacing: 0.5em;">起租日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
+
+                                    <dt><label>预计归还日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</dd>
+
+                                    <dt><label>实际归还时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#shortTime}}{{actualReturnTime}}{{/shortTime}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.5em;">发货时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#time}}{{deliveryTime}}{{/time}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.5em;">收货时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#time}}{{confirmDeliveryTime}}{{/time}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+                </div>
+
+                <div class="panel">
+                    <script type="text/html" id="orderDetailInfoTpl">
+                        {{#order}}
+                        <div class="dark">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>免押额度</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt><label style="letter-spacing: 0.75em;">授信额度</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5" id="creditAmount"></dd>
+
+                                        <dt><label style="letter-spacing: 0.75em;">已用额度</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5" id="creditAmountUsed"></dd>
+
+                                        <dt><label>本期免押金额度</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{totalCreditDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）*#</dd>
+
+                                        <dt><label>剩余免押金额度</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5" id="surplusCreditAmount"></dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>订单金额</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        <dt><label style="letter-spacing: 1em">税率</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">
+                                            <em style="font-style: normal;" class="text-info mr5">17%:</em><em style="font-style: normal;" class="mr15">{{highTaxRate}}%</em>
+                                            <em style="font-style: normal;" class="text-info mr5">6%:</em><em style="font-style: normal;">{{lowTaxRate}}%</em>
+                                        </dd>
+
+                                        <dt><label>设备押金</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{totalDepositAmount}}{{/price}}#*（商品：{{#price}}{{totalProductDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialDepositAmount}}{{/price}}）*#</dd>
+
+                                        <dt><label>租金押金</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{totalRentDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductRentDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialRentDepositAmount}}{{/price}}）*#</dd>
+
+                                        <dt><label>租金总额</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{totalRentalAmoutFont}}{{/price}}#*（商品：￥{{#price}}{{totalProductAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialAmount}}{{/price}}）*#</dd>
+
+                                        <dt><label style="letter-spacing: 1em">运费</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
+
+                                        <dt><label>订单总价</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5 text-danger">￥{{#price}}{{totalOrderAmount}}{{/price}}</dd>
+
+                                        <dt><label style="letter-spacing: 1em">首付</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5 text-danger">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</dd>
+
+                                        <dt><label style="letter-spacing: 0.33em">已付租金</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5 text-danger">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>订单状态</h4>
+                                    <div class="row pl15 mt15">
+                                        <ul class="Rental-timeline">
+                                            {{#orderTimeAxisTree}}
+                                            <li class="Rental-timeline-item {{#isLastLine}}Rental-timeline-item-last{{/isLastLine}}">
+                                                <div class="Rental-timeline-item-tail"></div>
+                                                <div class="Rental-timeline-item-head {{inlineClass}}"></div>
+                                                <div class="Rental-timeline-item-content"><span class="mr15">{{orderStatusValue}}</span><span>{{createTimeFormat}}</span></div>
+                                            </li>
+                                            {{/orderTimeAxisTree}}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+                    <div class="panel-body" id="orderDetailInfo"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                                <li class="active">
+                                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                </li>
+                                <li>
+                                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                                </li>
+                                <li>
+                                    <a href="#statementOrderList" data-toggle="tab">结算单</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body light pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
+                                <script type="text/html" id="pickingProductButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-right ml10">
+                                                <div class="btn-group actionCommonButtons" >
+                                                    {{#acitonButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{text}}" data-orderno="{{orderNo}}">
+                                                        <i class="{{iClass}}"></i> {{text}}
+                                                    </a>
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="pickingProductButtons"></div>
+                                <div class="table-responsive mb30">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>商品名称</th>
+                                            <th>类别</th>
+                                            <th>品牌</th>
+                                            <th>商品参数（SKU）</th>
+                                            <th>商品价值</th>
+                                            <th>商品单价</th>
+                                            <th>数量</th>
+                                            <th>租期</th>
+                                            <th>支付方式</th>
+                                            <th>设备押金</th>
+                                            <th>商品总价</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#listData}}
+                                        <tr class="productRow" productRowKey="{{productId}}">
+                                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td>{{propertiesToStr}}</td>
+                                            <td>￥{{currentSkuPrice}}</td>
+                                            <td>
+                                                ￥{{#price}}{{productUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                {{productCount}}
+                                            </td>
+                                            <td>
+                                                <p>{{rentTypeValue}}</p>
+                                                <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                            </td>
+                                            <td>
+                                                <p>{{payModeValue}}</p>
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{depositAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{productAmount}}{{/price}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-light affixTr" style="height: 0;">
+                                            <td colspan="12" class="pn br-n" style="height:0;">
+                                                <div class="panel m15 affixPanel"  style="display: none;">
+                                                    <div class="panel-heading pn ph10">
+                                                        <span>已配设备：共配 {{orderProductEquipmentListCount}} 件</span>
+                                                    </div>
+                                                    <div class="panel-body pn">
+                                                        <table class="table">
+                                                            <thead>
+                                                            <th>设备编号</th>
+                                                            <th>预计归还时间</th>
+                                                            <th>实际归还时间</th>
+                                                            </thead>
+                                                            {{#orderProductEquipmentListData}}
+                                                            <tbody>
+                                                            {{#list}}
+                                                            <tr>
+                                                                <td>{{equipmentNo}}</td>
+                                                                <td>{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</td>
+                                                                <td>{{#time}}{{actualReturnTime}}{{/time}}</td>
+                                                            </tr>
+                                                            {{/list}}
+                                                            {{^list}}
+                                                            <tr>
+                                                                <td class="br-r">无配货信息</td>
+                                                            </tr>
+                                                            {{/list}}
+                                                            </tbody>
+                                                            {{/orderProductEquipmentListData}}
+                                                        </table>
+                                                    </div>
+                                                    <div class="panel-footer pn pv5 ph15">
+                                                        <div class="row">
+                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+
+                            </div>
+                            <div id="purchaseOrderMaterialItems" class="tab-pane tab-pane-order">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="materialDataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                        ##                                            <th>编号</th>
+                                        ##                                            <th>图片</th>
+                                            <th>配件名称</th>
+                                            <th>品牌</th>
+                                            <th>类型</th>
+                                            <th>配件价值</th>
+                                            <th>配件单价</th>
+                                            <th>数量</th>
+                                            <th>租期</th>
+                                            <th>支付方式</th>
+                                            <th>设备押金</th>
+                                            <th>配件总价</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr class="materialRow">
+                                        ##                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialNo}}</td>
+                                        ##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialName}}</td>
+                                            <td>{{brandName}}</td>
+                                            <td>{{materialTypeStr}}</td>
+                                            <td>￥{{currentMaterialPrice}}</td>
+                                            <td>
+                                                ￥{{#price}}{{materialUnitAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                {{materialCount}}
+                                            </td>
+                                            <td>
+                                                <p>{{rentTypeValue}}</p>
+                                                <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                            </td>
+                                            <td>
+                                                <p>{{payModeValue}}</p>
+                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{depositAmount}}{{/price}}
+                                            </td>
+                                            <td>
+                                                ￥{{#price}}{{materialAmount}}{{/price}}
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="#"
+                                                       class="btn btn-default btn-xs {{class}}"
+                                                       data-materialno="{{materialNo}}"
+                                                       data-materialid="{{materialId}}"
+                                                       data-orderno="{{orderNo}}"
+                                                       data-materialcount="{{materialCount}}"
+                                                       data-isnewmaterial="{{isNewMaterial}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                    <a href="#" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-light affixTr" style="height: 0;">
+                                            <td colspan="14" class="pn br-n" style="height:0;">
+                                                <div class="panel m15 affixPanel"  style="display: none;">
+                                                    {{#orderMaterialBulkListData}}
+                                                    <div class="panel-heading pn ph8">
+                                                        <span>已配散料：共 {{sourcceLength}} 件</span>
+                                                    </div>
+                                                    <div class="panel-body pn">
+                                                        <table class="table">
+                                                            {{#orderMaterialBulkListSource}}
+                                                            <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                <td class="br-r">{{bulkMaterialNo}}</td>
+                                                            </tr>
+                                                            {{/orderMaterialBulkListSource}}
+                                                            {{^orderMaterialBulkListSource}}
+                                                            <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                                                <td class="br-r">无配货信息</td>
+                                                            </tr>
+                                                            {{/orderMaterialBulkListSource}}
+                                                        </table>
+                                                    </div>
+                                                    <div class="panel-footer pn pv5 ph15">
+                                                        <div class="row">
+                                                            <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                                                        </div>
+                                                    </div>
+                                                    {{/orderMaterialBulkListData}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有配件</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13 br-t" id="materialDataListTable"></table>
+                                </div>
+                            </div>
+                            <div id="statementOrderList" class="tab-pane tab-pane-order">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="statementOrderDetailListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>商品名</th>
+                                            <th>金额类型</th>
+                                            <th>单价</th>
+                                            <th>商品数量</th>
+                                            <th>租赁类型</th>
+                                            <th>期数</th>
+                                            <th>结算单金额</th>
+                                            <th>其它费用</th>
+                                            <th>预计支付时间</th>
+                                            <th>已经支付金额</th>
+                                            <th>结算支付时间</th>
+                                            <th>逾期金额</th>
+                                            <th>退还租金押金</th>
+                                            <th>退还押金</th>
+                                            <th>状态</th>
+                                            <th class="text-right">结算时间</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            <td>
+                                                <div class="mw200">
+                                                    {{itemName}}
+                                                </div>
+                                            </td>
+                                            <td>{{statementDetailTypeValue}}</td>
+                                            <td>￥{{#price}}{{unitAmount}}{{/price}}</td>
+                                            <td>{{itemCount}}</td>
+                                            <td>{{itemRentTypeValue}}</td>
+                                            <td>{{statementDetailPhase}}</td>
+                                            <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
+                                            <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
+                                            <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
+                                            <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
+                                            <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+                                            <td>
+                                                <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td>{{statementDetailStatusValue}}</td>
+                                            <td>
+                                                <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
+                                                <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">无结算明细列表</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="statementOrderDetailList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'api.data.js',
+            'manage.order.mixin.js',
+            'manage.order.handle.mixin.js',
+            'manage.k3.order.detail.js',
+            'manage.order.item.render.js',
+            'manage.order.util.js',
+            'modal.submit.audit.js',
+            'manage.order.picking.js',
+            'modal.input.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+
+    K3OrderDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>
