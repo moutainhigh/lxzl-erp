@@ -133,6 +133,7 @@ public class ErrorCode {
     public static final String PRODUCT_NEW_DAY_RENT_PRICE_IS_NOT_NULL = "J200073";
     public static final String PRODUCT_NEW_MONTH_RENT_PRICE_IS_NOT_NULL = "J200074";
     public static final String BUYER_CUSTOMER_NO_NOT_NULL = "J200075";
+    public static final String PRODUCT_ALREADY_EXISTS = "J200076";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -806,6 +807,7 @@ public class ErrorCode {
         MAP.put(ORDER_EXPECT_DELIVERY_TIME_ERROR, "预计发货时间必须在租赁时间之前，并且不能大于2天");
         MAP.put(ORDER_NO_NOT_NULL, "订单号不能为空");
         MAP.put(BUYER_CUSTOMER_NO_NOT_NULL, "购买人编号不能为空");
+        MAP.put(PRODUCT_ALREADY_EXISTS, "商品已经存在");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
