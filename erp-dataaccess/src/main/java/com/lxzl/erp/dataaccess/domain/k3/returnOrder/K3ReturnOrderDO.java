@@ -1,0 +1,119 @@
+package com.lxzl.erp.dataaccess.domain.k3.returnOrder;
+
+import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import java.util.Date;
+import java.util.List;
+
+
+public class K3ReturnOrderDO  extends BaseDO {
+
+	private Integer id;
+	private String returnOrderNo;
+	private String k3CustomerNo;
+	private String k3CustomerName;   //K3客户名称
+	private Date returnTime;
+	private String returnAddress;
+	private String returnContacts;
+	private String returnPhone;
+	private Integer returnOrderStatus;   // 是否推送到K3 1是0否
+	private Integer dataStatus;
+	private String remark;
+
+	private List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList;
+
+	public Integer getId(){
+		return id;
+	}
+
+	public void setId(Integer id){
+		this.id = id;
+	}
+
+	public String getReturnOrderNo(){
+		return returnOrderNo;
+	}
+
+	public void setReturnOrderNo(String returnOrderNo){
+		this.returnOrderNo = returnOrderNo;
+	}
+
+	public String getK3CustomerNo(){
+		return k3CustomerNo;
+	}
+
+	public void setK3CustomerNo(String k3CustomerNo){
+		this.k3CustomerNo = k3CustomerNo;
+	}
+
+	public Date getReturnTime(){
+		return returnTime;
+	}
+
+	public void setReturnTime(Date returnTime){
+		this.returnTime = returnTime;
+	}
+
+	public String getReturnAddress(){
+		return returnAddress;
+	}
+
+	public void setReturnAddress(String returnAddress){
+		this.returnAddress = returnAddress;
+	}
+
+	public String getReturnContacts(){
+		return returnContacts;
+	}
+
+	public void setReturnContacts(String returnContacts){
+		this.returnContacts = returnContacts;
+	}
+
+	public String getReturnPhone(){
+		return returnPhone;
+	}
+
+	public void setReturnPhone(String returnPhone){
+		this.returnPhone = returnPhone;
+	}
+
+	public Integer getDataStatus(){
+		return dataStatus;
+	}
+
+	public void setDataStatus(Integer dataStatus){
+		this.dataStatus = dataStatus;
+	}
+
+	public String getRemark(){
+		return remark;
+	}
+
+	public void setRemark(String remark){
+		this.remark = remark;
+	}
+
+	public List<K3ReturnOrderDetailDO> getK3ReturnOrderDetailDOList() {
+		return k3ReturnOrderDetailDOList;
+	}
+
+	public void setK3ReturnOrderDetailDOList(List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList) {
+		this.k3ReturnOrderDetailDOList = k3ReturnOrderDetailDOList;
+	}
+
+	public String getK3CustomerName() {
+		return k3CustomerName;
+	}
+
+	public void setK3CustomerName(String k3CustomerName) {
+		this.k3CustomerName = k3CustomerName;
+	}
+
+	public Integer getReturnOrderStatus() {
+		return returnOrderStatus;
+	}
+
+	public void setReturnOrderStatus(Integer returnOrderStatus) {
+		this.returnOrderStatus = returnOrderStatus;
+	}
+}

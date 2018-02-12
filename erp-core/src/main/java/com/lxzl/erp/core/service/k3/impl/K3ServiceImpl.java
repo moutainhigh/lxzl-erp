@@ -10,6 +10,9 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
@@ -215,6 +218,41 @@ public class K3ServiceImpl implements K3Service {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(CollectionUtil.isNotEmpty(orderList) ? orderList.get(0) : null);
         return result;
+    }
+
+
+    @Override
+    public ServiceResult<String, String> createReturnOrder(K3ReturnOrder k3ReturnOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> addReturnOrder(K3ReturnOrderDetail k3ReturnOrderDetail) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<String, String> deleteReturnOrder(Integer k3ReturnOrderDetailId) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<String, Page<K3ReturnOrder>> queryReturnOrder(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<String, K3ReturnOrder> queryReturnOrderByNo(String returnOrderNo) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult<String, String> sendToK3(String returnOrderNo) {
+        return null;
     }
 
 

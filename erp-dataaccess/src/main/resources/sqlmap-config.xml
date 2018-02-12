@@ -140,6 +140,8 @@
         <mapper resource="sqlmap/erp_statement_order_correct.xml" />
         <mapper resource="sqlmap/erp_user_login_log.xml" />
         <mapper resource="sqlmap/erp_statement_order_correct_detail.xml" />
+        <mapper resource="sqlmap/erp_k3_return_order.xml" />
+        <mapper resource="sqlmap/erp_k3_return_order_detail.xml" />
     </mappers>
 
 </configuration>
