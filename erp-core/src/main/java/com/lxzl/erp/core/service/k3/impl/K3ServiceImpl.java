@@ -122,7 +122,7 @@ public class K3ServiceImpl implements K3Service {
                 if (StringUtil.isBlank(productNumber)) {
                     continue;
                 }
-                String[] number = productNumber.split(".");
+                String[] number = productNumber.split("\\.");
                 if (number.length >= 2) {
                     K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByK3Code(number[1]);
                     if (k3MappingCategoryDO != null) {
@@ -130,7 +130,7 @@ public class K3ServiceImpl implements K3Service {
                     }
                 }
                 if (number.length >= 3) {
-                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByK3Code(number[1]);
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByK3Code(number[2]);
                     if (k3MappingBrandDO != null) {
                         orderProduct.setBrandName(k3MappingBrandDO.getBrandName());
                     }
@@ -147,7 +147,7 @@ public class K3ServiceImpl implements K3Service {
                 if (StringUtil.isBlank(fNumber)) {
                     continue;
                 }
-                String[] number = fNumber.split(".");
+                String[] number = fNumber.split("\\.");
                 if (number.length >= 2) {
                     K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByK3Code(number[1]);
                     if (k3MappingCategoryDO != null) {
@@ -155,7 +155,7 @@ public class K3ServiceImpl implements K3Service {
                     }
                 }
                 if (number.length >= 3) {
-                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByK3Code(number[1]);
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByK3Code(number[2]);
                     if (k3MappingBrandDO != null) {
                         orderMaterial.setBrandName(k3MappingBrandDO.getBrandName());
                     }
