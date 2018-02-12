@@ -16,6 +16,7 @@ import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
@@ -724,6 +725,12 @@ public class OrderServiceImpl implements OrderService {
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+                orderDO.setUpdateTime(currentTime);
+                orderDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMapper.update(orderDO);
+                //获取订单详细信息，发送给k3
+                Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
@@ -731,10 +738,11 @@ public class OrderServiceImpl implements OrderService {
                     customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), orderDO.getTotalCreditDepositAmount());
                 }
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId());
+                orderDO.setUpdateTime(currentTime);
+                orderDO.setUpdateUser(loginUser.getUserId().toString());
+                orderMapper.update(orderDO);
             }
-            orderDO.setUpdateTime(currentTime);
-            orderDO.setUpdateUser(loginUser.getUserId().toString());
-            orderMapper.update(orderDO);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -2201,4 +2209,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private StatementOrderSupport statementOrderSupport;
+    @Autowired
+    private WebServiceHelper webServiceHelper;
 }

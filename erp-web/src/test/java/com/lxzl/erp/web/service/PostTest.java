@@ -4,8 +4,6 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.constant.PostK3OperatorType;
 import com.lxzl.erp.common.constant.PostK3Type;
-import com.lxzl.erp.common.domain.Page;
-import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
@@ -13,6 +11,7 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
@@ -43,8 +42,22 @@ public class PostTest extends ERPUnTransactionalTest {
 
     @Test
     public void postProduct() throws InterruptedException {
+
         ProductDO productDO = productMapper.findByProductId(2000063);
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
+        Thread.sleep(30000);
+    }
+    @Test
+    public void postAllProduct() throws InterruptedException {
+        Map<String,Object> maps = new HashMap<>();
+        ProductQueryParam productQueryParam = new ProductQueryParam();
+        maps.put("start", 0);
+        maps.put("pageSize", 20);
+        maps.put("productQueryParam", productQueryParam);
+        List<ProductDO> productDOList = productMapper.findProductByParams(maps);
+        for(ProductDO productDO : productDOList){
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
+        }
         Thread.sleep(30000);
     }
 
@@ -99,11 +112,13 @@ public class PostTest extends ERPUnTransactionalTest {
         customerCompanyQueryParam.setPageSize(Integer.MAX_VALUE);
         Map<String,Object> maps = new HashMap<>();
         maps.put("start", 0);
-        maps.put("pageSize", 20);
+        maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("orderQueryParam", customerCompanyQueryParam);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
 
         for(CustomerDO customerDO : customerDOList){
+
+            Thread.sleep(50);
             Customer customer = customerService.detailCustomerTemp(customerDO.getCustomerNo());
             if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customer.getCustomerType())){
                 CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customer.getCustomerId());
@@ -116,7 +131,7 @@ public class PostTest extends ERPUnTransactionalTest {
             webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_CUSTOMER, customer);
         }
 
-        Thread.sleep(30000);
+        Thread.sleep(100000);
     }
     @Autowired
     private ProductMapper productMapper;

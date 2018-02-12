@@ -42,7 +42,8 @@ public class K3WebServicePostRunner implements Runnable {
     public void run() {
         ServiceResult response = null;
         try {
-
+            k3SendRecordDO.setRecordJson(JSON.toJSONString(postData));
+            k3SendRecordMapper.update(k3SendRecordDO);
             logger.info("【推送消息】" + JSON.toJSONString(postData));
             IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
 
@@ -58,7 +59,7 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addSEorder((FormSEOrder) postData);
             }
             //修改推送记录
-            if ("0".equals(response.getStatus())) {
+            if (response.getStatus()==1) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
             } else {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);

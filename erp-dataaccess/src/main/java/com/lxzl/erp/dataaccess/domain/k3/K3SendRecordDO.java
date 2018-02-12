@@ -13,6 +13,7 @@ public class K3SendRecordDO  extends BaseDO {
 	private Integer sendResult;
 	private Integer receiveResult;
 	private Date sendTime;
+	private Integer recordReferId;
 
 	public Integer getId(){
 		return id;
@@ -70,4 +71,11 @@ public class K3SendRecordDO  extends BaseDO {
 		this.sendTime = sendTime;
 	}
 
+	public Integer getRecordReferId() {
+		return recordReferId;
+	}
+
+	public void setRecordReferId(Integer recordReferId) {
+		this.recordReferId = recordReferId;
+	}
 }

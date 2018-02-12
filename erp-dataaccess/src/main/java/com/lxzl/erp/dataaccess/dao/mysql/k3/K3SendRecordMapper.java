@@ -12,4 +12,6 @@ public interface K3SendRecordMapper extends BaseMysqlDAO<K3SendRecordDO> {
 	List<K3SendRecordDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+	K3SendRecordDO findByReferIdAndType(@Param("referId") Integer referId , @Param("type") Integer type);
 }

@@ -85,9 +85,9 @@ public class K3CustomerConverter implements ConvertK3DataService{
         formOrganization.setName(customer.getCustomerName());
         formOrganization.setEmpNumber(empNumber);
         formOrganization.setEmpName(ownerUser.getRealName());
-        formOrganization.setPhone(phone);
-        formOrganization.setContact(contact);
-        formOrganization.setAddress(address);
+        formOrganization.setPhone(phone==null?"":phone);
+        formOrganization.setContact(contact==null?"":contact);
+        formOrganization.setAddress(address==null?"":address);
         formOrganization.setNumbers(new ItemNumber[]{new ItemNumber(false, name, cityCode, "客户"),
                 new ItemNumber(true, customer.getCustomerName(), k3MappingCustomerDO.getK3CustomerCode(), "客户")});
 
