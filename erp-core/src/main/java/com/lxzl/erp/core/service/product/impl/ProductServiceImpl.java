@@ -1,9 +1,6 @@
 package com.lxzl.erp.core.service.product.impl;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.PermissionType;
-import com.lxzl.erp.common.constant.ProductEquipmentStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
@@ -14,6 +11,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.FileService;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductImageConverter;
@@ -152,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(errorCode);
             return result;
         }
-
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productId);
         return result;
@@ -1185,4 +1183,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private PermissionSupport permissionSupport;
+
+    @Autowired
+    private WebServiceHelper webServiceHelper;
 }

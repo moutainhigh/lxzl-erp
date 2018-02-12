@@ -59,7 +59,7 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addSEorder((FormSEOrder) postData);
             }
             //修改推送记录
-            if (response.getStatus()==1) {
+            if (response.getStatus()==0) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
             } else {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
