@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(errorCode);
             return result;
         }
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productId);
         return result;
@@ -577,7 +577,7 @@ public class ProductServiceImpl implements ProductService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("productEquipmentQueryParam", productEquipmentQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY,PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY, PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = productEquipmentMapper.listCount(maps);
         List<ProductEquipmentDO> productEquipmentDOList = productEquipmentMapper.listPage(maps);
@@ -747,6 +747,13 @@ public class ProductServiceImpl implements ProductService {
 
         if (product.getProductSkuList() == null || product.getProductSkuList().isEmpty()) {
             return ErrorCode.PRODUCT_SKU_NOT_NULL;
+        }
+
+        ProductDO productDO = productMapper.findExistsProduct(product.getBrandId(), product.getCategoryId(), product.getProductModel());
+        if (productDO != null) {
+            if (!productDO.getId().equals(product.getProductId())) {
+                return ErrorCode.PRODUCT_ALREADY_EXISTS;
+            }
         }
         for (ProductSku productSku : product.getProductSkuList()) {
 

@@ -152,6 +152,12 @@
         FROM erp_product ep WHERE id = #{id, jdbcType=INTEGER}
     </select>
 
+    <select id="findExistsProduct" resultMap="ProductDO" parameterType="java.util.Map">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_product ep WHERE brand_id = #{brandId, jdbcType=INTEGER} AND category_id = #{categoryId, jdbcType=INTEGER} AND product_model = #{productModel, jdbcType=VARCHAR}
+    </select>
+
     <select id="findProductByParams" resultMap="ProductDO" parameterType="map">
         SELECT m_product.*
         <trim prefix=",">

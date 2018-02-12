@@ -19,4 +19,6 @@ public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     List<ProductSkuDO> findSkuRentByCustomerId(@Param("customerId") Integer customerId);
 
     List<ProductDO> findProductByName(@Param("productName") String productName);
+
+    ProductDO findExistsProduct(@Param("brandId") Integer brandId,@Param("categoryId") Integer categoryId,@Param("productModel") String productModel);
 }
