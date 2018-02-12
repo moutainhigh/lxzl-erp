@@ -90,6 +90,7 @@
                                     <th>预计支付日期</th>
                                     <th>已支付金额</th>
                                     <th>逾期金额</th>
+                                    <th>冲正金额</th>
                                     <th>结算状态</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
@@ -124,6 +125,7 @@
                                         <p class="mn mt5" title="支付时间">{{#clockTime}}{{statementPaidTime}}{{/clockTime}}</p>
                                     </td>
                                     <td>￥{{#price}}{{statementOverdueAmount}}{{/price}}</td>
+                                    <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                     <td class="{{statementOrderStatusClass}}">{{statementOrderStatusValue}}</td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
