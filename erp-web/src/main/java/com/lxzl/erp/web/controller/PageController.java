@@ -588,11 +588,11 @@ public class PageController extends BaseController {
         return "/statementOrderManage/statementOrderDetail";
     }
     // 对账单
-    @RequestMapping("/monthly-statement-order/list")
+    @RequestMapping("/statement-monthly-order/list")
     public String monthStatementOrderList() {
         return "/statementOrderManage/monthlyStatementOrderList";
     }
-    @RequestMapping("/monthly-statement-order/detail")
+    @RequestMapping("/statement-monthly-order/detail")
     public String monthStatementOrderDetail() {
         return "/statementOrderManage/monthlyStatementOrderDetail";
     }
@@ -695,6 +695,17 @@ public class PageController extends BaseController {
     public String changeOrderUpdateMaterialDiffPrice() {
         return "/component/changeOrder/updateMaterialPriceDiff";
     }
+
+    //k3数据
+    @RequestMapping("/k3-order/list")
+    public String k3OrderManageList() {
+        return "/k3Manage/k3OrderList";
+    }
+    @RequestMapping("/k3-order/detail")
+    public String k3OrderManageDetail() {
+        return "/k3Manage/k3OrderDetail";
+    }
+
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
