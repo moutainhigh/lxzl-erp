@@ -44,7 +44,7 @@
                         <th>公司名</th>
                         <th>法人</th>
                         <th>联系方式</th>
-                        <th>备注</th>
+##                        <th>备注</th>
                         <th class="text-right">操作</th>
                     </tr>
                     </thead>
@@ -60,7 +60,7 @@
                             <p>{{customerCompany.connectPhone}}</p>
                             <div>{{addressForamt}}</div>
                         </td>
-                        <td>{{customerCompany.remark}}</td>
+##                        <td>{{customerCompany.remark}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
                                 <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs chooseButton" data-customerno="{{customerNo}}" data-customertype="{{customerType}}">选择</a>

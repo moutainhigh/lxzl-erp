@@ -41,7 +41,7 @@
 ##                        <th>手机号</th>
 ##                        <th>地址</th>
                         <th>联系方式</th>
-                        <th>备注</th>
+##                        <th>备注</th>
                         <th class="text-right">操作</th>
                     </tr>
                     </thead>
@@ -59,7 +59,7 @@
                             <p>{{customerPerson.phone}}</p>
                             <p>{{addressForamt}}</p>
                         </td>
-                        <td>{{customerPerson.remark}}</td>
+##                        <td>{{customerPerson.remark}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
                                 <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-customerno="{{customerNo}}" data-customertype="{{customerType}}">选择</a>

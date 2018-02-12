@@ -88,9 +88,6 @@
                                     <th>其它收入</th>
                                     <th>预付租金</th>
                                     <th>收入</th>
-                                    <th>支付时间</th>
-                                    <th>订单项ID</th>
-                                    <th>订单项类型</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -110,9 +107,6 @@
                                     <td>￥{{#price}}{{otherPaidAmount}}{{/price}}</td>
                                     <td>￥{{#price}}{{prepayRentAmount}}{{/price}}</td>
                                     <td>￥{{#price}}{{incomeAmount}}{{/price}}</td>
-                                    <td>{{#time}}{{payTime}}{{/time}}</td>
-                                    <td>{{orderItemReferId}}</td>
-                                    <td>{{orderItemTypeValue}}</td>
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}
@@ -135,8 +129,8 @@
                                     <td id="totalPrepayRent"></td>
                                     <td id="totalIncome"></td>
                                     <td id="statisticsIncomeDetailPage"></td>
-                                    <td></td>
-                                    <td></td>
+##                                    <td></td>
+##                                    <td></td>
                                 </tr>
                                 {{/dataSource}}
                                 </tbody>
