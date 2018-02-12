@@ -188,6 +188,9 @@
             </if>
         </where>
     </select>
+    <select id="listAllUser" resultMap="userResult" >
+          SELECT <include refid="columnList"/> FROM erp_user u order by id
+    </select>
     <select id="listPage" resultMap="userResult" parameterType="java.util.Map">
         SELECT LIMIT_MAIN.* FROM (
             select user_main.*,<include refid="role_columnList"/>,

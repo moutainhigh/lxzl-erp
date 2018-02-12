@@ -135,9 +135,7 @@ public class K3OrderConverter implements ConvertK3DataService {
         Integer subCompanyId = userSupport.getCompanyIdByUser(erpOrder.getOrderSellerId());
         SubCompanyDO sellerSubCompanyDO = subCompanyMapper.findById(subCompanyId);
         String empNumber = k3Support.getK3CityCode(sellerSubCompanyDO.getSubCompanyCode())+"."+erpOrder.getOrderSellerId();
-//        todo
-        formSEOrder.setEmpNumber("00.0001");// 业务员代码
-
+        formSEOrder.setEmpNumber(k3Support.getK3UserCode(erpOrder.getOrderSellerId()));// 业务员代码
         formSEOrder.setEmpName(erpOrder.getOrderSellerName());// 业务员名称
         formSEOrder.setBillerName(erpOrder.getCreateUserRealName());// 制单人
         //主管用业务员代替
@@ -168,8 +166,12 @@ public class K3OrderConverter implements ConvertK3DataService {
         formSEOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
         formSEOrder.setOrderFromNumber("XX");// 订单来源 XS	线上 XX 线下
         formSEOrder.setDeliveryName(erpOrder.getOrderConsignInfo().getConsigneeName());// 提货人
-        String address = erpOrder.getOrderConsignInfo().getProvinceName()+" "+erpOrder.getOrderConsignInfo().getCityName()+" "+
-                erpOrder.getOrderConsignInfo().getDistrictName() + " "+erpOrder.getOrderConsignInfo().getAddress();
+
+        String provinceName = erpOrder.getOrderConsignInfo().getProvinceName()==null?"":erpOrder.getOrderConsignInfo().getProvinceName()+" ";
+        String cityName = erpOrder.getOrderConsignInfo().getCityName()==null?"":erpOrder.getOrderConsignInfo().getCityName()+" ";
+        String districtName = erpOrder.getOrderConsignInfo().getDistrictName() ==null?"":erpOrder.getOrderConsignInfo().getDistrictName()+" " ;
+        String address =erpOrder.getOrderConsignInfo().getAddress() ==null?"":erpOrder.getOrderConsignInfo().getAddress() ;
+        address = provinceName +cityName+ districtName+address;
         formSEOrder.setDeliveryAddress(address);// 交货地址
         formSEOrder.setDeliverPhone(erpOrder.getOrderConsignInfo().getConsigneePhone());// 收货人电话
 
@@ -374,8 +376,6 @@ public class K3OrderConverter implements ConvertK3DataService {
     private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
-    @Autowired
-    private CustomerMapper customerMapper;
     @Autowired
     private UserSupport userSupport;
     @Autowired

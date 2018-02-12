@@ -14,4 +14,5 @@ public interface IERPService extends java.rmi.Remote {
     public ServiceResult addICItem(FormICItem item) throws java.rmi.RemoteException;
     public ServiceResult addOrganization(FormOrganization cust) throws java.rmi.RemoteException;
     public ServiceResult addSEorder(FormSEOrder order) throws java.rmi.RemoteException;
+    public ServiceResult addUser(FormUser user) throws java.rmi.RemoteException;
 }

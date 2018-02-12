@@ -22,4 +22,6 @@ public interface UserMapper extends BaseMysqlDAO<UserDO> {
     List<UserDO> getPassiveUserByUser(@Param("userId") Integer userId);
 
     UserDO findByUserRealName(@Param("realName") String realName);
+
+    List<UserDO>  listAllUser();
 }

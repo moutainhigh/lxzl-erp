@@ -26,6 +26,9 @@ public class PostK3ServiceManager {
         if(PostK3Type.POST_K3_TYPE_ORDER.equals(postType)){
             return k3OrderConverter;
         }
+        if(PostK3Type.POST_K3_TYPE_USER.equals(postType)){
+            return k3UserConverter;
+        }
         return null;
     }
 
@@ -39,4 +42,6 @@ public class PostK3ServiceManager {
     private K3SupplierConverter k3SupplierConverter;
     @Autowired
     private K3OrderConverter k3OrderConverter;
+    @Autowired
+    private K3UserConverter k3UserConverter;
 }

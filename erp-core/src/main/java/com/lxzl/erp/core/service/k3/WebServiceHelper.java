@@ -55,6 +55,8 @@ public class WebServiceHelper {
                 refId = (Integer)doFiledMap.get("supplierId").get(data);
             }else if(postK3Type.equals(PostK3Type.POST_K3_TYPE_ORDER)){
                 refId = (Integer)doFiledMap.get("orderId").get(data);
+            }else if(postK3Type.equals(PostK3Type.POST_K3_TYPE_USER)){
+                refId = (Integer)doFiledMap.get("userId").get(data);
             }
             K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(refId,postK3Type);
 
@@ -77,7 +79,7 @@ public class WebServiceHelper {
             threadPoolTaskExecutor.execute(new K3WebServicePostRunner(postK3Type, postData, k3SendRecordMapper,k3SendRecordDO));
         } catch (Exception e) {
             logger.error("=============【 PostWebServiceHelper ERROR 】=============");
-            logger.error("【 ERROR INFO 】" + e);
+            logger.error("【 ERROR INFO 】" ,e);
         }
 
     }

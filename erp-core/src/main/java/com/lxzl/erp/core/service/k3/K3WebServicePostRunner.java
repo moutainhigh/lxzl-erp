@@ -57,6 +57,8 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addSupply((FormSupply) postData);
             }else if (PostK3Type.POST_K3_TYPE_ORDER.equals(postK3Type)) {
                 response = service.addSEorder((FormSEOrder) postData);
+            }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
+                response = service.addUser((FormUser) postData);
             }
             //修改推送记录
             if (response.getStatus()==0) {
@@ -72,10 +74,10 @@ public class K3WebServicePostRunner implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("=============【PUSH DATA TO K3 ERROR】=============");
-            logger.error("【ERROR INFO】" + e);
+            logger.error("【ERROR INFO】" , e);
         } catch (Throwable t) {
             logger.error("=============【PUSH DATA TO K3 ERROR】=============");
-            logger.error("【ERROR INFO】" + t);
+            logger.error("【ERROR INFO】" ,t);
         } finally {
 
             if (response == null || response.getStatus() != 0) {

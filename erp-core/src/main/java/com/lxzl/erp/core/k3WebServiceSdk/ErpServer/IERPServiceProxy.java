@@ -70,5 +70,11 @@ public class IERPServiceProxy implements IERPService {
     return iERPService.addSEorder(order);
   }
   
+  public ServiceResult addUser(FormUser user) throws java.rmi.RemoteException{
+    if (iERPService == null)
+      _initIERPServiceProxy();
+    return iERPService.addUser(user);
+  }
+  
   
 }
