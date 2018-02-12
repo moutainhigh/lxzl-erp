@@ -31,6 +31,10 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         Date end = sdf.parse( " 2028-07-10 19:20:00 " );
         statisticsIncomePageParam.setStartTime(start);
         statisticsIncomePageParam.setEndTime(end);
+        statisticsIncomePageParam.setSubCompanyId(1);
+        statisticsIncomePageParam.setRentLengthType(2);
+        statisticsIncomePageParam.setCustomerName("公司");
+        statisticsIncomePageParam.setSalesmanName("ad");
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
     @Test
