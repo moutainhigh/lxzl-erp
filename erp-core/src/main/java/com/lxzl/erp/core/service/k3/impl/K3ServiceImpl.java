@@ -36,6 +36,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
+    private String k3OrderUrl = "http://103.239.207.170:9090/api/OrderSearch";
+
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
@@ -70,7 +72,7 @@ public class K3ServiceImpl implements K3Service {
                 jsonObject.remove("createEndTime");
             }
             requestJson = jsonObject.toJSONString();
-            String response = HttpClientUtil.post("http://103.239.207.170:9090/api/OrderSearch", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
 
             logger.info("query charge page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
@@ -117,12 +119,13 @@ public class K3ServiceImpl implements K3Service {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("orderNo", orderNo);
             String requestJson = jsonObject.toJSONString();
-            String response = HttpClientUtil.post("http://103.239.207.170:9090/api/OrderSearch", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
 
             logger.info("query charge page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
 
-            List<JSONObject> k3OrderList = (List<JSONObject>) postResult.get("Data");
+            JSONObject orderBills = (JSONObject) postResult.get("Data");
+            List<JSONObject> k3OrderList = (List<JSONObject>) orderBills.get("bills");
 
             if (CollectionUtil.isNotEmpty(k3OrderList)) {
                 for (JSONObject obj : k3OrderList) {
