@@ -171,7 +171,7 @@
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
-            'manage.order.handle.mixin.js',
+            'manage.k3.order.handle.mixin.js',
             'manage.k3.order.list.js',
             'modal.submit.audit.js');
 </script>
