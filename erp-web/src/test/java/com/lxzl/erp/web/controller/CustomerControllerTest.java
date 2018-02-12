@@ -39,7 +39,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("彭测试公司名a123");
+        customerCompany.setCompanyName("三九文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("彭企业信息详细地址测试");
@@ -80,6 +80,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
+        Thread.sleep(1000000);
     }
 
     @Test

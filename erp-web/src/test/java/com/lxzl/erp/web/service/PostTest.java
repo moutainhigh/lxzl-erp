@@ -56,6 +56,7 @@ public class PostTest extends ERPUnTransactionalTest {
         maps.put("productQueryParam", productQueryParam);
         List<ProductDO> productDOList = productMapper.findProductByParams(maps);
         for(ProductDO productDO : productDOList){
+            Thread.sleep(500);
             webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
         }
         Thread.sleep(30000);
@@ -70,7 +71,7 @@ public class PostTest extends ERPUnTransactionalTest {
 
     @Test
     public void postCustomer() throws InterruptedException {
-        String customerNo  = "CP201712060843154191841";
+        String customerNo  = "LXCC-1000-20180212-00084";
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
@@ -98,7 +99,7 @@ public class PostTest extends ERPUnTransactionalTest {
         for(OrderDO orderDO : orderList){
            Order order =  orderService.queryOrderByNo(orderDO.getOrderNo()).getResult();
 //            order.setOrderNo("LXO-20180208-700032-00009");
-
+            Thread.sleep(500);
             webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
         }
 
@@ -118,7 +119,7 @@ public class PostTest extends ERPUnTransactionalTest {
 
         for(CustomerDO customerDO : customerDOList){
 
-            Thread.sleep(50);
+            Thread.sleep(500);
             Customer customer = customerService.detailCustomerTemp(customerDO.getCustomerNo());
             if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customer.getCustomerType())){
                 CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customer.getCustomerId());

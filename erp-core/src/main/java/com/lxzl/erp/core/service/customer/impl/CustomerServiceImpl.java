@@ -21,6 +21,7 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.businessSystemConfig.BusinessSystemConfigService;
 import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -181,6 +182,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult1;
         }
 
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class));
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
@@ -233,7 +235,7 @@ public class CustomerServiceImpl implements CustomerService {
 //        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
 //            saveCustomerPersonConsignInfo(customerDO,customerPersonDO,now,userSupport.getCurrentUserId());
 //        }
-
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class));
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
@@ -2064,20 +2066,28 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private UserRoleMapper userRoleMapper;
+
     @Autowired
     private CustomerUpdateLogMapper customerUpdateLogMapper;
+
     @Autowired
     private ProductSkuMapper productSkuMapper;
+
     @Autowired
     private CustomerMapper customerMapper;
+
     @Autowired
     private CustomerPersonMapper customerPersonMapper;
+
     @Autowired
     private CustomerCompanyMapper customerCompanyMapper;
+
     @Autowired
     private UserSupport userSupport;
+
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
 
@@ -2103,5 +2113,5 @@ public class CustomerServiceImpl implements CustomerService {
     private PermissionSupport permissionSupport;
 
     @Autowired
-    private BusinessSystemConfigService businessSystemConfigService;
+    private WebServiceHelper webServiceHelper;
 }
