@@ -65,7 +65,7 @@ public class K3ServiceImpl implements K3Service {
                     String measureList = obj.get("MeasureList").toString();
                     List<OrderMaterial> orderMaterialList = JSON.parseObject(measureList, List.class);
                     order.setOrderMaterialList(orderMaterialList);
-                    String productList = obj.get("ProdutList").toString();
+                    String productList = obj.get("ProductList").toString();
                     List<OrderProduct> orderProductList = JSON.parseObject(productList, List.class);
                     order.setOrderProductList(orderProductList);
 
