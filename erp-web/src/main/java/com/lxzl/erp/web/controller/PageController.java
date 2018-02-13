@@ -705,6 +705,14 @@ public class PageController extends BaseController {
     public String k3OrderManageDetail() {
         return "/k3Manage/k3OrderDetail";
     }
+    @RequestMapping("/return-order-k3/list")
+    public String k3ReturnOrderList() {
+        return "/k3Manage/k3ReturnOrder";
+    }
+    @RequestMapping("/return-order-k3/detail")
+    public String k3ReturnOrderDetail() {
+        return "/k3Manage/k3ReturnOrderDetail";
+    }
 
 
     //选择仓库Modal
