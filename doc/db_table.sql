@@ -2824,6 +2824,7 @@ CREATE TABLE `erp_k3_return_order` (
   `return_address` varchar(64) COMMENT '退货地址',
   `return_contacts` varchar(64) COMMENT '联系人',
   `return_phone` varchar(64) COMMENT '联系电话',
+  `return_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '是否推送到K3 1是0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
