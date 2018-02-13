@@ -305,10 +305,6 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(workflowCommitResult.getErrorCode());
                 return result;
             }
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
-            orderDO.setUpdateUser(loginUser.getUserId().toString());
-            orderDO.setUpdateTime(currentTime);
-            orderMapper.update(orderDO);
 
             // 扣除信用额度
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
@@ -316,8 +312,19 @@ public class OrderServiceImpl implements OrderService {
             }
 
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
-        } else {
-            receiveVerifyResult(true, orderDO.getOrderNo());
+        }
+
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateTime(currentTime);
+        orderMapper.update(orderDO);
+        if (!isNeedVerify) {
+            boolean verifyResult = receiveVerifyResult(true, orderDO.getOrderNo());
+            if (!verifyResult) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
+                return result;
+            }
         }
 
         result.setResult(orderNo);
@@ -723,7 +730,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(orderDO);
                 //获取订单详细信息，发送给k3
                 Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
