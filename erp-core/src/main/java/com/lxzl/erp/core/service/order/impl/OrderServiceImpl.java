@@ -237,7 +237,7 @@ public class OrderServiceImpl implements OrderService {
                 oldProductCount = productOldStockMap.get(product.getProductId());
                 newProductCount = productNewStockMap.get(product.getProductId());
 
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     if ((newProductCount - orderProductDO.getProductCount()) < 0) {
                         result.setErrorCode(ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT);
                         return result;
@@ -253,7 +253,7 @@ public class OrderServiceImpl implements OrderService {
                         oldProductCount = oldProductCount - orderProductDO.getProductCount();
                         productOldStockMap.put(product.getProductId(), oldProductCount);
                     }
-                }
+                }*/
             }
         }
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
@@ -265,7 +265,7 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
                 Material material = materialServiceResult.getResult();
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     if (material == null || material.getNewMaterialCount() == null || material.getNewMaterialCount() <= 0 || (material.getNewMaterialCount() - orderMaterialDO.getMaterialCount()) < 0) {
                         result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT);
                         return result;
@@ -275,7 +275,7 @@ public class OrderServiceImpl implements OrderService {
                         result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT);
                         return result;
                     }
-                }
+                }*/
             }
         }
 
