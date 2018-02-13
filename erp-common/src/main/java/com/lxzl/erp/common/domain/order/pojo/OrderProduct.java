@@ -37,6 +37,7 @@ public class OrderProduct extends BasePO {
     private List<OrderProductEquipment> orderProductEquipmentList;
 
     private BigDecimal firstNeedPayAmount;      // 首付金额
+    private BigDecimal firstNeedPayRentAmount;      // 首付租金金额
 
     public Integer getOrderProductId() {
         return orderProductId;
@@ -244,5 +245,13 @@ public class OrderProduct extends BasePO {
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
+    }
+
+    public BigDecimal getFirstNeedPayRentAmount() {
+        return firstNeedPayRentAmount;
+    }
+
+    public void setFirstNeedPayRentAmount(BigDecimal firstNeedPayRentAmount) {
+        this.firstNeedPayRentAmount = firstNeedPayRentAmount;
     }
 }

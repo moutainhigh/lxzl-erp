@@ -798,6 +798,9 @@ public class OrderServiceImpl implements OrderService {
                                 && statementOrderDetail.getOrderItemReferId().equals(orderProduct.getOrderProductId())
                                 && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(), order.getRentStartTime())) {
                             orderProduct.setFirstNeedPayAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
+                                orderProduct.setFirstNeedPayRentAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayRentAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            }
                         }
                     }
                 }
@@ -820,6 +823,9 @@ public class OrderServiceImpl implements OrderService {
                                 && statementOrderDetail.getOrderItemReferId().equals(orderMaterial.getOrderMaterialId())
                                 && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(), order.getRentStartTime())) {
                             orderMaterial.setFirstNeedPayAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
+                                orderMaterial.setFirstNeedPayRentAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayRentAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            }
                         }
                     }
                 }
