@@ -306,27 +306,20 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
-        } else {
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
-            // 只有审批通过才生成结算单
-            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderNo);
-            if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(createStatementOrderResult.getErrorCode());
-                return result;
+            orderDO.setUpdateUser(loginUser.getUserId().toString());
+            orderDO.setUpdateTime(currentTime);
+            orderMapper.update(orderDO);
+
+            // 扣除信用额度
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
             }
-            orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        } else {
+            receiveVerifyResult(true, orderDO.getOrderNo());
         }
 
-        orderDO.setUpdateUser(loginUser.getUserId().toString());
-        orderDO.setUpdateTime(currentTime);
-        orderMapper.update(orderDO);
-        // 扣除信用额度
-        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-        }
-
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
