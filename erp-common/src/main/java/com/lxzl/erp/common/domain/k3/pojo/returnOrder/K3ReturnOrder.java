@@ -17,6 +17,7 @@ public class K3ReturnOrder extends BasePO {
 	private String returnAddress;   //退货地址
 	private String returnContacts;   //联系人
 	private String returnPhone;   //联系电话
+	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   // 是否推送到K3 1是0否
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -154,5 +155,13 @@ public class K3ReturnOrder extends BasePO {
 
 	public void setReturnOrderStatus(Integer returnOrderStatus) {
 		this.returnOrderStatus = returnOrderStatus;
+	}
+
+	public Integer getReturnMode() {
+		return returnMode;
+	}
+
+	public void setReturnMode(Integer returnMode) {
+		this.returnMode = returnMode;
 	}
 }

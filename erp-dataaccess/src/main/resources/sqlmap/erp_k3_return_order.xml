@@ -11,26 +11,84 @@
 		<result column="return_address" jdbcType="VARCHAR" property="returnAddress" />
 		<result column="return_contacts" jdbcType="VARCHAR" property="returnContacts" />
 		<result column="return_phone" jdbcType="VARCHAR" property="returnPhone" />
+		<result column="return_mode" jdbcType="INTEGER" property="returnMode" />
+		<result column="return_order_status" jdbcType="INTEGER" property="returnOrderStatus" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <collection property="k3ReturnOrderDetailDOList" resultMap="K3ReturnOrderDetailDO" />
 	</resultMap>
 
-	<sql id="column_List">
-		ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
-	</sql>
+    <resultMap id="K3ReturnOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
+        <id column="detail_id" jdbcType="INTEGER" property="id" />
+        <result column="detail_return_order_id" jdbcType="INTEGER" property="returnOrderId" />
+        <result column="detail_order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="detail_order_entry" jdbcType="VARCHAR" property="orderEntry" />
+        <result column="detail_product_no" jdbcType="VARCHAR" property="productNo" />
+        <result column="detail_product_count" jdbcType="INTEGER" property="productCount" />
+        <result column="detail_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="detail_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="detail_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="detail_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
+
+    <sql id="column_List">
+        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
+    </sql>
+
+    <sql id="detail_column_List">
+        ekrod.id as detail_id,ekrod.return_order_id as detail_return_order_id,ekrod.order_no as detail_order_no,ekrod.order_entry as detail_order_entry,ekrod.product_no as detail_product_no,ekrod.product_count as detail_product_count,ekrod.data_status as detail_data_status,ekrod.remark as detail_remark,ekrod.create_time as detail_create_time,ekrod.create_user as detail_create_user,ekrod.update_time as detail_update_time,ekrod.update_user as detail_update_user
+    </sql>
 
 	<select id="findById" resultMap="K3ReturnOrderDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_k3_return_order ekro 
-		WHERE ekro.id = #{id, jdbcType=INTEGER} AND ekro.data_status = 1 
+        SELECT m_order.*
+        <trim prefix=",">
+            <include refid="detail_column_List" />
+        </trim>
+        FROM (
+            SELECT
+            <include refid="column_List"/>
+            FROM erp_k3_return_order ekro
+            WHERE ekro.id = #{id, jdbcType=INTEGER} AND ekro.data_status = 1
+        ) m_order
+        LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
+    </select>
+
+	<select id="findByNo" resultMap="K3ReturnOrderDO" parameterType="java.lang.String">
+        SELECT m_order.*
+        <trim prefix=",">
+            <include refid="detail_column_List" />
+        </trim>
+        FROM (
+            SELECT <include refid="column_List"/> FROM erp_k3_return_order ekro
+            WHERE ekro.return_order_no = #{returnOrderNo, jdbcType=VARCHAR} AND ekro.data_status = 1
+        ) m_order
+        LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ekro.id) FROM erp_k3_return_order ekro 
+		SELECT count(ekro.id) FROM erp_k3_return_order ekro
 		<where>
+            <if test="maps.k3ReturnOrderQueryParam.returnOrderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.returnOrderNo != ''">
+                and ekro.return_order_no like CONCAT('%','${maps.k3ReturnOrderQueryParam.returnOrderNo}','%' )
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.k3CustomerNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.k3CustomerNo != ''">
+                and ekro.k3_customer_no like CONCAT('%','${maps.k3ReturnOrderQueryParam.k3CustomerNo}','%' )
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.k3CustomerName != null &amp;&amp; maps.k3ReturnOrderQueryParam.k3CustomerName != ''">
+                and ekro.k3_customer_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.k3CustomerName}','%' )
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.returnStartTime != null">
+                <![CDATA[ AND ekro.return_time >= #{maps.k3ReturnOrderQueryParam.returnStartTime} ]]>
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.returnEndTime != null ">
+                <![CDATA[ AND ekro.return_time <= #{maps.k3ReturnOrderQueryParam.returnEndTime} ]]>
+            </if>
 			<if test="true">
 				AND ekro.data_status = 1
 			</if>
@@ -38,13 +96,35 @@
 	</select>
 
 	<select id="listPage" resultMap="K3ReturnOrderDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_k3_return_order ekro 
-		<where>
-			<if test="true">
-				AND ekro.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
+        SELECT m_order.*
+        <trim prefix=",">
+            <include refid="detail_column_List" />
+        </trim>
+        FROM (
+            SELECT <include refid="column_List"/> FROM erp_k3_return_order ekro
+            <where>
+                <if test="maps.k3ReturnOrderQueryParam.returnOrderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.returnOrderNo != ''">
+                    and ekro.return_order_no like CONCAT('%','${maps.k3ReturnOrderQueryParam.returnOrderNo}','%' )
+                </if>
+                <if test="maps.k3ReturnOrderQueryParam.k3CustomerNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.k3CustomerNo != ''">
+                    and ekro.k3_customer_no like CONCAT('%','${maps.k3ReturnOrderQueryParam.k3CustomerNo}','%' )
+                </if>
+                <if test="maps.k3ReturnOrderQueryParam.k3CustomerName != null &amp;&amp; maps.k3ReturnOrderQueryParam.k3CustomerName != ''">
+                    and ekro.k3_customer_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.k3CustomerName}','%' )
+                </if>
+                <if test="maps.k3ReturnOrderQueryParam.returnStartTime != null">
+                    <![CDATA[ AND ekro.return_time >= #{maps.k3ReturnOrderQueryParam.returnStartTime} ]]>
+                </if>
+                <if test="maps.k3ReturnOrderQueryParam.returnEndTime != null ">
+                    <![CDATA[ AND ekro.return_time <= #{maps.k3ReturnOrderQueryParam.returnEndTime} ]]>
+                </if>
+                <if test="true">
+                    AND ekro.data_status = 1
+                </if>
+            </where>
+            LIMIT #{maps.start},#{maps.pageSize}
+        ) m_order
+        LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
 	</select>
 
 	<sql id="set_column_sql">
@@ -69,6 +149,12 @@
 			</if>
 			<if test="returnPhone != null">
 				return_phone = #{returnPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="returnMode != null">
+                return_mode = #{returnMode,jdbcType=INTEGER},
+			</if>
+			<if test="returnOrderStatus != null">
+				return_order_status = #{returnOrderStatus,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

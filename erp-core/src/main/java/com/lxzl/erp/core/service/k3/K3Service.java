@@ -28,6 +28,8 @@ public interface K3Service {
 
     ServiceResult<String, String> createReturnOrder(K3ReturnOrder k3ReturnOrder);
 
+    ServiceResult<String, String> updateReturnOrder(K3ReturnOrder k3ReturnOrder);
+
     ServiceResult<String, String> addReturnOrder(K3ReturnOrderDetail k3ReturnOrderDetail);
 
     ServiceResult<String, String> deleteReturnOrder(Integer k3ReturnOrderDetailId);

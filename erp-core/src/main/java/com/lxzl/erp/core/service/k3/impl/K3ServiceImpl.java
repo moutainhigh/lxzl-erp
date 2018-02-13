@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.k3.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -13,24 +14,35 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
+import com.lxzl.se.common.util.UUIDUtil;
+import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -222,37 +234,168 @@ public class K3ServiceImpl implements K3Service {
 
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> createReturnOrder(K3ReturnOrder k3ReturnOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        if (k3ReturnOrder == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+
+        K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
+        k3ReturnOrderDO.setReturnOrderNo(UUIDUtil.getUUID());
+        k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        k3ReturnOrderDO.setCreateTime(currentTime);
+        k3ReturnOrderDO.setCreateUser(loginUser.getUserId().toString());
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderMapper.save(k3ReturnOrderDO);
+        if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
+            for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+                K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
+                k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+                k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                k3ReturnOrderDetailDO.setCreateTime(currentTime);
+                k3ReturnOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
+                k3ReturnOrderDetailDO.setUpdateTime(currentTime);
+                k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+                k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
+            }
+        }
+        result.setResult(k3ReturnOrderDO.getReturnOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> updateReturnOrder(K3ReturnOrder k3ReturnOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        if (k3ReturnOrder == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        K3ReturnOrderDO dbK3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+        if (dbK3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
 
 
+        K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
+        k3ReturnOrderDO.setId(dbK3ReturnOrderDO.getId());
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
+        result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
     @Override
     public ServiceResult<String, String> addReturnOrder(K3ReturnOrderDetail k3ReturnOrderDetail) {
-        return null;
+
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetail.getReturnOrderId());
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
+        k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+        k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        k3ReturnOrderDetailDO.setCreateTime(currentTime);
+        k3ReturnOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
+        k3ReturnOrderDetailDO.setUpdateTime(currentTime);
+        k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
+
+        result.setResult(k3ReturnOrderDO.getReturnOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
     public ServiceResult<String, String> deleteReturnOrder(Integer k3ReturnOrderDetailId) {
-        return null;
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(k3ReturnOrderDetailId);
+        if (k3ReturnOrderDetailDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        k3ReturnOrderDetailDO.setUpdateTime(currentTime);
+        k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
     public ServiceResult<String, Page<K3ReturnOrder>> queryReturnOrder(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
-        return null;
+        ServiceResult<String, Page<K3ReturnOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(k3ReturnOrderQueryParam.getPageNo(), k3ReturnOrderQueryParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("k3ReturnOrderQueryParam", k3ReturnOrderQueryParam);
+
+        Integer totalCount = k3ReturnOrderMapper.listCount(maps);
+        List<K3ReturnOrderDO> orderDOList = k3ReturnOrderMapper.listPage(maps);
+        List<K3ReturnOrder> orderList = ConverterUtil.convertList(orderDOList, K3ReturnOrder.class);
+        Page<K3ReturnOrder> page = new Page<>(orderList, totalCount, k3ReturnOrderQueryParam.getPageNo(), k3ReturnOrderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     @Override
     public ServiceResult<String, K3ReturnOrder> queryReturnOrderByNo(String returnOrderNo) {
-        return null;
+        ServiceResult<String, K3ReturnOrder> result = new ServiceResult<>();
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        result.setResult(ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
     public ServiceResult<String, String> sendToK3(String returnOrderNo) {
-        return null;
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        k3ReturnOrderDO.setReturnOrderStatus(CommonConstant.DATA_STATUS_ENABLE);
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
 
@@ -261,4 +404,13 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private K3MappingCategoryMapper k3MappingCategoryMapper;
+
+    @Autowired
+    private K3ReturnOrderMapper k3ReturnOrderMapper;
+
+    @Autowired
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
+
+    @Autowired
+    private UserSupport userSupport;
 }
