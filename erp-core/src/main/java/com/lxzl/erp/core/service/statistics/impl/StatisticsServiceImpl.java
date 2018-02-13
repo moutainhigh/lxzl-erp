@@ -117,24 +117,21 @@ public class StatisticsServiceImpl implements StatisticsService {
                     statisticsIncomeDetail.setPrepayRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getPrepayRentAmount(), prepayRentAmount));
                     statisticsIncomeDetail.setOtherPaidAmount(BigDecimalUtil.add(statisticsIncomeDetail.getOtherPaidAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount()));
 
-                    BigDecimal in = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),
-                            BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(),
-                                    BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),
-                                            statementOrderDetailDO.getStatementDetailRentDepositPaidAmount())));
-                    BigDecimal out = BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                    BigDecimal inCome = BigDecimalUtil.addAll(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),statementOrderDetailDO.getStatementDetailRentPaidAmount(),statementOrderDetailDO.getStatementDetailDepositPaidAmount(),
+                                            statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+//                    inCome = BigDecimalUtil.subAll(inCome,statementOrderDetailDO.(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
 
-                    statisticsIncomeDetail.setIncomeAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsIncomeDetail.getIncomeAmount(), in), out));
+//                    statisticsIncomeDetail.setIncomeAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsIncomeDetail.getIncomeAmount(), in), out));
                 }
             }
         }
         statisticsIncome.setTotalRent(totalRent);
         statisticsIncome.setTotalPrepayRent(totalPrepayRent);
         statisticsIncome.setTotalOtherPaid(totalOtherPaid);
-        BigDecimal in = BigDecimalUtil.add(statisticsIncome.getTotalPrepayRent(), BigDecimalUtil.add(statisticsIncome.getTotalOtherPaid(), BigDecimalUtil.add(statisticsIncome.getTotalRent(), BigDecimalUtil.add(statisticsIncome.getTotalDeposit(), statisticsIncome.getTotalRentDeposit()))));
 
-
-        BigDecimal out = BigDecimalUtil.add(statisticsIncome.getTotalReturnDeposit(), statisticsIncome.getTotalReturnRentDeposit());
-        statisticsIncome.setTotalIncome(BigDecimalUtil.sub(in, out));
+        BigDecimal totalIncome = BigDecimalUtil.addAll(statisticsIncome.getTotalPrepayRent(),statisticsIncome.getTotalOtherPaid(),statisticsIncome.getTotalRent(),statisticsIncome.getTotalDeposit(),statisticsIncome.getTotalRentDeposit(),statisticsIncome.getTotalOverdueAmount());
+        totalIncome = BigDecimalUtil.subAll(totalIncome,statisticsIncome.getTotalCorrectAmount(),statisticsIncome.getTotalReturnDeposit(),statisticsIncome.getTotalReturnRentDeposit());
+        statisticsIncome.setTotalIncome(totalIncome);
         Page<StatisticsIncomeDetail> page = new Page<>(statisticsIncomeDetailList, statisticsIncome.getTotalCount(), statisticsIncomePageParam.getPageNo(), statisticsIncomePageParam.getPageSize());
         statisticsIncome.setStatisticsIncomeDetailPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);

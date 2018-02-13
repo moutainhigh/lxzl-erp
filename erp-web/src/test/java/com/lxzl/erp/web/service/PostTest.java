@@ -49,7 +49,7 @@ public class PostTest extends ERPUnTransactionalTest {
     @Test
     public void postProduct() throws InterruptedException {
 
-        ProductDO productDO = productMapper.findByProductId(2000049);
+        ProductDO productDO = productMapper.findByProductId(2000000);
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
         Thread.sleep(30000);
     }
@@ -70,11 +70,19 @@ public class PostTest extends ERPUnTransactionalTest {
 
     @Test
     public void postMaterial() throws InterruptedException {
-        MaterialDO materialDO = materialMapper.findByNo("M201712211828335601367");
+        MaterialDO materialDO = materialMapper.findByNo("LX-0121-20180202-00002");
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class));
         Thread.sleep(100000);
     }
-
+    @Test
+    public void postAllMaterial() throws InterruptedException {
+        List<MaterialDO> materialDOList = materialMapper.findAllMaterial();
+        for(MaterialDO materialDO : materialDOList){
+            Thread.sleep(500);
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class));
+        }
+        Thread.sleep(30000);
+    }
     @Test
     public void postCustomer() throws InterruptedException {
         String customerNo  = "LXCC-1000-20180212-00084";
@@ -106,7 +114,7 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postOrder() throws InterruptedException {
-       Order order =  orderService.queryOrderByNo("LXO-20180212-701528-00012").getResult();
+       Order order =  orderService.queryOrderByNo("LXO-20180213-701397-00013").getResult();
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
         Thread.sleep(30000);
     }
@@ -115,7 +123,7 @@ public class PostTest extends ERPUnTransactionalTest {
         Map<String,Object> maps = new HashMap<>();
         OrderQueryParam orderQueryParam = new OrderQueryParam();
         maps.put("start", 0);
-        maps.put("pageSize", 20);
+        maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("orderQueryParam", orderQueryParam);
         List<OrderDO> orderList = orderMapper.findOrderByParams(maps) ;
         for(OrderDO orderDO : orderList){

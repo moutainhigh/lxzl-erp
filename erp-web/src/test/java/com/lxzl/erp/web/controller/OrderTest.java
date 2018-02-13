@@ -251,7 +251,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void testProcessOrder() throws Exception {
         ProcessOrderParam processOrderParam = new ProcessOrderParam();
         processOrderParam.setOrderNo("LXO-20180127-729331-00106");
-        //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null
+        //select * from erp_product_equipment where sku_id=40 and equipment_status = 1 and data_status = 1 and order_no is null AND is_new = 0
 //        processOrderParam.setEquipmentNo("LX-E-4000001-2017122918884");
 //        processOrderParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017120110037");
         processOrderParam.setMaterialId(76);

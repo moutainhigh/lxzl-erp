@@ -1,6 +1,5 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
@@ -20,10 +19,6 @@ import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Service
@@ -81,7 +76,6 @@ public class K3CustomerConverter implements ConvertK3DataService{
             name = areaCityDO.getAbbCn();
         }
 
-        formOrganization.setNumber(k3MappingCustomerDO.getK3CustomerCode());
         formOrganization.setName(customer.getCustomerName());
         formOrganization.setEmpNumber(empNumber);
         formOrganization.setEmpName(ownerUser.getRealName());
@@ -104,7 +98,6 @@ public class K3CustomerConverter implements ConvertK3DataService{
 //                new ItemNumber(false,"深圳","01","客户"),
 //                new ItemNumber(false,"aaaa什么","01.0002300000","客户")
 //        });
-        System.out.println(JSON.toJSONString(formOrganization,true));
         return formOrganization;
     }
 

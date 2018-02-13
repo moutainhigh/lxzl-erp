@@ -40,6 +40,14 @@ public class BigDecimalUtil {
         }
         return result;
     }
+    public static BigDecimal subAll(BigDecimal ... values) {
+        BigDecimal result = BigDecimal.ZERO;
+        for(BigDecimal value : values){
+            value = value==null?BigDecimal.ZERO:value;
+            result = result.subtract(value);
+        }
+        return result;
+    }
     /**
      * 提供精确减法运算的sub方法
      *
