@@ -4,23 +4,7 @@
 
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper">
 
-    <resultMap id="StatisticsIncomeDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncomeDetail">
-        <result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
-        <result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
-        <result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
-        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
-        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
-        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
-        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
-        <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
-        <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
-        <result column="deposit_paid_amount" jdbcType="DECIMAL" property="depositPaidAmount" />
-        <result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
-        <result column="rent_deposit_paid_amount" jdbcType="DECIMAL" property="rentDepositPaidAmount" />
-        <result column="return_deposit_paid_amount" jdbcType="DECIMAL" property="returnDepositPaidAmount" />
-        <result column="return_rent_deposit_paid_amount" jdbcType="DECIMAL" property="returnRentDepositPaidAmount" />
-        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-    </resultMap>
+
 
     <resultMap id="StatisticsIncome" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome">
         <result column="total_count" jdbcType="INTEGER" property="totalCount" />
@@ -29,15 +13,17 @@
         <result column="total_return_deposit" jdbcType="DECIMAL" property="totalReturnDeposit" />
         <result column="total_return_rent_deposit" jdbcType="DECIMAL" property="totalReturnRentDeposit" />
         <result column="total_other_paid" jdbcType="DECIMAL" property="totalOtherPaid" />
+        <result column="total_correct_amount" jdbcType="DECIMAL" property="totalCorrectAmount" />
+        <result column="total_overdue_amount" jdbcType="DECIMAL" property="totalOverdueAmount" />
     </resultMap>
 
     <select id="queryIncomeCount" resultMap="StatisticsIncome" parameterType="map">
-        SELECT COUNT(DISTINCT eo.buyer_customer_id, eo.rent_length_type, eo.order_sub_company_id, eo.order_seller_id) total_count,
-        IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
-        IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,
-        IFNULL(SUM(esod.statement_detail_rent_paid_amount),0) rent_rmount,
-        IFNULL(SUM(esod.statement_detail_other_amount),0) other_paid_amount,
-        IFNULL(SUM(esod.statement_detail_correct_amount),0) correct_amount,
+        SELECT COUNT(distinct esod.id) total_count,
+        IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) total_deposit,
+        IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) total_rent_deposit,
+        IFNULL(SUM(esod.statement_detail_other_amount),0) total_other_paid,
+        IFNULL(SUM(esod.statement_detail_correct_amount),0) total_correct_amount,
+        IFNULL(SUM(esod.statement_detail_overdue_paid_amount),0) total_overdue_amount,
         SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) total_return_rent_deposit,
         SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) total_return_deposit
         FROM erp_statement_order_detail esod
@@ -77,17 +63,39 @@
         )
         )
     </select>
-
+    <resultMap id="StatisticsIncomeDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncomeDetail">
+        <result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
+        <result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
+        <result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+        <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+        <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
+        <result column="deposit_paid_amount" jdbcType="DECIMAL" property="depositPaidAmount" />
+        <result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
+        <result column="rent_deposit_paid_amount" jdbcType="DECIMAL" property="rentDepositPaidAmount" />
+        <result column="return_deposit_paid_amount" jdbcType="DECIMAL" property="returnDepositPaidAmount" />
+        <result column="return_rent_deposit_paid_amount" jdbcType="DECIMAL" property="returnRentDepositPaidAmount" />
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+        <result column="rent_amount" jdbcType="TIMESTAMP" property="rentAmount" />
+        <result column="correct_amount" jdbcType="DECIMAL" property="correctAmount" />
+        <result column="overdue_amount" jdbcType="DECIMAL" property="overdueAmount" />
+        <result column="paid_time" jdbcType="TIMESTAMP" property="paidTime" />
+    </resultMap>
     <select id="queryIncome" resultMap="StatisticsIncomeDetail" parameterType="map">
-        SELECT eo.buyer_customer_id customer_id,MIN(ec.customer_no) customer_no,MIN(ec.customer_name) customer_name ,eo.rent_length_type,eo.order_sub_company_id sub_company_id,MIN(esc.sub_company_name)  sub_company_name,
-        eo.order_seller_id, MIN(eu.real_name) order_seller_name,
+        SELECT esod.id,MIN(eo.buyer_customer_id) customer_id,MIN(ec.customer_no) customer_no,MIN(ec.customer_name) customer_name ,MIN(eo.rent_length_type) rent_length_type,
+        MIN(eo.order_sub_company_id) sub_company_id,MIN(esc.sub_company_name)  sub_company_name,,MIN(esod.statement_detail_paid_time) paid_time
+        MIN(eo.order_seller_id) order_seller_id, MIN(eu.real_name) order_seller_name,
         IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
         IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,
-        IFNULL(SUM(esod.statement_detail_rent_paid_amount),0) rent_rmount,
-        IFNULL(SUM(esod.statement_detail_other_amount),0) other_paid_amount,
+        IFNULL(SUM(esod.statement_detail_rent_paid_amount),0) rent_amount,
+        IFNULL(SUM(esod.statement_detail_other_amount),0) other_amount,
         IFNULL(SUM(esod.statement_detail_correct_amount),0) correct_amount,
-        SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) total_return_rent_deposit,
-        SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) total_return_deposit
+        IFNULL(SUM(esod.statement_detail_overdue_paid_amount),0) overdue_amount,
+        SUM(CASE WHEN esord.return_type=1 THEN esord.return_amount ELSE 0 END ) return_rent_deposit_paid_amount,
+        SUM(CASE WHEN esord.return_type=2 THEN esord.return_amount ELSE 0 END ) return_deposit_paid_amount
         FROM erp_statement_order_detail esod
         LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status =1
         LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status =1
@@ -123,8 +131,8 @@
             AND  #{maps.incomeQueryParam.endTime} > esod.statement_end_time)
             )
         )
-        GROUP BY eo.buyer_customer_id,eo.rent_length_type,eo.order_sub_company_id,eo.order_seller_id
-        ORDER BY eo.order_sub_company_id,order_seller_id,buyer_customer_id,rent_length_type
+        GROUP BY esod.id
+        ORDER BY esod.id
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 

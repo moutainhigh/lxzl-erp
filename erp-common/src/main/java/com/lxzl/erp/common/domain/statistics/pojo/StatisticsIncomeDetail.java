@@ -24,6 +24,8 @@ public class StatisticsIncomeDetail {
     private BigDecimal rentAmount;  //租金
     private BigDecimal prepayRentAmount;  //预付租金
     private BigDecimal otherPaidAmount;  //其他费用（运费等）
+    private BigDecimal correctAmount;  //冲正金额
+    private BigDecimal overdueAmount;  //逾期费用
     private BigDecimal incomeAmount;  //收入
     private Date payTime;  //支付时间
     private Integer orderItemReferId;  //订单项ID
@@ -171,5 +173,21 @@ public class StatisticsIncomeDetail {
 
     public void setOtherPaidAmount(BigDecimal otherPaidAmount) {
         this.otherPaidAmount = otherPaidAmount;
+    }
+
+    public BigDecimal getCorrectAmount() {
+        return correctAmount;
+    }
+
+    public void setCorrectAmount(BigDecimal correctAmount) {
+        this.correctAmount = correctAmount;
+    }
+
+    public BigDecimal getOverdueAmount() {
+        return overdueAmount;
+    }
+
+    public void setOverdueAmount(BigDecimal overdueAmount) {
+        this.overdueAmount = overdueAmount;
     }
 }

@@ -24,6 +24,10 @@ public class StatisticsIncome implements Serializable {
     private BigDecimal totalPrepayRent;    //总预付租金
     private BigDecimal totalOtherPaid;    //总其他收入
     private BigDecimal totalIncome;    //总收入
+    private BigDecimal totalCorrectAmount;    //总冲正金额
+    private BigDecimal totalOverdueAmount;    //总逾期收入
+
+
     private Page<StatisticsIncomeDetail> statisticsIncomeDetailPage;    //统计项分页
 
 
@@ -105,6 +109,22 @@ public class StatisticsIncome implements Serializable {
 
     public void setStatisticsIncomeDetailPage(Page<StatisticsIncomeDetail> statisticsIncomeDetailPage) {
         this.statisticsIncomeDetailPage = statisticsIncomeDetailPage;
+    }
+
+    public BigDecimal getTotalCorrectAmount() {
+        return totalCorrectAmount;
+    }
+
+    public void setTotalCorrectAmount(BigDecimal totalCorrectAmount) {
+        this.totalCorrectAmount = totalCorrectAmount;
+    }
+
+    public BigDecimal getTotalOverdueAmount() {
+        return totalOverdueAmount;
+    }
+
+    public void setTotalOverdueAmount(BigDecimal totalOverdueAmount) {
+        this.totalOverdueAmount = totalOverdueAmount;
     }
 }
 

@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.TimeDimensionType;
@@ -35,6 +36,12 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsIncomePageParam.setRentLengthType(2);
         statisticsIncomePageParam.setCustomerName("公司");
         statisticsIncomePageParam.setSalesmanName("ad");
+        TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
+    }
+    @Test
+    public void queryIncomeJson() throws Exception {
+        StatisticsIncomePageParam statisticsIncomePageParam = JSON.parseObject("{\"pageNo\":1,\"pageSize\":15,\"customerName\":\"\",\"salesmanName\":\"\",\"rentLengthType\":\"\",\"subCompanyId\":\"8\",\"startTime\":\"1515945600000\",\"endTime\":\"1518537599999\"}",StatisticsIncomePageParam.class);
+
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
     @Test
