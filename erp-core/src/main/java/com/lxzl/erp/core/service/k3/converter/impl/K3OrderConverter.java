@@ -4,49 +4,35 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
-import com.lxzl.erp.common.domain.order.pojo.OrderTimeAxis;
-import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSeorderEntry;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
-import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderTimeAxisMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleDepartmentDataDO;
-import com.lxzl.erp.dataaccess.domain.user.UserRoleDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +40,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -159,9 +144,11 @@ public class K3OrderConverter implements ConvertK3DataService {
         String remark = erpOrder.getRemark()==null?"":erpOrder.getRemark();
         formSEOrder.setExplanation(remark);// 摘要
         if(RentLengthType.RENT_LENGTH_TYPE_SHORT == erpOrder.getRentLengthType()){
-            formSEOrder.setOrderTypeNumber("D");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
-        }else if(RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()){
+            formSEOrder.setOrderTypeNumber("R");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
+        }else if(RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()&&erpOrder.getRentTimeLength()>=6){
             formSEOrder.setOrderTypeNumber("L");
+        }else{
+            formSEOrder.setOrderTypeNumber("D");
         }
         formSEOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
         formSEOrder.setOrderFromNumber("XX");// 订单来源 XS	线上 XX 线下
@@ -233,11 +220,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setName(productDO.getProductName());//  设备名称
                     formSeorderEntry.setQty(new BigDecimal(orderProduct.getProductCount()));// 数量
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType()))
-                    {
-                        formSeorderEntry.setLeaseMonthCount(BigDecimal.ZERO);//  租赁月数
-                    }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType())){
-                        formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
-                    }
+                    formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
                     formSeorderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
                     //计算平均税率
                     BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
@@ -250,7 +233,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setYJMonthCount(new BigDecimal(orderProduct.getDepositCycle()));//  押金月数
                     formSeorderEntry.setSFMonthCount(new BigDecimal(orderProduct.getPaymentCycle()));//  首付月数
                     formSeorderEntry.setPayMonthCount(new BigDecimal(orderProduct.getPaymentCycle()) );// 付款月数
-                    formSeorderEntry.setSFAmount(orderProduct.getFirstNeedPayAmount());//  首付租金
+                    formSeorderEntry.setSFAmount(orderProduct.getFirstNeedPayRentAmount());//  首付租金
                     //暂时与设备配置名称用一个值
                     formSeorderEntry.setEQConfigNumber(orderProduct.getProductSkuName());//  设备配置代码
                     formSeorderEntry.setEQConfigName(orderProduct.getProductSkuName());//  设备配置名称
@@ -298,12 +281,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setNumber(number);//  设备代码
                     formSeorderEntry.setName(materialDO.getMaterialName());//  设备名称
                     formSeorderEntry.setQty(new BigDecimal(orderMaterial.getMaterialCount()));// 数量
-                    if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType()))
-                    {
-                        formSeorderEntry.setLeaseMonthCount(BigDecimal.ZERO);//  租赁月数
-                    }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType())){
-                        formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderMaterial.getRentTimeLength()));//  租赁月数
-                    }
+                    formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderMaterial.getRentTimeLength()));//  租赁月数
                     formSeorderEntry.setPrice(orderMaterial.getMaterialUnitAmount());//  含税单价
                     //计算平均税率
                     BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
@@ -314,7 +292,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setYJMonthCount(new BigDecimal(orderMaterial.getDepositCycle()));//  押金月数
                     formSeorderEntry.setSFMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()));//  首付月数
                     formSeorderEntry.setPayMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()) );// 付款月数
-                    formSeorderEntry.setSFAmount(orderMaterial.getFirstNeedPayAmount());//  首付租金
+                    formSeorderEntry.setSFAmount(orderMaterial.getFirstNeedPayRentAmount());//  首付租金
                     formSeorderEntry.setEQConfigNumber("");//  设备配置代码
                     formSeorderEntry.setEQConfigName("");//  设备配置名称
                     formSeorderEntry.setStartDate( startTime);//  起算日期
