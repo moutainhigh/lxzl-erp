@@ -82,8 +82,6 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setCustName(k3MappingCustomerDO.getCustomerName());// 客户名称
 //        }
 
-        formSEOrder.setFetchStyleNumber("");
-        formSEOrder.setDeptNumber("");
         formSEOrder.setBillNO(erpOrder.getOrderNo());// 单据编号
         Calendar createTime= Calendar.getInstance();
         createTime.setTime(erpOrder.getCreateTime());
