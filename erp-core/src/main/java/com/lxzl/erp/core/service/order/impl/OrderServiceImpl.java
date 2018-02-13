@@ -237,7 +237,7 @@ public class OrderServiceImpl implements OrderService {
                 oldProductCount = productOldStockMap.get(product.getProductId());
                 newProductCount = productNewStockMap.get(product.getProductId());
 
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                     if ((newProductCount - orderProductDO.getProductCount()) < 0) {
                         result.setErrorCode(ErrorCode.ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT);
                         return result;
@@ -253,7 +253,7 @@ public class OrderServiceImpl implements OrderService {
                         oldProductCount = oldProductCount - orderProductDO.getProductCount();
                         productOldStockMap.put(product.getProductId(), oldProductCount);
                     }
-                }
+                }*/
             }
         }
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
@@ -265,7 +265,7 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
                 Material material = materialServiceResult.getResult();
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
+                /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     if (material == null || material.getNewMaterialCount() == null || material.getNewMaterialCount() <= 0 || (material.getNewMaterialCount() - orderMaterialDO.getMaterialCount()) < 0) {
                         result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT);
                         return result;
@@ -275,7 +275,7 @@ public class OrderServiceImpl implements OrderService {
                         result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT);
                         return result;
                     }
-                }
+                }*/
             }
         }
 
@@ -305,28 +305,28 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(workflowCommitResult.getErrorCode());
                 return result;
             }
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
-        } else {
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
-            // 只有审批通过才生成结算单
-            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderNo);
-            if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(createStatementOrderResult.getErrorCode());
-                return result;
+
+            // 扣除信用额度
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
             }
-            orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
+
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         }
 
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
-        // 扣除信用额度
-        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+        if (!isNeedVerify) {
+            boolean verifyResult = receiveVerifyResult(true, orderDO.getOrderNo());
+            if (!verifyResult) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
+                return result;
+            }
         }
 
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -730,7 +730,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(orderDO);
                 //获取订单详细信息，发送给k3
                 Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度

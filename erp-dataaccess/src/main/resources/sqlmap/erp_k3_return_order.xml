@@ -11,6 +11,7 @@
 		<result column="return_address" jdbcType="VARCHAR" property="returnAddress" />
 		<result column="return_contacts" jdbcType="VARCHAR" property="returnContacts" />
 		<result column="return_phone" jdbcType="VARCHAR" property="returnPhone" />
+		<result column="return_mode" jdbcType="INTEGER" property="returnMode" />
 		<result column="return_order_status" jdbcType="INTEGER" property="returnOrderStatus" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -37,7 +38,7 @@
     </resultMap>
 
     <sql id="column_List">
-        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_order_status,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
+        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
     </sql>
 
     <sql id="detail_column_List">
@@ -148,6 +149,9 @@
 			</if>
 			<if test="returnPhone != null">
 				return_phone = #{returnPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="returnMode != null">
+                return_mode = #{returnMode,jdbcType=INTEGER},
 			</if>
 			<if test="returnOrderStatus != null">
 				return_order_status = #{returnOrderStatus,jdbcType=INTEGER},

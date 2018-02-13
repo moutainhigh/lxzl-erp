@@ -207,7 +207,6 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setInvoiceType("02");
         }
 
-
         int orderProductSize = CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())? erpOrder.getOrderProductList().size():0;
         int orderMaterialSize = CollectionUtil.isNotEmpty(erpOrder.getOrderMaterialList())? erpOrder.getOrderMaterialList().size():0;
         int size = orderProductSize + orderMaterialSize;
@@ -258,7 +257,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setStartDate(startTime);//  起算日期
                     formSeorderEntry.setYJAmount(orderProduct.getRentDepositAmount());//  租金押金金额
                     formSeorderEntry.setEQYJAmount(orderProduct.getDepositAmount());//  设备押金金额
-                    formSeorderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderProduct.getFirstNeedPayAmount(),orderProduct.getDepositAmount(),orderProduct.getRentDepositAmount()));//首付合计
+                    formSeorderEntry.setPayAmountTotal(orderProduct.getFirstNeedPayAmount());//首付合计
                     ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
                     formSeorderEntry.setEQPrice(productSkuDO.getSkuPrice());//  单台设备价值
                     formSeorderEntry.setEQAmount( BigDecimalUtil.mul(productSkuDO.getSkuPrice(),new BigDecimal(orderProduct.getProductCount())));//  设备价值
@@ -321,7 +320,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setStartDate( startTime);//  起算日期
                     formSeorderEntry.setYJAmount(orderMaterial.getRentDepositAmount());//  租金押金金额
                     formSeorderEntry.setEQYJAmount(orderMaterial.getDepositAmount());//设备押金金额
-                    formSeorderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderMaterial.getFirstNeedPayAmount(),orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount()));// 首付合计
+                    formSeorderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderMaterial.getFirstNeedPayAmount()));// 首付合计
                     rate = rate.setScale(2,BigDecimal.ROUND_HALF_UP);
                     formSeorderEntry.setAddRate(rate);//  税率
                     formSeorderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值

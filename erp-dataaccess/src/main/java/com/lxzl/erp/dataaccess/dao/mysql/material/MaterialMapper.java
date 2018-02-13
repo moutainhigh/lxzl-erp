@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Map;
 @Repository
 public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
-    MaterialDO findByMaterialTypeAndCapacity(@Param("materialType") Integer materialType,
-                                             @Param("materialCapacityValue") Double materialCapacityValue);
+    MaterialDO findByMaterialTypeAndCapacity(@Param("materialType") Integer materialType, @Param("materialCapacityValue") Double materialCapacityValue);
 
-    MaterialDO findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,
-                                            @Param("materialModelId") Integer materialModelId);
+    MaterialDO findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,@Param("materialModelId") Integer materialModelId);
 
     MaterialDO findByNo(@Param("materialNo") String materialNo);
 
@@ -24,7 +22,10 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     List<MaterialDO> findMaterialRent (@Param("maps") Map<String, Object> paramMap);
+
     Integer findMaterialRentCount (@Param("maps") Map<String, Object> paramMap);
 
     List<String> findMaterialByName(@Param("materialName") String materialName);
+
+    List<MaterialDO> findAllMaterial();
 }

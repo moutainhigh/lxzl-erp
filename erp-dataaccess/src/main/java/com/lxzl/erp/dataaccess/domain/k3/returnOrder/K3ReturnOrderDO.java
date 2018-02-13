@@ -15,6 +15,7 @@ public class K3ReturnOrderDO  extends BaseDO {
 	private String returnAddress;
 	private String returnContacts;
 	private String returnPhone;
+	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   // 是否推送到K3 1是0否
 	private Integer dataStatus;
 	private String remark;
@@ -115,5 +116,13 @@ public class K3ReturnOrderDO  extends BaseDO {
 
 	public void setReturnOrderStatus(Integer returnOrderStatus) {
 		this.returnOrderStatus = returnOrderStatus;
+	}
+
+	public Integer getReturnMode() {
+		return returnMode;
+	}
+
+	public void setReturnMode(Integer returnMode) {
+		this.returnMode = returnMode;
 	}
 }

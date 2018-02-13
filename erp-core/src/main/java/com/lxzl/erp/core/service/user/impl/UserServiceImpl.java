@@ -1,9 +1,7 @@
 package com.lxzl.erp.core.service.user.impl;
 
 import com.lxzl.erp.common.cache.CommonCache;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.UserType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -13,6 +11,7 @@ import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -62,6 +61,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Autowired
     private UserLoginLogSupport userLoginLogSupport;
+
+    @Autowired
+    private WebServiceHelper webServiceHelper;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -130,9 +132,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setCreateTime(currentTime);
         userDO.setUpdateTime(currentTime);
         userMapper.save(userDO);
-        CommonCache.userMap.put(userDO.getId(), ConverterUtil.convert(userDO, User.class));
+        user = ConverterUtil.convert(userDO, User.class);
+        CommonCache.userMap.put(userDO.getId(),user );
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
 
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_USER, user);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
         return result;

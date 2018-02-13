@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.user.pojo.UserRole;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -44,6 +45,9 @@ public class UserSupport {
     @Autowired
     private SubCompanyMapper subCompanyMapper;
 
+    @Autowired
+    private UserRoleService userRoleService;
+
 
     public User getCurrentUser() {
         return (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
@@ -52,6 +56,10 @@ public class UserSupport {
     public Integer getCurrentUserId() {
         User user = (User) httpSession.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         return user == null? null:user.getUserId();
+    }
+
+    public boolean isSuperUser(){
+        return userRoleService.isSuperAdmin(getCurrentUserId());
     }
 
     /**

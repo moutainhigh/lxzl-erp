@@ -80,7 +80,21 @@
 			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
-
+	<select id="findAllMaterial" resultMap="MaterialDO">
+		SELECT material_main.*, <include refid="img_column_List"/> FROM
+		(
+		select
+		<include refid="column_List"/>
+		<trim prefix=",">
+			emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
+		</trim>
+		from erp_material em
+		LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
+		LEFT JOIN erp_material_type emt ON em.material_type = emt.id
+		LEFT JOIN erp_brand eb ON eb.id = em.brand_id
+		where em.data_status = 1
+		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
+	</select>
 	<select id="findByNo" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(

@@ -855,7 +855,8 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
                 !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser())) &&
                 !dataAccessPassiveUserList.contains(customerDO.getOwner()) &&
-                !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
+                !dataAccessPassiveUserList.contains(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1050,7 +1051,8 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
                 !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser())) &&
                 !dataAccessPassiveUserList.contains(customerDO.getOwner()) &&
-                !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
+                !dataAccessPassiveUserList.contains(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1180,7 +1182,8 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
                 !dataAccessPassiveUserList.contains(Integer.parseInt(customerDO.getCreateUser())) &&
                 !dataAccessPassiveUserList.contains(customerDO.getOwner()) &&
-                !dataAccessPassiveUserList.contains(customerDO.getUnionUser())) {
+                !dataAccessPassiveUserList.contains(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
