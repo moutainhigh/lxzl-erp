@@ -85,7 +85,7 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postCustomer() throws InterruptedException {
-        String customerNo  = "LXCC-1000-20180212-00084";
+        String customerNo  = "LXCC-1000-20180213-00129";
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
@@ -114,7 +114,7 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postOrder() throws InterruptedException {
-       Order order =  orderService.queryOrderByNo("LXO-20180213-701397-00013").getResult();
+       Order order =  orderService.queryOrderByNo("LXO-20180213-731811-00077").getResult();
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
         Thread.sleep(30000);
     }

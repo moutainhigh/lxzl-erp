@@ -75,7 +75,7 @@ public class K3CustomerConverter implements ConvertK3DataService{
         }else{
             name = areaCityDO.getAbbCn();
         }
-
+        formOrganization.setNumber(k3MappingCustomerDO.getK3CustomerCode());
         formOrganization.setName(customer.getCustomerName());
         formOrganization.setEmpNumber(empNumber);
         formOrganization.setEmpName(ownerUser.getRealName());
