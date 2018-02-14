@@ -4,8 +4,6 @@
 
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper">
 
-
-
     <resultMap id="StatisticsIncome" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsIncome">
         <result column="total_count" jdbcType="INTEGER" property="totalCount" />
         <result column="total_deposit" jdbcType="DECIMAL" property="totalDeposit" />
@@ -74,7 +72,7 @@
         <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
         <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
         <result column="deposit_paid_amount" jdbcType="DECIMAL" property="depositPaidAmount" />
-        <result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
+        <result column="other_amount" jdbcType="DECIMAL" property="otherPaidAmount" />
         <result column="rent_deposit_paid_amount" jdbcType="DECIMAL" property="rentDepositPaidAmount" />
         <result column="return_deposit_paid_amount" jdbcType="DECIMAL" property="returnDepositPaidAmount" />
         <result column="return_rent_deposit_paid_amount" jdbcType="DECIMAL" property="returnRentDepositPaidAmount" />
@@ -82,11 +80,10 @@
         <result column="rent_amount" jdbcType="TIMESTAMP" property="rentAmount" />
         <result column="correct_amount" jdbcType="DECIMAL" property="correctAmount" />
         <result column="overdue_amount" jdbcType="DECIMAL" property="overdueAmount" />
-        <result column="paid_time" jdbcType="TIMESTAMP" property="paidTime" />
     </resultMap>
     <select id="queryIncome" resultMap="StatisticsIncomeDetail" parameterType="map">
         SELECT esod.id,MIN(eo.buyer_customer_id) customer_id,MIN(ec.customer_no) customer_no,MIN(ec.customer_name) customer_name ,MIN(eo.rent_length_type) rent_length_type,
-        MIN(eo.order_sub_company_id) sub_company_id,MIN(esc.sub_company_name)  sub_company_name,,MIN(esod.statement_detail_paid_time) paid_time
+        MIN(eo.order_sub_company_id) sub_company_id,MIN(esc.sub_company_name)  sub_company_name,MIN(esod.statement_detail_paid_time) pay_time,
         MIN(eo.order_seller_id) order_seller_id, MIN(eu.real_name) order_seller_name,
         IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
         IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,

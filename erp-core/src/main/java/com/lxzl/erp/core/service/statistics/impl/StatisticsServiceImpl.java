@@ -119,9 +119,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
                     BigDecimal inCome = BigDecimalUtil.addAll(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),statementOrderDetailDO.getStatementDetailRentPaidAmount(),statementOrderDetailDO.getStatementDetailDepositPaidAmount(),
                                             statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-//                    inCome = BigDecimalUtil.subAll(inCome,statementOrderDetailDO.(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
-
-//                    statisticsIncomeDetail.setIncomeAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsIncomeDetail.getIncomeAmount(), in), out));
+                    inCome = BigDecimalUtil.subAll(inCome,statementOrderDetailDO.getStatementDetailDepositReturnAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount());
+                    statisticsIncomeDetail.setIncomeAmount(inCome);
                 }
             }
         }
