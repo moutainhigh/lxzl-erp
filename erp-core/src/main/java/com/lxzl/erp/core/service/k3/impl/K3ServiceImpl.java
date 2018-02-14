@@ -142,7 +142,7 @@ public class K3ServiceImpl implements K3Service {
                 if (number.length >= 2) {
                     K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByK3Code(number[1]);
                     if (k3MappingCategoryDO != null) {
-                        orderProduct.setBrandName(k3MappingCategoryDO.getCategoryName());
+                        orderProduct.setCategoryName(k3MappingCategoryDO.getCategoryName());
                     }
                 }
                 if (number.length >= 3) {
