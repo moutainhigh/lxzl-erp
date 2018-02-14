@@ -141,10 +141,10 @@ public class K3OrderConverter implements ConvertK3DataService {
 
         String remark = erpOrder.getRemark()==null?"":erpOrder.getRemark();
         formSEOrder.setExplanation(remark);// 摘要
-        if(RentLengthType.RENT_LENGTH_TYPE_SHORT == erpOrder.getRentLengthType()){
-            formSEOrder.setOrderTypeNumber("R");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
-        }else if(RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()&&erpOrder.getRentTimeLength()>=6){
+        if(RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()){
             formSEOrder.setOrderTypeNumber("L");
+        }else if(OrderRentType.RENT_TYPE_DAY.equals(erpOrder.getRentType())){
+            formSEOrder.setOrderTypeNumber("R");// 订单类型 L	长租  R	短短租(天) X	销售   D	短租
         }else{
             formSEOrder.setOrderTypeNumber("D");
         }

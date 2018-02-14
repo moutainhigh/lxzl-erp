@@ -114,7 +114,7 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postOrder() throws InterruptedException {
-       Order order =  orderService.queryOrderByNo("LXO-20180213-731812-00078").getResult();
+       Order order =  orderService.queryOrderByNo("LXO-20180214-731812-00080").getResult();
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
         Thread.sleep(30000);
     }
