@@ -196,14 +196,6 @@ public class OrderServiceImpl implements OrderService {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
-        }
-        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
-            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
-            return result;
-        }
         if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())
                 && CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
@@ -305,12 +297,6 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(workflowCommitResult.getErrorCode());
                 return result;
             }
-
-            // 扣除信用额度
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-            }
-
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         }
 
@@ -318,6 +304,11 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
+
+        // 扣除信用额度
+        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+        }
         if (!isNeedVerify) {
             boolean verifyResult = receiveVerifyResult(true, orderDO.getOrderNo());
             if (!verifyResult) {
@@ -1393,6 +1384,7 @@ public class OrderServiceImpl implements OrderService {
                         throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT);
                     }
 
+                    Integer depositCycle, payCycle, payMode;
                     boolean productIsCheckRiskManagement = isCheckRiskManagement(orderProductDO, null);
                     if (!productIsCheckRiskManagement) {
                         if (orderProductDO.getPayMode() == null) {
@@ -1405,23 +1397,30 @@ public class OrderServiceImpl implements OrderService {
                     }
                     // 判断用户是否为全额押金用户，如果为全额押金用户，即全额押金，并且押0付1
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
-                        orderProductDO.setDepositCycle(0);
-                        orderProductDO.setPaymentCycle(1);
-                        orderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                        depositCycle = 0;
+                        payCycle = 1;
+                        payMode = OrderPayMode.PAY_MODE_PAY_BEFORE;
                     } else if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
                         // 商品品牌为苹果品牌
-                        orderProductDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
-                        orderProductDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
-                        orderProductDO.setPayMode(customerRiskManagementDO.getApplePayMode());
+                        depositCycle = customerRiskManagementDO.getAppleDepositCycle();
+                        payCycle = customerRiskManagementDO.getApplePaymentCycle();
+                        payMode = customerRiskManagementDO.getApplePayMode();
                     } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
-                        orderProductDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
-                        orderProductDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                        orderProductDO.setPayMode(customerRiskManagementDO.getNewPayMode());
+                        depositCycle = customerRiskManagementDO.getNewDepositCycle();
+                        payCycle = customerRiskManagementDO.getNewPaymentCycle();
+                        payMode = customerRiskManagementDO.getNewPayMode();
                     } else {
-                        orderProductDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
-                        orderProductDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
-                        orderProductDO.setPayMode(customerRiskManagementDO.getPayMode());
+                        depositCycle = customerRiskManagementDO.getDepositCycle();
+                        payCycle = customerRiskManagementDO.getPaymentCycle();
+                        payMode = customerRiskManagementDO.getPayMode();
                     }
+                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                        depositCycle = depositCycle > orderProductDO.getRentTimeLength() ? orderProductDO.getRentTimeLength() : depositCycle;
+                        payCycle = payCycle > orderProductDO.getRentTimeLength() ? orderProductDO.getRentTimeLength() : payCycle;
+                    }
+                    orderProductDO.setDepositCycle(depositCycle);
+                    orderProductDO.setPaymentCycle(payCycle);
+                    orderProductDO.setPayMode(payMode);
                 } else {
                     if (orderProductDO.getPayMode() == null) {
                         throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
@@ -1461,24 +1460,33 @@ public class OrderServiceImpl implements OrderService {
                         orderMaterialDO.setPaymentCycle(0);
                         continue;
                     }
+                    Integer depositCycle, payCycle, payMode;
                     // 判断用户是否为全额押金用户，如果为全额押金用户，即全额押金，并且押0付1
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
-                        orderMaterialDO.setDepositCycle(0);
-                        orderMaterialDO.setPaymentCycle(1);
-                        orderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+                        depositCycle = 0;
+                        payCycle = 1;
+                        payMode = OrderPayMode.PAY_MODE_PAY_BEFORE;
                     } else if (BrandId.BRAND_ID_APPLE.equals(material.getBrandId())) {
-                        orderMaterialDO.setDepositCycle(customerRiskManagementDO.getAppleDepositCycle());
-                        orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getApplePaymentCycle());
-                        orderMaterialDO.setPayMode(customerRiskManagementDO.getApplePayMode());
+                        // 商品品牌为苹果品牌
+                        depositCycle = customerRiskManagementDO.getAppleDepositCycle();
+                        payCycle = customerRiskManagementDO.getApplePaymentCycle();
+                        payMode = customerRiskManagementDO.getApplePayMode();
                     } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
-                        orderMaterialDO.setDepositCycle(customerRiskManagementDO.getNewDepositCycle());
-                        orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getNewPaymentCycle());
-                        orderMaterialDO.setPayMode(customerRiskManagementDO.getNewPayMode());
+                        depositCycle = customerRiskManagementDO.getNewDepositCycle();
+                        payCycle = customerRiskManagementDO.getNewPaymentCycle();
+                        payMode = customerRiskManagementDO.getNewPayMode();
                     } else {
-                        orderMaterialDO.setDepositCycle(customerRiskManagementDO.getDepositCycle());
-                        orderMaterialDO.setPaymentCycle(customerRiskManagementDO.getPaymentCycle());
-                        orderMaterialDO.setPayMode(customerRiskManagementDO.getPayMode());
+                        depositCycle = customerRiskManagementDO.getDepositCycle();
+                        payCycle = customerRiskManagementDO.getPaymentCycle();
+                        payMode = customerRiskManagementDO.getPayMode();
                     }
+                    if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+                        depositCycle = depositCycle > orderMaterialDO.getRentTimeLength() ? orderMaterialDO.getRentTimeLength() : depositCycle;
+                        payCycle = payCycle > orderMaterialDO.getRentTimeLength() ? orderMaterialDO.getRentTimeLength() : payCycle;
+                    }
+                    orderMaterialDO.setDepositCycle(depositCycle);
+                    orderMaterialDO.setPaymentCycle(payCycle);
+                    orderMaterialDO.setPayMode(payMode);
                 } else {
                     if (orderMaterialDO.getPayMode() == null) {
                         throw new BusinessException(ErrorCode.ORDER_PAY_MODE_NOT_NULL);
