@@ -196,14 +196,6 @@ public class OrderServiceImpl implements OrderService {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
-        }
-        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
-            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
-            return result;
-        }
         if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())
                 && CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
@@ -305,12 +297,6 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(workflowCommitResult.getErrorCode());
                 return result;
             }
-
-            // 扣除信用额度
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-            }
-
             orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         }
 
@@ -318,6 +304,11 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
         orderMapper.update(orderDO);
+
+        // 扣除信用额度
+        if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+            customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+        }
         if (!isNeedVerify) {
             boolean verifyResult = receiveVerifyResult(true, orderDO.getOrderNo());
             if (!verifyResult) {
