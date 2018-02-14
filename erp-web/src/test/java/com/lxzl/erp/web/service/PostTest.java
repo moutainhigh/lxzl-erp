@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
@@ -22,17 +23,21 @@ import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerPersonDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.supplier.SupplierDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.junit.Test;
@@ -114,7 +119,8 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postOrder() throws InterruptedException {
-       Order order =  orderService.queryOrderByNo("LXO-20180214-731812-00080").getResult();
+
+       Order order =  orderService.queryOrderByNo("LXO-20180214-731813-00081").getResult();
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order);
         Thread.sleep(30000);
     }
@@ -182,6 +188,16 @@ public class PostTest extends ERPUnTransactionalTest {
         }
         Thread.sleep(30000);
     }
+
+    @Test
+    public void postReturnOrder() throws InterruptedException {
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo("53f0140d84834f4e8502619ca88bb4a4");
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER, ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class));
+        Thread.sleep(100000);
+    }
+
+
     @Autowired
     private ProductMapper productMapper;
     @Autowired
@@ -202,4 +218,6 @@ public class PostTest extends ERPUnTransactionalTest {
     private UserMapper userMapper;
     @Autowired
     private SupplierMapper supplierMapper;
+    @Autowired
+    private K3ReturnOrderMapper k3ReturnOrderMapper;
 }

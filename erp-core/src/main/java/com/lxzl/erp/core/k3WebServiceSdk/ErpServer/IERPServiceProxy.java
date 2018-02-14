@@ -76,5 +76,11 @@ public class IERPServiceProxy implements IERPService {
     return iERPService.addUser(user);
   }
   
+  public ServiceResult addSEOutstock(FormSEOutStock user) throws java.rmi.RemoteException{
+    if (iERPService == null)
+      _initIERPServiceProxy();
+    return iERPService.addSEOutstock(user);
+  }
+  
   
 }

@@ -328,7 +328,7 @@ public class K3OrderConverter implements ConvertK3DataService {
             }
             formSEOrder.setEntrys(list);
         }
-        System.out.println(JSON.toJSONString(formSEOrder,true));
+//        System.out.println(JSON.toJSONString(formSEOrder,true));
         return formSEOrder;
     }
 

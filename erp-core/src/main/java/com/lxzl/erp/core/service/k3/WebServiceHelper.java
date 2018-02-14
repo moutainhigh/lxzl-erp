@@ -57,6 +57,8 @@ public class WebServiceHelper {
                 refId = (Integer)doFiledMap.get("orderId").get(data);
             }else if(postK3Type.equals(PostK3Type.POST_K3_TYPE_USER)){
                 refId = (Integer)doFiledMap.get("userId").get(data);
+            }else if(postK3Type.equals(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER)){
+                refId = (Integer)doFiledMap.get("k3ReturnOrderId").get(data);
             }
             K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(refId,postK3Type);
 

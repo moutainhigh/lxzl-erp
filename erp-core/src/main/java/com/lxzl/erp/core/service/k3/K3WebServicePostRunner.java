@@ -59,6 +59,8 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addSEorder((FormSEOrder) postData);
             }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
                 response = service.addUser((FormUser) postData);
+            }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
+                response = service.addSEOutstock((FormSEOutStock) postData);
             }
             //修改推送记录
             if (response.getStatus()==0) {
