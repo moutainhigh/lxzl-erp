@@ -217,7 +217,6 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSeorderEntry.setNumber(number);//  设备代码
                     formSeorderEntry.setName(productDO.getProductName());//  设备名称
                     formSeorderEntry.setQty(new BigDecimal(orderProduct.getProductCount()));// 数量
-                    if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType()))
                     formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
                     formSeorderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
                     //计算平均税率
