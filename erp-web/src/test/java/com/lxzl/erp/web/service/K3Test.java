@@ -27,6 +27,6 @@ public class K3Test extends ERPUnTransactionalTest {
 
     @Test
     public void queryOrder() {
-        k3Service.queryOrder("LXSE2017121518");
+        k3Service.queryOrder("LXO-20180214-731812-00080");
     }
 }

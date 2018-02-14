@@ -1415,7 +1415,6 @@ public class OrderServiceImpl implements OrderService {
                         payMode = customerRiskManagementDO.getPayMode();
                     }
                     if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                        depositCycle = depositCycle > orderProductDO.getRentTimeLength() ? orderProductDO.getRentTimeLength() : depositCycle;
                         payCycle = payCycle > orderProductDO.getRentTimeLength() ? orderProductDO.getRentTimeLength() : payCycle;
                     }
                     orderProductDO.setDepositCycle(depositCycle);

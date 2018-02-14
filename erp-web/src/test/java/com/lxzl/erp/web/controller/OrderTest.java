@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
@@ -25,7 +26,7 @@ import java.util.*;
  * @author gaochao
  * @date 2017-11-15 14:14
  */
-public class OrderTest extends ERPUnTransactionalTest {
+public class OrderTest extends ERPTransactionalTest {
 
     @Test
     public void testCreateOrder() throws Exception {
@@ -227,7 +228,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180213-731811-00077");
+        order.setOrderNo("LXO-20180214-731812-00080");
         order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }
@@ -307,7 +308,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180213-731812-00079");
+        order.setOrderNo("LXO-20180214-731812-00080");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
