@@ -42,6 +42,14 @@
 			</properties>
 			<!-- <activation> <activeByDefault>true</activeByDefault> </activation> -->
 		</profile>
+		<!-- 预发环境 -->
+		<profile>
+			<id>advance</id>
+			<properties>
+				<env>advance</env>
+			</properties>
+			 <!--<activation> <activeByDefault>true</activeByDefault> </activation>-->
+		</profile>
 		<!-- 生产环境 -->
 		<profile>
 			<id>product</id>
