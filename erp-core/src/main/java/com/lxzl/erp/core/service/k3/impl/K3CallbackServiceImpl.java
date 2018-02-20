@@ -37,7 +37,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        orderDO.setDeliveryTime(currentTime);
+        orderDO.setDeliveryTime(k3DeliveryOrder.getDeliveryTime());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_DELIVERED);
         orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
         orderDO.setUpdateTime(currentTime);
