@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.pojo.callback.K3DeliveryOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class K3CallbackController extends BaseController {
 
     @RequestMapping(value = "receiveDeliveryInfo", method = RequestMethod.POST)
     public Result receiveDeliveryInfo(@RequestBody K3DeliveryOrder param, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        ServiceResult<String, String> serviceResult = k3CallbackService.callbackDelivery(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -35,6 +36,6 @@ public class K3CallbackController extends BaseController {
     private ResultGenerator resultGenerator;
 
     @Autowired
-    private K3CallbackController k3CallbackService;
+    private K3CallbackService k3CallbackService;
 
 }

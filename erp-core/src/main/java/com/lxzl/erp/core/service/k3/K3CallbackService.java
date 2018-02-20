@@ -1,5 +1,8 @@
 package com.lxzl.erp.core.service.k3;
 
+
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.k3.pojo.callback.K3DeliveryOrder;
 import com.lxzl.se.core.service.BaseService;
 
 /**
@@ -9,4 +12,6 @@ import com.lxzl.se.core.service.BaseService;
  * @date 2018-02-19 13:37
  */
 public interface K3CallbackService extends BaseService {
+
+    ServiceResult<String, String> callbackDelivery(K3DeliveryOrder k3DeliveryOrder);
 }

@@ -50,7 +50,7 @@ import java.util.*;
  * @author gaochao
  * @date 2018-02-11 20:54
  */
-@Service
+@Service("k3Service")
 public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
