@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.k3.pojo.callback;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import java.util.List;
  * @author gaochao
  * @date 2018-02-19 13:39
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class K3DeliveryOrder {
 
     private String orderNo;
