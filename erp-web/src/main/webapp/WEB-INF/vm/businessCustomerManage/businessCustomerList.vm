@@ -59,6 +59,11 @@
                                             <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
                                         </div>
                                     </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 140px;">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus"></select>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -137,15 +142,15 @@
                                                 {{/rowActionButtons}}
                                             </ul>
                                         </div>
-##                                        <div class="btn-group text-right">
-##                                            {{#rowActionButtons}}
-##                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}"
-##                                               data-customerno="{{customerNo}}"
-##                                               data-statementdate="{{statementDate}}"
-##                                               data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
-##                                               data-customertype="{{customerType}}">{{text}}</a>
-##                                            {{/rowActionButtons}}
-##                                        </div>
+##                                      <div class="btn-group text-right">
+##                                          {{#rowActionButtons}}
+##                                          <a href="${ctx}{{menuUrl}}?no={{customerNo}}" type="button" class="btn btn-default btn-xs {{class}}"
+##                                             data-customerno="{{customerNo}}"
+##                                             data-statementdate="{{statementDate}}"
+##                                             data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
+##                                             data-customertype="{{customerType}}">{{text}}</a>
+##                                          {{/rowActionButtons}}
+##                                      </div>
                                     </td>
                                     {{/hasRowActionButtons}}
                                 </tr>
