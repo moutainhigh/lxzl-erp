@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
+    <title>爱租-运营管理系统-系统异常</title>
+    <style>
+        .text p {
+            text-align: center;
+        }
+        .text span{
+            display:block;text-align: center;
+        }
+        .text u{color:#45A0E7;cursor:pointer;}
+        .text{
+            font-family: 微软雅黑;
+            color: #666;
+            font-size: 15px;
+        }
+        .pic{
+            margin: 0 auto;
+            width: 600px;
+            padding: 30px 20px 25px 20px;
+            border-bottom: 1px solid #aaa;
+        }
+        .text .errordetail {
+            width: 560px;
+            margin: 20px auto;
+            font-size: 12px;
+            text-align: left;
+            display:none;
+        }
+    </style>
+    #parse("layout/include.vm")
+    <script type="text/javascript"></script>
+</head>
+<body border="false">
+    <div class="wrap">
+        <div class="pic">
+            <img src="$!{request.contextPath}/img/weberrorjpg.jpg" alt=""/>
+        </div>
+        <div class="text">
+            <p>系统异常</p>
+            <span>抱歉，系统异常，请与管理员联系。<a href="javascript:void(0)" style="text-decoration:underline" onclick="seedetail();">查看详情</a></span>
+            <div class="errordetail" id="errordetail">$!{result.code} : $!{result.description}</div>
+        </div>
+    </div>
+    <script>
+        function seedetail(){
+            var errordetail = $('.errordetail');
+            
+            if(errordetail.is(':hidden')){
+                errordetail.slideDown();
+            }else {
+                errordetail.slideUp();
+            }
+        }
+    </script>
+</body>
+</html>

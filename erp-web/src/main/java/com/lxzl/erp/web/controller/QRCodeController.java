@@ -18,6 +18,6 @@ public class QRCodeController extends BaseController {
     @RequestMapping("/scan")
     public String scan() {
         String idCode = getStringParameter("idCode");
-        return "/home";
+        return "/support";
     }
 }
