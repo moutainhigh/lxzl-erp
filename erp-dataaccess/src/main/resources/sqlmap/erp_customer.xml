@@ -443,10 +443,14 @@
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
+		,union_user.real_name AS unionUserName
+		,owner_user.real_name AS ownerName
 		FROM erp_customer ec LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.data_status=1
 		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
 		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
+		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
+		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
 				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
