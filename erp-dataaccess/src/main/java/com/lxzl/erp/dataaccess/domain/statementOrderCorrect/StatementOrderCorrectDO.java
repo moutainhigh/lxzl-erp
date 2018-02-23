@@ -28,27 +28,9 @@ public class StatementOrderCorrectDO  extends BaseDO {
 	private Integer statementOrderItemId;   //结算单订单项ID
 	private Integer statementOrderReferId;   //结算单订单项ID
 
-	private String createUserName;   //添加人
-	private String updateUserName;   //修改人
 	private String statementOrderNo;  //结算单编号
 	private String productName;  //商品名称
 	private String productNo;  //商品编号
-
-	public String getCreateUserName() {
-		return createUserName;
-	}
-
-	public void setCreateUserName(String createUserName) {
-		this.createUserName = createUserName;
-	}
-
-	public String getUpdateUserName() {
-		return updateUserName;
-	}
-
-	public void setUpdateUserName(String updateUserName) {
-		this.updateUserName = updateUserName;
-	}
 
 	public String getStatementOrderNo() {
 		return statementOrderNo;
