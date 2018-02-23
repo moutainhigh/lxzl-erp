@@ -193,6 +193,7 @@
 				AND esoc.data_status = 1
 			</if>
 		</where>
+		ORDER BY esoc.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 </mapper>
