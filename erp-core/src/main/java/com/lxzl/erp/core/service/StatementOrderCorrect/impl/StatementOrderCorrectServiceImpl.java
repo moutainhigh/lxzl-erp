@@ -287,26 +287,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
             return serviceResult;
         }
-        String createUser = orderProductDO.getCreateUser();
-        int createUserId = Integer.parseInt(createUser);
-        String updateUser = orderProductDO.getUpdateUser();
-        int updateUserId = Integer.parseInt(updateUser);
-
-        UserDO createUserDO = userMapper.findByUserId(createUserId);
-        if(createUserDO ==null){
-            serviceResult.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
-            return serviceResult;
-        }
-        String createUserName = createUserDO.getUserName();
-        statementOrderCorrectDO.setCreateUserName(createUserName);
-
-        UserDO updateUserDO = userMapper.findByUserId(updateUserId);
-        String updateUserName = updateUserDO.getUserName();
-        if(updateUserDO ==null){
-            serviceResult.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
-            return serviceResult;
-        }
-        statementOrderCorrectDO.setUpdateUserName(updateUserName);
 
         statementOrderCorrectDO.setProductNo(productDO.getProductNo());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

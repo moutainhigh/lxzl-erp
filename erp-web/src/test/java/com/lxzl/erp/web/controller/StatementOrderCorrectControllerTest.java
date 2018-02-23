@@ -79,7 +79,7 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     @Test
     public void queryStatementOrderCorrectDetailByNo() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-1085-20180210-00004");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-38-20180211-00003");
         TestResult testResult = getJsonTestResult("/correct/query", statementOrderCorrect);
     }
 
@@ -93,7 +93,7 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
         Calendar calendar = Calendar.getInstance();
         calendar.set(2017, 10, 12);
         statementOrderCorrectQueryParam.setCreateStartTime(calendar.getTime());
-        calendar.set(2018, 02, 01);
+        calendar.set(2018, 02, 23);
         statementOrderCorrectQueryParam.setCreateEndTime(calendar.getTime());
         TestResult testResult = getJsonTestResult("/correct/page", statementOrderCorrectQueryParam);
     }
