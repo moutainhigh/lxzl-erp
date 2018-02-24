@@ -13,6 +13,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderCorrect extends BasePO {
@@ -49,8 +50,18 @@ public class StatementOrderCorrect extends BasePO {
 	private String statementCorrectFailReason;   //冲正失败原因（建议格式为 错误代码:错误描述）
 
 	private String statementOrderNo;  //结算单编号
-	private String productName;  //商品名称
-	private String productNo;  //商品编号
+	private List<String> productName;  //商品名称
+	private List<String> materialName;  //物料名称
+	private String orderNo;  //订单编号
+	private String customerName;  //客户名称
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
 	public String getStatementOrderNo() {
 		return statementOrderNo;
@@ -60,20 +71,28 @@ public class StatementOrderCorrect extends BasePO {
 		this.statementOrderNo = statementOrderNo;
 	}
 
-	public String getProductName() {
+	public List<String> getProductName() {
 		return productName;
 	}
 
-	public void setProductName(String productName) {
+	public void setProductName(List<String> productName) {
 		this.productName = productName;
 	}
 
-	public String getProductNo() {
-		return productNo;
+	public List<String> getMaterialName() {
+		return materialName;
 	}
 
-	public void setProductNo(String productNo) {
-		this.productNo = productNo;
+	public void setMaterialName(List<String> materialName) {
+		this.materialName = materialName;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 
 	public Integer getStatementOrderCorrectId(){

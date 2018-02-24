@@ -180,7 +180,7 @@
     <select id="findById" resultMap="OrderDO" parameterType="java.lang.Integer">
         select
         <include refid="column_List"/>
-        from erp_order where id = #{id, jdbcType=INTEGER}
+        from erp_order eo where id = #{id, jdbcType=INTEGER}
     </select>
 
     <select id="findByOrderId" resultMap="OrderDO" parameterType="java.lang.Integer">
