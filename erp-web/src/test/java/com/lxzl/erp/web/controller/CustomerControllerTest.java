@@ -280,10 +280,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void verifyCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180129-00060");
+        customer.setCustomerNo("LXCC-1000-20180212-00084");
         customer.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //        customer.setVerifyRemark("资料驳回的备注，请一定要填写好看的数据");
         customer.setVerifyRemark("资料通过的备注，请一定要多多珍惜这个数据");
+        customer.setVerifyRemark(null);
 
         TestResult result = getJsonTestResult("/customer/verifyCustomer", customer);
     }

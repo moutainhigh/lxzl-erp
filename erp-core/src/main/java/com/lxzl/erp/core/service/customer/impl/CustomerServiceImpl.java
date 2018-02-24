@@ -727,11 +727,12 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        if (CustomerStatus.STATUS_REJECT.equals(customerStatus) && StringUtil.isNotBlank(verifyRemark)) {
+        if (CustomerStatus.STATUS_REJECT.equals(customerStatus)) {
             customerDO.setFailReason(verifyRemark);
+            customerDO.setPassReason(null);
         }
 
-        if (CustomerStatus.STATUS_PASS.equals(customerStatus) && StringUtil.isNotBlank(verifyRemark)) {
+        if (CustomerStatus.STATUS_PASS.equals(customerStatus)) {
             customerDO.setPassReason(verifyRemark);
         }
 

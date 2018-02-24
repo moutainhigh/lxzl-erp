@@ -281,12 +281,8 @@
 			<if test="statementDate != null">
 				statement_date = #{statementDate,jdbcType=INTEGER},
 			</if>
-			<if test="passReason != null">
 				pass_reason = #{passReason,jdbcType=VARCHAR},
-			</if>
-			<if test="failReason != null">
 				fail_reason = #{failReason,jdbcType=VARCHAR},
-			</if>
 				union_user = #{unionUser,jdbcType=INTEGER},
 		</set>
 	</sql>
