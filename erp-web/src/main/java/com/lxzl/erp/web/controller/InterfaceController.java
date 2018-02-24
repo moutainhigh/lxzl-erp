@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -180,7 +181,7 @@ public class InterfaceController extends BaseController {
     public Result weixinQueryCustomerAccountLogPage(@RequestBody @Validated InterfaceCustomerAccountLogParam param, BindingResult validResult) {
         boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(param.getErpAppId(), param.getErpAppSecret());
         if(erpIdentity){
-            ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
+            ServiceResult<String, Map<String, Object>> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
             return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
         }
         return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);
