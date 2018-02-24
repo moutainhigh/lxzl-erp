@@ -13,6 +13,7 @@ import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectServ
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
@@ -21,14 +22,13 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
-import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author : XiaoLuYu
@@ -275,22 +272,39 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             return serviceResult;
         }
         statementOrderCorrectDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
-
-        OrderProductDO orderProductDO = orderProductMapper.findById(statementOrderCorrectDO.getStatementOrderItemId());
-        if(orderProductDO == null){
+        Integer statementOrderReferId = statementOrderCorrectDO.getStatementOrderReferId();
+        OrderDO orderDO = orderMapper.findById(statementOrderReferId);
+        if(orderDO == null){
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
             return serviceResult;
         }
-        statementOrderCorrectDO.setProductName(orderProductDO.getProductName());
-        ProductDO productDO = productMapper.findById(orderProductDO.getProductId());
-        if(productDO == null){
-            serviceResult.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
-            return serviceResult;
+        StatementOrderCorrect statementOrderCorrect = ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class);
+        //客户名称
+        statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
+        //订单编号
+        statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+        //商品名称
+        List<OrderProductDO> orderProductDOList = orderProductMapper.findByOrderId(orderDO.getId());
+        List<String> productNameList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(orderProductDOList)){
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                productNameList.add(orderProductDO.getProductName());
+            }
+            statementOrderCorrect.setProductName(productNameList);
         }
 
-        statementOrderCorrectDO.setProductNo(productDO.getProductNo());
+        //物料名称
+        List<OrderMaterialDO> orderMaterialDOList = orderMaterialMapper.findByOrderId(orderDO.getId());
+        List<String> materialNameList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(orderProductDOList)){
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                materialNameList.add(orderMaterialDO.getMaterialName());
+            }
+            statementOrderCorrect.setMaterialName(materialNameList);
+        }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
+        serviceResult.setResult(statementOrderCorrect);
         return serviceResult;
     }
 
@@ -313,6 +327,26 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         Integer statementOrderCorrectCount = statementOrderCorrectMapper.listCount(maps);
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderCorrectAndStatementOrderByQueryParam(maps);
         List<StatementOrderCorrect> statementOrderCorrectList = ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class);
+        for (StatementOrderCorrect statementOrderCorrect : statementOrderCorrectList) {
+            Integer statementOrderId = statementOrderCorrect.getStatementOrderId();
+            StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
+            if(statementOrderDO == null){
+                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+                return serviceResult;
+            }
+            //结算单编号
+            statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
+            //客户名称
+            statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
+            //订单编号
+            OrderDO orderDO = orderMapper.findById(statementOrderCorrect.getStatementOrderReferId());
+            if(orderDO == null){
+                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
+                return serviceResult;
+            }
+            //订单编号
+            statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+        }
         Page<StatementOrderCorrect> statementOrderCorrectPage = new Page<>(statementOrderCorrectList, statementOrderCorrectCount, statementOrderCorrectQueryParam.getPageNo(), statementOrderCorrectQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statementOrderCorrectPage);
@@ -737,6 +771,9 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
     @Autowired
     private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Autowired
     private OrderMaterialMapper orderMaterialMapper;
