@@ -294,7 +294,7 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{businessCustomerAccountLogId}}</td>
                                 <td>{{recordType}}</td>
-                                <td>{{tradeAmount}}</td>
+                                <td>￥{{tradeAmount}}</td>
                                 <td>￥{{#price}}{{oldBalanceAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{newBalanceAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{oldTotalFrozenAmount}}{{/price}}</td>
