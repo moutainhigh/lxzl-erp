@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 
 /**
@@ -83,13 +84,13 @@ public class PaymentController extends BaseController {
 
     @RequestMapping(value = "queryCustomerAccountLogPage", method = RequestMethod.POST)
     public Result queryCustomerAccountLogPage(@RequestBody CustomerAccountLogParam param, BindingResult validResult) {
-        ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.queryCustomerAccountLogPage(param);
+        ServiceResult<String, Map<String, Object>> serviceResult = paymentService.queryCustomerAccountLogPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "weixinQueryCustomerAccountLogPage", method = RequestMethod.POST)
     public Result weixinQueryCustomerAccountLogPage(@RequestBody InterfaceCustomerAccountLogParam param, BindingResult validResult) {
-        ServiceResult<String, CustomerAccountLogSummary> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
+        ServiceResult<String, Map<String, Object>> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -125,12 +126,12 @@ public interface PaymentService extends BaseService {
      * @param customerAccountLogParam
      * @return
      */
-    ServiceResult<String, CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam);
+    ServiceResult<String, Map<String,Object>> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam);
 
     /**
      * 微信端客户帐户流水接口
      * @param param
      * @return
      */
-    ServiceResult<String, CustomerAccountLogSummary> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param);
+    ServiceResult<String, Map<String,Object>> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param);
 }
