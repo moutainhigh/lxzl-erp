@@ -1,6 +1,5 @@
 package com.lxzl.erp.web.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectParam;
@@ -10,7 +9,6 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 /**
  * @Author : XiaoLuYu
@@ -79,22 +77,22 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
     @Test
     public void queryStatementOrderCorrectDetailByNo() throws Exception {
         StatementOrderCorrect statementOrderCorrect = new StatementOrderCorrect();
-        statementOrderCorrect.setStatementCorrectNo("LXSOC-38-20180211-00003");
+        statementOrderCorrect.setStatementCorrectNo("LXSOC-24-20180223-00007");
         TestResult testResult = getJsonTestResult("/correct/query", statementOrderCorrect);
     }
 
     @Test
     public void pageStatementOrderCorrect() throws Exception {
         StatementOrderCorrectQueryParam statementOrderCorrectQueryParam = new StatementOrderCorrectQueryParam();
-//        statementOrderCorrectQueryParam.setStatementCorrectNo("LXSOC-22-20180131-00002");
+        statementOrderCorrectQueryParam.setStatementCorrectNo("LXSOC-24-20180223-00007");
 //        statementOrderCorrectQueryParam.setStatementOrderDetailId(79);
 //        statementOrderCorrectQueryParam.setStatementOrderId(22);
 //        statementOrderCorrectQueryParam.setStatementOrderCorrectStatus(0);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2017, 10, 12);
-        statementOrderCorrectQueryParam.setCreateStartTime(calendar.getTime());
-        calendar.set(2018, 02, 23);
-        statementOrderCorrectQueryParam.setCreateEndTime(calendar.getTime());
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(2017, 10, 12);
+//        statementOrderCorrectQueryParam.setCreateStartTime(calendar.getTime());
+//        calendar.set(2018, 02, 23);
+//        statementOrderCorrectQueryParam.setCreateEndTime(calendar.getTime());
         TestResult testResult = getJsonTestResult("/correct/page", statementOrderCorrectQueryParam);
     }
 

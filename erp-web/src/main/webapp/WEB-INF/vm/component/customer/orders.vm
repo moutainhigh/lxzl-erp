@@ -225,33 +225,23 @@
                 <script type="text/html" id="totalAccountTpl">
                     {{#hasTotalAccount}}
                     {{#totalAccount}}
-                    <div class="row br-b ph8 account-title">客户流水汇总信息</div>
+                    <div class="row br-b ph8 account-title">客户账户流水汇总信息</div>
                     <div class="row pt20">
                         <div class="col-md-4">
                             <dl class="dl-horizontal">
-                                <dt>客户编号：</dt><dd class="mb5">{{businessCustomerAccountLogId}}</dd>
-                                <dt>账户流水编号：</dt><dd class="mb5">{{customerId}}</dd>
-                                <dt>记录类型：</dt><dd class="mb5">{{recordType}}</dd>
-                                <dt>交易总额：</dt><dd class="mb5">{{tradeAmount}}</dd>
-                                <dt>可用余额（未操作前）：</dt><dd class="mb5">{{oldBalanceAmount}}</dd>
+                                <dt>可用余额（未操作前）：</dt><dd class="mb5">￥{{oldBalanceAmount}}</dd>
+                                <dt>总冻结金额（未操作前）：</dt><dd class="mb5">￥{{oldTotalFrozenAmount}}</dd>
+                                <dt>押金金额（未操作前）：</dt><dd class="mb5">￥{{oldDepositAmount}}</dd>
+                                <dt>租金存款（未操作前）：</dt><dd class="mb5">￥{{oldRentDepositAmount}}</dd>
                             </dl>
                         </div>
                         <div class="col-md-4">
                             <dl class="dl-horizontal">
-                                <dt>总冻结金额（未操作前）：</dt><dd class="mb5">{{oldTotalFrozenAmount}}</dd>
-                                <dt>押金金额（未操作前）：</dt><dd class="mb5">{{oldDepositAmount}}</dd>
-                                <dt>租金存款（未操作前）：</dt><dd class="mb5">{{oldRentDepositAmount}}</dd>
-                                <dt>可用余额（操作后）：</dt><dd class="mb5">{{newBalanceAmount}}</dd>
-                                <dt>总冻结金额（操作后）：</dt><dd class="mb5">{{newTotalFrozenAmount}}</dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-4">
-                            <dl class="dl-horizontal">
-                                <dt>押金金额（操作后）：</dt><dd class="mb5">{{newDepositAmount}}</dd>
-                                <dt>租金存款（操作后）：</dt><dd class="mb5">{{newRentDepositAmount}}</dd>
-                                <dt>备注：</dt><dd class="mb5">{{remark}}</dd>
-                                <dt>创建时间：</dt><dd class="mb5">{{#shortTime}}{{createTime}}{{/shortTime}}</dd>
-                                <dt>更新时间：</dt><dd class="mb5">{{#shortTime}}{{updateTime}}{{/shortTime}}</dd>
+                                <dt>可用余额（操作后）：</dt><dd class="mb5 text-primary">￥{{newBalanceAmount}}</dd>
+                                <dt>总冻结金额（操作后）：</dt><dd class="mb5 text-primary">￥{{newTotalFrozenAmount}}</dd>
+                                <dt>押金金额（操作后）：</dt><dd class="mb5 text-primary">￥{{newDepositAmount}}</dd>
+                                <dt>租金存款（操作后）：</dt><dd class="mb5 text-primary">￥{{newRentDepositAmount}}</dd>
+                                <dt>交易总额：</dt><dd class="mb5 text-danger">￥{{tradeAmount}}</dd>
                             </dl>
                         </div>
                     </div>
@@ -261,7 +251,7 @@
                 <div id="totalAccount"></div>
 
                 <div class="row section">
-                    <div class="br-b ph8 account-title">客户流水信息</div>
+                    <div class="br-b ph8 account-title">客户账户流水信息</div>
                     <div class="table-responsive">
                         <script type="text/html" id="accountListTpl">
                             <thead>
@@ -304,7 +294,7 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{businessCustomerAccountLogId}}</td>
                                 <td>{{recordType}}</td>
-                                <td>{{tradeAmount}}</td>
+                                <td>{{operation}}￥{{tradeAmount}}</td>
                                 <td>￥{{#price}}{{oldBalanceAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{newBalanceAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{oldTotalFrozenAmount}}{{/price}}</td>
@@ -320,7 +310,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到订单</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到客户流水</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}

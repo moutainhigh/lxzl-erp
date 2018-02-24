@@ -53,9 +53,9 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryCustomerAccountLogPage() throws Exception {
         CustomerAccountLogParam param = new CustomerAccountLogParam();
-        param.setBusinessCustomerNo("LXCC-1000-20180206-00022");
+        param.setBusinessCustomerNo("LXCC-1000-20180213-00128");
         param.setPageNo(1);
-        param.setPageSize(10);
+        param.setPageSize(15);
 //        param.setCustomerAccountLogType(5);
         TestResult testResult = getJsonTestResult("/payment/queryCustomerAccountLogPage", param);
     }
@@ -63,10 +63,10 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
     @Test
     public void weixinQueryCustomerAccountLogPage() throws Exception {
         InterfaceCustomerAccountLogParam param = new InterfaceCustomerAccountLogParam();
-        param.setCustomerNo("CC201712161455119301332");
+        param.setCustomerNo("LXCC-1000-20180213-00128");
         param.setPageNo(1);
         param.setPageSize(10);
-        param.setCustomerAccountLogType(5);
+//        param.setCustomerAccountLogType(5);
         TestResult testResult = getJsonTestResult("/payment/weixinQueryCustomerAccountLogPage", param);
     }
 }

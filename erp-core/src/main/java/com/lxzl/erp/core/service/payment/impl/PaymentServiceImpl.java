@@ -486,8 +486,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String,  CustomerAccountLogSummary> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam) {
-        ServiceResult<String,  CustomerAccountLogSummary> result = new ServiceResult<>();
+    public ServiceResult<String,  Map<String,Object>> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam) {
+        ServiceResult<String,  Map<String,Object>> result = new ServiceResult<>();
 
         CustomerDO customerDO = customerMapper.findByNo(customerAccountLogParam.getBusinessCustomerNo());
         if(customerDO == null){
@@ -521,14 +521,9 @@ public class PaymentServiceImpl implements PaymentService {
             logger.info("query Customer Account Log Page response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
-                Map<String,String> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+                Map<String,Object> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
 
-                CustomerAccountLogSummary customerAccountLogSummary = JSONUtil.parseObject(map.get("customerAccountLogSummary"), CustomerAccountLogSummary.class);
-                Page<CustomerAccountLogPage> customerAccountLogPage = JSONUtil.parseObject(map.get("customerAccountLogPage"), Page.class);
-                List<CustomerAccountLogPage> customerAccountLogPageList = customerAccountLogPage.getItemList();
-                customerAccountLogSummary.setCustomerAccountLogPage(customerAccountLogPageList);
-
-                result.setResult(customerAccountLogSummary);
+                result.setResult(map);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
@@ -539,8 +534,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, CustomerAccountLogSummary> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param) {
-        ServiceResult<String,  CustomerAccountLogSummary> result = new ServiceResult<>();
+    public ServiceResult<String, Map<String,Object>> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param) {
+        ServiceResult<String,  Map<String,Object>> result = new ServiceResult<>();
 
         CustomerAccountLogParam customerAccountLogParam = new CustomerAccountLogParam();
         customerAccountLogParam.setPageSize(param.getPageSize());
@@ -575,14 +570,9 @@ public class PaymentServiceImpl implements PaymentService {
             logger.info("weixin Query Customer Account Log Page response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
-                Map<String,String> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+                Map<String,Object> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
 
-                CustomerAccountLogSummary customerAccountLogSummary = JSONUtil.parseObject(map.get("customerAccountLogSummary"), CustomerAccountLogSummary.class);
-                Page<CustomerAccountLogPage> customerAccountLogPage = JSONUtil.parseObject(map.get("customerAccountLogPage"), Page.class);
-                List<CustomerAccountLogPage> customerAccountLogPageList = customerAccountLogPage.getItemList();
-                customerAccountLogSummary.setCustomerAccountLogPage(customerAccountLogPageList);
-
-                result.setResult(customerAccountLogSummary);
+                result.setResult(map);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             }
