@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -47,6 +48,12 @@ public class StatementController extends BaseController {
     @RequestMapping(value = "createNew", method = RequestMethod.POST)
     public Result createNewOrderStatement(@RequestBody StatementOrderQueryParam param, BindingResult validResult) {
         ServiceResult<String, BigDecimal> serviceResult = statementService.createOrderStatement(param.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "createK3StatementOrder", method = RequestMethod.POST)
+    public Result createNewOrderStatement(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createK3OrderStatement(order);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

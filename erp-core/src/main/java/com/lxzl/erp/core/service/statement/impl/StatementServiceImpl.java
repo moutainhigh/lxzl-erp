@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
@@ -163,6 +164,62 @@ public class StatementServiceImpl implements StatementService {
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
             return null;
+        }
+        Integer statementDays;
+        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+        if (dataDictionaryDO == null) {
+            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+        } else {
+            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
+        }
+        if (customerDO.getStatementDate() != null) {
+            statementDays = customerDO.getStatementDate();
+        }
+
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
+        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
+
+        // 生成单子后，本次需要付款的金额
+        BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
+        if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
+                // 核算本次应该交多少钱
+                if (DateUtil.isSameDay(rentStartTime, statementOrderDetailDO.getStatementExpectPayTime())) {
+                    thisNeedPayAmount = BigDecimalUtil.add(thisNeedPayAmount, statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
+                }
+            }
+        }
+
+        result.setResult(thisNeedPayAmount);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> createK3OrderStatement(Order order) {
+        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+        if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+            return result;
+        }
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        Date rentStartTime = orderDO.getRentStartTime();
+        CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
+        if (customerDO == null) {
+            customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
+            if (customerDO == null) {
+                return null;
+            }
+            orderDO.setBuyerCustomerId(customerDO.getId());
+            orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
         }
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
@@ -851,71 +908,76 @@ public class StatementServiceImpl implements StatementService {
     private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail) {
         if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
             OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
-            statementOrderDetail.setOrderNo(orderDO.getOrderNo());
-            if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-                for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
-                        statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
-                        statementOrderDetail.setItemCount(orderProductDO.getProductCount());
-                        statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                        statementOrderDetail.setItemRentType(orderProductDO.getRentType());
-                        break;
+            if (orderDO != null) {
+                statementOrderDetail.setOrderNo(orderDO.getOrderNo());
+                if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                    for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                            statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+                            statementOrderDetail.setItemCount(orderProductDO.getProductCount());
+                            statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                            statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                            break;
+                        }
                     }
                 }
-            }
-            if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
-                for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
-                        statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
-                        statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
-                        statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                        statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
-                        break;
+                if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                    for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                            statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
+                            statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
+                            statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                            statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                            break;
+                        }
                     }
                 }
             }
         }
+
         if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
             OrderDO orderDO = null;
             if (returnReferStatementOrderDetail != null) {
                 orderDO = orderMapper.findByOrderId(returnReferStatementOrderDetail.getOrderId());
             }
             ReturnOrderDO returnOrderDO = returnOrderMapper.findById(statementOrderDetail.getOrderId());
-            statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
-            if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderProductDOList())) {
-                for (ReturnOrderProductDO returnOrderProductDO : returnOrderDO.getReturnOrderProductDOList()) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderProductDO.getId())) {
-                        Product product = FastJsonUtil.toBean(returnOrderProductDO.getReturnProductSkuSnapshot(), Product.class);
-                        if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
-                            statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
-                        }
-                        statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                        statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
-                        if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-                            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                                if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
-                                    statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                                    statementOrderDetail.setItemRentType(orderProductDO.getRentType());
-                                    break;
+            if (returnOrderDO != null) {
+                statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
+                if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderProductDOList())) {
+                    for (ReturnOrderProductDO returnOrderProductDO : returnOrderDO.getReturnOrderProductDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderProductDO.getId())) {
+                            Product product = FastJsonUtil.toBean(returnOrderProductDO.getReturnProductSkuSnapshot(), Product.class);
+                            if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                                statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
+                            }
+                            statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                            statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
+                            if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                                for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                                        statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                                        statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderMaterialDOList())) {
-                for (ReturnOrderMaterialDO returnOrderMaterialDO : returnOrderDO.getReturnOrderMaterialDOList()) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
-                        Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
-                        statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                        statementOrderDetail.setItemName(material.getMaterialName());
-                        statementOrderDetail.setItemCount(returnOrderMaterialDO.getRealReturnMaterialCount());
-                        if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
-                            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                                if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
-                                    statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                                    statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
-                                    break;
+                if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderMaterialDOList())) {
+                    for (ReturnOrderMaterialDO returnOrderMaterialDO : returnOrderDO.getReturnOrderMaterialDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
+                            Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
+                            statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                            statementOrderDetail.setItemName(material.getMaterialName());
+                            statementOrderDetail.setItemCount(returnOrderMaterialDO.getRealReturnMaterialCount());
+                            if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                                for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                                        statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                                        statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -923,26 +985,29 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
+
         if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
             ChangeOrderDO changeOrderDO = changeOrderMapper.findById(statementOrderDetail.getOrderId());
-            statementOrderDetail.setOrderNo(changeOrderDO.getChangeOrderNo());
-            if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderProductDOList())) {
-                for (ChangeOrderProductDO changeOrderProductDO : changeOrderDO.getChangeOrderProductDOList()) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderDO.getId())) {
-                        Product product = FastJsonUtil.toBean(changeOrderProductDO.getSrcChangeProductSkuSnapshot(), Product.class);
-                        if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
-                            statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
+            if (changeOrderDO != null) {
+                statementOrderDetail.setOrderNo(changeOrderDO.getChangeOrderNo());
+                if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderProductDOList())) {
+                    for (ChangeOrderProductDO changeOrderProductDO : changeOrderDO.getChangeOrderProductDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderDO.getId())) {
+                            Product product = FastJsonUtil.toBean(changeOrderProductDO.getSrcChangeProductSkuSnapshot(), Product.class);
+                            if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                                statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
+                            }
+                            statementOrderDetail.setItemCount(changeOrderProductDO.getRealChangeProductSkuCount());
                         }
-                        statementOrderDetail.setItemCount(changeOrderProductDO.getRealChangeProductSkuCount());
                     }
                 }
-            }
-            if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderMaterialDOList())) {
-                for (ChangeOrderMaterialDO changeOrderMaterialDO : changeOrderDO.getChangeOrderMaterialDOList()) {
-                    if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderMaterialDO.getId())) {
-                        Material material = FastJsonUtil.toBean(changeOrderMaterialDO.getSrcChangeMaterialSnapshot(), Material.class);
-                        statementOrderDetail.setItemName(material.getMaterialName());
-                        statementOrderDetail.setItemCount(changeOrderMaterialDO.getRealChangeMaterialCount());
+                if (CollectionUtil.isNotEmpty(changeOrderDO.getChangeOrderMaterialDOList())) {
+                    for (ChangeOrderMaterialDO changeOrderMaterialDO : changeOrderDO.getChangeOrderMaterialDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(changeOrderMaterialDO.getId())) {
+                            Material material = FastJsonUtil.toBean(changeOrderMaterialDO.getSrcChangeMaterialSnapshot(), Material.class);
+                            statementOrderDetail.setItemName(material.getMaterialName());
+                            statementOrderDetail.setItemCount(changeOrderMaterialDO.getRealChangeMaterialCount());
+                        }
                     }
                 }
             }
@@ -1584,7 +1649,7 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
                 BigDecimal originalDetailOverdueAmount = statementOrderDetailDO.getStatementDetailOverdueAmount();
-                BigDecimal originalDetailAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(),originalDetailOverdueAmount);
+                BigDecimal originalDetailAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), originalDetailOverdueAmount);
 
                 // 以下均为逾期处理，overdueDays 为逾期天数，开始算逾期。
                 BigDecimal detailOverdueAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(originalDetailAmount, new BigDecimal(0.003)), new BigDecimal(overdueDays)).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP);
@@ -1598,7 +1663,7 @@ public class StatementServiceImpl implements StatementService {
             }
 
             BigDecimal originalOverdueAmount = statementOrderDO.getStatementOverdueAmount();
-            BigDecimal originalAmount = BigDecimalUtil.sub(statementOrderDO.getStatementAmount(),originalOverdueAmount);
+            BigDecimal originalAmount = BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), originalOverdueAmount);
             BigDecimal nowOverdueAmount = BigDecimalUtil.add(totalOverdueAmount, statementOrderDO.getStatementOverduePaidAmount());
             statementOrderDO.setStatementAmount(BigDecimalUtil.add(originalAmount, nowOverdueAmount));
             statementOrderDO.setStatementOverdueAmount(nowOverdueAmount);
@@ -1707,6 +1772,7 @@ public class StatementServiceImpl implements StatementService {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         Date statementEndTime = null, statementExpectPayTime = null;
+        payMode = OrderPayMode.PAY_MODE_PAY_BEFORE;
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength - 1);
             if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
