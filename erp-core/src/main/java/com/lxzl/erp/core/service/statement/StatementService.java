@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -38,6 +39,7 @@ public interface StatementService extends BaseService {
      * @return 发货前需要交多少钱
      */
     ServiceResult<String, BigDecimal> createOrderStatement(String orderNo);
+    ServiceResult<String, BigDecimal> createK3OrderStatement(Order order);
 
     /**
      * 计算订单首次需要缴纳费用

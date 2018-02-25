@@ -1,13 +1,22 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
+import com.lxzl.erp.common.domain.Page;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.core.service.statement.StatementService;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +28,28 @@ import java.util.List;
  * @date 2018-02-13 9:41
  */
 public class K3ControllerTest extends ERPUnTransactionalTest {
+
+
+    @Test
+    public void queryOrder() throws Exception {
+        K3OrderQueryParam param = new K3OrderQueryParam();
+        TestResult testResult = getJsonTestResult("/k3/queryOrder", param);
+        Object object = testResult.getResultMap().get("data");
+        String json = JSON.toJSONString(object);
+        Page<JSONObject> orderPage = JSON.parseObject(json, Page.class);
+
+        List<JSONObject> orderList = orderPage.getItemList();
+
+        for (int i = 0; i < orderList.size(); i++) {
+            if (i > 1) {
+                break;
+            }
+            JSONObject obj = orderList.get(i);
+            Order order = JSON.parseObject(obj.toJSONString(), Order.class);
+            testResult = getJsonTestResult("/statementOrder/createK3StatementOrder", order);
+        }
+    }
+
 
     @Test
     public void createReturnOrder() throws Exception {
@@ -102,5 +133,8 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         param.setReturnOrderNo("6f52d4caa5a643109d7ccca400218d0c");
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrderByNo", param);
     }
+
+    @Autowired
+    private StatementService statementService;
 
 }

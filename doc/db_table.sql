@@ -2846,6 +2846,7 @@ CREATE TABLE `erp_k3_return_order_detail` (
   `order_no` varchar(64) NOT NULL COMMENT '订单号',
   `order_entry` varchar(64) NOT NULL COMMENT '订单行号',
   `product_no` varchar(64) NOT NULL COMMENT '产品代码',
+  `product_name` varchar(64) NOT NULL COMMENT '产品名称',
   `product_count` int(11) NOT NULL COMMENT '退货数量',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',

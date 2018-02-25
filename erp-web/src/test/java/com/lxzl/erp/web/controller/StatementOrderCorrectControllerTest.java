@@ -6,7 +6,9 @@ import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectPar
 import com.lxzl.erp.common.domain.statementOrderCorrect.StatementOrderCorrectQueryParam;
 import com.lxzl.erp.common.domain.statementOrderCorrect.pojo.StatementOrderCorrect;
 import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectService;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 
@@ -29,6 +31,7 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
         statementOrderCorrect.setRemark("测试225");
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
     }
+
     @Test
     public void createStatementOrderCorrectJSON() throws Exception {
         String str = "{\n" +
@@ -44,9 +47,17 @@ public class StatementOrderCorrectControllerTest extends ERPUnTransactionalTest 
                 "\t\"statementCorrectReason\": \"\",\n" +
                 "\t\"remark\": \"\"\n" +
                 "}";
-        StatementOrderCorrect statementOrderCorrect = FastJsonUtil.toBean(str,StatementOrderCorrect.class);
+        StatementOrderCorrect statementOrderCorrect = FastJsonUtil.toBean(str, StatementOrderCorrect.class);
         TestResult testResult = getJsonTestResult("/correct/create", statementOrderCorrect);
     }
+
+    @Test
+    public void testReceiveOrder() {
+        statementOrderCorrectService.receiveVerifyResult(true, "LXSOC-578-20180225-00025");
+    }
+
+    @Autowired
+    private StatementOrderCorrectService statementOrderCorrectService;
 
     @Test
     public void commitStatementOrderCorrect() throws Exception {

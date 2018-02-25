@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.OrderStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.UUIDUtil;
+import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,14 +88,18 @@ public class K3ServiceImpl implements K3Service {
             }
             if (param.getCreateStartTime() == null) {
                 jsonObject.remove("createStartTime");
+            } else {
+                jsonObject.put("createStartTime", DateUtil.formatDate(param.getCreateStartTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
             if (param.getCreateEndTime() == null) {
                 jsonObject.remove("createEndTime");
+            } else {
+                jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
 
-            logger.info("query charge page response:{}", response);
+            logger.info("query k3 order page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
 
             JSONObject orderBills = (JSONObject) postResult.get("Data");
@@ -104,6 +110,7 @@ public class K3ServiceImpl implements K3Service {
                 for (JSONObject obj : k3OrderList) {
                     String orderBill = obj.get("OrderBill").toString();
                     Order order = JSON.parseObject(orderBill, Order.class);
+                    convertOrderInfo(order);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
@@ -128,6 +135,20 @@ public class K3ServiceImpl implements K3Service {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    private void convertOrderInfo(Order order) {
+        if (order.getOrderStatus() == null) {
+            if (order.getOrderStatus() == 0) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+            } else if (order.getOrderStatus() == 1) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            } else if (order.getOrderStatus() == 2) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_DELIVERED);
+            } else if (order.getOrderStatus() == 3) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_OVER);
+            }
+        }
     }
 
     private void convertOrderProduct(List<OrderProduct> orderProductList) {
@@ -203,6 +224,7 @@ public class K3ServiceImpl implements K3Service {
                 for (JSONObject obj : k3OrderList) {
                     String orderBill = obj.get("OrderBill").toString();
                     Order order = JSON.parseObject(orderBill, Order.class);
+                    convertOrderInfo(order);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
