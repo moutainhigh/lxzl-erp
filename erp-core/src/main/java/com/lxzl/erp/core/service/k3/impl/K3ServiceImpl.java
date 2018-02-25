@@ -34,6 +34,7 @@ import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.UUIDUtil;
+import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,14 +88,18 @@ public class K3ServiceImpl implements K3Service {
             }
             if (param.getCreateStartTime() == null) {
                 jsonObject.remove("createStartTime");
+            } else {
+                jsonObject.put("createStartTime", DateUtil.formatDate(param.getCreateStartTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
             if (param.getCreateEndTime() == null) {
                 jsonObject.remove("createEndTime");
+            } else {
+                jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
 
-            logger.info("query charge page response:{}", response);
+            logger.info("query k3 order page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
 
             JSONObject orderBills = (JSONObject) postResult.get("Data");
