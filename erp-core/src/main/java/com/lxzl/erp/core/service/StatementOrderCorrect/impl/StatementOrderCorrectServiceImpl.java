@@ -267,14 +267,14 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         }
         Integer statementOrderId = statementOrderCorrectDO.getStatementOrderId();
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
-        if(statementOrderDO == null){
+        if (statementOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return serviceResult;
         }
         statementOrderCorrectDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
         Integer statementOrderReferId = statementOrderCorrectDO.getStatementOrderReferId();
         OrderDO orderDO = orderMapper.findById(statementOrderReferId);
-        if(orderDO == null){
+        if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
             return serviceResult;
         }
@@ -286,7 +286,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         //商品名称
         List<OrderProductDO> orderProductDOList = orderProductMapper.findByOrderId(orderDO.getId());
         List<String> productNameList = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(orderProductDOList)){
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
             for (OrderProductDO orderProductDO : orderProductDOList) {
                 productNameList.add(orderProductDO.getProductName());
             }
@@ -296,7 +296,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         //物料名称
         List<OrderMaterialDO> orderMaterialDOList = orderMaterialMapper.findByOrderId(orderDO.getId());
         List<String> materialNameList = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(orderProductDOList)){
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
                 materialNameList.add(orderMaterialDO.getMaterialName());
             }
@@ -330,7 +330,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         for (StatementOrderCorrect statementOrderCorrect : statementOrderCorrectList) {
             Integer statementOrderId = statementOrderCorrect.getStatementOrderId();
             StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderId);
-            if(statementOrderDO == null){
+            if (statementOrderDO == null) {
                 serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
                 return serviceResult;
             }
@@ -340,7 +340,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
             //订单编号
             OrderDO orderDO = orderMapper.findById(statementOrderCorrect.getStatementOrderReferId());
-            if(orderDO == null){
+            if (orderDO == null) {
                 serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
                 return serviceResult;
             }
@@ -578,11 +578,17 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return serviceResult;
         }
-        if ((statementOrderCorrect.getStatementCorrectRentAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentAmount(), BigDecimal.ZERO) < 0)
-                || (statementOrderCorrect.getStatementCorrectRentDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) < 0)
-                || (statementOrderCorrect.getStatementCorrectDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) < 0)
-                || (statementOrderCorrect.getStatementCorrectOtherAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOtherAmount(), BigDecimal.ZERO) < 0)
-                || (statementOrderCorrect.getStatementCorrectOverdueAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOverdueAmount(), BigDecimal.ZERO) < 0)) {
+        if (((statementOrderCorrect.getStatementCorrectRentAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentAmount(), BigDecimal.ZERO) < 0)
+                        || (statementOrderCorrect.getStatementCorrectRentDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) < 0)
+                        || (statementOrderCorrect.getStatementCorrectDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) < 0)
+                        || (statementOrderCorrect.getStatementCorrectOtherAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOtherAmount(), BigDecimal.ZERO) < 0)
+                        || (statementOrderCorrect.getStatementCorrectOverdueAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOverdueAmount(), BigDecimal.ZERO) < 0))
+                        ||
+                ((statementOrderCorrect.getStatementCorrectRentAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentAmount(), BigDecimal.ZERO) == 0)
+                        && (statementOrderCorrect.getStatementCorrectRentDepositAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) == 0)
+                        && (statementOrderCorrect.getStatementCorrectDepositAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) == 0)
+                        && (statementOrderCorrect.getStatementCorrectOtherAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOtherAmount(), BigDecimal.ZERO) == 0)
+                        && (statementOrderCorrect.getStatementCorrectOverdueAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOverdueAmount(), BigDecimal.ZERO) == 0))) {
             serviceResult.setErrorCode(ErrorCode.CORRECT_AMOUNT_MORE_THEN_ZERO);
             return serviceResult;
         }
