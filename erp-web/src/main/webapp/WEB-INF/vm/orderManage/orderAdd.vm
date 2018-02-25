@@ -14,14 +14,14 @@
         #parse("layout/sidebar.vm")
 
         <section id="content_wrapper">
-                #parse("layout/topbarDropmenu.vm")
-                #parse("layout/topbar.vm")
-                <section id="content" class="animated fadeIn">
-                    <form class="" id="addOrderForm">
-                        #parse("component/order/orderContent.vm")
-                    </form>
-                </section>
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <form class="" id="addOrderForm">
+                    #parse("component/order/orderContent.vm")
+                </form>
             </section>
+        </section>
 
         #parse("layout/sidebarRight.vm")
     </div>

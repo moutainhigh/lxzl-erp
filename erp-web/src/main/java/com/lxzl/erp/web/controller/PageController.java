@@ -707,11 +707,24 @@ public class PageController extends BaseController {
     }
     @RequestMapping("/return-order-k3/list")
     public String k3ReturnOrderList() {
-        return "/k3Manage/k3ReturnOrder";
+        return "/k3Manage/K3ReturnOrder";
     }
+
     @RequestMapping("/return-order-k3/detail")
     public String k3ReturnOrderDetail() {
         return "/k3Manage/k3ReturnOrderDetail";
+    }
+    @RequestMapping("/return-order-k3/add")
+    public String k3ReturnOrderAdd() {
+        return "/k3Manage/k3ReturnOrderAdd";
+    }
+    @RequestMapping("/return-order-k3/edit")
+    public String k3ReturnOrderEdit() {
+        return "/k3Manage/k3ReturnOrderEdit";
+    }
+    @RequestMapping("/k3-order/item-choose")
+    public String k3OrderChooseItem() {
+        return "/component/k3Manage/chooseOrderItemModal";
     }
 
 

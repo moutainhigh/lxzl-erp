@@ -2,32 +2,103 @@
     <div class="panel-heading">
         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
             <li class="active">
-                <a href="#tab-1" data-toggle="tab" aria-expanded="false">基本信息</a>
+                <a href="#tab-1" data-toggle="tab" aria-expanded="false">所需设备</a>
             </li>
             <li class="">
-                <a href="#tab-2" data-toggle="tab" aria-expanded="false">法人征信</a>
+                <a href="#tab-2" data-toggle="tab" aria-expanded="false">基本信息</a>
             </li>
             <li class="">
-                <a href="#tab-3" data-toggle="tab" aria-expanded="false">公司资质</a>
+                <a href="#tab-3" data-toggle="tab" aria-expanded="false">法人征信</a>
             </li>
             <li class="">
-                <a href="#tab-4" data-toggle="tab" aria-expanded="false">其它资料</a>
+                <a href="#tab-4" data-toggle="tab" aria-expanded="false">公司资质</a>
+            </li>
+            <li class="">
+                <a href="#tab-5" data-toggle="tab" aria-expanded="false">其它资料</a>
             </li>
         </ul>
     </div>
     <div class="panel-body br-n">
         <div class="tab-content pn br-n">
-            <div id="tab-1" class="tab-pane active">
+            <div id="tab-1" class="tab-pane active" style="margin:-25px;">
+                <div class="panel-menu br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
+                                    <i class="fa fa-plus"></i> 选择商品
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="dataListTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>商品ID</th>
+                            <th>租赁数量</th>
+                            <th>租赁时长</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#listData}}
+                        <tr class="productRow skuRow" productRowKey="{{productId}}">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>{{skuId}}</td>
+                            <td>
+                                <label class="field prepend-icon mw200">
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{rentCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                </label>
+                            </td>
+                            <td>
+                                <label class="field prepend-icon mw200">
+                                    <input id="rentTimeLength" name="rentTimeLength" class="form-control number required pl10" type="text" value="{{rentLength}}" placeholder="输入租赁时长" />
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                        </tr>
+                        {{/listData}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                </div>
+            </div>
+            <div id="tab-2" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-4">
                         <div class="section-divider mv40"><span> 营业执照 </span></div>
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="businessLicensePictureImage">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -37,10 +108,10 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureFrontImage">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -50,27 +121,27 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureBackImage">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="tab-2" class="tab-pane">
+            <div id="tab-3" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40"><span> 法人个人征信报告或附（法人个人征信授权书） </span></div>
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="legalPersonCreditReportImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -82,10 +153,10 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="legalPersonEducationImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -97,27 +168,27 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="legalPersonPositionalTitleImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="tab-3" class="tab-pane">
+            <div id="tab-4" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40"><span> 固定资产证明 </span></div>
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="fixedAssetsProveImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -129,10 +200,10 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="publicAccountFlowBillImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -144,10 +215,10 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="socialSecurityRoProvidentFundImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -159,10 +230,10 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="cooperationAgreementImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -174,10 +245,10 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="managerPlaceRentContractImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -189,27 +260,27 @@
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="localeChecklistsImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="tab-4" class="tab-pane">
+            <div id="tab-5" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40"><span> 其它材料 </span></div>
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="otherDateImageList">
                                 <div class="dz-default dz-message" >
-                <span>
-                    <i class="fa fa-cloud-upload"></i>
-                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                </span>
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -230,7 +301,7 @@
             <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
         </div>
         <div class="dz-success-mark">
-                                                 <span>âœ?/span>
+            <span>âœ?/span>
         </div>
         <a class="dz-remove" href="#" data-dz-remove>删除</a>
     </div>
