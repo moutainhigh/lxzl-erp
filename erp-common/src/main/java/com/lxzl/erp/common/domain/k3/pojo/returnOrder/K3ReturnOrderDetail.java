@@ -13,6 +13,7 @@ public class K3ReturnOrderDetail extends BasePO {
 	private String orderNo;   //订单号
 	private String orderEntry;   //订单行号
 	private String productNo;   //产品代码
+	private String productName;   //产品名称
 	private Integer productCount;   //退货数量
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -118,4 +119,11 @@ public class K3ReturnOrderDetail extends BasePO {
 		this.updateUser = updateUser;
 	}
 
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
 }

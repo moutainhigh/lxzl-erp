@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.OrderStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -104,6 +105,7 @@ public class K3ServiceImpl implements K3Service {
                 for (JSONObject obj : k3OrderList) {
                     String orderBill = obj.get("OrderBill").toString();
                     Order order = JSON.parseObject(orderBill, Order.class);
+                    convertOrderInfo(order);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
@@ -128,6 +130,20 @@ public class K3ServiceImpl implements K3Service {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    private void convertOrderInfo(Order order) {
+        if (order.getOrderStatus() == null) {
+            if (order.getOrderStatus() == 0) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+            } else if (order.getOrderStatus() == 1) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
+            } else if (order.getOrderStatus() == 2) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_DELIVERED);
+            } else if (order.getOrderStatus() == 3) {
+                order.setOrderStatus(OrderStatus.ORDER_STATUS_OVER);
+            }
+        }
     }
 
     private void convertOrderProduct(List<OrderProduct> orderProductList) {
@@ -203,6 +219,7 @@ public class K3ServiceImpl implements K3Service {
                 for (JSONObject obj : k3OrderList) {
                     String orderBill = obj.get("OrderBill").toString();
                     Order order = JSON.parseObject(orderBill, Order.class);
+                    convertOrderInfo(order);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
