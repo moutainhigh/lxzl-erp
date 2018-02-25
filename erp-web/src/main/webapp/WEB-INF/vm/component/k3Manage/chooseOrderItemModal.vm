@@ -5,19 +5,7 @@
         </div>
         <div class="panel-menu p12">
             <div class="row">
-                <div class="col-md-3">
-                    <script type="text/html" id="actionCommonButtonsTpl">
-                        <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                        {{#acitonCommonButtons}}
-                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                            <i class="{{iClass}}"></i> {{text}}
-                        </a>
-                        {{/acitonCommonButtons}}
-                    </script>
-
-                    <div class="btn-group" id="actionCommonButtons"></div>
-                </div>
-                <div class="col-md-9 text-right">
+                <div class="col-md-12 text-right">
                     <form id="searchForm" class="form-horizontal">
                         <div class="pull-right">
                             <button type="submit" class="btn btn-primary btn-sm">查询</button>
@@ -71,15 +59,13 @@
                         <th>订单状态</th>
                         <th>收货人</th>
                         <th>创建人</th>
-                        {{#hasRowActionButtons}}
                         <th class="text-right">操作</th>
-                        {{/hasRowActionButtons}}
                     </tr>
                     </thead>
                     <tbody>
                     {{#dataSource}}
                     {{#listData}}
-                    <tr>
+                    <tr class="trOrder">
                         {{#hasCommonActionButtons}}
                         <td class="text-center">
                             <label class="option block mn">
@@ -113,15 +99,65 @@
                             <p class="mn">{{createUserRealName}}</p>
                             <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                         </td>
-                        {{#hasRowActionButtons}}
                         <td class="text-right">
                             <div class="btn-group text-right">
-                                {{#rowActionButtons}}
-                                <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
-                                {{/rowActionButtons}}
+                                <a href="#" class="btn btn-default btn-xs chooseOrderItems" data-orderno="{{orderNo}}">选择</a>
                             </div>
                         </td>
-                        {{/hasRowActionButtons}}
+                    </tr>
+                    <tr class="trOrderItmes">
+                        <td colspan="12" style="height: 0;">
+                            <div class="orderItmesContainer row p5" data-order="{{orderJSONString}}" style="display: none;">
+                                <div  class="row">
+                                    <div class="panel m15">
+                                        <div class="panel-heading pn ph8">
+                                            <span>选择商品</span>
+                                        </div>
+                                        <div class="panel-body pn">
+                                            <table class="table">
+                                                <thead>
+                                                <tr class="bg-light">
+                                                    <th></th>
+                                                    <th>商品名称</th>
+                                                    <th>编号</th>
+                                                    <th>数量</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#orderProductList}}
+                                                <tr class="skuTr">
+                                                    <td>
+                                                        <label class="option block mn">
+                                                            <input type="checkbox" name="productNo" value="{{productNumber}}">
+                                                            <span class="checkbox mn"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>{{productName}}</td>
+                                                    <td>{{productNumber}}</td>
+                                                    <td>{{productCount}}</td>
+                                                </tr>
+                                                {{/orderProductList}}
+                                                {{^orderProductList}}
+                                                <tr>
+                                                    <td colspan="4" class="text-center">无商品项</td>
+                                                </tr>
+                                                {{/orderProductList}}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="panel-footer pn pv5 ph15">
+                                            <div class="row">
+                                                <div class="form-group mn pull-right">
+                                                    <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
+                                                    <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
                     </tr>
                     {{/listData}}
                     {{^listData}}
