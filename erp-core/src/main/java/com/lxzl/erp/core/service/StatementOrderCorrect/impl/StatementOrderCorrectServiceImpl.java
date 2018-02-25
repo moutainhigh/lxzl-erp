@@ -418,7 +418,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 if (statementOrderDetailDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                     continue;
                 }
-                //判断商品是否存在
+                /*//判断商品是否存在
                 if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetailDO.getOrderItemType())) {
                     OrderProductDO orderProductDO = orderProductMapper.findById(statementOrderDetailDO.getOrderItemReferId());
                     if (orderProductDO == null) {
@@ -433,7 +433,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return false;
                     }
-                }
+                }*/
                 //需要付的逾期金额
                 BigDecimal realStatementDetailOverdueAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOverdueAmount(), statementOrderDetailDO.getStatementDetailOverduePaidAmount());
                 // 历史冲正单金额

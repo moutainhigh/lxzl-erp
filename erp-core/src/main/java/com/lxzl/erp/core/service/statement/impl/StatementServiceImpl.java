@@ -1772,7 +1772,6 @@ public class StatementServiceImpl implements StatementService {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         Date statementEndTime = null, statementExpectPayTime = null;
-        payMode = OrderPayMode.PAY_MODE_PAY_BEFORE;
         if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
             statementEndTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(rentStartTime, rentTimeLength - 1);
             if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
