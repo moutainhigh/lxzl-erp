@@ -11,7 +11,7 @@ import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterial;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
-import com.lxzl.erp.core.service.order.impl.support.ReturnSupport;
+import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +23,7 @@ import java.util.List;
 public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
 
     @Autowired
-    private ReturnSupport returnSupport;
+    private PenaltySupport penaltySupport;
 
     @Test
     public void create() throws Exception {
@@ -209,7 +209,7 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     public void returnMaterial() throws Exception {
         String returnOrderNo = "LXRO-731494-20180205-00020";
         String orderNo = "LXO-20180205-731494-00018";
-        ServiceResult<String, BigDecimal> totalPenalty = returnSupport.orderPenalty(returnOrderNo,orderNo);
+        ServiceResult<String, BigDecimal> totalPenalty = penaltySupport.orderPenalty(returnOrderNo,orderNo);
         System.out.println(totalPenalty);
     }
 

@@ -93,14 +93,14 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         StatisticsIncome statisticsIncome = statisticsMapper.queryIncomeCount(maps);
         List<StatisticsIncomeDetail> statisticsIncomeDetailList = statisticsMapper.queryIncome(maps);
-        Map<String, StatisticsIncomeDetail> statisticsIncomeDetailMap = ListUtil.listToMap(statisticsIncomeDetailList, "orderItemReferId", "orderItemType");
+        Map<Integer, StatisticsIncomeDetail> statisticsIncomeDetailMap = ListUtil.listToMap(statisticsIncomeDetailList, "id");
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForStatistics(maps);
         BigDecimal totalRent = BigDecimal.ZERO;    //总租金
         BigDecimal totalPrepayRent = BigDecimal.ZERO;    //总预付租金
         BigDecimal totalOtherPaid = BigDecimal.ZERO;    //总其他收入
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
-                String key = statementOrderDetailDO.getOrderItemReferId() + "-" + statementOrderDetailDO.getOrderItemType();
+                Integer key = statementOrderDetailDO.getId();
                 //计算查询区间内租金费用
                 BigDecimal rentAmount = calculateRentAmount(statisticsIncomePageParam.getStartTime(), statisticsIncomePageParam.getEndTime(), statementOrderDetailDO);
                 //计算查询区间内预付租金费用
@@ -110,16 +110,16 @@ public class StatisticsServiceImpl implements StatisticsService {
                 totalPrepayRent = BigDecimalUtil.add(totalPrepayRent, prepayRentAmount);
                 totalOtherPaid = BigDecimalUtil.add(totalOtherPaid, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
                 //如果在返回列表中有数据，则处理租金及预付租金字段
+                BigDecimal inCome = BigDecimalUtil.addAll(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),statementOrderDetailDO.getStatementDetailRentPaidAmount(),statementOrderDetailDO.getStatementDetailDepositPaidAmount(),
+                        statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                inCome = BigDecimalUtil.subAll(inCome,statementOrderDetailDO.getStatementDetailDepositReturnAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount());
                 if (statisticsIncomeDetailMap.containsKey(key)) {
                     StatisticsIncomeDetail statisticsIncomeDetail = statisticsIncomeDetailMap.get(key);
 
-                    statisticsIncomeDetail.setRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getRentAmount(), rentAmount));
-                    statisticsIncomeDetail.setPrepayRentAmount(BigDecimalUtil.add(statisticsIncomeDetail.getPrepayRentAmount(), prepayRentAmount));
-                    statisticsIncomeDetail.setOtherPaidAmount(BigDecimalUtil.add(statisticsIncomeDetail.getOtherPaidAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount()));
+                    statisticsIncomeDetail.setRentAmount(rentAmount);
+                    statisticsIncomeDetail.setPrepayRentAmount(prepayRentAmount);
+                    statisticsIncomeDetail.setOtherPaidAmount(statementOrderDetailDO.getStatementDetailOtherPaidAmount());
 
-                    BigDecimal inCome = BigDecimalUtil.addAll(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),statementOrderDetailDO.getStatementDetailRentPaidAmount(),statementOrderDetailDO.getStatementDetailDepositPaidAmount(),
-                                            statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-                    inCome = BigDecimalUtil.subAll(inCome,statementOrderDetailDO.getStatementDetailDepositReturnAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount());
                     statisticsIncomeDetail.setIncomeAmount(inCome);
                 }
             }

@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class StatisticsIncomeDetail {
 
+    private Integer id;  //唯一标识
     private String customerNo;  //客户编号
     private String customerName;  //客户姓名
     private Integer rentLengthType;  //业务类型，1-短租，2-长租
@@ -30,6 +31,15 @@ public class StatisticsIncomeDetail {
     private Date payTime;  //支付时间
     private Integer orderItemReferId;  //订单项ID
     private Integer orderItemType;  //订单项类型，1为商品，2为配件
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getCustomerNo() {
         return customerNo;
