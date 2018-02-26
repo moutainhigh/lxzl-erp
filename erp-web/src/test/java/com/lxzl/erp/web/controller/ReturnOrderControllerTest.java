@@ -5,12 +5,15 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.returnOrder.*;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrder;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderConsignInfo;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderMaterial;
 import com.lxzl.erp.common.domain.returnOrder.pojo.ReturnOrderProduct;
+import com.lxzl.erp.core.service.order.impl.support.ReturnSupport;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,6 +21,10 @@ import java.util.Date;
 import java.util.List;
 
 public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
+
+    @Autowired
+    private ReturnSupport returnSupport;
+
     @Test
     public void create() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
@@ -196,6 +203,14 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
         returnOrderCommitParam.setRemark("备注");
         returnOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/returnOrder/commit", returnOrderCommitParam);
+    }
+
+    @Test
+    public void returnMaterial() throws Exception {
+        String returnOrderNo = "LXRO-731494-20180205-00020";
+        String orderNo = "LXO-20180205-731494-00018";
+        ServiceResult<String, BigDecimal> totalPenalty = returnSupport.orderPenalty(returnOrderNo,orderNo);
+        System.out.println(totalPenalty);
     }
 
 }
