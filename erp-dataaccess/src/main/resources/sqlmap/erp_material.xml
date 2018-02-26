@@ -37,6 +37,7 @@
 		<result column="new_month_rent_price" jdbcType="DECIMAL" property="newMonthRentPrice" />
 		<result column="new_material_count" jdbcType="INTEGER" property="newMaterialCount" />
 		<result column="old_material_count" jdbcType="INTEGER" property="oldMaterialCount" />
+		<result column="is_return_any_time" jdbcType="INTEGER" property="isReturnAnyTime" />
 		<collection property="materialImgDOList" resultMap="MaterialImgDO" />
 	</resultMap>
 
@@ -57,7 +58,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		em.id,em.material_no,em.material_name,em.material_model,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.is_consumable,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user,em.new_material_price,em.new_day_rent_price,em.new_month_rent_price
+		em.id,em.material_no,em.material_name,em.material_model,em.material_type,em.material_capacity_value,em.material_model_id,em.is_main_material,em.brand_id,em.stock,em.is_rent,em.material_price,em.day_rent_price,em.month_rent_price,em.material_desc,em.is_consumable,em.data_status,em.remark,em.create_time,em.create_user,em.update_time,em.update_user,em.new_material_price,em.new_day_rent_price,em.new_month_rent_price,em.is_return_any_time
 	</sql>
 
 	<sql id="img_column_List">
@@ -334,6 +335,9 @@
 			</if>
 			<if test="newMonthRentPrice != null">
 				new_month_rent_price = #{newMonthRentPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="isReturnAnyTime != null">
+				is_return_any_time = #{isReturnAnyTime,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>

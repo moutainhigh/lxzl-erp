@@ -40,7 +40,8 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     }
     @Test
     public void queryIncomeJson() throws Exception {
-        StatisticsIncomePageParam statisticsIncomePageParam = JSON.parseObject("{\"pageNo\":1,\"pageSize\":15,\"customerName\":\"\",\"salesmanName\":\"\",\"rentLengthType\":\"\",\"subCompanyId\":\"8\",\"startTime\":\"1515945600000\",\"endTime\":\"1518537599999\"}",StatisticsIncomePageParam.class);
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"customerName\":\"\",\"salesmanName\":\"\",\"rentLengthType\":\"\",\"startTime\":\"1517068800000\",\"endTime\":\"1519660799999\"}";
+        StatisticsIncomePageParam statisticsIncomePageParam = JSON.parseObject(json,StatisticsIncomePageParam.class);
 
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
@@ -56,6 +57,13 @@ public class StatisticsTest extends ERPUnTransactionalTest {
 //        statisticsUnReceivablePageParam.setSubCompanyId(1);
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
 
+    }
+
+    @Test
+    public void queryStatisticsUnReceivableJson() throws Exception {
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"salesmanName\":\"\",\"subCompanyId\":\"7\"}";
+        StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = JSON.parseObject(json,StatisticsUnReceivablePageParam.class);
+        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
     }
 
     @Test

@@ -25,6 +25,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_user" property="updateUser"/>
         <result column="update_time" property="updateTime"/>
+        <result column="is_return_any_time" jdbcType="INTEGER" property="isReturnAnyTime" />
         <collection property="productImgDOList" resultMap="ProductImgDO" />
         <collection property="productDescImgDOList" resultMap="ProductDescImgDO" />
         <collection property="productSkuDOList" resultMap="ProductSkuDO" />
@@ -123,7 +124,7 @@
     </resultMap>
 
     <sql id="column_List">
-		ep.id AS id,ep.product_no AS product_no,ep.product_name AS product_name,ep.product_model AS product_model,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_rent AS is_rent,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user
+		ep.id AS id,ep.product_no AS product_no,ep.product_name AS product_name,ep.product_model AS product_model,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_rent AS is_rent,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user,ep.is_return_any_time AS is_return_any_time
 	</sql>
 
     <sql id="img_column_List">
@@ -347,6 +348,9 @@
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="isReturnAnyTime != null">
+                is_return_any_time = #{isReturnAnyTime,jdbcType=INTEGER},
             </if>
         </set>
     </sql>

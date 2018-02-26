@@ -27,9 +27,9 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void addMaterial() throws Exception {
         Material material = new Material();
-        material.setMaterialName("固态/300G SSD");
+        material.setMaterialName("固态/1T SSD");
         material.setMaterialType(8);
-        material.setMaterialCapacityValue(128.0);
+        material.setMaterialCapacityValue(1000.0);
         material.setIsRent(CommonConstant.YES);
         material.setMaterialPrice(new BigDecimal(5000.0));
         material.setDayRentPrice(new BigDecimal(5000.0));
@@ -38,6 +38,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
         material.setNewMaterialPrice(new BigDecimal("12.00"));
         material.setNewDayRentPrice(new BigDecimal("13.00"));
         material.setNewMonthRentPrice(new BigDecimal("14.00"));
+        material.setIsReturnAnyTime(1);
 
         List<MaterialImg> materialImgList = new ArrayList<>();
         MaterialImg materialImg = new MaterialImg();
@@ -95,7 +96,7 @@ public class MaterialTest extends ERPUnTransactionalTest {
     @Test
     public void queryMaterialByNo() throws Exception {
         MaterialQueryParam materialQueryParam = new MaterialQueryParam();
-        materialQueryParam.setMaterialNo("M201711291737346371109");
+        materialQueryParam.setMaterialNo("LX--20180224-00106");
         TestResult testResult = getJsonTestResult("/material/queryMaterialByNo", materialQueryParam);
     }
 

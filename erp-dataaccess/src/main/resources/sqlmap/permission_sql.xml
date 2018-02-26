@@ -144,6 +144,11 @@
 						 separator="," close=")">
 					#{item}
 				</foreach>
+				OR ewl.update_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
 				OR ewl.current_verify_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">

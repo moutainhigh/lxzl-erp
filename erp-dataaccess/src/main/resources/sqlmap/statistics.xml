@@ -84,6 +84,7 @@
     <select id="queryIncome" resultMap="StatisticsIncomeDetail" parameterType="map">
         SELECT esod.id,MIN(eo.buyer_customer_id) customer_id,MIN(ec.customer_no) customer_no,MIN(ec.customer_name) customer_name ,MIN(eo.rent_length_type) rent_length_type,
         MIN(eo.order_sub_company_id) sub_company_id,MIN(esc.sub_company_name)  sub_company_name,MIN(esod.statement_detail_paid_time) pay_time,
+        MIN(esod.order_item_refer_id) order_item_refer_id,MIN(esod.order_item_type) order_item_type,
         MIN(eo.order_seller_id) order_seller_id, MIN(eu.real_name) order_seller_name,
         IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
         IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,
@@ -156,21 +157,18 @@
         SELECT COUNT(DISTINCT (esod.order_item_refer_id)) total_count,
         SUM(esod.statement_detail_amount) total_un_receivable
         FROM erp_statement_order_detail esod
-        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
-        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
         LEFT JOIN erp_customer ec ON esod.customer_id = ec.id and ec.data_status =1
-        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
-        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
-        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
+        LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=eo.order_seller_id
         WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1
         <if test="maps.unReceivableQueryParam.rentLengthType!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.unReceivableQueryParam.rentLengthType}
+            AND  eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType}
         </if>
         <if test="maps.unReceivableQueryParam.customerName!=null&amp;&amp; maps.unReceivableQueryParam.customerName != ''">
             AND ec.customer_name LIKE CONCAT('%','${maps.unReceivableQueryParam.customerName}','%' )
         </if>
         <if test="maps.unReceivableQueryParam.subCompanyId!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.unReceivableQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.unReceivableQueryParam.subCompanyId}
         </if>
         <if test="maps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
@@ -178,8 +176,7 @@
     </select>
 
     <select id="queryUnReceivable" resultMap="UnReceivableDetail" parameterType="map">
-        SELECT esod.order_item_refer_id , esod.order_item_type ,(CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type
-        WHEN esod.order_item_type = 2 THEN eom.rent_length_type END ) rent_length_type,
+        SELECT esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type,
         SUM(esod.statement_detail_amount) un_receivable,
         IFNULL(MIN(esod.statement_detail_overdue_phase_count),0)overdue_phase_count,
         MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,
@@ -190,24 +187,23 @@
         LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
         LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
         LEFT JOIN erp_customer ec ON esod.customer_id = ec.id and ec.data_status =1
-        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
-        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
-        LEFT JOIN erp_user eu ON eu.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_seller_id WHEN esod.order_item_type = 2 THEN eo2.order_seller_id END)
-        LEFT JOIN erp_sub_company esc ON esc.id=(CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) and esc.data_status = 1
+        LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=eo.order_seller_id
+        LEFT JOIN erp_sub_company esc ON esc.id=eo.order_sub_company_id and esc.data_status = 1
         WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1
         <if test="maps.unReceivableQueryParam.rentLengthType!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type end) = #{maps.unReceivableQueryParam.rentLengthType}
+            AND eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType}
         </if>
         <if test="maps.unReceivableQueryParam.customerName!=null&amp;&amp; maps.unReceivableQueryParam.customerName != ''">
             AND ec.customer_name LIKE CONCAT('%','${maps.unReceivableQueryParam.customerName}','%' )
         </if>
         <if test="maps.unReceivableQueryParam.subCompanyId!=null">
-            AND (CASE WHEN esod.order_item_type = 1 THEN eo1.order_sub_company_id WHEN esod.order_item_type = 2 THEN eo2.order_sub_company_id END) = #{maps.unReceivableQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.unReceivableQueryParam.subCompanyId}
         </if>
         <if test="maps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
         </if>
-        GROUP BY rent_length_type,esod.order_item_refer_id,esod.order_item_type
+        GROUP BY eo.rent_length_type,esod.order_item_refer_id,esod.order_item_type
         ORDER BY esod_create_time ASC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
@@ -288,7 +284,6 @@
     <select id="queryStatisticsUnReceivable" resultMap="StatisticsUnReceivableDetail" parameterType="map">
         select esod.order_seller_id,MIN(esod.order_seller_name) order_seller_name,
         esod.order_sub_company_id,MIN(esod.sub_company_name) sub_company_name,
-        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=2 AND esod.order_status=20 THEN esod.buyer_customer_id ELSE NULL END)) renting_customer_count_long,
         COUNT(DISTINCT

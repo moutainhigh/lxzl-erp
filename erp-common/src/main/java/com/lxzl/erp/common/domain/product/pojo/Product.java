@@ -28,6 +28,7 @@ public class Product extends BasePO {
     private Integer dataStatus;
     protected Date createTime;
     protected Date updateTime;
+    private Integer isReturnAnyTime;    //是否允许随时归还，0否1是
 
     private List<ProductImg> productImgList;           // 商品图片
     private List<ProductImg> productDescImgList;           // 商品图片
@@ -238,4 +239,8 @@ public class Product extends BasePO {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
+
+    public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
 }

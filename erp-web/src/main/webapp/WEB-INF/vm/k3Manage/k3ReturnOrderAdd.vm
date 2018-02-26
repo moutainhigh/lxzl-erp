@@ -31,6 +31,7 @@
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.k3.return.order.mixin.js',
+            'manage.k3.order.item.choose.modal.js',
             'manage.order.item.render.js',
             'manage.order.util.js',
             'manage.k3.return.order.add.js');

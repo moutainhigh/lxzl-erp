@@ -50,6 +50,8 @@ public class MaterialDO extends BaseDO {
     private Integer newMaterialCount;
     private Integer oldMaterialCount;
 
+    private Integer isReturnAnyTime;    //是否允许随时归还，0否1是
+
     public BigDecimal getNewMaterialPrice() {
         return newMaterialPrice;
     }
@@ -288,4 +290,8 @@ public class MaterialDO extends BaseDO {
     public void setOldMaterialCount(Integer oldMaterialCount) {
         this.oldMaterialCount = oldMaterialCount;
     }
+
+    public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
+
+    public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
 }
