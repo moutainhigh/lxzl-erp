@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.company.impl.support.DepartmentConverter;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
@@ -26,15 +27,11 @@ import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
-
-    @Autowired(required = false)
-    private HttpSession session;
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
@@ -43,12 +40,15 @@ public class CompanyServiceImpl implements CompanyService {
     private DepartmentMapper departmentMapper;
 
     @Autowired
+    private UserSupport userSupport;
+
+    @Autowired
     private RoleMapper roleMapper;
 
     @Override
     public ServiceResult<String, Integer> addSubCompany(SubCompany subCompany) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         if (StringUtil.isBlank(subCompany.getSubCompanyName())) {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NAME_NOT_NULL);
             return result;
@@ -72,6 +72,26 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public ServiceResult<String, Integer> updateSubCompany(SubCompany subCompany) {
         return null;
+    }
+
+    @Override
+    public ServiceResult<String, String> addShortReceivableAmount(SubCompany subCompany) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompany.getSubCompanyId());
+        if (subCompanyDO == null) {
+            serviceResult.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        subCompanyDO.setShortLimitReceivableAmount(subCompany.getShortLimitReceivableAmount());
+        subCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        subCompanyDO.setUpdateTime(new Date());
+        subCompanyMapper.update(subCompanyDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(subCompanyDO.getSubCompanyCode());
+        return serviceResult;
     }
 
     @Override
@@ -228,7 +248,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public ServiceResult<String, Integer> addDepartment(Department department) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
         if (StringUtil.isBlank(department.getDepartmentName())
@@ -264,7 +284,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public ServiceResult<String, Integer> updateDepartment(Department department) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
         if (department.getParentDepartmentId() != null && !CommonConstant.SUPER_DEPARTMENT_ID.equals(department.getParentDepartmentId())) {
@@ -289,7 +309,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public ServiceResult<String, Integer> deleteDepartment(Integer departmentId) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
-        User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
+        User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         DepartmentDO dbDepartment = departmentMapper.findById(departmentId);
         if (dbDepartment == null) {

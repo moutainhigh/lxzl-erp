@@ -17,6 +17,8 @@ public interface CompanyService {
 
     ServiceResult<String, Integer> updateSubCompany(SubCompany subCompany);
 
+    ServiceResult<String, String> addShortReceivableAmount(SubCompany subCompany);
+
     ServiceResult<String, SubCompany> getSubCompanyById(Integer subCompanyId);
 
     ServiceResult<String, Page<SubCompany>> subCompanyPage(InterfaceSubCompanyQueryParam subCompanyQueryParam);

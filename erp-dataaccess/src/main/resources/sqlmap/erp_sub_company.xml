@@ -10,6 +10,7 @@
         <result column="province" jdbcType="INTEGER" property="province" />
         <result column="city" jdbcType="INTEGER" property="city" />
         <result column="district" jdbcType="INTEGER" property="district" />
+        <result column="short_limit_receivable_amount" jdbcType="DECIMAL" property="shortLimitReceivableAmount" />
         <result column="data_order" jdbcType="INTEGER" property="dataOrder" />
         <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -23,7 +24,7 @@
     </resultMap>
 
     <sql id="column_List">
-        esc.id,esc.sub_company_name,esc.sub_company_type,esc.sub_company_code,esc.province,esc.city,esc.district,esc.data_order,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
+        esc.id,esc.sub_company_name,esc.sub_company_type,esc.sub_company_code,esc.province,esc.city,esc.district,esc.short_limit_receivable_amount,esc.data_order,esc.data_status,esc.remark,esc.create_time,esc.create_user,esc.update_time,esc.update_user
     </sql>
 
     <select id="findById" resultMap="SubCompanyDO" parameterType="java.lang.Integer">
@@ -57,6 +58,9 @@
             </if>
             <if test="district != null">
                 district = #{district,jdbcType=INTEGER},
+            </if>
+            <if test="shortLimitReceivableAmount != null">
+                short_limit_receivable_amount = #{shortLimitReceivableAmount,jdbcType=DECIMAL},
             </if>
             <if test="dataOrder != null">
                 data_order = #{dataOrder,jdbcType=INTEGER},

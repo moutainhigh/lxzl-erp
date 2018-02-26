@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class SubCompany extends BasePO {
     private Integer province;   //省份ID，对应字典ID
     private Integer city;   //城市ID，对应字典ID
     private Integer district;   //区ID，对应字典ID
+    private BigDecimal shortLimitReceivableAmount; //短租应收上限
     private Integer dataOrder;   //数据排序排序，越大排越前
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
@@ -178,4 +180,12 @@ public class SubCompany extends BasePO {
     public String getSubCompanyCode() { return subCompanyCode; }
 
     public void setSubCompanyCode(String subCompanyCode) { this.subCompanyCode = subCompanyCode; }
+
+    public BigDecimal getShortLimitReceivableAmount() {
+        return shortLimitReceivableAmount;
+    }
+
+    public void setShortLimitReceivableAmount(BigDecimal shortLimitReceivableAmount) {
+        this.shortLimitReceivableAmount = shortLimitReceivableAmount;
+    }
 }
