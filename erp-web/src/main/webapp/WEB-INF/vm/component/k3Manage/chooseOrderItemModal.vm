@@ -121,11 +121,12 @@
                                                     <th>商品名称</th>
                                                     <th>编号</th>
                                                     <th>数量</th>
+                                                    <th>选择数量</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 {{#orderProductList}}
-                                                <tr class="skuTr">
+                                                <tr class="productTr">
                                                     <td>
                                                         <label class="option block mn">
                                                             <input type="checkbox" name="productNo" value="{{productNumber}}">
@@ -135,6 +136,11 @@
                                                     <td>{{productName}}</td>
                                                     <td>{{productNumber}}</td>
                                                     <td>{{productCount}}</td>
+                                                    <td>
+                                                        <label class="field prepend-icon mw200">
+                                                            <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                        </label>
+                                                    </td>
                                                 </tr>
                                                 {{/orderProductList}}
                                                 {{^orderProductList}}

@@ -712,7 +712,7 @@ public class PageController extends BaseController {
 
     @RequestMapping("/return-order-k3/detail")
     public String k3ReturnOrderDetail() {
-        return "/k3Manage/k3ReturnOrderDetail";
+        return "/k3Manage/K3ReturnOrderDetail";
     }
     @RequestMapping("/return-order-k3/add")
     public String k3ReturnOrderAdd() {
