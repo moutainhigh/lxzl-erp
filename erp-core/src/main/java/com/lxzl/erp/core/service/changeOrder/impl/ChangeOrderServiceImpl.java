@@ -427,9 +427,11 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
         }
         //累计换货sku总数
-        Integer totalChangeProductCount = changeOrderDO.getTotalChangeProductCount();
+//        Integer totalChangeProductCount = changeOrderDO.getTotalChangeProductCount();
+        Integer totalChangeProductCount = 0;
         //累计换货配件总数
-        Integer totalChangeMaterialCount = changeOrderDO.getTotalChangeMaterialCount();
+//        Integer totalChangeMaterialCount = changeOrderDO.getTotalChangeMaterialCount();
+        Integer totalChangeMaterialCount = 0;
         Date now = new Date();
         //构造待保存换货单商品项
         List<ChangeOrderProductDO> changeOrderProductDOList = new ArrayList<>();

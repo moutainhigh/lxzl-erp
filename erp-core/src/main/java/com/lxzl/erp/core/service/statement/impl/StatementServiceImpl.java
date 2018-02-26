@@ -1324,6 +1324,11 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
             return result;
         }
+        // 先屏蔽换货的
+        if (true) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            return result;
+        }
         List<ChangeOrderProductEquipmentDO> changeOrderProductEquipmentDOList = changeOrderProductEquipmentMapper.findByChangeOrderNo(changeOrderNo);
         Integer buyerCustomerId = changeOrderDO.getCustomerId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();

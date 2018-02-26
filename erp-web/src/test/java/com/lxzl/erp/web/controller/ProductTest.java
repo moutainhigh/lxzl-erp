@@ -24,7 +24,7 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setPageNo(1);
         productQueryParam.setPageSize(15);
-        productQueryParam.setProductId(2000060);
+        productQueryParam.setProductId(2000065);
 //        productQueryParam.setIsRent(0);
 //        productQueryParam.setBrandId(15);
         TestResult testResult = getJsonTestResult("/product/queryAllProduct", productQueryParam);
@@ -32,7 +32,7 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void queryProductById() throws Exception {
         Product product = new Product();
-        product.setProductId(2000062);
+        product.setProductId(2000065);
         TestResult testResult = getJsonTestResult("/product/queryProductById", product);
     }
     @Test
@@ -55,13 +55,14 @@ public class ProductTest extends ERPUnTransactionalTest {
     @Test
     public void testAddProduct() throws Exception {
         Product product = new Product();
-        product.setProductName("一个小小的台式机商品");
+        product.setProductName("一个小小的台式机商品2018");
         product.setCategoryId(800003);
         product.setBrandId(1);
         product.setIsRent(1);
         product.setProductDesc("商品描述：一个台式机，内存16G，512硬盘");
         product.setDataStatus(1);
         product.setSubtitle("台式机小标题");
+        product.setIsReturnAnyTime(1);
 
         List<ProductSku> productSkuList = new ArrayList<>();
         ProductSku productSku = new ProductSku();

@@ -46,6 +46,7 @@ public class Material extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
+    private Integer isReturnAnyTime;    //是否允许随时归还，0否1是
 
     private List<MaterialImg> materialImgList;
 
@@ -331,4 +332,8 @@ public class Material extends BasePO {
     public void setMaterialTypeName(String materialTypeName) {
         this.materialTypeName = materialTypeName;
     }
+
+    public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
+
+    public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
 }

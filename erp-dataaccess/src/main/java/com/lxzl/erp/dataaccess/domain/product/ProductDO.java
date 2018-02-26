@@ -32,6 +32,8 @@ public class ProductDO extends BaseDO {
     @Transient
     private String categoryName;
 
+    private Integer isReturnAnyTime;    //是否允许随时归还，0否1是
+
     public Integer getId() {
         return id;
     }
@@ -140,9 +142,7 @@ public class ProductDO extends BaseDO {
         return productPropertyDOList;
     }
 
-    public void setProductPropertyDOList(List<ProductSkuPropertyDO> productPropertyDOList) {
-        this.productPropertyDOList = productPropertyDOList;
-    }
+    public void setProductPropertyDOList(List<ProductSkuPropertyDO> productPropertyDOList) { this.productPropertyDOList = productPropertyDOList; }
 
     public List<ProductImgDO> getProductImgDOList() {
         return productImgDOList;
@@ -164,9 +164,7 @@ public class ProductDO extends BaseDO {
         return productDescImgDOList;
     }
 
-    public void setProductDescImgDOList(List<ProductImgDO> productDescImgDOList) {
-        this.productDescImgDOList = productDescImgDOList;
-    }
+    public void setProductDescImgDOList(List<ProductImgDO> productDescImgDOList) { this.productDescImgDOList = productDescImgDOList; }
 
     public String getBrandName() {
         return brandName;
@@ -191,4 +189,8 @@ public class ProductDO extends BaseDO {
     public void setProductModel(String productModel) {
         this.productModel = productModel;
     }
+
+    public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
+
+    public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
 }

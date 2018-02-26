@@ -41,9 +41,12 @@ public class BigDecimalUtil {
         return result;
     }
     public static BigDecimal subAll(BigDecimal ... values) {
-        BigDecimal result = BigDecimal.ZERO;
-        for(BigDecimal value : values){
-            value = value==null?BigDecimal.ZERO:value;
+        if(values==null|| values[0]==null){
+            return BigDecimal.ZERO;
+        }
+        BigDecimal result = values[0];
+        for(int i = 1 ; i < values.length ; i++){
+            BigDecimal value = values[i]==null?BigDecimal.ZERO:values[i];
             result = result.subtract(value);
         }
         return result;
