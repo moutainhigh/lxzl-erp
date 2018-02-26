@@ -1235,10 +1235,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         Date now = new Date();
         //判断客户审核状态(如果为驳回状态则不可修改创建分控信息)
-        if(customerDO.getCustomerStatus() == 3){
+        if (customerDO.getCustomerStatus() == 3 || customerDO.getCustomerStatus() == 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_EDIT_RISK_MANAGEMENT);
             return serviceResult;
         }
+
+
 
         if (customerDO.getCustomerRiskManagementDO() == null) {//没有风控信息则添加
 
@@ -1262,8 +1264,15 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDOForUpdate.setUpdateTime(now);
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
+
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             serviceResult.setResult(customerDO.getCustomerNo());
+        }
+
+        //跟新客户审核状态为成功
+        if (customerDO.getCustomerStatus() == 1) {
+            customerDO.setCustomerStatus(2);
+            customerMapper.update(customerDO);
         }
 
         return serviceResult;
