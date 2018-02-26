@@ -170,7 +170,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                     Integer count = destSkuCountMap.get(destKey);
                     destSkuCountMap.put(destKey,count+changeOrderProduct.getChangeProductSkuCount());
                 }
-                totalChangeProductCount += changeOrderProduct.getChangeProductSkuCount()-changeOrderProduct.getChangeProductSkuCount();
+                totalChangeProductCount += changeOrderProduct.getChangeProductSkuCount();
                 ChangeOrderProductDO changeOrderProductDO = new ChangeOrderProductDO();
                 changeOrderProductDO.setSrcChangeProductSkuId(changeOrderProduct.getSrcChangeProductSkuId());
                 changeOrderProductDO.setDestChangeProductSkuId(changeOrderProduct.getDestChangeProductSkuId());
@@ -275,7 +275,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                     Integer count = destMaterialCountMap.get(destKey);
                     destMaterialCountMap.put(destKey,count+changeOrderMaterial.getChangeMaterialCount());
                 }
-                totalChangeMaterialCount += changeOrderMaterial.getChangeMaterialCount()-changeOrderMaterial.getChangeMaterialCount();
+                totalChangeMaterialCount += changeOrderMaterial.getChangeMaterialCount();
                 ChangeOrderMaterialDO changeOrderMaterialDO = new ChangeOrderMaterialDO();
                 changeOrderMaterialDO.setSrcChangeMaterialId(srcMaterial.getMaterialId());
                 changeOrderMaterialDO.setDestChangeMaterialId(destMaterial.getMaterialId());
@@ -427,9 +427,11 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
             }
         }
         //累计换货sku总数
-        Integer totalChangeProductCount = changeOrderDO.getTotalChangeProductCount();
+//        Integer totalChangeProductCount = changeOrderDO.getTotalChangeProductCount();
+        Integer totalChangeProductCount = 0;
         //累计换货配件总数
-        Integer totalChangeMaterialCount = changeOrderDO.getTotalChangeMaterialCount();
+//        Integer totalChangeMaterialCount = changeOrderDO.getTotalChangeMaterialCount();
+        Integer totalChangeMaterialCount = 0;
         Date now = new Date();
         //构造待保存换货单商品项
         List<ChangeOrderProductDO> changeOrderProductDOList = new ArrayList<>();
