@@ -49,8 +49,8 @@ public class K3Controller extends BaseController {
     }
 
     @RequestMapping(value = "addReturnOrder", method = RequestMethod.POST)
-    public Result addReturnOrder(@RequestBody K3ReturnOrderDetail k3ReturnOrderDetail, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = k3Service.addReturnOrder(k3ReturnOrderDetail);
+    public Result addReturnOrder(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.addReturnOrder(k3ReturnOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
