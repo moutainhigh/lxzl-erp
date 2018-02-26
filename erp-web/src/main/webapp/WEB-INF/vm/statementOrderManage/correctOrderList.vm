@@ -76,8 +76,8 @@
                                 </th>
                                 {{/hasCommonActionButtons}}
                                 <th>冲正单编号</th>
-##                                <th>结算单ID</th>
-##                                <th>结算单项ID</th>
+                                <th>客户名称</th>
+                                <th>订单编号</th>
                                 <th>冲正金额</th>
                                 <th>冲正原因</th>
                                 <th>冲正状态</th>
@@ -103,8 +103,8 @@
                                 </td>
                                 {{/hasCommonActionButtons}}
                                 <td>{{statementCorrectNo}}</td>
-##                                <td>{{statementOrderId}}</td>
-##                                <td>{{statementOrderDetailId}}</td>
+                                <td>{{customerName}}</td>
+                                <td>{{orderNo}}</td>
                                 <td>￥{{#price}}{{statementCorrectAmount}}{{/price}}</td>
                                 <td>{{statementCorrectReason}}</td>
                                 <td class="{{statementOrderCorrectStatusClass}}">{{statementOrderCorrectStatusValue}}</td>
