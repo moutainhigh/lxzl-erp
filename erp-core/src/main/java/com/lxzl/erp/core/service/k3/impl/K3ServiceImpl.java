@@ -321,25 +321,30 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, String> addReturnOrder(K3ReturnOrderDetail k3ReturnOrderDetail) {
+    public ServiceResult<String, String> addReturnOrder(K3ReturnOrder k3ReturnOrder) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetail.getReturnOrderId());
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
         if (k3ReturnOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-
-        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
-        k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
-        k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        k3ReturnOrderDetailDO.setCreateTime(currentTime);
-        k3ReturnOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
-        k3ReturnOrderDetailDO.setUpdateTime(currentTime);
-        k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
-        k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
+        if (CollectionUtil.isEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+        for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
+            k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+            k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            k3ReturnOrderDetailDO.setCreateTime(currentTime);
+            k3ReturnOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
+            k3ReturnOrderDetailDO.setUpdateTime(currentTime);
+            k3ReturnOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+            k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
+        }
 
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);

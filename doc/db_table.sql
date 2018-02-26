@@ -138,6 +138,7 @@ CREATE TABLE `erp_sub_company` (
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
   `data_order` int(11) NOT NULL DEFAULT '0' COMMENT '数据排序排序，越大排越前',
+  `short_limit_receivable_amount` decimal(15,2) COMMENT '短租应收上限',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

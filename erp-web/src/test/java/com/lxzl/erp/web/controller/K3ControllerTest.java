@@ -83,6 +83,30 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void createReturnOrderJSON() throws Exception {
+        String str = "{\n" +
+                "\t\"k3CustomerNo\": \"04.731812\",\n" +
+                "\t\"k3CustomerName\": \"测试K3同步客户\",\n" +
+                "\t\"returnTime\": 1519603200000,\n" +
+                "\t\"returnAddress\": \"北京东区东直门小酒馆\",\n" +
+                "\t\"returnContacts\": \"黎明\",\n" +
+                "\t\"returnPhone\": \"18033402832\",\n" +
+                "\t\"returnMode\": \"1\",\n" +
+                "\t\"k3ReturnOrderDetailList\": [{\n" +
+                "\t\t\"orderNo\": \"LXO-20180214-731812-00080\",\n" +
+                "\t\t\"orderEntry\": 1,\n" +
+                "\t\t\"productNo\": \"10.DPC.LE.viewpaker-M2\",\n" +
+                "\t\t\"productName\": \"优威派克一体机M2\",\n" +
+                "\t\t\"remark\": \"\"\n" +
+                "\t}]\n" +
+                "}";
+
+        K3ReturnOrder k3ReturnOrder = JSON.parseObject(str, K3ReturnOrder.class);
+        TestResult testResult = getJsonTestResult("/k3/createReturnOrder", k3ReturnOrder);
+
+    }
+
+    @Test
     public void updateReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
         k3ReturnOrder.setReturnOrderNo("6f52d4caa5a643109d7ccca400218d0c");
@@ -96,15 +120,27 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void addReturnOrder() throws Exception {
-        K3ReturnOrderDetail k3ReturnOrderDetail = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail.setReturnOrderId(1);
-        k3ReturnOrderDetail.setOrderNo("O4562789");
-        k3ReturnOrderDetail.setOrderEntry("1");
-        k3ReturnOrderDetail.setProductNo("10.123.1228.156");
-        k3ReturnOrderDetail.setProductCount(1);
-        k3ReturnOrderDetail.setRemark("123456");
 
-        TestResult testResult = getJsonTestResult("/k3/addReturnOrder", k3ReturnOrderDetail);
+        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+        k3ReturnOrder.setReturnOrderNo("d5ce9f41a45245e4b213e977f06ce92c");
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
+
+        K3ReturnOrderDetail k3ReturnOrderDetail1 = new K3ReturnOrderDetail();
+        k3ReturnOrderDetail1.setOrderNo("LXSE2018020716");
+        k3ReturnOrderDetail1.setOrderEntry("1");
+        k3ReturnOrderDetail1.setProductNo("10.LPC.AP.PROH133");
+        k3ReturnOrderDetail1.setProductCount(1);
+        k3ReturnOrderDetailList.add(k3ReturnOrderDetail1);
+
+        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
+        k3ReturnOrderDetail2.setOrderNo("LXSE2018020716");
+        k3ReturnOrderDetail2.setOrderEntry("4");
+        k3ReturnOrderDetail2.setProductNo("20.MOU.XX.PCMOU");
+        k3ReturnOrderDetail2.setProductCount(2);
+        k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
+        k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
+        TestResult testResult = getJsonTestResult("/k3/addReturnOrder", k3ReturnOrder);
     }
 
     @Test
