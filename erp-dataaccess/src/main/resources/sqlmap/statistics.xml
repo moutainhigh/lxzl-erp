@@ -84,6 +84,7 @@
     <select id="queryIncome" resultMap="StatisticsIncomeDetail" parameterType="map">
         SELECT esod.id,MIN(eo.buyer_customer_id) customer_id,MIN(ec.customer_no) customer_no,MIN(ec.customer_name) customer_name ,MIN(eo.rent_length_type) rent_length_type,
         MIN(eo.order_sub_company_id) sub_company_id,MIN(esc.sub_company_name)  sub_company_name,MIN(esod.statement_detail_paid_time) pay_time,
+        MIN(esod.order_item_refer_id) order_item_refer_id,MIN(esod.order_item_type) order_item_type,
         MIN(eo.order_seller_id) order_seller_id, MIN(eu.real_name) order_seller_name,
         IFNULL(SUM(esod.statement_detail_deposit_paid_amount),0) deposit_paid_amount,
         IFNULL(SUM(esod.statement_detail_rent_deposit_paid_amount),0) rent_deposit_paid_amount,
@@ -283,7 +284,6 @@
     <select id="queryStatisticsUnReceivable" resultMap="StatisticsUnReceivableDetail" parameterType="map">
         select esod.order_seller_id,MIN(esod.order_seller_name) order_seller_name,
         esod.order_sub_company_id,MIN(esod.sub_company_name) sub_company_name,
-        COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=2 AND esod.order_status=20 THEN esod.buyer_customer_id ELSE NULL END)) renting_customer_count_long,
         COUNT(DISTINCT
