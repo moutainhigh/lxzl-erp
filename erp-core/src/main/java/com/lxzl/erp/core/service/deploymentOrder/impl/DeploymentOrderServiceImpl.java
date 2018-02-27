@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.deploymentOrder.impl;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.deploymentOrder.CommitDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ReturnDeploymentOrderParam;
@@ -379,11 +380,14 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     }
 
     @Override
-    public ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser, String commitRemark) {
+    public ServiceResult<String, String> commitDeploymentOrder(CommitDeploymentOrderParam param) {
 
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
+        String deploymentOrderNo = param.getDeploymentOrderNo();
+        Integer verifyUser = param.getVerifyUserId();
+        String commitRemark = param.getRemark();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (dbDeploymentOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
@@ -405,7 +409,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return result;
         }
         if (isMeedVerifyResult.getResult()) {
-            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, null, commitRemark);
+            ServiceResult<String, String> workFlowResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO, deploymentOrderNo, verifyUser, null, commitRemark, param.getImgIdList());
             if (!ErrorCode.SUCCESS.equals(workFlowResult.getErrorCode())) {
                 result.setErrorCode(workFlowResult.getErrorCode());
                 return result;

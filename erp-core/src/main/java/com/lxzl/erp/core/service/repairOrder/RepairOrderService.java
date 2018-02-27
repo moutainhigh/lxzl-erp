@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.repairOrder;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderCommitParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderEquipmentQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrder;
@@ -36,7 +37,7 @@ public interface RepairOrderService extends VerifyReceiver {
      * @param commitRemark 提交备注
      * @return 订单编号
      */
-    ServiceResult<String,String> commitRepairOrder(String repairOrderNo,Integer verifyUser,String commitRemark);
+    ServiceResult<String,String> commitRepairOrder(RepairOrderCommitParam repairOrderCommitParam);
 
 
     /**

@@ -39,7 +39,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "verifyWorkFlow", method = RequestMethod.POST)
     public Result verifyWorkFlow(@RequestBody VerifyWorkflowParam param, HttpServletRequest request) {
-        ServiceResult<String, Integer> serviceResult = workflowService.verifyWorkFlow(param.getWorkflowLinkNo(), param.getVerifyStatus(), param.getReturnType(), param.getVerifyOpinion(), param.getNextVerifyUser());
+        ServiceResult<String, Integer> serviceResult = workflowService.verifyWorkFlow(param.getWorkflowLinkNo(), param.getVerifyStatus(), param.getReturnType(), param.getVerifyOpinion(), param.getNextVerifyUser(), param.getImgIdList());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -69,7 +69,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "commitWorkFlow", method = RequestMethod.POST)
     public Result commitWorkFlow(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
-        ServiceResult<String, String> serviceResult = workflowService.commitWorkFlow(workflowLinkQueryParam.getWorkflowType(), workflowLinkQueryParam.getWorkflowReferNo(), workflowLinkQueryParam.getCurrentVerifyUser(), workflowLinkQueryParam.getVerifyMatters(),null);
+        ServiceResult<String, String> serviceResult = workflowService.commitWorkFlow(workflowLinkQueryParam.getWorkflowType(), workflowLinkQueryParam.getWorkflowReferNo(), workflowLinkQueryParam.getCurrentVerifyUser(), workflowLinkQueryParam.getVerifyMatters(),null,null);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

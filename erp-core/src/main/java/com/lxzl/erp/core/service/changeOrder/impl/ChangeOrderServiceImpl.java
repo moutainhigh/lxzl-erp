@@ -714,7 +714,7 @@ public class ChangeOrderServiceImpl implements ChangeOrderService {
                 return result;
             }
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CHANGE, changeOrderDO.getChangeOrderNo(), changeOrderCommitParam.getVerifyUserId(),null, changeOrderCommitParam.getRemark());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CHANGE, changeOrderDO.getChangeOrderNo(), changeOrderCommitParam.getVerifyUserId(),null, changeOrderCommitParam.getRemark(), changeOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 changeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING);

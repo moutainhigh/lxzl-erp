@@ -143,7 +143,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             if (needVerifyResult.getResult()) {
                 //走工作流
                 statementOrderCorrectParam.setVerifyMatters("结算冲正单");
-                ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectParam.getStatementCorrectNo(), statementOrderCorrectParam.getVerifyUserId(), statementOrderCorrectParam.getVerifyMatters(), statementOrderCorrectParam.getRemark());
+                ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectParam.getStatementCorrectNo(), statementOrderCorrectParam.getVerifyUserId(), statementOrderCorrectParam.getVerifyMatters(), statementOrderCorrectParam.getRemark(), statementOrderCorrectParam.getImgIdList());
                 if (!ErrorCode.SUCCESS.equals(workflowServiceResult.getErrorCode())) {
                     serviceResult.setErrorCode(workflowServiceResult.getErrorCode());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚

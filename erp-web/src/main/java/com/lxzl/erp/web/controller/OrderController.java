@@ -2,10 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.order.OrderQueryParam;
-import com.lxzl.erp.common.domain.order.ProcessOrderParam;
-import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
-import com.lxzl.erp.common.domain.order.LastRentPriceResponse;
+import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -47,8 +44,8 @@ public class OrderController extends BaseController {
     }
 
     @RequestMapping(value = "commit", method = RequestMethod.POST)
-    public Result commit(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.commitOrder(order.getOrderNo(), order.getVerifyUser(), order.getCommitRemark());
+    public Result commit(@RequestBody OrderCommitParam orderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.commitOrder(orderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

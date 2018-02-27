@@ -1461,6 +1461,7 @@ public class StatementServiceImpl implements StatementService {
         param.setIsNeedToPay(CommonConstant.COMMON_CONSTANT_YES);
         param.setStatementExpectPayStartTime(startTime);
         param.setStatementExpectPayEndTime(endTime);
+        param.setStatementOrderNo("LXSO-731826-20180215-00407");
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);

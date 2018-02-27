@@ -41,12 +41,9 @@ public interface TransferOrderService extends VerifyReceiver {
 
     /**
      * 提交转移单进行审核
-     * @param transferOrderNo
-     * @param verifyUserId
-     * @param remark
      * @return
      */
-    ServiceResult<String,String> commitTransferOrder(String transferOrderNo, Integer verifyUserId, String remark);
+    ServiceResult<String,String> commitTransferOrder(TransferOrderCommitParam transferOrderCommitParam);
 
     /**
      * 新增转移单转出

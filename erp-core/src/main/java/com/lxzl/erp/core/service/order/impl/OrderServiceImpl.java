@@ -191,10 +191,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> commitOrder(String orderNo, Integer verifyUser, String commitRemark) {
+    public ServiceResult<String, String> commitOrder(OrderCommitParam orderCommitParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
+        String orderNo = orderCommitParam.getOrderNo();
+        Integer verifyUser = orderCommitParam.getVerifyUserId();
+        String commitRemark = orderCommitParam.getRemark();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())
                 && CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {
@@ -291,7 +294,7 @@ public class OrderServiceImpl implements OrderService {
         boolean isNeedVerify = isNeedVerifyResult.getResult();
 
         if (isNeedVerify) {
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark);
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark, orderCommitParam.getImgIdList());
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());

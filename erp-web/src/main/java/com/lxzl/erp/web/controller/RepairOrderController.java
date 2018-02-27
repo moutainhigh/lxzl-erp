@@ -4,10 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.BulkMaterial;
 import com.lxzl.erp.common.domain.purchase.pojo.PurchaseReceiveOrder;
-import com.lxzl.erp.common.domain.repairOrder.FixRepairOrderQueryParam;
-import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
-import com.lxzl.erp.common.domain.repairOrder.RepairOrderEquipmentQueryParam;
-import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.*;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrder;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderBulkMaterial;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrderEquipment;
@@ -51,8 +48,8 @@ public class RepairOrderController {
     }
 
     @RequestMapping(value = "commitRepairOrder", method = RequestMethod.POST)
-    public Result commitRepairOrder(@RequestBody @Validated(IdGroup.class)RepairOrder repairOrder, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = repairOrderService.commitRepairOrder(repairOrder.getRepairOrderNo(), repairOrder.getVerifyUser(), repairOrder.getCommitRemark());
+    public Result commitRepairOrder(@RequestBody RepairOrderCommitParam repairOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = repairOrderService.commitRepairOrder(repairOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

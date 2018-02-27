@@ -792,10 +792,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> commitTransferOrder(String transferOrderNo, Integer verifyUser, String commitRemark) {
+    public ServiceResult<String, String> commitTransferOrder(TransferOrderCommitParam transferOrderCommitParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
+        String transferOrderNo = transferOrderCommitParam.getTransferOrderNo();
+        String commitRemark = transferOrderCommitParam.getRemark();
+        Integer verifyUser = transferOrderCommitParam.getVerifyUserId();
         TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrderNo);
         if (transferOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.TRANSFER_ORDER_NOT_EXISTS);
@@ -846,10 +849,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             String verifyMatters = "1.流转单的类型，2.仓库的位置，3.流转的商品sku，商品数量，商品新旧，4流转的物料，物料数量，物料新旧";
             //转入的转移单审核
             if(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
-                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark);
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark, transferOrderCommitParam.getImgIdList());
             }else{
                 //转出的转移单审核
-                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark);
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark, transferOrderCommitParam.getImgIdList());
             }
             //提交审核后，修改转移单的状态为审核中
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {

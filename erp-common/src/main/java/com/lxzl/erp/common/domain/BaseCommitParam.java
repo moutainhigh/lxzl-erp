@@ -2,12 +2,15 @@ package com.lxzl.erp.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BaseCommitParam {
 
     private Integer verifyUserId;
     private String remark;
     private String verifyMatters;
+    private List<Integer> imgIdList;
 
     public Integer getVerifyUserId() {
         return verifyUserId;
@@ -28,4 +31,12 @@ public class BaseCommitParam {
     public String getVerifyMatters() { return verifyMatters; }
 
     public void setVerifyMatters(String verifyMatters) { this.verifyMatters = verifyMatters; }
+
+    public List<Integer> getImgIdList() {
+        return imgIdList;
+    }
+
+    public void setImgIdList(List<Integer> imgIdList) {
+        this.imgIdList = imgIdList;
+    }
 }

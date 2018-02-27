@@ -33,12 +33,9 @@ public interface OrderService extends VerifyReceiver {
     /**
      * 提交订单
      *
-     * @param orderNo      订单编号
-     * @param verifyUser   审核人
-     * @param commitRemark 提交备注
      * @return 订单编号
      */
-    ServiceResult<String, String> commitOrder(String orderNo, Integer verifyUser, String commitRemark);
+    ServiceResult<String, String> commitOrder(OrderCommitParam orderCommitParam);
 
 
     /**

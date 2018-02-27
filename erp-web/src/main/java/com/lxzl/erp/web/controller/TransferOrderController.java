@@ -126,7 +126,7 @@ public class TransferOrderController {
      */
     @RequestMapping(value = "commitTransferOrder", method = RequestMethod.POST)
     public Result commitTransferOrder(@RequestBody  @Validated(IdGroup.class) TransferOrderCommitParam transferOrderCommitParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = transferOrderService.commitTransferOrder(transferOrderCommitParam.getTransferOrderNo(), transferOrderCommitParam.getVerifyUserId(), transferOrderCommitParam.getRemark());
+        ServiceResult<String, String> serviceResult = transferOrderService.commitTransferOrder(transferOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
