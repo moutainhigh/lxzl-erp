@@ -2831,7 +2831,7 @@ CREATE TABLE `erp_k3_return_order` (
   `return_phone` varchar(64) COMMENT '联系电话',
   `return_mode` int(11) NOT NULL COMMENT '退还方式，1-上门取件，2邮寄',
   `logistics_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '运费',
-  `service_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '运费',
+  `service_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '服务费',
   `return_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '是否推送到K3 1是0否',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
@@ -2859,3 +2859,49 @@ CREATE TABLE `erp_k3_return_order_detail` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3订单退货明细表';
+
+DROP TABLE if exists `erp_k3_change_order`;
+CREATE TABLE `erp_k3_change_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `change_order_no` varchar(100) NOT NULL COMMENT '换货单编号',
+  `k3_customer_no` varchar(64) COMMENT 'K3客户编码',
+  `k3_customer_name` varchar(64) COMMENT 'K3客户名称',
+  `change_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `change_address` varchar(64) COMMENT '换货地址',
+  `change_contacts` varchar(64) COMMENT '联系人',
+  `change_phone` varchar(64) COMMENT '联系电话',
+  `change_mode` int(11) NOT NULL COMMENT '换还方式，1-上门取件，2邮寄',
+  `logistics_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '运费',
+  `service_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '服务费',
+  `change_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '是否推送到K3 1是0否',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3订单换货表';
+
+DROP TABLE if exists `erp_k3_change_order_detail`;
+CREATE TABLE `erp_k3_change_order_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `change_order_id` int(20) NOT NULL COMMENT 'K3换货单ID',
+  `order_no` varchar(64) NOT NULL COMMENT '订单号',
+  `order_entry` varchar(64) NOT NULL COMMENT '订单行号',
+  `product_no` varchar(64) NOT NULL COMMENT '产品代码',
+  `product_name` varchar(64) NOT NULL COMMENT '产品名称',
+  `change_sku_id` int(20) COMMENT 'SKU ID',
+  `change_material_id` int(20) COMMENT '物料 ID',
+  `change_product_no` varchar(64) NOT NULL COMMENT '换货产品代码',
+  `change_product_name` varchar(64) NOT NULL COMMENT '换货产品名称',
+  `product_count` int(11) NOT NULL COMMENT '换货数量',
+  `product_diff_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品差价',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3订单换货明细表';
