@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.changeOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
 
 
 public class ChangeOrderMaterialDO extends BaseDO {
@@ -17,6 +18,12 @@ public class ChangeOrderMaterialDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private Integer isNew;
+
+    @Transient
+    private String srcChangeMaterialNo;
+    @Transient
+    private String destChangeMaterialNo;
+
 
     public Integer getId() {
         return id;
@@ -112,5 +119,21 @@ public class ChangeOrderMaterialDO extends BaseDO {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public String getSrcChangeMaterialNo() {
+        return srcChangeMaterialNo;
+    }
+
+    public void setSrcChangeMaterialNo(String srcChangeMaterialNo) {
+        this.srcChangeMaterialNo = srcChangeMaterialNo;
+    }
+
+    public String getDestChangeMaterialNo() {
+        return destChangeMaterialNo;
+    }
+
+    public void setDestChangeMaterialNo(String destChangeMaterialNo) {
+        this.destChangeMaterialNo = destChangeMaterialNo;
     }
 }

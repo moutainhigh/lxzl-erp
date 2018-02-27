@@ -50,6 +50,7 @@ public class ChangeOrderMaterial  extends BasePO {
     @In(value = {CommonConstant.NO,CommonConstant.YES}, message = ErrorCode.IS_NEW_VALUE_ERROR)
     private Integer isNew;
 
+
     public Integer getChangeOrderMaterialId() {
         return changeOrderMaterialId;
     }
@@ -201,4 +202,6 @@ public class ChangeOrderMaterial  extends BasePO {
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
     }
+
+
 }
