@@ -1258,9 +1258,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.save(customerRiskManagementDO);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(customerDO.getCustomerNo());
-            return serviceResult;
+
         } else {//有风控信息则修改
             CustomerRiskManagementDO customerRiskManagementDOForUpdate = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
@@ -1269,8 +1267,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
 
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(customerDO.getCustomerNo());
         }
 
         //跟新客户审核状态为成功
@@ -1279,6 +1275,8 @@ public class CustomerServiceImpl implements CustomerService {
             customerMapper.update(customerDO);
         }
 
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
 
