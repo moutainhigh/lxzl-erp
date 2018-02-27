@@ -1235,8 +1235,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         Date now = new Date();
         //判断客户审核状态(如果为驳回状态则不可修改创建分控信息)
-        if (customerDO.getCustomerStatus() == 3 || customerDO.getCustomerStatus() == 0) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_EDIT_RISK_MANAGEMENT);
+        if (customerDO.getCustomerStatus() == 3 ) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_REJECT_CAN_NOT_EDIT_RISK_MANAGEMENT);
+            return serviceResult;
+        }
+        if (customerDO.getCustomerStatus() == 0 ) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNCOMMITTED_CAN_NOT_EDIT_RISK_MANAGEMENT);
             return serviceResult;
         }
 
@@ -1254,9 +1258,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDO.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.save(customerRiskManagementDO);
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(customerDO.getCustomerNo());
-            return serviceResult;
+
         } else {//有风控信息则修改
             CustomerRiskManagementDO customerRiskManagementDOForUpdate = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
@@ -1265,8 +1267,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
 
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(customerDO.getCustomerNo());
         }
 
         //跟新客户审核状态为成功
@@ -1275,6 +1275,8 @@ public class CustomerServiceImpl implements CustomerService {
             customerMapper.update(customerDO);
         }
 
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
 
