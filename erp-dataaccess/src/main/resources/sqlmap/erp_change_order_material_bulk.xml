@@ -37,7 +37,7 @@
 	</select>
 	<select id="findByChangeOrderMaterialId" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_change_order_material_bulk ecomb
-		WHERE ecomb.change_order_material_id = #{change-order-material-id, jdbcType=INTEGER} AND ecomb.data_status = 1
+		WHERE ecomb.change_order_material_id = #{changeOrderMaterialId, jdbcType=INTEGER} AND ecomb.data_status = 1
 	</select>
 	<select id="findByChangeOrderNo" resultMap="ChangeOrderMaterialBulkDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/> ,ebmd.material_id AS dest_material_id,ebms.material_id AS src_material_id  FROM erp_change_order_material_bulk ecomb
