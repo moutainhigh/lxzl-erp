@@ -50,7 +50,7 @@ public class DeploymentOrderController extends BaseController {
 
     @RequestMapping(value = "commit", method = RequestMethod.POST)
     public Result commit(@RequestBody CommitDeploymentOrderParam param, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = deploymentOrderService.commitDeploymentOrder(param.getDeploymentOrderNo(), param.getVerifyUser(), param.getCommitRemark());
+        ServiceResult<String, String> serviceResult = deploymentOrderService.commitDeploymentOrder(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

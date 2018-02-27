@@ -2,6 +2,7 @@ package com.lxzl.erp.core.service.deploymentOrder;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.deploymentOrder.CommitDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.DeploymentOrderQueryParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ProcessDeploymentOrderParam;
 import com.lxzl.erp.common.domain.deploymentOrder.ReturnDeploymentOrderParam;
@@ -35,12 +36,9 @@ public interface DeploymentOrderService extends VerifyReceiver {
     /**
      * 提交调度单
      *
-     * @param deploymentOrderNo 调拨单号
-     * @param verifyUser        审核人
-     * @param commitRemark      提交备注
      * @return 调度单编号
      */
-    ServiceResult<String, String> commitDeploymentOrder(String deploymentOrderNo, Integer verifyUser, String commitRemark);
+    ServiceResult<String, String> commitDeploymentOrder(CommitDeploymentOrderParam param);
 
 
     /**

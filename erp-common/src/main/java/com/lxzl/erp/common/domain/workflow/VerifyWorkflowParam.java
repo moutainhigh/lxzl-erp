@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.workflow;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -33,6 +34,8 @@ public class VerifyWorkflowParam implements Serializable {
      * 下一个审核人，可空
      */
     private Integer nextVerifyUser;
+
+    private List<Integer> imgIdList;
 
     public Integer getWorkflowLinkId() {
         return workflowLinkId;
@@ -80,5 +83,13 @@ public class VerifyWorkflowParam implements Serializable {
 
     public void setWorkflowLinkNo(String workflowLinkNo) {
         this.workflowLinkNo = workflowLinkNo;
+    }
+
+    public List<Integer> getImgIdList() {
+        return imgIdList;
+    }
+
+    public void setImgIdList(List<Integer> imgIdList) {
+        this.imgIdList = imgIdList;
     }
 }

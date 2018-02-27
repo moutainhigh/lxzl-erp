@@ -1,5 +1,7 @@
 package com.lxzl.erp.common.domain.deploymentOrder;
 
+import com.lxzl.erp.common.domain.BaseCommitParam;
+
 import java.io.Serializable;
 
 /**
@@ -8,10 +10,8 @@ import java.io.Serializable;
  * @author gaochao
  * @date 2017-11-28 15:18
  */
-public class CommitDeploymentOrderParam implements Serializable {
+public class CommitDeploymentOrderParam extends BaseCommitParam {
     private String deploymentOrderNo;
-    private Integer verifyUser;
-    private String commitRemark;
     private String backup;
 
     public String getDeploymentOrderNo() {
@@ -20,22 +20,6 @@ public class CommitDeploymentOrderParam implements Serializable {
 
     public void setDeploymentOrderNo(String deploymentOrderNo) {
         this.deploymentOrderNo = deploymentOrderNo;
-    }
-
-    public Integer getVerifyUser() {
-        return verifyUser;
-    }
-
-    public void setVerifyUser(Integer verifyUser) {
-        this.verifyUser = verifyUser;
-    }
-
-    public String getCommitRemark() {
-        return commitRemark;
-    }
-
-    public void setCommitRemark(String commitRemark) {
-        this.commitRemark = commitRemark;
     }
 
     public String getBackup() {

@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.workflow;
 
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class WorkflowLinkDetailDO  extends BaseDO {
@@ -30,6 +32,8 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	private String workflowPreviousNodeName;
 	@Transient
 	private String workflowNextNodeName;
+
+	private List<ImageDO> imageDOList;
 
 	public Integer getId(){
 		return id;
@@ -165,5 +169,13 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 
 	public void setWorkflowNextNodeName(String workflowNextNodeName) {
 		this.workflowNextNodeName = workflowNextNodeName;
+	}
+
+	public List<ImageDO> getImageDOList() {
+		return imageDOList;
+	}
+
+	public void setImageDOList(List<ImageDO> imageDOList) {
+		this.imageDOList = imageDOList;
 	}
 }

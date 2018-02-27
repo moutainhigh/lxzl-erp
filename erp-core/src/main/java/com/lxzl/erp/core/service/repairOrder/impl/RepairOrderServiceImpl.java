@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderBulkMaterialQueryParam;
+import com.lxzl.erp.common.domain.repairOrder.RepairOrderCommitParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderEquipmentQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.pojo.RepairOrder;
@@ -172,10 +173,10 @@ public class RepairOrderServiceImpl implements RepairOrderService {
     }
 
     @Override
-    public ServiceResult<String, String> commitRepairOrder(String repairOrderNo, Integer verifyUser, String commitRemark) {
+    public ServiceResult<String, String> commitRepairOrder(RepairOrderCommitParam repairOrderCommitParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
-        RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderNo);
+        RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderCommitParam.getRepairOrderNo());
         if (repairOrderDO == null) {
             serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_IS_NOT_EXISTS);
             return serviceResult;
@@ -199,14 +200,14 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
         } else if (needVerifyResult.getResult()) {
-            if (verifyUser == null) {
+            if (repairOrderCommitParam.getVerifyUserId() == null) {
                 serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
                 return serviceResult;
             }
             String verifyMatters = "1.维修原因，2维修的设备的数量和每个设备标号，3维修的物料数量和散料编号";
 
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), verifyUser, verifyMatters, commitRemark);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), repairOrderCommitParam.getVerifyUserId(), verifyMatters, repairOrderCommitParam.getRemark(), repairOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING);

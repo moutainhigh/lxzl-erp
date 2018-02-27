@@ -24,5 +24,6 @@ public class ImgType {
     public static final Integer LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE = 11;
     public static final Integer LOCALE_CHECKLISTS_IMG_TYPE = 12;
     public static final Integer OTHER_DATE_IMG_TYPE = 13;
+    public static final Integer WORKFLOW_IMG_TYPE = 14;
 
 }

@@ -24,6 +24,7 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
@@ -34,6 +35,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
@@ -108,9 +110,12 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Autowired
     private PermissionSupport permissionSupport;
 
+    @Autowired
+    private ImgMysqlMapper imgMysqlMapper;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters, String commitRemark) {
+    public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters, String commitRemark, List<Integer> imgIdList) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date currentTime = new Date();
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
@@ -134,10 +139,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         String workflowLinkNo;
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
-            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser, verifyMatters, currentTime);
+            workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser, verifyMatters, imgIdList, currentTime);
             workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
         } else {
-            String errorCode = continueWorkflowLink(workflowLinkDO, commitRemark, verifyUser, currentTime);
+            String errorCode = continueWorkflowLink(workflowLinkDO, commitRemark, verifyUser, imgIdList, currentTime);
             if (!ErrorCode.SUCCESS.equals(errorCode)) {
                 result.setErrorCode(errorCode);
                 return result;
@@ -150,6 +155,26 @@ public class WorkflowServiceImpl implements WorkflowService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkNo);
         return result;
+    }
+
+    private void saveWorkflowImage(Integer workflowDetailId, List<Integer> imgIdList, Date currentTime) {
+        //对营业执照图片操作
+        if (CollectionUtil.isNotEmpty(imgIdList)) {
+            for (Integer imageId : imgIdList) {
+                ImageDO workflowImage = imgMysqlMapper.findById(imageId);
+                if (workflowImage == null) {
+                    return;
+                }
+                if (StringUtil.isNotEmpty(workflowImage.getRefId())) {
+                    return;
+                }
+                workflowImage.setImgType(ImgType.WORKFLOW_IMG_TYPE);
+                workflowImage.setRefId(workflowDetailId.toString());
+                workflowImage.setUpdateUser(userSupport.getCurrentUserId().toString());
+                workflowImage.setUpdateTime(currentTime);
+                imgMysqlMapper.update(workflowImage);
+            }
+        }
     }
 
     private Integer getSubCompanyId(Integer workflowType, String workflowReferNo) {
@@ -282,6 +307,14 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
+        if (CollectionUtil.isNotEmpty(workflowLinkDO.getWorkflowLinkDetailDOList())) {
+            for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
+                List<ImageDO> imageDOList = imgMysqlMapper.findByRefIdAndType(workflowLinkDetailDO.getId().toString(), ImgType.WORKFLOW_IMG_TYPE);
+                if(CollectionUtil.isNotEmpty(imageDOList)){
+                    workflowLinkDetailDO.setImageDOList(imageDOList);
+                }
+            }
+        }
         result.setResult(ConverterUtil.convert(workflowLinkDO, WorkflowLink.class));
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -349,7 +382,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, Integer> verifyWorkFlow(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser) {
+    public ServiceResult<String, Integer> verifyWorkFlow(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser, List<Integer> imgIdList) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         Date currentTime = new Date();
         ServiceResult<String, Integer> result = new ServiceResult<>();
@@ -413,6 +446,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         lastWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
         lastWorkflowLinkDetailDO.setUpdateTime(currentTime);
         workflowLinkDetailMapper.update(lastWorkflowLinkDetailDO);
+        saveWorkflowImage(lastWorkflowLinkDetailDO.getId(), imgIdList, currentTime);
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
@@ -526,7 +560,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 生成工作流线，只适用于首次创建
      */
-    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser, String verifyMatters, Date currentTime) {
+    private String generateWorkflowLink(WorkflowTemplateDO workflowTemplateDO, String workflowReferNo, String commitRemark, Integer verifyUser, String verifyMatters, List<Integer> imgIdList, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowTemplateDO == null) {
             return null;
@@ -575,6 +609,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setCreateTime(currentTime);
         workflowLinkDetailMapper.save(commitWorkflowLinkDetailDO);
 
+        saveWorkflowImage(commitWorkflowLinkDetailDO.getId(), imgIdList, currentTime);
+
         // 生成审批人工作流
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
@@ -600,7 +636,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     /**
      * 继续工作流
      */
-    private String continueWorkflowLink(WorkflowLinkDO workflowLinkDO, String commitRemark, Integer verifyUser, Date currentTime) {
+    private String continueWorkflowLink(WorkflowLinkDO workflowLinkDO, String commitRemark, Integer verifyUser, List<Integer> imgIdList, Date currentTime) {
         User loginUser = (User) session.getAttribute(CommonConstant.ERP_USER_SESSION_KEY);
         if (workflowLinkDO == null) {
             return ErrorCode.WORKFLOW_LINK_NOT_EXISTS;
@@ -653,6 +689,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setUpdateTime(currentTime);
         commitWorkflowLinkDetailDO.setCreateTime(currentTime);
         workflowLinkDetailMapper.save(commitWorkflowLinkDetailDO);
+
+        saveWorkflowImage(commitWorkflowLinkDetailDO.getId(), imgIdList, currentTime);
 
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
