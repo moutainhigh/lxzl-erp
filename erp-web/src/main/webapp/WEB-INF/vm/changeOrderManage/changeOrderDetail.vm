@@ -231,6 +231,7 @@
                                                            data-changeOrderMaterialId="{{changeOrderMaterialId}}"
                                                            data-srcChangeMaterialNo="{{srcChangeMaterialNo}}"
                                                            data-changeMaterialCount="{{changeMaterialCount}}"
+                                                           data-changeOrderMaterialId="{{changeOrderMaterialId}}"
                                                            data-no="{{no}}"
                                                            data-realchangematerialcount="{{realChangeMaterialCount}}">{{text}}</a>
                                                         {{/rowActionButtons}}

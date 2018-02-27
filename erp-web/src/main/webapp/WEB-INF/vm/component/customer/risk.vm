@@ -36,6 +36,13 @@
             </tr>
             <tr>
                 <td>
+                    <span class="fa fa-circle text-primary"></span>
+                </td>
+                <td>是否是全额押金客户</td>
+                <td><span class='text-primary'>{{#boolText}}{{isFullDeposit}}{{/boolText}}</span></td>
+            </tr>
+            <tr>
+                <td>
                     <span class="fa fa-circle text-info"></span>
                 </td>
                 <td>押金期数</td>
@@ -54,6 +61,13 @@
                 </td>
                 <td>支付方式</td>
                 <td><span class='text-info'>{{payModeValue}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
+                <td>限制单台设备价值</td>
+                <td><span class='text-info'>￥{{#price}}{{singleLimitPrice}}{{/price}}</span></td>
             </tr>
             <tr>
                 <td>
@@ -80,6 +94,13 @@
                 <td>
                     <span class="fa fa-circle text-info"></span>
                 </td>
+                <td>是否限制苹果机</td>
+                <td><span class='text-info'>{{#boolText}}{{isLimitApple}}{{/boolText}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
                 <td>全新设备押金期数</td>
                 <td><span class='text-info'>{{newDepositCycle}}</span></td>
             </tr>
@@ -96,6 +117,13 @@
                 </td>
                 <td>全新设备支付方式</td>
                 <td><span class='text-info'>{{newPayModeValue}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
+                <td>是否限制全新机</td>
+                <td><span class='text-info'>{{#boolText}}{{isLimitNew}}{{/boolText}}</span></td>
             </tr>
             <tr>
                 <td>
