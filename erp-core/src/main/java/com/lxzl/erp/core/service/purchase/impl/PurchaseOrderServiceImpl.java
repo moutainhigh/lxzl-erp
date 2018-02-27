@@ -1109,6 +1109,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //更新采购收货单状态
         purchaseReceiveOrderDO.setPurchaseReceiveOrderStatus(PurchaseReceiveOrderStatus.PURCHASE_RECEIVE_ORDER_STATUS_YET);
         purchaseReceiveOrderDO.setConfirmTime(now);
+        purchaseReceiveOrderDO.setOwner(userSupport.getCurrentUserId());
         purchaseReceiveOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         purchaseReceiveOrderDO.setUpdateTime(now);
         purchaseReceiveOrderMapper.update(purchaseReceiveOrderDO);
