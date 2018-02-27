@@ -14,4 +14,6 @@ public interface K3MappingCustomerMapper extends BaseMysqlDAO<K3MappingCustomerD
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	K3MappingCustomerDO findByErpCode(@Param("erpCode") String erpCode);
+
+	K3MappingCustomerDO findByK3Code(@Param("k3Code") String k3Code);
 }
