@@ -23,12 +23,10 @@ import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.se.common.exception.BusinessException;
@@ -147,6 +145,13 @@ public class K3ServiceImpl implements K3Service {
                 order.setOrderStatus(OrderStatus.ORDER_STATUS_DELIVERED);
             } else if (order.getOrderStatus() == 3) {
                 order.setOrderStatus(OrderStatus.ORDER_STATUS_OVER);
+            }
+        }
+
+        if (order.getBuyerCustomerNo() != null) {
+            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(order.getBuyerCustomerNo());
+            if (k3MappingCustomerDO != null) {
+                order.setBuyerCustomerNo(k3MappingCustomerDO.getErpCustomerCode());
             }
         }
     }
@@ -437,6 +442,9 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
+
+    @Autowired
+    private K3MappingCustomerMapper k3MappingCustomerMapper;
 
     @Autowired
     private UserSupport userSupport;
