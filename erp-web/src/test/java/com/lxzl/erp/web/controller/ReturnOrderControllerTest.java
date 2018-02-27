@@ -206,10 +206,10 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
-    public void returnMaterial() throws Exception {
+    public void orderPenalty() throws Exception {
         String returnOrderNo = "LXRO-731494-20180205-00020";
         String orderNo = "LXO-20180205-731494-00018";
-        ServiceResult<String, BigDecimal> totalPenalty = penaltySupport.orderPenalty(returnOrderNo,orderNo);
+        ServiceResult<String, BigDecimal> totalPenalty = penaltySupport.orderPenalty(returnOrderNo);
         System.out.println(totalPenalty);
     }
 
