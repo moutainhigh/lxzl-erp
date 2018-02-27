@@ -6,6 +6,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
 		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="order_item_id" jdbcType="VARCHAR" property="orderItemId" />
 		<result column="order_entry" jdbcType="VARCHAR" property="orderEntry" />
 		<result column="product_no" jdbcType="VARCHAR" property="productNo" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
@@ -19,7 +20,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user
+		ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_item_id,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user
 	</sql>
 
 	<select id="findById" resultMap="K3ReturnOrderDetailDO" parameterType="java.lang.Integer">
@@ -53,6 +54,9 @@
 			</if>
 			<if test="orderNo != null">
 				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderItemId != null">
+				order_item_id = #{orderItemId,jdbcType=VARCHAR},
 			</if>
 			<if test="orderEntry != null">
 				order_entry = #{orderEntry,jdbcType=VARCHAR},

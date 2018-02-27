@@ -9,6 +9,7 @@ public class K3ReturnOrderDetailDO  extends BaseDO {
 	private Integer id;
 	private Integer returnOrderId;
 	private String orderNo;
+	private String orderItemId;
 	private String orderEntry;
 	private String productNo;
 	private String productName;
@@ -86,5 +87,13 @@ public class K3ReturnOrderDetailDO  extends BaseDO {
 
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	public String getOrderItemId() {
+		return orderItemId;
+	}
+
+	public void setOrderItemId(String orderItemId) {
+		this.orderItemId = orderItemId;
 	}
 }

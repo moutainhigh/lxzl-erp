@@ -11,6 +11,7 @@ public class K3ReturnOrderDetail extends BasePO {
 	private Integer k3ReturnOrderDetailId;   //唯一标识
 	private Integer returnOrderId;   //K3退货单ID
 	private String orderNo;   //订单号
+	private String orderItemId;	// 订单项ID
 	private String orderEntry;   //订单行号
 	private String productNo;   //产品代码
 	private String productName;   //产品名称
@@ -125,5 +126,13 @@ public class K3ReturnOrderDetail extends BasePO {
 
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	public String getOrderItemId() {
+		return orderItemId;
+	}
+
+	public void setOrderItemId(String orderItemId) {
+		this.orderItemId = orderItemId;
 	}
 }
