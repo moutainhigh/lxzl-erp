@@ -114,9 +114,19 @@
                 </label>
             </div>
             <div class="section">
+                <label for="isRent" class="field-label">允许随时归还</label>
+                <label class="field select">
+                    <select id="isReturnAnyTime" name="isReturnAnyTime">
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                    <i class="arrow"></i>
+                </label>
+            </div>
+            <div class="section">
                 <label for="materialDesc" class="field-label">描述</label>
                 <label for="materialDesc" class="field prepend-icon">
-                    <textarea class="gui-textarea" id="materialDesc" name="materialDesc" style="height: 220px"></textarea>
+                    <textarea class="gui-textarea" id="materialDesc" name="materialDesc" style="height: 130px"></textarea>
                     <label for="materialDesc" class="field-icon"><i class="fa fa-comments"></i></label>
                 </label>
             </div>
