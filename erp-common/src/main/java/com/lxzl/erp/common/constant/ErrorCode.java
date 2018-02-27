@@ -134,7 +134,8 @@ public class ErrorCode {
     public static final String PRODUCT_NEW_MONTH_RENT_PRICE_IS_NOT_NULL = "J200074";
     public static final String BUYER_CUSTOMER_NO_NOT_NULL = "J200075";
     public static final String PRODUCT_ALREADY_EXISTS = "J200076";
-    public static final String CUSTOMER_CAN_NOT_EDIT_RISK_MANAGEMENT = "J200077";
+    public static final String CUSTOMER_REJECT_CAN_NOT_EDIT_RISK_MANAGEMENT = "J200077";
+    public static final String CUSTOMER_UNCOMMITTED_CAN_NOT_EDIT_RISK_MANAGEMENT = "J200078";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -809,7 +810,8 @@ public class ErrorCode {
         MAP.put(ORDER_NO_NOT_NULL, "订单号不能为空");
         MAP.put(BUYER_CUSTOMER_NO_NOT_NULL, "购买人编号不能为空");
         MAP.put(PRODUCT_ALREADY_EXISTS, "商品已经存在");
-        MAP.put(CUSTOMER_CAN_NOT_EDIT_RISK_MANAGEMENT, "客户在驳回状态不允许修改风控信息");
+        MAP.put(CUSTOMER_REJECT_CAN_NOT_EDIT_RISK_MANAGEMENT, "客户在驳回状态不允许修改风控信息");
+        MAP.put(CUSTOMER_UNCOMMITTED_CAN_NOT_EDIT_RISK_MANAGEMENT, "客户在未提交状态不允许修改风控信息");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
