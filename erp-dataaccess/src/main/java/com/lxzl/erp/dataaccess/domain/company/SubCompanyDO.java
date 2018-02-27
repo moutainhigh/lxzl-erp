@@ -2,6 +2,7 @@ package com.lxzl.erp.dataaccess.domain.company;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class SubCompanyDO extends BaseDO{
@@ -20,7 +21,7 @@ public class SubCompanyDO extends BaseDO{
     private String provinceName;
     private String cityName;
     private String districtName;
-
+    private BigDecimal shortLimitReceivableAmount;
     private List<DepartmentDO> departmentDOList;
 
     public String getSubCompanyCode() {
@@ -133,5 +134,13 @@ public class SubCompanyDO extends BaseDO{
 
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
+    }
+
+    public BigDecimal getShortLimitReceivableAmount() {
+        return shortLimitReceivableAmount;
+    }
+
+    public void setShortLimitReceivableAmount(BigDecimal shortLimitReceivableAmount) {
+        this.shortLimitReceivableAmount = shortLimitReceivableAmount;
     }
 }

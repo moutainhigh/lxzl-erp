@@ -2,6 +2,8 @@ package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +21,8 @@ public class K3ReturnOrder extends BasePO {
 	private String returnPhone;   //联系电话
 	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   // 是否推送到K3 1是0否
+	private BigDecimal logisticsAmount;	// 运费
+	private BigDecimal serviceAmount;	// 服务费
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -163,5 +167,21 @@ public class K3ReturnOrder extends BasePO {
 
 	public void setReturnMode(Integer returnMode) {
 		this.returnMode = returnMode;
+	}
+
+	public BigDecimal getLogisticsAmount() {
+		return logisticsAmount;
+	}
+
+	public void setLogisticsAmount(BigDecimal logisticsAmount) {
+		this.logisticsAmount = logisticsAmount;
+	}
+
+	public BigDecimal getServiceAmount() {
+		return serviceAmount;
+	}
+
+	public void setServiceAmount(BigDecimal serviceAmount) {
+		this.serviceAmount = serviceAmount;
 	}
 }

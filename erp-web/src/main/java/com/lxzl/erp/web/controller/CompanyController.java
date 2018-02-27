@@ -93,4 +93,10 @@ public class CompanyController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "addShortReceivableAmount", method = RequestMethod.POST)
+    public Result addShortReceivableAmount(@RequestBody SubCompany subCompany, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = companyService.addShortReceivableAmount(subCompany);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }

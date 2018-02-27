@@ -1,6 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.k3.returnOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +19,8 @@ public class K3ReturnOrderDO  extends BaseDO {
 	private String returnPhone;
 	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   // 是否推送到K3 1是0否
+	private BigDecimal logisticsAmount;	// 运费
+	private BigDecimal serviceAmount;	// 服务费
 	private Integer dataStatus;
 	private String remark;
 
@@ -124,5 +128,21 @@ public class K3ReturnOrderDO  extends BaseDO {
 
 	public void setReturnMode(Integer returnMode) {
 		this.returnMode = returnMode;
+	}
+
+	public BigDecimal getLogisticsAmount() {
+		return logisticsAmount;
+	}
+
+	public void setLogisticsAmount(BigDecimal logisticsAmount) {
+		this.logisticsAmount = logisticsAmount;
+	}
+
+	public BigDecimal getServiceAmount() {
+		return serviceAmount;
+	}
+
+	public void setServiceAmount(BigDecimal serviceAmount) {
+		this.serviceAmount = serviceAmount;
 	}
 }
