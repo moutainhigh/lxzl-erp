@@ -25,75 +25,83 @@
 
                             <div class="panel panel-default panel-border top">
                                 <div class="panel-heading">
-                                    <span class="panel-title"><i class="fa fa-pencil"></i>添加商品</span>
+                                    <span class="panel-title"><i class="fa fa-pencil"></i>商品详细</span>
                                 </div>
                                 <div class="panel-body p25">
                                     <div class="section row">
-                                        <div class="col-md-4">
-                                            <div class="section">
-                                                <label for="categoryId" class="field-label">类别</label>
-                                                <label for="categoryId" class="field select">
-                                                    <select id="categoryId" name="categoryId" class="required" readonly>
-                                                        <option value="">请选择</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-                                            <div class="section">
-                                                <label for="userName" class="field-label">商品名称</label>
-                                                <label for="productName" class="field prepend-icon">
-                                                    <input type="text" name="productName" id="productName" class="gui-input required" />
-                                                    <label for="productName" class="field-icon"><i class="fa fa-tag"></i>
-                                                    </label>
-                                                </label>
-                                            </div>
-                                            <div class="section">
-                                                <label for="unit" class="field-label">单位</label>
-                                                <label for="unit" class="field select">
-                                                    <select id="unit" name="unit">
-                                                        <option value="303719">件</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-
+                                        <div class="col-md-3">
+                                            <label for="categoryId" class="field-label">类别</label>
+                                            <label for="categoryId" class="field select">
+                                                <select id="categoryId" name="categoryId" class="required" readonly>
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </label>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="section">
-                                                <label for="isRent" class="field-label">品牌</label>
-                                                <label class="field select">
-                                                    <select id="brandId" name="brandId" class="required" readonly>
-                                                        <option value="">请选择</option>
-                                                    </select>
-                                                    <i class="arrow"></i>
-                                                </label>
-                                            </div>
-                                            <div class="section">
-                                                <label for="subtitle" class="field-label">副标题</label>
-                                                <label for="subtitle" class="field prepend-icon">
-                                                    <input type="text" name="subtitle" id="subtitle" class="gui-input required" />
-                                                    <label for="subtitle" class="field-icon"><i class="fa fa-tag"></i>
-                                                    </label>
-                                                </label>
-                                            </div>
-                                            <div class="section">
-                                                <label for="isRent" class="field-label">是否在租</label>
-                                                <label class="field select">
-                                                    <select id="isRent" name="isRent">
-                                                        <option value="1">在租</option>
-                                                        <option value="0">下架</option>
-                                                    </select>
-                                                    <i class="arrow"></i>
-                                                </label>
-                                            </div>
+                                        <div class="col-md-3">
+                                            <label for="isRent" class="field-label">品牌</label>
+                                            <label class="field select">
+                                                <select id="brandId" name="brandId" class="required" readonly>
+                                                    <option value="">请选择</option>
+                                                </select>
+                                                <i class="arrow"></i>
+                                            </label>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="section">
-                                                <label for="productModel" class="field-label">型号</label>
-                                                <label for="productModel" class="field prepend-icon">
-                                                    <input type="text" name="productModel" id="productModel" class="gui-input required letterOrNumber" readonly />
-                                                    <label for="productModel" class="field-icon"><i class="fa fa-tag"></i>
-                                                    </label>
+                                        <div class="col-md-3">
+                                            <label for="productModel" class="field-label">型号</label>
+                                            <label for="productModel" class="field prepend-icon">
+                                                <input type="text" name="productModel" id="productModel" class="gui-input required letterOrNumber2" readonly />
+                                                <label for="productModel" class="field-icon"><i class="fa fa-tag"></i>
                                                 </label>
-                                            </div>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="unit" class="field-label">单位</label>
+                                            <label for="unit" class="field select">
+                                                <select id="unit" name="unit">
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="section row">
+                                        <div class="col-md-3">
+                                            <label for="userName" class="field-label">商品名称</label>
+                                            <label for="productName" class="field prepend-icon">
+                                                <input type="text" name="productName" id="productName" class="gui-input required" />
+                                                <label for="productName" class="field-icon"><i class="fa fa-tag"></i>
+                                                </label>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="subtitle" class="field-label">副标题</label>
+                                            <label for="subtitle" class="field prepend-icon">
+                                                <input type="text" name="subtitle" id="subtitle" class="gui-input required" />
+                                                <label for="subtitle" class="field-icon"><i class="fa fa-tag"></i>
+                                                </label>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="isRent" class="field-label">是否在租</label>
+                                            <label class="field select">
+                                                <select id="isRent" name="isRent">
+                                                    <option value="1">上架</option>
+                                                    <option value="0">下架</option>
+                                                </select>
+                                                <i class="arrow"></i>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="isRent" class="field-label">允许随时归还</label>
+                                            <label class="field select">
+                                                <select id="isReturnAnyTime" name="isReturnAnyTime">
+                                                    <option value="1">是</option>
+                                                    <option value="0">否</option>
+                                                </select>
+                                                <i class="arrow"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="section row">
+                                        <div class="col-md-12">
                                             <div class="section">
                                                 <label for="productDesc" class="field-label">商品描述</label>
                                                 <label for="productDesc" class="field prepend-icon">
