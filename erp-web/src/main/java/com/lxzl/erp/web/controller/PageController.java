@@ -709,7 +709,6 @@ public class PageController extends BaseController {
     public String k3ReturnOrderList() {
         return "/k3Manage/K3ReturnOrder";
     }
-
     @RequestMapping("/return-order-k3/detail")
     public String k3ReturnOrderDetail() {
         return "/k3Manage/K3ReturnOrderDetail";
@@ -725,6 +724,16 @@ public class PageController extends BaseController {
     @RequestMapping("/k3-order/item-choose")
     public String k3OrderChooseItem() {
         return "/component/k3Manage/chooseOrderItemModal";
+    }
+
+    //分公司列表
+    @RequestMapping("/company-manage/list")
+    public String companyManageList() {
+        return "/companyManage/companyList";
+    }
+    @RequestMapping("/add-short-receivable-amount/modal")
+    public String addShortReceivableAmountModal() {
+        return "/component/company/addShortReceivableAmountModal";
     }
 
 
