@@ -40,7 +40,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     }
     @Test
     public void queryIncomeJson() throws Exception {
-        String json = "{\"pageNo\":1,\"pageSize\":15,\"customerName\":\"\",\"salesmanName\":\"\",\"rentLengthType\":\"\",\"startTime\":\"1517068800000\",\"endTime\":\"1519660799999\"}";
+        String json = "{\"pageNo\":2,\"pageSize\":15,\"customerName\":\"\",\"salesmanName\":\"\",\"rentLengthType\":\"\",\"subCompanyId\":\"7\",\"startTime\":\"1517155200000\",\"endTime\":\"1519747199999\"}";
         StatisticsIncomePageParam statisticsIncomePageParam = JSON.parseObject(json,StatisticsIncomePageParam.class);
 
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
@@ -61,7 +61,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryStatisticsUnReceivableJson() throws Exception {
-        String json = "{\"pageNo\":1,\"pageSize\":15,\"salesmanName\":\"\",\"subCompanyId\":\"7\"}";
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"salesmanName\":\"\"}";
         StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = JSON.parseObject(json,StatisticsUnReceivablePageParam.class);
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
     }
@@ -90,6 +90,12 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     public void queryLongRentByTime() throws Exception {
         HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
         homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_MONTH);
+        TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
+    }
+    @Test
+    public void queryLongRentByTimeJson() throws Exception {
+        String json = "{\"timeDimensionType\":1}";
+        HomeRentByTimeParam homeRentByTimeParam = JSON.parseObject(json,HomeRentByTimeParam.class);
         TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
     }
 

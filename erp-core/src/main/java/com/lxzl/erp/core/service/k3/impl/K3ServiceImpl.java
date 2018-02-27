@@ -8,6 +8,9 @@ import com.lxzl.erp.common.constant.OrderStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
+import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
@@ -24,6 +27,8 @@ import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
+import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
@@ -422,7 +427,7 @@ public class K3ServiceImpl implements K3Service {
             return result;
         }
 
-        k3ReturnOrderDO.setReturnOrderStatus(CommonConstant.DATA_STATUS_ENABLE);
+        k3ReturnOrderDO.setReturnOrderStatus(CommonConstant.COMMON_CONSTANT_YES);
         k3ReturnOrderDO.setUpdateTime(currentTime);
         k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
@@ -430,6 +435,180 @@ public class K3ServiceImpl implements K3Service {
         return result;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> createChangeOrder(K3ChangeOrder k3ChangeOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+        if (k3ChangeOrder == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder,K3ChangeOrderDO.class);
+        k3ChangeOrderDO.setChangeOrderNo(UUIDUtil.getUUID());
+        k3ChangeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        k3ChangeOrderDO.setChangeOrderStatus(CommonConstant.COMMON_CONSTANT_NO);
+        k3ChangeOrderDO.setCreateTime(now);
+        k3ChangeOrderDO.setUpdateTime(now);
+        k3ChangeOrderDO.setCreateUser(loginUser.getUserId().toString());
+        k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ChangeOrderMapper.save(k3ChangeOrderDO);
+
+        List<K3ChangeOrderDetail> k3ChangeOrderDetailList = k3ChangeOrder.getK3ChangeOrderDetailList();
+        if(CollectionUtil.isNotEmpty(k3ChangeOrderDetailList)){
+            for(K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrderDetailList){
+                K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
+                k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
+                k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                k3ChangeOrderDetailDO.setCreateTime(now);
+                k3ChangeOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
+                k3ChangeOrderDetailDO.setUpdateTime(now);
+                k3ChangeOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+                k3ChangeOrderDetailMapper.save(k3ChangeOrderDetailDO);
+            }
+        }
+
+        result.setResult(k3ChangeOrderDO.getChangeOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> updateChangeOrder(K3ChangeOrder k3ChangeOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        if (k3ChangeOrder == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        K3ChangeOrderDO dbK3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrder.getChangeOrderNo());
+        if (dbK3ChangeOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+
+        K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder, K3ChangeOrderDO.class);
+        k3ChangeOrderDO.setId(dbK3ChangeOrderDO.getId());
+        k3ChangeOrderDO.setUpdateTime(currentTime);
+        k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ChangeOrderMapper.update(k3ChangeOrderDO);
+        result.setResult(k3ChangeOrderDO.getChangeOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> addChangeOrder(K3ChangeOrder k3ChangeOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrder.getChangeOrderNo());
+        if (k3ChangeOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        if (CollectionUtil.isEmpty(k3ChangeOrder.getK3ChangeOrderDetailList())) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+            return result;
+        }
+        for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrder.getK3ChangeOrderDetailList()) {
+            K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
+            k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
+            k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            k3ChangeOrderDetailDO.setCreateTime(currentTime);
+            k3ChangeOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
+            k3ChangeOrderDetailDO.setUpdateTime(currentTime);
+            k3ChangeOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+            k3ChangeOrderDetailMapper.save(k3ChangeOrderDetailDO);
+        }
+
+        result.setResult(k3ChangeOrderDO.getChangeOrderNo());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> deleteChangeOrder(Integer k3ChangeOrderDetailId) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        K3ChangeOrderDetailDO k3ChangeOrderDetailDO = k3ChangeOrderDetailMapper.findById(k3ChangeOrderDetailId);
+        if (k3ChangeOrderDetailDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        k3ChangeOrderDetailDO.setUpdateTime(currentTime);
+        k3ChangeOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ChangeOrderDetailMapper.update(k3ChangeOrderDetailDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<K3ChangeOrder>> queryChangeOrder(K3ChangeOrderQueryParam param) {
+        ServiceResult<String, Page<K3ChangeOrder>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("k3ChangeOrderQueryParam", param);
+
+        Integer totalCount = k3ChangeOrderMapper.listCount(maps);
+        List<K3ChangeOrderDO> orderDOList = k3ChangeOrderMapper.listPage(maps);
+        List<K3ChangeOrder> orderList = ConverterUtil.convertList(orderDOList, K3ChangeOrder.class);
+        Page<K3ChangeOrder> page = new Page<>(orderList, totalCount, param.getPageNo(), param.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, K3ChangeOrder> queryChangeOrderByNo(String changeOrderNo) {
+        ServiceResult<String, K3ChangeOrder> result = new ServiceResult<>();
+
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(changeOrderNo);
+        if (k3ChangeOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        result.setResult(ConverterUtil.convert(k3ChangeOrderDO, K3ChangeOrder.class));
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> sendChangeOrderToK3(String changeOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(changeOrderNo);
+        if (k3ChangeOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        if(CollectionUtil.isEmpty(k3ChangeOrderDO.getK3ChangeOrderDetailDOList())){
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        k3ChangeOrderDO.setChangeOrderStatus(CommonConstant.COMMON_CONSTANT_YES);
+        k3ChangeOrderDO.setUpdateTime(currentTime);
+        k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ChangeOrderMapper.update(k3ChangeOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;
@@ -441,11 +620,15 @@ public class K3ServiceImpl implements K3Service {
     private K3ReturnOrderMapper k3ReturnOrderMapper;
 
     @Autowired
+    private K3ChangeOrderMapper k3ChangeOrderMapper;
+
+    @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
+    @Autowired
+    private K3ChangeOrderDetailMapper k3ChangeOrderDetailMapper;
 
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
-
     @Autowired
     private UserSupport userSupport;
 }

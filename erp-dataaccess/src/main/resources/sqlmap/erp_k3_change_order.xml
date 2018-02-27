@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper">
+
+	<resultMap id="K3ChangeOrderDO" type="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="change_order_no" jdbcType="VARCHAR" property="changeOrderNo" />
+		<result column="k3_customer_no" jdbcType="VARCHAR" property="k3CustomerNo" />
+		<result column="k3_customer_name" jdbcType="VARCHAR" property="k3CustomerName" />
+		<result column="change_time" jdbcType="TIMESTAMP" property="changeTime" />
+		<result column="change_address" jdbcType="VARCHAR" property="changeAddress" />
+		<result column="change_contacts" jdbcType="VARCHAR" property="changeContacts" />
+		<result column="change_phone" jdbcType="VARCHAR" property="changePhone" />
+		<result column="change_mode" jdbcType="INTEGER" property="changeMode" />
+		<result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount" />
+		<result column="service_amount" jdbcType="DECIMAL" property="serviceAmount" />
+		<result column="change_order_status" jdbcType="INTEGER" property="changeOrderStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<collection property="k3ChangeOrderDetailDOList" resultMap="K3ChangeOrderDetailDO" />
+	</resultMap>
+
+	<sql id="column_List">
+		ekco.id,ekco.change_order_no,ekco.k3_customer_no,ekco.k3_customer_name,ekco.change_time,ekco.change_address,ekco.change_contacts,ekco.change_phone,ekco.change_mode,ekco.logistics_amount,ekco.service_amount,ekco.change_order_status,ekco.data_status,ekco.remark,ekco.create_time,ekco.create_user,ekco.update_time,ekco.update_user
+	</sql>
+	<resultMap id="K3ChangeOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="detail_change_order_id" jdbcType="INTEGER" property="changeOrderId" />
+		<result column="detail_order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="detail_order_entry" jdbcType="VARCHAR" property="orderEntry" />
+		<result column="detail_product_no" jdbcType="VARCHAR" property="productNo" />
+		<result column="detail_product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="detail_change_sku_id" jdbcType="INTEGER" property="changeSkuId" />
+		<result column="detail_change_material_id" jdbcType="INTEGER" property="changeMaterialId" />
+		<result column="detail_change_product_no" jdbcType="VARCHAR" property="changeProductNo" />
+		<result column="detail_change_product_name" jdbcType="VARCHAR" property="changeProductName" />
+		<result column="detail_product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="detail_product_diff_amount" jdbcType="DECIMAL" property="productDiffAmount" />
+		<result column="detail_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="detail_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="detail_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="detail_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="detail_column_List">
+		ekcod.id AS detail_id,ekcod.change_order_id AS detail_change_order_id,ekcod.order_no AS detail_order_no,ekcod.order_entry AS detail_order_entry,ekcod.product_no AS detail_product_no,ekcod.product_name AS detail_product_name,ekcod.change_sku_id AS detail_change_sku_id,ekcod.change_material_id AS detail_change_material_id,ekcod.change_product_no AS detail_change_product_no,ekcod.change_product_name AS detail_change_product_name,ekcod.product_count AS detail_product_count,ekcod.product_diff_amount AS detail_product_diff_amount,ekcod.data_status AS detail_data_status,ekcod.remark AS detail_remark,ekcod.create_time AS detail_create_time,ekcod.create_user AS detail_create_user,ekcod.update_time AS detail_update_time,ekcod.update_user AS detail_update_user
+	</sql>
+
+	<select id="findById" resultMap="K3ChangeOrderDO" parameterType="java.lang.Integer">
+		SELECT m_order.*
+		<trim prefix=",">
+			<include refid="detail_column_List" />
+		</trim>
+		FROM (
+		SELECT <include refid="column_List"/> FROM erp_k3_change_order ekco
+		WHERE ekco.id = #{id, jdbcType=INTEGER} AND ekco.data_status = 1
+		) m_order
+		LEFT JOIN erp_k3_change_order_detail ekcod ON m_order.id = ekcod.change_order_id and ekcod.data_status = 1
+	</select>
+	<select id="findByNo" resultMap="K3ChangeOrderDO" parameterType="java.lang.String">
+		SELECT m_order.*
+		<trim prefix=",">
+			<include refid="detail_column_List" />
+		</trim>
+		FROM (
+		SELECT <include refid="column_List"/> FROM erp_k3_change_order ekco
+		WHERE ekco.change_order_no = #{changeOrderNo, jdbcType=VARCHAR} AND ekco.data_status = 1
+		) m_order
+		LEFT JOIN erp_k3_change_order_detail ekcod ON m_order.id = ekcod.change_order_id and ekcod.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ekco.id) FROM erp_k3_change_order ekco
+		<where>
+			<if test="maps.k3ChangeOrderQueryParam.changeOrderNo != null &amp;&amp; maps.k3ChangeOrderQueryParam.changeOrderNo != ''">
+				and ekco.change_order_no like CONCAT('%','${maps.k3ChangeOrderQueryParam.changeOrderNo}','%' )
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.k3CustomerNo != null &amp;&amp; maps.k3ChangeOrderQueryParam.k3CustomerNo != ''">
+				and ekco.k3_customer_no like CONCAT('%','${maps.k3ChangeOrderQueryParam.k3CustomerNo}','%' )
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.k3CustomerName != null &amp;&amp; maps.k3ChangeOrderQueryParam.k3CustomerName != ''">
+				and ekco.k3_customer_name like CONCAT('%','${maps.k3ChangeOrderQueryParam.k3CustomerName}','%' )
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.changeStartTime != null">
+				<![CDATA[ AND ekco.change_time >= #{maps.k3ChangeOrderQueryParam.changeStartTime} ]]>
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.changeEndTime != null ">
+				<![CDATA[ AND ekco.change_time <= #{maps.k3ChangeOrderQueryParam.changeEndTime} ]]>
+			</if>
+			<if test="true">
+				AND ekco.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="K3ChangeOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		<trim prefix=",">
+			<include refid="detail_column_List" />
+		</trim>
+		FROM (
+		SELECT <include refid="column_List"/> FROM erp_k3_change_order ekco
+		<where>
+			<if test="maps.k3ChangeOrderQueryParam.changeOrderNo != null &amp;&amp; maps.k3ChangeOrderQueryParam.changeOrderNo != ''">
+				and ekco.change_order_no like CONCAT('%','${maps.k3ChangeOrderQueryParam.changeOrderNo}','%' )
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.k3CustomerNo != null &amp;&amp; maps.k3ChangeOrderQueryParam.k3CustomerNo != ''">
+				and ekco.k3_customer_no like CONCAT('%','${maps.k3ChangeOrderQueryParam.k3CustomerNo}','%' )
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.k3CustomerName != null &amp;&amp; maps.k3ChangeOrderQueryParam.k3CustomerName != ''">
+				and ekco.k3_customer_name like CONCAT('%','${maps.k3ChangeOrderQueryParam.k3CustomerName}','%' )
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.changeStartTime != null">
+				<![CDATA[ AND ekco.change_time >= #{maps.k3ChangeOrderQueryParam.changeStartTime} ]]>
+			</if>
+			<if test="maps.k3ChangeOrderQueryParam.changeEndTime != null ">
+				<![CDATA[ AND ekco.change_time <= #{maps.k3ChangeOrderQueryParam.changeEndTime} ]]>
+			</if>
+			<if test="true">
+				AND ekco.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+
+		) ekco
+		LEFT JOIN erp_k3_change_order_detail ekcod ON ekco.id = ekcod.change_order_id and ekcod.data_status = 1
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="changeOrderNo != null">
+				change_order_no = #{changeOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="k3CustomerNo != null">
+				k3_customer_no = #{k3CustomerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="k3CustomerName != null">
+				k3_customer_name = #{k3CustomerName,jdbcType=VARCHAR},
+			</if>
+			<if test="changeTime != null">
+				change_time = #{changeTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="changeAddress != null">
+				change_address = #{changeAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="changeContacts != null">
+				change_contacts = #{changeContacts,jdbcType=VARCHAR},
+			</if>
+			<if test="changePhone != null">
+				change_phone = #{changePhone,jdbcType=VARCHAR},
+			</if>
+			<if test="changeMode != null">
+				change_mode = #{changeMode,jdbcType=INTEGER},
+			</if>
+			<if test="logisticsAmount != null">
+				logistics_amount = #{logisticsAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="serviceAmount != null">
+				service_amount = #{serviceAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="changeOrderStatus != null">
+				change_order_status = #{changeOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO">
+		INSERT INTO erp_k3_change_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO">
+		UPDATE erp_k3_change_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

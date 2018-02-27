@@ -1,8 +1,7 @@
 package com.lxzl.erp.common.constant;
 
 /**
- * 描述: ${DESCRIPTION}
- *
+ * 描述:  结算单明细类型,1-租金,2-押金,3-抵消租金（退租）,4-退押金,5-其他费用,6- 逾期费用，这个只供冲正使用
  * @author gaochao
  * @date 2018-01-23 14:22
  */

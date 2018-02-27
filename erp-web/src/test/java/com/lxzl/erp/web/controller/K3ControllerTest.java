@@ -8,6 +8,9 @@ import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
+import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
@@ -170,7 +173,145 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrderByNo", param);
     }
 
-    @Autowired
-    private StatementService statementService;
+    @Test
+    public void createChangeOrder() throws Exception {
+
+        K3ChangeOrder k3ChangeOrder = new K3ChangeOrder();
+        k3ChangeOrder.setChangeAddress("测试");
+        k3ChangeOrder.setChangeContacts("123123123");
+        k3ChangeOrder.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
+        k3ChangeOrder.setK3CustomerNo("123");
+        k3ChangeOrder.setK3CustomerName("test");
+        k3ChangeOrder.setChangeTime(new Date());
+        k3ChangeOrder.setChangePhone("13612342234");
+        k3ChangeOrder.setLogisticsAmount(new BigDecimal(12.12));
+        k3ChangeOrder.setServiceAmount(new BigDecimal(123.12));
+        k3ChangeOrder.setRemark("13123");
+        List<K3ChangeOrderDetail> k3ChangeOrderDetailList = new ArrayList<>();
+        K3ChangeOrderDetail k3ChangeOrderDetail0 = new K3ChangeOrderDetail();
+        K3ChangeOrderDetail k3ChangeOrderDetail1 = new K3ChangeOrderDetail();
+
+        k3ChangeOrderDetailList.add(k3ChangeOrderDetail0);
+        k3ChangeOrderDetailList.add(k3ChangeOrderDetail1);
+
+        k3ChangeOrderDetail0.setOrderNo("123123");
+        k3ChangeOrderDetail0.setOrderEntry("1");
+        k3ChangeOrderDetail0.setProductNo("123123");
+        k3ChangeOrderDetail0.setProductName("test1");
+        k3ChangeOrderDetail0.setChangeSkuId(1);
+        k3ChangeOrderDetail0.setChangeMaterialId(1);
+        k3ChangeOrderDetail0.setChangeProductNo("123123");
+        k3ChangeOrderDetail0.setChangeProductName("test2");
+        k3ChangeOrderDetail0.setProductCount(1);
+        k3ChangeOrderDetail0.setProductDiffAmount(new BigDecimal(12));
+        k3ChangeOrderDetail0.setRemark("12312312");
+
+        k3ChangeOrderDetail1.setOrderNo("123123");
+        k3ChangeOrderDetail1.setOrderEntry("1");
+        k3ChangeOrderDetail1.setProductNo("123123");
+        k3ChangeOrderDetail1.setProductName("test1");
+        k3ChangeOrderDetail1.setChangeSkuId(1);
+        k3ChangeOrderDetail1.setChangeMaterialId(1);
+        k3ChangeOrderDetail1.setChangeProductNo("123123");
+        k3ChangeOrderDetail1.setChangeProductName("test2");
+        k3ChangeOrderDetail1.setProductCount(1);
+        k3ChangeOrderDetail1.setProductDiffAmount(new BigDecimal(12));
+        k3ChangeOrderDetail1.setRemark("12312312");
+
+        k3ChangeOrder.setK3ChangeOrderDetailList(k3ChangeOrderDetailList);
+        TestResult testResult = getJsonTestResult("/k3/createChangeOrder", k3ChangeOrder);
+    }
+
+    @Test
+    public void updateChangeOrder() throws Exception {
+        K3ChangeOrder k3ChangeOrder = new K3ChangeOrder();
+        k3ChangeOrder.setChangeOrderNo("cd3ae33b8929487688b59188d9522575");
+        k3ChangeOrder.setChangeAddress("测试");
+        k3ChangeOrder.setChangeContacts("123123123");
+        k3ChangeOrder.setChangeMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
+        k3ChangeOrder.setK3CustomerNo("123");
+        k3ChangeOrder.setK3CustomerName("test");
+        k3ChangeOrder.setChangeTime(new Date());
+        k3ChangeOrder.setChangePhone("13612342234");
+        k3ChangeOrder.setLogisticsAmount(new BigDecimal(122.12));
+        k3ChangeOrder.setServiceAmount(new BigDecimal(123.12));
+        k3ChangeOrder.setRemark("13123");
+
+        TestResult testResult = getJsonTestResult("/k3/updateChangeOrder", k3ChangeOrder);
+    }
+
+    @Test
+    public void addChangeOrder() throws Exception {
+
+        K3ChangeOrder k3ChangeOrder = new K3ChangeOrder();
+        k3ChangeOrder.setChangeOrderNo("cd3ae33b8929487688b59188d9522575");
+        List<K3ChangeOrderDetail> k3ChangeOrderDetailList = new ArrayList<>();
+        K3ChangeOrderDetail k3ChangeOrderDetail0 = new K3ChangeOrderDetail();
+        K3ChangeOrderDetail k3ChangeOrderDetail1 = new K3ChangeOrderDetail();
+
+        k3ChangeOrderDetailList.add(k3ChangeOrderDetail0);
+        k3ChangeOrderDetailList.add(k3ChangeOrderDetail1);
+
+        k3ChangeOrderDetail0.setOrderNo("123123");
+        k3ChangeOrderDetail0.setOrderEntry("1");
+        k3ChangeOrderDetail0.setProductNo("123123");
+        k3ChangeOrderDetail0.setProductName("test1");
+        k3ChangeOrderDetail0.setChangeSkuId(1);
+        k3ChangeOrderDetail0.setChangeMaterialId(1);
+        k3ChangeOrderDetail0.setChangeProductNo("123123");
+        k3ChangeOrderDetail0.setChangeProductName("test2");
+        k3ChangeOrderDetail0.setProductCount(1);
+        k3ChangeOrderDetail0.setProductDiffAmount(new BigDecimal(12));
+        k3ChangeOrderDetail0.setRemark("添加测试1");
+
+        k3ChangeOrderDetail1.setOrderNo("123123");
+        k3ChangeOrderDetail1.setOrderEntry("1");
+        k3ChangeOrderDetail1.setProductNo("123123");
+        k3ChangeOrderDetail1.setProductName("test1");
+        k3ChangeOrderDetail1.setChangeSkuId(1);
+        k3ChangeOrderDetail1.setChangeMaterialId(1);
+        k3ChangeOrderDetail1.setChangeProductNo("123123");
+        k3ChangeOrderDetail1.setChangeProductName("test2");
+        k3ChangeOrderDetail1.setProductCount(1);
+        k3ChangeOrderDetail1.setProductDiffAmount(new BigDecimal(12));
+        k3ChangeOrderDetail1.setRemark("添加测试2");
+
+        k3ChangeOrder.setK3ChangeOrderDetailList(k3ChangeOrderDetailList);
+
+        TestResult testResult = getJsonTestResult("/k3/addChangeOrder", k3ChangeOrder);
+    }
+
+    @Test
+    public void deleteChangeOrder() throws Exception {
+        K3ChangeOrderDetail k3ChangeOrderDetail = new K3ChangeOrderDetail();
+        k3ChangeOrderDetail.setK3ChangeOrderDetailId(7);
+        TestResult testResult = getJsonTestResult("/k3/deleteChangeOrder", k3ChangeOrderDetail);
+    }
+
+    @Test
+    public void sendChangeOrderToK3() throws Exception {
+        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+        k3ReturnOrder.setReturnOrderNo("6f52d4caa5a643109d7ccca400218d0c");
+        TestResult testResult = getJsonTestResult("/k3/sendToK3", k3ReturnOrder);
+    }
+
+    @Test
+    public void queryChangeOrder() throws Exception {
+        K3ChangeOrderQueryParam param = new K3ChangeOrderQueryParam();
+
+        param.setChangeOrderNo("ff97b7d9cfab4a7bae468be48e1f1ee1");
+        param.setK3CustomerNo("123");
+        param.setK3CustomerName("test");
+        param.setChangeEndTime(new Date());
+
+        TestResult testResult = getJsonTestResult("/k3/queryChangeOrder", param);
+    }
+
+    @Test
+    public void queryChangeOrderByNo() throws Exception {
+        K3ChangeOrderQueryParam param = new K3ChangeOrderQueryParam();
+        param.setChangeOrderNo("ff97b7d9cfab4a7bae468be48e1f1ee1");
+        TestResult testResult = getJsonTestResult("/k3/queryChangeOrderByNo", param);
+    }
 
 }

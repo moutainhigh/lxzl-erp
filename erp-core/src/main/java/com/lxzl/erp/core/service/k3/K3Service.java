@@ -3,6 +3,8 @@ package com.lxzl.erp.core.service.k3;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
+import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -39,4 +41,18 @@ public interface K3Service {
     ServiceResult<String, K3ReturnOrder> queryReturnOrderByNo(String returnOrderNo);
 
     ServiceResult<String, String> sendToK3(String returnOrderNo);
+
+    ServiceResult<String, String> createChangeOrder(K3ChangeOrder k3ChangeOrder);
+
+    ServiceResult<String, String> sendChangeOrderToK3(String changeOrderNo);
+
+    ServiceResult<String,String> updateChangeOrder(K3ChangeOrder k3ChangeOrder);
+
+    ServiceResult<String,String> addChangeOrder(K3ChangeOrder k3ChangeOrder);
+
+    ServiceResult<String,String> deleteChangeOrder(Integer k3ChangeOrderDetailId);
+
+    ServiceResult<String,Page<K3ChangeOrder>> queryChangeOrder(K3ChangeOrderQueryParam param);
+
+    ServiceResult<String,K3ChangeOrder> queryChangeOrderByNo(String changeOrderNo);
 }

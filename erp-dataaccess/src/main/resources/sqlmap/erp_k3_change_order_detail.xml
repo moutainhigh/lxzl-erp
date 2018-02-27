@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderDetailMapper">
+
+	<resultMap id="K3ChangeOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="change_order_id" jdbcType="INTEGER" property="changeOrderId" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="order_entry" jdbcType="VARCHAR" property="orderEntry" />
+		<result column="product_no" jdbcType="VARCHAR" property="productNo" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="change_sku_id" jdbcType="INTEGER" property="changeSkuId" />
+		<result column="change_material_id" jdbcType="INTEGER" property="changeMaterialId" />
+		<result column="change_product_no" jdbcType="VARCHAR" property="changeProductNo" />
+		<result column="change_product_name" jdbcType="VARCHAR" property="changeProductName" />
+		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_diff_amount" jdbcType="DECIMAL" property="productDiffAmount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ekcod.id,ekcod.change_order_id,ekcod.order_no,ekcod.order_entry,ekcod.product_no,ekcod.product_name,ekcod.change_sku_id,ekcod.change_material_id,ekcod.change_product_no,ekcod.change_product_name,ekcod.product_count,ekcod.product_diff_amount,ekcod.data_status,ekcod.remark,ekcod.create_time,ekcod.create_user,ekcod.update_time,ekcod.update_user
+	</sql>
+
+	<select id="findById" resultMap="K3ChangeOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_change_order_detail ekcod 
+		WHERE ekcod.id = #{id, jdbcType=INTEGER} AND ekcod.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ekcod.id) FROM erp_k3_change_order_detail ekcod 
+		<where>
+			<if test="true">
+				AND ekcod.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="K3ChangeOrderDetailDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_change_order_detail ekcod 
+		<where>
+			<if test="true">
+				AND ekcod.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="changeOrderId != null">
+				change_order_id = #{changeOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderEntry != null">
+				order_entry = #{orderEntry,jdbcType=VARCHAR},
+			</if>
+			<if test="productNo != null">
+				product_no = #{productNo,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null">
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="changeSkuId != null">
+				change_sku_id = #{changeSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="changeMaterialId != null">
+				change_material_id = #{changeMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="changeProductNo != null">
+				change_product_no = #{changeProductNo,jdbcType=VARCHAR},
+			</if>
+			<if test="changeProductName != null">
+				change_product_name = #{changeProductName,jdbcType=VARCHAR},
+			</if>
+			<if test="productCount != null">
+				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="productDiffAmount != null">
+				product_diff_amount = #{productDiffAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO">
+		INSERT INTO erp_k3_change_order_detail <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO">
+		UPDATE erp_k3_change_order_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
