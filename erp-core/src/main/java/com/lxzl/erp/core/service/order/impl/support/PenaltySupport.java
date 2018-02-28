@@ -73,6 +73,15 @@ public class PenaltySupport {
     @Autowired
     private K3Service k3Service;
 
+    /**
+     * erp违约金计算
+     *
+     * @param returnOrderNo
+     * @return
+     * @author kai
+     *
+     * 目前根据退货单形式 看对方法 是否新增加字段
+     */
     public ServiceResult<String, BigDecimal> orderPenalty(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
 
@@ -85,45 +94,46 @@ public class PenaltySupport {
         BigDecimal materialTotal = new BigDecimal(0);
         for (int i = 0; i < returnOrderDO.getReturnOrderMaterialDOList().size(); i++) {
             MaterialDO materialDO = materialMapper.findById(returnOrderDO.getReturnOrderMaterialDOList().get(i).getReturnMaterialId());
-            if(materialDO == null){
+            if (materialDO == null) {
                 result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                 return result;
             }
             //todo 计算订单物料相同（全新次新出租价格不同问题）
             SqlLogInterceptor.setExecuteSql("skip print returnOrderMaterialBulkMapper.findByReturnOrderMaterialId  sql ......");
             List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDO = returnOrderMaterialBulkMapper.findByReturnOrderMaterialId(returnOrderDO.getReturnOrderMaterialDOList().get(i).getId());
-            if(returnOrderMaterialBulkDO == null){
+            if (returnOrderMaterialBulkDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
-            Map<BigDecimal,Integer> map = new HashMap<>();
+            Map<BigDecimal, Integer> map = new HashMap<>();
             BigDecimal amount = null;
             Integer count = 1;
-            for(int y=0;y<returnOrderMaterialBulkDO.size();y++){
-                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(y).getOrderNo(),returnOrderMaterialBulkDO.get(y).getBulkMaterialNo());
-                if(amount == null){
+            for (int y = 0; y < returnOrderMaterialBulkDO.size(); y++) {
+                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(y).getOrderNo(), returnOrderMaterialBulkDO.get(y).getBulkMaterialNo());
+                if (amount == null) {
                     amount = orderMaterialBulkDO.getMaterialBulkUnitAmount();
-                    map.put(amount,count);
+                    map.put(amount, count);
                     count++;
-                }else if(orderMaterialBulkDO.getMaterialBulkUnitAmount().equals(amount)){
+                } else if (orderMaterialBulkDO.getMaterialBulkUnitAmount().equals(amount)) {
                     amount = orderMaterialBulkDO.getMaterialBulkUnitAmount();
-                    map.put(amount,count);
+                    map.put(amount, count);
                     count++;
-                }else{
+                } else {
+                    //todo 如果退货 新 旧 新 旧 退 有问题  （退货单物料退貨本身有問題）
                     amount = orderMaterialBulkDO.getMaterialBulkUnitAmount();
                     count = 1;
-                    map.put(amount,count);
+                    map.put(amount, count);
                     count++;
                 }
             }
 
-            OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(0).getOrderNo(),returnOrderMaterialBulkDO.get(0).getBulkMaterialNo());
-            if(orderMaterialBulkDO == null){
+            OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(0).getOrderNo(), returnOrderMaterialBulkDO.get(0).getBulkMaterialNo());
+            if (orderMaterialBulkDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
             OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialBulkDO.getOrderMaterialId());
-            if(orderMaterialDO == null){
+            if (orderMaterialDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
@@ -142,9 +152,8 @@ public class PenaltySupport {
 
                 //设备租金单价与数量相乘
                 BigDecimal materialPrice = BigDecimalUtil.mul(price, new BigDecimal(total));
-            /*
-             * (1)非即租即还设备，甲方提前退还租赁设备，乙方将收取合同期内未到期的剩余租金的50%作为违约金，且乙方无须退还其他费用及押金；
-             */
+
+                //(1)非即租即还设备，甲方提前退还租赁设备，乙方将收取合同期内未到期的剩余租金的50%作为违约金，且乙方无须退还其他费用及押金；
                 if (materialDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
                     if (orderMaterialDO.getRentType() == 2) {//判断月
 
@@ -152,21 +161,17 @@ public class PenaltySupport {
                         SqlLogInterceptor.setExecuteSql("skip print statementService.queryStatementOrderDetailByOrderId  sql ......");
                         ServiceResult<String, StatementOrder> statementOrderServiceResult = statementService.queryStatementOrderDetailByOrderId(orderDO.getOrderNo());
                         List<StatementOrderDetail> statementOrderDetailList = statementOrderServiceResult.getResult().getStatementOrderDetailList();
-                        List<StatementOrderDetail> yesPayList = new ArrayList<>();
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
-                        List<StatementOrderDetail> noPayList = new ArrayList<>();
-                        for(int j=0;j<statementOrderDetailList.size();j++){
-                            if(statementOrderDetailList.get(j).getOrderItemType() == 2 && statementOrderDetailList.get(j).getStatementDetailType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2){
-                                if(orderMaterialDO.getMaterialName().equals(statementOrderDetailList.get(j).getItemName())){
-                                    if(total.equals(statementOrderDetailList.get(j).getItemCount())){
-                                        if(price.equals(statementOrderDetailList.get(j).getUnitAmount())){
-                                            if(statementOrderDetailList.get(j).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED){
-                                                yesPayList.add(statementOrderDetailList.get(j));
-                                                yesPay = BigDecimalUtil.add(yesPay,statementOrderDetailList.get(j).getStatementDetailAmount());
-                                            }else{
-                                                noPayList.add(statementOrderDetailList.get(j));
-                                                noPay = BigDecimalUtil.add(noPay,statementOrderDetailList.get(j).getStatementDetailAmount());
+                        for (int j = 0; j < statementOrderDetailList.size(); j++) {
+                            if (statementOrderDetailList.get(j).getOrderItemType() == 2 && statementOrderDetailList.get(j).getStatementDetailType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2) {
+                                if (orderMaterialDO.getMaterialName().equals(statementOrderDetailList.get(j).getItemName())) {
+                                    if (total.equals(statementOrderDetailList.get(j).getItemCount())) {
+                                        if (price.equals(statementOrderDetailList.get(j).getUnitAmount())) {
+                                            if (statementOrderDetailList.get(j).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) {
+                                                yesPay = BigDecimalUtil.add(yesPay, statementOrderDetailList.get(j).getStatementDetailAmount());
+                                            } else {
+                                                noPay = BigDecimalUtil.add(noPay, statementOrderDetailList.get(j).getStatementDetailAmount());
                                             }
                                         }
                                     }
@@ -174,15 +179,14 @@ public class PenaltySupport {
                             }
                         }
                         //计算平均物料的价格
-                        BigDecimal average = BigDecimalUtil.div(noPay,new BigDecimal(orderMaterialDO.getMaterialCount()),2);
+                        BigDecimal average = BigDecimalUtil.div(noPay, new BigDecimal(orderMaterialDO.getMaterialCount()), 2);
                         //计算退货数量的剩馀租金
-                        BigDecimal returnPrice = BigDecimalUtil.mul(average,new BigDecimal(total));
-
+                        BigDecimal returnPrice = BigDecimalUtil.mul(average, new BigDecimal(total));
                         materialTotal = BigDecimalUtil.div(returnPrice, new BigDecimal(2), 2);
                     }
                 } else if (materialDO.getIsReturnAnyTime() == CommonConstant.YES) {
                     if (orderMaterialDO.getRentType() == 2) {//判断月
-                        materialTotal = materialAndProductTotal(materialPrice, orderDO.getRentStartTime(),orderDO.getRentTimeLength(), returnOrderDO.getReturnTime());
+                        materialTotal = materialAndProductTotal(materialPrice, orderDO.getRentStartTime(), orderDO.getRentTimeLength(), returnOrderDO.getReturnTime());
                     }
                 }
                 materialPenalty = BigDecimalUtil.add(materialPenalty, materialTotal);
@@ -193,51 +197,51 @@ public class PenaltySupport {
         BigDecimal productTotal = new BigDecimal(0);
         for (int i = 0; i < returnOrderDO.getReturnOrderProductDOList().size(); i++) {
             ProductSkuDO productSkuDO = productSkuMapper.findById(returnOrderDO.getReturnOrderProductDOList().get(i).getReturnProductSkuId());
-            if(productSkuDO == null){
+            if (productSkuDO == null) {
                 result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                 return result;
             }
             ProductDO productDO = productMapper.findById(productSkuDO.getProductId());
-            if(productDO == null){
+            if (productDO == null) {
                 result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
                 return result;
             }
             //todo 计算订单设备相同（全新次新出租价格不同问题）
             SqlLogInterceptor.setExecuteSql("skip print returnOrderProductEquipmentMapper.findByReturnOrderProductId  sql ......");
             List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDO = returnOrderProductEquipmentMapper.findByReturnOrderProductId(returnOrderDO.getReturnOrderProductDOList().get(i).getId());
-            if(returnOrderProductEquipmentDO == null){
+            if (returnOrderProductEquipmentDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
-            Map<BigDecimal,Integer> map = new HashMap<>();
+            Map<BigDecimal, Integer> map = new HashMap<>();
             BigDecimal amount = null;
             Integer count = 1;
-            for(int y=0;y<returnOrderProductEquipmentDO.size();y++){
-                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(y).getOrderNo(),returnOrderProductEquipmentDO.get(y).getEquipmentNo());
-                if(amount == null){
+            for (int y = 0; y < returnOrderProductEquipmentDO.size(); y++) {
+                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(y).getOrderNo(), returnOrderProductEquipmentDO.get(y).getEquipmentNo());
+                if (amount == null) {
                     amount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
-                    map.put(amount,count);
+                    map.put(amount, count);
                     count++;
-                }else if(orderProductEquipmentDO.getProductEquipmentUnitAmount().equals(amount)){
+                } else if (orderProductEquipmentDO.getProductEquipmentUnitAmount().equals(amount)) {
                     amount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
-                    map.put(amount,count);
+                    map.put(amount, count);
                     count++;
-                }else{
-                    //todo 如果退货 新 旧 新 旧 退 有问题
+                } else {
+                    //todo 如果依据商品价格 退货 新 旧 新 旧 退 有问题
                     amount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
                     count = 1;
-                    map.put(amount,count);
+                    map.put(amount, count);
                     count++;
                 }
             }
 
-            OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(0).getOrderNo(),returnOrderProductEquipmentDO.get(0).getEquipmentNo());
-            if(orderProductEquipmentDO == null){
+            OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(0).getOrderNo(), returnOrderProductEquipmentDO.get(0).getEquipmentNo());
+            if (orderProductEquipmentDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
             OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
-            if(orderProductDO == null){
+            if (orderProductDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
@@ -246,7 +250,6 @@ public class PenaltySupport {
                 result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                 return result;
             }
-
 
             BigDecimal price = null;
             Integer total = 0;
@@ -266,21 +269,17 @@ public class PenaltySupport {
                         SqlLogInterceptor.setExecuteSql("skip print statementService.queryStatementOrderDetailByOrderId  sql ......");
                         ServiceResult<String, StatementOrder> statementOrderServiceResult = statementService.queryStatementOrderDetailByOrderId(orderDO.getOrderNo());
                         List<StatementOrderDetail> statementOrderDetailList = statementOrderServiceResult.getResult().getStatementOrderDetailList();
-                        List<StatementOrderDetail> yesPayList = new ArrayList<>();
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
-                        List<StatementOrderDetail> noPayList = new ArrayList<>();
-                        for(int j=0;j<statementOrderDetailList.size();j++){
-                            if(statementOrderDetailList.get(j).getOrderItemType() == 1 && statementOrderDetailList.get(j).getStatementDetailType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2){
-                                if((orderProductDO.getProductName()+orderProductDO.getProductSkuName()).equals(statementOrderDetailList.get(j).getItemName())){
-                                    if(total.equals(statementOrderDetailList.get(j).getItemCount())){
-                                        if(price.equals(statementOrderDetailList.get(j).getUnitAmount())){
-                                            if(statementOrderDetailList.get(j).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED){
-                                                yesPayList.add(statementOrderDetailList.get(j));
-                                                yesPay = BigDecimalUtil.add(yesPay,statementOrderDetailList.get(j).getStatementDetailAmount());
-                                            }else{
-                                                noPayList.add(statementOrderDetailList.get(j));
-                                                noPay = BigDecimalUtil.add(noPay,statementOrderDetailList.get(j).getStatementDetailAmount());
+                        for (int j = 0; j < statementOrderDetailList.size(); j++) {
+                            if (statementOrderDetailList.get(j).getOrderItemType() == 1 && statementOrderDetailList.get(j).getStatementDetailType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2) {
+                                if ((orderProductDO.getProductName() + orderProductDO.getProductSkuName()).equals(statementOrderDetailList.get(j).getItemName())) {
+                                    if (total.equals(statementOrderDetailList.get(j).getItemCount())) {
+                                        if (price.equals(statementOrderDetailList.get(j).getUnitAmount())) {
+                                            if (statementOrderDetailList.get(j).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) {
+                                                yesPay = BigDecimalUtil.add(yesPay, statementOrderDetailList.get(j).getStatementDetailAmount());
+                                            } else {
+                                                noPay = BigDecimalUtil.add(noPay, statementOrderDetailList.get(j).getStatementDetailAmount());
                                             }
                                         }
                                     }
@@ -288,23 +287,18 @@ public class PenaltySupport {
                             }
                         }
                         //计算平均物料的价格
-                        BigDecimal average = BigDecimalUtil.div(noPay,new BigDecimal(orderProductDO.getProductCount()),2);
+                        BigDecimal average = BigDecimalUtil.div(noPay, new BigDecimal(orderProductDO.getProductCount()), 2);
                         //计算退货数量的剩馀租金
-                        BigDecimal returnPrice = BigDecimalUtil.mul(average,new BigDecimal(total));
-
+                        BigDecimal returnPrice = BigDecimalUtil.mul(average, new BigDecimal(total));
                         productTotal = BigDecimalUtil.div(returnPrice, new BigDecimal(2), 2);
                     }
                 } else if (productDO.getIsReturnAnyTime() == CommonConstant.YES) {
                     if (orderProductDO.getRentType() == 2) {//判断月
-                        productTotal = materialAndProductTotal(productPrice, orderDO.getRentStartTime(),orderDO.getRentTimeLength(), returnOrderDO.getReturnTime());
+                        productTotal = materialAndProductTotal(productPrice, orderDO.getRentStartTime(), orderDO.getRentTimeLength(), returnOrderDO.getReturnTime());
                     }
                 }
                 productPenalty = BigDecimalUtil.add(productPenalty, productTotal);
             }
-
-
-
-
         }
         BigDecimal totalPenalty = BigDecimalUtil.add(materialPenalty, productPenalty);
 
@@ -313,7 +307,7 @@ public class PenaltySupport {
         return result;
     }
 
-    public BigDecimal materialAndProductTotal(BigDecimal price,Date rentStartTime,Integer rentTimeLength, Date returnTime) {
+    public BigDecimal materialAndProductTotal(BigDecimal price, Date rentStartTime, Integer rentTimeLength, Date returnTime) {
         /*
          * ①若约定租期为6个月以上，租满6个月之后退还，凌雄租赁不收取额外违约金，只需由客户承担退货运费；
          * 若6个月内退还，实际租期≤3个月，将收取3个月租金作为违约金，并由客户自己承担退货运费；
@@ -347,41 +341,51 @@ public class PenaltySupport {
         return Total;
     }
 
+    /**
+     * k3违约金
+     *
+     * @param returnOrderNo
+     * @return
+     * @author kai
+     *
+     */
     public ServiceResult<String, BigDecimal> k3OrderPenalty(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
 
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
-        if(k3ReturnOrderDO == null){
+        if (k3ReturnOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
 
         BigDecimal productPenalty = new BigDecimal(0);
         BigDecimal productTotal = new BigDecimal(0);
-        for(int i=0;i<k3ReturnOrderDO.getK3ReturnOrderDetailDOList().size();i++){
+        for (int i = 0; i < k3ReturnOrderDO.getK3ReturnOrderDetailDOList().size(); i++) {
             SqlLogInterceptor.setExecuteSql("skip print k3Service.queryOrder  sql ......");
             ServiceResult<String, Order> k3Order = k3Service.queryOrder(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderNo());
-            if(k3Order == null){
+            if (k3Order == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
+            //todo 物料的违约金判别（目前只有商品）
+
             //todo K3商品编码与ERP商品编码不一致 先取ERP订单判别(看后续更改用什么查询)
 
             //todo 新旧机同时名称 金额价格不同
 
             OrderDO orderDO = orderMapper.findByOrderNo(k3Order.getResult().getOrderNo());
-            if(orderDO == null){
+            if (orderDO == null) {
                 result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                 return result;
             }
             List<OrderProductDO> orderProductDO = orderProductMapper.findByOrderId(orderDO.getId());
-            if(orderDO == null){
+            if (orderDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
 
-            for(int j=0;j<orderProductDO.size();j++){
-                if(orderProductDO.get(j).getProductName().equals(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductName())){
+            for (int j = 0; j < orderProductDO.size(); j++) {
+                if (orderProductDO.get(j).getProductName().equals(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductName())) {
                     ProductDO productDO = productMapper.findById(orderProductDO.get(j).getProductId());
                     //设备单价与数量相乘
                     BigDecimal productPrice = BigDecimalUtil.mul((orderProductDO.get(j).getProductUnitAmount()), new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
@@ -392,21 +396,17 @@ public class PenaltySupport {
                         SqlLogInterceptor.setExecuteSql("skip print statementService.queryStatementOrderDetailByOrderId  sql ......");
                         ServiceResult<String, StatementOrder> statementOrderServiceResult = statementService.queryStatementOrderDetailByOrderId(orderDO.getOrderNo());
                         List<StatementOrderDetail> statementOrderDetailList = statementOrderServiceResult.getResult().getStatementOrderDetailList();
-                        List<StatementOrderDetail> yesPayList = new ArrayList<>();
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
-                        List<StatementOrderDetail> noPayList = new ArrayList<>();
-                        for(int z=0;z<statementOrderDetailList.size();z++){
-                            if(statementOrderDetailList.get(z).getOrderItemType() == 1 && statementOrderDetailList.get(z).getStatementDetailType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2){
-                                if((orderProductDO.get(j).getProductName()+orderProductDO.get(j).getProductSkuName()).equals(statementOrderDetailList.get(z).getItemName())){
-                                    if(orderProductDO.get(j).getProductCount().equals(statementOrderDetailList.get(z).getItemCount())){
-                                        if(orderProductDO.get(j).getProductUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())){
-                                            if(statementOrderDetailList.get(z).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED){
-                                                yesPayList.add(statementOrderDetailList.get(z));
-                                                yesPay = BigDecimalUtil.add(yesPay,statementOrderDetailList.get(z).getStatementDetailAmount());
-                                            }else{
-                                                noPayList.add(statementOrderDetailList.get(z));
-                                                noPay = BigDecimalUtil.add(noPay,statementOrderDetailList.get(z).getStatementDetailAmount());
+                        for (int z = 0; z < statementOrderDetailList.size(); z++) {
+                            if (statementOrderDetailList.get(z).getOrderItemType() == 1 && statementOrderDetailList.get(z).getStatementDetailType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2) {
+                                if ((orderProductDO.get(j).getProductName() + orderProductDO.get(j).getProductSkuName()).equals(statementOrderDetailList.get(z).getItemName())) {
+                                    if (orderProductDO.get(j).getProductCount().equals(statementOrderDetailList.get(z).getItemCount())) {
+                                        if (orderProductDO.get(j).getProductUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())) {
+                                            if (statementOrderDetailList.get(z).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) {
+                                                yesPay = BigDecimalUtil.add(yesPay, statementOrderDetailList.get(z).getStatementDetailAmount());
+                                            } else {
+                                                noPay = BigDecimalUtil.add(noPay, statementOrderDetailList.get(z).getStatementDetailAmount());
                                             }
                                         }
                                     }
@@ -414,15 +414,14 @@ public class PenaltySupport {
                             }
                         }
                         //计算平均物料的价格
-                        BigDecimal average = BigDecimalUtil.div(noPay,new BigDecimal(orderProductDO.get(j).getProductCount()),2);
+                        BigDecimal average = BigDecimalUtil.div(noPay, new BigDecimal(orderProductDO.get(j).getProductCount()), 2);
                         //计算退货数量的剩馀租金
-                        BigDecimal returnPrice = BigDecimalUtil.mul(average,new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
-
+                        BigDecimal returnPrice = BigDecimalUtil.mul(average, new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
                         productTotal = BigDecimalUtil.div(returnPrice, new BigDecimal(2), 2);
 
-                    }else if(productDO.getIsReturnAnyTime() == CommonConstant.YES){
+                    } else if (productDO.getIsReturnAnyTime() == CommonConstant.YES) {
                         if (orderProductDO.get(j).getRentType() == 2) {//判断月
-                            productTotal = materialAndProductTotal(productPrice, k3Order.getResult().getRentStartTime(),k3Order.getResult().getRentTimeLength(), k3ReturnOrderDO.getReturnTime());
+                            productTotal = materialAndProductTotal(productPrice, k3Order.getResult().getRentStartTime(), k3Order.getResult().getRentTimeLength(), k3ReturnOrderDO.getReturnTime());
                         }
                     }
                 }
