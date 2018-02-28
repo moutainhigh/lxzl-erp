@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.product;
 
+import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -17,4 +18,9 @@ public interface ProductCategoryPropertyValueMapper extends BaseMysqlDAO<Product
     List<ProductCategoryPropertyValueDO> findByCategoryId(@Param("categoryId") Integer categoryId);
     List<ProductCategoryPropertyValueDO> findByMaterialTypeAndCapacityValue(@Param("materialType") Integer materialType,
                                                                             @Param("capacityValue") Double capacityValue);
+
+    ProductCategoryPropertyValueDO findByPropertyValueNameAndCategoryId(@Param("propertyValueName")String propertyValueName,
+                                                                        @Param("categoryId")Integer categoryId);
+
+    List<ProductCategoryPropertyValueDO> findListByPropertyIdAndCategoryId(@Param("propertyId")Integer propertyId, @Param("categoryId")Integer categoryId);
 }
