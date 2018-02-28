@@ -17,4 +17,6 @@ public interface ReturnOrderMaterialBulkMapper extends BaseMysqlDAO<ReturnOrderM
 	void saveList(@Param("returnOrderMaterialBulkDOList") List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDOList);
 
 	List<ReturnOrderMaterialBulkDO> findByReturnOrderNo(@Param("returnOrderNo") String returnOrderNo);
+
+	List<ReturnOrderMaterialBulkDO> findByReturnOrderMaterialId(@Param("returnOrderMaterialId") Integer returnOrderMaterialId);
 }

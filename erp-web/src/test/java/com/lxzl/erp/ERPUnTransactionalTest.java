@@ -46,9 +46,9 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
         try {
 //            sessionResult = getLoginSession("lxcs","123456");//采购部审核人
 //            sessionResult = getLoginSession("liuke","Lxzl123456");
-//            sessionResult = getLoginSession("admin", "Lxzl123456");
+            sessionResult = getLoginSession("admin", "Lxzl123456");
 //            sessionResult = getLoginSession("maotao", "Lxzl123456");
-            sessionResult = getLoginSession("xiaoluyu", "Lxzl123456");
+//            sessionResult = getLoginSession("xiaoluyu", "Lxzl123456");
 //            sessionResult = getLoginSession("chenchao", "Lxzl123456");
             this.session = sessionResult.mockHttpSession;
         } catch (Exception e) {

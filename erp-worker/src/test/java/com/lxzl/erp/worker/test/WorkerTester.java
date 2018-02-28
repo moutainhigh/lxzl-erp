@@ -1,8 +1,10 @@
 package com.lxzl.erp.worker.test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.lxzl.se.core.quartz.config.QuartzParameter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,24 +35,24 @@ public class WorkerTester extends BaseUnTransactionalTest {
 
 	@Test
 	public void testQuartz() {
-		String schedName = "erp-workerScheduler";
-		String jobName = "统计每日销售数据";
-		String jobGroup = "统计销售数据组";
-		String jobClassName = "countAmountJob";
-		String description = "统计每日销售数据";
+		String schedName = "workerMonitorScheduler";
+		String jobName = "定时检查逾期结算单任务";
+		String jobGroup = "定时检查逾期结算单任务组";
+		String jobClassName = "statementOverdueJob";
+		String description = "每天1点检查前一天逾期情况，如果没交钱，算逾期";
 		boolean isRecovery = false;
-		String triggerName = "每日执行统计销售数据任务";
-		String triggerGroup = "执行统计销售数据任务组";
+		String triggerName = "执行定时检查逾期任务";
+		String triggerGroup = "执行定时检查逾期任务组";
 		boolean isCronTrigger = true;
-		String expression = "0 0 0 * * ?"; //每天0点触发
+		String expression = "0 0 1 * * ?"; //1分钟執行一次
 		Map<String, String> extraInfo = new HashMap<String, String>();
-		extraInfo.put("extra", "demo");
-		quartzManager.getAllJobs();
-		quartzManager.saveOrUpdateJob(schedName, jobName, jobGroup, jobClassName, description, isRecovery, triggerName, triggerGroup, isCronTrigger,
+		extraInfo.put("jobSays", "Handle overdue Statement Order!");
+		List<QuartzParameter> quartzParameterList = quartzManager.getAllJobs();
+		boolean success = quartzManager.saveOrUpdateJob(schedName, jobName, jobGroup, jobClassName, description, isRecovery, triggerName, triggerGroup, isCronTrigger,
 				expression, null, null, extraInfo);
 
 		try {
-			Thread.sleep(5000l);
+			Thread.sleep(1000l);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

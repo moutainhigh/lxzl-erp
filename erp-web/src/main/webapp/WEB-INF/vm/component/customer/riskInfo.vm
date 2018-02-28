@@ -63,6 +63,13 @@
                             </td>
                             <td>{{returnVisitFrequency}}个月</td>
                         </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-circle text-primary fs8 pr15"></i>
+                                <span>是否是全额押金客户</span>
+                            </td>
+                            <td>{{#boolText}}{{isFullDeposit}}{{/boolText}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

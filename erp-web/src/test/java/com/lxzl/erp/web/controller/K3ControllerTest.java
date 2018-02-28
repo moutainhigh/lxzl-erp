@@ -15,6 +15,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ import java.util.List;
  */
 public class K3ControllerTest extends ERPUnTransactionalTest {
 
+    @Autowired
+    private PenaltySupport penaltySupport;
 
     @Test
     public void queryOrder() throws Exception {
@@ -312,6 +315,13 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         K3ChangeOrderQueryParam param = new K3ChangeOrderQueryParam();
         param.setChangeOrderNo("ff97b7d9cfab4a7bae468be48e1f1ee1");
         TestResult testResult = getJsonTestResult("/k3/queryChangeOrderByNo", param);
+    }
+
+    @Test
+    public void k3OrderPenalty() throws Exception {
+        String returnOrderNo = "d5cbf55b320f49b99b020cd8e725d868";
+        ServiceResult<String, BigDecimal> totalPenalty = penaltySupport.k3OrderPenalty(returnOrderNo);
+        System.out.println(totalPenalty);
     }
 
 }

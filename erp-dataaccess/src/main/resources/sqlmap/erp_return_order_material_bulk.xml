@@ -27,6 +27,11 @@
 		WHERE eromb.return_order_no = #{returnOrderNo, jdbcType=VARCHAR} AND eromb.data_status = 1
 	</select>
 
+	<select id="findByReturnOrderMaterialId" resultMap="ReturnOrderMaterialBulkDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_return_order_material_bulk eromb
+		WHERE eromb.return_order_material_id = #{returnOrderMaterialId, jdbcType=INTEGER} AND eromb.data_status = 1
+	</select>
+
 	<select id="findById" resultMap="ReturnOrderMaterialBulkDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_return_order_material_bulk eromb 
 		WHERE eromb.id = #{id, jdbcType=INTEGER} AND eromb.data_status = 1 
