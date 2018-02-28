@@ -31,10 +31,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderProductEquipment
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.*;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
@@ -47,7 +51,6 @@ import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
-import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
@@ -863,7 +866,8 @@ public class StatementServiceImpl implements StatementService {
                             return result;
                         }
                         Integer productId = orderProductDO.getProductId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId;
+                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为订单物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
@@ -873,40 +877,50 @@ public class StatementServiceImpl implements StatementService {
                             return result;
                         }
                         Integer materialId = orderMaterialDO.getMaterialId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId;
+                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为订单其他时
                     if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType();
-                        hashMap.put(key, statementOrderDetail);
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType()+"-"+statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
+                        hashMap.put(key,statementOrderDetail);
                         continue;
                     }
                 }
                 if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
                     //为退还商品时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
-                        ReturnOrderProductDO returnOrderProductDO = returnOrderProductMapper.findById(statementOrderDetail.getOrderItemReferId());
-                        if (returnOrderProductDO == null) {
+                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (k3ReturnOrderDetailDO == null) {
                             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
                             return result;
                         }
-                        Integer returnProductSkuId = returnOrderProductDO.getReturnProductSkuId();
-                        ProductSkuDO productSkuDO = productSkuMapper.findById(returnProductSkuId);
-                        if (productSkuDO == null) {
-                            result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                        OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                        if (orderProductDO == null) {
+                            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                            return result;
                         }
-                        Integer productId = productSkuDO.getProductId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId;
+                        Integer productId = orderProductDO.getProductId();
+                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为退还物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
-                        ReturnOrderMaterialDO returnOrderMaterialDO = returnOrderMaterialMapper.findById(statementOrderDetail.getOrderItemReferId());
-                        if (returnOrderMaterialDO == null) {
+                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (k3ReturnOrderDetailDO == null) {
                             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
                             return result;
                         }
-                        Integer returnMaterialId = returnOrderMaterialDO.getReturnMaterialId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + returnMaterialId;
+                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                        OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                        if (orderMaterialDO == null) {
+                            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                            return result;
+                        }
+                        Integer materialId = orderMaterialDO.getMaterialId();
+                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                 }
 
@@ -936,6 +950,7 @@ public class StatementServiceImpl implements StatementService {
 
                     newStatementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailAmount(), statementOrderDetail.getStatementDetailAmount()));
 
+                    newStatementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
                 } else {
                     //各项总金额
                     hashMap.put(key, statementOrderDetail);
@@ -1004,7 +1019,8 @@ public class StatementServiceImpl implements StatementService {
                             return result;
                         }
                         Integer productId = orderProductDO.getProductId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId;
+                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为订单物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
@@ -1014,40 +1030,50 @@ public class StatementServiceImpl implements StatementService {
                             return result;
                         }
                         Integer materialId = orderMaterialDO.getMaterialId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId;
+                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为订单其他时
                     if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType();
-                        hashMap.put(key, statementOrderDetail);
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType()+"-"+statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
+                        hashMap.put(key,statementOrderDetail);
                         continue;
                     }
                 }
                 if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
                     //为退还商品时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
-                        ReturnOrderProductDO returnOrderProductDO = returnOrderProductMapper.findById(statementOrderDetail.getOrderItemReferId());
-                        if (returnOrderProductDO == null) {
+                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (k3ReturnOrderDetailDO == null) {
                             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
                             return result;
                         }
-                        Integer returnProductSkuId = returnOrderProductDO.getReturnProductSkuId();
-                        ProductSkuDO productSkuDO = productSkuMapper.findById(returnProductSkuId);
-                        if (productSkuDO == null) {
-                            result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                        OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                        if (orderProductDO == null) {
+                            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                            return result;
                         }
-                        Integer productId = productSkuDO.getProductId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId;
+                        Integer productId = orderProductDO.getProductId();
+                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为退还物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
-                        ReturnOrderMaterialDO returnOrderMaterialDO = returnOrderMaterialMapper.findById(statementOrderDetail.getOrderItemReferId());
-                        if (returnOrderMaterialDO == null) {
+                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (k3ReturnOrderDetailDO == null) {
                             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
                             return result;
                         }
-                        Integer returnMaterialId = returnOrderMaterialDO.getReturnMaterialId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + returnMaterialId;
+                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                        OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                        if (orderMaterialDO == null) {
+                            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                            return result;
+                        }
+                        Integer materialId = orderMaterialDO.getMaterialId();
+                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                 }
 
@@ -1077,6 +1103,7 @@ public class StatementServiceImpl implements StatementService {
 
                     newStatementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailAmount(), statementOrderDetail.getStatementDetailAmount()));
 
+                    newStatementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
                 } else {
                     //各项总金额
                     hashMap.put(key, statementOrderDetail);
@@ -2102,7 +2129,8 @@ public class StatementServiceImpl implements StatementService {
                             return result;
                         }
                         Integer productId = orderProductDO.getProductId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId;
+                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为订单物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
@@ -2112,42 +2140,53 @@ public class StatementServiceImpl implements StatementService {
                             return result;
                         }
                         Integer materialId = orderMaterialDO.getMaterialId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId;
+                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为订单其他时
                     if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType();
-                        hashMap.put(key, statementOrderDetail);
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType()+"-"+statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
+                        hashMap.put(key,statementOrderDetail);
                         continue;
                     }
                 }
                 if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
                     //为退还商品时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
-                        ReturnOrderProductDO returnOrderProductDO = returnOrderProductMapper.findById(statementOrderDetail.getOrderItemReferId());
-                        if (returnOrderProductDO == null) {
+                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (k3ReturnOrderDetailDO == null) {
                             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
                             return result;
                         }
-                        Integer returnProductSkuId = returnOrderProductDO.getReturnProductSkuId();
-                        ProductSkuDO productSkuDO = productSkuMapper.findById(returnProductSkuId);
-                        if (productSkuDO == null) {
-                            result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                        OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
+                        if (orderProductDO == null) {
+                            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                            return result;
                         }
-                        Integer productId = productSkuDO.getProductId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId;
+                        Integer productId = orderProductDO.getProductId();
+                        Integer isNewProduct = orderProductDO.getIsNewProduct();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                     //为退还物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
-                        ReturnOrderMaterialDO returnOrderMaterialDO = returnOrderMaterialMapper.findById(statementOrderDetail.getOrderItemReferId());
-                        if (returnOrderMaterialDO == null) {
+                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
+                        if (k3ReturnOrderDetailDO == null) {
                             result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
                             return result;
                         }
-                        Integer returnMaterialId = returnOrderMaterialDO.getReturnMaterialId();
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + returnMaterialId;
+                        String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                        OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                        if (orderMaterialDO == null) {
+                            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                            return result;
+                        }
+                        Integer materialId = orderMaterialDO.getMaterialId();
+                        Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial+"-" + statementOrderDetail.getOrderNo()+"-" + statementOrderDetail.getItemRentType();
                     }
                 }
+
 
                 if (key == null) {
                     continue;
@@ -2168,7 +2207,7 @@ public class StatementServiceImpl implements StatementService {
                     newStatementOrderDetail.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailDepositReturnAmount(), statementOrderDetail.getStatementDetailDepositReturnAmount()));
                     newStatementOrderDetail.setStatementDetailCorrectAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailCorrectAmount(), statementOrderDetail.getStatementDetailCorrectAmount()));
                     newStatementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailAmount(), statementOrderDetail.getStatementDetailAmount()));
-
+                    newStatementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
                 } else {
                     //各项总金额
                     hashMap.put(key, statementOrderDetail);
@@ -2619,7 +2658,7 @@ public class StatementServiceImpl implements StatementService {
     private K3MappingCustomerMapper k3MappingCustomerMapper;
 
     @Autowired
-    private ReturnOrderProductMapper returnOrderProductMapper;
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
     @Autowired
     private ProductSkuMapper productSkuMapper;
