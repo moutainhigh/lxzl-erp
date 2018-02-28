@@ -25,6 +25,7 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
@@ -34,6 +35,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.UUIDUtil;
@@ -215,7 +217,7 @@ public class K3ServiceImpl implements K3Service {
     public ServiceResult<String, Order> queryOrder(String orderNo) {
         ServiceResult<String, Order> result = new ServiceResult<>();
 
-        List<Order> orderList = new ArrayList<>();
+        Order order = new Order();
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -229,11 +231,10 @@ public class K3ServiceImpl implements K3Service {
 
             JSONObject orderBills = (JSONObject) postResult.get("Data");
             List<JSONObject> k3OrderList = (List<JSONObject>) orderBills.get("bills");
-
             if (CollectionUtil.isNotEmpty(k3OrderList)) {
                 for (JSONObject obj : k3OrderList) {
                     String orderBill = obj.get("OrderBill").toString();
-                    Order order = JSON.parseObject(orderBill, Order.class);
+                    order = JSON.parseObject(orderBill, Order.class);
                     convertOrderInfo(order);
                     String address = obj.get("Address").toString();
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
@@ -249,10 +250,12 @@ public class K3ServiceImpl implements K3Service {
                     order.setOrderProductList(orderProductList);
 
                     if (orderNo.equals(order.getOrderNo())) {
-                        orderList.add(order);
+                        ServiceResult<String, com.lxzl.erp.common.domain.order.pojo.Order> erpOrderResult = orderService.queryOrderByNo(order.getOrderNo());
+                        if (ErrorCode.SUCCESS.equals(erpOrderResult.getErrorCode())) {
+
+                        }
                         break;
                     }
-
                 }
             }
         } catch (Exception e) {
@@ -260,7 +263,7 @@ public class K3ServiceImpl implements K3Service {
             throw new BusinessException(e.getMessage());
         }
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(CollectionUtil.isNotEmpty(orderList) ? orderList.get(0) : null);
+        result.setResult(order);
         return result;
     }
 
@@ -445,7 +448,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
-        K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder,K3ChangeOrderDO.class);
+        K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder, K3ChangeOrderDO.class);
         k3ChangeOrderDO.setChangeOrderNo(UUIDUtil.getUUID());
         k3ChangeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         k3ChangeOrderDO.setChangeOrderStatus(CommonConstant.COMMON_CONSTANT_NO);
@@ -456,8 +459,8 @@ public class K3ServiceImpl implements K3Service {
         k3ChangeOrderMapper.save(k3ChangeOrderDO);
 
         List<K3ChangeOrderDetail> k3ChangeOrderDetailList = k3ChangeOrder.getK3ChangeOrderDetailList();
-        if(CollectionUtil.isNotEmpty(k3ChangeOrderDetailList)){
-            for(K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrderDetailList){
+        if (CollectionUtil.isNotEmpty(k3ChangeOrderDetailList)) {
+            for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrderDetailList) {
                 K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
                 k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
                 k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -598,7 +601,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if(CollectionUtil.isEmpty(k3ChangeOrderDO.getK3ChangeOrderDetailDOList())){
+        if (CollectionUtil.isEmpty(k3ChangeOrderDO.getK3ChangeOrderDetailDOList())) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
@@ -631,4 +634,7 @@ public class K3ServiceImpl implements K3Service {
     private K3MappingCustomerMapper k3MappingCustomerMapper;
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private OrderService orderService;
 }

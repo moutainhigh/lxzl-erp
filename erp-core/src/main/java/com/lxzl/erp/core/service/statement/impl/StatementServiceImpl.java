@@ -29,6 +29,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
@@ -41,6 +44,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCor
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
@@ -1012,6 +1018,183 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo) {
+        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
+        String buyerCustomerNo = k3ReturnOrderDO.getK3CustomerNo();
+        K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(buyerCustomerNo);
+        CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+        Integer buyerCustomerId = customerDO.getId();
+        Date statementDetailStartTime;
+        Date statementDetailEndTime;
+        // 其他的费用 包括服务费等费用
+        BigDecimal otherAmount = BigDecimalUtil.add(k3ReturnOrderDO.getLogisticsAmount(), k3ReturnOrderDO.getServiceAmount());
+
+        // 租金押金和设备押金
+        BigDecimal totalReturnRentDepositAmount = BigDecimal.ZERO, totalReturnDepositAmount = BigDecimal.ZERO;
+        Date returnTime = k3ReturnOrderDO.getReturnTime();
+        Date otherStatementTime = returnTime;
+
+        // TODO 完成原逻辑退货
+
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
+            for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                if (orderProductDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
+                    return result;
+                }
+
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
+                BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                BigDecimal thisReturnDepositAmount = BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                    for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
+                        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
+                        if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
+                            // 第一期如果支付了押金，就要退押金，否则不退了
+                            if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                                StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
+                                    totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
+                                    statementOrderDetailDO.setStatementDetailDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositReturnAmount(), thisReturnDepositAmount));
+                                    statementOrderDetailDO.setStatementDetailDepositReturnTime(currentTime);
+                                    statementOrderDO.setStatementDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositReturnAmount(), thisReturnDepositAmount));
+                                    statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_DEPOSIT, thisReturnDepositAmount, returnTime, loginUser.getUserId(), currentTime);
+                                }
+                                if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositReturnAmount()), thisReturnRentDepositAmount) >= 0) {
+                                    totalReturnRentDepositAmount = BigDecimalUtil.add(totalReturnRentDepositAmount, thisReturnRentDepositAmount);
+                                    statementOrderDetailDO.setStatementDetailRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), thisReturnRentDepositAmount));
+                                    statementOrderDetailDO.setStatementDetailRentDepositReturnTime(currentTime);
+                                    statementOrderDO.setStatementRentDepositReturnAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositReturnAmount(), thisReturnRentDepositAmount));
+                                    statementReturnSupport.saveStatementReturnRecord(statementOrderDO.getId(), statementOrderDO.getCustomerId(), statementOrderDetailDO.getOrderId(), statementOrderDetailDO.getOrderItemReferId(), StatementReturnType.RETURN_TYPE_RENT_DEPOSIT, thisReturnRentDepositAmount, returnTime, loginUser.getUserId(), currentTime);
+                                }
+                                statementOrderDetailMapper.update(statementOrderDetailDO);
+                                statementOrderMapper.update(statementOrderDO);
+                            }
+                            continue;
+                        }
+
+                        // 如果有押金还没交，不让退货
+                        if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+                            return result;
+                        }
+                        statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
+                        statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
+
+                        // 如果退货时间在结束时间之后，证明本期都没缴，不用处理，等待交
+                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
+                            continue;
+                        }
+                        BigDecimal needPayAmount = BigDecimal.ZERO;
+                        BigDecimal productUnitAmount = BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(k3ReturnOrderDetailDO.getProductCount()));
+                        if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
+                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, productUnitAmount);
+                                }
+                            } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProductDO.getPayMode())) {
+                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+                                    BigDecimal firstAmount = BigDecimalUtil.div(BigDecimalUtil.mul(orderProductDO.getProductAmount(), new BigDecimal(0.3)), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                                    // 30%期
+                                    if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
+                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
+                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+                                        needPayAmount = BigDecimalUtil.compare(needPayAmount, firstAmount) > 0 ? firstAmount : needPayAmount;
+                                    } else if (statementOrderDetailDO.getStatementDetailPhase() == 2) {
+                                        // 70% 期
+                                        // 加2的原因是算上前面30%的那一天
+                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 2;
+                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+                                        // 减掉上期的30%
+                                        needPayAmount = BigDecimalUtil.sub(needPayAmount, firstAmount);
+                                    }
+                                }
+                            } else {
+                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+                                    int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
+                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+                                }
+                            }
+                        }
+                        // 正常全额退
+                        BigDecimal payReturnAmount = BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE);
+                        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                            if (DateUtil.isSameDay(otherStatementTime, returnTime) || DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) < 0) {
+                                otherStatementTime = statementOrderDetailDO.getStatementExpectPayTime();
+                            }
+                        }
+                        // 退款金额，扣除未交款的部分
+                        payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
+
+                        String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT + "-" + orderProductDO.getId() + "-" + orderProductDO.getProductSkuId() + "-" + statementOrderDetailDO.getStatementExpectPayTime();
+                        if (addStatementOrderDetailDOMap.get(key) != null) {
+                            StatementOrderDetailDO thisStatementOrderDetailDO = addStatementOrderDetailDOMap.get(key);
+                            thisStatementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
+                            thisStatementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.add(thisStatementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1))));
+                            addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+                        } else {
+                            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT, k3ReturnOrderDetailDO.getId(), statementOrderDetailDO.getStatementExpectPayTime(), statementDetailStartTime, statementDetailEndTime, BigDecimalUtil.mul(payReturnAmount, new BigDecimal(-1)), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                            if (thisStatementOrderDetailDO != null) {
+                                thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                                thisStatementOrderDetailDO.setReturnReferId(statementOrderDetailDO.getId());
+                                addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+            String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.toString();
+            // 如果没有处理完差价，统一当天交钱
+            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_RETURN, k3ReturnOrderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER, BigInteger.ZERO.intValue(), otherStatementTime, returnTime, returnTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId());
+            if (thisStatementOrderDetailDO != null) {
+                thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
+                addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
+            }
+        }
+
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
+        if (!addStatementOrderDetailDOMap.isEmpty()) {
+            for (Map.Entry<String, StatementOrderDetailDO> entry : addStatementOrderDetailDOMap.entrySet()) {
+                addStatementOrderDetailDOList.add(entry.getValue());
+            }
+        }
+        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
+
+        // TODO 退货完成后要退还租金押金和设备押金   totalReturnRentDepositAmount,totalReturnDepositAmount
+        if (BigDecimalUtil.compare(totalReturnRentDepositAmount, BigDecimal.ZERO) > 0
+                || BigDecimalUtil.compare(totalReturnDepositAmount, BigDecimal.ZERO) > 0) {
+            ServiceResult<String, Boolean> returnDepositResult = paymentService.returnDeposit(buyerCustomerNo, totalReturnRentDepositAmount, totalReturnDepositAmount);
+            if (!ErrorCode.SUCCESS.equals(returnDepositResult.getErrorCode()) || !returnDepositResult.getResult()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(returnDepositResult.getErrorCode());
+                return result;
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Override
@@ -2024,4 +2207,13 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private StatementOrderCorrectDetailMapper statementOrderCorrectDetailMapper;
+
+    @Autowired
+    private K3ReturnOrderMapper k3ReturnOrderMapper;
+
+    @Autowired
+    private K3ChangeOrderMapper k3ChangeOrderMapper;
+
+    @Autowired
+    private K3MappingCustomerMapper k3MappingCustomerMapper;
 }
