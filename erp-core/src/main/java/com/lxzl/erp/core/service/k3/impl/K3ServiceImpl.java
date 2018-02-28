@@ -22,6 +22,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
@@ -252,9 +253,23 @@ public class K3ServiceImpl implements K3Service {
                     if (orderNo.equals(order.getOrderNo())) {
                         ServiceResult<String, com.lxzl.erp.common.domain.order.pojo.Order> erpOrderResult = orderService.queryOrderByNo(order.getOrderNo());
                         if (ErrorCode.SUCCESS.equals(erpOrderResult.getErrorCode())) {
-
+                            com.lxzl.erp.common.domain.order.pojo.Order dbOrder = erpOrderResult.getResult();
+                            order.setCreateUserRealName(dbOrder.getCreateUserRealName());
+                            order.getOrderConsignInfo().setConsigneePhone(dbOrder.getOrderConsignInfo().getConsigneePhone());
+                            order.setActualReturnTime(dbOrder.getActualReturnTime());
+                            order.setHighTaxRate(dbOrder.getHighTaxRate());
+                            order.setLowTaxRate(dbOrder.getLowTaxRate());
+                            order.setOrderStatus(dbOrder.getOrderStatus());
+                            List< com.lxzl.erp.common.domain.order.pojo.OrderProduct> dbOrderProductList = dbOrder.getOrderProductList();
+                            Map<Integer ,com.lxzl.erp.common.domain.order.pojo.OrderProduct> map = ListUtil.listToMap(dbOrderProductList,"id");
+                            for(OrderProduct orderProduct : orderProductList){
+                                com.lxzl.erp.common.domain.order.pojo.OrderProduct dbOrderProduct = map.get(orderProduct.getOrderProductId());
+                                if(dbOrderProduct!=null){
+                                    orderProduct.setProductSkuId(dbOrderProduct.getProductSkuId());
+                                    orderProduct.setProductSkuName(dbOrderProduct.getProductSkuName());
+                                }
+                            }
                         }
-                        break;
                     }
                 }
             }
