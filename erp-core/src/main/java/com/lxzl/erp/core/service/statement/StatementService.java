@@ -115,6 +115,7 @@ public interface StatementService extends BaseService {
      * @return 退货金额
      */
     ServiceResult<String, BigDecimal> createReturnOrderStatement(String returnOrderNo);
+    ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo);
 
     /**
      * 创建换货单结算单
@@ -123,6 +124,7 @@ public interface StatementService extends BaseService {
      * @return 差价
      */
     ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo);
+    ServiceResult<String, BigDecimal> createK3ChangeOrderStatement(String changeOrderNo);
 
     /**
      * 处理逾期的结算单

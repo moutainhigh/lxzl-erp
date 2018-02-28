@@ -1208,6 +1208,7 @@ public class StatementServiceImpl implements StatementService {
         }
     }
 
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createK3ReturnOrderStatement(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
@@ -1806,6 +1807,15 @@ public class StatementServiceImpl implements StatementService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, BigDecimal> createK3ChangeOrderStatement(String changeOrderNo) {
+        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createChangeOrderStatement(String changeOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         Date currentTime = new Date();
@@ -1954,7 +1964,7 @@ public class StatementServiceImpl implements StatementService {
         param.setIsNeedToPay(CommonConstant.COMMON_CONSTANT_YES);
         param.setStatementExpectPayStartTime(startTime);
         param.setStatementExpectPayEndTime(endTime);
-        param.setStatementOrderNo("LXSO-731826-20180215-00407");
+        param.setStatementOrderNo("LXSO-731828-20180205-00412");
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", 0);
         maps.put("pageSize", Integer.MAX_VALUE);
