@@ -1,6 +1,8 @@
 package com.lxzl.erp.core.service.product;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
 import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategory;
 import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
@@ -57,4 +59,44 @@ public interface ProductCategoryService extends BaseService {
      * @return 修改ID
      */
     ServiceResult<String, Integer> updateProductCategoryPropertyValue(ProductCategoryPropertyValue productCategoryPropertyValue);
+
+    /**
+     *增加产品的分类
+     *
+     * @param productCategoryProperty 产品分类
+     * @return
+     */
+    ServiceResult<String,Integer> addProductCategoryProperty(ProductCategoryProperty productCategoryProperty);
+
+    /**
+     * 删除不需要的商品分类属性
+     * @param productCategoryProperty
+     * @return
+     */
+    ServiceResult<String,Integer> deleteProductCategoryPropertyValue(ProductCategoryProperty productCategoryProperty);
+
+    /**
+     * 修改商品分类属性
+     *
+     * @param productCategoryProperty
+     * @return
+     */
+    ServiceResult<String,Integer> updateCategoryPropertyValue(ProductCategoryProperty productCategoryProperty);
+
+    /**
+     * 商品分类列表
+     *
+     * @param productCategoryPageParam 商品分类查询条件
+     * @return
+     */
+    ServiceResult<String,Page<ProductCategory>> pageProductCategory(ProductCategoryPageParam productCategoryPageParam);
+
+    /**
+     * 商品分类的详情
+     *
+     * @param productCategory
+     * @return
+     */
+    ServiceResult<String,ProductCategory> detailProductCategory(ProductCategory productCategory);
+
 }

@@ -36,6 +36,8 @@
         <result column="value_update_user" property="updateUser"/>
         <result column="value_update_time" property="updateTime"/>
     </resultMap>
+
+
     <sql id="column_List">
 		epcp.id as id,epcp.property_name as property_name,epcp.category_id as category_id,epcp.property_type as property_type,epcp.material_type as material_type,epcp.is_input as is_input,epcp.is_checkbox as is_checkbox,epcp.is_required as is_required,epcp.data_order as data_order,epcp.data_status as data_status,epcp.remark as remark,epcp.create_time as create_time,epcp.create_user as create_user,epcp.update_time as update_time,epcp.update_user as update_user
 	</sql>
@@ -182,4 +184,14 @@
         INSERT INTO erp_product_category_property
         <include refid="set_column_sql"/>
     </insert>
+
+    <select id="findByProductNameAndCategoryId" resultMap="ProductCategoryPropertyDO">
+        SELECT <include refid="column_List"/> FROM erp_product_category_property epcp WHERE
+        epcp.property_name = #{propertyName, jdbcType=VARCHAR} AND epcp.category_id = #{categoryId, jdbcType=INTEGER} AND epcp.data_status = 1
+    </select>
+
+    <select id="findListByCategoryId" resultMap="ProductCategoryPropertyDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/> FROM erp_product_category_property epcp WHERE
+        epcp.category_id = #{categoryId, jdbcType=INTEGER} AND epcp.data_status = 1
+    </select>
 </mapper>

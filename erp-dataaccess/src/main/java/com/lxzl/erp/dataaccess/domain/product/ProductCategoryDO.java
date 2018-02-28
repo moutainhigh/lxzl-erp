@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.product;
 
+import com.lxzl.erp.common.domain.product.pojo.ProductCategoryProperty;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -16,6 +17,8 @@ public class ProductCategoryDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private List<ProductCategoryDO> children;
+
+    private List<ProductCategoryPropertyDO> productCategoryPropertyDOList;
 
     public List<ProductCategoryDO> getChildren() {
         return children;
@@ -79,5 +82,13 @@ public class ProductCategoryDO extends BaseDO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public List<ProductCategoryPropertyDO> getProductCategoryPropertyDOList() {
+        return productCategoryPropertyDOList;
+    }
+
+    public void setProductCategoryPropertyDOList(List<ProductCategoryPropertyDO> productCategoryPropertyDOList) {
+        this.productCategoryPropertyDOList = productCategoryPropertyDOList;
     }
 }

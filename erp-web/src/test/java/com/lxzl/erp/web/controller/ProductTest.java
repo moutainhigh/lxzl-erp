@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.product.ProductCategoryPageParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.product.ProductQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.*;
@@ -156,5 +157,118 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductEquipmentQueryParam productEquipmentQueryParam = new ProductEquipmentQueryParam();
         productEquipmentQueryParam.setEquipmentNo("LX-EQUIPMENT-4000001-2017111110130");
         TestResult testResult = getJsonTestResult("/product/queryProductEquipmentDetail", productEquipmentQueryParam);
+    }
+
+    @Test
+    public void addProductCategoryProperty() throws Exception {
+        ProductCategoryProperty productCategoryProperty = new ProductCategoryProperty();
+        productCategoryProperty.setPropertyName("尺寸");
+        productCategoryProperty.setCategoryId(800003);
+        productCategoryProperty.setPropertyType(1);
+//        productCategoryProperty.setMaterialType(24);
+        productCategoryProperty.setDataOrder(20);
+
+        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = new ArrayList<>();
+
+        ProductCategoryPropertyValue productCategoryPropertyValue1 = new ProductCategoryPropertyValue();
+        productCategoryPropertyValue1.setPropertyValueName("21寸");
+        productCategoryPropertyValue1.setCategoryId(800003);
+        productCategoryPropertyValue1.setPropertyCapacityValue(21.00);
+        productCategoryPropertyValue1.setMaterialModelId(6);
+
+        ProductCategoryPropertyValue productCategoryPropertyValue2 = new ProductCategoryPropertyValue();
+        productCategoryPropertyValue2.setPropertyValueName("23寸");
+        productCategoryPropertyValue2.setCategoryId(800003);
+        productCategoryPropertyValue2.setPropertyCapacityValue(23.00);
+        productCategoryPropertyValue2.setMaterialModelId(5);
+
+
+        ProductCategoryPropertyValue productCategoryPropertyValue3 = new ProductCategoryPropertyValue();
+        productCategoryPropertyValue3.setPropertyValueName("24寸");
+        productCategoryPropertyValue3.setCategoryId(800003);
+        productCategoryPropertyValue3.setPropertyCapacityValue(24.00);
+        productCategoryPropertyValue3.setMaterialModelId(5);
+
+
+        productCategoryPropertyValueList.add(productCategoryPropertyValue1);
+        productCategoryPropertyValueList.add(productCategoryPropertyValue2);
+        productCategoryPropertyValueList.add(productCategoryPropertyValue3);
+
+        productCategoryProperty.setProductCategoryPropertyValueList(productCategoryPropertyValueList);
+
+        TestResult testResult = getJsonTestResult("/product/addProductCategoryProperty", productCategoryProperty);
+    }
+
+
+    @Test
+    public void deleteProductCategoryPropertyValue() throws Exception {
+        ProductCategoryProperty productCategoryProperty = new ProductCategoryProperty();
+        productCategoryProperty.setCategoryPropertyId(31);
+
+        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = new ArrayList<>();
+        ProductCategoryPropertyValue productCategoryPropertyValue1 = new ProductCategoryPropertyValue();
+        ProductCategoryPropertyValue productCategoryPropertyValue2 = new ProductCategoryPropertyValue();
+        ProductCategoryPropertyValue productCategoryPropertyValue3 = new ProductCategoryPropertyValue();
+
+        productCategoryPropertyValue1.setCategoryPropertyValueId(86);
+        productCategoryPropertyValue2.setCategoryPropertyValueId(87);
+        productCategoryPropertyValue3.setCategoryPropertyValueId(88);
+
+        productCategoryPropertyValueList.add(productCategoryPropertyValue1);
+        productCategoryPropertyValueList.add(productCategoryPropertyValue2);
+        productCategoryPropertyValueList.add(productCategoryPropertyValue3);
+
+        productCategoryProperty.setProductCategoryPropertyValueList(productCategoryPropertyValueList);
+
+        TestResult testResult = getJsonTestResult("/product/deleteProductCategoryPropertyValue", productCategoryProperty);
+    }
+
+    @Test
+    public void updateCategoryPropertyValue() throws Exception {
+        ProductCategoryProperty productCategoryProperty = new ProductCategoryProperty();
+        productCategoryProperty.setCategoryPropertyId(5);
+
+
+        List<ProductCategoryPropertyValue> productCategoryPropertyValueList = new ArrayList<>();
+        ProductCategoryPropertyValue productCategoryPropertyValue1 = new ProductCategoryPropertyValue();
+        ProductCategoryPropertyValue productCategoryPropertyValue2 = new ProductCategoryPropertyValue();
+
+        productCategoryPropertyValue1.setCategoryPropertyValueId(10);
+        productCategoryPropertyValue1.setPropertyValueName("I4_6400");
+//        productCategoryPropertyValue1.setPropertyCapacityValue(2048.00);
+        productCategoryPropertyValue1.setMaterialModelId(19);
+
+        productCategoryPropertyValue2.setCategoryPropertyValueId(11);
+        productCategoryPropertyValue2.setPropertyValueName("i7-001");
+//        productCategoryPropertyValue2.setPropertyCapacityValue(32);
+        productCategoryPropertyValue2.setMaterialModelId(32);
+
+
+        productCategoryPropertyValueList.add(productCategoryPropertyValue1);
+        productCategoryPropertyValueList.add(productCategoryPropertyValue2);
+
+        productCategoryProperty.setProductCategoryPropertyValueList(productCategoryPropertyValueList);
+
+
+        TestResult testResult = getJsonTestResult("/product/updateCategoryPropertyValue", productCategoryProperty);
+    }
+
+
+    @Test
+    public void pageProductCategory() throws Exception {
+        ProductCategoryPageParam productCategoryPageParam = new ProductCategoryPageParam();
+//        productCategoryPageParam.setCategoryType(1);
+        productCategoryPageParam.setPageNo(1);
+        productCategoryPageParam.setPageSize(5);
+
+        TestResult testResult = getJsonTestResult("/product/pageProductCategory", productCategoryPageParam);
+    }
+
+    @Test
+    public void detailProductCategory() throws Exception {
+        ProductCategory productCategory = new ProductCategory();
+        productCategory.setCategoryId(800001);
+
+        TestResult testResult = getJsonTestResult("/product/detailProductCategory", productCategory);
     }
 }

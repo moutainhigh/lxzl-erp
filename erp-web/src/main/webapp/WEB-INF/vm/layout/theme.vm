@@ -6,6 +6,7 @@
 <script type="text/javascript" src="${staticManagement}/loader.js?v=$version"></script>
 
 <script type="text/javascript">
-    common_load_css('${staticCommon}/rental/css','master.css');
+    common_load_css('${staticCommon}/rental/css','master.css','dropzone.css');
     management_load_css('${staticManagement}/css','master.css');
+##    common_load_css('${staticCommon}/rental/css','dropzone.css');
 </script>

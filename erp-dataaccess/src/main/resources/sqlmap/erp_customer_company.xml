@@ -272,4 +272,9 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 
 	</select>
+
+	<select id="findByDefaultAddressReferId" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc WHERE
+		ecc.default_address_refer_id = #{defaultAddressReferId,javaType=INTEGER} AND ecc.data_status = 1
+	</select>
 </mapper>

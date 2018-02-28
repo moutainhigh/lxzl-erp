@@ -144,6 +144,7 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(errorCode);
             return result;
         }
+
         errorCode = saveProductMaterial(productId, loginUser, currentTime);
         if (!ErrorCode.SUCCESS.equals(errorCode)) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 商品物料未保存成功

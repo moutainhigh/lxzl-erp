@@ -24,6 +24,19 @@
                         </label>
                     </div>
                 </div>
+                <div class="section row">
+                    <div class="section-divider mv40"><span>上传图片附件</span></div>
+                    <div class="tray-bin">
+                        <div class="atl-dropzone dropzoneImg" id="auditImgIdList">
+                            <div class="dz-default dz-message" >
+                                <span>
+                                    <i class="fa fa-cloud-upload"></i>
+                                    <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="panel-footer text-right">
                 <button type="submit" class="button btn-primary">确定</button>

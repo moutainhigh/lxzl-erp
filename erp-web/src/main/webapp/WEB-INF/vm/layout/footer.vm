@@ -13,6 +13,7 @@
 <script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${staticCommon}vendor/plugins/mustache/mustache.min.js"></script>
 <script type="text/javascript" src="${staticCommon}vendor/plugins/magnific/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
 
 <!-- Fixed Header Table -->
 <script type="text/javascript" src="${staticCommon}vendor/plugins/fixedHeaderTable/jquery.fixedheadertable.min.js"></script>
