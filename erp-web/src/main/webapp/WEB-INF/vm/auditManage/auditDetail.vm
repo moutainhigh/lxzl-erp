@@ -110,6 +110,15 @@
                                                 <div class="panel-header-menu pull-right mr10 text-muted fs12">{{verifyTimeFormat}}</div>
                                             </div>
                                             <div class="panel-body clearfix">
+                                                {{#imageListSource}}
+                                                <div class="row mb15">
+                                                    {{#imageListData}}
+                                                    <div class="col-xs-4" style="height: 200px" >
+                                                        <a class="gallery-item open-img-popup" data-imgs="{{imgListToJSONStringify}}" href="{{imgurl}}"><img src="{{imgurl}}" class="img-responsive" alt=""></a>
+                                                    </div>
+                                                    {{/imageListData}}
+                                                </div>
+                                                {{/imageListSource}}
                                                 <blockquote class="mbn ml10">
                                                     <p>{{verifyOpinion}}</p>
                                                     <small class="{{textClass}}">{{verifyStatusValue}}</small>
