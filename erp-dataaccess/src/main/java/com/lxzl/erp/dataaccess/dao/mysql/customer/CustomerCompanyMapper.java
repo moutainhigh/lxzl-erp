@@ -18,4 +18,6 @@ public interface CustomerCompanyMapper extends BaseMysqlDAO<CustomerCompanyDO> {
 	List<CustomerCompanyDO> findCustomerCompanyByParams(@Param("maps") Map<String, Object> paramMap);
 
 	Integer findCustomerCompanyCountByParams(@Param("maps") Map<String, Object> paramMap);
+
+    CustomerCompanyDO findByDefaultAddressReferId(@Param("defaultAddressReferId")Integer defaultAddressReferId);
 }
