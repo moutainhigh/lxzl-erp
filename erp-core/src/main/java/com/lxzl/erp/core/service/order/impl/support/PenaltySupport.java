@@ -337,8 +337,9 @@ public class PenaltySupport {
             return result;
         }
 
-        BigDecimal productPenalty = new BigDecimal(0);
-        BigDecimal productTotal = new BigDecimal(0);
+        //todo k3退货新旧问题
+
+        BigDecimal totalPenalty = new BigDecimal(0);
         for (int i = 0; i < k3ReturnOrderDO.getK3ReturnOrderDetailDOList().size(); i++) {
             SqlLogInterceptor.setExecuteSql("skip print k3Service.queryOrder  sql ......");
             ServiceResult<String, Order> k3Order = k3Service.queryOrder(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderNo());
@@ -346,31 +347,34 @@ public class PenaltySupport {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
-            //todo 物料的违约金判别（目前只有商品）
-
-            //todo K3商品编码与ERP商品编码不一致 先取ERP订单判别(看后续更改用什么查询)
-
-            //todo 新旧机同时名称 金额价格不同
 
             OrderDO orderDO = orderMapper.findByOrderNo(k3Order.getResult().getOrderNo());
             if (orderDO == null) {
                 result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                 return result;
             }
-            List<OrderProductDO> orderProductDO = orderProductMapper.findByOrderId(orderDO.getId());
-            if (orderDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-                return result;
-            }
+            String productNo = k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductNo();
+            if (productNo.substring(0, 2).equals("10")) {//商品
 
-            for (int j = 0; j < orderProductDO.size(); j++) {
-                if (orderProductDO.get(j).getProductName().equals(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductName())) {
-                    ProductDO productDO = productMapper.findById(orderProductDO.get(j).getProductId());
-                    //设备单价与数量相乘
-                    BigDecimal productPrice = BigDecimalUtil.mul((orderProductDO.get(j).getProductUnitAmount()), new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
+                //根据 erp_k3_return_order_detail的order_item_id 查询
+                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.valueOf(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderItemId()));
+                if (orderProductDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
+                    return result;
+                }
 
-                    if (productDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
+                BigDecimal productPenalty = new BigDecimal(0);
+                BigDecimal productTotal = new BigDecimal(0);
+                ProductDO productDO = productMapper.findById(orderProductDO.getProductId());
+                if (productDO == null) {
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+                //设备单价与数量相乘
+                BigDecimal productPrice = BigDecimalUtil.mul((orderProductDO.getProductUnitAmount()), new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
 
+                if (productDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
+                    if (orderProductDO.getRentType() == 2) {//判断月
                         //判断结算单租金付了多少
                         List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
 
@@ -378,9 +382,9 @@ public class PenaltySupport {
                         BigDecimal noPay = new BigDecimal(0);
                         for (int z = 0; z < statementOrderDetailList.size(); z++) {
                             if (statementOrderDetailList.get(z).getOrderItemType() == 1 && statementOrderDetailList.get(z).getStatementDetailType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2) {
-                                if ((orderProductDO.get(j).getProductName() + orderProductDO.get(j).getProductSkuName()).equals(statementOrderDetailList.get(z).getItemName())) {
-                                    if (orderProductDO.get(j).getProductCount().equals(statementOrderDetailList.get(z).getItemCount())) {
-                                        if (orderProductDO.get(j).getProductUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())) {
+                                if ((orderProductDO.getProductName() + orderProductDO.getProductSkuName()).equals(statementOrderDetailList.get(z).getItemName())) {
+                                    if (orderProductDO.getProductCount().equals(statementOrderDetailList.get(z).getItemCount())) {
+                                        if (orderProductDO.getProductUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())) {
                                             if (statementOrderDetailList.get(z).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) {
                                                 yesPay = BigDecimalUtil.add(yesPay, statementOrderDetailList.get(z).getStatementDetailAmount());
                                             } else {
@@ -392,27 +396,82 @@ public class PenaltySupport {
                             }
                         }
                         //计算平均物料的价格
-                        BigDecimal average = BigDecimalUtil.div(noPay, new BigDecimal(orderProductDO.get(j).getProductCount()), 2);
+                        BigDecimal average = BigDecimalUtil.div(noPay, new BigDecimal(orderProductDO.getProductCount()), 2);
                         //计算退货数量的剩馀租金
                         BigDecimal returnPrice = BigDecimalUtil.mul(average, new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
                         productTotal = BigDecimalUtil.div(returnPrice, new BigDecimal(2), 2);
-
-                    } else if (productDO.getIsReturnAnyTime() == CommonConstant.YES) {
-                        if (orderProductDO.get(j).getRentType() == 2) {//判断月
-                            productTotal = materialAndProductTotal(productPrice, k3Order.getResult().getRentStartTime(), k3Order.getResult().getRentTimeLength(), k3ReturnOrderDO.getReturnTime());
-                        }
+                    }
+                } else if (productDO.getIsReturnAnyTime() == CommonConstant.YES) {
+                    if (orderProductDO.getRentType() == 2) {//判断月
+                        productTotal = materialAndProductTotal(productPrice, k3Order.getResult().getRentStartTime(), k3Order.getResult().getRentTimeLength(), k3ReturnOrderDO.getReturnTime());
                     }
                 }
-            }
-            productPenalty = BigDecimalUtil.add(productPenalty, productTotal);
-        }
-        BigDecimal totalPenalty = productPenalty;
+                productPenalty = BigDecimalUtil.add(productPenalty, productTotal);
 
+                totalPenalty = BigDecimalUtil.add(totalPenalty, productPenalty);
+
+            } else if (productNo.substring(0, 2).equals("10")) {//物料
+
+                //根据 erp_k3_return_order_detail的order_item_id 查询
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.valueOf(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderItemId()));
+                if (orderMaterialDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                BigDecimal materialPenalty = new BigDecimal(0);
+                BigDecimal materialTotal = new BigDecimal(0);
+
+                MaterialDO materialDO = materialMapper.findById(orderMaterialDO.getMaterialId());
+                if (materialDO == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+
+                //设备单价与数量相乘
+                BigDecimal materialPrice = BigDecimalUtil.mul((orderMaterialDO.getMaterialUnitAmount()), new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
+
+                if (materialDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
+                    if (orderMaterialDO.getRentType() == 2) {
+                        //判断结算单租金付了多少
+                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+
+                        BigDecimal yesPay = new BigDecimal(0);
+                        BigDecimal noPay = new BigDecimal(0);
+                        for (int z = 0; z < statementOrderDetailList.size(); z++) {
+                            if (statementOrderDetailList.get(z).getOrderItemType() == 2 && statementOrderDetailList.get(z).getStatementDetailType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2) {
+                                if (orderMaterialDO.getMaterialName().equals(statementOrderDetailList.get(z).getItemName())) {
+                                    if (orderMaterialDO.getMaterialCount().equals(statementOrderDetailList.get(z).getItemCount())) {
+                                        if (orderMaterialDO.getMaterialUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())) {
+                                            if (statementOrderDetailList.get(z).getStatementDetailStatus() == StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED) {
+                                                yesPay = BigDecimalUtil.add(yesPay, statementOrderDetailList.get(z).getStatementDetailAmount());
+                                            } else {
+                                                noPay = BigDecimalUtil.add(noPay, statementOrderDetailList.get(z).getStatementDetailAmount());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //计算平均物料的价格
+                        BigDecimal average = BigDecimalUtil.div(noPay, new BigDecimal(orderMaterialDO.getMaterialCount()), 2);
+                        //计算退货数量的剩馀租金
+                        BigDecimal returnPrice = BigDecimalUtil.mul(average, new BigDecimal(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductCount()));
+                        materialTotal = BigDecimalUtil.div(returnPrice, new BigDecimal(2), 2);
+                    }
+                } else if (materialDO.getIsReturnAnyTime() == CommonConstant.YES) {
+                    if (orderMaterialDO.getRentType() == 2) {//判断月
+                        materialTotal = materialAndProductTotal(materialPrice, k3Order.getResult().getRentStartTime(), k3Order.getResult().getRentTimeLength(), k3ReturnOrderDO.getReturnTime());
+                    }
+                }
+                materialPenalty = BigDecimalUtil.add(materialPenalty, materialTotal);
+
+                totalPenalty = BigDecimalUtil.add(totalPenalty, materialPenalty);
+            }
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(totalPenalty);
         return result;
     }
-
 
     public List<StatementOrderDetail> queryStatementOrderDetailByOrderId(Integer orderId, Integer orderItemType) {
 
@@ -420,46 +479,37 @@ public class PenaltySupport {
         List<StatementOrderDetail> statementOrderDetailList = ConverterUtil.convertList(statementOrderDetailDOList, StatementOrderDetail.class);
 
         if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
-            StatementOrderDetail returnReferStatementOrderDetail = null;
-            Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrderDetailList, "statementOrderDetailId");
             for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
-                if (statementOrderDetail.getReturnReferId() != null) {
-                    returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
+                if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+                    SqlLogInterceptor.setExecuteSql("skip print orderMapper.findByOrderId  sql ......");
+                    OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
+                    if (orderDO != null) {
+                        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                                if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                                    statementOrderDetail.setItemCount(orderProductDO.getProductCount());
+                                    statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+                                    statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                                    statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                                    break;
+                                }
+                            }
+                        }
+                        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                                if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                                    statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
+                                    statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
+                                    statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                                    statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
-                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
             }
         }
         return statementOrderDetailList;
-    }
-
-    public void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail) {
-        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
-            SqlLogInterceptor.setExecuteSql("skip print orderMapper.findByOrderId  sql ......");
-            OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
-            if (orderDO != null) {
-                if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-                    for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
-                            statementOrderDetail.setItemCount(orderProductDO.getProductCount());
-                            statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
-                            statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                            statementOrderDetail.setItemRentType(orderProductDO.getRentType());
-                            break;
-                        }
-                    }
-                }
-                if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
-                    for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
-                            statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
-                            statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
-                            statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                            statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     }
 }
