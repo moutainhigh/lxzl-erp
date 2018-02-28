@@ -1,16 +1,12 @@
 package com.lxzl.erp.core.service.order.impl.support;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.StatementOrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
-import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.DateUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.k3.K3Service;
-import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
@@ -19,14 +15,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderMaterialBulkDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,8 +59,6 @@ public class PenaltySupport {
     @Autowired
     private OrderProductEquipmentMapper orderProductEquipmentMapper;
     @Autowired
-    private StatementService statementService;
-    @Autowired
     private OrderMaterialMapper orderMaterialMapper;
     @Autowired
     private OrderProductMapper orderProductMapper;
@@ -72,6 +66,10 @@ public class PenaltySupport {
     private K3ReturnOrderMapper k3ReturnOrderMapper;
     @Autowired
     private K3Service k3Service;
+    @Autowired
+    private StatementOrderDetailMapper statementOrderDetailMapper;
+    @Autowired
+    private ChangeOrderMapper changeOrderMapper;
 
     /**
      * erp违约金计算
@@ -79,7 +77,7 @@ public class PenaltySupport {
      * @param returnOrderNo
      * @return
      * @author kai
-     *
+     * <p>
      * 目前根据退货单形式 看对方法 是否新增加字段
      */
     public ServiceResult<String, BigDecimal> orderPenalty(String returnOrderNo) {
@@ -98,57 +96,50 @@ public class PenaltySupport {
                 result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                 return result;
             }
-            //todo 计算订单物料相同（全新次新出租价格不同问题）
+            //计算订单物料相同（全新次新出租价格不同问题）
             SqlLogInterceptor.setExecuteSql("skip print returnOrderMaterialBulkMapper.findByReturnOrderMaterialId  sql ......");
             List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDO = returnOrderMaterialBulkMapper.findByReturnOrderMaterialId(returnOrderDO.getReturnOrderMaterialDOList().get(i).getId());
             if (returnOrderMaterialBulkDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
-            Map<BigDecimal, Integer> map = new HashMap<>();
-            BigDecimal amount = null;
-            Integer count = 1;
-            for (int y = 0; y < returnOrderMaterialBulkDO.size(); y++) {
-                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(y).getOrderNo(), returnOrderMaterialBulkDO.get(y).getBulkMaterialNo());
-                if (amount == null) {
-                    amount = orderMaterialBulkDO.getMaterialBulkUnitAmount();
-                    map.put(amount, count);
-                    count++;
-                } else if (orderMaterialBulkDO.getMaterialBulkUnitAmount().equals(amount)) {
-                    amount = orderMaterialBulkDO.getMaterialBulkUnitAmount();
-                    map.put(amount, count);
-                    count++;
-                } else {
-                    //todo 如果退货 新 旧 新 旧 退 有问题  （退货单物料退貨本身有問題）
-                    amount = orderMaterialBulkDO.getMaterialBulkUnitAmount();
-                    count = 1;
-                    map.put(amount, count);
-                    count++;
-                }
+
+            List<OrderMaterialBulkDO> orderMaterialBulkDOList = new ArrayList<>();
+            for (int a = 0; a < returnOrderMaterialBulkDO.size(); a++) {
+                SqlLogInterceptor.setExecuteSql("skip print orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo  sql ......");
+                OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(a).getOrderNo(), returnOrderMaterialBulkDO.get(a).getBulkMaterialNo());
+                orderMaterialBulkDOList.add(orderMaterialBulkDO);
             }
 
-            OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(0).getOrderNo(), returnOrderMaterialBulkDO.get(0).getBulkMaterialNo());
-            if (orderMaterialBulkDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-                return result;
+            Map countMaterialMap = new HashMap();
+            for (OrderMaterialBulkDO temp : orderMaterialBulkDOList) {
+                Integer count = (Integer) countMaterialMap.get(temp.getOrderMaterialId() + "," + temp.getMaterialBulkUnitAmount());
+                countMaterialMap.put(temp.getOrderMaterialId() + "," + temp.getMaterialBulkUnitAmount(), (count == null) ? 1 : count + 1);
             }
-            OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialBulkDO.getOrderMaterialId());
-            if (orderMaterialDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-                return result;
-            }
+
             OrderDO orderDO = orderMapper.findByOrderNo(returnOrderMaterialBulkDO.get(i).getOrderNo());
             if (orderDO == null) {
                 result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                 return result;
             }
-            BigDecimal price = null;
-            Integer total = 0;
-            Iterator it = map.entrySet().iterator();
+
+            BigDecimal price;
+            Integer total;
+            Integer orderMaterialId;
+            Iterator it = countMaterialMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry entry = (Map.Entry) it.next();
-                price = (BigDecimal) entry.getKey();
+                String key = (String) entry.getKey();
+                String[] str = key.split(",");
+                orderMaterialId = Integer.valueOf(str[0]);
+                price = new BigDecimal(str[1]);
                 total = (Integer) entry.getValue();
+
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialId);
+                if (orderMaterialDO == null) {
+                    result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                    return result;
+                }
 
                 //设备租金单价与数量相乘
                 BigDecimal materialPrice = BigDecimalUtil.mul(price, new BigDecimal(total));
@@ -158,9 +149,8 @@ public class PenaltySupport {
                     if (orderMaterialDO.getRentType() == 2) {//判断月
 
                         //判断结算单租金付了多少
-                        SqlLogInterceptor.setExecuteSql("skip print statementService.queryStatementOrderDetailByOrderId  sql ......");
-                        ServiceResult<String, StatementOrder> statementOrderServiceResult = statementService.queryStatementOrderDetailByOrderId(orderDO.getOrderNo());
-                        List<StatementOrderDetail> statementOrderDetailList = statementOrderServiceResult.getResult().getStatementOrderDetailList();
+                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int j = 0; j < statementOrderDetailList.size(); j++) {
@@ -206,58 +196,49 @@ public class PenaltySupport {
                 result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
                 return result;
             }
-            //todo 计算订单设备相同（全新次新出租价格不同问题）
+            //计算订单设备相同（全新次新出租价格不同问题）
             SqlLogInterceptor.setExecuteSql("skip print returnOrderProductEquipmentMapper.findByReturnOrderProductId  sql ......");
             List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDO = returnOrderProductEquipmentMapper.findByReturnOrderProductId(returnOrderDO.getReturnOrderProductDOList().get(i).getId());
             if (returnOrderProductEquipmentDO == null) {
                 result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
                 return result;
             }
-            Map<BigDecimal, Integer> map = new HashMap<>();
-            BigDecimal amount = null;
-            Integer count = 1;
-            for (int y = 0; y < returnOrderProductEquipmentDO.size(); y++) {
-                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(y).getOrderNo(), returnOrderProductEquipmentDO.get(y).getEquipmentNo());
-                if (amount == null) {
-                    amount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
-                    map.put(amount, count);
-                    count++;
-                } else if (orderProductEquipmentDO.getProductEquipmentUnitAmount().equals(amount)) {
-                    amount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
-                    map.put(amount, count);
-                    count++;
-                } else {
-                    //todo 如果依据商品价格 退货 新 旧 新 旧 退 有问题
-                    amount = orderProductEquipmentDO.getProductEquipmentUnitAmount();
-                    count = 1;
-                    map.put(amount, count);
-                    count++;
-                }
+            List<OrderProductEquipmentDO> orderProductEquipmentDOList = new ArrayList<>();
+            for (int a = 0; a < returnOrderProductEquipmentDO.size(); a++) {
+                SqlLogInterceptor.setExecuteSql("skip print orderProductEquipmentMapper.findByOrderNoAndEquipmentNo  sql ......");
+                OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(a).getOrderNo(), returnOrderProductEquipmentDO.get(a).getEquipmentNo());
+                orderProductEquipmentDOList.add(orderProductEquipmentDO);
             }
 
-            OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(0).getOrderNo(), returnOrderProductEquipmentDO.get(0).getEquipmentNo());
-            if (orderProductEquipmentDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-                return result;
+            Map countProductMap = new HashMap();
+            for (OrderProductEquipmentDO temp : orderProductEquipmentDOList) {
+                Integer count = (Integer) countProductMap.get(temp.getOrderProductId() + "," + temp.getProductEquipmentUnitAmount());
+                countProductMap.put(temp.getOrderProductId() + "," + temp.getProductEquipmentUnitAmount(), (count == null) ? 1 : count + 1);
             }
-            OrderProductDO orderProductDO = orderProductMapper.findById(orderProductEquipmentDO.getOrderProductId());
-            if (orderProductDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-                return result;
-            }
+
             OrderDO orderDO = orderMapper.findByOrderNo(returnOrderProductEquipmentDO.get(i).getOrderNo());
             if (orderDO == null) {
                 result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                 return result;
             }
 
-            BigDecimal price = null;
-            Integer total = 0;
-            Iterator it = map.entrySet().iterator();
+            BigDecimal price;
+            Integer total;
+            Integer orderProductId;
+            Iterator it = countProductMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry entry = (Map.Entry) it.next();
-                price = (BigDecimal) entry.getKey();
+                String key = (String) entry.getKey();
+                String[] str = key.split(",");
+                orderProductId = Integer.valueOf(str[0]);
+                price = new BigDecimal(str[1]);
                 total = (Integer) entry.getValue();
+
+                OrderProductDO orderProductDO = orderProductMapper.findById(orderProductId);
+                if (orderProductDO == null) {
+                    result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                    return result;
+                }
 
                 //设备单价与数量相乘
                 BigDecimal productPrice = BigDecimalUtil.mul(price, new BigDecimal(total));
@@ -266,9 +247,8 @@ public class PenaltySupport {
                     if (orderProductDO.getRentType() == 2) {//判断月
 
                         //判断结算单租金付了多少
-                        SqlLogInterceptor.setExecuteSql("skip print statementService.queryStatementOrderDetailByOrderId  sql ......");
-                        ServiceResult<String, StatementOrder> statementOrderServiceResult = statementService.queryStatementOrderDetailByOrderId(orderDO.getOrderNo());
-                        List<StatementOrderDetail> statementOrderDetailList = statementOrderServiceResult.getResult().getStatementOrderDetailList();
+                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int j = 0; j < statementOrderDetailList.size(); j++) {
@@ -347,7 +327,6 @@ public class PenaltySupport {
      * @param returnOrderNo
      * @return
      * @author kai
-     *
      */
     public ServiceResult<String, BigDecimal> k3OrderPenalty(String returnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
@@ -393,9 +372,8 @@ public class PenaltySupport {
                     if (productDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
 
                         //判断结算单租金付了多少
-                        SqlLogInterceptor.setExecuteSql("skip print statementService.queryStatementOrderDetailByOrderId  sql ......");
-                        ServiceResult<String, StatementOrder> statementOrderServiceResult = statementService.queryStatementOrderDetailByOrderId(orderDO.getOrderNo());
-                        List<StatementOrderDetail> statementOrderDetailList = statementOrderServiceResult.getResult().getStatementOrderDetailList();
+                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int z = 0; z < statementOrderDetailList.size(); z++) {
@@ -435,4 +413,53 @@ public class PenaltySupport {
         return result;
     }
 
+
+    public List<StatementOrderDetail> queryStatementOrderDetailByOrderId(Integer orderId, Integer orderItemType) {
+
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdAndOrderItemType(orderId, orderItemType);
+        List<StatementOrderDetail> statementOrderDetailList = ConverterUtil.convertList(statementOrderDetailDOList, StatementOrderDetail.class);
+
+        if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+            StatementOrderDetail returnReferStatementOrderDetail = null;
+            Map<Integer, StatementOrderDetail> statementOrderDetailMap = ListUtil.listToMap(statementOrderDetailList, "statementOrderDetailId");
+            for (StatementOrderDetail statementOrderDetail : statementOrderDetailList) {
+                if (statementOrderDetail.getReturnReferId() != null) {
+                    returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
+                }
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+            }
+        }
+        return statementOrderDetailList;
+    }
+
+    public void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail) {
+        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+            SqlLogInterceptor.setExecuteSql("skip print orderMapper.findByOrderId  sql ......");
+            OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
+            if (orderDO != null) {
+                if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+                    for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
+                            statementOrderDetail.setItemCount(orderProductDO.getProductCount());
+                            statementOrderDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
+                            statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
+                            statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                            break;
+                        }
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+                    for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
+                            statementOrderDetail.setItemCount(orderMaterialDO.getMaterialCount());
+                            statementOrderDetail.setItemName(orderMaterialDO.getMaterialName());
+                            statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
+                            statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
