@@ -261,7 +261,7 @@ public class K3ServiceImpl implements K3Service {
                             order.setLowTaxRate(dbOrder.getLowTaxRate());
                             order.setOrderStatus(dbOrder.getOrderStatus());
                             List< com.lxzl.erp.common.domain.order.pojo.OrderProduct> dbOrderProductList = dbOrder.getOrderProductList();
-                            Map<Integer ,com.lxzl.erp.common.domain.order.pojo.OrderProduct> map = ListUtil.listToMap(dbOrderProductList,"id");
+                            Map<Integer ,com.lxzl.erp.common.domain.order.pojo.OrderProduct> map = ListUtil.listToMap(dbOrderProductList,"orderProductId");
                             for(OrderProduct orderProduct : orderProductList){
                                 com.lxzl.erp.common.domain.order.pojo.OrderProduct dbOrderProduct = map.get(orderProduct.getOrderProductId());
                                 if(dbOrderProduct!=null){
