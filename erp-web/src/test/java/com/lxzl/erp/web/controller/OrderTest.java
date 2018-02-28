@@ -1,5 +1,6 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
@@ -7,6 +8,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DeliveryMode;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.domain.order.OrderCommitParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
@@ -231,6 +233,19 @@ public class OrderTest extends ERPTransactionalTest {
         order.setOrderNo("LXO-20180228-731827-00096");
         order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
+    }
+
+    @Test
+    public void testCommitOrderJSON() throws Exception {
+        String str = "{\n" +
+                "\t\"orderNo\": \"LXO-20180227-701528-00019\",\n" +
+                "\t\"verifyUser\": \"500006\",\n" +
+                "\t\"commitRemark\": \"提交订单\",\n" +
+                "\t\"imgIdList\": [414]\n" +
+                "}";
+
+        OrderCommitParam orderCommitParam = JSON.parseObject(str, OrderCommitParam.class);
+        TestResult testResult = getJsonTestResult("/order/commit", orderCommitParam);
     }
 
     @Test
