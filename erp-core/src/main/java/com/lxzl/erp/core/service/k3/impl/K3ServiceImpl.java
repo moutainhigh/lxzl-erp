@@ -260,11 +260,11 @@ public class K3ServiceImpl implements K3Service {
                             order.setHighTaxRate(dbOrder.getHighTaxRate());
                             order.setLowTaxRate(dbOrder.getLowTaxRate());
                             order.setOrderStatus(dbOrder.getOrderStatus());
-                            List< com.lxzl.erp.common.domain.order.pojo.OrderProduct> dbOrderProductList = dbOrder.getOrderProductList();
-                            Map<Integer ,com.lxzl.erp.common.domain.order.pojo.OrderProduct> map = ListUtil.listToMap(dbOrderProductList,"orderProductId");
-                            for(OrderProduct orderProduct : orderProductList){
+                            List<com.lxzl.erp.common.domain.order.pojo.OrderProduct> dbOrderProductList = dbOrder.getOrderProductList();
+                            Map<Integer, com.lxzl.erp.common.domain.order.pojo.OrderProduct> map = ListUtil.listToMap(dbOrderProductList, "orderProductId");
+                            for (OrderProduct orderProduct : orderProductList) {
                                 com.lxzl.erp.common.domain.order.pojo.OrderProduct dbOrderProduct = map.get(orderProduct.getOrderProductId());
-                                if(dbOrderProduct!=null){
+                                if (dbOrderProduct != null) {
                                     orderProduct.setProductSkuId(dbOrderProduct.getProductSkuId());
                                     orderProduct.setProductSkuName(dbOrderProduct.getProductSkuName());
                                 }
@@ -296,7 +296,7 @@ public class K3ServiceImpl implements K3Service {
         }
 
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
-        k3ReturnOrderDO.setReturnOrderNo(UUIDUtil.getUUID());
+        k3ReturnOrderDO.setReturnOrderNo("LXK3RO" + DateUtil.formatDate(currentTime, "yyyyMMddHHmmssSSS"));
         k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         k3ReturnOrderDO.setCreateTime(currentTime);
         k3ReturnOrderDO.setCreateUser(loginUser.getUserId().toString());
