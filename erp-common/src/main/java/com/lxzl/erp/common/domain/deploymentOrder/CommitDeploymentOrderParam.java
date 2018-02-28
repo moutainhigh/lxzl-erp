@@ -13,6 +13,8 @@ import java.io.Serializable;
 public class CommitDeploymentOrderParam extends BaseCommitParam {
     private String deploymentOrderNo;
     private String backup;
+    private Integer verifyUser;
+    private String commitRemark;
 
     public String getDeploymentOrderNo() {
         return deploymentOrderNo;
@@ -28,5 +30,21 @@ public class CommitDeploymentOrderParam extends BaseCommitParam {
 
     public void setBackup(String backup) {
         this.backup = backup;
+    }
+
+    public Integer getVerifyUser() {
+        return verifyUser;
+    }
+
+    public void setVerifyUser(Integer verifyUser) {
+        this.verifyUser = verifyUser;
+    }
+
+    public String getCommitRemark() {
+        return commitRemark;
+    }
+
+    public void setCommitRemark(String commitRemark) {
+        this.commitRemark = commitRemark;
     }
 }

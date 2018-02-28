@@ -387,7 +387,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Date currentTime = new Date();
         String deploymentOrderNo = param.getDeploymentOrderNo();
         Integer verifyUser = param.getVerifyUserId();
-        String commitRemark = param.getRemark();
+        String commitRemark = param.getCommitRemark();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (dbDeploymentOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);

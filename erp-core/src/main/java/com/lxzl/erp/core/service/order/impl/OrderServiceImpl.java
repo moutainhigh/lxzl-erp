@@ -196,8 +196,8 @@ public class OrderServiceImpl implements OrderService {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         String orderNo = orderCommitParam.getOrderNo();
-        Integer verifyUser = orderCommitParam.getVerifyUserId();
-        String commitRemark = orderCommitParam.getRemark();
+        Integer verifyUser = orderCommitParam.getVerifyUser();
+        String commitRemark = orderCommitParam.getCommitRemark();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (CollectionUtil.isEmpty(orderDO.getOrderProductDOList())
                 && CollectionUtil.isEmpty(orderDO.getOrderMaterialDOList())) {

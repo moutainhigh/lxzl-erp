@@ -200,14 +200,14 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             serviceResult.setErrorCode(needVerifyResult.getErrorCode());
             return serviceResult;
         } else if (needVerifyResult.getResult()) {
-            if (repairOrderCommitParam.getVerifyUserId() == null) {
+            if (repairOrderCommitParam.getVerifyUser() == null) {
                 serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
                 return serviceResult;
             }
             String verifyMatters = "1.维修原因，2维修的设备的数量和每个设备标号，3维修的物料数量和散料编号";
 
             //调用提交审核服务
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), repairOrderCommitParam.getVerifyUserId(), verifyMatters, repairOrderCommitParam.getRemark(), repairOrderCommitParam.getImgIdList());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_REPAIR, repairOrderDO.getRepairOrderNo(), repairOrderCommitParam.getVerifyUser(), verifyMatters, repairOrderCommitParam.getCommitRemark(), repairOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 repairOrderDO.setRepairOrderStatus(RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING);

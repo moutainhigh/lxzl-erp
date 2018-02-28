@@ -10,6 +10,8 @@ public class OrderCommitParam extends BaseCommitParam {
 
     @NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL)
     private String orderNo;
+    private Integer verifyUser;
+    private String commitRemark;
 
     public String getOrderNo() {
         return orderNo;
@@ -17,5 +19,21 @@ public class OrderCommitParam extends BaseCommitParam {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public Integer getVerifyUser() {
+        return verifyUser;
+    }
+
+    public void setVerifyUser(Integer verifyUser) {
+        this.verifyUser = verifyUser;
+    }
+
+    public String getCommitRemark() {
+        return commitRemark;
+    }
+
+    public void setCommitRemark(String commitRemark) {
+        this.commitRemark = commitRemark;
     }
 }
