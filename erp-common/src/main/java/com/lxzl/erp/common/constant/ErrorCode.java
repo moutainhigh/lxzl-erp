@@ -393,6 +393,10 @@ public class ErrorCode {
     public static final String CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE = "J400123";
     public static final String DIFF_PRICE_ERROR = "J400124";
     public static final String STATEMENT_ORDER_PRODUCT_NOT_EXISTS = "J400125";
+    public static final String ORDER_DELIVERY_MODE_IS_NULL = "J400126";
+    public static final String ORDER_EXPECT_DELIVERY_TIME = "J400127";
+    public static final String ORDER_RENT_TYPE_IS_NULL = "J400128";
+    public static final String ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL = "J400129";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -500,6 +504,8 @@ public class ErrorCode {
     public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
     public static final String CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL = "J500107";
     public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
+    public static final String SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500109";
+    public static final String SHORT_RECEIVABLE_CALCULATE_FAIL = "J500110";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -514,7 +520,7 @@ public class ErrorCode {
     public static final String REPAIR_ORDER_IS_NOT_EXISTS = "J700004";
     public static final String REPAIR_ORDER_STATUS_ERROR = "J700005";
     public static final String REPAIR_ORDER_EQUIPMENT_NOT_EXISTS = "J700006";
-    public static final String REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS = "J700007";
+    public static final String REPAIR_ORDER_BULK_MATERIAL_NOT_EXISTS = "J700007";
     public static final String REPAIR_ORDER_DATA_STATUS_ERROR = "J700008";
 
     public static final String JOINT_PRODUCT_ID_IS_NULL = "J1000001";
@@ -552,7 +558,7 @@ public class ErrorCode {
     public static final String OTHER_DATE_IMAGE_NOT_EXISTS = "J1100029";
     public static final String OTHER_DATE_IMAGE_TYPE_IS_ERROR = "J1100030";
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
-    public static final String IMG_REF_ID_NEED_NULL = "J1100032";
+    public static final String IMG_REF_ID_HAD_VALUE = "J1100032";
     public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
@@ -714,7 +720,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_SKU_PROPERTY_VALUE_NOT_NULL, "商品SKU属性值不能为空");
         MAP.put(PRODUCT_IMAGE_UPLOAD_ERROR, "商品图片上传失败");
         MAP.put(PRODUCT_IS_NULL_OR_NOT_EXISTS, "商品不存在或发生变更");
-        MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS, "商品SKU不存在或发生变更");
+        MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS, "此商品SKU不存在或发生变更");
         MAP.put(PRODUCT_SKU_PRICE_ERROR, "商品SKU价格填写不正确");
         MAP.put(PRODUCT_SKU_COUNT_ERROR, "商品SKU数量填写不正确");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS, "商品属性不存在");
@@ -728,7 +734,7 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_NOT_EXISTS, "编号【%s 】的配件不存在");
         MAP.put(PRODUCT_NOT_EXISTS, "商品【%s 】不存在");
         MAP.put(PRODUCT_EQUIPMENT_NOT_IN_THIS_WAREHOUSE, "编号【%s 】的设备不在【%s 】库房中");
-        MAP.put(PRODUCT_IS_NOT_RENT, "该商品已下架");
+        MAP.put(PRODUCT_IS_NOT_RENT, "选择的该商品已下架，请联系工作人员");
         MAP.put(MATERIAL_IN_USED, "配件正在被使用");
         MAP.put(PRODUCT_SKU_CAN_NOT_DELETE, "检测到您要删除商品SKU，目前SKU不支持删除。");
         MAP.put(BULK_MATERIAL_IS_NOT_IDLE, "编号【%s 】没有在闲置状态。");
@@ -748,7 +754,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_EQUIPMENT_IS_NOT_BUSY, "编号【%s 】的设备不在租赁中");
         MAP.put(BULK_MATERIAL_IS_NOT_BUSY, "编号【%s 】的配件不在租赁中");
         MAP.put(BULK_MATERIAL_IS_IN_ORDER_EQUIPMENT, "编号【%s 】在某订单或者某设备上");
-        MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH, "配件库存不足！");
+        MAP.put(BULK_MATERIAL_HAVE_NOT_ENOUGH, "配件库存不足，请联系相关人员！");
         MAP.put(BULK_MATERIAL_ID_NOT_NULL, "散料ID不能为空！");
         MAP.put(PRODUCT_EQUIPMENT_MATERIAL_COUNT_NOT_ENOUGH, "该设备的此种配件不足");
         MAP.put(PRODUCT_EQUIPMENT_BULK_MATERIAL_NOT_EXISTS, "该设备的此种散料不存在");
@@ -769,15 +775,15 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(PRODUCT_NOT_SAME, "收货商品不一致");
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致");
-        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的商品的skuID不能为空");
-        MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的商品单台价值不能空");
-        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的商品租赁数量不能空");
-        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的商品的租赁期限不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
         MAP.put(ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT, "全新配件库存不足！");
         MAP.put(ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT, "次新配件库存不足！");
-        MAP.put(ORDER_PRODUCT_COUNT_ERROR, "商品数量必须大于0！");
-        MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量必须大于0！");
+        MAP.put(ORDER_PRODUCT_COUNT_ERROR, "商品数量有误，必须大于0，请重新填写数量");
+        MAP.put(ORDER_MATERIAL_COUNT_ERROR, "设备数量有误，必须大于0，请重新填写数量");
         MAP.put(CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE, "该配件客户的在租只有【%d】个！");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_MATCHING, "订单设备不匹配");
         MAP.put(WAREHOUSE_NOT_AVAILABLE, "您无权使用该仓库");
@@ -808,10 +814,10 @@ public class ErrorCode {
         MAP.put(WORKFLOW_VERIFY_USER_ERROR, "此工作流审核人员有误");
         MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
         MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用");
-        MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核工作流没有配置");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "苹果设备被限制，不能下单");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "全新设备被限制，不能下单");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "价格被限制，不能下单");
+        MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核管理的审核工作流没有配置信息");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "该客户风控信息，苹果设备被限制，不能下单，请联系风控及相关人员");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "该客户风控信息，全新设备被限制，不能下单，请联系风控及相关人员");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "该客户风控信息，商品价格被限制，不能下单，请联系风控及相关人员");
         MAP.put(CUSTOMER_STATUS_ERROR, "客户状态异常，仔细检查后操作");
         MAP.put(CUSTOMER_IS_DISABLED, "客户已经被禁用");
         MAP.put(CUSTOMER_CAN_NOT_EDIT, "客户在该状态下不允许修改");
@@ -819,7 +825,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_CONTINUE, "此采购申请单不能恢复暂停");
         MAP.put(PURCHASE_APPLY_CAN_NOT_END, "此采购申请单不能结束");
         MAP.put(PURCHASE_NOT_HAVE_APPLY, "采购计划中没有【%s】");
-        MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "订单租期不允许");
+        MAP.put(ORDER_RENT_LENGTH_MORE_THAN_90, "订单商品租期不允许操作，请联系风控人员");
         MAP.put(BULK_MATERIAL_NOT_IN_THE_WAREHOUSE, "编号【%s 】的散料不在【%s 】库房中");
         MAP.put(PRODUCT_NEW_SKU_PRICE_IS_NOT_NULL, "全新商品本身的价值不能为空");
         MAP.put(PRODUCT_NEW_DAY_RENT_PRICE_IS_NOT_NULL, "全新天租赁价格不能为空");
@@ -848,9 +854,9 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
-        MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的商品总金额计算出错");
-        MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的商品总金额不相等");
-        MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有后续所需设备的商品总金额不相等");
+        MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
+        MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
+        MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -867,7 +873,7 @@ public class ErrorCode {
         MAP.put(DATA_STATUS_ERROR, "数据状态异常");
         MAP.put(VERIFY_STATUS_ERROR, "审核状态异常");
         MAP.put(OPERATOR_IS_NOT_YOURSELF, "操作者不是本人，不能操作");
-        MAP.put(PARAM_IS_NOT_ENOUGH, "信息不全，请仔细检查");
+        MAP.put(PARAM_IS_NOT_ENOUGH, "选择的设备不存在或者信息不全，请仔细检查");
         MAP.put(NO_DUPLICATE_COMMIT, "禁止重复提交");
         MAP.put(PARAM_IS_ERROR, "参数有误，请仔细检查");
 
@@ -927,8 +933,8 @@ public class ErrorCode {
         MAP.put(MATERIAL_TYPE_HAVE_NO_MODEL, "该配件类型没有型号");
         MAP.put(PURCHASE_RECEIVE_ORDER_MATERIAL_NO_NOT_NULL, "采购收货单配件项配件编号不能为空");
         MAP.put(CUSTOMER_CONSIGN_NOT_EXISTS, "客户收货地址不存在");
-        MAP.put(CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW, "客户授信额度超限");
-        MAP.put(CUSTOMER_GET_CREDIT_NEED_RISK_INFO, "客户需要授信额度，未检测到风控信息");
+        MAP.put(CUSTOMER_GET_CREDIT_AMOUNT_OVER_FLOW, "该客户授信额度超限，请联系风控人员及相关人员");
+        MAP.put(CUSTOMER_GET_CREDIT_NEED_RISK_INFO, "该客户需要授信额度，未检测到风控信息，请联系风控人员及相关人员");
         MAP.put(STATEMENT_PAY_TYPE_ERROR, "结算单支付方式有误");
         MAP.put(STATEMENT_PAY_FAILED, "结算单支付失败");
         MAP.put(STATEMENT_PAY_AMOUNT_DIFF_ERROR, "您上次有支付记录正在处理中，请联系业务员手动关闭或者等待2小时再来支付！");
@@ -952,7 +958,7 @@ public class ErrorCode {
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
-        MAP.put(CUSTOMER_IS_EXISTS, "客户已经存在");
+        MAP.put(CUSTOMER_IS_EXISTS, "客户名称已经存在，请重新填写名称");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
         MAP.put(SUPPLIER_NAME_IS_NULL, "供应商名字有空格");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
@@ -970,7 +976,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY, "客户的开发员不能为总公司人员");
         MAP.put(CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY, "客户的联合开发员不能为总公司人员");
         MAP.put(STATEMENT_DATE_NOT_NULL, "客户的结算时间不能为空");
-        MAP.put(CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME, "客户的开发员和联合开发员不能为同一个人");
+        MAP.put(CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME, "客户的开发员和联合开发员不能同一个人");
         MAP.put(CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL, "客户是否将详细地址作为收货地址的该选项不能为空");
         MAP.put(CUSTOMER_CONSIGN_ADDRESS_NOT_NULL, "客户的收货地址的不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL, "企业客户首次所需设备的总价值不能空");
@@ -979,42 +985,44 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL, "企业客户的注册资本不能为空");
         MAP.put(CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL, "企业客户的办公人数不能为空");
         MAP.put(CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL, "企业客户的经营面积不能为空");
-        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话不能相同");
-        MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号不能相同");
-        MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号不能相同");
+        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话相同");
+        MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
+        MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
-        MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证不能相同");
-        MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人姓名与法人姓名不能相同");
+        MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
+        MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
         MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
+        MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
+        MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
 
-        MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
+        MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
         MAP.put(ORDER_PRODUCT_STOCK_NEW_INSUFFICIENT, "全新商品库存不足");
         MAP.put(ORDER_PRODUCT_STOCK_OLD_INSUFFICIENT, "次新商品库存不足");
-        MAP.put(ORDER_NOT_EXISTS, "订单不存在");
+        MAP.put(ORDER_NOT_EXISTS, "该订单数据不存在");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_NULL, "订单商品项设备编号不能为空");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_STATUS_ERROR, "该设备不存在或者该设备状态异常，请仔细检查");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_SKU_NOT_SAME, "该用户购买的商品不是这个型号的，请仔细检查");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_IS_NULL, "订单商品项设备编号为空");
-        MAP.put(ORDER_STATUS_ERROR, "订单状态不正确，请仔细检查");
+        MAP.put(ORDER_STATUS_ERROR, "订单状态有误，请仔细检查该订单");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_ERROR, "订单商品设备数不正确，请仔细检查");
         MAP.put(ORDER_PRODUCT_BULK_MATERIAL_COUNT_ERROR, "订单配件数不正确，请仔细检查");
-        MAP.put(ORDER_RENT_TYPE_OR_LENGTH_ERROR, "订单租赁方式或时长有误");
-        MAP.put(ORDER_PAY_MODE_NOT_NULL, "订单支付方式不能为空");
+        MAP.put(ORDER_RENT_TYPE_OR_LENGTH_ERROR, "订单租赁方式有误，请联系管理员");
+        MAP.put(ORDER_PAY_MODE_NOT_NULL, "订单支付方式不能为空，请选择支付方式");
         MAP.put(ORDER_PAY_STATUS_ERROR, "付款单状态异常，请检查");
         MAP.put(ORDER_REFUND_STATUS_ERROR, "退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS, "支付记录不存在");
-        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单没有租赁开始时间");
+        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单的起租日期不能空，请选择起租日期时间");
         MAP.put(ORDER_RENT_START_TIME_ERROR, "订单起租日期不能小于送货日期，并且不能大于超过2天");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房该商品库存不足。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房该配件库存不足。");
         MAP.put(DEPLOYMENT_ORDER_STATUS_ERROR, "调配单状态有误。");
         MAP.put(DEPLOYMENT_ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该调拨单项中。");
-        MAP.put(ORDER_STATUS_NOT_PROCESSED, "订单还没处理完。");
-        MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误。");
-        MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单配件价格有误。");
+        MAP.put(ORDER_STATUS_NOT_PROCESSED, "该订单还在处理中，请联系相关人员。");
+        MAP.put(ORDER_PRODUCT_AMOUNT_ERROR, "订单商品价格有误，请重新填写价格。");
+        MAP.put(ORDER_MATERIAL_AMOUNT_ERROR, "订单配件价格有误，请重新填写价格。");
         MAP.put(ORDER_HAVE_NO_THIS_ITEM, "编号【%s 】不在该订单项中或者新旧属性不匹配，请仔细检查。");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数超过了订单项最大数：%d");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数量超过了该订单项最大数：%d");
         MAP.put(ORDER_MATERIAL_BULK_COUNT_MAX, "配件数超过了订单项最大数：%d ");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_COUNT_MAX, "设备数超过了调拨单项最大数：%d。");
         MAP.put(DEPLOYMENT_ORDER_MATERIAL_BULK_COUNT_MAX, "配件数超过了调拨单项最大数：%d");
@@ -1028,7 +1036,7 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_SERVICE_COST_ERROR, "服务费金额有误");
         MAP.put(RETURN_ORDER_DAMAGE_COST_NOT_NULL, "损坏费用不能为空");
         MAP.put(RETURN_ORDER_DAMAGE_COST_ERROR, "损坏费用金额有误");
-        MAP.put(ORDER_HAVE_NO_PAID, "订单未支付，不能操作");
+        MAP.put(ORDER_HAVE_NO_PAID, "该订单尚未支付，不能操作此功能");
         MAP.put(ORDER_CAN_NOT_DELIVERY, "订单不能发货");
         MAP.put(ORDER_PAY_MODE_ERROR, "您当前不支持这种支付方式。");
         MAP.put(CHANGE_COUNT_ERROR, "更换数量错误");
@@ -1042,13 +1050,13 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DELIVERY, "不是备货中的换货单不能发货");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_END, "不是处理中的换货单不允许结束");
         MAP.put(ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS, "该设备不在该订单里，请仔细检查");
-        MAP.put(ORDER_PRODUCT_EQUIPMENT_ALREADY_RETURN, "订单设备已经归还");
+        MAP.put(ORDER_PRODUCT_EQUIPMENT_ALREADY_RETURN, "该订单设备已经归还，请联系工作人员");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的换货单换货单不允许取消");
         MAP.put(CHANGE_ORDER_STATUS_CAN_NOT_DO_CHANGE, "当前换货单不允许进行换货操作");
         MAP.put(CHANGE_ONLY_SAME_SKU, "目前仅支持更换相同SKU设备");
         MAP.put(ORDER_ALREADY_PAID, "订单已经支付");
         MAP.put(ORDER_MATERIAL_BULK_NOT_EXISTS, "散料不在该订单里，请仔细检查");
-        MAP.put(ORDER_MATERIAL_BULK_ALREADY_RETURN, "订单散料已经归还了");
+        MAP.put(ORDER_MATERIAL_BULK_ALREADY_RETURN, "该订单配件已经归还，请联系相关工作人员");
         MAP.put(CHANGE_ORDER_SRC_EQUIPMENT_NO_NOT_NULL, "原设备编号不能为空");
         MAP.put(CHANGE_ORDER_CAN_NOT_CHANGE, "此商品在本换货单中无法换货，您可尝试取消本退还单后，重新生成SKU相符的换货单，或进行退货再租操作");
         MAP.put(CHANGE_ORDER_SRC_MATERIAL_NO_NOT_NULL, "原配件编号不能为空");
@@ -1067,7 +1075,7 @@ public class ErrorCode {
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
         MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为商品价格的倍数");
         MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价格的倍数");
-        MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请仔细检查");
+        MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请联系管理员");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_PRODUCT, "只能更换相同商品");
         MAP.put(CHANGE_SRC_DEST_SHOULD_SAME_TYPE, "只能更换相同类型配件");
@@ -1079,6 +1087,10 @@ public class ErrorCode {
         MAP.put(CHANGE_ORDER_NOT_END_BULK_DIFF_PRICE, "配件差价没有全部填写，不可以结束");
         MAP.put(DIFF_PRICE_ERROR, "差价填写有误");
         MAP.put(STATEMENT_ORDER_PRODUCT_NOT_EXISTS, "订单商品不存在");
+        MAP.put(ORDER_DELIVERY_MODE_IS_NULL, "订单送货方式不能为空，请选择送货方式");
+        MAP.put(ORDER_EXPECT_DELIVERY_TIME, "订单送货日期不能为空，请选择送货日期时间");
+        MAP.put(ORDER_RENT_TYPE_IS_NULL, "订单的租赁类型不能为空，请选择租赁类型");
+        MAP.put(ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL, "订单的租赁类型不能为空或小于0，租赁时长需大于0");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1096,7 +1108,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR, "授信额度最小为0，最大为10000000");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR, "押金期数最小为0，最大为120");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR, "付款期数最小为1，最大为120");
-        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "风控信息不存在");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "客户的风控信息不存在");
         MAP.put(CUSTOMER_HAVE_NO_RETURN, "客户没有可归还商品");
         MAP.put(CUSTOMER_NOT_RENT_THIS, "客户没有租赁该商品");
         MAP.put(CUSTOMER_RETURN_TOO_MORE, "客户退换商品数超过限制");
@@ -1135,8 +1147,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_NOT_EXISTS, "结算单不存在");
         MAP.put(STATEMENT_ORDER_NOT_NULL, "月份结算单不能为空");
         MAP.put(STATEMENT_PAY_AMOUNT_ERROR, "结算单金额有误，请检查");
-        MAP.put(CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER, "客户存在有未支付逾期的结算单");
-        MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该用户短租应收过高，不可下单。");
+        MAP.put(CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER, "该客户存在有逾期的结算单，尚未支付，请联系该客户或者相关业务人员。");
+        MAP.put(CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该客户的短租有额度限制，应收价格过高，不可下单，联系相关业务人员。");
         MAP.put(STATEMENT_BATCH_PAY_IS_CUSTOMER_IS_DIFFERENCE, "批量支付结算单客户必须相同才能支付");
         MAP.put(STATEMENT_ORDER_STATUS_IS_ERROR, "批量支付结算单必须是未支付状态");
         MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
@@ -1158,7 +1170,7 @@ public class ErrorCode {
         MAP.put(REPAIR_ORDER_IS_NOT_EXISTS, "设备维修单不存在");
         MAP.put(REPAIR_ORDER_STATUS_ERROR, "设备维修单状态出错，请重新检查");
         MAP.put(REPAIR_ORDER_EQUIPMENT_NOT_EXISTS, "设备维修单明细不存在");
-        MAP.put(REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, "散料维修单明细不存在");
+        MAP.put(REPAIR_ORDER_BULK_MATERIAL_NOT_EXISTS, "散料维修单明细不存在");
         MAP.put(REPAIR_ORDER_DATA_STATUS_ERROR, "该设备维修单此状态不允许此操作");
 
         MAP.put(JOINT_PRODUCT_ID_IS_NULL, "组合商品id为空");
@@ -1196,7 +1208,7 @@ public class ErrorCode {
         MAP.put(OTHER_DATE_IMAGE_NOT_EXISTS, "其他材料的照片不存在");
         MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
-        MAP.put(IMG_REF_ID_NEED_NULL, "编号【%s 】的图片refID已经有值，不能进行该操作");
+        MAP.put(IMG_REF_ID_HAD_VALUE, "编号【%s 】的图片已经关联了客户，请重新选择图片");
         MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");

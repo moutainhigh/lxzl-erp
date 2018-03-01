@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
 

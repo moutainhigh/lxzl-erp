@@ -40,6 +40,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -49,6 +50,7 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -140,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         OrderDO dbOrderDO = orderMapper.findByOrderNo(order.getOrderNo());
         if (dbOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
         if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(dbOrderDO.getOrderStatus())) {
@@ -367,7 +369,7 @@ public class OrderServiceImpl implements OrderService {
                 }
                 Product product = productServiceResult.getResult();
                 if (product == null) {
-                    result.setErrorCode(ErrorCode.PRODUCT_SKU_NOT_NULL);
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
                     return result;
                 }
                 ProductSku thisProductSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
@@ -584,7 +586,11 @@ public class OrderServiceImpl implements OrderService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         ServiceResult<String, String> result = new ServiceResult<>();
-        if (orderNo == null || returnNBulkMaterialNo == null || returnDate == null) {
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
+            return result;
+        }
+        if (returnNBulkMaterialNo == null || returnDate == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
@@ -1005,7 +1011,7 @@ public class OrderServiceImpl implements OrderService {
 
         OrderDO orderDO = orderMapper.findByOrderNo(param.getOrderNo());
         if (orderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
         if (!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())
@@ -1438,6 +1444,9 @@ public class OrderServiceImpl implements OrderService {
                 // 如果走风控
                 if (isCheckRiskManagement) {
                     ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
+                    if(!productServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)){
+                        throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    }
                     Product product = productServiceResult.getResult();
                     ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
 
@@ -2042,9 +2051,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getCustomerConsignId() == null) {
             return ErrorCode.ORDER_CUSTOMER_CONSIGN_NOT_NULL;
         }
-        if (order.getDeliveryMode() == null || !DeliveryMode.inThisScope(order.getDeliveryMode())) {
+        if (order.getDeliveryMode() == null) {
+            return ErrorCode.ORDER_DELIVERY_MODE_IS_NULL;
+        }
+        if (!DeliveryMode.inThisScope(order.getDeliveryMode())) {
             return ErrorCode.ORDER_DELIVERY_MODE_ERROR;
         }
+
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         if (customerDO == null) {
             return ErrorCode.CUSTOMER_NOT_EXISTS;
@@ -2055,21 +2068,42 @@ public class OrderServiceImpl implements OrderService {
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
 
         BigDecimal totalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
+
+        //分公司的应收短期上线
+        BigDecimal subCompanyTotalShortRentReceivable = statementOrderSupport.getSubCompanyShortRentReceivable(customerDO.getId());
+        if(BigDecimalUtil.compare(subCompanyTotalShortRentReceivable,BigDecimal.ZERO) <0){
+            return ErrorCode.SHORT_RECEIVABLE_CALCULATE_FAIL;
+        }
+
         BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
+
+        //得到分公司设置的短期上线
+        List<RoleDO> roleDOListFindAll = roleMapper.findByUserId(customerDO.getOwner());
+        RoleDO roleDOFindAll = roleDOListFindAll.get(0);
+        Integer subCompanyId = roleDOFindAll.getSubCompanyId();
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
+        BigDecimal subCompanyShortLimitReceivableAmount = subCompanyDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : subCompanyDO.getShortLimitReceivableAmount();
+
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
             return ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS;
         }
-        if (order.getExpectDeliveryTime() == null || order.getRentStartTime() == null) {
+        if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
+        if (order.getExpectDeliveryTime() == null) {
+            return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
         }
         Integer deliveryBetweenDays = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectDeliveryTime(), order.getRentStartTime());
         if (deliveryBetweenDays < 0 || deliveryBetweenDays > 2) {
             return ErrorCode.ORDER_RENT_START_TIME_ERROR;
         }
-        if (order.getRentType() == null || order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
-            return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
+        if (order.getRentType() == null) {
+            return ErrorCode.ORDER_RENT_TYPE_IS_NULL;
+        }
+        if (order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
+            return ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL;
         }
         if (!OrderRentType.inThisScope(order.getRentType())) {
             return ErrorCode.ORDER_RENT_TYPE_OR_LENGTH_ERROR;
@@ -2147,6 +2181,12 @@ public class OrderServiceImpl implements OrderService {
                     if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
+
+                    //检验分公司是否超出
+                    subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
+                        return ErrorCode.SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
                 }
             }
         }
@@ -2160,8 +2200,8 @@ public class OrderServiceImpl implements OrderService {
                 if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
                     return ErrorCode.ORDER_MATERIAL_COUNT_ERROR;
                 }
-                if (orderMaterial.getMaterialId() == null || orderMaterial.getMaterialCount() == null) {
-                    return ErrorCode.PARAM_IS_NOT_ENOUGH;
+                if (orderMaterial.getMaterialId() == null) {
+                    return ErrorCode.MATERIAL_NOT_EXISTS;
                 }
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterial.getMaterialId());
 
@@ -2202,6 +2242,12 @@ public class OrderServiceImpl implements OrderService {
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
                     if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
+
+                    //检验分公司是否超出
+                    subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
+                        return ErrorCode.SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
             }
@@ -2296,4 +2342,6 @@ public class OrderServiceImpl implements OrderService {
     private StatementOrderDetailMapper statementOrderDetailMapper;
     @Autowired
     private StatementOrderMapper statementOrderMapper;
+    @Autowired
+    private RoleMapper roleMapper;
 }
