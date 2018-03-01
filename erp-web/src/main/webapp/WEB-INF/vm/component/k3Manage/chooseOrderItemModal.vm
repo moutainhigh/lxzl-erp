@@ -107,49 +107,103 @@
                     </tr>
                     <tr class="trOrderItmes">
                         <td colspan="12" style="height: 0;">
+
                             <div class="orderItmesContainer row p5" data-order="{{orderJSONString}}" style="display: none;">
+
                                 <div  class="row">
                                     <div class="panel m15">
-                                        <div class="panel-heading pn ph8">
-                                            <span>选择商品</span>
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                                                    <li class="tab-menu active">
+                                                        <a href="#ordeProductItems-{{orderNo}}" data-toggle="tab">商品项（共<span id="orderItemProductCount">{{orderProductListCount}}</span>件）</a>
+                                                    </li>
+                                                    <li class="tab-menu">
+                                                        <a href="#orderMaterialItems-{{orderNo}}" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">{{orderMaterialListCount}}</span>件）</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="panel-body pn">
-                                            <table class="table">
-                                                <thead>
-                                                <tr class="bg-light">
-                                                    <th></th>
-                                                    <th>商品名称</th>
-                                                    <th>编号</th>
-                                                    <th>数量</th>
-                                                    <th>选择数量</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {{#orderProductList}}
-                                                <tr class="productTr">
-                                                    <td>
-                                                        <label class="option block mn">
-                                                            <input type="checkbox" name="productNo" value="{{productNumber}}">
-                                                            <span class="checkbox mn"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>{{productName}}</td>
-                                                    <td>{{productNumber}}</td>
-                                                    <td>{{productCount}}</td>
-                                                    <td>
-                                                        <label class="field prepend-icon mw200">
-                                                            <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                                {{/orderProductList}}
-                                                {{^orderProductList}}
-                                                <tr>
-                                                    <td colspan="4" class="text-center">无商品项</td>
-                                                </tr>
-                                                {{/orderProductList}}
-                                                </tbody>
-                                            </table>
+                                        <div class="panel-body light pn">
+                                            <div class="tab-content pn br-n">
+                                                <div id="ordeProductItems-{{orderNo}}" class="tab-pane tab-pane-order active">
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr class="bg-light">
+                                                            <th></th>
+                                                            <th>商品名称</th>
+                                                            <th>编号</th>
+                                                            <th>数量</th>
+                                                            <th>选择数量</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {{#orderProductList}}
+                                                        <tr class="productTr">
+                                                            <td>
+                                                                <label class="option block mn">
+                                                                    <input type="checkbox" name="productNo" value="{{productNumber}}">
+                                                                    <span class="checkbox mn"></span>
+                                                                </label>
+                                                            </td>
+                                                            <td>{{productName}}</td>
+                                                            <td>{{productNumber}}</td>
+                                                            <td>{{productCount}}</td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                        {{/orderProductList}}
+                                                        {{^orderProductList}}
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">无商品项</td>
+                                                        </tr>
+                                                        {{/orderProductList}}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div id="orderMaterialItems-{{orderNo}}" class="tab-pane tab-pane-order">
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr class="bg-light">
+                                                            <th></th>
+                                                            <th>配件名称</th>
+                                                            <th>编号</th>
+                                                            <th>数量</th>
+                                                            <th>选择数量</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {{#orderMaterialList}}
+                                                        <tr class="materialTr">
+                                                            <td>
+                                                                <label class="option block mn">
+                                                                    <input type="checkbox" name="fNumber" value="{{fNumber}}">
+                                                                    <span class="checkbox mn"></span>
+                                                                </label>
+                                                            </td>
+                                                            <td>{{materialName}}</td>
+                                                            <td>{{fNumber}}</td>
+                                                            <td>{{materialCount}}</td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <input type="text" name="materialCount-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                        {{/orderMaterialList}}
+                                                        {{^orderMaterialList}}
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">无配件项</td>
+                                                        </tr>
+                                                        {{/orderMaterialList}}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div class="panel-footer pn pv5 ph15">
                                             <div class="row">
@@ -161,6 +215,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
 
                         </td>
