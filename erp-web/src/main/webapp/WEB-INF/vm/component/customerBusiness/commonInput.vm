@@ -146,7 +146,7 @@
             </label>
         </div>
         <div class="col-md-4">
-            <label for="industry" class="field-label">所属行业</label>
+            <label for="industry" class="field-label"><em class="text-danger">*</em>所属行业</label>
             <label class="field select">
                 <select id="industry" name="industry" class="required">
                     <option value="">请选择</option>
@@ -225,7 +225,7 @@
     <div class="section row">
         <div class="col-md-12">
             <div class="section-divider mv40" id="spy2">
-                <span>公司经营地址</span>
+                <span><em class="text-danger">*</em>公司经营地址</span>
             </div>
             <div class="section row">
                 <div class="col-md-4">
