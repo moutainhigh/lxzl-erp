@@ -20,32 +20,47 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerControllerTest extends ERPUnTransactionalTest {
+public class CustomerControllerTest extends ERPTransactionalTest {
     @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
         customer.setOwner(500021);
         customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
+        customer.setFirstApplyAmount(new BigDecimal(84000));
+        customer.setLaterApplyAmount(new BigDecimal(50000));
         customer.setIsDefaultConsignAddress(1);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
-        CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
-        customerCompanyNeed.setSkuId(70);
-//        customerCompanyNeed.setUnitPrice(new BigDecimal(1560));
-        customerCompanyNeed.setRentCount(10);
-        customerCompanyNeed.setRentLength(24);
-        customerCompanyNeedFirstList.add(customerCompanyNeed);
+        CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
+        customerCompanyNeed1.setSkuId(70);
+        customerCompanyNeed1.setRentCount(10);
+        customerCompanyNeed1.setTotalPrice(new BigDecimal(80000));
+
+        CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
+        customerCompanyNeed2.setSkuId(57);
+        customerCompanyNeed2.setRentCount(20);
+        customerCompanyNeed2.setTotalPrice(new BigDecimal(4000));
+        customerCompanyNeedFirstList.add(customerCompanyNeed1);
+        customerCompanyNeedFirstList.add(customerCompanyNeed2);
+
+        List<CustomerCompanyNeed> customerCompanyNeedLaterList = new ArrayList<>();
+        CustomerCompanyNeed customerCompanyNeed3 = new CustomerCompanyNeed();
+        customerCompanyNeed3.setSkuId(60);
+        customerCompanyNeed3.setRentCount(10);
+        customerCompanyNeed3.setTotalPrice(new BigDecimal(50000));
+        customerCompanyNeedLaterList.add(customerCompanyNeed3);
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("三九六文化");
+        customerCompany.setCompanyName("楚汉文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
-        customerCompany.setAddress("彭企业信息详细地址测试101");
+        customerCompany.setAddress("彭企业信息详细地址测试103");
         customerCompany.setProductPurpose("测试设备用途");
         customerCompany.setRemark("记住这是公司的备注不是客户的备注");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
+        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setAgentPersonPhone("18566324595");
         customerCompany.setAgentPersonNo("422827199009080030");
@@ -106,7 +121,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180228-00091");
+        customer.setCustomerNo("LXCC-1000-20180228-00093");
         customer.setOwner(500021);
         customer.setUnionUser(500003);
         customer.setIsDefaultConsignAddress(0);
@@ -114,22 +129,39 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         //首次所需设备
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
-        CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
-        customerCompanyNeed.setSkuId(208);
-        customerCompanyNeed.setUnitPrice(new BigDecimal(1560));
-        customerCompanyNeed.setRentCount(15);
-        customerCompanyNeed.setRentLength(24);
-        customerCompanyNeedFirstList.add(customerCompanyNeed);
+        CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
+        customerCompanyNeed1.setSkuId(70);
+        customerCompanyNeed1.setRentCount(15);
+//        customerCompanyNeed1.setTotalPrice(new BigDecimal(120000));
 
+        CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
+        customerCompanyNeed2.setSkuId(57);
+        customerCompanyNeed2.setRentCount(30);
+//        customerCompanyNeed2.setTotalPrice(new BigDecimal(6000));
+
+        customerCompanyNeedFirstList.add(customerCompanyNeed1);
+        customerCompanyNeedFirstList.add(customerCompanyNeed2);
+
+        //后续所需设备
+        List<CustomerCompanyNeed> customerCompanyNeedLaterList = new ArrayList<>();
+        CustomerCompanyNeed customerCompanyNeed3 = new CustomerCompanyNeed();
+        customerCompanyNeed3.setSkuId(40);
+        customerCompanyNeed3.setRentCount(10);
+//        customerCompanyNeed1.setTotalPrice(new BigDecimal(120000));
+
+        customerCompanyNeedLaterList.add(customerCompanyNeed3);
+
+        //加入首次租赁设备
+        customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
+        //加入后续租赁设备
+        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("三九六文化");
+        customerCompany.setCompanyName("二四六八文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
         customerCompany.setProductPurpose("测试设备用途");
-        //加入首次租赁设备
-        customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
         customerCompany.setIsLegalPersonApple(0);
         customerCompany.setLegalPersonPhone("13866253152");
         customerCompany.setAgentPersonPhone("13866253151");
@@ -160,7 +192,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         managerPlaceRentContractImageList.add(image5);
         managerPlaceRentContractImageList.add(image6);
 //        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
-
 
         TestResult result = getJsonTestResult("/customer/updateCompany", customer);
     }
@@ -331,7 +362,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180211-00060");
+        customer.setCustomerNo("LXCC-1000-20180228-00156");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -346,7 +377,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002018010300016");
+        customer.setCustomerNo("LXCD10002017123000034");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 
