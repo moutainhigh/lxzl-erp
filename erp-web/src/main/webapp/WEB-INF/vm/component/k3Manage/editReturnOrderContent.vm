@@ -78,7 +78,7 @@
         <div class="row">
             <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                 <li class="active">
-                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                    <a href="#returnProductCount" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                 </li>
 ##                <li>
 ##                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
