@@ -51,6 +51,9 @@
 <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
+            'modal.choose.product.js',
+            'manage.order.item.render.js',
+            'manage.order.util.js',
             'manage.customer.mixin.js',
             'manage.customer.business.edit.js',
             'modal.choose.user.js');

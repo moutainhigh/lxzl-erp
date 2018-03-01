@@ -269,39 +269,39 @@
         </div>
     </div>
 
-    <div class="section row">
-        <div class="col-md-4">
-            <div class="section-divider mv40" id="spy2">
-                <span>申请额度信息</span>
-            </div>
-            <div class="section">
-                <label for="firstApplyAmount" class="field-label"><em class="text-danger">*</em>首期申请额度</label>
-                <label for="firstApplyAmount" class="field prepend-icon">
-                    <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="gui-input required moneyNumber" />
-                    <label for="firstApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
-                </label>
-            </div>
-            <div class="section">
-                <label for="remark" class="field-label"><em class="text-danger">*</em>后期申请额度</label>
-                <label for="laterApplyAmount" class="field prepend-icon">
-                    <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="gui-input required moneyNumber" />
-                    <label for="laterApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
-                </label>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="section-divider mv40" id="spy2">
-                <span>备注</span>
-            </div>
-            <div class="section">
-##                <label for="remark" class="field-label">备注</label>
-                <label for="remark" class="field prepend-icon">
-                    <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
-                    <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-                </label>
-            </div>
-        </div>
-    </div>
+##    <div class="section row">
+##        <div class="col-md-4">
+##            <div class="section-divider mv40" id="spy2">
+##                <span>申请额度信息</span>
+##            </div>
+##            <div class="section">
+##                <label for="firstApplyAmount" class="field-label"><em class="text-danger">*</em>首期申请额度</label>
+##                <label for="firstApplyAmount" class="field prepend-icon">
+##                    <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="form-control gui-input required moneyNumber" readonly placeholder="0" />
+##                    <label for="firstApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                </label>
+##            </div>
+##            <div class="section">
+##                <label for="remark" class="field-label"><em class="text-danger">*</em>后期申请额度</label>
+##                <label for="laterApplyAmount" class="field prepend-icon">
+##                    <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="form-control gui-input required moneyNumber" readonly placeholder="0" />
+##                    <label for="laterApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                </label>
+##            </div>
+##        </div>
+##        <div class="col-md-8">
+##            <div class="section-divider mv40" id="spy2">
+##                <span>备注</span>
+##            </div>
+##            <div class="section">
+####                <label for="remark" class="field-label">备注</label>
+##                <label for="remark" class="field prepend-icon">
+##                    <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
+##                    <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##                </label>
+##            </div>
+##        </div>
+##    </div>
 
 ##    <div class="section row">
 ##        <div class="col-md-12">

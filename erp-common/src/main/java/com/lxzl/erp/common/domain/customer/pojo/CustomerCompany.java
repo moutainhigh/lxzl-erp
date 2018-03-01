@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -58,8 +59,8 @@ public class CustomerCompany extends BasePO {
     private Integer officeNumber;  //办公人数
 //    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String productPurpose;  //设备用途
-//    @Valid
-//    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @Valid
+    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
     @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})

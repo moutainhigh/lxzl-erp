@@ -90,7 +90,7 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
                 return serviceResult;
             }
-            if (customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPerson())) {
+            if (customerCompany.getAgentPersonName().equals(customerCompany.getLegalPerson())) {
                 serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
                 return serviceResult;
             }
@@ -130,10 +130,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        customerDO.setOwner(customer.getOwner());
-        customerDO.setUnionUser(customer.getUnionUser());
-        customerMapper.save(customerDO);
-
+        //用于记录客户所需设备的计算结果
         ServiceResult<String,BigDecimal> setServiceResult = new ServiceResult<>();
         CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
         //设置首次所需设备
@@ -147,11 +144,12 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-            if (customerDO.getFirstApplyAmount().compareTo(setServiceResult.getResult()) != 0){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
-                return serviceResult;
-            }
+//            if (customerDO.getFirstApplyAmount().compareTo(setServiceResult.getResult()) != 0){
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
+//                return serviceResult;
+//            }
+            customerDO.setFirstApplyAmount(setServiceResult.getResult());
             customerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
 
@@ -171,8 +169,14 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
                 return serviceResult;
             }
+
+            customerDO.setLaterApplyAmount(setServiceResult.getResult());
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
+
+        customerDO.setOwner(customer.getOwner());
+        customerDO.setUnionUser(customer.getUnionUser());
+        customerMapper.save(customerDO);
 
         //如果客户选择了将详细地址作为收货地址
         if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
@@ -2123,11 +2127,12 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
-            //判断总金额计算是否正确
-            if (totalPrice.compareTo(customerCompanyNeed.getTotalPrice()) != 0){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR);
-                return serviceResult;
-            }
+//            //判断总金额计算是否正确
+//            if (totalPrice.compareTo(customerCompanyNeed.getTotalPrice()) != 0){
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR);
+//                return serviceResult;
+//            }
+//
             customerCompanyNeed.setTotalPrice(totalPrice);
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
             customerCompanyNeed.setProduct(productServiceResult.getResult());

@@ -2,19 +2,22 @@
     <div class="panel-heading">
         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
             <li class="active">
-                <a href="#tab-1" data-toggle="tab" aria-expanded="false">所需设备</a>
+                <a href="#tab-1" data-toggle="tab" aria-expanded="false">首次所需设备</a>
+            </li>
+            <li>
+                <a href="#tab-2" data-toggle="tab" aria-expanded="false">后续所需设备</a>
             </li>
             <li class="">
-                <a href="#tab-2" data-toggle="tab" aria-expanded="false">基本信息</a>
+                <a href="#tab-3" data-toggle="tab" aria-expanded="false">基本信息</a>
             </li>
             <li class="">
-                <a href="#tab-3" data-toggle="tab" aria-expanded="false">法人征信</a>
+                <a href="#tab-4" data-toggle="tab" aria-expanded="false">法人征信</a>
             </li>
             <li class="">
-                <a href="#tab-4" data-toggle="tab" aria-expanded="false">公司资质</a>
+                <a href="#tab-5" data-toggle="tab" aria-expanded="false">公司资质</a>
             </li>
             <li class="">
-                <a href="#tab-5" data-toggle="tab" aria-expanded="false">其它资料</a>
+                <a href="#tab-6" data-toggle="tab" aria-expanded="false">其它资料</a>
             </li>
         </ul>
     </div>
@@ -45,9 +48,14 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                            <th>商品ID</th>
+                            <th>商品(sku)ID</th>
+                            <th>商品名称</th>
+                            <th>类别</th>
+                            <th>品牌</th>
+                            <th>商品参数（SKU）</th>
+                            <th>单台商品价值</th>
                             <th>租赁数量</th>
-                            <th>租赁时长</th>
+                            <th>商品总价值</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -56,39 +64,137 @@
                         <tr class="productRow skuRow" productRowKey="{{productId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
                             <td>{{skuId}}</td>
                             <td>
-                                <label class="field prepend-icon mw200">
-                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{rentCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
-                                </label>
+                                <div style="max-width:300px;">{{productName}}</div>
                             </td>
+                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                            <td><div style="max-width:300px;">{{propertiesToStr}}</div></td>
+                            <td>￥<span class="unitPrice">{{currentSkuPrice}}</span></td>
                             <td>
-                                <label class="field prepend-icon mw200">
-                                    <input id="rentTimeLength" name="rentTimeLength" class="form-control number required pl10" type="text" value="{{rentLength}}" placeholder="输入租赁时长" />
+                                <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
+                                <input type="hidden" name="productId" value="{{productId}}" class="productId" />
+                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                <label class="field prepend-icon" style="max-width:160px">
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
+                            <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
                                 </div>
                             </td>
                         </tr>
                         {{/listData}}
+
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                            <td valign="top" colspan="10" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                 </div>
+                <div class="br-t">
+                    <div class="row">
+                        <div class="col-md-10 text-right" style="line-height:39px; padding-right:0;">首期申请额度：</div>
+                        <div class="col-md-2" style="padding-left:0;"><input type="text" name="firstApplyAmount" id="firstApplyAmount" class="form-control required moneyNumber text-danger" readonly placeholder="0" style="border:none;background:#fff; text-decoration: none; padding-left:0;color: #e9573f;" /></div>
+                    </div>
+                </div>
             </div>
-            <div id="tab-2" class="tab-pane">
+            <div id="tab-2" class="tab-pane" style="margin:-25px;">
+                <div class="panel-menu br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="laterChooseButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="laterAddProduct" title="选择商品" style="margin-right: 5px; border-radius: 5px;">
+                                    <i class="fa fa-plus"></i> 选择商品
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="laterDeletProduct" title="删除商品" style="margin-right: 5px; border-radius: 5px;">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="productLaterNeedTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>商品(sku)ID</th>
+                            <th>商品名称</th>
+                            <th>类别</th>
+                            <th>品牌</th>
+                            <th>商品参数（SKU）</th>
+                            <th>单台商品价值</th>
+                            <th>租赁数量</th>
+                            <th>商品总价值</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#listData}}
+                        <tr class="productRow skuRow" productRowKey="{{productId}}">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>{{skuId}}</td>
+                            <td>
+                                <div style="max-width:300px;">{{productName}}</div>
+                            </td>
+                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                            <td><div style="max-width:300px;">{{propertiesToStr}}</div></td>
+                            <td>￥<span class="unitPrice">{{currentSkuPrice}}</span></td>
+                            <td>
+                                <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
+                                <input type="hidden" name="productId" value="{{productId}}" class="productId" />
+                                <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                <label class="field prepend-icon" style="max-width:160px">
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                </label>
+                            </td>
+                            <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="10" class="text-center">没有选择商品</td>
+                        </tr>
+                        {{/listData}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productLaterNeedTable"></table>
+                </div>
+                <div class="br-t">
+                    <div class="row">
+                        <div class="col-md-10 text-right" style="line-height:39px; padding-right:0;">后续申请额度：</div>
+                        <div class="col-md-2" style="padding-left:0;"><input type="text" name="laterApplyAmount" id="laterApplyAmount" class="form-control required moneyNumber text-danger" readonly placeholder="0" style="border:none;background:#fff; text-decoration: none; padding-left:0;color: #e9573f;" /></div>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-3" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-4">
                         <div class="section-divider mv40"><span> 营业执照 </span></div>
@@ -131,7 +237,7 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-3" class="tab-pane">
+            <div id="tab-4" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40"><span> 法人个人征信报告或附（法人个人征信授权书） </span></div>
@@ -178,7 +284,7 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-4" class="tab-pane">
+            <div id="tab-5" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40"><span> 固定资产证明 </span></div>
@@ -270,7 +376,7 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-5" class="tab-pane">
+            <div id="tab-6" class="tab-pane">
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40"><span> 其它材料 </span></div>
