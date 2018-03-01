@@ -32,26 +32,26 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed = new CustomerCompanyNeed();
         customerCompanyNeed.setSkuId(70);
-        customerCompanyNeed.setUnitPrice(new BigDecimal(1560));
+//        customerCompanyNeed.setUnitPrice(new BigDecimal(1560));
         customerCompanyNeed.setRentCount(10);
         customerCompanyNeed.setRentLength(24);
         customerCompanyNeedFirstList.add(customerCompanyNeed);
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("三九文化");
+        customerCompany.setCompanyName("三九六文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
-        customerCompany.setAddress("彭企业信息详细地址测试");
+        customerCompany.setAddress("彭企业信息详细地址测试101");
         customerCompany.setProductPurpose("测试设备用途");
         customerCompany.setRemark("记住这是公司的备注不是客户的备注");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setAgentPersonPhone("18566324595");
-        customerCompany.setAgentPersonNo("aaaaaaa");
+        customerCompany.setAgentPersonNo("422827199009080030");
         customerCompany.setAgentPersonName("人民的公义");
         customerCompany.setLegalPersonPhone("12345678900");
-        customerCompany.setLegalPersonNo("oooooooo");
+        customerCompany.setLegalPersonNo("422827199009080031");
         customerCompany.setLegalPerson("woshi lisiaaaaaaa");
 /*        Image image1 = new Image();
 //        image1.setImgId(18);
@@ -83,6 +83,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Thread.sleep(1000000);
     }
 
+
+
     @Test
     public void addCustomerPerson() throws Exception {
         Customer customer = new Customer();
@@ -104,9 +106,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180211-00006");
-        customer.setOwner(500025);
-//        customer.setUnionUser(500029);
+        customer.setCustomerNo("LXCC-1000-20180228-00091");
+        customer.setOwner(500021);
+        customer.setUnionUser(500003);
         customer.setIsDefaultConsignAddress(0);
         CustomerCompany customerCompany = new CustomerCompany();
 
@@ -121,7 +123,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
 
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("彭测试公司名a123453");
+        customerCompany.setCompanyName("三九六文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
@@ -411,8 +413,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void deleteCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(18);
-        customerConsignInfo.setIsMain(1);
+        customerConsignInfo.setCustomerConsignInfoId(382);
 
         TestResult result = getJsonTestResult("/customer/deleteCustomerConsignInfo", customerConsignInfo);
     }

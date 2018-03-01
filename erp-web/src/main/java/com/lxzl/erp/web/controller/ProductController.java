@@ -3,13 +3,12 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.product.ProductCategoryQueryParam;
-import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
-import com.lxzl.erp.common.domain.product.ProductQueryParam;
-import com.lxzl.erp.common.domain.product.ProductSkuQueryParam;
+import com.lxzl.erp.common.domain.product.*;
 import com.lxzl.erp.common.domain.product.pojo.*;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.CancelGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -29,13 +28,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("/product")
 @Controller
 @ControllerLog
 public class ProductController extends BaseController {
-
 
     @RequestMapping(value = "uploadImage", method = RequestMethod.POST)
     public Result uploadImage(@RequestParam("file") MultipartFile[] file, HttpServletRequest request) {
@@ -135,6 +134,37 @@ public class ProductController extends BaseController {
         ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryPropertyValue(productCategoryPropertyValue);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "addProductCategoryProperty", method = RequestMethod.POST)
+    public Result addProductCategoryProperty(@RequestBody @Validated(AddGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productCategoryService.addProductCategoryProperty(productCategoryProperty);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "deleteProductCategoryPropertyValue", method = RequestMethod.POST)
+    public Result deleteProductCategoryPropertyValue(@RequestBody @Validated(CancelGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productCategoryService.deleteProductCategoryPropertyValue(productCategoryProperty);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "updateCategoryPropertyValue", method = RequestMethod.POST)
+    public Result updateCategoryPropertyValue(@RequestBody @Validated(UpdateGroup.class) ProductCategoryProperty productCategoryProperty, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = productCategoryService.updateCategoryPropertyValue(productCategoryProperty);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pageProductCategory", method = RequestMethod.POST)
+    public Result pageProductCategory(@RequestBody ProductCategoryPageParam productCategoryPageParam, BindingResult validResult) {
+        ServiceResult<String, Page<ProductCategory>> serviceResult = productCategoryService.pageProductCategory(productCategoryPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "detailProductCategory", method = RequestMethod.POST)
+    public Result detailProductCategory(@RequestBody @Validated(IdGroup.class) ProductCategory productCategory, BindingResult validResult) {
+        ServiceResult<String, ProductCategory> serviceResult = productCategoryService.detailProductCategory(productCategory);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
     @Autowired
     private HttpSession session;

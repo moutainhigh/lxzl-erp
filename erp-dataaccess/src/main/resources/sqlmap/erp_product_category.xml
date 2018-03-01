@@ -92,4 +92,42 @@
         INSERT INTO erp_product_category
         <include refid="set_column_sql"/>
     </insert>
+
+    <select id="findProductCategoryCountByParams" resultType="Integer" parameterType="map">
+        SELECT count(id) FROM erp_product_category epc
+        <where>
+            <if test="maps.productCategoryPageParam != null &amp;&amp;maps.productCategoryPageParam.categoryName != null &amp;&amp; maps.productCategoryPageParam.categoryName != ''">
+                and epc.category_name = #{maps.productCategoryPageParam.categoryName, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.productCategoryPageParam != null &amp;&amp;maps.productCategoryPageParam.categoryType != null &amp;&amp; maps.productCategoryPageParam.categoryType != ''">
+                AND epc.category_type = #{maps.productCategoryPageParam.categoryType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.isQueryAll == null">
+                and epc.data_status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="findProductCategoryByParams" resultMap="ProductCategoryDO" parameterType="map">
+        SELECT <include refid="column_List"/> FROM erp_product_category epc
+        <where>
+            <if test="maps.productCategoryPageParam != null &amp;&amp;maps.productCategoryPageParam.categoryName != null &amp;&amp; maps.productCategoryPageParam.categoryName != ''">
+                and epc.category_name = #{maps.productCategoryPageParam.categoryName, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.productCategoryPageParam != null &amp;&amp;maps.productCategoryPageParam.categoryType != null &amp;&amp; maps.productCategoryPageParam.categoryType != ''">
+                AND epc.category_type = #{maps.productCategoryPageParam.categoryType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.isQueryAll == null">
+                and epc.data_status = 1
+            </if>
+        </where>
+        ORDER BY epc.create_time DESC
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+
+    <select id="findByParentCategoryId" resultMap="ProductCategoryDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/> FROM erp_product_category epc WHERE
+        epc.parent_category_id = #{parentCategoryId, jdbcType=INTEGER} AND epc.data_status = 1
+    </select>
+
 </mapper>

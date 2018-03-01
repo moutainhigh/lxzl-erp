@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -28,14 +31,20 @@ public class CustomerRiskManagement extends BasePO {
 	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
 	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
+	@Pattern(regexp = "^[0-9]*$",message = ErrorCode.DEPOSIT_CYCLE_IS_NOT_MATH,groups = {UpdateGroup.class, UpdateGroup.class})
 	private Integer depositCycle;   //押金期数
 	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
 	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	@Min(value = 1,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
+	@Pattern(regexp = "^[0-9]*$",message = ErrorCode.PAYMENT_CYCLE_IS_NOT_MATH,groups = {UpdateGroup.class})
 	private Integer paymentCycle;   //付款期数
+	@Pattern(regexp = "^[0-9]*$",message = ErrorCode.APPLE_DEPOSIT_CYCLE_IS_NOT_MATH,groups = {UpdateGroup.class})
 	private Integer appleDepositCycle;	// 苹果设备租赁方案
+	@Pattern(regexp = "^[0-9]*$",message = ErrorCode.APPLE_PAYMENT_CYCLE_IS_NOT_MATH,groups = {UpdateGroup.class})
 	private Integer applePaymentCycle;	// 苹果设备付款期数
+	@Pattern(regexp = "^[0-9]*$",message = ErrorCode.NEW_DEPOSIT_CYCLE_IS_NOT_MATH,groups = {UpdateGroup.class})
 	private Integer newDepositCycle;	// 全新押金期数
+	@Pattern(regexp = "^[0-9]*$",message = ErrorCode.NEW_PAYMENT_CYCLE_IS_NOT_MATH,groups = {UpdateGroup.class})
 	private Integer newPaymentCycle;	// 全新设备租赁方案
 	private Integer payMode;			// 其他设备支付方式
 	private Integer applePayMode;		// 苹果设备支付方式

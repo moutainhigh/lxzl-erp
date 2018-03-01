@@ -89,12 +89,8 @@
             <if test="dataOrder != null">
                 data_order = #{dataOrder, jdbcType=INTEGER},
             </if>
-            <if test="propertyCapacityValue != null">
                 property_capacity_value = #{propertyCapacityValue, jdbcType=DOUBLE},
-            </if>
-            <if test="materialModelId != null">
                 material_model_id = #{materialModelId, jdbcType=INTEGER},
-            </if>
             <if test="referId != null">
                 refer_id = #{referId, jdbcType=INTEGER},
             </if>
@@ -130,4 +126,16 @@
         INSERT INTO erp_product_category_property_value
         <include refid="set_column_sql"/>
     </insert>
+
+    <select id="findByPropertyValueNameAndCategoryId" resultMap="ProductCategoryPropertyValueDO">
+        SELECT <include refid="column_List"/> from erp_product_category_property_value epcpv WHERE
+        epcpv.property_value_name = #{propertyValueName, jdbcType=VARCHAR} AND epcpv.category_id = #{categoryId, jdbcType=INTEGER} AND epcpv.data_status = 1
+    </select>
+
+    <select id="findListByPropertyIdAndCategoryId" resultMap="ProductCategoryPropertyValueDO">
+        SELECT <include refid="column_List"/>, epcp.property_name, epcp.material_type
+        from erp_product_category_property_value epcpv
+        INNER JOIN erp_product_category_property epcp on epcp.id = epcpv.property_id and epcp.data_status = 1
+        WHERE epcpv.property_id = #{propertyId, jdbcType=INTEGER} AND epcpv.category_id = #{categoryId, jdbcType=INTEGER} AND epcpv.data_status = 1
+    </select>
 </mapper>

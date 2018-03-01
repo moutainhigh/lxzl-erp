@@ -136,6 +136,21 @@ public class ErrorCode {
     public static final String PRODUCT_ALREADY_EXISTS = "J200076";
     public static final String CUSTOMER_REJECT_CAN_NOT_EDIT_RISK_MANAGEMENT = "J200077";
     public static final String CUSTOMER_UNCOMMITTED_CAN_NOT_EDIT_RISK_MANAGEMENT = "J200078";
+    public static final String PROPERTY_NAME_NOT_NULL = "J200079";
+    public static final String CATEGORY_ID_NOT_NULL = "J200080";
+    public static final String PROPERTY_TYPE_NOT_NULL = "J200081";
+    public static final String PROPERTY_VALUE_NAME_NOT_NULL = "J200082";
+    public static final String PROPERTY_ID_NOT_NULL = "J200083";
+    public static final String PROPERTY_TYPE_MUST_BE_ONE_OR_TWO = "J200084";
+    public static final String PRODUCT_CATEGORY_NOT_EXISTS = "J200085";
+    public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
+    public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
+    public static final String PROPERTY_NAME_NOT_EXISTS = "J800088";
+    public static final String CATEGORY_PROPERTY_ID_NOT_NULL = "J800089";
+    public static final String CATEGORY_PROPERTY_VALUE_ID_NOT_NULL = "J800090";
+    public static final String PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR = "J800091";
+    public static final String PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME = "J800092";
+    public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR = "J800093";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -479,6 +494,7 @@ public class ErrorCode {
     public static final String LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO = "J500103";
     public static final String LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME = "J500104";
     public static final String CITY_NOT_EXISTS = "J500105";
+    public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -812,6 +828,21 @@ public class ErrorCode {
         MAP.put(PRODUCT_ALREADY_EXISTS, "商品已经存在");
         MAP.put(CUSTOMER_REJECT_CAN_NOT_EDIT_RISK_MANAGEMENT, "客户在驳回状态不允许修改风控信息");
         MAP.put(CUSTOMER_UNCOMMITTED_CAN_NOT_EDIT_RISK_MANAGEMENT, "客户在未提交状态不允许修改风控信息");
+        MAP.put(PROPERTY_NAME_NOT_NULL, "商品分类的属性名称不能为空");
+        MAP.put(CATEGORY_ID_NOT_NULL, "商品分类的所属类目ID不能为空");
+        MAP.put(PROPERTY_TYPE_NOT_NULL, "商品分类的属性类型不能为空");
+        MAP.put(PROPERTY_VALUE_NAME_NOT_NULL, "商品分类的属性值名称不能为空");
+        MAP.put(PROPERTY_ID_NOT_NULL, "商品分类的所属属性ID不能空");
+        MAP.put(PROPERTY_TYPE_MUST_BE_ONE_OR_TWO, "商品分类的属性类型只能为1或者2");
+        MAP.put(PRODUCT_CATEGORY_NOT_EXISTS, "商品分类不存在");
+        MAP.put(PROPERTY_CAPACITY_VALUE_NOT_NULL, "商品分类的属性容量值不能为空");
+        MAP.put(PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME, "商品分类的属性名称与配件名称不相同");
+        MAP.put(PROPERTY_NAME_NOT_EXISTS, "商品分类的属性名称不存在");
+        MAP.put(CATEGORY_PROPERTY_ID_NOT_NULL, "商品分类的属性ID不能为空");
+        MAP.put(CATEGORY_PROPERTY_VALUE_ID_NOT_NULL, "商品分类的属性值ID不能为空");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
+        MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1102,6 +1133,7 @@ public class ErrorCode {
         MAP.put(AGENT_PERSON_NAME_NOT_NULL, "经办人姓名不能为空");
         MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
         MAP.put(CITY_NOT_EXISTS, "城市不存在");
+        MAP.put(MATERIAL_TYPE_NOT_NULL, "商品的配件类型不存在");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

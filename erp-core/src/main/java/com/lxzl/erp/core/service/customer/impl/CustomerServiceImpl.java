@@ -324,28 +324,26 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerCompanyDO.getDefaultAddressReferId() == null) {
                 //如果默认地址选项有值，并且客户的默认地址关联ID为null
                 saveCustomerCompanyConsignInfo(customerDO, newCustomerCompanyDO, now, userSupport.getCurrentUserId());
-            } else {
+            }else{
                 CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
-                customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                customerConsignInfoDO.setConsigneeName(newCustomerCompanyDO.getAgentPersonName());
+                customerConsignInfoDO.setConsigneePhone(newCustomerCompanyDO.getAgentPersonPhone());
+                customerConsignInfoDO.setProvince(newCustomerCompanyDO.getProvince());
+                customerConsignInfoDO.setCity(newCustomerCompanyDO.getCity());
+                customerConsignInfoDO.setDistrict(newCustomerCompanyDO.getDistrict());
+                customerConsignInfoDO.setAddress(newCustomerCompanyDO.getAddress());
                 customerConsignInfoDO.setUpdateTime(now);
                 customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 customerConsignInfoMapper.update(customerConsignInfoDO);
-                newCustomerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
             }
-
-        } else if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())) {
-            if (customerCompanyDO.getDefaultAddressReferId() == null) {
-                saveCustomerCompanyConsignInfo(customerDO, newCustomerCompanyDO, now, userSupport.getCurrentUserId());
-                newCustomerCompanyDO.setDefaultAddressReferId(null);
-            } else {
-                //如果默认地址选项没有值，并且客户的默认地址关联ID不为null
-                CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
-                customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                customerConsignInfoDO.setUpdateTime(now);
-                customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                customerConsignInfoMapper.update(customerConsignInfoDO);
-                newCustomerCompanyDO.setDefaultAddressReferId(null);
-            }
+        } else if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress()) && customerCompanyDO.getDefaultAddressReferId() != null) {
+            //如果默认地址选项没有值，并且客户的默认地址关联ID不为null
+            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
+            customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            customerConsignInfoDO.setUpdateTime(now);
+            customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerConsignInfoMapper.update(customerConsignInfoDO);
+            newCustomerCompanyDO.setDefaultAddressReferId(null);
         }
 
         //判断首次所需设备 list转json
@@ -1347,7 +1345,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //如果传送过来的ismain是1
+        //如果传送过来的isMain是1,将该客户其他收货地址改为不是默认收货地址
         if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsMain())) {
             customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         }
@@ -1364,6 +1362,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerConsignInfoDO.getId());
         return serviceResult;
@@ -1384,6 +1383,16 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
+
+        //查看被删除的地址信息是否有企业的关联地址信息
+        CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByDefaultAddressReferId(customerConsignInfoDO.getId());
+        if (customerCompanyDO != null){
+            customerCompanyDO.setDefaultAddressReferId(null);
+            customerCompanyDO.setUpdateTime(now);
+            customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerCompanyMapper.update(customerCompanyDO);
+        }
+
         customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
