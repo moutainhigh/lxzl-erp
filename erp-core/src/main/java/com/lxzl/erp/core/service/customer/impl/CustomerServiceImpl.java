@@ -375,7 +375,6 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
-
             //将所有设备的总金额赋值给客户的首期申请额度
             customerDO.setFirstApplyAmount(setServiceResult.getResult());
         }
@@ -414,7 +413,6 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-
         //对身份证正面图片操作
         List<Image> legalPersonNoPictureFrontImageList = new ArrayList<>();
         legalPersonNoPictureFrontImageList.add(customerCompany.getLegalPersonNoPictureFrontImage());
@@ -423,7 +421,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
             return serviceResult;
         }
-
 
         //对身份证反面图片操作
         List<Image> legalPersonNoPictureBackImageList = new ArrayList<>();
@@ -634,7 +631,7 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedFirstJson = customerCompanyDO.getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
 
-            //todo 后面需要放开的字段
+            //todo 后面需要放开的字段，设备租赁
             //对租赁设备进行判断
             if(CollectionUtil.isEmpty(customerCompanyNeedList)){
                 result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);

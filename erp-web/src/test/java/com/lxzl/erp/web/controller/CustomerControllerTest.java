@@ -124,7 +124,7 @@ public class CustomerControllerTest extends ERPTransactionalTest {
         customer.setCustomerNo("LXCC-1000-20180301-00002");
         customer.setOwner(500021);
         customer.setUnionUser(500003);
-        customer.setIsDefaultConsignAddress(0);
+        customer.setIsDefaultConsignAddress(1);
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -157,6 +157,7 @@ public class CustomerControllerTest extends ERPTransactionalTest {
         //加入后续租赁设备
         customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 
+        customerCompany.setDefaultAddressReferId(441);
         customerCompany.setCustomerOrigin(1);
         customerCompany.setCompanyName("楚汉文化");
         customerCompany.setConnectRealName("测试紧急联系人");
