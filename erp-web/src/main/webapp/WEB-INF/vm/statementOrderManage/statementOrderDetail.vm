@@ -83,33 +83,43 @@
 
                     <div class="panel">
                         <div class="panel-body light pn">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="overflow-x: scroll; max-height: 500px;">
                                 <script type="text/html" id="dataListTpl">
                                     <thead>
                                     <tr class="bg-light">
 ##                                        <th>ID</th>
-                                        <th>类型</th>
-                                        <th>订单编号</th>
-                                        <th>订单项类型</th>
-                                        <th>商品名</th>
-                                        <th>金额类型</th>
-                                        <th>单价</th>
-                                        <th>商品数量</th>
-                                        <th>租赁类型</th>
-                                        <th>期数</th>
-                                        <th>结算单金额</th>
-##                                        <th>其它费用</th>
-                                        <th>预计支付时间</th>
-                                        <th>已经支付金额</th>
-                                        <th>结算支付时间</th>
-                                        <th>逾期金额</th>
-                                        <th>退还租金押金</th>
-                                        <th>退还押金</th>
-                                        <th>冲正金额</th>
-                                        <th>状态</th>
-                                        <th class="text-right">结算时间</th>
+                                        <th style="white-space: nowrap;">类型</th>
+                                        <th style="white-space: nowrap;">订单编号</th>
+                                        <th style="white-space: nowrap;">订单项类型</th>
+                                        <th style="white-space: nowrap;">商品名</th>
+                                        <th style="white-space: nowrap;">金额类型</th>
+                                        <th style="white-space: nowrap;">单价</th>
+                                        <th style="white-space: nowrap;">商品数量</th>
+                                        <th style="white-space: nowrap;">租赁类型</th>
+                                        <th style="white-space: nowrap;">期数</th>
+                                        <th style="white-space: nowrap;">结算单金额</th>
+##                                        <th style="white-space: nowrap;">其它费用</th>
+                                        <th style="white-space: nowrap;">预计支付时间</th>
+                                        <th style="white-space: nowrap;">已经支付金额</th>
+                                        <th style="white-space: nowrap;">结算支付时间</th>
+                                        <th style="white-space: nowrap;">逾期金额</th>
+
+                                        <th style="white-space: nowrap;">租金押金</th>
+                                        <th style="white-space: nowrap;">已付租金押金</th>
+
+                                        <th style="white-space: nowrap;">押金</th>
+                                        <th style="white-space: nowrap;">已付押金</th>
+
+                                        <th style="white-space: nowrap;">租金</th>
+                                        <th style="white-space: nowrap;">已付租金</th>
+
+                                        <th style="white-space: nowrap;">退还租金押金</th>
+                                        <th style="white-space: nowrap;">退还押金</th>
+                                        <th style="white-space: nowrap;">冲正金额</th>
+                                        <th style="white-space: nowrap;">状态</th>
+                                        <th style="white-space: nowrap;" class="text-right">结算时间</th>
                                         {{#hasRowActionButtons}}
-                                        <th class="text-right">操作</th>
+                                        <th style="white-space: nowrap;" class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
                                     </tr>
                                     </thead>
@@ -137,6 +147,16 @@
                                         <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
                                         <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
                                         <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+
+                                        <td>￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
+                                        <td>￥{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}</td>
+
+                                        <td>￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
+                                        <td>￥{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}</td>
+
+                                        <td>￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
+                                        <td>￥{{#price}}{{statementDetailRentPaidAmount}}{{/price}}</td>
+
                                         <td>
                                             <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
                                             <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
