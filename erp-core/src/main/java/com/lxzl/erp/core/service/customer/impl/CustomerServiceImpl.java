@@ -390,7 +390,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
             //将所有设备的总金额赋值给客户的首期申请额度
-            customerDO.setFirstApplyAmount(setServiceResult.getResult());
+            customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         }
 
         //判断后续所需设备
@@ -414,7 +414,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
             //将所有后续设备的总金额赋值给客户的首期申请额度
-            customerDO.setLaterApplyAmount(setServiceResult.getResult());
+            customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         }
 
         newCustomerCompanyDO.setDataStatus(null);
