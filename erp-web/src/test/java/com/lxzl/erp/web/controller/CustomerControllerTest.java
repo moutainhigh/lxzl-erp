@@ -28,7 +28,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
         customer.setFirstApplyAmount(new BigDecimal(84000));
-        customer.setLaterApplyAmount(new BigDecimal(50000));
+//        customer.setLaterApplyAmount(new BigDecimal(50000));
         customer.setIsDefaultConsignAddress(1);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
@@ -37,12 +37,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompanyNeed1.setRentCount(10);
         customerCompanyNeed1.setTotalPrice(new BigDecimal(80000));
 
-        CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
-        customerCompanyNeed2.setSkuId(57);
-        customerCompanyNeed2.setRentCount(20);
-        customerCompanyNeed2.setTotalPrice(new BigDecimal(4000));
+//        CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
+//        customerCompanyNeed2.setSkuId(57);
+//        customerCompanyNeed2.setRentCount(20);
+//        customerCompanyNeed2.setTotalPrice(new BigDecimal(4000));
         customerCompanyNeedFirstList.add(customerCompanyNeed1);
-        customerCompanyNeedFirstList.add(customerCompanyNeed2);
+//        customerCompanyNeedFirstList.add(customerCompanyNeed2);
 
         List<CustomerCompanyNeed> customerCompanyNeedLaterList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed3 = new CustomerCompanyNeed();
@@ -53,14 +53,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("楚汉文化");
+        customerCompany.setCompanyName("楚楚油菜文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("彭企业信息详细地址测试103");
         customerCompany.setProductPurpose("测试设备用途");
         customerCompany.setRemark("记住这是公司的备注不是客户的备注");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
-        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
+//        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setAgentPersonPhone("18566324595");
         customerCompany.setAgentPersonNo("422827199009080030");
@@ -200,78 +200,54 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerCompanyJSON() throws Exception {
         String str = "{{\n" +
-                "\t\"unionUser\": \"500006\",\n" +
-                "\t\"owner\": \"500008\",\n" +
-                "\t\"firstApplyAmount\": \"1000\",\n" +
-                "\t\"laterApplyAmount\": \"10000\",\n" +
-                "\t\"customerCompany\": {\n" +
-                "\t\t\"customerOrigin\": \"2\",\n" +
-                "\t\t\"unionUserName\": \"毛涛\",\n" +
-                "\t\t\"unionUser\": \"500006\",\n" +
-                "\t\t\"companyName\": \"测试公司名111\",\n" +
-                "\t\t\"companyAbb\": \"测试公司名111\",\n" +
-                "\t\t\"landline\": \"0755-33806405\",\n" +
-                "\t\t\"connectRealName\": \"测试紧急联系人\",\n" +
-                "\t\t\"connectPhone\": \"18566324590\",\n" +
-                "\t\t\"companyFoundTime\": \"2018-01-09\",\n" +
-                "\t\t\"industry\": \"动漫梦工厂\",\n" +
-                "\t\t\"affiliatedEnterprise\": \"百度\",\n" +
-                "\t\t\"registeredCapital\": \"100000000\",\n" +
-                "\t\t\"officeNumber\": \"1000\",\n" +
-                "\t\t\"unifiedCreditCode\": \"8888888\",\n" +
-                "\t\t\"operatingArea\": \"1000\",\n" +
-                "\t\t\"productPurpose\": \"测试设备用途\",\n" +
-                "\t\t\"unitInsuredNumber\": \"10\",\n" +
-                "\t\t\"ownerName\": \"毛桃a\",\n" +
-                "\t\t\"owner\": \"500008\",\n" +
-                "\t\t\"firstApplyAmount\": \"1000\",\n" +
-                "\t\t\"laterApplyAmount\": \"10000\",\n" +
-                "\t\t\"isLegalPersonApple\": \"0\",\n" +
-                "\t\t\"province\": \"1\",\n" +
-                "\t\t\"city\": \"1\",\n" +
-                "\t\t\"district\": \"1\",\n" +
-                "\t\t\"address\": \"企业信息详细地址测试\",\n" +
-                "\t\t\"legalPerson\": \"高超\",\n" +
-                "\t\t\"legalPersonNo\": \"110226198501272116\",\n" +
-                "\t\t\"legalPersonPhone\": \"18033402836\",\n" +
-                "\t\t\"agentPersonName\": \"黎明\",\n" +
-                "\t\t\"agentPersonNo\": \"110226198501272116\",\n" +
-                "\t\t\"agentPersonPhone\": \"18033402832\",\n" +
-                "\t\t\"remark\": \"\",\n" +
-                "\t\t\"businessLicensePictureImage\": {\n" +
-                "\t\t\t\"imgId\": 305\n" +
-                "\t\t},\n" +
-                "\t\t\"legalPersonNoPictureFrontImage\": {\n" +
-                "\t\t\t\"imgId\": 306\n" +
-                "\t\t},\n" +
-                "\t\t\"legalPersonNoPictureBackImage\": {\n" +
-                "\t\t\t\"imgId\": 307\n" +
-                "\t\t},\n" +
-                "\t\t\"legalPersonCreditReportImageList\": [{\n" +
-                "\t\t\t\"imgId\": 308\n" +
-                "\t\t}],\n" +
-                "\t\t\"fixedAssetsProveImageList\": [{\n" +
-                "\t\t\t\"imgId\": 309\n" +
-                "\t\t}],\n" +
-                "\t\t\"publicAccountFlowBillImageList\": [{\n" +
-                "\t\t\t\"imgId\": 310\n" +
-                "\t\t}],\n" +
-                "\t\t\"socialSecurityRoProvidentFundImageList\": [{\n" +
-                "\t\t\t\"imgId\": 311\n" +
-                "\t\t}],\n" +
-                "\t\t\"cooperationAgreementImageList\": [{\n" +
-                "\t\t\t\"imgId\": 312\n" +
-                "\t\t}],\n" +
-                "\t\t\"localeChecklistsImageList\": [{\n" +
-                "\t\t\t\"imgId\": 314\n" +
-                "\t\t}],\n" +
-                "\t\t\"managerPlaceRentContractImageList\": [{\n" +
-                "\t\t\t\"imgId\": 313\n" +
-                "\t\t}],\n" +
-                "\t\t\"otherDateImageList\": []\n" +
-                "\t},\n" +
-                "\t\"customerNo\": \"LXCC10002018010800035\"\n" +
-                "}\n";
+                "        address: \"外滩18路\"\n" +
+                "        affiliatedEnterprise: \"\"\n" +
+                "        agentPersonName: \"Nicklaus\"\n" +
+                "        agentPersonNo: \"430902199104028554\"\n" +
+                "        agentPersonPhone: \"13645987659\"\n" +
+                "        city: \"75\"\n" +
+                "        companyAbb: \"\"\n" +
+                "        companyFoundTime: \"2011-05-02\"\n" +
+                "        companyName: \"芒果文化\"\n" +
+                "        connectPhone: \"13645465487\"\n" +
+                "        connectRealName: \"Nick\"\n" +
+                "        customerCompanyNeedFirstList: [{\n" +
+                "            skuId: 214,\n" +
+                "            rentCount: \"10\"\n" +
+                "        }]\n" +
+                "        customerCompanyNeedLaterList: []\n" +
+                "        customerOrigin: \"3\"\n" +
+                "        district: \"787\"\n" +
+                "        firstApplyAmount: \"51000\"\n" +
+                "        industry: \"9\"\n" +
+                "        isDefaultConsignAddress: 0\n" +
+                "        isLegalPersonApple: \"1\"\n" +
+                "        isNewProduct: \"0\"\n" +
+                "        landline: \"0755-4568756\"\n" +
+                "        laterApplyAmount: \"0\"\n" +
+                "        legalPerson: \"Nicklaus\"\n" +
+                "        legalPersonNo: \"430902199104028554\"\n" +
+                "        legalPersonPhone: \"13645987659\"\n" +
+                "        officeNumber: \"100\"\n" +
+                "        operatingArea: \"2000\"\n" +
+                "        owner: \"500031\"\n" +
+                "        ownerName: \"san\"\n" +
+                "        productCount - 214 - 85: \"10\"\n" +
+                "        productId: \"2000062\"\n" +
+                "        productPurpose: \"办公\"\n" +
+                "        province: \"9\"\n" +
+                "        registeredCapital: \"1000\"\n" +
+                "        skuId: \"214\"\n" +
+                "        unifiedCreditCode: \"13546\"\n" +
+                "        unionUser: \"500029\"\n" +
+                "        unionUserName: \"鹏鹏\"\n" +
+                "        unitInsuredNumber: \"100\"\n" +
+                "        firstApplyAmount: \"51000\"\n" +
+                "        isDefaultConsignAddress: 0\n" +
+                "        laterApplyAmount: \"0\"\n" +
+                "        owner: \"500031\"\n" +
+                "        unionUser: \"500029\"\n" +
+                "    }";
 
         Customer customer = FastJsonUtil.toBean(str, Customer.class);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);

@@ -769,10 +769,10 @@ public class ErrorCode {
         MAP.put(BULK_MATERIAL_STATUS_NOT_REPAIR, "编号【%s 】的散料只有处于设备空闲或者租赁中,才能进行新增维修操作");
         MAP.put(PRODUCT_NOT_SAME, "收货商品不一致");
         MAP.put(MATERIAL_NOT_SAME, "收货配件不一致");
-        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
-        MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
-        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
-        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的商品的skuID不能为空");
+        MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的商品单台价值不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的商品租赁数量不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的商品的租赁期限不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
         MAP.put(ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT, "全新配件库存不足！");
         MAP.put(ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT, "次新配件库存不足！");
@@ -848,9 +848,9 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
-        MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
-        MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
-        MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
+        MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的商品总金额计算出错");
+        MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的商品总金额不相等");
+        MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有后续所需设备的商品总金额不相等");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -970,7 +970,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY, "客户的开发员不能为总公司人员");
         MAP.put(CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY, "客户的联合开发员不能为总公司人员");
         MAP.put(STATEMENT_DATE_NOT_NULL, "客户的结算时间不能为空");
-        MAP.put(CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME, "客户的开发员和联合开发员不能同一个人");
+        MAP.put(CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME, "客户的开发员和联合开发员不能为同一个人");
         MAP.put(CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL, "客户是否将详细地址作为收货地址的该选项不能为空");
         MAP.put(CUSTOMER_CONSIGN_ADDRESS_NOT_NULL, "客户的收货地址的不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL, "企业客户首次所需设备的总价值不能空");
@@ -979,12 +979,12 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL, "企业客户的注册资本不能为空");
         MAP.put(CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL, "企业客户的办公人数不能为空");
         MAP.put(CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL, "企业客户的经营面积不能为空");
-        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话相同");
-        MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号相同");
-        MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号相同");
+        MAP.put(LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE, "法人手机号与经办人电话不能相同");
+        MAP.put(AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE, "经办人电话与紧急联系人手机号不能相同");
+        MAP.put(CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE, "紧急联系人手机号与法人手机号不能相同");
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
-        MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
-        MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
+        MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证不能相同");
+        MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人姓名与法人姓名不能相同");
         MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
