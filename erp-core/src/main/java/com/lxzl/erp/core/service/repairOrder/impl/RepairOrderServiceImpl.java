@@ -557,7 +557,7 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             for (RepairOrderBulkMaterial repairOrderBulkMaterial : repairOrderBulkMaterialList) {
                 RepairOrderBulkMaterialDO repairOrderBulkMaterialDO = repairOrderBulkMaterialMapper.findById(repairOrderBulkMaterial.getRepairOrderBulkMaterialId());
                 if (repairOrderBulkMaterialDO == null) {
-                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, repairOrderBulkMaterial.getRepairOrderBulkMaterialId());
+                    serviceResult.setErrorCode(ErrorCode.REPAIR_ORDER_BULK_MATERIAL_NOT_EXISTS, repairOrderBulkMaterial.getRepairOrderBulkMaterialId());
                     return serviceResult;
                 }
 

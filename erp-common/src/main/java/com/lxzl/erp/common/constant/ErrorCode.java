@@ -516,7 +516,7 @@ public class ErrorCode {
     public static final String REPAIR_ORDER_IS_NOT_EXISTS = "J700004";
     public static final String REPAIR_ORDER_STATUS_ERROR = "J700005";
     public static final String REPAIR_ORDER_EQUIPMENT_NOT_EXISTS = "J700006";
-    public static final String REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS = "J700007";
+    public static final String REPAIR_ORDER_BULK_MATERIAL_NOT_EXISTS = "J700007";
     public static final String REPAIR_ORDER_DATA_STATUS_ERROR = "J700008";
 
     public static final String JOINT_PRODUCT_ID_IS_NULL = "J1000001";
@@ -554,7 +554,7 @@ public class ErrorCode {
     public static final String OTHER_DATE_IMAGE_NOT_EXISTS = "J1100029";
     public static final String OTHER_DATE_IMAGE_TYPE_IS_ERROR = "J1100030";
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
-    public static final String IMG_REF_ID_NEED_NULL = "J1100032";
+    public static final String IMG_REF_ID_HAD_VALUE = "J1100032";
     public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
@@ -954,7 +954,7 @@ public class ErrorCode {
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
-        MAP.put(CUSTOMER_IS_EXISTS, "客户已经存在");
+        MAP.put(CUSTOMER_IS_EXISTS, "客户名称已经存在，请重新填写名称");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
         MAP.put(SUPPLIER_NAME_IS_NULL, "供应商名字有空格");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
@@ -1162,7 +1162,7 @@ public class ErrorCode {
         MAP.put(REPAIR_ORDER_IS_NOT_EXISTS, "设备维修单不存在");
         MAP.put(REPAIR_ORDER_STATUS_ERROR, "设备维修单状态出错，请重新检查");
         MAP.put(REPAIR_ORDER_EQUIPMENT_NOT_EXISTS, "设备维修单明细不存在");
-        MAP.put(REPAIR_ORDER_BULK_MATERRIAL_NOT_EXISTS, "散料维修单明细不存在");
+        MAP.put(REPAIR_ORDER_BULK_MATERIAL_NOT_EXISTS, "散料维修单明细不存在");
         MAP.put(REPAIR_ORDER_DATA_STATUS_ERROR, "该设备维修单此状态不允许此操作");
 
         MAP.put(JOINT_PRODUCT_ID_IS_NULL, "组合商品id为空");
@@ -1200,7 +1200,7 @@ public class ErrorCode {
         MAP.put(OTHER_DATE_IMAGE_NOT_EXISTS, "其他材料的照片不存在");
         MAP.put(OTHER_DATE_IMAGE_TYPE_IS_ERROR, "传入的不是其他材料的照片，请重新传入");
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
-        MAP.put(IMG_REF_ID_NEED_NULL, "编号【%s 】的图片refID已经有值，不能进行该操作");
+        MAP.put(IMG_REF_ID_HAD_VALUE, "编号【%s 】的图片已经关联了客户，请重新选择图片");
         MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");

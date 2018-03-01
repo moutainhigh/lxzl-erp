@@ -149,7 +149,8 @@ public class CustomerServiceImpl implements CustomerService {
 //                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
 //                return serviceResult;
 //            }
-            customerDO.setFirstApplyAmount(setServiceResult.getResult());
+
+//            customerDO.setFirstApplyAmount(setServiceResult.getResult());
             customerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
 
@@ -164,13 +165,13 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-            if (customerDO.getLaterApplyAmount().compareTo(setServiceResult.getResult()) != 0){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(ErrorCode.LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
-                return serviceResult;
-            }
+//            if (customerDO.getLaterApplyAmount().compareTo(setServiceResult.getResult()) != 0){
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                serviceResult.setErrorCode(ErrorCode.LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
+//                return serviceResult;
+//            }
 
-            customerDO.setLaterApplyAmount(setServiceResult.getResult());
+//            customerDO.setLaterApplyAmount(setServiceResult.getResult());
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
 
@@ -380,9 +381,16 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
+
+//            if (customerDO.getFirstApplyAmount().compareTo(setServiceResult.getResult()) != 0){
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
+//                return serviceResult;
+//            }
+
             newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
             //将所有设备的总金额赋值给客户的首期申请额度
-            customerDO.setFirstApplyAmount(setServiceResult.getResult());
+//            customerDO.setFirstApplyAmount(setServiceResult.getResult());
         }
 
         //判断后续所需设备
@@ -396,10 +404,17 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-            newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
 
+            //todo 后期修改逻辑
+//            if (customerDO.getLaterApplyAmount().compareTo(setServiceResult.getResult()) != 0){
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
+//                return serviceResult;
+//            }
+
+            newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
             //将所有后续设备的总金额赋值给客户的首期申请额度
-            customerDO.setLaterApplyAmount(setServiceResult.getResult());
+//            customerDO.setLaterApplyAmount(setServiceResult.getResult());
         }
 
         newCustomerCompanyDO.setDataStatus(null);
@@ -1567,7 +1582,6 @@ public class CustomerServiceImpl implements CustomerService {
     private ServiceResult<String, String> saveImage(Customer customer, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
-
         //对营业执照图片操作
         if (customer.getCustomerCompany().getBusinessLicensePictureImage() != null) {
             ImageDO businessLicensePictureImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getBusinessLicensePictureImage().getImgId());
@@ -1576,7 +1590,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             if (StringUtil.isNotEmpty(businessLicensePictureImageDO.getRefId())) {
-                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, businessLicensePictureImageDO.getId());
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, businessLicensePictureImageDO.getId());
                 return serviceResult;
             }
             businessLicensePictureImageDO.setImgType(ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
@@ -1594,7 +1608,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             if (StringUtil.isNotEmpty(legalPersonNoPictureFrontImageDO.getRefId())) {
-                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, legalPersonNoPictureFrontImageDO.getId());
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, legalPersonNoPictureFrontImageDO.getId());
                 return serviceResult;
             }
             legalPersonNoPictureFrontImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
@@ -1612,7 +1626,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             if (StringUtil.isNotEmpty(legalPersonNoPictureBackImageDO.getRefId())) {
-                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, legalPersonNoPictureBackImageDO.getId());
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, legalPersonNoPictureBackImageDO.getId());
                 return serviceResult;
             }
             legalPersonNoPictureBackImageDO.setImgType(ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
@@ -1633,7 +1647,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(managerPlaceRentContractImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, managerPlaceRentContractImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, managerPlaceRentContractImageDO.getId());
                     return serviceResult;
                 }
                 managerPlaceRentContractImageDO.setImgType(ImgType.MANAGER_PLACE_RENT_CONTRACT_IMG_TYPE);
@@ -1655,7 +1669,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(legalPersonCreditReportImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, legalPersonCreditReportImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, legalPersonCreditReportImageDO.getId());
                     return serviceResult;
                 }
                 legalPersonCreditReportImageDO.setImgType(ImgType.LEGAL_PERSON_CREDIT_REPORT_IMG_TYPE);
@@ -1677,7 +1691,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(fixedAssetsProveImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, fixedAssetsProveImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, fixedAssetsProveImageDO.getId());
                     return serviceResult;
                 }
                 fixedAssetsProveImageDO.setImgType(ImgType.FIXED_ASSETS_PROVE_IMG_TYPE);
@@ -1699,7 +1713,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(publicAccountFlowBillImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, publicAccountFlowBillImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, publicAccountFlowBillImageDO.getId());
                     return serviceResult;
                 }
                 publicAccountFlowBillImageDO.setImgType(ImgType.PUBLIC_ACCOUNT_FLOW_BILL_IMG_TYPE);
@@ -1721,7 +1735,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(socialSecurityRoProvidentFundImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, socialSecurityRoProvidentFundImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, socialSecurityRoProvidentFundImageDO.getId());
                     return serviceResult;
                 }
                 socialSecurityRoProvidentFundImageDO.setImgType(ImgType.SOCIAL_SECURITY_RO_PROVIDENT_FUND_IMG_TYPE);
@@ -1743,7 +1757,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(cooperationAgreementImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, cooperationAgreementImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, cooperationAgreementImageDO.getId());
                     return serviceResult;
                 }
                 cooperationAgreementImageDO.setImgType(ImgType.COOPERATION_AGREEMENT_IMG_TYPE);
@@ -1765,7 +1779,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(legalPersonEducationImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, legalPersonEducationImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, legalPersonEducationImageDO.getId());
                     return serviceResult;
                 }
                 legalPersonEducationImageDO.setImgType(ImgType.LEGAL_PERSON_EDUCATION_IMG_TYPE);
@@ -1787,7 +1801,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(legalPersonPositionalTitleImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, legalPersonPositionalTitleImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, legalPersonPositionalTitleImageDO.getId());
                     return serviceResult;
                 }
                 legalPersonPositionalTitleImageDO.setImgType(ImgType.LEGAL_PERSON_POSITIONAL_TITLE_IMG_TYPE);
@@ -1809,7 +1823,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(localeChecklistsImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, localeChecklistsImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, localeChecklistsImageDO.getId());
                     return serviceResult;
                 }
                 localeChecklistsImageDO.setImgType(ImgType.LOCALE_CHECKLISTS_IMG_TYPE);
@@ -1831,7 +1845,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(otherDateImageDO.getRefId())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, otherDateImageDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, otherDateImageDO.getId());
                     return serviceResult;
                 }
                 otherDateImageDO.setImgType(ImgType.OTHER_DATE_IMG_TYPE);
@@ -1873,7 +1887,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
                 if (StringUtil.isNotEmpty(imgDO.getRefId()) && !imgDO.getRefId().equals(refId)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_NEED_NULL, imgDO.getId());
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, imgDO.getId());
                     return serviceResult;
                 }
                 imgDO.setImgType(imgType);
@@ -2159,6 +2173,7 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
                 return serviceResult;
             }
+
             BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
             customerCompanyNeed.setTotalPrice(totalPrice);
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
