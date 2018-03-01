@@ -350,6 +350,8 @@ public class CustomerServiceImpl implements CustomerService {
                 customerConsignInfoDO.setUpdateTime(now);
                 customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 customerConsignInfoMapper.update(customerConsignInfoDO);
+
+                newCustomerCompanyDO.setDefaultAddressReferId(customerCompanyDO.getDefaultAddressReferId());
             }
         } else if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress()) && customerCompanyDO.getDefaultAddressReferId() != null) {
             //如果默认地址选项没有值，并且客户的默认地址关联ID不为null

@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerControllerTest extends ERPTransactionalTest {
+public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
@@ -157,7 +157,6 @@ public class CustomerControllerTest extends ERPTransactionalTest {
         //加入后续租赁设备
         customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 
-        customerCompany.setDefaultAddressReferId(441);
         customerCompany.setCustomerOrigin(1);
         customerCompany.setCompanyName("楚汉文化");
         customerCompany.setConnectRealName("测试紧急联系人");
