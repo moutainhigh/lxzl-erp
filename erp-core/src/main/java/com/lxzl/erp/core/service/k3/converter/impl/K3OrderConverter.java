@@ -1,6 +1,5 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -12,7 +11,7 @@ import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSeorderEntry;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -201,7 +200,7 @@ public class K3OrderConverter implements ConvertK3DataService {
             startTime.setTime(erpOrder.getRentStartTime());
             Calendar endTime = Calendar.getInstance();
             endTime.setTime(erpOrder.getExpectReturnTime());
-            FormSeorderEntry list[]=new FormSeorderEntry[size];
+            FormSEOrderEntry list[]=new FormSEOrderEntry[size];
             if(CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())){
                 for(OrderProduct orderProduct : erpOrder.getOrderProductList()){
                     ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId());
@@ -212,60 +211,60 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formICItem.setModel(productDO.getProductModel());//型号名称
                     formICItem.setName(productDO.getProductName());//商品名称
                     String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
-                    FormSeorderEntry formSeorderEntry = new FormSeorderEntry();
+                    FormSEOrderEntry formSEOrderEntry = new FormSEOrderEntry();
 
-                    formSeorderEntry.setNumber(number);//  设备代码
-                    formSeorderEntry.setName(productDO.getProductName());//  设备名称
-                    formSeorderEntry.setQty(new BigDecimal(orderProduct.getProductCount()));// 数量
-                    formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
-                    formSeorderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
+                    formSEOrderEntry.setNumber(number);//  设备代码
+                    formSEOrderEntry.setName(productDO.getProductName());//  设备名称
+                    formSEOrderEntry.setQty(new BigDecimal(orderProduct.getProductCount()));// 数量
+                    formSEOrderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
+                    formSEOrderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
                     //计算平均税率
                     BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
                     rate = rate.setScale(2,BigDecimal.ROUND_HALF_UP);
-                    formSeorderEntry.setAddRate(rate);//  税率
-                    formSeorderEntry.setAmount(orderProduct.getProductAmount());//  含税租赁金额
+                    formSEOrderEntry.setAddRate(rate);//  税率
+                    formSEOrderEntry.setAmount(orderProduct.getProductAmount());//  含税租赁金额
 
-                    formSeorderEntry.setDate(startTime);//  租赁开始日期
-                    formSeorderEntry.setEndDate(endTime);//  租赁截止日期
-                    formSeorderEntry.setYJMonthCount(new BigDecimal(orderProduct.getDepositCycle()));//  押金月数
-                    formSeorderEntry.setSFMonthCount(new BigDecimal(orderProduct.getPaymentCycle()));//  首付月数
-                    formSeorderEntry.setPayMonthCount(new BigDecimal(orderProduct.getPaymentCycle()) );// 付款月数
-                    formSeorderEntry.setSFAmount(orderProduct.getFirstNeedPayRentAmount());//  首付租金
+                    formSEOrderEntry.setDate(startTime);//  租赁开始日期
+                    formSEOrderEntry.setEndDate(endTime);//  租赁截止日期
+                    formSEOrderEntry.setYJMonthCount(new BigDecimal(orderProduct.getDepositCycle()));//  押金月数
+                    formSEOrderEntry.setSFMonthCount(new BigDecimal(orderProduct.getPaymentCycle()));//  首付月数
+                    formSEOrderEntry.setPayMonthCount(new BigDecimal(orderProduct.getPaymentCycle()) );// 付款月数
+                    formSEOrderEntry.setSFAmount(orderProduct.getFirstNeedPayRentAmount());//  首付租金
                     //暂时与设备配置名称用一个值
-                    formSeorderEntry.setEQConfigNumber(orderProduct.getProductSkuName());//  设备配置代码
-                    formSeorderEntry.setEQConfigName(orderProduct.getProductSkuName());//  设备配置名称
-                    formSeorderEntry.setStartDate(startTime);//  起算日期
-                    formSeorderEntry.setYJAmount(orderProduct.getRentDepositAmount());//  租金押金金额
-                    formSeorderEntry.setEQYJAmount(orderProduct.getDepositAmount());//  设备押金金额
-                    formSeorderEntry.setPayAmountTotal(orderProduct.getFirstNeedPayAmount());//首付合计
+                    formSEOrderEntry.setEQConfigNumber(orderProduct.getProductSkuName());//  设备配置代码
+                    formSEOrderEntry.setEQConfigName(orderProduct.getProductSkuName());//  设备配置名称
+                    formSEOrderEntry.setStartDate(startTime);//  起算日期
+                    formSEOrderEntry.setYJAmount(orderProduct.getRentDepositAmount());//  租金押金金额
+                    formSEOrderEntry.setEQYJAmount(orderProduct.getDepositAmount());//  设备押金金额
+                    formSEOrderEntry.setPayAmountTotal(orderProduct.getFirstNeedPayAmount());//首付合计
                     ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
-                    formSeorderEntry.setEQPrice(productSkuDO.getSkuPrice());//  单台设备价值
-                    formSeorderEntry.setEQAmount( BigDecimalUtil.mul(productSkuDO.getSkuPrice(),new BigDecimal(orderProduct.getProductCount())));//  设备价值
-                    formSeorderEntry.setSupplyNumber("");//  同行供应商
+                    formSEOrderEntry.setEQPrice(productSkuDO.getSkuPrice());//  单台设备价值
+                    formSEOrderEntry.setEQAmount( BigDecimalUtil.mul(productSkuDO.getSkuPrice(),new BigDecimal(orderProduct.getProductCount())));//  设备价值
+                    formSEOrderEntry.setSupplyNumber("");//  同行供应商
                     if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProduct.getPayMode())){
-                        formSeorderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+                        formSEOrderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
                         formSEOrder.setPayMethodNumber("03");//订单里也要
                     }else if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProduct.getPayMode())){
-                        formSeorderEntry.setPayMethodNumber("01");
+                        formSEOrderEntry.setPayMethodNumber("01");
                         formSEOrder.setPayMethodNumber("03");//订单里也要
                     }
 
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())){
-                        formSeorderEntry.setStdPrice(productSkuDO.getDayRentPrice());//  设备标准租金
+                        formSEOrderEntry.setStdPrice(productSkuDO.getDayRentPrice());//  设备标准租金
                     }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType())){
-                        formSeorderEntry.setStdPrice(productSkuDO.getMonthRentPrice());//  设备标准租金
+                        formSEOrderEntry.setStdPrice(productSkuDO.getMonthRentPrice());//  设备标准租金
                     }
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())){
-                        formSeorderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
+                        formSEOrderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
                     }else if(CommonConstant.COMMON_CONSTANT_NO.equals(orderProduct.getIsNewProduct())){
-                        formSeorderEntry.setEQType("O");
+                        formSEOrderEntry.setEQType("O");
                     }
                     if(StringUtil.isEmpty(orderProduct.getRemark())){
-                        formSeorderEntry.setNote("无");//  备注
+                        formSEOrderEntry.setNote("无");//  备注
                     }else{
-                        formSeorderEntry.setNote(orderProduct.getRemark());//  备注
+                        formSEOrderEntry.setNote(orderProduct.getRemark());//  备注
                     }
-                    list[index++] = formSeorderEntry;
+                    list[index++] = formSEOrderEntry;
                 }
             }
             if(CollectionUtil.isNotEmpty(erpOrder.getOrderMaterialList())){
@@ -274,56 +273,56 @@ public class K3OrderConverter implements ConvertK3DataService {
                     K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
                     K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
                     String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
-                    FormSeorderEntry formSeorderEntry=new FormSeorderEntry();
-                    formSeorderEntry.setNumber(number);//  设备代码
-                    formSeorderEntry.setName(materialDO.getMaterialName());//  设备名称
-                    formSeorderEntry.setQty(new BigDecimal(orderMaterial.getMaterialCount()));// 数量
-                    formSeorderEntry.setLeaseMonthCount(new BigDecimal(orderMaterial.getRentTimeLength()));//  租赁月数
-                    formSeorderEntry.setPrice(orderMaterial.getMaterialUnitAmount());//  含税单价
+                    FormSEOrderEntry formSEOrderEntry =new FormSEOrderEntry();
+                    formSEOrderEntry.setNumber(number);//  设备代码
+                    formSEOrderEntry.setName(materialDO.getMaterialName());//  设备名称
+                    formSEOrderEntry.setQty(new BigDecimal(orderMaterial.getMaterialCount()));// 数量
+                    formSEOrderEntry.setLeaseMonthCount(new BigDecimal(orderMaterial.getRentTimeLength()));//  租赁月数
+                    formSEOrderEntry.setPrice(orderMaterial.getMaterialUnitAmount());//  含税单价
                     //计算平均税率
                     BigDecimal rate = BigDecimalUtil.add(BigDecimalUtil.mul(new BigDecimal(erpOrder.getHighTaxRate()),new BigDecimal(0.17d)),BigDecimalUtil.mul(new BigDecimal(erpOrder.getLowTaxRate()),new BigDecimal(0.06d)));
 
-                    formSeorderEntry.setAmount(orderMaterial.getMaterialAmount());//  含税租赁金额
-                    formSeorderEntry.setDate(startTime);//  租赁开始日期
-                    formSeorderEntry.setEndDate(endTime);//  租赁截止日期
-                    formSeorderEntry.setYJMonthCount(new BigDecimal(orderMaterial.getDepositCycle()));//  押金月数
-                    formSeorderEntry.setSFMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()));//  首付月数
-                    formSeorderEntry.setPayMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()) );// 付款月数
-                    formSeorderEntry.setSFAmount(orderMaterial.getFirstNeedPayRentAmount());//  首付租金
-                    formSeorderEntry.setEQConfigNumber("");//  设备配置代码
-                    formSeorderEntry.setEQConfigName("");//  设备配置名称
-                    formSeorderEntry.setStartDate( startTime);//  起算日期
-                    formSeorderEntry.setYJAmount(orderMaterial.getRentDepositAmount());//  租金押金金额
-                    formSeorderEntry.setEQYJAmount(orderMaterial.getDepositAmount());//设备押金金额
-                    formSeorderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderMaterial.getFirstNeedPayAmount()));// 首付合计
+                    formSEOrderEntry.setAmount(orderMaterial.getMaterialAmount());//  含税租赁金额
+                    formSEOrderEntry.setDate(startTime);//  租赁开始日期
+                    formSEOrderEntry.setEndDate(endTime);//  租赁截止日期
+                    formSEOrderEntry.setYJMonthCount(new BigDecimal(orderMaterial.getDepositCycle()));//  押金月数
+                    formSEOrderEntry.setSFMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()));//  首付月数
+                    formSEOrderEntry.setPayMonthCount(new BigDecimal(orderMaterial.getPaymentCycle()) );// 付款月数
+                    formSEOrderEntry.setSFAmount(orderMaterial.getFirstNeedPayRentAmount());//  首付租金
+                    formSEOrderEntry.setEQConfigNumber("");//  设备配置代码
+                    formSEOrderEntry.setEQConfigName("");//  设备配置名称
+                    formSEOrderEntry.setStartDate( startTime);//  起算日期
+                    formSEOrderEntry.setYJAmount(orderMaterial.getRentDepositAmount());//  租金押金金额
+                    formSEOrderEntry.setEQYJAmount(orderMaterial.getDepositAmount());//设备押金金额
+                    formSEOrderEntry.setPayAmountTotal(BigDecimalUtil.addAll(orderMaterial.getFirstNeedPayAmount()));// 首付合计
                     rate = rate.setScale(2,BigDecimal.ROUND_HALF_UP);
-                    formSeorderEntry.setAddRate(rate);//  税率
-                    formSeorderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值
-                    formSeorderEntry.setEQAmount(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()),materialDO.getMaterialPrice()));//  设备价值
-                    formSeorderEntry.setSupplyNumber("");//  同行供应商
+                    formSEOrderEntry.setAddRate(rate);//  税率
+                    formSEOrderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值
+                    formSEOrderEntry.setEQAmount(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()),materialDO.getMaterialPrice()));//  设备价值
+                    formSEOrderEntry.setSupplyNumber("");//  同行供应商
                     if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterial.getPayMode())){
-                        formSeorderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
+                        formSEOrderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
                         formSEOrder.setPayMethodNumber("03");//订单里也要
                     }else if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterial.getPayMode())){
-                        formSeorderEntry.setPayMethodNumber("01");
-                        formSEOrder.setPayMethodNumber("03");//订单里也要
+                        formSEOrderEntry.setPayMethodNumber("01");
+                        formSEOrder.setPayMethodNumber("01");//订单里也要
                     }
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType())){
-                        formSeorderEntry.setStdPrice(materialDO.getDayRentPrice());//  设备标准租金
+                        formSEOrderEntry.setStdPrice(materialDO.getDayRentPrice());//  设备标准租金
                     }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType())){
-                        formSeorderEntry.setStdPrice(materialDO.getMonthRentPrice());//  设备标准租金
+                        formSEOrderEntry.setStdPrice(materialDO.getMonthRentPrice());//  设备标准租金
                     }
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterial.getIsNewMaterial())){
-                        formSeorderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
+                        formSEOrderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
                     }else if(CommonConstant.COMMON_CONSTANT_NO.equals(orderMaterial.getIsNewMaterial())){
-                        formSeorderEntry.setEQType("O");
+                        formSEOrderEntry.setEQType("O");
                     }
                     if(StringUtil.isEmpty(orderMaterial.getRemark())){
-                        formSeorderEntry.setNote("无");//  备注
+                        formSEOrderEntry.setNote("无");//  备注
                     }else{
-                        formSeorderEntry.setNote(orderMaterial.getRemark());//  备注
+                        formSEOrderEntry.setNote(orderMaterial.getRemark());//  备注
                     }
-                    list[index++] = formSeorderEntry;
+                    list[index++] = formSEOrderEntry;
                 }
             }
             formSEOrder.setEntrys(list);

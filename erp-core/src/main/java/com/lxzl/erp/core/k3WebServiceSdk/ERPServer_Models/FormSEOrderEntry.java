@@ -1,5 +1,5 @@
 /**
- * FormSeorderEntry.java
+ * FormSEOrderEntry.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
@@ -7,7 +7,7 @@
 
 package com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models;
 
-public class FormSeorderEntry  implements java.io.Serializable {
+public class FormSEOrderEntry  implements java.io.Serializable {
     private java.math.BigDecimal addRate;
 
     private java.math.BigDecimal amount;
@@ -36,6 +36,8 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
     private String number;
 
+    private Integer orderItemId;
+
     private java.math.BigDecimal payAmountTotal;
 
     private String payMethodNumber;
@@ -60,10 +62,10 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
     private java.math.BigDecimal YJMonthCount;
 
-    public FormSeorderEntry() {
+    public FormSEOrderEntry() {
     }
 
-    public FormSeorderEntry(
+    public FormSEOrderEntry(
            java.math.BigDecimal addRate,
            java.math.BigDecimal amount,
            java.util.Calendar date,
@@ -78,6 +80,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
            String name,
            String note,
            String number,
+           Integer orderItemId,
            java.math.BigDecimal payAmountTotal,
            String payMethodNumber,
            java.math.BigDecimal payMonthCount,
@@ -104,6 +107,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
            this.name = name;
            this.note = note;
            this.number = number;
+           this.orderItemId = orderItemId;
            this.payAmountTotal = payAmountTotal;
            this.payMethodNumber = payMethodNumber;
            this.payMonthCount = payMonthCount;
@@ -120,7 +124,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the addRate value for this FormSeorderEntry.
+     * Gets the addRate value for this FormSEOrderEntry.
      * 
      * @return addRate
      */
@@ -130,7 +134,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the addRate value for this FormSeorderEntry.
+     * Sets the addRate value for this FormSEOrderEntry.
      * 
      * @param addRate
      */
@@ -140,7 +144,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the amount value for this FormSeorderEntry.
+     * Gets the amount value for this FormSEOrderEntry.
      * 
      * @return amount
      */
@@ -150,7 +154,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the amount value for this FormSeorderEntry.
+     * Sets the amount value for this FormSEOrderEntry.
      * 
      * @param amount
      */
@@ -160,7 +164,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the date value for this FormSeorderEntry.
+     * Gets the date value for this FormSEOrderEntry.
      * 
      * @return date
      */
@@ -170,7 +174,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the date value for this FormSeorderEntry.
+     * Sets the date value for this FormSEOrderEntry.
      * 
      * @param date
      */
@@ -180,7 +184,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the EQAmount value for this FormSeorderEntry.
+     * Gets the EQAmount value for this FormSEOrderEntry.
      * 
      * @return EQAmount
      */
@@ -190,7 +194,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the EQAmount value for this FormSeorderEntry.
+     * Sets the EQAmount value for this FormSEOrderEntry.
      * 
      * @param EQAmount
      */
@@ -200,7 +204,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the EQConfigName value for this FormSeorderEntry.
+     * Gets the EQConfigName value for this FormSEOrderEntry.
      * 
      * @return EQConfigName
      */
@@ -210,7 +214,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the EQConfigName value for this FormSeorderEntry.
+     * Sets the EQConfigName value for this FormSEOrderEntry.
      * 
      * @param EQConfigName
      */
@@ -220,7 +224,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the EQConfigNumber value for this FormSeorderEntry.
+     * Gets the EQConfigNumber value for this FormSEOrderEntry.
      * 
      * @return EQConfigNumber
      */
@@ -230,7 +234,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the EQConfigNumber value for this FormSeorderEntry.
+     * Sets the EQConfigNumber value for this FormSEOrderEntry.
      * 
      * @param EQConfigNumber
      */
@@ -240,7 +244,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the EQPrice value for this FormSeorderEntry.
+     * Gets the EQPrice value for this FormSEOrderEntry.
      * 
      * @return EQPrice
      */
@@ -250,7 +254,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the EQPrice value for this FormSeorderEntry.
+     * Sets the EQPrice value for this FormSEOrderEntry.
      * 
      * @param EQPrice
      */
@@ -260,7 +264,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the EQType value for this FormSeorderEntry.
+     * Gets the EQType value for this FormSEOrderEntry.
      * 
      * @return EQType
      */
@@ -270,7 +274,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the EQType value for this FormSeorderEntry.
+     * Sets the EQType value for this FormSEOrderEntry.
      * 
      * @param EQType
      */
@@ -280,7 +284,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the EQYJAmount value for this FormSeorderEntry.
+     * Gets the EQYJAmount value for this FormSEOrderEntry.
      * 
      * @return EQYJAmount
      */
@@ -290,7 +294,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the EQYJAmount value for this FormSeorderEntry.
+     * Sets the EQYJAmount value for this FormSEOrderEntry.
      * 
      * @param EQYJAmount
      */
@@ -300,7 +304,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the endDate value for this FormSeorderEntry.
+     * Gets the endDate value for this FormSEOrderEntry.
      * 
      * @return endDate
      */
@@ -310,7 +314,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the endDate value for this FormSeorderEntry.
+     * Sets the endDate value for this FormSEOrderEntry.
      * 
      * @param endDate
      */
@@ -320,7 +324,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the leaseMonthCount value for this FormSeorderEntry.
+     * Gets the leaseMonthCount value for this FormSEOrderEntry.
      * 
      * @return leaseMonthCount
      */
@@ -330,7 +334,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the leaseMonthCount value for this FormSeorderEntry.
+     * Sets the leaseMonthCount value for this FormSEOrderEntry.
      * 
      * @param leaseMonthCount
      */
@@ -340,7 +344,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the name value for this FormSeorderEntry.
+     * Gets the name value for this FormSEOrderEntry.
      * 
      * @return name
      */
@@ -350,7 +354,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the name value for this FormSeorderEntry.
+     * Sets the name value for this FormSEOrderEntry.
      * 
      * @param name
      */
@@ -360,7 +364,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the note value for this FormSeorderEntry.
+     * Gets the note value for this FormSEOrderEntry.
      * 
      * @return note
      */
@@ -370,7 +374,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the note value for this FormSeorderEntry.
+     * Sets the note value for this FormSEOrderEntry.
      * 
      * @param note
      */
@@ -380,7 +384,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the number value for this FormSeorderEntry.
+     * Gets the number value for this FormSEOrderEntry.
      * 
      * @return number
      */
@@ -390,7 +394,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the number value for this FormSeorderEntry.
+     * Sets the number value for this FormSEOrderEntry.
      * 
      * @param number
      */
@@ -400,7 +404,27 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the payAmountTotal value for this FormSeorderEntry.
+     * Gets the orderItemId value for this FormSEOrderEntry.
+     * 
+     * @return orderItemId
+     */
+    public Integer getOrderItemId() {
+        return orderItemId;
+    }
+
+
+    /**
+     * Sets the orderItemId value for this FormSEOrderEntry.
+     * 
+     * @param orderItemId
+     */
+    public void setOrderItemId(Integer orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+
+    /**
+     * Gets the payAmountTotal value for this FormSEOrderEntry.
      * 
      * @return payAmountTotal
      */
@@ -410,7 +434,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the payAmountTotal value for this FormSeorderEntry.
+     * Sets the payAmountTotal value for this FormSEOrderEntry.
      * 
      * @param payAmountTotal
      */
@@ -420,7 +444,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the payMethodNumber value for this FormSeorderEntry.
+     * Gets the payMethodNumber value for this FormSEOrderEntry.
      * 
      * @return payMethodNumber
      */
@@ -430,7 +454,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the payMethodNumber value for this FormSeorderEntry.
+     * Sets the payMethodNumber value for this FormSEOrderEntry.
      * 
      * @param payMethodNumber
      */
@@ -440,7 +464,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the payMonthCount value for this FormSeorderEntry.
+     * Gets the payMonthCount value for this FormSEOrderEntry.
      * 
      * @return payMonthCount
      */
@@ -450,7 +474,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the payMonthCount value for this FormSeorderEntry.
+     * Sets the payMonthCount value for this FormSEOrderEntry.
      * 
      * @param payMonthCount
      */
@@ -460,7 +484,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the price value for this FormSeorderEntry.
+     * Gets the price value for this FormSEOrderEntry.
      * 
      * @return price
      */
@@ -470,7 +494,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the price value for this FormSeorderEntry.
+     * Sets the price value for this FormSEOrderEntry.
      * 
      * @param price
      */
@@ -480,7 +504,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the qty value for this FormSeorderEntry.
+     * Gets the qty value for this FormSEOrderEntry.
      * 
      * @return qty
      */
@@ -490,7 +514,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the qty value for this FormSeorderEntry.
+     * Sets the qty value for this FormSEOrderEntry.
      * 
      * @param qty
      */
@@ -500,7 +524,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the SFAmount value for this FormSeorderEntry.
+     * Gets the SFAmount value for this FormSEOrderEntry.
      * 
      * @return SFAmount
      */
@@ -510,7 +534,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the SFAmount value for this FormSeorderEntry.
+     * Sets the SFAmount value for this FormSEOrderEntry.
      * 
      * @param SFAmount
      */
@@ -520,7 +544,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the SFMonthCount value for this FormSeorderEntry.
+     * Gets the SFMonthCount value for this FormSEOrderEntry.
      * 
      * @return SFMonthCount
      */
@@ -530,7 +554,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the SFMonthCount value for this FormSeorderEntry.
+     * Sets the SFMonthCount value for this FormSEOrderEntry.
      * 
      * @param SFMonthCount
      */
@@ -540,7 +564,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the startDate value for this FormSeorderEntry.
+     * Gets the startDate value for this FormSEOrderEntry.
      * 
      * @return startDate
      */
@@ -550,7 +574,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the startDate value for this FormSeorderEntry.
+     * Sets the startDate value for this FormSEOrderEntry.
      * 
      * @param startDate
      */
@@ -560,7 +584,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the stdPrice value for this FormSeorderEntry.
+     * Gets the stdPrice value for this FormSEOrderEntry.
      * 
      * @return stdPrice
      */
@@ -570,7 +594,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the stdPrice value for this FormSeorderEntry.
+     * Sets the stdPrice value for this FormSEOrderEntry.
      * 
      * @param stdPrice
      */
@@ -580,7 +604,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the supplyNumber value for this FormSeorderEntry.
+     * Gets the supplyNumber value for this FormSEOrderEntry.
      * 
      * @return supplyNumber
      */
@@ -590,7 +614,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the supplyNumber value for this FormSeorderEntry.
+     * Sets the supplyNumber value for this FormSEOrderEntry.
      * 
      * @param supplyNumber
      */
@@ -600,7 +624,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the YJAmount value for this FormSeorderEntry.
+     * Gets the YJAmount value for this FormSEOrderEntry.
      * 
      * @return YJAmount
      */
@@ -610,7 +634,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the YJAmount value for this FormSeorderEntry.
+     * Sets the YJAmount value for this FormSEOrderEntry.
      * 
      * @param YJAmount
      */
@@ -620,7 +644,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Gets the YJMonthCount value for this FormSeorderEntry.
+     * Gets the YJMonthCount value for this FormSEOrderEntry.
      * 
      * @return YJMonthCount
      */
@@ -630,7 +654,7 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
 
     /**
-     * Sets the YJMonthCount value for this FormSeorderEntry.
+     * Sets the YJMonthCount value for this FormSEOrderEntry.
      * 
      * @param YJMonthCount
      */
@@ -640,8 +664,8 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
     private Object __equalsCalc = null;
     public synchronized boolean equals(Object obj) {
-        if (!(obj instanceof FormSeorderEntry)) return false;
-        FormSeorderEntry other = (FormSeorderEntry) obj;
+        if (!(obj instanceof FormSEOrderEntry)) return false;
+        FormSEOrderEntry other = (FormSEOrderEntry) obj;
         if (obj == null) return false;
         if (this == obj) return true;
         if (__equalsCalc != null) {
@@ -692,6 +716,9 @@ public class FormSeorderEntry  implements java.io.Serializable {
             ((this.number==null && other.getNumber()==null) || 
              (this.number!=null &&
               this.number.equals(other.getNumber()))) &&
+            ((this.orderItemId==null && other.getOrderItemId()==null) || 
+             (this.orderItemId!=null &&
+              this.orderItemId.equals(other.getOrderItemId()))) &&
             ((this.payAmountTotal==null && other.getPayAmountTotal()==null) || 
              (this.payAmountTotal!=null &&
               this.payAmountTotal.equals(other.getPayAmountTotal()))) &&
@@ -781,6 +808,9 @@ public class FormSeorderEntry  implements java.io.Serializable {
         if (getNumber() != null) {
             _hashCode += getNumber().hashCode();
         }
+        if (getOrderItemId() != null) {
+            _hashCode += getOrderItemId().hashCode();
+        }
         if (getPayAmountTotal() != null) {
             _hashCode += getPayAmountTotal().hashCode();
         }
@@ -823,10 +853,10 @@ public class FormSeorderEntry  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(FormSeorderEntry.class, true);
+        new org.apache.axis.description.TypeDesc(FormSEOrderEntry.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrderEntry"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("addRate");
         elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "AddRate"));
@@ -924,6 +954,13 @@ public class FormSeorderEntry  implements java.io.Serializable {
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("orderItemId");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "OrderItemId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("payAmountTotal");
