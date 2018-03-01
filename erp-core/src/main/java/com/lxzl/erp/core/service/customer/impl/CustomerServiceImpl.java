@@ -171,7 +171,7 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
                 return serviceResult;
             }
-            customerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
+            customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
 
         //如果客户选择了将详细地址作为收货地址
@@ -621,7 +621,7 @@ public class CustomerServiceImpl implements CustomerService {
         //判断是否有收货地址
         List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
         if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
-            result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_ADDRESS_NOT_NULL);
+            result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
             return result;
         }
 
@@ -636,10 +636,11 @@ public class CustomerServiceImpl implements CustomerService {
 
             //todo 后面需要放开的字段
             //对租赁设备进行判断
-            /*if(CollectionUtil.isEmpty(customerCompanyNeedList)){
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL);
+            if(CollectionUtil.isEmpty(customerCompanyNeedList)){
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
-            }*/
+            }
+
             if (CollectionUtil.isNotEmpty(customerCompanyNeedList)) {
                 for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
                     ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
@@ -665,7 +666,7 @@ public class CustomerServiceImpl implements CustomerService {
             //对图片附件进行判断
             List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
             if (CollectionUtil.isEmpty(imageDOList)) {
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_IMAGES_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
@@ -674,50 +675,50 @@ public class CustomerServiceImpl implements CustomerService {
             List<ImageDO> legalPersonNoPictureBack = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
 
             if (businessLicensePicture.size() == 0) {
-                result.setErrorCode(ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
             if (legalPersonNoPictureFront.size() == 0) {
-                result.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
             if (legalPersonNoPictureBack.size() == 0) {
-                result.setErrorCode(ErrorCode.LEGAL_PERSON_NO_PICTURE_BACK_IMAGE_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
             //对注册资本判断
             if (customerCompanyDO.getRegisteredCapital() == null) {
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_REGISTERED_CAPITAL_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
             //对企业行业判断
             if (StringUtil.isEmpty(customerCompanyDO.getIndustry())) {
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_INDUSTRY_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
             //对企业的设备用途判断
             if (StringUtil.isEmpty(customerCompanyDO.getProductPurpose())) {
-                result.setErrorCode(ErrorCode.PRODUCT_PURPOSE_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
             //对企业成立时间判断
             if (customerCompanyDO.getCompanyFoundTime() == null) {
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_FOUND_TIME_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
             //对企业办公人数判断
             if (customerCompanyDO.getOfficeNumber() == null) {
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_OFFICE_NUMBER_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
             //对企业的经营面积判断
             if (customerCompanyDO.getOperatingArea() == null) {
-                result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_OPERATING_AREA_NOT_NULL);
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
         }
@@ -2155,7 +2156,6 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
-
             customerCompanyNeed.setTotalPrice(totalPrice);
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
             customerCompanyNeed.setProduct(productServiceResult.getResult());

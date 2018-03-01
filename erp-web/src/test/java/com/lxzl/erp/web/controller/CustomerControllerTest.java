@@ -121,7 +121,7 @@ public class CustomerControllerTest extends ERPTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180228-00093");
+        customer.setCustomerNo("LXCC-1000-20180301-00002");
         customer.setOwner(500021);
         customer.setUnionUser(500003);
         customer.setIsDefaultConsignAddress(0);
@@ -145,8 +145,9 @@ public class CustomerControllerTest extends ERPTransactionalTest {
         //后续所需设备
         List<CustomerCompanyNeed> customerCompanyNeedLaterList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed3 = new CustomerCompanyNeed();
-        customerCompanyNeed3.setSkuId(40);
+        customerCompanyNeed3.setSkuId(60);
         customerCompanyNeed3.setRentCount(10);
+//        customerCompanyNeed3.setTotalPrice(new BigDecimal(50000));
 //        customerCompanyNeed1.setTotalPrice(new BigDecimal(120000));
 
         customerCompanyNeedLaterList.add(customerCompanyNeed3);
@@ -157,7 +158,7 @@ public class CustomerControllerTest extends ERPTransactionalTest {
         customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("二四六八文化");
+        customerCompany.setCompanyName("楚汉文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
@@ -304,7 +305,7 @@ public class CustomerControllerTest extends ERPTransactionalTest {
     @Test
     public void commitCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180129-00060");
+        customer.setCustomerNo("LXCC-1000-20180301-00002");
         customer.setIsDefaultConsignAddress(1);
 
         TestResult result = getJsonTestResult("/customer/commitCustomer", customer);

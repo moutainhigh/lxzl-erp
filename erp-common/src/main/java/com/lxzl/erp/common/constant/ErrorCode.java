@@ -499,6 +499,7 @@ public class ErrorCode {
     public static final String CITY_NOT_EXISTS = "J500105";
     public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
     public static final String CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL = "J500107";
+    public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -984,6 +985,7 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
+        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
