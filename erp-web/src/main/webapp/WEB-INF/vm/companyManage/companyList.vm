@@ -87,7 +87,7 @@
                                 <td>{{subCompanyName}}</td>
                                 <td>{{subCompanyTypeValue}}</td>
                                 <td>{{provinceName}}{{cityName}}{{districtName}}</td>
-                                <td>￥{{#price}}{{shortLimitReceivableAmount}}{{/price}}</td>
+                                <td>{{shortLimitReceivableAmountValue}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group text-right">
