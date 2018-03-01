@@ -151,6 +151,9 @@ public class ErrorCode {
     public static final String PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR = "J800091";
     public static final String PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME = "J800092";
     public static final String PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR = "J800093";
+    public static final String CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR = "J800094";
+    public static final String FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800095";
+    public static final String LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800096";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -495,6 +498,8 @@ public class ErrorCode {
     public static final String LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME = "J500104";
     public static final String CITY_NOT_EXISTS = "J500105";
     public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
+    public static final String CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL = "J500107";
+    public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -788,7 +793,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_CAN_NOT_UPDATE, "此状态采购申请单不可修改");
         MAP.put(PURCHASE_APPLY_CAN_NOT_CANCEL_BY_STATUS, "此状态采购申请单不可取消");
         MAP.put(PURCHASE_APPLY_YET_RECEIVE_CAN_NOT_CANCEL, "已收货的采购申请单不可取消");
-        MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员ID不能为空");
+        MAP.put(CUSTOMER_OWNER_NOT_NULL, "客户业务员必须填写");
         MAP.put(PURCHASE_APPLY_USE_TIME_NOT_NUll, "计划使用时间不能为空");
         MAP.put(STATEMENT_ORDER_CAN_NOT_PAID_THIS, "历史有未结算的结算单，不能支付该项");
         MAP.put(WORKFLOW_TYPE_NOT_EXISTS, "工作流类型不存在");
@@ -843,6 +848,9 @@ public class ErrorCode {
         MAP.put(PRODUCT_CATEGORY_PROPERTY_ID_IS_ERROR, "更改的商品分类的属性值ID与原商品分类的属性值ID不同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_NAME_NOT_SAME, "商品分类的属性值名称不能相同");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_CATEGORY_ID_IS_ERROR, "商品分类的ID必须一致，即必须属于同一个产品");
+        MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
+        MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
+        MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -977,6 +985,7 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
+        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品不能为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1134,6 +1143,7 @@ public class ErrorCode {
         MAP.put(AGENT_PERSON_NO_NOT_NULL, "经办人身份证号码不能为空");
         MAP.put(CITY_NOT_EXISTS, "城市不存在");
         MAP.put(MATERIAL_TYPE_NOT_NULL, "商品的配件类型不存在");
+        MAP.put(CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL, "客户的首期申请额度不能为空");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
