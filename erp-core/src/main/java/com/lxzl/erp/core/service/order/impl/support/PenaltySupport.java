@@ -32,7 +32,7 @@ import java.util.*;
 
 
 /**
- * 描述: ${DESCRIPTION}
+ * 违约金计算
  *
  * @author kai
  * @date 2018-02-24 17:08
