@@ -320,8 +320,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                         productCategoryPropertyValueDO.setPropertyCapacityValue(null);
                         productCategoryPropertyValueDO.setMaterialModelId(null);
                     }
-                }
-
                 if (productCategoryPropertyValueDO.getMaterialModelId() != null) {
                     MaterialModelDO materialModelDO = materialModelMapper.findById(productCategoryPropertyValueDO.getMaterialModelId());
                     if (materialModelDO == null
@@ -340,6 +338,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                 productCategoryPropertyValueDO.setUpdateUser(currentUser);
                 productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
             }
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productCategoryPropertyDO.getId());
         return result;
