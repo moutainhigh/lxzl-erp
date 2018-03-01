@@ -2,16 +2,12 @@ package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.DeliveryMode;
-import com.lxzl.erp.common.constant.OrderPayMode;
-import com.lxzl.erp.common.constant.OrderRentType;
+import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.OrderCommitParam;
 import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.order.ProcessOrderParam;
-import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -40,17 +36,18 @@ public class OrderTest extends ERPTransactionalTest {
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
 
-        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentType(OrderRentType.RENT_TYPE_DAY);
         order.setRentTimeLength(6);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderProduct.setProductSkuId(40);
+        orderProduct.setProductSkuId(222);
         orderProduct.setProductCount(5);
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
         orderProduct.setProductUnitAmount(new BigDecimal(20.0));
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
+        orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 
@@ -58,17 +55,18 @@ public class OrderTest extends ERPTransactionalTest {
 
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderMaterial.setMaterialId(5);
+        orderMaterial.setMaterialId(78);
         orderMaterial.setMaterialCount(3);
         orderMaterial.setInsuranceAmount(new BigDecimal(20));
         orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
         orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
+        orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
 
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("C201711152010206581143");
-        order.setCustomerConsignId(7);
+        order.setBuyerCustomerNo("LXCD10002017123000034");
+        order.setCustomerConsignId(89);
         order.setRentStartTime(new Date());
         TestResult testResult = getJsonTestResult("/order/create", order);
     }

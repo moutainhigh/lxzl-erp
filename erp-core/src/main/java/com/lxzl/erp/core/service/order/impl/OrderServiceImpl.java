@@ -39,7 +39,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -49,6 +49,7 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -2055,7 +2056,21 @@ public class OrderServiceImpl implements OrderService {
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
 
         BigDecimal totalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
+
+        //分公司的应收短期上线
+        BigDecimal subCompanyTotalShortRentReceivable = statementOrderSupport.getSubCompanyShortRentReceivable(customerDO.getId());
+        if(BigDecimalUtil.compare(subCompanyTotalShortRentReceivable,BigDecimal.ZERO) <0){
+            return ErrorCode.SHORT_RECEIVABLE_CALCULATE_FAIL;
+        }
+
         BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
+
+        //得到分公司设置的短期上线
+        List<RoleDO> roleDOListFindAll = roleMapper.findByUserId(customerDO.getOwner());
+        RoleDO roleDOFindAll = roleDOListFindAll.get(0);
+        Integer subCompanyId = roleDOFindAll.getSubCompanyId();
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
+        BigDecimal subCompanyShortLimitReceivableAmount = subCompanyDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : subCompanyDO.getShortLimitReceivableAmount();
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
@@ -2147,6 +2162,12 @@ public class OrderServiceImpl implements OrderService {
                     if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
+
+                   //检验分公司是否超出
+                    subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
+                        return ErrorCode.SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
                 }
             }
         }
@@ -2202,6 +2223,12 @@ public class OrderServiceImpl implements OrderService {
                     totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
                     if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
+
+                    //检验分公司是否超出
+                    subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
+                        return ErrorCode.SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
                 }
             }
@@ -2296,4 +2323,6 @@ public class OrderServiceImpl implements OrderService {
     private StatementOrderDetailMapper statementOrderDetailMapper;
     @Autowired
     private StatementOrderMapper statementOrderMapper;
+    @Autowired
+    private RoleMapper roleMapper;
 }
