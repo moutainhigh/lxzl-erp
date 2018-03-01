@@ -149,12 +149,18 @@ public class PenaltySupport {
                     if (orderMaterialDO.getRentType() == 2) {//判断月
 
                         //判断结算单租金付了多少
-                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+                        ServiceResult<String, List<StatementOrderDetail>> statementOrderDetailListResult = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialId);
+                        if (!statementOrderDetailListResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                            result.setErrorCode(statementOrderDetailListResult.getErrorCode());
+                            return result;
+                        }
+
+                        List<StatementOrderDetail> statementOrderDetailList = statementOrderDetailListResult.getResult();
 
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int j = 0; j < statementOrderDetailList.size(); j++) {
-                            if (statementOrderDetailList.get(j).getOrderItemType() == 2 && statementOrderDetailList.get(j).getStatementDetailType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2) {
+                            if (statementOrderDetailList.get(j).getOrderItemType() == 2 && statementOrderDetailList.get(j).getItemRentType() == 2) {
                                 if (orderMaterialDO.getMaterialName().equals(statementOrderDetailList.get(j).getItemName())) {
                                     if (total.equals(statementOrderDetailList.get(j).getItemCount())) {
                                         if (price.equals(statementOrderDetailList.get(j).getUnitAmount())) {
@@ -209,13 +215,11 @@ public class PenaltySupport {
                 OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(a).getOrderNo(), returnOrderProductEquipmentDO.get(a).getEquipmentNo());
                 orderProductEquipmentDOList.add(orderProductEquipmentDO);
             }
-
             Map countProductMap = new HashMap();
             for (OrderProductEquipmentDO temp : orderProductEquipmentDOList) {
                 Integer count = (Integer) countProductMap.get(temp.getOrderProductId() + "," + temp.getProductEquipmentUnitAmount());
                 countProductMap.put(temp.getOrderProductId() + "," + temp.getProductEquipmentUnitAmount(), (count == null) ? 1 : count + 1);
             }
-
             OrderDO orderDO = orderMapper.findByOrderNo(returnOrderProductEquipmentDO.get(i).getOrderNo());
             if (orderDO == null) {
                 result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
@@ -247,12 +251,18 @@ public class PenaltySupport {
                     if (orderProductDO.getRentType() == 2) {//判断月
 
                         //判断结算单租金付了多少
-                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                        ServiceResult<String, List<StatementOrderDetail>> statementOrderDetailListResult = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductId);
+                        if (!statementOrderDetailListResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                            result.setErrorCode(statementOrderDetailListResult.getErrorCode());
+                            return result;
+                        }
+
+                        List<StatementOrderDetail> statementOrderDetailList = statementOrderDetailListResult.getResult();
 
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int j = 0; j < statementOrderDetailList.size(); j++) {
-                            if (statementOrderDetailList.get(j).getOrderItemType() == 1 && statementOrderDetailList.get(j).getStatementDetailType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2) {
+                            if (statementOrderDetailList.get(j).getOrderItemType() == 1 && statementOrderDetailList.get(j).getItemRentType() == 2) {
                                 if ((orderProductDO.getProductName() + orderProductDO.getProductSkuName()).equals(statementOrderDetailList.get(j).getItemName())) {
                                     if (total.equals(statementOrderDetailList.get(j).getItemCount())) {
                                         if (price.equals(statementOrderDetailList.get(j).getUnitAmount())) {
@@ -336,26 +346,22 @@ public class PenaltySupport {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-
-        //todo k3退货新旧问题
+        SqlLogInterceptor.setExecuteSql("skip print k3Service.queryOrder  sql ......");
+        ServiceResult<String, Order> k3Order = k3Service.queryOrder(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(0).getOrderNo());
+        if (k3Order == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(k3Order.getResult().getOrderNo());
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
 
         BigDecimal totalPenalty = new BigDecimal(0);
         for (int i = 0; i < k3ReturnOrderDO.getK3ReturnOrderDetailDOList().size(); i++) {
-            SqlLogInterceptor.setExecuteSql("skip print k3Service.queryOrder  sql ......");
-            ServiceResult<String, Order> k3Order = k3Service.queryOrder(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderNo());
-            if (k3Order == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-                return result;
-            }
-
-            OrderDO orderDO = orderMapper.findByOrderNo(k3Order.getResult().getOrderNo());
-            if (orderDO == null) {
-                result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                return result;
-            }
             String productNo = k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getProductNo();
             if (productNo.substring(0, 2).equals("10")) {//商品
-
                 //根据 erp_k3_return_order_detail的order_item_id 查询
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.valueOf(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderItemId()));
                 if (orderProductDO == null) {
@@ -376,12 +382,18 @@ public class PenaltySupport {
                 if (productDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
                     if (orderProductDO.getRentType() == 2) {//判断月
                         //判断结算单租金付了多少
-                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                        ServiceResult<String, List<StatementOrderDetail>> statementOrderDetailListResult = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getProductId());
+                        if (!statementOrderDetailListResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                            result.setErrorCode(statementOrderDetailListResult.getErrorCode());
+                            return result;
+                        }
+
+                        List<StatementOrderDetail> statementOrderDetailList = statementOrderDetailListResult.getResult();
 
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int z = 0; z < statementOrderDetailList.size(); z++) {
-                            if (statementOrderDetailList.get(z).getOrderItemType() == 1 && statementOrderDetailList.get(z).getStatementDetailType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2) {
+                            if (statementOrderDetailList.get(z).getOrderItemType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2) {
                                 if ((orderProductDO.getProductName() + orderProductDO.getProductSkuName()).equals(statementOrderDetailList.get(z).getItemName())) {
                                     if (orderProductDO.getProductCount().equals(statementOrderDetailList.get(z).getItemCount())) {
                                         if (orderProductDO.getProductUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())) {
@@ -407,11 +419,9 @@ public class PenaltySupport {
                     }
                 }
                 productPenalty = BigDecimalUtil.add(productPenalty, productTotal);
-
                 totalPenalty = BigDecimalUtil.add(totalPenalty, productPenalty);
 
-            } else if (productNo.substring(0, 2).equals("10")) {//物料
-
+            } else if (productNo.substring(0, 2).equals("20")) {//物料
                 //根据 erp_k3_return_order_detail的order_item_id 查询
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.valueOf(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(i).getOrderItemId()));
                 if (orderMaterialDO == null) {
@@ -433,12 +443,18 @@ public class PenaltySupport {
                 if (materialDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是
                     if (orderMaterialDO.getRentType() == 2) {
                         //判断结算单租金付了多少
-                        List<StatementOrderDetail> statementOrderDetailList = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL);
+                        ServiceResult<String, List<StatementOrderDetail>> statementOrderDetailListResult = queryStatementOrderDetailByOrderId(orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getMaterialId());
+                        if (!statementOrderDetailListResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                            result.setErrorCode(statementOrderDetailListResult.getErrorCode());
+                            return result;
+                        }
+
+                        List<StatementOrderDetail> statementOrderDetailList = statementOrderDetailListResult.getResult();
 
                         BigDecimal yesPay = new BigDecimal(0);
                         BigDecimal noPay = new BigDecimal(0);
                         for (int z = 0; z < statementOrderDetailList.size(); z++) {
-                            if (statementOrderDetailList.get(z).getOrderItemType() == 2 && statementOrderDetailList.get(z).getStatementDetailType() == 1 && statementOrderDetailList.get(z).getItemRentType() == 2) {
+                            if (statementOrderDetailList.get(z).getOrderItemType() == 2 && statementOrderDetailList.get(z).getItemRentType() == 2) {
                                 if (orderMaterialDO.getMaterialName().equals(statementOrderDetailList.get(z).getItemName())) {
                                     if (orderMaterialDO.getMaterialCount().equals(statementOrderDetailList.get(z).getItemCount())) {
                                         if (orderMaterialDO.getMaterialUnitAmount().equals(statementOrderDetailList.get(z).getUnitAmount())) {
@@ -464,7 +480,6 @@ public class PenaltySupport {
                     }
                 }
                 materialPenalty = BigDecimalUtil.add(materialPenalty, materialTotal);
-
                 totalPenalty = BigDecimalUtil.add(totalPenalty, materialPenalty);
             }
         }
@@ -473,9 +488,14 @@ public class PenaltySupport {
         return result;
     }
 
-    public List<StatementOrderDetail> queryStatementOrderDetailByOrderId(Integer orderId, Integer orderItemType) {
+    public ServiceResult<String, List<StatementOrderDetail>> queryStatementOrderDetailByOrderId(Integer orderId, Integer orderItemType, Integer orderItemReferId) {
+        ServiceResult<String, List<StatementOrderDetail>> result = new ServiceResult<>();
 
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdAndOrderItemType(orderId, orderItemType);
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderIdAndOrderItemType(orderId, orderItemType, orderItemReferId);
+        if (statementOrderDetailDOList == null) {
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS);
+            return result;
+        }
         List<StatementOrderDetail> statementOrderDetailList = ConverterUtil.convertList(statementOrderDetailDOList, StatementOrderDetail.class);
 
         if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
@@ -510,6 +530,9 @@ public class PenaltySupport {
                 }
             }
         }
-        return statementOrderDetailList;
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(statementOrderDetailList);
+        return result;
     }
 }

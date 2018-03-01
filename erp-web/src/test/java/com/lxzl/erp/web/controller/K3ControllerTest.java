@@ -319,7 +319,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void k3OrderPenalty() throws Exception {
-        String returnOrderNo = "d5cbf55b320f49b99b020cd8e725d868";
+        String returnOrderNo = "test-001";
         ServiceResult<String, BigDecimal> totalPenalty = penaltySupport.k3OrderPenalty(returnOrderNo);
         System.out.println(totalPenalty);
     }
