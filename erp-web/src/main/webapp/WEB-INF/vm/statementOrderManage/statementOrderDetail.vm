@@ -92,7 +92,7 @@
                                         <th class="nowrap">订单编号</th>
                                         <th class="nowrap">订单项类型</th>
                                         <th class="nowrap">商品名</th>
-                                        <th class="nowrap">金额类型</th>
+##                                        <th class="nowrap">金额类型</th>
                                         <th class="nowrap">单价</th>
                                         <th class="nowrap">商品数量</th>
                                         <th class="nowrap">租赁类型</th>
@@ -136,7 +136,7 @@
                                         <td class="nowrap">
                                             {{itemName}}
                                         </td>
-                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
+##                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
                                         <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
                                         <td class="nowrap">{{itemCount}}</td>
                                         <td class="nowrap">{{itemRentTypeValue}}</td>
