@@ -725,6 +725,22 @@ public class PageController extends BaseController {
     public String k3OrderChooseItem() {
         return "/component/k3Manage/chooseOrderItemModal";
     }
+    @RequestMapping("/change-order-k3/list")
+    public String k3ChangeOrderList() {
+        return "/k3Manage/k3ChangeOrder";
+    }
+    @RequestMapping("/change-order-k3/detail")
+    public String k3ChangeOrderDetail() {
+        return "/k3Manage/k3ChangeOrderDetail";
+    }
+    @RequestMapping("/change-order-k3/add")
+    public String k3ChangeOrderAdd() {
+        return "/k3Manage/k3ChangeOrderAdd";
+    }
+    @RequestMapping("/change-order-k3/edit")
+    public String k3ChangeOrderEdit() {
+        return "/k3Manage/k3ChangeOrderEdit";
+    }
 
     //分公司列表
     @RequestMapping("/company-manage/list")

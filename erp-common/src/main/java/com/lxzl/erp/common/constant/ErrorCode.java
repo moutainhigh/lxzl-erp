@@ -668,6 +668,10 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_ITEM_ID_NOT_NULL = "J16000014";
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
+    public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
+    public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE = "J17000003";
+    public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE = "J17000004";
+    public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE = "J17000005";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1328,6 +1332,10 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_CORRECT_FAIL, "结算冲正单结算失败");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
+        MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
+        MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE, "K3退货单状态为审核中或者已推送到K3，不能操作");
+        MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE, "K3换货单单状态为审核中或者已推送到K3，不能修改");
+        MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE, "K3换货单状态为审核中或者已推送到K3，不能操作");
 
     }
 
