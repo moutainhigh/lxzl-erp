@@ -17,7 +17,7 @@
                     <div class="col-md-4">
                         <label for="returnVisitFrequency" class="field-label">回访频率</label>
                         <label for="returnVisitFrequency" class="field prepend-icon">
-                            <input type="text" name="returnVisitFrequency" id="returnVisitFrequency" class="gui-input required number" maxlength="7">
+                            <input type="text" name="returnVisitFrequency" id="returnVisitFrequency" class="gui-input required checkInteger" maxlength="7">
                             <label for="returnVisitFrequency" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -67,7 +67,7 @@
                     <div class="col-md-4">
                         <label for="depositCycle" class="field-label">押金期数</label>
                         <label for="depositCycle" class="field prepend-icon">
-                            <input type="text" name="depositCycle" id="depositCycle" class="gui-input required number" maxlength="3">
+                            <input type="text" name="depositCycle" id="depositCycle" class="gui-input required checkInteger requiredWithFullDeposit" maxlength="3">
                             <label for="depositCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -75,7 +75,7 @@
                     <div class="col-md-4">
                         <label for="paymentCycle" class="field-label">付款期数</label>
                         <label for="paymentCycle" class="field prepend-icon">
-                            <input type="text" name="paymentCycle" id="paymentCycle" class="gui-input required number maxlength="3">
+                            <input type="text" name="paymentCycle" id="paymentCycle" class="gui-input required checkInteger requiredWithFullDeposit" maxlength="3">
                             <label for="paymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -83,7 +83,7 @@
                     <div class="col-md-4">
                         <label for="applePayMode" class="field-label">支付方式</label>
                         <label for="applePayMode" class="field select">
-                            <select class="required" name="payMode">
+                            <select class="required requiredWithFullDeposit" name="payMode">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
@@ -94,7 +94,7 @@
                     <div class="col-md-4">
                         <label for="appleDepositCycle" class="field-label">苹果押金期数</label>
                         <label for="appleDepositCycle" class="field prepend-icon">
-                            <input type="text" name="appleDepositCycle" id="appleDepositCycle" class="appleControl gui-input required number" maxlength="3">
+                            <input type="text" name="appleDepositCycle" id="appleDepositCycle" class="appleControl gui-input required checkInteger requiredWithFullDeposit" maxlength="3">
                             <label for="appleDepositCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -102,7 +102,7 @@
                     <div class="col-md-4">
                         <label for="applePaymentCycle" class="field-label">苹果付款期数</label>
                         <label for="applePaymentCycle" class="field prepend-icon">
-                            <input type="text" name="applePaymentCycle" id="applePaymentCycle" class="appleControl gui-input required number" maxlength="3">
+                            <input type="text" name="applePaymentCycle" id="applePaymentCycle" class="appleControl gui-input required checkInteger requiredWithFullDeposit" maxlength="3">
                             <label for="applePaymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -110,7 +110,7 @@
                     <div class="col-md-4">
                         <label for="applePayMode" class="field-label">苹果设备支付方式</label>
                         <label for="applePayMode" class="field select">
-                            <select class="appleControl required" name="applePayMode">
+                            <select class="appleControl required requiredWithFullDeposit" name="applePayMode">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
@@ -121,7 +121,7 @@
                     <div class="col-md-4">
                         <label for="newDepositCycle" class="field-label">全新设备押金期数</label>
                         <label for="newDepositCycle" class="field prepend-icon">
-                            <input type="text" name="newDepositCycle" id="newDepositCycle" class="newDepositControl gui-input required moneyNumber" maxlength="7">
+                            <input type="text" name="newDepositCycle" id="newDepositCycle" class="newDepositControl gui-input required checkInteger requiredWithFullDeposit" maxlength="7">
                             <label for="newDepositCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -129,7 +129,7 @@
                     <div class="col-md-4">
                         <label for="newPaymentCycle" class="field-label">全新设备付款期数</label>
                         <label for="newPaymentCycle" class="field prepend-icon">
-                            <input type="text" name="newPaymentCycle" id="newPaymentCycle" class="newDepositControl gui-input required number" maxlength="10">
+                            <input type="text" name="newPaymentCycle" id="newPaymentCycle" class="newDepositControl gui-input required checkInteger requiredWithFullDeposit" maxlength="10">
                             <label for="newPaymentCycle" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -137,7 +137,7 @@
                     <div class="col-md-4">
                         <label for="newPayMode" class="field-label">全新设备支付方式</label>
                         <label for="newPayMode" class="field select">
-                            <select class="newDepositControl required" name="newPayMode">
+                            <select class="newDepositControl required requiredWithFullDeposit" name="newPayMode">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>

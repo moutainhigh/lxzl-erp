@@ -137,20 +137,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedFirstList())) {
             List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
             //记录所有首次设备的总金额
-            BigDecimal totalCompanyNeedPrice = new BigDecimal(0);
-            setServiceResult = setAddCustomerCompanyNeed(customerCompanyNeedFirstList,totalCompanyNeedPrice);
+            setServiceResult = setCustomerCompanyNeed(customerCompanyNeedFirstList);
             if (!ErrorCode.SUCCESS.equals(setServiceResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-//            if (customerDO.getFirstApplyAmount().compareTo(setServiceResult.getResult()) != 0){
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
-//                return serviceResult;
-//            }
-
-//            customerDO.setFirstApplyAmount(setServiceResult.getResult());
             customerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
         }
 
@@ -158,20 +150,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedLaterList())) {
             List<CustomerCompanyNeed> customerCompanyNeedLaterList = customer.getCustomerCompany().getCustomerCompanyNeedLaterList();
             //记录所有后续设备的总金额
-            BigDecimal totalCompanyNeedPrice = new BigDecimal(0);
-            setServiceResult = setAddCustomerCompanyNeed(customerCompanyNeedLaterList,totalCompanyNeedPrice);
+            setServiceResult = setCustomerCompanyNeed(customerCompanyNeedLaterList);
             if (!ErrorCode.SUCCESS.equals(setServiceResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-//            if (customerDO.getLaterApplyAmount().compareTo(setServiceResult.getResult()) != 0){
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                serviceResult.setErrorCode(ErrorCode.LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
-//                return serviceResult;
-//            }
-
-//            customerDO.setLaterApplyAmount(setServiceResult.getResult());
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
 
@@ -374,48 +358,27 @@ public class CustomerServiceImpl implements CustomerService {
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedFirstList())) {
             List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
             //记录所有所有设备的总金额
-            BigDecimal totalCompanyNeedPrice = new BigDecimal(0);
-            setServiceResult= setUpdateCustomerCompanyNeed(customerCompanyNeedFirstList,totalCompanyNeedPrice);
+            setServiceResult= setCustomerCompanyNeed(customerCompanyNeedFirstList);
             if (!ErrorCode.SUCCESS.equals(setServiceResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-
-//            if (customerDO.getFirstApplyAmount().compareTo(setServiceResult.getResult()) != 0){
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
-//                return serviceResult;
-//            }
-
             newCustomerCompanyDO.setCustomerCompanyNeedFirstJson(JSON.toJSON(customerCompanyNeedFirstList).toString());
-            //将所有设备的总金额赋值给客户的首期申请额度
-            customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         }
 
         //判断后续所需设备
         if (CollectionUtil.isNotEmpty(customerCompany.getCustomerCompanyNeedLaterList())) {
             List<CustomerCompanyNeed> customerCompanyNeedLaterList = customerCompany.getCustomerCompanyNeedLaterList();
             //记录所有后续设备的总金额
-            BigDecimal totalCompanyNeedPrice = new BigDecimal(0);
-            setServiceResult = setUpdateCustomerCompanyNeed(customerCompanyNeedLaterList,totalCompanyNeedPrice);
+            setServiceResult = setCustomerCompanyNeed(customerCompanyNeedLaterList);
             if (!ErrorCode.SUCCESS.equals(setServiceResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(setServiceResult.getErrorCode());
                 return serviceResult;
             }
-
-            //todo 后期修改逻辑
-//            if (customerDO.getLaterApplyAmount().compareTo(setServiceResult.getResult()) != 0){
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                serviceResult.setErrorCode(ErrorCode.FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE);
-//                return serviceResult;
-//            }
-
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
-            //将所有后续设备的总金额赋值给客户的首期申请额度
-            customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
-        }
+         }
 
         newCustomerCompanyDO.setDataStatus(null);
         newCustomerCompanyDO.setCreateTime(null);
@@ -652,34 +615,33 @@ public class CustomerServiceImpl implements CustomerService {
             String customerCompanyNeedFirstJson = customerCompanyDO.getCustomerCompanyNeedFirstJson();
             List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
 
-            //todo 后面需要放开的字段，设备租赁
             //对租赁设备进行判断
             if(CollectionUtil.isEmpty(customerCompanyNeedList)){
                 result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
-            if (CollectionUtil.isNotEmpty(customerCompanyNeedList)) {
-                for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-                    ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
-                    if (productSkuDO == null) {
-                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
-                        return result;
-                    }
-                    if (customerCompanyNeed.getUnitPrice() == null) {
-                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL);
-                        return result;
-                    }
-                    if (customerCompanyNeed.getRentCount() == null) {
-                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
-                        return result;
-                    }
-                    if (customerCompanyNeed.getTotalPrice() == null) {
-                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL);
-                        return result;
-                    }
-                }
-            }
+//            if (CollectionUtil.isNotEmpty(customerCompanyNeedList)) {
+//                for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
+//                    ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+//                    if (productSkuDO == null) {
+//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
+//                        return result;
+//                    }
+//                    if (customerCompanyNeed.getUnitPrice() == null) {
+//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL);
+//                        return result;
+//                    }
+//                    if (customerCompanyNeed.getRentCount() == null) {
+//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
+//                        return result;
+//                    }
+//                    if (customerCompanyNeed.getTotalPrice() == null) {
+//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL);
+//                        return result;
+//                    }
+//                }
+//            }
 
             //对图片附件进行判断
             List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
@@ -710,13 +672,13 @@ public class CustomerServiceImpl implements CustomerService {
                 result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
-            //对企业行业判断
+            //对企业所属行业判断
             if (StringUtil.isEmpty(customerCompanyDO.getIndustry())) {
                 result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
             }
 
-            //对企业的设备用途判断
+            //对设备用途判断
             if (StringUtil.isEmpty(customerCompanyDO.getProductPurpose())) {
                 result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
                 return result;
@@ -915,12 +877,24 @@ public class CustomerServiceImpl implements CustomerService {
         //首次所需设备，Json转list
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson())) {
             String customerCompanyNeedFirstJson = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedFirstJson();
+            List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
+            BigDecimal firstListTotalPrice = new BigDecimal(0);
+            for (CustomerCompanyNeed customerCompanyNeed: customerCompanyNeedList){
+                firstListTotalPrice = firstListTotalPrice.add(customerCompanyNeed.getTotalPrice());
+            }
+            customerResult.getCustomerCompany().setFirstListTotalPrice(firstListTotalPrice);
             customerResult.getCustomerCompany().setCustomerCompanyNeedFirstList(JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class));
         }
 
         //后续所需设备，Json转list
         if (StringUtil.isNotEmpty(customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson())) {
             String customerCompanyNeedLaterList = customerDO.getCustomerCompanyDO().getCustomerCompanyNeedLaterJson();
+            List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class);
+            BigDecimal laterListTotalPrice = new BigDecimal(0);
+            for (CustomerCompanyNeed customerCompanyNeed: customerCompanyNeedList){
+                laterListTotalPrice = laterListTotalPrice.add(customerCompanyNeed.getTotalPrice());
+            }
+            customerResult.getCustomerCompany().setLaterListTotalPrice(laterListTotalPrice);
             customerResult.getCustomerCompany().setCustomerCompanyNeedLaterList(JSONObject.parseArray(customerCompanyNeedLaterList, CustomerCompanyNeed.class));
         }
 
@@ -2126,7 +2100,7 @@ public class CustomerServiceImpl implements CustomerService {
         addCustomerConsignInfo(customerConsignInfo);
     }
 
-    private ServiceResult<String, BigDecimal> setAddCustomerCompanyNeed(List<CustomerCompanyNeed> customerCompanyNeedList, BigDecimal totalCompanyNeedPrice) {
+    private ServiceResult<String, BigDecimal> setCustomerCompanyNeed(List<CustomerCompanyNeed> customerCompanyNeedList) {
         ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
 
         for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
@@ -2140,52 +2114,44 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
                 return serviceResult;
             }
+
             BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
-//            //判断总金额计算是否正确
-//            if (totalPrice.compareTo(customerCompanyNeed.getTotalPrice()) != 0){
-//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR);
+            customerCompanyNeed.setTotalPrice(totalPrice);
+            ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+            customerCompanyNeed.setProduct(productServiceResult.getResult());
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+//    private ServiceResult<String, BigDecimal> setUpdateCustomerCompanyNeed(List<CustomerCompanyNeed> customerCompanyNeedList,BigDecimal totalCompanyNeedPrice) {
+//        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
+//
+//        for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
+//            ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
+//            if (productSkuDO == null) {
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
+//                return serviceResult;
+//            }
+//            customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
+//            if (customerCompanyNeed.getRentCount() == null) {
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
 //                return serviceResult;
 //            }
 //
-            customerCompanyNeed.setTotalPrice(totalPrice);
-            ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-            customerCompanyNeed.setProduct(productServiceResult.getResult());
-
-            totalCompanyNeedPrice = totalCompanyNeedPrice.add(customerCompanyNeed.getTotalPrice());
-        }
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(totalCompanyNeedPrice);
-        return serviceResult;
-    }
-
-    private ServiceResult<String, BigDecimal> setUpdateCustomerCompanyNeed(List<CustomerCompanyNeed> customerCompanyNeedList,BigDecimal totalCompanyNeedPrice) {
-        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
-
-        for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-            ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
-            if (productSkuDO == null) {
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
-                return serviceResult;
-            }
-            customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
-            if (customerCompanyNeed.getRentCount() == null) {
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
-                return serviceResult;
-            }
-
-            BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
-            customerCompanyNeed.setTotalPrice(totalPrice);
-            ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-            customerCompanyNeed.setProduct(productServiceResult.getResult());
-
-            totalCompanyNeedPrice = totalCompanyNeedPrice.add(customerCompanyNeed.getTotalPrice());
-        }
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(totalCompanyNeedPrice);
-        return serviceResult;
-    }
+//            BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
+//            customerCompanyNeed.setTotalPrice(totalPrice);
+//            ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
+//            customerCompanyNeed.setProduct(productServiceResult.getResult());
+//
+//            totalCompanyNeedPrice = totalCompanyNeedPrice.add(customerCompanyNeed.getTotalPrice());
+//        }
+//
+//        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//        serviceResult.setResult(totalCompanyNeedPrice);
+//        return serviceResult;
+//    }
 
 
     @Autowired

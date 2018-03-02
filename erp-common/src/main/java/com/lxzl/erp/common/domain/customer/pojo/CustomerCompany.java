@@ -62,7 +62,9 @@ public class CustomerCompany extends BasePO {
     @Valid
     @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
+    private BigDecimal firstListTotalPrice; //首次所需设备总金额
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
+    private BigDecimal laterListTotalPrice; //后续所需设备总金额
     @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonName;  //经办人姓名
     @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
@@ -74,7 +76,7 @@ public class CustomerCompany extends BasePO {
     private Double operatingArea; //经营面积
     private Integer unitInsuredNumber; //单位参保人数
     private String affiliatedEnterprise; //关联企业
-
+    private Integer deliveryMode;   //发货方式，1快递，2自提，3凌雄配送
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
@@ -549,5 +551,29 @@ public class CustomerCompany extends BasePO {
 
     public void setDefaultAddressReferId(Integer defaultAddressReferId) {
         this.defaultAddressReferId = defaultAddressReferId;
+    }
+
+    public Integer getDeliveryMode() {
+        return deliveryMode;
+    }
+
+    public void setDeliveryMode(Integer deliveryMode) {
+        this.deliveryMode = deliveryMode;
+    }
+
+    public BigDecimal getFirstListTotalPrice() {
+        return firstListTotalPrice;
+    }
+
+    public void setFirstListTotalPrice(BigDecimal firstListTotalPrice) {
+        this.firstListTotalPrice = firstListTotalPrice;
+    }
+
+    public BigDecimal getLaterListTotalPrice() {
+        return laterListTotalPrice;
+    }
+
+    public void setLaterListTotalPrice(BigDecimal laterListTotalPrice) {
+        this.laterListTotalPrice = laterListTotalPrice;
     }
 }
