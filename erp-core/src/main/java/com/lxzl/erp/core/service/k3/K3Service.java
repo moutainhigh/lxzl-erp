@@ -2,13 +2,16 @@ package com.lxzl.erp.core.service.k3;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.core.service.VerifyReceiver;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -16,7 +19,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
  * @author gaochao
  * @date 2018-02-11 20:54
  */
-public interface K3Service {
+public interface K3Service extends VerifyReceiver {
 
     /**
      * 根据参数查询订单
@@ -40,6 +43,10 @@ public interface K3Service {
 
     ServiceResult<String, K3ReturnOrder> queryReturnOrderByNo(String returnOrderNo);
 
+    ServiceResult<String, String> cancelK3ReturnOrder(K3ReturnOrder k3ReturnOrder);
+
+    ServiceResult<String, String> commitK3ReturnOrder(K3ReturnOrderCommitParam k3ReturnOrderCommitParam);
+
     ServiceResult<String, String> sendToK3(String returnOrderNo);
 
     ServiceResult<String, String> createChangeOrder(K3ChangeOrder k3ChangeOrder);
@@ -55,4 +62,8 @@ public interface K3Service {
     ServiceResult<String,Page<K3ChangeOrder>> queryChangeOrder(K3ChangeOrderQueryParam param);
 
     ServiceResult<String,K3ChangeOrder> queryChangeOrderByNo(String changeOrderNo);
+
+    ServiceResult<String, String> cancelK3ChangeOrder(K3ChangeOrder k3ChangeOrder);
+
+    ServiceResult<String, String> commitK3ChangeOrder(K3ChangeOrderCommitParam k3ChangeOrderCommitParam);
 }

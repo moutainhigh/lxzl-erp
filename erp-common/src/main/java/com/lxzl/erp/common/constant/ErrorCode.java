@@ -672,6 +672,13 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE = "J17000003";
     public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE = "J17000004";
     public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE = "J17000005";
+    public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_CANCEL = "J17000006";
+    public static final String K3_CHANGE_ORDER_IS_NOT_NULL = "J17000007";
+    public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL = "J17000008";
+    public static final String K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000009";
+    public static final String K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000010";
+    public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
+    public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1336,6 +1343,13 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE, "K3退货单状态为审核中或者已推送到K3，不能操作");
         MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE, "K3换货单单状态为审核中或者已推送到K3，不能修改");
         MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE, "K3换货单状态为审核中或者已推送到K3，不能操作");
+        MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的K3换货单换货单不允许取消");
+        MAP.put(K3_CHANGE_ORDER_IS_NOT_NULL, "K3换货单不存在");
+        MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的K3退货单换货单不允许取消");
+        MAP.put(K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3换货单可以提交");
+        MAP.put(K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3换货单商品不能空，需有商品才能提交");
+        MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
+        MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
 
     }
 

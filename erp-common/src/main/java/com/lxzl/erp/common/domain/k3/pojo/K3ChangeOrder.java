@@ -20,7 +20,7 @@ public class K3ChangeOrder extends BasePO {
 	private Integer changeMode;   //换还方式，1-上门取件，2邮寄
 	private BigDecimal logisticsAmount;   //运费
 	private BigDecimal serviceAmount;   //服务费
-	private Integer changeOrderStatus;   //是否推送到K3 1是0否
+	private Integer changeOrderStatus;   //换货订单状态，0-待提交，4-审核中，24-取消，28-已完成
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间

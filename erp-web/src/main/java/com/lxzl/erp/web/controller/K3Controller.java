@@ -2,7 +2,9 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
@@ -75,6 +77,18 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "cancelK3ReturnOrder", method = RequestMethod.POST)
+    public Result cancelK3ReturnOrder(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.cancelK3ReturnOrder(k3ReturnOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "commitK3ReturnOrder", method = RequestMethod.POST)
+    public Result commitK3ReturnOrder(@RequestBody K3ReturnOrderCommitParam k3ReturnOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.commitK3ReturnOrder(k3ReturnOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "sendToK3", method = RequestMethod.POST)
     public Result sendToK3(@RequestBody K3ReturnOrder param, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3Service.sendToK3(param.getReturnOrderNo());
@@ -128,6 +142,19 @@ public class K3Controller extends BaseController {
         ServiceResult<String, String> serviceResult = k3Service.sendChangeOrderToK3(k3ChangeOrder.getChangeOrderNo());
         return resultGenerator.generate(serviceResult);
     }
+
+    @RequestMapping(value = "cancelK3ChangeOrder", method = RequestMethod.POST)
+    public Result cancelK3ChangeOrder(@RequestBody K3ChangeOrder k3ChangeOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.cancelK3ChangeOrder(k3ChangeOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "commitK3ChangeOrder", method = RequestMethod.POST)
+    public Result commitK3ChangeOrder(@RequestBody K3ChangeOrderCommitParam k3ChangeOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.commitK3ChangeOrder(k3ChangeOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 
