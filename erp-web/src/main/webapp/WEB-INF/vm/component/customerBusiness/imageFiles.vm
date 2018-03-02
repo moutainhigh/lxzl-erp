@@ -81,7 +81,7 @@
                                 <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                 <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                 <label class="field prepend-icon" style="max-width:160px">
-                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
                                 </label>
                             </td>
                             <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
@@ -167,7 +167,7 @@
                                 <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                 <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                 <label class="field prepend-icon" style="max-width:160px">
-                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                    <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量"  aria-required="true" aria-invalid="false"/>
                                 </label>
                             </td>
                             <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>

@@ -237,6 +237,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return
      */
     private Double getPercentage(BigDecimal d1 , BigDecimal d2){
+        d2=d2==null?BigDecimal.ZERO:d2;
         if(BigDecimal.ZERO.compareTo(d2)==0){
             return 0d;
         }else{

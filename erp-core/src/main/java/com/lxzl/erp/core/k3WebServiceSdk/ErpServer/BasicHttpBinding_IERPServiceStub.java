@@ -134,12 +134,12 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
             Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
             Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
             Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
-            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ArrayOfFormSeorderEntry");
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ArrayOfFormSEOrderEntry");
             cachedSerQNames.add(qName);
-            cls = FormSeorderEntry[].class;
+            cls = FormSEOrderEntry[].class;
             cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry");
-            qName2 = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry");
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrderEntry");
+            qName2 = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrderEntry");
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
@@ -182,9 +182,9 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry");
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrderEntry");
             cachedSerQNames.add(qName);
-            cls = FormSeorderEntry.class;
+            cls = FormSEOrderEntry.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);

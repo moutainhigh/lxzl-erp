@@ -768,6 +768,10 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+
+        List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
+        orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
+
         Order order = ConverterUtil.convert(orderDO, Order.class);
 
         ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());

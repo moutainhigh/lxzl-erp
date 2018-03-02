@@ -321,7 +321,7 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180214-731812-00080");
+        order.setOrderNo("LXO-20180301-731846-00002");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 

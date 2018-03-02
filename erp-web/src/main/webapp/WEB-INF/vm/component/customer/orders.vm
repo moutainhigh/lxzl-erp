@@ -53,6 +53,11 @@
                                     <td>￥{{totalPrice}}</td>
                                 </tr>
                                 {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="8" class="text-center">没有查询到首次所需设备</td>
+                                </tr>
+                                {{/listData}}
                                 {{/dataSource}}
                             </tbody>
                         </script>
@@ -88,6 +93,11 @@
                                     <td>￥{{unitPrice}}</td>
                                     <td>{{rentCount}}</td>
                                     <td>￥{{totalPrice}}</td>
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="8" class="text-center">没有查询到后续所需设备</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}

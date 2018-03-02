@@ -46,7 +46,7 @@ public class FormSEOrder  implements java.io.Serializable {
 
     private String empNumber;
 
-    private FormSeorderEntry[] entrys;
+    private FormSEOrderEntry[] entrys;
 
     private String explanation;
 
@@ -89,7 +89,7 @@ public class FormSEOrder  implements java.io.Serializable {
            String deptNumber,
            String empName,
            String empNumber,
-           FormSeorderEntry[] entrys,
+           FormSEOrderEntry[] entrys,
            String explanation,
            String fetchStyleNumber,
            String invoiceType,
@@ -516,7 +516,7 @@ public class FormSEOrder  implements java.io.Serializable {
      * 
      * @return entrys
      */
-    public FormSeorderEntry[] getEntrys() {
+    public FormSEOrderEntry[] getEntrys() {
         return entrys;
     }
 
@@ -526,7 +526,7 @@ public class FormSEOrder  implements java.io.Serializable {
      * 
      * @param entrys
      */
-    public void setEntrys(FormSeorderEntry[] entrys) {
+    public void setEntrys(FormSEOrderEntry[] entrys) {
         this.entrys = entrys;
     }
 
@@ -1061,10 +1061,10 @@ public class FormSEOrder  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("entrys");
         elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "Entrys"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrderEntry"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
-        elemField.setItemQName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSeorderEntry"));
+        elemField.setItemQName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormSEOrderEntry"));
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("explanation");

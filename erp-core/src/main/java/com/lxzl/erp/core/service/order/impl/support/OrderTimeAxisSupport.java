@@ -20,12 +20,12 @@ import java.util.List;
 public class OrderTimeAxisSupport {
 
 
-    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot,Date currentTime, Integer loginUserId){
+    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, Integer loginUserId) {
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisMapper.findByOrderId(orderId);
-        if(CollectionUtil.isNotEmpty(orderTimeAxisDOList)){
+        if (CollectionUtil.isNotEmpty(orderTimeAxisDOList)) {
             OrderTimeAxisDO lastRecord = orderTimeAxisDOList.get(orderTimeAxisDOList.size() - 1);
             // 如果最后的状态和当前状态相同，就没有必要再存一条
-            if(orderStatus.equals(lastRecord.getOrderStatus())){
+            if (orderStatus.equals(lastRecord.getOrderStatus())) {
                 return;
             }
         }
@@ -40,6 +40,11 @@ public class OrderTimeAxisSupport {
         orderTimeAxisDO.setUpdateTime(currentTime);
         orderTimeAxisMapper.save(orderTimeAxisDO);
     }
+
+    public List<OrderTimeAxisDO> getOrderTimeAxis(Integer orderId) {
+       return orderTimeAxisMapper.findByOrderId(orderId);
+    }
+
 
     @Autowired
     private OrderTimeAxisMapper orderTimeAxisMapper;
