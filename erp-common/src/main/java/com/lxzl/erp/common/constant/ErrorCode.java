@@ -397,6 +397,8 @@ public class ErrorCode {
     public static final String ORDER_EXPECT_DELIVERY_TIME = "J400127";
     public static final String ORDER_RENT_TYPE_IS_NULL = "J400128";
     public static final String ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL = "J400129";
+    public static final String RETURN_ORDER_MATERIAL_BULK_NOT_NULL = "J400130";
+    public static final String RETURN_ORDER_PRODUCT_EQUIPMENT_NOT_NULL = "J400131";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -660,6 +662,9 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_CORRECT_FAIL = "J16000012";
     public static final String CORRECT_AMOUNT_MORE_THEN_ZERO = "J16000013";
     public static final String STATEMENT_ORDER_ITEM_ID_NOT_NULL = "J16000014";
+
+    public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1091,6 +1096,8 @@ public class ErrorCode {
         MAP.put(ORDER_EXPECT_DELIVERY_TIME, "订单送货日期不能为空，请选择送货日期时间");
         MAP.put(ORDER_RENT_TYPE_IS_NULL, "订单的租赁类型不能为空，请选择租赁类型");
         MAP.put(ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL, "订单的租赁类型不能为空或小于0，租赁时长需大于0");
+        MAP.put(RETURN_ORDER_MATERIAL_BULK_NOT_NULL, "违约金计算-退货单的物料退货表为空或不存在");
+        MAP.put(RETURN_ORDER_PRODUCT_EQUIPMENT_NOT_NULL, "违约金计算-退货单的商品退货表为空或不存在");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1311,6 +1318,8 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID, "结算单ID不对应结算单项ID");
         MAP.put(STATEMENT_ORDER_CORRECT_EXISTS, "结算冲正单已存在");
         MAP.put(STATEMENT_ORDER_CORRECT_FAIL, "结算冲正单结算失败");
+
+        MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
 
     }
 

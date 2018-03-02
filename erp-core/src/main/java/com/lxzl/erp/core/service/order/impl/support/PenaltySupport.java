@@ -6,7 +6,6 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.k3.K3Service;
-import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
@@ -68,8 +67,6 @@ public class PenaltySupport {
     private K3Service k3Service;
     @Autowired
     private StatementOrderDetailMapper statementOrderDetailMapper;
-    @Autowired
-    private ChangeOrderMapper changeOrderMapper;
 
     /**
      * erp违约金计算
@@ -100,7 +97,7 @@ public class PenaltySupport {
             SqlLogInterceptor.setExecuteSql("skip print returnOrderMaterialBulkMapper.findByReturnOrderMaterialId  sql ......");
             List<ReturnOrderMaterialBulkDO> returnOrderMaterialBulkDO = returnOrderMaterialBulkMapper.findByReturnOrderMaterialId(returnOrderDO.getReturnOrderMaterialDOList().get(i).getId());
             if (returnOrderMaterialBulkDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                result.setErrorCode(ErrorCode.RETURN_ORDER_MATERIAL_BULK_NOT_NULL);
                 return result;
             }
 
@@ -108,6 +105,10 @@ public class PenaltySupport {
             for (int a = 0; a < returnOrderMaterialBulkDO.size(); a++) {
                 SqlLogInterceptor.setExecuteSql("skip print orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo  sql ......");
                 OrderMaterialBulkDO orderMaterialBulkDO = orderMaterialBulkMapper.findByOrderNoAndBulkMaterialNo(returnOrderMaterialBulkDO.get(a).getOrderNo(), returnOrderMaterialBulkDO.get(a).getBulkMaterialNo());
+                if (orderMaterialBulkDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_BULK_NOT_EXISTS);
+                    return result;
+                }
                 orderMaterialBulkDOList.add(orderMaterialBulkDO);
             }
 
@@ -137,7 +138,7 @@ public class PenaltySupport {
 
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderMaterialId);
                 if (orderMaterialDO == null) {
-                    result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_NOT_EXISTS);
                     return result;
                 }
 
@@ -206,13 +207,17 @@ public class PenaltySupport {
             SqlLogInterceptor.setExecuteSql("skip print returnOrderProductEquipmentMapper.findByReturnOrderProductId  sql ......");
             List<ReturnOrderProductEquipmentDO> returnOrderProductEquipmentDO = returnOrderProductEquipmentMapper.findByReturnOrderProductId(returnOrderDO.getReturnOrderProductDOList().get(i).getId());
             if (returnOrderProductEquipmentDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                result.setErrorCode(ErrorCode.RETURN_ORDER_PRODUCT_EQUIPMENT_NOT_NULL);
                 return result;
             }
             List<OrderProductEquipmentDO> orderProductEquipmentDOList = new ArrayList<>();
             for (int a = 0; a < returnOrderProductEquipmentDO.size(); a++) {
                 SqlLogInterceptor.setExecuteSql("skip print orderProductEquipmentMapper.findByOrderNoAndEquipmentNo  sql ......");
                 OrderProductEquipmentDO orderProductEquipmentDO = orderProductEquipmentMapper.findByOrderNoAndEquipmentNo(returnOrderProductEquipmentDO.get(a).getOrderNo(), returnOrderProductEquipmentDO.get(a).getEquipmentNo());
+                if (orderProductEquipmentDO == null) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_EQUIPMENT_NOT_EXISTS);
+                    return result;
+                }
                 orderProductEquipmentDOList.add(orderProductEquipmentDO);
             }
             Map countProductMap = new HashMap();
@@ -240,7 +245,7 @@ public class PenaltySupport {
 
                 OrderProductDO orderProductDO = orderProductMapper.findById(orderProductId);
                 if (orderProductDO == null) {
-                    result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
                     return result;
                 }
 
@@ -334,22 +339,22 @@ public class PenaltySupport {
     /**
      * k3违约金
      *
-     * @param returnOrderNo
+     * @param k3ReturnOrderNo
      * @return
      * @author kai
      */
-    public ServiceResult<String, BigDecimal> k3OrderPenalty(String returnOrderNo) {
+    public ServiceResult<String, BigDecimal> k3OrderPenalty(String k3ReturnOrderNo) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
 
-        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderNo);
         if (k3ReturnOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
         }
         SqlLogInterceptor.setExecuteSql("skip print k3Service.queryOrder  sql ......");
         ServiceResult<String, Order> k3Order = k3Service.queryOrder(k3ReturnOrderDO.getK3ReturnOrderDetailDOList().get(0).getOrderNo());
-        if (k3Order == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+        if (!ErrorCode.SUCCESS.equals(k3Order.getErrorCode())) {
+            result.setErrorCode(k3Order.getErrorCode());
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(k3Order.getResult().getOrderNo());
