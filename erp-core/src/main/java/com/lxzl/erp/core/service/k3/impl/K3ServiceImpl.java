@@ -2,9 +2,7 @@ package com.lxzl.erp.core.service.k3.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -297,6 +295,7 @@ public class K3ServiceImpl implements K3Service {
 
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         k3ReturnOrderDO.setReturnOrderNo("LXK3RO" + DateUtil.formatDate(currentTime, "yyyyMMddHHmmssSSS"));
+        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
         k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         k3ReturnOrderDO.setCreateTime(currentTime);
         k3ReturnOrderDO.setCreateUser(loginUser.getUserId().toString());
@@ -336,7 +335,10 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-
+        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE);
+            return result;
+        }
 
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         k3ReturnOrderDO.setId(dbK3ReturnOrderDO.getId());
@@ -363,6 +365,10 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
+        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
+            return result;
+        }
         for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
             K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
             k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
@@ -387,6 +393,11 @@ public class K3ServiceImpl implements K3Service {
         K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(k3ReturnOrderDetailId);
         if (k3ReturnOrderDetailDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetailDO.getReturnOrderId());
+        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
 
@@ -445,7 +456,7 @@ public class K3ServiceImpl implements K3Service {
             return result;
         }
 
-        k3ReturnOrderDO.setReturnOrderStatus(CommonConstant.COMMON_CONSTANT_YES);
+        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
         k3ReturnOrderDO.setUpdateTime(currentTime);
         k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
@@ -466,7 +477,7 @@ public class K3ServiceImpl implements K3Service {
         K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder, K3ChangeOrderDO.class);
         k3ChangeOrderDO.setChangeOrderNo(UUIDUtil.getUUID());
         k3ChangeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        k3ChangeOrderDO.setChangeOrderStatus(CommonConstant.COMMON_CONSTANT_NO);
+        k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT);
         k3ChangeOrderDO.setCreateTime(now);
         k3ChangeOrderDO.setUpdateTime(now);
         k3ChangeOrderDO.setCreateUser(loginUser.getUserId().toString());
@@ -508,6 +519,10 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ChangeOrderDO.getChangeOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE);
+            return result;
+        }
 
 
         K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder, K3ChangeOrderDO.class);
@@ -535,6 +550,10 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
+        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE);
+            return result;
+        }
         for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrder.getK3ChangeOrderDetailList()) {
             K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
             k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
@@ -559,6 +578,11 @@ public class K3ServiceImpl implements K3Service {
         K3ChangeOrderDetailDO k3ChangeOrderDetailDO = k3ChangeOrderDetailMapper.findById(k3ChangeOrderDetailId);
         if (k3ChangeOrderDetailDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findById(k3ChangeOrderDetailDO.getChangeOrderId());
+        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
 
@@ -620,7 +644,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        k3ChangeOrderDO.setChangeOrderStatus(CommonConstant.COMMON_CONSTANT_YES);
+        k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_END);
         k3ChangeOrderDO.setUpdateTime(currentTime);
         k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ChangeOrderMapper.update(k3ChangeOrderDO);

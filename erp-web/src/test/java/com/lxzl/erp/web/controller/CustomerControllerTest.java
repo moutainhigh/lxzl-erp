@@ -125,6 +125,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setOwner(500021);
         customer.setUnionUser(500003);
         customer.setIsDefaultConsignAddress(1);
+        customer.setShortLimitReceivableAmount(new BigDecimal(2000));
         CustomerCompany customerCompany = new CustomerCompany();
 
         //首次所需设备
@@ -148,7 +149,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompanyNeed3.setSkuId(60);
         customerCompanyNeed3.setRentCount(10);
 //        customerCompanyNeed3.setTotalPrice(new BigDecimal(50000));
-//        customerCompanyNeed1.setTotalPrice(new BigDecimal(120000));
 
         customerCompanyNeedLaterList.add(customerCompanyNeed3);
 
@@ -267,6 +267,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerNo("LXCD-1000-20180127-00058");
         customer.setOwner(500025);
         customer.setIsDefaultConsignAddress(1);
+        customer.setShortLimitReceivableAmount(new BigDecimal(1000));
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
         customerPerson.setConnectRealName("update测试个人用户紧急联系人姓名");
@@ -339,7 +340,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180228-00156");
+        customer.setCustomerNo("LXCC-1000-20180302-00010");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
