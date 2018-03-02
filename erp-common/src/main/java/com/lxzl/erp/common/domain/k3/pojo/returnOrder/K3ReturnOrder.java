@@ -20,7 +20,7 @@ public class K3ReturnOrder extends BasePO {
 	private String returnContacts;   //联系人
 	private String returnPhone;   //联系电话
 	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
-	private Integer returnOrderStatus;   // 是否推送到K3 1是0否
+	private Integer returnOrderStatus;   // 归还订单状态，0-待提交，4-审核中，16-已取消，20-已完成
 	private BigDecimal logisticsAmount;	// 运费
 	private BigDecimal serviceAmount;	// 服务费
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除

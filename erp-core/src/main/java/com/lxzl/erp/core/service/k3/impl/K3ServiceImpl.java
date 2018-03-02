@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
@@ -26,6 +28,7 @@ import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
@@ -47,6 +50,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.*;
 
@@ -445,6 +449,97 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    public ServiceResult<String, String> cancelK3ReturnOrder(K3ReturnOrder k3ReturnOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+        if(k3ReturnOrderDO == null){
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
+            return result;
+        }
+        //判断何时可以取消
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus()) &&
+                !ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
+        //判断状态审核中执行工作流取消审核
+        if (ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_RETURN, k3ReturnOrderDO.getReturnOrderNo());
+            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
+                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
+                return result;
+            }
+        }
+        k3ReturnOrderDO.setUpdateTime(now);
+        k3ReturnOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_CANCEL);
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(k3ReturnOrderDO.getReturnOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> commitK3ReturnOrder(K3ReturnOrderCommitParam k3ReturnOrderCommitParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderCommitParam.getReturnOrderNo());
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
+            return result;
+        } else if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            //只有待提交状态的换货单可以提交
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
+            return result;
+        }
+        if (!k3ReturnOrderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            //只有创建换货单本人可以提交
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return result;
+        }
+        if (CollectionUtil.isEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL);
+            return result;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_RETURN);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            result.setErrorCode(needVerifyResult.getErrorCode());
+            return result;
+        } else if (needVerifyResult.getResult()) {
+            if (k3ReturnOrderCommitParam.getVerifyUserId() == null) {
+                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return result;
+            }
+            //调用提交审核服务
+            k3ReturnOrderCommitParam.setVerifyMatters("K3退货单审核事项：1.服务费和运费 2.退还方式 3.商品与配件的退货数量");
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_RETURN, k3ReturnOrderCommitParam.getReturnOrderNo(), k3ReturnOrderCommitParam.getVerifyUserId(),k3ReturnOrderCommitParam.getVerifyMatters(), k3ReturnOrderCommitParam.getRemark(), k3ReturnOrderCommitParam.getImgIdList());
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
+                k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+                k3ReturnOrderDO.setUpdateTime(now);
+                k3ReturnOrderMapper.update(k3ReturnOrderDO);
+                return verifyResult;
+            } else {
+                result.setErrorCode(verifyResult.getErrorCode());
+                return result;
+            }
+        } else {
+            k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
+            k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+            k3ReturnOrderDO.setUpdateTime(now);
+            k3ReturnOrderMapper.update(k3ReturnOrderDO);
+            result.setErrorCode(ErrorCode.SUCCESS);
+            return result;
+        }
+    }
+
+    @Override
     public ServiceResult<String, String> sendToK3(String returnOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -630,6 +725,99 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> cancelK3ChangeOrder(K3ChangeOrder k3ChangeOrder) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrder.getChangeOrderNo());
+        if(k3ChangeOrderDO == null){
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_IS_NOT_NULL);
+            return result;
+        }
+        //判断何时可以取消
+        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus()) &&
+                !ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
+        //判断状态审核中执行工作流取消审核
+        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_CHANGE, k3ChangeOrderDO.getChangeOrderNo());
+            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
+                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
+                return result;
+            }
+        }
+        k3ChangeOrderDO.setUpdateTime(now);
+        k3ChangeOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_CANCEL);
+        k3ChangeOrderMapper.update(k3ChangeOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(k3ChangeOrderDO.getChangeOrderNo());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> commitK3ChangeOrder(K3ChangeOrderCommitParam k3ChangeOrderCommitParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date now = new Date();
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrderCommitParam.getChangeOrderNo());
+        if (k3ChangeOrderDO == null) {
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_IS_NOT_NULL);
+            return result;
+        } else if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+            //只有待提交状态的换货单可以提交
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
+            return result;
+        }
+        if (!k3ChangeOrderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            //只有创建换货单本人可以提交
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return result;
+        }
+        if (CollectionUtil.isEmpty(k3ChangeOrderDO.getK3ChangeOrderDetailDOList())) {
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL);
+            return result;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CHANGE);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            result.setErrorCode(needVerifyResult.getErrorCode());
+            return result;
+        } else if (needVerifyResult.getResult()) {
+            if (k3ChangeOrderCommitParam.getVerifyUserId() == null) {
+                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return result;
+            }
+            //调用提交审核服务
+            k3ChangeOrderCommitParam.setVerifyMatters("K3换货单审核事项：1.服务费和运费 2.换货方式 3.商品与配件的商品差价和换货数量");
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_CHANGE, k3ChangeOrderCommitParam.getChangeOrderNo(), k3ChangeOrderCommitParam.getVerifyUserId(),k3ChangeOrderCommitParam.getVerifyMatters(), k3ChangeOrderCommitParam.getRemark(), k3ChangeOrderCommitParam.getImgIdList());
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING);
+                k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+                k3ChangeOrderDO.setUpdateTime(now);
+                k3ChangeOrderMapper.update(k3ChangeOrderDO);
+                return verifyResult;
+            } else {
+                result.setErrorCode(verifyResult.getErrorCode());
+                return result;
+            }
+        } else {
+            k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_END);
+            k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
+            k3ChangeOrderDO.setUpdateTime(now);
+            k3ChangeOrderMapper.update(k3ChangeOrderDO);
+            result.setErrorCode(ErrorCode.SUCCESS);
+            return result;
+        }
+    }
+
+    @Override
     public ServiceResult<String, String> sendChangeOrderToK3(String changeOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -652,6 +840,53 @@ public class K3ServiceImpl implements K3Service {
         return result;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        try {
+            if(k3ChangeOrderDO != null){//k3换货单
+                //不是审核中状态的收货单，拒绝处理
+                if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+                    return false;
+                }
+                if (verifyResult) {
+                    k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_END);
+                } else {
+                    k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT);
+                }
+                k3ChangeOrderMapper.update(k3ChangeOrderDO);
+                return true;
+            }else if(k3ReturnOrderDO != null){//k3退货单
+                //不是审核中状态的收货单，拒绝处理
+                if (!ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+                    return false;
+                }
+                if (verifyResult) {
+                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
+                } else {
+                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+                }
+                k3ReturnOrderMapper.update(k3ReturnOrderDO);
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            if(k3ChangeOrderDO != null){
+                logger.error("【K3换货单审核后，业务处理异常】", e);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                logger.error("【数据已回滚】");
+            }else if(k3ReturnOrderDO != null){
+                logger.error("【K3退货单审核后，业务处理异常】", e);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                logger.error("【数据已回滚】");
+            }
+            return false;
+        }
+    }
+
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;
 
@@ -666,14 +901,19 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
+
     @Autowired
     private K3ChangeOrderDetailMapper k3ChangeOrderDetailMapper;
 
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
+
     @Autowired
     private UserSupport userSupport;
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private WorkflowService workflowService;
 }

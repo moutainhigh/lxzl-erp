@@ -7,7 +7,9 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
+import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
@@ -323,5 +325,36 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         ServiceResult<String, BigDecimal> totalPenalty = penaltySupport.k3OrderPenalty(returnOrderNo);
         System.out.println(totalPenalty);
     }
+
+    @Test
+    public void cancelK3ReturnOrder() throws Exception {
+        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180301211219301");
+        TestResult testResult = getJsonTestResult("/k3/cancelK3ReturnOrder", k3ReturnOrder);
+    }
+
+    @Test
+    public void commitK3ReturnOrder() throws Exception {
+        K3ReturnOrderCommitParam k3ReturnOrderCommitParam = new K3ReturnOrderCommitParam();
+        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180301211219301");
+        k3ReturnOrderCommitParam.setVerifyUserId(500006);
+        TestResult testResult = getJsonTestResult("/k3/commitK3ReturnOrder", k3ReturnOrderCommitParam);
+    }
+
+    @Test
+    public void cancelK3ChangeOrder() throws Exception {
+        K3ChangeOrder k3ChangeOrder = new K3ChangeOrder();
+        k3ChangeOrder.setChangeOrderNo("05e9b5d1327a43368bbabd8e44b81974");
+        TestResult testResult = getJsonTestResult("/k3/cancelK3ChangeOrder", k3ChangeOrder);
+    }
+
+    @Test
+    public void commitK3ChangeOrder() throws Exception {
+        K3ChangeOrderCommitParam k3ChangeOrderCommitParam = new K3ChangeOrderCommitParam();
+        k3ChangeOrderCommitParam.setChangeOrderNo("05e9b5d1327a43368bbabd8e44b81974");
+        k3ChangeOrderCommitParam.setVerifyUserId(500006);
+        TestResult testResult = getJsonTestResult("/k3/commitK3ChangeOrder", k3ChangeOrderCommitParam);
+    }
+
 
 }

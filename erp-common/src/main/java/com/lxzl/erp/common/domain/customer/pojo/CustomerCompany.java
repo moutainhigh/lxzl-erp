@@ -40,6 +40,7 @@ public class CustomerCompany extends BasePO {
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String address;   //公司经营地址
     private Integer defaultAddressReferId; //默认地址关联ID
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer isLegalPersonApple;   //是否法人代表申请
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
@@ -51,9 +52,10 @@ public class CustomerCompany extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
-
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer customerOrigin; //客户来源,1地推活动，2展会了解，3业务联系，4百度推广，5朋友推荐，6其他广告
     private Date companyFoundTime;  //企业成立时间
+    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_INDUSTRY_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String industry;  //所属行业
     private BigDecimal registeredCapital;  //注册资本
     private Integer officeNumber;  //办公人数
@@ -76,7 +78,6 @@ public class CustomerCompany extends BasePO {
     private Double operatingArea; //经营面积
     private Integer unitInsuredNumber; //单位参保人数
     private String affiliatedEnterprise; //关联企业
-    private Integer deliveryMode;   //发货方式，1快递，2自提，3凌雄配送
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
@@ -551,14 +552,6 @@ public class CustomerCompany extends BasePO {
 
     public void setDefaultAddressReferId(Integer defaultAddressReferId) {
         this.defaultAddressReferId = defaultAddressReferId;
-    }
-
-    public Integer getDeliveryMode() {
-        return deliveryMode;
-    }
-
-    public void setDeliveryMode(Integer deliveryMode) {
-        this.deliveryMode = deliveryMode;
     }
 
     public BigDecimal getFirstListTotalPrice() {

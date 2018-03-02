@@ -5,6 +5,7 @@ import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectServ
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
@@ -45,6 +46,8 @@ public class WorkFlowManager {
     private PeerDeploymentOrderService peerDeploymentOrderService;
     @Autowired
     private StatementOrderCorrectService statementOrderCorrectService;
+    @Autowired
+    private K3Service k3Service;
 
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -69,6 +72,10 @@ public class WorkFlowManager {
             return peerDeploymentOrderService;
         }else if(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)){
             return statementOrderCorrectService;
+        }else if(WorkflowType.WORKFLOW_TYPE_K3_CHANGE.equals(workflowType)){
+            return k3Service;
+        }else if(WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)){
+            return k3Service;
         }
         return null;
     }

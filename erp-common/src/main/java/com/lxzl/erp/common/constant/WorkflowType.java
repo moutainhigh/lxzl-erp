@@ -61,6 +61,14 @@ public class WorkflowType {
      * 结算单冲正
      */
     public static final Integer WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT = 13;
+    /**
+     * K3换货单审批
+     */
+    public static final Integer WORKFLOW_TYPE_K3_CHANGE = 14;
+    /**
+     * K3退货单审批
+     */
+    public static final Integer WORKFLOW_TYPE_K3_RETURN = 15;
 
 
     public static String getWorkflowTypeDesc(Integer workflowType) {
@@ -88,6 +96,10 @@ public class WorkflowType {
             return "同行调出单";
         } else if (WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)) {
             return "结算冲正单";
+        } else if (WORKFLOW_TYPE_K3_CHANGE.equals(workflowType)) {
+            return "K3换货单";
+        } else if (WORKFLOW_TYPE_K3_RETURN.equals(workflowType)) {
+            return "K3退货单";
         } else {
             return "其他";
         }

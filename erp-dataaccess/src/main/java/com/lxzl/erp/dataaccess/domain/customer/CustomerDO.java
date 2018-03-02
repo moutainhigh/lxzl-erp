@@ -22,6 +22,7 @@ public class CustomerDO  extends BaseDO {
     private Date localizationTime;	//属地化时间
     private BigDecimal shortLimitReceivableAmount; //短租应收上限
     private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
+	private Integer deliveryMode; //发货方式，1快递，2自提,3凌雄配送'
 
 	private BigDecimal firstApplyAmount;		// 首期申请额度
 	private BigDecimal laterApplyAmount;		// 后期申请额度
@@ -234,5 +235,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setFailReason(String failReason) {
 		this.failReason = failReason;
+	}
+
+	public Integer getDeliveryMode() {
+		return deliveryMode;
+	}
+
+	public void setDeliveryMode(Integer deliveryMode) {
+		this.deliveryMode = deliveryMode;
 	}
 }

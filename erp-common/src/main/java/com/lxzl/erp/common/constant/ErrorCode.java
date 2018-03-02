@@ -508,6 +508,10 @@ public class ErrorCode {
     public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
     public static final String SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500109";
     public static final String SHORT_RECEIVABLE_CALCULATE_FAIL = "J500110";
+    public static final String CUSTOMER_DELIVERY_MODE_NOT_NULL = "J500111";
+    public static final String CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL = "J500112";
+    public static final String CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL = "J500113";
+    public static final String CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL = "J500114";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -668,6 +672,13 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE = "J17000003";
     public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE = "J17000004";
     public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE = "J17000005";
+    public static final String K3_CHANGE_ORDER_STATUS_CAN_NOT_CANCEL = "J17000006";
+    public static final String K3_CHANGE_ORDER_IS_NOT_NULL = "J17000007";
+    public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL = "J17000008";
+    public static final String K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000009";
+    public static final String K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000010";
+    public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
+    public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1000,9 +1011,13 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
-        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
+        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
         MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
         MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
+        MAP.put(CUSTOMER_DELIVERY_MODE_NOT_NULL , "客户的发货方式不能为空");
+        MAP.put(CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL , "企业客户的是否是法人申请选项不能为空");
+        MAP.put(CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL , "企业客户的客户来源不能为空");
+        MAP.put(CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL , "企业客户法人姓名、身份证号码、手机号不能为空");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1328,6 +1343,13 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE, "K3退货单状态为审核中或者已推送到K3，不能操作");
         MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE, "K3换货单单状态为审核中或者已推送到K3，不能修改");
         MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE, "K3换货单状态为审核中或者已推送到K3，不能操作");
+        MAP.put(K3_CHANGE_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的K3换货单换货单不允许取消");
+        MAP.put(K3_CHANGE_ORDER_IS_NOT_NULL, "K3换货单不存在");
+        MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的K3退货单换货单不允许取消");
+        MAP.put(K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3换货单可以提交");
+        MAP.put(K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3换货单商品不能空，需有商品才能提交");
+        MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
+        MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
 
     }
 

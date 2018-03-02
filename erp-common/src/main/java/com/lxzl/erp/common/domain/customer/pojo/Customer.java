@@ -45,6 +45,8 @@ public class Customer extends BasePO {
 	private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
 	private String passReason; //通过原因
 	private String failReason; //拒绝原因
+	@NotNull(message = ErrorCode.CUSTOMER_DELIVERY_MODE_NOT_NULL , groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+	private Integer deliveryMode; //发货方式，1快递，2自提,3凌雄配送'
 
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
@@ -52,6 +54,7 @@ public class Customer extends BasePO {
 	private String unionAreaCityName; //联合城市名
 	private String unionAreaDistrictName; //联合地区名
 	private String verifyRemark;	//审核备注
+	private String customerArea; //所属区域
 
 	@Valid
 	private CustomerPerson customerPerson;
@@ -338,5 +341,21 @@ public class Customer extends BasePO {
 
 	public void setFailReason(String failReason) {
 		this.failReason = failReason;
+	}
+
+	public Integer getDeliveryMode() {
+		return deliveryMode;
+	}
+
+	public void setDeliveryMode(Integer deliveryMode) {
+		this.deliveryMode = deliveryMode;
+	}
+
+	public String getCustomerArea() {
+		return customerArea;
+	}
+
+	public void setCustomerArea(String customerArea) {
+		this.customerArea = customerArea;
 	}
 }
