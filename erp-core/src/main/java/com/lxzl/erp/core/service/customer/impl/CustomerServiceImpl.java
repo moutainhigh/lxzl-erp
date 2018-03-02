@@ -122,6 +122,9 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateTime(now);
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setOwner(customer.getOwner());
+        customerDO.setUnionUser(customer.getUnionUser());
+        customerMapper.save(customerDO);
 
         //判断业务员和联合开发员
         serviceResult = judgeUserOwnerAndUnion(customer);
@@ -158,10 +161,6 @@ public class CustomerServiceImpl implements CustomerService {
             }
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
-
-        customerDO.setOwner(customer.getOwner());
-        customerDO.setUnionUser(customer.getUnionUser());
-        customerMapper.save(customerDO);
 
         //如果客户选择了将详细地址作为收货地址
         if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
@@ -493,14 +492,17 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        //更改短租应收上限
+        customerDO.setShortLimitReceivableAmount(customer.getShortLimitReceivableAmount());
+
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
+        customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
+        customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
+        customerDO.setRemark(customer.getRemark());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-//        customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
-//        customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
-        customerDO.setRemark(customer.getRemark());
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -556,7 +558,9 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //更改联合开发人
+        //更改短租应收上限
+        customerDO.setShortLimitReceivableAmount(customer.getShortLimitReceivableAmount());
+
         customerDO.setIsDisabled(null);
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
