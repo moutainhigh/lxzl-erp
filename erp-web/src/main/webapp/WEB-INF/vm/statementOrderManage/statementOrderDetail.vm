@@ -88,36 +88,38 @@
                                     <thead>
                                     <tr class="bg-light">
 ##                                        <th>ID</th>
-                                        <th style="white-space: nowrap;">类型</th>
-                                        <th style="white-space: nowrap;">订单编号</th>
-                                        <th style="white-space: nowrap;">订单项类型</th>
-                                        <th style="white-space: nowrap;">商品名</th>
-                                        <th style="white-space: nowrap;">金额类型</th>
-                                        <th style="white-space: nowrap;">单价</th>
-                                        <th style="white-space: nowrap;">商品数量</th>
-                                        <th style="white-space: nowrap;">租赁类型</th>
-                                        <th style="white-space: nowrap;">期数</th>
-                                        <th style="white-space: nowrap;">结算单金额</th>
-##                                        <th style="white-space: nowrap;">其它费用</th>
-                                        <th style="white-space: nowrap;">预计支付时间</th>
-                                        <th style="white-space: nowrap;">已经支付金额</th>
-                                        <th style="white-space: nowrap;">结算支付时间</th>
-                                        <th style="white-space: nowrap;">逾期金额</th>
+                                        <th class="nowrap">类型</th>
+                                        <th class="nowrap">订单编号</th>
+                                        <th class="nowrap">订单项类型</th>
+                                        <th class="nowrap">商品名</th>
+                                        <th class="nowrap">金额类型</th>
+                                        <th class="nowrap">单价</th>
+                                        <th class="nowrap">商品数量</th>
+                                        <th class="nowrap">租赁类型</th>
+                                        <th class="nowrap">期数</th>
+                                        <th class="nowrap">预计支付时间</th>
+                                        <th class="nowrap">结算支付时间</th>
 
-                                        <th style="white-space: nowrap;">租金押金</th>
-                                        <th style="white-space: nowrap;">已付租金押金</th>
+                                        <th class="nowrap text-info">结算单金额</th>
+                                        <th class="nowrap">租金</th>
+                                        <th class="nowrap">租金押金</th>
+                                        <th class="nowrap">押金</th>
 
-                                        <th style="white-space: nowrap;">押金</th>
-                                        <th style="white-space: nowrap;">已付押金</th>
+                                        <th class="nowrap">其它费用</th>
+                                        <th class="nowrap">逾期金额</th>
 
-                                        <th style="white-space: nowrap;">租金</th>
-                                        <th style="white-space: nowrap;">已付租金</th>
+                                        <th class="nowrap text-success">已付金额</th>
+                                        <th class="nowrap">已付租金</th>
+                                        <th class="nowrap">已付租金押金</th>
+                                        <th class="nowrap">已付押金</th>
 
-                                        <th style="white-space: nowrap;">退还租金押金</th>
-                                        <th style="white-space: nowrap;">退还押金</th>
-                                        <th style="white-space: nowrap;">冲正金额</th>
-                                        <th style="white-space: nowrap;">状态</th>
-                                        <th style="white-space: nowrap;" class="text-right">结算时间</th>
+                                        <th class="nowrap">退还租金押金</th>
+                                        <th class="nowrap">退还押金</th>
+                                        <th class="nowrap text-danger">冲正金额</th>
+
+                                        <th class="nowrap">状态</th>
+                                        <th class="nowrap" class="text-right">结算时间</th>
+
                                         {{#hasRowActionButtons}}
                                         <th style="white-space: nowrap;" class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -127,52 +129,51 @@
                                     {{#dataSource}}
                                     {{#listData}}
                                     <tr>
-##                                        <td>{{statementOrderDetailId}}</td>
-                                        <td>{{orderTypeValue}}</td>
-                                        <td>{{orderNo}}</td>
-                                        <td>{{orderItemTypeValue}}</td>
-                                        <td>
-                                            <div class="mw200">
-                                                {{itemName}}
-                                            </div>
+##                                        <td class=nowrap">{{statementOrderDetailId}}</td>
+                                        <td class="nowrap">{{orderTypeValue}}</td>
+                                        <td class="nowrap">{{orderNo}}</td>
+                                        <td class="nowrap">{{orderItemTypeValue}}</td>
+                                        <td class="nowrap">
+                                            {{itemName}}
                                         </td>
-                                        <td>{{statementDetailTypeValue}}</td>
-                                        <td>￥{{#price}}{{unitAmount}}{{/price}}</td>
-                                        <td>{{itemCount}}</td>
-                                        <td>{{itemRentTypeValue}}</td>
-                                        <td>{{statementDetailPhase}}</td>
-                                        <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
-##                                        <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
-                                        <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-                                        <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
-                                        <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
-                                        <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
+                                        <td class="nowrap">{{statementDetailTypeValue}}</td>
+                                        <td class="nowrap">￥{{#price}}{{unitAmount}}{{/price}}</td>
+                                        <td class="nowrap">{{itemCount}}</td>
+                                        <td class="nowrap">{{itemRentTypeValue}}</td>
+                                        <td class="nowrap">{{statementDetailPhase}}</td>
+                                        <td class="nowrap">{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
+                                        <td class="nowrap">{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
 
-                                        <td>￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
-                                        <td>￥{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}</td>
+                                        <td class="nowrap text-info">￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
 
-                                        <td>￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
-                                        <td>￥{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
 
-                                        <td>￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
-                                        <td>￥{{#price}}{{statementDetailRentPaidAmount}}{{/price}}</td>
+                                        <td class="nowrap text-success">￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailRentPaidAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}</td>
+                                        <td class="nowrap">￥{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}</td>
 
-                                        <td>
+                                        <td class="nowrap">
                                             <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
                                             <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
                                         </td>
-                                        <td>
+                                        <td class="nowrap">
                                             <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
                                             <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
                                         </td>
-                                        <td>￥{{#price}}{{statementDetailCorrectAmount}}{{/price}}</td>
-                                        <td>{{statementDetailStatusValue}}</td>
-                                        <td>
+                                        <td class="nowrap text-danger">￥{{#price}}{{statementDetailCorrectAmount}}{{/price}}</td>
+
+                                        <td class="nowrap {{statementDetailStatusClass}}">{{statementDetailStatusValue}}</td>
+                                        <td class="nowrap">
                                             <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
                                             <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
                                         </td>
                                         {{#hasRowActionButtons}}
-                                        <td class="text-right">
+                                        <td class="text-right nowrap">
                                             <div class="btn-group text-right">
                                                 {{#rowActionButtons}}
                                                 <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
