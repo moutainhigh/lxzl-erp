@@ -855,7 +855,7 @@ public class StatementServiceImpl implements StatementService {
                 if (statementOrderDetail.getReturnReferId() != null) {
                     returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
                 }
-                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail, null);
                 String key = null;
                 if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
                     //为订单商品时
@@ -982,7 +982,7 @@ public class StatementServiceImpl implements StatementService {
                 if (statementOrderDetail.getReturnReferId() != null) {
                     returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
                 }
-                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail, orderDO);
 
                 statementOrder.setStatementAmount(BigDecimalUtil.add(statementOrder.getStatementAmount(), statementOrderDetail.getStatementDetailAmount()));
                 statementOrder.setStatementPaidAmount(BigDecimalUtil.add(statementOrder.getStatementPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
@@ -1010,9 +1010,9 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
-    private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail) {
+    private void convertStatementOrderDetailOtherInfo(StatementOrderDetail statementOrderDetail, StatementOrderDetail returnReferStatementOrderDetail, OrderDO orderDO) {
         if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
-            OrderDO orderDO = orderMapper.findByOrderId(statementOrderDetail.getOrderId());
+            orderDO = orderDO == null ? orderMapper.findByOrderId(statementOrderDetail.getOrderId()) : orderDO;
             if (orderDO != null) {
                 statementOrderDetail.setOrderNo(orderDO.getOrderNo());
                 if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
@@ -1041,7 +1041,6 @@ public class StatementServiceImpl implements StatementService {
         }
 
         if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
-            OrderDO orderDO = null;
             if (returnReferStatementOrderDetail != null) {
                 orderDO = orderMapper.findByOrderId(returnReferStatementOrderDetail.getOrderId());
             }
@@ -2012,7 +2011,7 @@ public class StatementServiceImpl implements StatementService {
                 if (statementOrderDetail.getReturnReferId() != null) {
                     returnReferStatementOrderDetail = statementOrderDetailMap.get(statementOrderDetail.getReturnReferId());
                 }
-                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail);
+                convertStatementOrderDetailOtherInfo(statementOrderDetail, returnReferStatementOrderDetail, null);
                 String key = null;
                 if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
                     //为订单商品时
