@@ -411,7 +411,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(29);
+        customerConsignInfo.setCustomerConsignInfoId(5);
         customerConsignInfo.setConsigneeName("update测试联系人26622");
         customerConsignInfo.setConsigneePhone("13566253478");
         customerConsignInfo.setProvince(29);

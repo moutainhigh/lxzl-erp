@@ -1011,7 +1011,7 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
-        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
+        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
         MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
         MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
         MAP.put(CUSTOMER_DELIVERY_MODE_NOT_NULL , "客户的发货方式不能为空");

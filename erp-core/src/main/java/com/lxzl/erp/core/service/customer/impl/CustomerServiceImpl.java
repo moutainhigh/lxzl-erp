@@ -570,7 +570,7 @@ public class CustomerServiceImpl implements CustomerService {
         //更改短租应收上限
         customerDO.setShortLimitReceivableAmount(customer.getShortLimitReceivableAmount());
         //更改发货方式
-        customerDO.setDeliveryMode(customer.getDeliveryMode());
+//        customerDO.setDeliveryMode(customer.getDeliveryMode());
 
         customerDO.setIsDisabled(null);
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
@@ -621,10 +621,17 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
+
         //如果客户是企业
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
             //判断客户资料中必填项是否填写
+
+            //送货方式是否有值
+            if(customerDO.getDeliveryMode() == null){
+                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
+                return result;
+            }
 
             //1.租赁设备明细
             String customerCompanyNeedFirstJson = customerCompanyDO.getCustomerCompanyNeedFirstJson();
@@ -1013,6 +1020,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (customerResult.getOwner() != null) {
             customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+            Integer companyId = userSupport.getCompanyIdByUser(customerResult.getOwner());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setCustomerArea(subCompanyDO.getSubCompanyName());
         }
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
@@ -1119,6 +1129,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (customerResult.getOwner() != null) {
             customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+            Integer companyId = userSupport.getCompanyIdByUser(customerResult.getOwner());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setCustomerArea(subCompanyDO.getSubCompanyName());
         }
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
@@ -1249,6 +1262,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (customerResult.getOwner() != null) {
             customerResult.setCustomerOwnerUser(CommonCache.userMap.get(customerResult.getOwner()));
+            Integer companyId = userSupport.getCompanyIdByUser(customerResult.getOwner());
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
+            customerResult.setCustomerArea(subCompanyDO.getSubCompanyName());
         }
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
@@ -1385,15 +1401,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
         }
 
-        customerConsignInfoDO.setConsigneeName(customerConsignInfo.getConsigneeName());
-        customerConsignInfoDO.setConsigneePhone(customerConsignInfo.getConsigneePhone());
-        customerConsignInfoDO.setProvince(customerConsignInfo.getProvince());
-        customerConsignInfoDO.setCity(customerConsignInfo.getCity());
-        customerConsignInfoDO.setDistrict(customerConsignInfo.getDistrict());
-        customerConsignInfoDO.setAddress(customerConsignInfo.getAddress());
-        customerConsignInfoDO.setIsMain(customerConsignInfo.getIsMain());
-        customerConsignInfoDO.setRemark(customerConsignInfo.getRemark());
-        customerConsignInfoDO.setDataStatus(customerConsignInfo.getDataStatus());
+        customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo ,CustomerConsignInfoDO.class);
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerConsignInfoMapper.update(customerConsignInfoDO);
