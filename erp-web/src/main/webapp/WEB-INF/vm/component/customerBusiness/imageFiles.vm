@@ -48,7 +48,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                            <th>商品(sku)ID</th>
                             <th>商品名称</th>
                             <th>类别</th>
                             <th>品牌</th>
@@ -68,7 +67,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{skuId}}</td>
                             <td>
                                 <div style="max-width:300px;">{{productName}}</div>
                             </td>
@@ -95,18 +93,19 @@
 
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="10" class="text-center">没有选择商品</td>
+                            <td valign="top" colspan="9" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
+                        <tr>
+                            <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
+                            <td colspan="2" class="text-danger">
+                                <div class="text-danger" id="firstListTotalPriceBox"></div>
+                                <input type="hidden" name="firstApplyAmount" id="firstApplyAmount" />
+                            </td>
+                        </tr>
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
-                </div>
-                <div class="br-t">
-                    <div class="row">
-                        <div class="col-md-10 text-right" style="line-height:39px; padding-right:0;">首期申请额度：</div>
-                        <div class="col-md-2" style="padding-left:0;"><input type="text" name="firstApplyAmount" id="firstApplyAmount" class="form-control required moneyNumber text-danger" readonly placeholder="0" style="border:none;background:#fff; text-decoration: none; padding-left:0;color: #e9573f;" /></div>
-                    </div>
                 </div>
             </div>
             <div id="tab-2" class="tab-pane" style="margin:-25px;">
@@ -134,7 +133,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </th>
-                            <th>商品(sku)ID</th>
                             <th>商品名称</th>
                             <th>类别</th>
                             <th>品牌</th>
@@ -154,7 +152,6 @@
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{skuId}}</td>
                             <td>
                                 <div style="max-width:300px;">{{productName}}</div>
                             </td>
@@ -183,15 +180,16 @@
                             <td valign="top" colspan="10" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
+                        <tr>
+                            <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
+                            <td colspan="2" class="text-danger">
+                                <div class="text-danger" id="laterListTotalPriceBox"></div>
+                                <input type="hidden" name="laterApplyAmount" id="laterApplyAmount"/>
+                            </td>
+                        </tr
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productLaterNeedTable"></table>
-                </div>
-                <div class="br-t">
-                    <div class="row">
-                        <div class="col-md-10 text-right" style="line-height:39px; padding-right:0;">后续申请额度：</div>
-                        <div class="col-md-2" style="padding-left:0;"><input type="text" name="laterApplyAmount" id="laterApplyAmount" class="form-control required moneyNumber text-danger" readonly placeholder="0" style="border:none;background:#fff; text-decoration: none; padding-left:0;color: #e9573f;" /></div>
-                    </div>
                 </div>
             </div>
             <div id="tab-3" class="tab-pane">
@@ -226,162 +224,6 @@
                         <div class="section-divider mv40"><span> 法人/股东身份证反 </span></div>
                         <div class="tray-bin">
                             <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureBackImage">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="tab-4" class="tab-pane">
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 法人个人征信报告或附（法人个人征信授权书） </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="legalPersonCreditReportImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 法人学历证明 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="legalPersonEducationImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 法人职称证明 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="legalPersonPositionalTitleImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="tab-5" class="tab-pane">
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 固定资产证明 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="fixedAssetsProveImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 单位对公账户流水账单 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="publicAccountFlowBillImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 公积金缴纳证明 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="socialSecurityRoProvidentFundImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 战略协议或合作协议 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="cooperationAgreementImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 经营场所租赁合同 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="managerPlaceRentContractImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 现场核查表 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="localeChecklistsImageList">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="tab-6" class="tab-pane">
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40"><span> 其它材料 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="otherDateImageList">
                                 <div class="dz-default dz-message" >
                                     <span>
                                         <i class="fa fa-cloud-upload"></i>
