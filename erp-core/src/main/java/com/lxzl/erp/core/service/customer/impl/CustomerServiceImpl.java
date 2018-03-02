@@ -65,6 +65,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         //校验法人手机号,经办人电话,紧急联系人手机号
         if (customerCompany.getIsLegalPersonApple() == 0) {
+            if (customerCompany.getLegalPerson() == null || customerCompany.getLegalPersonNo() == null || customerCompany.getLegalPersonPhone() == null){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL);
+                return serviceResult;
+            }
             if (customerCompany.getLegalPersonPhone() != null && customerCompany.getLegalPersonPhone() != "") {
                 String regExp = "^1[0-9]{10}$";
                 Pattern pattern = Pattern.compile(regExp);
@@ -190,7 +194,6 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addPerson(Customer customer) {
@@ -253,6 +256,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         //校验法人手机号,经办人电话,紧急联系人手机号
         if (CommonConstant.COMMON_CONSTANT_NO.equals(customerCompany.getIsLegalPersonApple())) {
+            if (customerCompany.getLegalPerson() == null || customerCompany.getLegalPersonNo() == null || customerCompany.getLegalPersonPhone() == null){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL);
+                return serviceResult;
+            }
             if (customerCompany.getLegalPersonPhone() != null && customerCompany.getLegalPersonPhone() != "") {
                 String regExp = "^1[0-9]{10}$";
                 Pattern pattern = Pattern.compile(regExp);
@@ -494,6 +501,8 @@ public class CustomerServiceImpl implements CustomerService {
 
         //更改短租应收上限
         customerDO.setShortLimitReceivableAmount(customer.getShortLimitReceivableAmount());
+        //更改发货方式
+        customerDO.setDeliveryMode(customer.getDeliveryMode());
 
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
@@ -560,6 +569,8 @@ public class CustomerServiceImpl implements CustomerService {
 
         //更改短租应收上限
         customerDO.setShortLimitReceivableAmount(customer.getShortLimitReceivableAmount());
+        //更改发货方式
+        customerDO.setDeliveryMode(customer.getDeliveryMode());
 
         customerDO.setIsDisabled(null);
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
@@ -2128,35 +2139,6 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
-//    private ServiceResult<String, BigDecimal> setUpdateCustomerCompanyNeed(List<CustomerCompanyNeed> customerCompanyNeedList,BigDecimal totalCompanyNeedPrice) {
-//        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
-//
-//        for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-//            ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
-//            if (productSkuDO == null) {
-//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
-//                return serviceResult;
-//            }
-//            customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
-//            if (customerCompanyNeed.getRentCount() == null) {
-//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
-//                return serviceResult;
-//            }
-//
-//            BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
-//            customerCompanyNeed.setTotalPrice(totalPrice);
-//            ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
-//            customerCompanyNeed.setProduct(productServiceResult.getResult());
-//
-//            totalCompanyNeedPrice = totalCompanyNeedPrice.add(customerCompanyNeed.getTotalPrice());
-//        }
-//
-//        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-//        serviceResult.setResult(totalCompanyNeedPrice);
-//        return serviceResult;
-//    }
-
 
     @Autowired
     private UserMapper userMapper;

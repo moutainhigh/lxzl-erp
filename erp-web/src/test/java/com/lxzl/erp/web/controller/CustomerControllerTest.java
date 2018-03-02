@@ -27,6 +27,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setOwner(500021);
         customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
+        customer.setDeliveryMode(1);
         customer.setFirstApplyAmount(new BigDecimal(84000));
 //        customer.setLaterApplyAmount(new BigDecimal(50000));
         customer.setIsDefaultConsignAddress(1);
@@ -35,7 +36,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
         customerCompanyNeed1.setSkuId(70);
         customerCompanyNeed1.setRentCount(10);
-        customerCompanyNeed1.setTotalPrice(new BigDecimal(80000));
 
 //        CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
 //        customerCompanyNeed2.setSkuId(57);
@@ -48,19 +48,19 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerCompanyNeed customerCompanyNeed3 = new CustomerCompanyNeed();
         customerCompanyNeed3.setSkuId(60);
         customerCompanyNeed3.setRentCount(10);
-        customerCompanyNeed3.setTotalPrice(new BigDecimal(50000));
         customerCompanyNeedLaterList.add(customerCompanyNeed3);
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("楚楚油菜文化");
+        customerCompany.setCompanyName("楚楚菜菜文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
         customerCompany.setAddress("彭企业信息详细地址测试103");
         customerCompany.setProductPurpose("测试设备用途");
+        customerCompany.setIndustry("2");
         customerCompany.setRemark("记住这是公司的备注不是客户的备注");
         customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
-//        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
+        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setAgentPersonPhone("18566324595");
         customerCompany.setAgentPersonNo("422827199009080030");
@@ -105,13 +105,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         customer.setOwner(500021);
+        customer.setDeliveryMode(2);
         customer.setIsDefaultConsignAddress(1);
 
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
         customerPerson.setConnectRealName("赵二天");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("砰砰");
+        customerPerson.setRealName("砰砰博士");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
@@ -124,6 +125,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerNo("LXCC-1000-20180301-00002");
         customer.setOwner(500021);
         customer.setUnionUser(500003);
+        customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(2000));
         CustomerCompany customerCompany = new CustomerCompany();
@@ -158,6 +160,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 
         customerCompany.setCustomerOrigin(1);
+        customerCompany.setIndustry("3");
         customerCompany.setCompanyName("楚汉文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
@@ -165,6 +168,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setProductPurpose("测试设备用途");
         customerCompany.setIsLegalPersonApple(0);
         customerCompany.setLegalPersonPhone("13866253152");
+        customerCompany.setLegalPersonNo("422827199009080013");
         customerCompany.setAgentPersonPhone("13866253151");
         customerCompany.setAgentPersonName("火狐666");
         customerCompany.setAgentPersonNo("422827199009080013");
@@ -266,6 +270,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCD-1000-20180127-00058");
         customer.setOwner(500025);
+        customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(1000));
         CustomerPerson customerPerson = new CustomerPerson();
@@ -340,7 +345,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180302-00010");
+        customer.setCustomerNo("LXCC-1000-20180302-00013");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -355,7 +360,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD10002017123000034");
+        customer.setCustomerNo("LXCD-1000-20180302-00014");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 

@@ -26,6 +26,7 @@
 		<result column="statement_date" jdbcType="INTEGER" property="statementDate" />
 		<result column="pass_reason" jdbcType="VARCHAR" property="passReason" />
 		<result column="fail_reason" jdbcType="VARCHAR" property="failReason" />
+		<result column="delivery_mode" jdbcType="INTEGER" property="deliveryMode" />
 
 		<association resultMap="CustomerCompanyDO" property="customerCompanyDO"/>
 		<association resultMap="CustomerPersonDO" property="customerPersonDO"/>
@@ -133,7 +134,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status,ec.first_apply_amount,ec.later_apply_amount,ec.localization_time,ec.short_limit_receivable_amount,ec.statement_date,ec.pass_reason,ec.fail_reason
+		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status,ec.first_apply_amount,ec.later_apply_amount,ec.localization_time,ec.short_limit_receivable_amount,ec.statement_date,ec.pass_reason,ec.fail_reason,ec.delivery_mode
 	</sql>
 	<sql id="company_column_List">
 		ecc.id AS ecc_id,ecc.customer_id AS ecc_customer_id,ecc.landline AS ecc_landline,ecc.connect_real_name AS ecc_connect_real_name,ecc.connect_phone AS ecc_connect_phone,ecc.company_name AS ecc_company_name,ecc.company_abb AS ecc_company_abb,ecc.province AS ecc_province,ecc.city AS ecc_city,ecc.district AS ecc_district,ecc.address AS ecc_address,ecc.legal_person AS ecc_legal_person,ecc.legal_person_no AS ecc_legal_person_no,ecc.business_license_no AS ecc_business_license_no,ecc.data_status AS ecc_data_status,ecc.remark AS ecc_remark,ecc.create_time AS ecc_create_time,ecc.create_user AS ecc_create_user,ecc.update_time AS ecc_update_time,ecc.update_user AS ecc_update_user,ecc.customer_origin AS ecc_customer_origin,ecc.company_found_time AS ecc_company_found_time,ecc.industry AS ecc_industry,ecc.registered_capital AS ecc_registered_capital,ecc.office_number AS ecc_office_number,ecc.product_purpose AS ecc_product_purpose,ecc.customer_company_need_first_json AS ecc_customer_company_need_first_json,ecc.customer_company_need_later_json AS ecc_customer_company_need_later_json,ecc.agent_person_name AS ecc_agent_person_name,ecc.agent_person_phone AS ecc_agent_person_phone,ecc.agent_person_no AS ecc_agent_person_no,ecc.unified_credit_code AS ecc_unified_credit_code,ecc.customer_no AS ecc_customer_no,ecc.is_legal_person_apple AS ecc_is_legal_person_apple,ecc.legal_person_phone AS ecc_legal_person_phone,ecc.operating_area AS ecc_operating_area,ecc.unit_insured_number AS ecc_unit_insured_number,ecc.affiliated_enterprise AS ecc_affiliated_enterprise,ecc.default_address_refer_id AS ecc_default_address_refer_id
@@ -280,6 +281,9 @@
 			</if>
 			<if test="statementDate != null">
 				statement_date = #{statementDate,jdbcType=INTEGER},
+			</if>
+			<if test="deliveryMode != null">
+				delivery_mode = #{deliveryMode,jdbcType=INTEGER},
 			</if>
 				pass_reason = #{passReason,jdbcType=VARCHAR},
 				fail_reason = #{failReason,jdbcType=VARCHAR},

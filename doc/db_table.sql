@@ -352,6 +352,7 @@ CREATE TABLE `erp_customer` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `delivery_mode` int(11) DEFAULT NULL COMMENT '发货方式，1快递，2自提,3凌雄配送',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=700001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户表';
 
