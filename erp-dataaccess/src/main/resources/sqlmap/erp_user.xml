@@ -158,6 +158,9 @@
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
                 </if>
+                <if test="maps.userQueryParam.isDisabled != null &amp;&amp; maps.userQueryParam.isDisabled != ''">
+                    and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
+                </if>
                 <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
                     and u.id in <foreach collection="maps.userQueryParam.userIdList" open="(" close=")" separator="," item="userId">#{userId}</foreach>
                 </if>
@@ -202,6 +205,9 @@
             <where>
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
+                </if>
+                <if test="maps.userQueryParam.isDisabled != null &amp;&amp; maps.userQueryParam.isDisabled != ''">
+                    and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
                 </if>
                 <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
                     and u.id in <foreach collection="maps.userQueryParam.userIdList" open="(" close=")" separator="," item="userId">#{userId}</foreach>
