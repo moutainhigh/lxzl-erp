@@ -1,4 +1,4 @@
-<div class="panel br-n br-t">
+<div class="panel br-n">
     <div class="panel-heading" style="margin-bottom: 0;">
         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
             <li class="active">
@@ -46,9 +46,7 @@
                             <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i></button>
                         </div>
                     </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
                         <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
                         <label for="companyName" class="field prepend-icon">
                             <input type="text" name="companyName" id="companyName" class="gui-input required" />
@@ -56,7 +54,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
                         <label for="industry" class="field-label"><em class="text-danger">*</em>所属行业</label>
                         <label class="field select">
                             <select id="industry" name="industry" class="required">
@@ -65,18 +63,7 @@
                             <i class="arrow"></i>
                         </label>
                     </div>
-                    <div class="col-md-4">
-                        <label for="" class="field-label"><em class="text-danger">*</em>所属区域</label>
-                        <label class="field select">
-                            <select id="" name="" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
                         <label for="landline" class="field-label">座机电话</label>
                         <label for="landline" class="field prepend-icon">
                             <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
@@ -84,7 +71,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
                         <label for="affiliatedEnterprise" class="field-label">关联企业</label>
                         <label for="affiliatedEnterprise" class="field prepend-icon">
                             <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
@@ -92,7 +79,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
                         <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
                         <label for="unitInsuredNumber" class="field prepend-icon">
                             <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
@@ -100,35 +87,7 @@
                             </label>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="agentPersonName" class="field-label"><em class="text-danger">*</em>经办人姓名</label>
-                        <label for="agentPersonName" class="field prepend-icon">
-                            <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input required letterOrChinese" />
-                            <label for="agentPersonName" class="field-icon"><i class="fa fa-user"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
-                        <label for="agentPersonNo" class="field prepend-icon">
-                            <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required"  />
-                            <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="agentPersonPhone" class="field-label"><em class="text-danger">*</em>经办人电话</label>
-                        <label for="agentPersonPhone" class="field prepend-icon">
-                            <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone required" />
-                            <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
                         <label for="isDisabled" class="field-label"><em class="text-danger">*</em>是否由法人代表申请</label>
                         <label class="field select">
                             <select id="isLegalPersonApple" name="isLegalPersonApple">
@@ -138,7 +97,39 @@
                             <i class="arrow"></i>
                         </label>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt20">
+                        <label for="agentPersonName" class="field-label"><em class="text-danger">*</em>经办人姓名</label>
+                        <label for="agentPersonName" class="field prepend-icon">
+                            <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input required letterOrChinese" />
+                            <label for="agentPersonName" class="field-icon"><i class="fa fa-user"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
+                        <label for="agentPersonNo" class="field prepend-icon">
+                            <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required"  />
+                            <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="agentPersonPhone" class="field-label"><em class="text-danger">*</em>经办人电话</label>
+                        <label for="agentPersonPhone" class="field prepend-icon">
+                            <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone required" />
+                            <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="shortLimitReceivableAmount" class="field-label">短租应收上限</label>
+                        <label for="shortLimitReceivableAmount" class="field prepend-icon">
+                            <input type="text" name="shortLimitReceivableAmount" id="shortLimitReceivableAmount" class="gui-input required" />
+                            <label for="shortLimitReceivableAmount" class="field-icon"><i class="fa fa-user"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
                         <label for="deliveryMode" class="field-label"><em class="text-danger">*</em>送货方式</label>
                         <label class="field select">
                             <select id="deliveryMode" name="deliveryMode" class="required"></select>
@@ -147,7 +138,7 @@
                     </div>
                 </div>
                 <div class="section row">
-##                    <div class="col-md-12">
+                ##                    <div class="col-md-12">
 ##                        <div class="section-divider mv40" id="spy2">
 ##                            <span><em class="text-danger">*</em>收货地址</span>
 ##                        </div>
@@ -379,7 +370,6 @@
                 </div>
             </div>
             <div id="top-tab-2" class="tab-pane">
-                <p>基本信息</p>
                 <div class="section row">
                     <div class="col-md-4">
                         <div class="section-divider mv40"><span> 营业执照 </span></div>
@@ -425,7 +415,7 @@
             <div id="top-tab-3" class="tab-pane">
                 <div class="section row" id="legalPersonContainer">
                     <div class="col-md-4">
-                        <label for="legalPerson" class="field-label"><em class="text-danger">*</em>法人姓名</label>
+                        <label for="legalPerson" class="field-label">法人姓名</label>
                         <label for="legalPerson" class="field prepend-icon">
                             <input type="text" name="legalPerson" id="legalPerson" class="gui-input letterOrChinese required" />
                             <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
@@ -433,7 +423,7 @@
                         </label>
                     </div>
                     <div class="col-md-4">
-                        <label for="legalPersonNo" class="field-label"><em class="text-danger">*</em>法人身份证号</label>
+                        <label for="legalPersonNo" class="field-label">法人身份证号</label>
                         <label for="legalPersonNo" class="field prepend-icon">
                             <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input required" />
                             <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
@@ -441,7 +431,7 @@
                         </label>
                     </div>
                     <div class="col-md-4">
-                        <label for="legalPersonPhone" class="field-label"><em class="text-danger">*</em>法人手机号</label>
+                        <label for="legalPersonPhone" class="field-label">法人手机号</label>
                         <label for="legalPersonPhone" class="field prepend-icon">
                             <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone required" />
                             <label for="legalPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
@@ -450,8 +440,8 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-4">
-                        <label for="registeredCapital" class="field-label"><em class="text-danger">*</em>注册资本</label>
+                    <div class="col-md-4 mt20">
+                        <label for="registeredCapital" class="field-label">注册资本</label>
                         <div class="smart-widget sm-right">
                             <label for="registeredCapital" class="field prepend-icon">
                                 <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
@@ -461,26 +451,24 @@
                             <label for="registeredCapital" class="button">万</label>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="officeNumber" class="field-label"><em class="text-danger">*</em>办公人数</label>
+                    <div class="col-md-4 mt20">
+                        <label for="officeNumber" class="field-label">办公人数</label>
                         <label for="officeNumber" class="field prepend-icon">
                             <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
                             <label for="officeNumber" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4">
-                        <label for="unifiedCreditCode" class="field-label"><em class="text-danger">*</em>统一信用代码</label>
+                    <div class="col-md-4 mt20">
+                        <label for="unifiedCreditCode" class="field-label">统一信用代码</label>
                         <label for="unifiedCreditCode" class="field prepend-icon">
                             <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
                             <label for="unifiedCreditCode" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="registeredCapital" class="field-label"><em class="text-danger">*</em>经营面积</label>
+                    <div class="col-md-4 mt20">
+                        <label for="registeredCapital" class="field-label">经营面积</label>
                         <div class="smart-widget sm-right">
                             <label for="operatingArea" class="field prepend-icon">
                                 <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
@@ -490,35 +478,49 @@
                             <label for="operatingArea" class="button">㎡</label>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="connectRealName" class="field-label"><em class="text-danger">*</em>紧急联系人姓名</label>
+                    <div class="col-md-4 mt20">
+                        <label for="connectRealName" class="field-label">紧急联系人姓名</label>
                         <label for="connectRealName" class="field prepend-icon">
                             <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
                             <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
                         </label>
                     </div>
-                    <div class="col-md-4">
-                        <label for="connectPhone" class="field-label"><em class="text-danger">*</em>紧急联系人手机号</label>
+                    <div class="col-md-4 mt20">
+                        <label for="connectPhone" class="field-label">紧急联系人手机号</label>
                         <label for="connectPhone" class="field prepend-icon">
                             <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
                             <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
                             </label>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="productPurpose" class="field-label"><em class="text-danger">*</em>设备用途</label>
+                    <div class="col-md-4 mt20">
+                        <label for="productPurpose" class="field-label">设备用途</label>
                         <label for="productPurpose" class="field prepend-icon">
                             <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
                             <label for="productPurpose" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4">
-                        <label for="" class="field-label"><em class="text-danger">*</em>经营地址、收货地址是否一致</label>
+                    <div class="col-md-4 mt20">
+                        <label for="firstApplyAmount" class="field-label">首期申请额度</label>
+                        <label for="firstApplyAmount" class="field prepend-icon">
+                            <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="gui-input form-control required moneyNumber" placeholder="0" />
+                            <label for="firstApplyAmount" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="laterApplyAmount" class="field-label">后续申请额度</label>
+                        <label for="laterApplyAmount" class="field prepend-icon">
+                            <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="gui-input form-control required moneyNumber" placeholder="0" />
+                            <label for="laterApplyAmount" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="isDefaultConsignAddress" class="field-label">经营地址、收货地址是否一致</label>
                         <label class="field select">
-                            <select id="" name="">
+                            <select id="isDefaultConsignAddress" name="isDefaultConsignAddress" aria-required="true" aria-invalid="false">
                                 <option value="0">否</option>
                                 <option value="1">是</option>
                             </select>
@@ -529,7 +531,7 @@
                 <div class="section row">
                     <div class="col-md-12">
                         <div class="section-divider mv40" id="spy2">
-                            <span><em class="text-danger">*</em>公司经营地址</span>
+                            <span>公司经营地址</span>
                         </div>
                         <div class="section row">
                             <div class="col-md-4">
@@ -575,7 +577,7 @@
                                     <a href="#tab-1" data-toggle="tab" aria-expanded="false">首次所需设备</a>
                                 </li>
                                 <li>
-                                    <a href="#tab-2" data-toggle="tab" aria-expanded="false">后续所需设备</a>
+                                    <a href="#tab-2" data-toggle="tab" aria-expanded="false">后续所需设备(选填)</a>
                                 </li>
                                 <li class="">
                                     <a href="#tab-3" data-toggle="tab" aria-expanded="false">负责人意见</a>
@@ -632,21 +634,24 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    <div style="max-width:300px;">{{productName}}</div>
+                                                    {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                                    {{productName}}
                                                 </td>
                                                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                                 <td><div style="max-width:300px;">{{propertiesToStr}}</div></td>
-                                                <td>￥<span class="unitPrice">{{currentSkuPrice}}</span></td>
+                                                <td>￥<span class="unitPrice">{{currentSkuPrice}}</span>
+                                                    <input type="hidden" name="unitPrice" value="{{currentSkuPrice}}" />
+                                                </td>
                                                 <td>
                                                     <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
                                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                     <label class="field prepend-icon" style="max-width:160px">
-                                                        <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
+                                                        <input type="text" name="rentCount-{{skuId}}-{{rowKey}}" value="{{rentCount}}" class="rentCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
                                                     </label>
                                                 </td>
-                                                <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
+                                                <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
                                                 <td class="text-right">
                                                     <div class="btn-group text-right">
                                                         <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
@@ -663,7 +668,7 @@
                                                 <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
                                                 <td colspan="2" class="text-danger">
                                                     <div class="text-danger" id="firstListTotalPriceBox"></div>
-                                                    <input type="hidden" name="firstApplyAmount" id="firstApplyAmount" />
+                                                    <input type="hidden" name="firstListTotalPrice" id="firstListTotalPrice" />
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -716,21 +721,23 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    <div style="max-width:300px;">{{productName}}</div>
+                                                    {{productName}}
                                                 </td>
                                                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                                 <td><div style="max-width:300px;">{{propertiesToStr}}</div></td>
-                                                <td>￥<span class="unitPrice">{{currentSkuPrice}}</span></td>
+                                                <td>￥<span class="unitPrice">{{currentSkuPrice}}</span>
+                                                    <input type="hidden" name="unitPrice" value="{{currentSkuPrice}}" />
+                                                </td>
                                                 <td>
                                                     <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
                                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                     <label class="field prepend-icon" style="max-width:160px">
-                                                        <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量"  aria-required="true" aria-invalid="false"/>
+                                                        <input type="text" name="rentCount-{{skuId}}-{{rowKey}}" value="{{rentCount}}" class="rentCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
                                                     </label>
                                                 </td>
-                                                <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
+                                                <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
                                                 <td class="text-right">
                                                     <div class="btn-group text-right">
                                                         <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
@@ -740,16 +747,16 @@
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="10" class="text-center">没有选择商品</td>
+                                                <td valign="top" colspan="9" class="text-center">没有选择商品</td>
                                             </tr>
                                             {{/listData}}
                                             <tr>
-                                                <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
+                                                <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
                                                 <td colspan="2" class="text-danger">
                                                     <div class="text-danger" id="laterListTotalPriceBox"></div>
-                                                    <input type="hidden" name="laterApplyAmount" id="laterApplyAmount"/>
+                                                    <input type="hidden" name="laterListTotalPrice" id="laterListTotalPrice" />
                                                 </td>
-                                            </tr
+                                            </tr>
                                             </tbody>
                                         </script>
                                         <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productLaterNeedTable"></table>

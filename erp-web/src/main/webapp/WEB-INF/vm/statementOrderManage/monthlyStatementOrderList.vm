@@ -69,6 +69,7 @@
                                 {{/hasCommonActionButtons}}
                                 <th>客户编码</th>
                                 <th>客户</th>
+                                <th>月份</th>
                                 <th>租金押金金额</th>
                                 <th>对账单押金金额</th>
                                 <th>对账单租金金额</th>
@@ -96,6 +97,7 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{customerNo}}</td>
                                 <td>{{customerName}}</td>
+                                <td>{{#clockMonthTime}}{{monthTime}}{{/clockMonthTime}}</td>
                                 <td>￥{{#price}}{{statementRentDepositAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{statementDepositAmount}}{{/price}}</td>
                                 <td>￥{{#price}}{{statementRentAmount}}{{/price}}</td>

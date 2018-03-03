@@ -7,7 +7,7 @@
 </head>
 <body class="gallery-page">
     #parse("layout/toolbox.vm")
-    <div id="main">
+<div id="main">
     #parse("layout/navbar.vm")
     #parse("layout/sidebar.vm")
     <section id="content_wrapper">
@@ -182,6 +182,10 @@
                                                     <td class="fs15 fw700 text-right">{{#customerIndustryValue}}{{customerCompany.industry}}{{/customerIndustryValue}}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td class="va-m fw600 text-muted"></i>所属区域</td>
+                                                    <td class="fs15 fw700 text-right">{{customerArea}}</td>
+                                                </tr>
+                                                <tr>
                                                     <td class="va-m fw600 text-muted"></i>关联企业</td>
                                                     <td class="fs15 fw700 text-right">{{customerCompany.affiliatedEnterprise}}</td>
                                                 </tr>
@@ -198,12 +202,8 @@
                                                     <td class="fs15 fw700 text-right">{{customerCompany.operatingArea}}㎡</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="va-m fw600 text-muted"></i>统一信用码</td>
-                                                    <td class="fs15 fw700 text-right">{{customerCompany.unifiedCreditCode}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="va-m fw600 text-muted"></i>设备用途</td>
-                                                    <td class="fs15 fw700 text-right">{{customerCompany.productPurpose}}</td>
+                                                    <td class="va-m fw600 text-muted"></i>短租应收上限</td>
+                                                    <td class="fs15 fw700 text-right">￥{{shortLimitReceivableAmount}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -213,6 +213,14 @@
                                             {{#customerCompany}}
                                             <table class="table mbn">
                                                 <tbody>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>统一信用码</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.unifiedCreditCode}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted"></i>设备用途</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.productPurpose}}</td>
+                                                </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">公司座机</td>
                                                     <td class="fs15 fw700 text-right">{{landline}}</td>
@@ -228,6 +236,10 @@
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">公司地址</td>
                                                     <td class="fs15 fw700 text-right">{{provinceName}}{{cityName}}{{districtName}}{{address}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="va-m fw600 text-muted">是否以地址作为收货地址</td>
+                                                    <td class="fs15 fw700 text-right">{{isDefaultConsignAddressValue}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -284,27 +296,27 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-    <script type="text/javascript">
-        management_load_script('${staticManagement}/js',
-                'manage.customer.mixin.js',
-                'manage.customer.handle.mixin.js',
-                'manage.customer.business.detail.js',
-                'manage.customer.risk.js',
-                'manage.customer.address.js',
-                'manage.customer.address.add.js',
-                'manage.customer.address.edit.js',
-                'manage.customer.orders.js',
-                'modal.input.js');
-    </script>
-    <script type="text/javascript">
-        //功能事件初始化
-        Rental.init();
-        Layout.init();
-        BusinessCustomerDetail.init();
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.customer.mixin.js',
+            'manage.customer.handle.mixin.js',
+            'manage.customer.business.detail.js',
+            'manage.customer.risk.js',
+            'manage.customer.address.js',
+            'manage.customer.address.add.js',
+            'manage.customer.address.edit.js',
+            'manage.customer.orders.js',
+            'modal.input.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    BusinessCustomerDetail.init();
 
-        //UI效果初始化
-        Core.init();
-        Demo.init();
-    </script>
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
 </body>
 </html>
