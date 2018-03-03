@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-订单管理-换货单列表-添加换货单</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <form class="" id="detailOrderForm">
+                <div class="panel panel-primary panel-border top mb35">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>退货单编号：<small id="changeOrderNo"></small></h5>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <script type="text/html" id="actionButtonsTpl">
+                                    {{#acitonButtons}}
+                                    <a href="${ctx}{{menuUrl}}?no={{no}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/acitonButtons}}
+                                </script>
+                                <div class="btn-group" id="actionButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script type="text/html" id="orderBaseInfoTpl">
+                        {{#order}}
+                        <div class="form-horizontal panel-body bg-light dark br-t-n">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">客户</dt><dd>{{k3CustomerName}}</dd>
+                                        <dt class="mb10">客户编号</dt><dd>{{k3CustomerNo}}</dd>
+                                        <dt class="mb10">联系人</dt><dd>{{changeContacts}}</dd>
+                                        <dt class="mb10">联系电话</dt><dd>{{changePhone}}</dd>
+                                        <dt>收货地址</dt><dd>{{changeAddress}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">换货单状态</dt><dd>{{changeOrderStatusValue}}</dd>
+                                        <dt class="mb10">换货日期:</dt><dd>{{#shortTime}}{{changeTime}}{{/shortTime}}</dd>
+                                        <dt class="mb10">换货方式</dt><dd>{{changeModeValue}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
+                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+
+                    <div id="orderBaseInfo"></div>
+
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                <li class="active">
+                                    <a href="#returnProductCount" data-toggle="tab">商品项（共<span id="changeItemProductCount">0</span>件）</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body dark pn">
+                        <div class="tab-content pn br-n">
+                            <div id="purchaseOrderProductItems" class="tab-pane active">
+                                <script type="text/html" id="productActionsButtonsTpl">
+                                    {{#hasActionButtons}}
+                                    <div class="panel-menu p12 br-n br-b">
+                                        <div class="row">
+                                            <div class="pull-left ml10">
+                                                <div class="btn-group actionCommonButtons">
+                                                    {{#acitonButtons}}
+                                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" id="{{class}}" title="{{menuName}}" data-no="{{no}}">
+                                                        <i class="{{iClass}}"></i> {{text}}
+                                                    </a>
+                                                    {{/acitonButtons}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/hasActionButtons}}
+                                </script>
+                                <div id="productActionsButtons"></div>
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkAll" value="">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </th>
+                                            <th>编号</th>
+                                            <th>商品名称</th>
+                                            <th>更换商品名称</th>
+                                            <th>换货数量</th>
+                                            <th>商品差价</th>
+                                            <th>备注</th>
+                                            <th class="text-right">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#listData}}
+                                        <tr class="productRow skuRow" productRowKey="{{productNo}}">
+                                            <td>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkItem" value="{{productNo}}" data-productno="{{productNo}}">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            <td>{{productNo}}</td>
+                                            <td>{{productName}}</td>
+                                            <td>{{changeProductName}}</td>
+                                            <td>
+                                                {{#hasK3ChangeOrderDetailId}}
+                                                {{productCount}}
+                                                {{/hasK3ChangeOrderDetailId}}
+                                                {{^hasK3ChangeOrderDetailId}}
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
+                                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入换货数量" />
+                                                </label>
+                                                {{/hasK3ChangeOrderDetailId}}
+                                            </td>
+                                            <td>
+                                                {{#hasK3ChangeOrderDetailId}}
+                                                ￥{{#price}}{{productDiffAmount}}{{/price}}
+                                                {{/hasK3ChangeOrderDetailId}}
+                                                {{^hasK3ChangeOrderDetailId}}
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="text" name="productDiffAmount-{{rowKey}}" value="{{productDiffAmount}}" class="productDiffAmount form-control required moneyNumber pl10" placeholder="输入商品差价" />
+                                                </label>
+                                                {{/hasK3ChangeOrderDetailId}}
+                                            </td>
+                                            <td>
+                                                {{#hasK3ChangeOrderDetailId}}
+                                                {{remark}}
+                                                {{/hasK3ChangeOrderDetailId}}
+                                                {{^hasK3ChangeOrderDetailId}}
+                                                <label class="field prepend-icon mw200">
+                                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                    <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
+                                                </label>
+                                                {{/hasK3ChangeOrderDetailId}}
+                                            </td>
+                                            <td class="text-right">
+##                                                <div class="btn-group text-right">
+##                                                    <a href="#" type="button" class="btn btn-default btn-xs chooseChangeProduct"
+##                                                       data-orderItemId="{{orderItemId}}"
+##                                                       data-productno="{{productNo}}"
+##                                                       data-productid="{{productId}}"
+##                                                       data-changeSkuId="{{changeSkuId}}"
+##                                                       data-changeMaterialId="{{changeMaterialId}}">选择更换商品</a>
+##                                                    <a href="#" type="button" class="btn btn-default btn-xs deleteProductButton" data-productno="{{productNo}}">删除</a>
+##                                                </div>
+
+                                                <div class="btn-group text-right">
+                                                    {{#hasK3ChangeOrderDetailId}}
+                                                        {{#rowActionButtons}}
+                                                        <a href="#" type="button" class="btn btn-default btn-xs {{class}}"
+                                                           data-orderItemId="{{orderItemId}}"
+                                                           data-productno="{{productNo}}"
+                                                           data-productid="{{productId}}"
+                                                           data-changeSkuId="{{changeSkuId}}"
+                                                           data-changeMaterialId="{{changeMaterialId}}
+                                                           data-k3ChangeOrderDetailId="{{k3ChangeOrderDetailId}}"
+                                                        data-no="{{no}}">{{text}}</a>
+                                                        {{/rowActionButtons}}
+                                                    {{/hasK3ChangeOrderDetailId}}
+                                                    {{^hasK3ChangeOrderDetailId}}
+                                                    <a href="#" type="button" class="btn btn-default btn-xs chooseChangeProduct"
+                                                       data-orderItemId="{{orderItemId}}"
+                                                       data-productno="{{productNo}}"
+                                                       data-productid="{{productId}}"
+                                                       data-changeSkuId="{{changeSkuId}}"
+                                                       data-changeMaterialId="{{changeMaterialId}}">选择更换商品</a>
+                                                    <a href="#" type="button" class="btn btn-default btn-xs deleteProductButton" data-productno="{{productNo}}">删除</a>
+                                                    {{/hasK3ChangeOrderDetailId}}
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                        </tr>
+                                        {{/listData}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goback">返回</button>
+                        <button class="btn btn-primary pull-right saveButton">保存</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.k3.change.order.mixin.js',
+            'manage.k3.change.order.handle.mixin.js',
+            'manage.k3.change.order.detail.js',
+            'manage.k3.order.item.choose.modal.js',
+            'modal.choose.product.js',
+            'modal.choose.material.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    K3ChangeOrderDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+
+</body>
+</html>

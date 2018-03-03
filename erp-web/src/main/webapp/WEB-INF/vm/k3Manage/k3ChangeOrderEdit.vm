@@ -124,7 +124,7 @@
     //功能事件初始化
     Rental.init();
     Layout.init();
-    K3AddChangeOrder.init();
+    K3EditChangeOrder.init();
 
     //UI效果初始化
     Core.init();

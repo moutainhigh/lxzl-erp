@@ -117,10 +117,10 @@
                                     <div class="row">
                                         <div class="pull-left ml10">
                                             <div class="btn-group" id="actionCommonButtons">
-                                                <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
+                                                <button type="button" class="btn btn-primary btn-sm batchAddProduct" id="batchAddProduct" title="选择商品">
                                                     <i class="fa fa-plus"></i> 选择商品
                                                 </button>
-                                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
+                                                <button type="button" class="btn btn-primary btn-sm batchDeleteProduct" id="batchDeleteProduct" title="删除商品">
                                                     <i class="fa fa-trash-o"></i> 删除
                                                 </button>
                                             </div>
@@ -175,7 +175,7 @@
                                                     <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                 </label>
                                             </td>
-                                            <td>
+                                            <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     <a href="#" type="button" class="btn btn-default btn-xs chooseChangeProduct"
                                                        data-orderItemId="{{orderItemId}}"

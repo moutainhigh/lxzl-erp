@@ -79,7 +79,7 @@
                                 <th>K3客户编码</th>
                                 <th>K3客户名称</th>
                                 <th>换货地址</th>
-                                <th>是否推送到K3</th>
+                                <th>换货单状态</th>
                                 <th>备注</th>
                                 <th>创建人</th>
                                 {{#hasRowActionButtons}}
@@ -107,7 +107,7 @@
                                     <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{changePhone}}</p>
                                     <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{changeAddress}}</p>
                                 </td>
-                                <td>
+                                <td class="{{changeOrderStatusClass}}">
                                     {{changeOrderStatusValue}}
                                 </td>
                                 <td>
