@@ -656,7 +656,7 @@ public class K3ServiceImpl implements K3Service {
     public ServiceResult<String, String> addChangeOrder(K3ChangeOrder k3ChangeOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
-        Date currentTime = new Date();
+        Date now = new Date();
         K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrder.getChangeOrderNo());
         if (k3ChangeOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
@@ -670,17 +670,35 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
-        for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrder.getK3ChangeOrderDetailList()) {
+
+        for (K3ChangeOrderDetail k3ChangeOrderDetail :  k3ChangeOrder.getK3ChangeOrderDetailList()) {
             K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
+            if(k3ChangeOrderDetailDO.getChangeSkuId()!=null){
+                ServiceResult<String,Product> productServiceResult = productService.queryProductBySkuId(k3ChangeOrderDetailDO.getChangeSkuId());
+                Product product = productServiceResult.getResult();
+                K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+                String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+                k3ChangeOrderDetailDO.setChangeProductNo(number);
+            }else if(k3ChangeOrderDetailDO.getChangeMaterialId()!=null){
+                MaterialDO materialDO = materialMapper.findById(k3ChangeOrderDetailDO.getChangeMaterialId());
+                K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
+                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
+                FormICItem formICItem = new FormICItem();
+                formICItem.setModel(materialDO.getMaterialModel());//型号名称
+                formICItem.setName(materialDO.getMaterialName());//商品名称
+                String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                k3ChangeOrderDetailDO.setChangeProductNo(number);
+            }
+
             k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
             k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            k3ChangeOrderDetailDO.setCreateTime(currentTime);
+            k3ChangeOrderDetailDO.setCreateTime(now);
             k3ChangeOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
-            k3ChangeOrderDetailDO.setUpdateTime(currentTime);
+            k3ChangeOrderDetailDO.setUpdateTime(now);
             k3ChangeOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
             k3ChangeOrderDetailMapper.save(k3ChangeOrderDetailDO);
         }
-
         result.setResult(k3ChangeOrderDO.getChangeOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
