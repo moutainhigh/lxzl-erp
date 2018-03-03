@@ -18,7 +18,6 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
-import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -32,6 +31,7 @@ import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
@@ -899,6 +899,7 @@ public class K3ServiceImpl implements K3Service {
         k3ChangeOrderDO.setUpdateTime(currentTime);
         k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ChangeOrderMapper.update(k3ChangeOrderDO);
+        statementService.createK3ChangeOrderStatement(changeOrderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -994,4 +995,6 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private OrderMaterialMapper orderMaterialMapper;
+    @Autowired
+    private StatementService statementService;
 }
