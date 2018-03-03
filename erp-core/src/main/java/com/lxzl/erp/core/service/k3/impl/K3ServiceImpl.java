@@ -36,11 +36,15 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.UUIDUtil;
@@ -593,6 +597,11 @@ public class K3ServiceImpl implements K3Service {
                     K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
                     String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
                     k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                    OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                    if(orderProductDO!=null){
+                        k3ChangeOrderDetailDO.setRentType(orderProductDO.getRentType());
+                    }
                 }else if(k3ChangeOrderDetailDO.getChangeMaterialId()!=null){
                     MaterialDO materialDO = materialMapper.findById(k3ChangeOrderDetailDO.getChangeMaterialId());
                     K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
@@ -602,6 +611,11 @@ public class K3ServiceImpl implements K3Service {
                     formICItem.setName(materialDO.getMaterialName());//商品名称
                     String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
                     k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                    if(orderMaterialDO!=null){
+                        k3ChangeOrderDetailDO.setRentType(orderMaterialDO.getRentType());
+                    }
                 }
 
                 k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
@@ -680,6 +694,11 @@ public class K3ServiceImpl implements K3Service {
                 K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
                 String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
                 k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                if(orderProductDO!=null){
+                    k3ChangeOrderDetailDO.setRentType(orderProductDO.getRentType());
+                }
             }else if(k3ChangeOrderDetailDO.getChangeMaterialId()!=null){
                 MaterialDO materialDO = materialMapper.findById(k3ChangeOrderDetailDO.getChangeMaterialId());
                 K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
@@ -689,6 +708,11 @@ public class K3ServiceImpl implements K3Service {
                 formICItem.setName(materialDO.getMaterialName());//商品名称
                 String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
                 k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                if(orderMaterialDO!=null){
+                    k3ChangeOrderDetailDO.setRentType(orderMaterialDO.getRentType());
+                }
             }
 
             k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
@@ -958,8 +982,16 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private ProductService productService;
+
     @Autowired
     private MaterialMapper materialMapper;
+
     @Autowired
     private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
+
+    @Autowired
+    private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderMaterialMapper orderMaterialMapper;
 }
