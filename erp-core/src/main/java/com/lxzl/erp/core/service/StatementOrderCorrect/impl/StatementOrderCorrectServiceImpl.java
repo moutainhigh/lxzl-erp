@@ -275,34 +275,46 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         }
         statementOrderCorrectDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
         Integer statementOrderReferId = statementOrderCorrectDO.getStatementOrderReferId();
-        OrderDO orderDO = orderMapper.findById(statementOrderReferId);
-        if (orderDO == null) {
-            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
-            return serviceResult;
-        }
+
         StatementOrderCorrect statementOrderCorrect = ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class);
         //客户名称
         statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
-        //订单编号
-        statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
-        //商品名称
-        List<OrderProductDO> orderProductDOList = orderProductMapper.findByOrderId(orderDO.getId());
-        List<String> productNameList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
-            for (OrderProductDO orderProductDO : orderProductDOList) {
-                productNameList.add(orderProductDO.getProductName());
-            }
-            statementOrderCorrect.setProductName(productNameList);
-        }
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            OrderDO orderDO = orderMapper.findById(statementOrderReferId);
+            if (orderDO != null) {
+                //订单编号
+                statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                //商品名称
+                List<OrderProductDO> orderProductDOList = orderProductMapper.findByOrderId(orderDO.getId());
+                List<String> productNameList = new ArrayList<>();
+                if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+                    for (OrderProductDO orderProductDO : orderProductDOList) {
+                        productNameList.add(orderProductDO.getProductName());
+                    }
+                    statementOrderCorrect.setProductName(productNameList);
+                }
 
-        //物料名称
-        List<OrderMaterialDO> orderMaterialDOList = orderMaterialMapper.findByOrderId(orderDO.getId());
-        List<String> materialNameList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
-            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-                materialNameList.add(orderMaterialDO.getMaterialName());
+                //物料名称
+                List<OrderMaterialDO> orderMaterialDOList = orderMaterialMapper.findByOrderId(orderDO.getId());
+                List<String> materialNameList = new ArrayList<>();
+                if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+                    for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                        materialNameList.add(orderMaterialDO.getMaterialName());
+                    }
+                    statementOrderCorrect.setMaterialName(materialNameList);
+                }
             }
-            statementOrderCorrect.setMaterialName(materialNameList);
+        } else {
+            statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, statementOrderCorrect.getStatementOrderReferId());
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                //订单编号
+                K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(statementOrderCorrect.getStatementOrderReferId());
+                if (k3ReturnOrderDO != null) {
+                    //订单编号
+                    statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                }
+            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -340,7 +352,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
             //客户名称
             statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
-
 
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
             if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
