@@ -13,6 +13,7 @@ import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectServ
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
@@ -22,6 +23,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -338,14 +340,27 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             statementOrderCorrect.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
             //客户名称
             statementOrderCorrect.setCustomerName(statementOrderDO.getCustomerName());
-            //订单编号
-            OrderDO orderDO = orderMapper.findById(statementOrderCorrect.getStatementOrderReferId());
-            if (orderDO == null) {
-                serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_PRODUCT_NOT_EXISTS);
-                return serviceResult;
+
+
+            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER, statementOrderCorrect.getStatementOrderReferId());
+            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                //订单编号
+                OrderDO orderDO = orderMapper.findById(statementOrderCorrect.getStatementOrderReferId());
+                if (orderDO != null) {
+                    //订单编号
+                    statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
+                }
+            } else {
+                statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN, statementOrderCorrect.getStatementOrderReferId());
+                if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+                    //订单编号
+                    K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(statementOrderCorrect.getStatementOrderReferId());
+                    if (k3ReturnOrderDO != null) {
+                        //订单编号
+                        statementOrderCorrect.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                    }
+                }
             }
-            //订单编号
-            statementOrderCorrect.setOrderNo(orderDO.getOrderNo());
         }
         Page<StatementOrderCorrect> statementOrderCorrectPage = new Page<>(statementOrderCorrectList, statementOrderCorrectCount, statementOrderCorrectQueryParam.getPageNo(), statementOrderCorrectQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -579,11 +594,11 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             return serviceResult;
         }
         if (((statementOrderCorrect.getStatementCorrectRentAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentAmount(), BigDecimal.ZERO) < 0)
-                        || (statementOrderCorrect.getStatementCorrectRentDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) < 0)
-                        || (statementOrderCorrect.getStatementCorrectDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) < 0)
-                        || (statementOrderCorrect.getStatementCorrectOtherAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOtherAmount(), BigDecimal.ZERO) < 0)
-                        || (statementOrderCorrect.getStatementCorrectOverdueAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOverdueAmount(), BigDecimal.ZERO) < 0))
-                        ||
+                || (statementOrderCorrect.getStatementCorrectRentDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectDepositAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectOtherAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOtherAmount(), BigDecimal.ZERO) < 0)
+                || (statementOrderCorrect.getStatementCorrectOverdueAmount() != null && BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectOverdueAmount(), BigDecimal.ZERO) < 0))
+                ||
                 ((statementOrderCorrect.getStatementCorrectRentAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentAmount(), BigDecimal.ZERO) == 0)
                         && (statementOrderCorrect.getStatementCorrectRentDepositAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectRentDepositAmount(), BigDecimal.ZERO) == 0)
                         && (statementOrderCorrect.getStatementCorrectDepositAmount() == null || BigDecimalUtil.compare(statementOrderCorrect.getStatementCorrectDepositAmount(), BigDecimal.ZERO) == 0)
@@ -789,6 +804,9 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private K3ReturnOrderMapper k3ReturnOrderMapper;
 
     @Autowired
     private UserMapper userMapper;

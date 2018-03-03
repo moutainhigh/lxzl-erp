@@ -679,6 +679,7 @@ public class ErrorCode {
     public static final String K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000010";
     public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
     public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
+    public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1350,6 +1351,7 @@ public class ErrorCode {
         MAP.put(K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3换货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
+        MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
 
     }
 
