@@ -885,8 +885,8 @@ public class StatementServiceImpl implements StatementService {
                 }
                 if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
                     //为退还商品时
+                    K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
-                        K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
                         if (k3ReturnOrderDetailDO != null) {
                             String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
                             OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(orderItemId));
@@ -896,23 +896,23 @@ public class StatementServiceImpl implements StatementService {
                                 key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
                             }
                         }
-                        //为退还物料时
-                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
-                            if (k3ReturnOrderDetailDO != null) {
-                                String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
-                                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
-                                if (orderMaterialDO != null) {
-                                    Integer materialId = orderMaterialDO.getMaterialId();
-                                    Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                    key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
-                                }
+                    }
+                    //为退还物料时
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
+                        if (k3ReturnOrderDetailDO != null) {
+                            String orderItemId = k3ReturnOrderDetailDO.getOrderItemId();
+                            OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(orderItemId));
+                            if (orderMaterialDO != null) {
+                                Integer materialId = orderMaterialDO.getMaterialId();
+                                Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
+                                key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
                             }
                         }
                     }
-                }
-
-                if (key == null) {
-                    continue;
+                    //为退还物料时
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(statementOrderDetail.getOrderItemType())) {
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                    }
                 }
 
                 //各商品物料
@@ -946,7 +946,7 @@ public class StatementServiceImpl implements StatementService {
         }
 
         for (StatementOrderDetail statementOrderDetail : hashMap.values()) {
-            BigDecimal statementDetailPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderDetail.getStatementDetailDepositPaidAmount(), statementOrderDetail.getStatementDetailOverduePaidAmount()), statementOrderDetail.getStatementDetailRentDepositPaidAmount()), statementOrderDetail.getStatementDetailRentPaidAmount()),statementOrderDetail.getStatementDetailOtherPaidAmount());
+            BigDecimal statementDetailPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderDetail.getStatementDetailDepositPaidAmount(), statementOrderDetail.getStatementDetailOverduePaidAmount()), statementOrderDetail.getStatementDetailRentDepositPaidAmount()), statementOrderDetail.getStatementDetailRentPaidAmount()), statementOrderDetail.getStatementDetailOtherPaidAmount());
             statementOrderDetail.setStatementDetailPaidAmount(statementDetailPaidAmount);
         }
 
@@ -1133,8 +1133,7 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
         String buyerCustomerNo = k3ReturnOrderDO.getK3CustomerNo();
-        K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(buyerCustomerNo);
-        CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+        CustomerDO customerDO = customerMapper.findByNo(buyerCustomerNo);
         Integer buyerCustomerId = customerDO.getId();
         Date statementDetailStartTime;
         Date statementDetailEndTime;
@@ -2098,7 +2097,7 @@ public class StatementServiceImpl implements StatementService {
         }
 
         for (StatementOrderDetail statementOrderDetail : hashMap.values()) {
-            BigDecimal statementDetailPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderDetail.getStatementDetailDepositPaidAmount(), statementOrderDetail.getStatementDetailOverduePaidAmount()), statementOrderDetail.getStatementDetailRentDepositPaidAmount()), statementOrderDetail.getStatementDetailRentPaidAmount()),statementOrderDetail.getStatementDetailOtherPaidAmount());
+            BigDecimal statementDetailPaidAmount = BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementOrderDetail.getStatementDetailDepositPaidAmount(), statementOrderDetail.getStatementDetailOverduePaidAmount()), statementOrderDetail.getStatementDetailRentDepositPaidAmount()), statementOrderDetail.getStatementDetailRentPaidAmount()), statementOrderDetail.getStatementDetailOtherPaidAmount());
             statementOrderDetail.setStatementDetailPaidAmount(statementDetailPaidAmount);
         }
 
