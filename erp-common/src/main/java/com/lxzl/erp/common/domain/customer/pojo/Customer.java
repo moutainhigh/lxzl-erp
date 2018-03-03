@@ -32,7 +32,7 @@ public class Customer extends BasePO {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 	@NotNull(message = ErrorCode.CUSTOMER_OWNER_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
-	private Integer owner;		//数据归属人，跟单员
+	private Integer owner;		//数据归属人，跟单员，业务员
 	private Integer unionUser;  //联合开发人
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
 //	@NotNull(message = ErrorCode.CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL , groups = {AddCustomerCompanyGroup.class})
@@ -45,6 +45,7 @@ public class Customer extends BasePO {
 	private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
 	private String passReason; //通过原因
 	private String failReason; //拒绝原因
+	@NotNull(message = ErrorCode.DELIVERY_MODE_NOT_NULL , groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private Integer deliveryMode; //发货方式，1快递，2自提,3凌雄配送'
 
 	private String ownerName; //业务员姓名
@@ -67,7 +68,7 @@ public class Customer extends BasePO {
 	private User customerOwnerUser;
 	private User customerUnionUser;
 
-	@NotNull(message = ErrorCode.CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL , groups ={AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//	@NotNull(message = ErrorCode.CUSTOMER_IS_DEFAULT_CONSIGN_ADDRESS_NOT_NULL , groups ={CommitCustomerGroup.class})
 	private Integer isDefaultConsignAddress; //是否以地址作为收货地址,1是，0否
 
 	public Integer getCustomerId() {

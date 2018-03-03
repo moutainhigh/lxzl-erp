@@ -2901,6 +2901,7 @@ CREATE TABLE `erp_k3_change_order_detail` (
   `change_product_name` varchar(64) NOT NULL COMMENT '换货产品名称',
   `product_count` int(11) NOT NULL COMMENT '换货数量',
   `product_diff_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品差价',
+  `rent_type` int(20) COMMENT '租赁方式',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
