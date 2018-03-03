@@ -2105,6 +2105,8 @@ public class StatementServiceImpl implements StatementService {
         List<StatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
         statementOrder.setStatementOrderDetailList(statementOrderDetailList);
 
+        statementOrder.setMonthTime(month);
+
         result.setResult(statementOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;

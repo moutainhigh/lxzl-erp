@@ -126,6 +126,11 @@
 						 separator="," close=")">
 					#{item}
 				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
 				OR ec.owner in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
@@ -282,6 +287,11 @@
 			AND
 			<if test="maps.permissionParam.permissionUserIdList!= null" >
 				(eso.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
 					#{item}

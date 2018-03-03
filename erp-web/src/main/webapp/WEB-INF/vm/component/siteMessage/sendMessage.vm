@@ -1,37 +1,39 @@
-<div class="quick-compose-form container">
-    <div class="compose-header">
-        <div class="title">写信</div>
-        <a href="javascript:;" class="close-btn">
-            <span class="glyphicon glyphicon-remove"></span>
-        </a>
-    </div>
-    <form id="form-horizontal panel-body bg-light dark">
-        <div class="form-group">
-            <label class="col-md-2 col-sm-2 control-label">收件人：</label>
-            <div class="col-md-10 col-sm-10">
-                <div class="input-group bringContainer">
-                    <input type="hidden" name="srcReceiveId" />
-                    <input type="text" id="srcReceiveName" name="srcReceiveName" bringFiled="srcReceiveName" class="form-control required" readonly placeholder="收件人" />
-                    <span class="input-group-addon cursor chooseReceive" id="chooseSrcReceiveId"><i class="fa fa-search mr5"></i>选择</span>
+<div class="quick-compose-form row">
+    <div class="col-md-10 col-md-offset-2 writeBox" style="position:relative; padding-top:46px; height:100%;">
+        <div class="compose-header">
+            <div class="title">写信</div>
+            <a href="javascript:;" class="close-btn">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </div>
+        <form id="form-horizontal panel-body bg-light dark">
+            <div class="form-group">
+                <label class="col-md-2 col-sm-2 control-label">收件人：</label>
+                <div class="col-md-10 col-sm-10">
+                    <div class="input-group bringContainer">
+                        <input type="hidden" name="srcReceiveId" />
+                        <input type="text" id="srcReceiveName" name="srcReceiveName" bringFiled="srcReceiveName" class="form-control required" readonly placeholder="收件人" />
+                        <span class="input-group-addon cursor chooseReceive" id="chooseSrcReceiveId"><i class="fa fa-search mr5"></i>选择</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 col-sm-2 control-label">主题：</label>
-            <div class="col-md-10 col-sm-10">
-                <div class="input-group bringContainer">
-                    <input id="messageTitle" name="messageTitle" bringFiled="messageTitle" class="form-control required" type="text" placeholder="主题" />
+            <div class="form-group">
+                <label class="col-md-2 col-sm-2 control-label">主题：</label>
+                <div class="col-md-10 col-sm-10">
+                    <div class="input-group bringContainer">
+                        <input id="messageTitle" name="messageTitle" bringFiled="messageTitle" class="form-control required" type="text" placeholder="主题" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 col-sm-2 control-label">正文：</label>
-            <div class="col-md-10 col-sm-10">
-                <textarea class="form-control area" id="messageText" name="messageText"></textarea>
+            <div class="form-group">
+                <label class="col-md-2 control-label">正文：</label>
+                <div class="col-md-10">
+                    <textarea class="form-control area" id="messageText" name="messageText"></textarea>
+                </div>
             </div>
+        </form>
+        <div class="btn-wrapper">
+            <a href="#" class="btn btn-info btn-lg active" role="button" id="sendMessageBtn">发送</a>
         </div>
-    </form>
-    <div class="btn-wrapper">
-        <a href="#" class="btn btn-info btn-lg active" role="button" id="sendMessageBtn">发送</a>
     </div>
 </div>
