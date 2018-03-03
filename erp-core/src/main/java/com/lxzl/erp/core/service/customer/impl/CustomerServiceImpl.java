@@ -1266,9 +1266,11 @@ public class CustomerServiceImpl implements CustomerService {
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
             customerResult.setCustomerArea(subCompanyDO.getSubCompanyName());
         }
+
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;

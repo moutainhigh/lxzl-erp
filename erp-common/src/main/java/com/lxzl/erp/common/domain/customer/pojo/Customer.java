@@ -35,7 +35,7 @@ public class Customer extends BasePO {
 	private Integer owner;		//数据归属人，跟单员
 	private Integer unionUser;  //联合开发人
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
-	@NotNull(message = ErrorCode.CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL , groups = {AddCustomerCompanyGroup.class})
+//	@NotNull(message = ErrorCode.CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL , groups = {AddCustomerCompanyGroup.class})
 	private BigDecimal firstApplyAmount;		// 首期申请额度
 	private BigDecimal laterApplyAmount;		// 后期申请额度
 	private Date localizationTime;	//属地化时间
