@@ -346,7 +346,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE);
             return result;
         }
@@ -376,7 +376,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
@@ -680,7 +680,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }

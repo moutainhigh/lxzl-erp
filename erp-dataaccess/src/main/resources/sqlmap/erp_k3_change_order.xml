@@ -41,6 +41,8 @@
 		<result column="detail_change_product_name" jdbcType="VARCHAR" property="changeProductName" />
 		<result column="detail_product_count" jdbcType="INTEGER" property="productCount" />
 		<result column="detail_product_diff_amount" jdbcType="DECIMAL" property="productDiffAmount" />
+		<result column="detail_order_item_id" jdbcType="VARCHAR" property="orderItemId" />
+		<result column="detail_rent_type" jdbcType="INTEGER" property="rentType" />
 		<result column="detail_data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="detail_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="detail_create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -50,7 +52,7 @@
 	</resultMap>
 
 	<sql id="detail_column_List">
-		ekcod.id AS detail_id,ekcod.change_order_id AS detail_change_order_id,ekcod.order_no AS detail_order_no,ekcod.order_entry AS detail_order_entry,ekcod.product_no AS detail_product_no,ekcod.product_name AS detail_product_name,ekcod.change_sku_id AS detail_change_sku_id,ekcod.change_material_id AS detail_change_material_id,ekcod.change_product_no AS detail_change_product_no,ekcod.change_product_name AS detail_change_product_name,ekcod.product_count AS detail_product_count,ekcod.product_diff_amount AS detail_product_diff_amount,ekcod.data_status AS detail_data_status,ekcod.remark AS detail_remark,ekcod.create_time AS detail_create_time,ekcod.create_user AS detail_create_user,ekcod.update_time AS detail_update_time,ekcod.update_user AS detail_update_user
+		ekcod.id AS detail_id,ekcod.change_order_id AS detail_change_order_id,ekcod.order_no AS detail_order_no,ekcod.order_entry AS detail_order_entry,ekcod.product_no AS detail_product_no,ekcod.product_name AS detail_product_name,ekcod.change_sku_id AS detail_change_sku_id,ekcod.change_material_id AS detail_change_material_id,ekcod.change_product_no AS detail_change_product_no,ekcod.change_product_name AS detail_change_product_name,ekcod.product_count AS detail_product_count,ekcod.product_diff_amount AS detail_product_diff_amount,ekcod.order_item_id AS detail_order_item_id,ekcod.rent_type AS detail_rent_type,ekcod.data_status AS detail_data_status,ekcod.remark AS detail_remark,ekcod.create_time AS detail_create_time,ekcod.create_user AS detail_create_user,ekcod.update_time AS detail_update_time,ekcod.update_user AS detail_update_user
 	</sql>
 
 	<select id="findById" resultMap="K3ChangeOrderDO" parameterType="java.lang.Integer">
