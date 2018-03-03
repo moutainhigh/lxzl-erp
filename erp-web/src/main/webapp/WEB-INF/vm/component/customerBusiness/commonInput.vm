@@ -1,842 +1,315 @@
-<div class="panel br-n br-t">
-    <div class="panel-heading" style="margin-bottom: 0;">
-        <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-            <li class="active">
-                <a href="#top-tab-1" data-toggle="tab" aria-expanded="false">基础信息</a>
-            </li>
-            <li>
-                <a href="#top-tab-2" data-toggle="tab" aria-expanded="false">按天租必填，按月租选填</a>
-            </li>
-            <li class="">
-                <a href="#top-tab-3" data-toggle="tab" aria-expanded="false">按月租必填，按天租选填</a>
-            </li>
-        </ul>
-    </div>
-    <div class="panel-body" style="padding-bottom: 0;">
-        <div class="tab-content">
-            <div id="top-tab-1" class="tab-pane active">
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>客户来源</label>
-                        <label class="field select">
-                            <select id="customerOrigin" name="customerOrigin" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>业务员</label>
-                        <div class="smart-widget sm-right smr-50">
-                            <label class="field">
-                                <input type="text" name="ownerName" id="ownerName" class="gui-input" readonly placeholder=" 请选择业务员" />
-                                <input type="hidden" name="owner" id="owner" class="gui-input" />
-                            </label>
-                            <button type="button" class="button btn-primary bradiusN" id="chooseOwnerName"> <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="customerOrigin" class="field-label">联合开发人</label>
-                        <div class="smart-widget sm-right smr-50">
-                            <label class="field">
-                                <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly />
-                                <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
-                            </label>
-                            <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
-                        <label for="companyName" class="field prepend-icon">
-                            <input type="text" name="companyName" id="companyName" class="gui-input required" />
-                            <label for="companyName" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="industry" class="field-label"><em class="text-danger">*</em>所属行业</label>
-                        <label class="field select">
-                            <select id="industry" name="industry" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="" class="field-label"><em class="text-danger">*</em>所属区域</label>
-                        <label class="field select">
-                            <select id="" name="" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="landline" class="field-label">座机电话</label>
-                        <label for="landline" class="field prepend-icon">
-                            <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
-                            <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="affiliatedEnterprise" class="field-label">关联企业</label>
-                        <label for="affiliatedEnterprise" class="field prepend-icon">
-                            <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
-                            <label for="affiliatedEnterprise" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
-                        <label for="unitInsuredNumber" class="field prepend-icon">
-                            <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
-                            <label for="unitInsuredNumber" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="agentPersonName" class="field-label"><em class="text-danger">*</em>经办人姓名</label>
-                        <label for="agentPersonName" class="field prepend-icon">
-                            <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input required letterOrChinese" />
-                            <label for="agentPersonName" class="field-icon"><i class="fa fa-user"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
-                        <label for="agentPersonNo" class="field prepend-icon">
-                            <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required"  />
-                            <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="agentPersonPhone" class="field-label"><em class="text-danger">*</em>经办人电话</label>
-                        <label for="agentPersonPhone" class="field prepend-icon">
-                            <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone required" />
-                            <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="isDisabled" class="field-label"><em class="text-danger">*</em>是否由法人代表申请</label>
-                        <label class="field select">
-                            <select id="isLegalPersonApple" name="isLegalPersonApple">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="deliveryMode" class="field-label"><em class="text-danger">*</em>送货方式</label>
-                        <label class="field select">
-                            <select id="deliveryMode" name="deliveryMode" class="required"></select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-##                    <div class="col-md-12">
-##                        <div class="section-divider mv40" id="spy2">
-##                            <span><em class="text-danger">*</em>收货地址</span>
-##                        </div>
-##                        <div class="section row">
-##                            <div class="col-md-4">
-##                                <div class="section">
-##                                    <label class="field select">
-##                                        <select id="province" name="province" class="required">
-##                                            <option value="">请选择</option>
-##                                        </select>
-##                                        <i class="arrow"></i>
-##                                    </label>
-##                                </div>
-##                                <div class="section">
-##                                    <label class="field select">
-##                                        <select id="city" name="city" class="required">
-##                                            <option value="">请选择</option>
-##                                        </select>
-##                                        <i class="arrow"></i>
-##                                    </label>
-##                                </div>
-##                                <div class="section">
-##                                    <label class="field select">
-##                                        <select id="district" name="district" class="required">
-##                                            <option value="">请选择</option>
-##                                        </select>
-##                                        <i class="arrow"></i>
-##                                    </label>
-##                                </div>
-##                            </div>
-##                            <div class="col-md-8">
-##                                <label for="address" class="field prepend-icon">
-##                                    <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入详细地址(例如街道门号信息)"></textarea>
-##                                    <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
-##                                </label>
-##                            </div>
-##                        </div>
-##                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40" id="spy2">
-                            <span>备注</span>
-                        </div>
-                        <div class="section">
-                            <label for="remark" class="field prepend-icon">
-                                <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
-                                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="section" style="margin: 0 -25px;">
-                    <div class="panel br-n br-t" style="margin-bottom: 0">
-                        <div class="panel-heading">
-                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-                                <li class="active">
-                                    <a href="#creadit" data-toggle="tab" aria-expanded="false">法人征信</a>
-                                </li>
-                                <li>
-                                    <a href="#intelligence" data-toggle="tab" aria-expanded="false">公司资质</a>
-                                </li>
-                                <li class="">
-                                    <a href="#otherMaterial" data-toggle="tab" aria-expanded="false">其它资料</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="panel-body br-n">
-                            <div class="tab-content pn br-n">
-                                <div id="creadit" class="tab-pane active">
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 法人个人征信报告或附（法人个人征信授权书） </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="legalPersonCreditReportImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 法人学历证明 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="legalPersonEducationImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 法人职称证明 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="legalPersonPositionalTitleImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="intelligence" class="tab-pane">
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 固定资产证明 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="fixedAssetsProveImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 单位对公账户流水账单 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="publicAccountFlowBillImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 公积金缴纳证明 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="socialSecurityRoProvidentFundImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 战略协议或合作协议 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="cooperationAgreementImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 经营场所租赁合同 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="managerPlaceRentContractImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 现场核查表 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="localeChecklistsImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="otherMaterial" class="tab-pane">
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 其它材料 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="otherDateImageList">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="panel-body p25">
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>客户来源</label>
+            <label class="field select">
+                <select id="customerOrigin" name="customerOrigin" class="required">
+                    <option value="">请选择</option>
+                </select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="customerOrigin" class="field-label">联合开发人</label>
+            <div class="smart-widget sm-right smr-50">
+                <label class="field">
+                    <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly />
+                    <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
+                </label>
+                <button type="button" class="button btn-primary bradiusN" id="chooseUnionUserName"> <i class="fa fa-search"></i></button>
             </div>
-            <div id="top-tab-2" class="tab-pane">
-                <p>基本信息</p>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <div class="section-divider mv40"><span> 营业执照 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="businessLicensePictureImage">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="section-divider mv40"><span> 经办人身份证正面 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="section-divider mv40"><span> 经办人身份证反面 </span></div>
-                        <div class="tray-bin">
-                            <div class="atl-dropzone dropzoneImg" id="">
-                                <div class="dz-default dz-message" >
-                                    <span>
-                                        <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="top-tab-3" class="tab-pane">
-                <div class="section row" id="legalPersonContainer">
-                    <div class="col-md-4">
-                        <label for="legalPerson" class="field-label"><em class="text-danger">*</em>法人姓名</label>
-                        <label for="legalPerson" class="field prepend-icon">
-                            <input type="text" name="legalPerson" id="legalPerson" class="gui-input letterOrChinese required" />
-                            <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="legalPersonNo" class="field-label"><em class="text-danger">*</em>法人身份证号</label>
-                        <label for="legalPersonNo" class="field prepend-icon">
-                            <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input required" />
-                            <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="legalPersonPhone" class="field-label"><em class="text-danger">*</em>法人手机号</label>
-                        <label for="legalPersonPhone" class="field prepend-icon">
-                            <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone required" />
-                            <label for="legalPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="registeredCapital" class="field-label"><em class="text-danger">*</em>注册资本</label>
-                        <div class="smart-widget sm-right">
-                            <label for="registeredCapital" class="field prepend-icon">
-                                <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
-                                <label for="registeredCapital" class="field-icon"><i class="fa fa-jpy"></i>
-                                </label>
-                            </label>
-                            <label for="registeredCapital" class="button">万</label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="officeNumber" class="field-label"><em class="text-danger">*</em>办公人数</label>
-                        <label for="officeNumber" class="field prepend-icon">
-                            <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
-                            <label for="officeNumber" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="unifiedCreditCode" class="field-label"><em class="text-danger">*</em>统一信用代码</label>
-                        <label for="unifiedCreditCode" class="field prepend-icon">
-                            <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
-                            <label for="unifiedCreditCode" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="registeredCapital" class="field-label"><em class="text-danger">*</em>经营面积</label>
-                        <div class="smart-widget sm-right">
-                            <label for="operatingArea" class="field prepend-icon">
-                                <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
-                                <label for="operatingArea" class="field-icon"><i class="fa fa-jpy"></i>
-                                </label>
-                            </label>
-                            <label for="operatingArea" class="button">㎡</label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="connectRealName" class="field-label"><em class="text-danger">*</em>紧急联系人姓名</label>
-                        <label for="connectRealName" class="field prepend-icon">
-                            <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
-                            <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="connectPhone" class="field-label"><em class="text-danger">*</em>紧急联系人手机号</label>
-                        <label for="connectPhone" class="field prepend-icon">
-                            <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
-                            <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4">
-                        <label for="productPurpose" class="field-label"><em class="text-danger">*</em>设备用途</label>
-                        <label for="productPurpose" class="field prepend-icon">
-                            <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
-                            <label for="productPurpose" class="field-icon"><i class="fa fa-tag"></i>
-                            </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="" class="field-label"><em class="text-danger">*</em>经营地址、收货地址是否一致</label>
-                        <label class="field select">
-                            <select id="" name="">
-                                <option value="0">否</option>
-                                <option value="1">是</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-12">
-                        <div class="section-divider mv40" id="spy2">
-                            <span><em class="text-danger">*</em>公司经营地址</span>
-                        </div>
-                        <div class="section row">
-                            <div class="col-md-4">
-                                <div class="section">
-                                    <label class="field select">
-                                        <select id="province" name="province" class="required">
-                                            <option value="">请选择</option>
-                                        </select>
-                                        <i class="arrow"></i>
-                                    </label>
-                                </div>
-                                <div class="section">
-                                    <label class="field select">
-                                        <select id="city" name="city" class="required">
-                                            <option value="">请选择</option>
-                                        </select>
-                                        <i class="arrow"></i>
-                                    </label>
-                                </div>
-                                <div class="section">
-                                    <label class="field select">
-                                        <select id="district" name="district" class="required">
-                                            <option value="">请选择</option>
-                                        </select>
-                                        <i class="arrow"></i>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <label for="address" class="field prepend-icon">
-                                    <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入公司详细地址(例如街道门号信息)"></textarea>
-                                    <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section" style="margin: 0 -25px;">
-                    <div class="panel br-n br-t" style="margin-bottom: 0">
-                        <div class="panel-heading">
-                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-                                <li class="active">
-                                    <a href="#tab-1" data-toggle="tab" aria-expanded="false">首次所需设备</a>
-                                </li>
-                                <li>
-                                    <a href="#tab-2" data-toggle="tab" aria-expanded="false">后续所需设备</a>
-                                </li>
-                                <li class="">
-                                    <a href="#tab-3" data-toggle="tab" aria-expanded="false">负责人意见</a>
-                                </li>
-                                <li class="">
-                                    <a href="#tab-4" data-toggle="tab" aria-expanded="false">基本信息</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="panel-body br-n">
-                            <div class="tab-content pn br-n">
-                                <div id="tab-1" class="tab-pane active" style="margin:-25px;">
-                                    <div class="panel-menu br-n br-b">
-                                        <div class="row">
-                                            <div class="pull-left ml10">
-                                                <div class="btn-group" id="actionCommonButtons">
-                                                    <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
-                                                        <i class="fa fa-plus"></i> 选择商品
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
-                                                        <i class="fa fa-trash-o"></i> 删除
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <script type="text/html" id="dataListTpl">
-                                            <thead>
-                                            <tr class="bg-light">
-                                                <th>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkAll" value="">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </th>
-                                                <th>商品名称</th>
-                                                <th>类别</th>
-                                                <th>品牌</th>
-                                                <th>商品参数（SKU）</th>
-                                                <th>单台商品价值</th>
-                                                <th>租赁数量</th>
-                                                <th>商品总价值</th>
-                                                <th class="text-right">操作</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {{#listData}}
-                                            <tr class="productRow skuRow" productRowKey="{{productId}}">
-                                                <td>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <div style="max-width:300px;">{{productName}}</div>
-                                                </td>
-                                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
-                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                                                <td><div style="max-width:300px;">{{propertiesToStr}}</div></td>
-                                                <td>￥<span class="unitPrice">{{currentSkuPrice}}</span></td>
-                                                <td>
-                                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
-                                                    <input type="hidden" name="productId" value="{{productId}}" class="productId" />
-                                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                    <label class="field prepend-icon" style="max-width:160px">
-                                                        <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
-                                                    </label>
-                                                </td>
-                                                <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            {{/listData}}
-                                            {{^listData}}
-                                            <tr>
-                                                <td valign="top" colspan="9" class="text-center">没有选择商品</td>
-                                            </tr>
-                                            {{/listData}}
-                                            <tr>
-                                                <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
-                                                <td colspan="2" class="text-danger">
-                                                    <div class="text-danger" id="firstListTotalPriceBox"></div>
-                                                    <input type="hidden" name="firstApplyAmount" id="firstApplyAmount" />
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </script>
-                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
-                                    </div>
-                                </div>
-                                <div id="tab-2" class="tab-pane" style="margin:-25px;">
-                                    <div class="panel-menu br-n br-b">
-                                        <div class="row">
-                                            <div class="pull-left ml10">
-                                                <div class="btn-group" id="laterChooseButtons">
-                                                    <button type="button" class="btn btn-primary btn-sm" id="laterAddProduct" title="选择商品" style="margin-right: 5px; border-radius: 5px;">
-                                                        <i class="fa fa-plus"></i> 选择商品
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary btn-sm" id="laterDeletProduct" title="删除商品" style="margin-right: 5px; border-radius: 5px;">
-                                                        <i class="fa fa-trash-o"></i> 删除
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <script type="text/html" id="productLaterNeedTpl">
-                                            <thead>
-                                            <tr class="bg-light">
-                                                <th>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkAll" value="">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </th>
-                                                <th>商品名称</th>
-                                                <th>类别</th>
-                                                <th>品牌</th>
-                                                <th>商品参数（SKU）</th>
-                                                <th>单台商品价值</th>
-                                                <th>租赁数量</th>
-                                                <th>商品总价值</th>
-                                                <th class="text-right">操作</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {{#listData}}
-                                            <tr class="productRow skuRow" productRowKey="{{productId}}">
-                                                <td>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <div style="max-width:300px;">{{productName}}</div>
-                                                </td>
-                                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
-                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                                                <td><div style="max-width:300px;">{{propertiesToStr}}</div></td>
-                                                <td>￥<span class="unitPrice">{{currentSkuPrice}}</span></td>
-                                                <td>
-                                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
-                                                    <input type="hidden" name="productId" value="{{productId}}" class="productId" />
-                                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                                    <label class="field prepend-icon" style="max-width:160px">
-                                                        <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量"  aria-required="true" aria-invalid="false"/>
-                                                    </label>
-                                                </td>
-                                                <td class="totalPrice">￥<span class="num">{{totalPrice}}</span></td>
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            {{/listData}}
-                                            {{^listData}}
-                                            <tr>
-                                                <td valign="top" colspan="10" class="text-center">没有选择商品</td>
-                                            </tr>
-                                            {{/listData}}
-                                            <tr>
-                                                <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
-                                                <td colspan="2" class="text-danger">
-                                                    <div class="text-danger" id="laterListTotalPriceBox"></div>
-                                                    <input type="hidden" name="laterApplyAmount" id="laterApplyAmount"/>
-                                                </td>
-                                            </tr
-                                            </tbody>
-                                        </script>
-                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productLaterNeedTable"></table>
-                                    </div>
-                                </div>
-                                <div id="tab-3" class="tab-pane">
-                                    <div class="section row">
-                                        <div class="col-md-12">
-                                            <div class="section-divider mv40"><span> 负责人意见</span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="tab-4" class="tab-pane">
-                                    <div class="section row">
-                                        <div class="col-md-4">
-                                            <div class="section-divider mv40"><span> 营业执照 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="businessLicensePictureImage">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="section-divider mv40"><span> 法人/股东身份证正面 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureFrontImage">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="section-divider mv40"><span> 法人/股东身份证反 </span></div>
-                                            <div class="tray-bin">
-                                                <div class="atl-dropzone dropzoneImg" id="legalPersonNoPictureBackImage">
-                                                    <div class="dz-default dz-message" >
-                                                        <span>
-                                                            <i class="fa fa-cloud-upload"></i>
-                                                            <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <script type="text/html" id="examplePreviewTpl">
-                    {{#productImg}}
-                    <div class="dz-preview dz-processing dz-error dz-image-preview hidden example-preview" data-img="{{dataImg}}">
-                        <div class="dz-details">
-                            <div class="dz-filename">
-                                <span data-dz-name="">{{originalName}}</span>
-                            </div>
-                            <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
-                        </div>
-                        <div class="dz-success-mark">
-                            <span>âœ?/span>
-                        </div>
-                        <a class="dz-remove" href="#" data-dz-remove>删除</a>
-                    </div>
-                    {{/productImg}}
-                </script>
+        </div>
+        <div class="col-md-4">
+            <label for="customerOrigin" class="field-label"><em class="text-danger">*</em>业务员</label>
+            <div class="smart-widget sm-right smr-50">
+                <label class="field">
+                    <input type="text" name="ownerName" id="ownerName" class="gui-input" readonly placeholder=" 请选择业务员" />
+                    <input type="hidden" name="owner" id="owner" class="gui-input" />
+                </label>
+                <button type="button" class="button btn-primary bradiusN" id="chooseOwnerName"> <i class="fa fa-search"></i>
+                </button>
             </div>
         </div>
     </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
+            <label for="companyName" class="field prepend-icon">
+                <input type="text" name="companyName" id="companyName" class="gui-input required" />
+                <label for="companyName" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="companyAbb" class="field-label">公司简称</label>
+            <label for="companyAbb" class="field prepend-icon">
+                <input type="text" name="companyAbb" id="companyAbb" class="gui-input" />
+                <label for="companyAbb" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="landline" class="field-label">座机电话</label>
+            <label for="landline" class="field prepend-icon">
+                <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
+                <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
+                </label>
+            </label>
+        </div>
+
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="connectRealName" class="field-label"><em class="text-danger">*</em>紧急联系人姓名</label>
+            <label for="connectRealName" class="field prepend-icon">
+                <input type="text" name="connectRealName" id="connectRealName" class="gui-input required letterOrChinese" />
+                <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="connectPhone" class="field-label"><em class="text-danger">*</em>紧急联系人手机号</label>
+            <label for="connectPhone" class="field prepend-icon">
+                <input type="text" name="connectPhone" id="connectPhone" class="gui-input required mobilephone" />
+                <label for="connectPhone" class="field-icon"><i class="fa fa-mobile"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="isDisabled" class="field-label"><em class="text-danger">*</em>是否由法人代表申请</label>
+            <label class="field select">
+                <select id="isLegalPersonApple" name="isLegalPersonApple">
+                    <option value="0">否</option>
+                    <option value="1">是</option>
+                </select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="agentPersonName" class="field-label"><em class="text-danger">*</em>经办人姓名</label>
+            <label for="agentPersonName" class="field prepend-icon">
+                <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input required letterOrChinese" />
+                <label for="agentPersonName" class="field-icon"><i class="fa fa-user"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
+            <label for="agentPersonNo" class="field prepend-icon">
+                <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required"  />
+                <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="agentPersonPhone" class="field-label"><em class="text-danger">*</em>经办人电话</label>
+            <label for="agentPersonPhone" class="field prepend-icon">
+                <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input mobilephone required" />
+                <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row" id="legalPersonContainer">
+        <div class="col-md-4">
+            <label for="legalPerson" class="field-label"><em class="text-danger">*</em>法人姓名</label>
+            <label for="legalPerson" class="field prepend-icon">
+                <input type="text" name="legalPerson" id="legalPerson" class="gui-input letterOrChinese required" />
+                <label for="legalPerson" class="field-icon"><i class="fa fa-user"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="legalPersonNo" class="field-label"><em class="text-danger">*</em>法人身份证号</label>
+            <label for="legalPersonNo" class="field prepend-icon">
+                <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input required" />
+                <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="legalPersonPhone" class="field-label"><em class="text-danger">*</em>法人手机号</label>
+            <label for="legalPersonPhone" class="field prepend-icon">
+                <input type="text" name="legalPersonPhone" id="legalPersonPhone" class="gui-input mobilephone required" />
+                <label for="legalPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="companyFoundTime" class="field-label">企业成立时间</label>
+            <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
+                <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
+                <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="industry" class="field-label"><em class="text-danger">*</em>所属行业</label>
+            <label class="field select">
+                <select id="industry" name="industry" class="required">
+                    <option value="">请选择</option>
+                </select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="affiliatedEnterprise" class="field-label">关联企业</label>
+            <label for="affiliatedEnterprise" class="field prepend-icon">
+                <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
+                <label for="affiliatedEnterprise" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="registeredCapital" class="field-label">注册资本</label>
+            <div class="smart-widget sm-right">
+                <label for="registeredCapital" class="field prepend-icon">
+                    <input type="text" name="registeredCapital" id="registeredCapital" class="gui-input number" />
+                    <label for="registeredCapital" class="field-icon"><i class="fa fa-jpy"></i>
+                    </label>
+                </label>
+                <label for="registeredCapital" class="button">万</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="officeNumber" class="field-label">办公人数</label>
+            <label for="officeNumber" class="field prepend-icon">
+                <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
+                <label for="officeNumber" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="unifiedCreditCode" class="field-label">统一信用代码</label>
+            <label for="unifiedCreditCode" class="field prepend-icon">
+                <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
+                <label for="unifiedCreditCode" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+    <div class="section row">
+        <div class="col-md-4">
+            <label for="registeredCapital" class="field-label">经营面积</label>
+            <div class="smart-widget sm-right">
+                <label for="operatingArea" class="field prepend-icon">
+                    <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
+                    <label for="operatingArea" class="field-icon"><i class="fa fa-jpy"></i>
+                    </label>
+                </label>
+                <label for="operatingArea" class="button">㎡</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="productPurpose" class="field-label">设备用途</label>
+            <label for="productPurpose" class="field prepend-icon">
+                <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
+                <label for="productPurpose" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
+            <label for="unitInsuredNumber" class="field prepend-icon">
+                <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
+                <label for="unitInsuredNumber" class="field-icon"><i class="fa fa-tag"></i>
+                </label>
+            </label>
+        </div>
+    </div>
+
+    <div class="section row">
+        <div class="col-md-12">
+            <div class="section-divider mv40" id="spy2">
+                <span><em class="text-danger">*</em>公司经营地址</span>
+            </div>
+            <div class="section row">
+                <div class="col-md-4">
+                    <div class="section">
+                        <label class="field select">
+                            <select id="province" name="province" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label class="field select">
+                            <select id="city" name="city" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label class="field select">
+                            <select id="district" name="district" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <label for="address" class="field prepend-icon">
+                        <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入公司详细地址(例如街道门号信息)"></textarea>
+                        <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
+                    </label>
+                    <label class="block mt15 switch switch-primary pull-right">
+                        <input type="checkbox" name="isDefaultConsignAddress" id="isDefaultConsignAddress" value="1">
+                        <label for="isDefaultConsignAddress" data-on="是" data-off="否"></label>
+                        <span>设为收货地址</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+##    <div class="section row">
+##        <div class="col-md-4">
+##            <div class="section-divider mv40" id="spy2">
+##                <span>申请额度信息</span>
+##            </div>
+##            <div class="section">
+##                <label for="firstApplyAmount" class="field-label"><em class="text-danger">*</em>首期申请额度</label>
+##                <label for="firstApplyAmount" class="field prepend-icon">
+##                    <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="form-control gui-input required moneyNumber" readonly placeholder="0" />
+##                    <label for="firstApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                </label>
+##            </div>
+##            <div class="section">
+##                <label for="remark" class="field-label"><em class="text-danger">*</em>后期申请额度</label>
+##                <label for="laterApplyAmount" class="field prepend-icon">
+##                    <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="form-control gui-input required moneyNumber" readonly placeholder="0" />
+##                    <label for="laterApplyAmount" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                </label>
+##            </div>
+##        </div>
+##        <div class="col-md-8">
+##            <div class="section-divider mv40" id="spy2">
+##                <span>备注</span>
+##            </div>
+##            <div class="section">
+####                <label for="remark" class="field-label">备注</label>
+##                <label for="remark" class="field prepend-icon">
+##                    <textarea class="gui-textarea" id="remark" name="remark" style="height: 155px;" placeholder="输入备注"></textarea>
+##                    <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##                </label>
+##            </div>
+##        </div>
+##    </div>
+
+##    <div class="section row">
+##        <div class="col-md-12">
+##            <label for="remark" class="field-label">备注</label>
+##            <label for="remark" class="field prepend-icon">
+##                <textarea class="gui-textarea" id="remark" name="remark" style="height: 170px;" placeholder="输入备注"></textarea>
+##                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##            </label>
+##        </div>
+##    </div>
 </div>
