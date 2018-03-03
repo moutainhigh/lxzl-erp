@@ -18,6 +18,8 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -25,18 +27,19 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
-import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -583,6 +586,24 @@ public class K3ServiceImpl implements K3Service {
         if (CollectionUtil.isNotEmpty(k3ChangeOrderDetailList)) {
             for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrderDetailList) {
                 K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
+                if(k3ChangeOrderDetailDO.getChangeSkuId()!=null){
+                    ServiceResult<String,Product> productServiceResult = productService.queryProductBySkuId(k3ChangeOrderDetailDO.getChangeSkuId());
+                    Product product = productServiceResult.getResult();
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+                    String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+                    k3ChangeOrderDetailDO.setChangeProductNo(number);
+                }else if(k3ChangeOrderDetailDO.getChangeMaterialId()!=null){
+                    MaterialDO materialDO = materialMapper.findById(k3ChangeOrderDetailDO.getChangeMaterialId());
+                    K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
+                    FormICItem formICItem = new FormICItem();
+                    formICItem.setModel(materialDO.getMaterialModel());//型号名称
+                    formICItem.setName(materialDO.getMaterialName());//商品名称
+                    String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                    k3ChangeOrderDetailDO.setChangeProductNo(number);
+                }
+
                 k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
                 k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 k3ChangeOrderDetailDO.setCreateTime(now);
@@ -916,4 +937,11 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private MaterialMapper materialMapper;
+    @Autowired
+    private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
 }
