@@ -91,6 +91,13 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">备注</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -100,9 +107,6 @@
                                 <li class="active">
                                     <a href="#returnProductCount" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                 </li>
-                            ##                <li>
-                            ##                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
-                            ##                </li>
                             </ul>
                         </div>
                     </div>
@@ -135,7 +139,9 @@
                                             </th>
                                             <th>编号</th>
                                             <th>商品名称</th>
-                                            <th>退货数量</th>
+                                            <th>更换商品名称</th>
+                                            <th>换货数量</th>
+                                            <th>商品差价</th>
                                             <th>备注</th>
                                             <th class="text-right">操作</th>
                                         </tr>
@@ -151,10 +157,16 @@
                                             </td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
+                                            <td>{{changeProductName}}</td>
                                             <td>
                                                 <label class="field prepend-icon mw200">
                                                     <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
-                                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                    <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入换货数量" />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="field prepend-icon mw200">
+                                                    <input type="text" name="productDiffAmount-{{rowKey}}" value="{{productDiffAmount}}" class="productDiffAmount form-control required moneyNumber pl10" placeholder="输入商品差价" />
                                                 </label>
                                             </td>
                                             <td>
@@ -163,8 +175,14 @@
                                                     <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                 </label>
                                             </td>
-                                            <td class="text-right">
+                                            <td>
                                                 <div class="btn-group text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs chooseChangeProduct"
+                                                       data-orderItemId="{{orderItemId}}"
+                                                       data-productno="{{productNo}}"
+                                                       data-productid="{{productId}}"
+                                                       data-changeSkuId="{{changeSkuId}}"
+                                                       data-changeMaterialId="{{changeMaterialId}}">选择更换商品</a>
                                                     <a href="#" type="button" class="btn btn-default btn-xs deleteProductButton" data-productno="{{productNo}}">删除</a>
                                                 </div>
                                             </td>
@@ -200,7 +218,9 @@
     management_load_script('${staticManagement}/js',
             'manage.k3.change.order.mixin.js',
             'manage.k3.change.order.add.js',
-            'manage.k3.order.item.choose.modal.js');
+            'manage.k3.order.item.choose.modal.js',
+            'modal.choose.product.js',
+            'modal.choose.material.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
