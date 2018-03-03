@@ -885,6 +885,7 @@ public class StatementServiceImpl implements StatementService {
                 }
                 if (OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
                     //为退还商品时
+                    K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(statementOrderDetail.getOrderId());
                     K3ReturnOrderDetailDO k3ReturnOrderDetailDO = k3ReturnOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
                         if (k3ReturnOrderDetailDO != null) {
@@ -911,6 +912,9 @@ public class StatementServiceImpl implements StatementService {
                     }
                     //为退还物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.equals(statementOrderDetail.getOrderItemType())) {
+                        if (k3ReturnOrderDO != null) {
+                            statementOrderDetail.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                        }
                         key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
                     }
                 }
