@@ -20,6 +20,7 @@ public class K3ChangeOrderDetailDO  extends BaseDO {
 	private BigDecimal productDiffAmount;
 	private Integer dataStatus;
 	private String remark;
+	private String orderItemId;
 
 	public Integer getId(){
 		return id;
@@ -133,4 +134,11 @@ public class K3ChangeOrderDetailDO  extends BaseDO {
 		this.remark = remark;
 	}
 
+	public String getOrderItemId() {
+		return orderItemId;
+	}
+
+	public void setOrderItemId(String orderItemId) {
+		this.orderItemId = orderItemId;
+	}
 }
