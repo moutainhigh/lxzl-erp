@@ -919,7 +919,7 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
                 if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
-                    //为退还商品时
+                    //为换商品时
                     K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findById(statementOrderDetail.getOrderId());
                     K3ChangeOrderDetailDO k3ChangeOrderDetailDO = k3ChangeOrderDetailMapper.findById(statementOrderDetail.getOrderItemReferId());
                     if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT.equals(statementOrderDetail.getOrderItemType())) {
@@ -933,7 +933,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         }
                     }
-                    //为退还物料时
+                    //为换物料时
                     if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL.equals(statementOrderDetail.getOrderItemType())) {
                         if (k3ChangeOrderDetailDO != null) {
                             String orderItemId = k3ChangeOrderDetailDO.getOrderItemId();
@@ -945,7 +945,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         }
                     }
-                    //为其他费用时
+                    //为换货其他费用时
                     if (OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
                         if (k3ChangeOrderDO != null) {
                             statementOrderDetail.setOrderNo(k3ChangeOrderDO.getChangeOrderNo());
