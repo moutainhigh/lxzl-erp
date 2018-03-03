@@ -635,7 +635,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ChangeOrderDO.getChangeOrderStatus())) {
+        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ChangeOrderDO.getChangeOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE);
             return result;
         }
