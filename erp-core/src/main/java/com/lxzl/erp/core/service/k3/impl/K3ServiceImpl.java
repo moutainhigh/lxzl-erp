@@ -573,7 +573,7 @@ public class K3ServiceImpl implements K3Service {
             return result;
         }
         K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder, K3ChangeOrderDO.class);
-        k3ChangeOrderDO.setChangeOrderNo(UUIDUtil.getUUID());
+        k3ChangeOrderDO.setChangeOrderNo("LXK3RO" + DateUtil.formatDate(now, "yyyyMMddHHmmssSSS"));
         k3ChangeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT);
         k3ChangeOrderDO.setCreateTime(now);

@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
@@ -54,6 +55,12 @@ public class StatementController extends BaseController {
     @RequestMapping(value = "createK3StatementOrder", method = RequestMethod.POST)
     public Result createNewOrderStatement(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, BigDecimal> serviceResult = statementService.createK3OrderStatement(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "createK3ReturnOrderStatement", method = RequestMethod.POST)
+    public Result createK3ReturnOrderStatement(@RequestBody K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
