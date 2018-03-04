@@ -2235,14 +2235,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     String verifyOrderShortRentReceivable(CustomerDO customerDO, OrderDO orderDO) {
+
+        Integer subCompanyId = orderDO.getOrderSubCompanyId();
+
         BigDecimal customerTotalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
         //分公司的应收短期上线
-        BigDecimal subCompanyTotalShortRentReceivable = statementOrderSupport.getSubCompanyShortRentReceivable(customerDO.getOwnerSubCompanyId());
+        BigDecimal subCompanyTotalShortRentReceivable = statementOrderSupport.getSubCompanyShortRentReceivable(subCompanyId);
         if (BigDecimalUtil.compare(subCompanyTotalShortRentReceivable, BigDecimal.ZERO) < 0) {
             return ErrorCode.SHORT_RECEIVABLE_CALCULATE_FAIL;
         }
         //得到分公司设置的短期上线
-        Integer subCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
         SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
         BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
         BigDecimal subCompanyShortLimitReceivableAmount = subCompanyDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : subCompanyDO.getShortLimitReceivableAmount();
