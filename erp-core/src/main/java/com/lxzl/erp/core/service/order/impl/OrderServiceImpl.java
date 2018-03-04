@@ -215,6 +215,12 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+
+        String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
+        if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
+            result.setErrorCode(verifyOrderShortRentReceivableResult);
+            return result;
+        }
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             int oldProductCount = 0, newProductCount = 0;
             Map<Integer, Integer> productNewStockMap = new HashMap<>();
@@ -330,12 +336,6 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
                 return result;
             }
-        }
-
-        String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
-        if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
-            result.setErrorCode(verifyOrderShortRentReceivableResult);
-            return result;
         }
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);

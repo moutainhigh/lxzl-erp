@@ -126,7 +126,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-1000-20180304-00031");
-        customer.setOwner(500026);
+        customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
 //        customer.setIsDefaultConsignAddress(1);
@@ -161,7 +161,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customerCompany.setCustomerOrigin(1);
         customerCompany.setIndustry("3");
-        customerCompany.setCompanyName("楚汉文化");
+        customerCompany.setCompanyName("齐跑文化");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
@@ -269,16 +269,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180304-00032");
+        customer.setCustomerNo("LXCD-1000-20180304-00032");
         customer.setOwner(500025);
         customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(1000));
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setConnectRealName("update测试个人用户紧急联系人姓名");
+        customerPerson.setConnectRealName("赵二天");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("叶良辰666");
+        customerPerson.setRealName("武神么");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("update个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
@@ -322,7 +322,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void pageCustomerPerson() throws Exception {
         CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
         customerPersonQueryParam.setPageNo(1);
-        customerPersonQueryParam.setPageSize(15);
+        customerPersonQueryParam.setPageSize(5);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
