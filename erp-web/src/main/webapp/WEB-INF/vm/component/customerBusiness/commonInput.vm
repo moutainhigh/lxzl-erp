@@ -40,7 +40,7 @@
                         <label for="customerOrigin" class="field-label">联合开发人</label>
                         <div class="smart-widget sm-right smr-50">
                             <label class="field prepend-icon">
-                                <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly />
+                                <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly placeholder=" 请选择联合开发人" />
                                 <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
                             </label>
                             <button type="button" class="button btn-primary bradiusN" id="deleteUnionUserName" style="right:50px;"> <i class="fa fa-trash-o"></i></button>
