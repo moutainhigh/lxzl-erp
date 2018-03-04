@@ -693,13 +693,13 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerCompanyDO.getOfficeNumber() == null) {
                 errorCodeMsg.append("办公人数，");
             }
-            if (StringUtil.isNotBlank(customerCompanyDO.getConnectRealName())) {
+            if (StringUtil.isBlank(customerCompanyDO.getConnectRealName())) {
                 errorCodeMsg.append("紧急联系人，");
             }
-            if (StringUtil.isNotBlank(customerCompanyDO.getConnectPhone())) {
+            if (StringUtil.isBlank(customerCompanyDO.getConnectPhone())) {
                 errorCodeMsg.append("紧急联系人手机号，");
             }
-            if (StringUtil.isNotBlank(customerCompanyDO.getAddress())) {
+            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
                 errorCodeMsg.append("公司经营地址，");
             }
             if (customerCompanyDO.getIsLegalPersonApple() == null) {
