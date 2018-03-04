@@ -24,6 +24,7 @@ public class CustomerDO  extends BaseDO {
     private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
 	private Integer deliveryMode; //发货方式，1快递，2自提,3凌雄配送'
 	private Integer ownerSubCompanyId; //业务员所属分公司ID
+	private String ownerSubCompanyName; //业务员所属分公司名称
 
 	private BigDecimal firstApplyAmount;		// 首期申请额度
 	private BigDecimal laterApplyAmount;		// 后期申请额度
@@ -46,7 +47,6 @@ public class CustomerDO  extends BaseDO {
 
 	private Integer isDefaultConsignAddress; //是否以地址作为收货地址,1是，0否
 
-	private String ownerSubCompanyName; //业务员所属分公司名称
 
 	public Integer getId(){
 		return id;
