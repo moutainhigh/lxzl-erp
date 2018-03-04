@@ -39,6 +39,18 @@
         WHERE esc.id = #{id, jdbcType=INTEGER} AND esc.data_status = 1
     </select>
 
+    <select id="findBySubCompanyCode" resultMap="SubCompanyDO" parameterType="java.lang.String">
+        SELECT <include refid="column_List"/>
+        <trim prefix=",">
+            eap.province_name AS province_name, eac.city_name AS city_name, ead.district_name AS district_name
+        </trim>
+        FROM erp_sub_company esc
+        LEFT JOIN erp_area_province eap ON eap.id = esc.province
+        LEFT JOIN erp_area_city eac ON eac.id = esc.city
+        LEFT JOIN erp_area_district ead ON ead.id = esc.district
+        WHERE esc.sub_company_code = #{subCompanyCode, jdbcType=VARCHAR} AND esc.data_status = 1
+    </select>
+
     <sql id="set_column_sql">
         <set>
             <if test="subCompanyName != null">

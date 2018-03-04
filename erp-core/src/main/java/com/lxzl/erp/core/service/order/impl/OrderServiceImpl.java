@@ -730,6 +730,14 @@ public class OrderServiceImpl implements OrderService {
                 return false;
             }
             if (verifyResult) {
+                CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
+                // 审核通过时，对当前订单做短租应收额度校验
+                String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
+                if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return false;
+                }
+
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
                 // 只有审批通过的订单才生成结算单
                 ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderDO.getOrderNo());

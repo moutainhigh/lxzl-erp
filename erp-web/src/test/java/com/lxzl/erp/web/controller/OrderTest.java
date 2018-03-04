@@ -131,7 +131,7 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180304-704187-00001");
+        order.setOrderNo("LXO-20180304-731819-00042");
         order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }

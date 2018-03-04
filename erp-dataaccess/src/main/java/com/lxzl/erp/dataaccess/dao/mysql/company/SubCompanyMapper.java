@@ -13,4 +13,6 @@ public interface SubCompanyMapper extends BaseMysqlDAO<SubCompanyDO> {
     List<SubCompanyDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    SubCompanyDO findBySubCompanyCode(@Param("subCompanyCode") String subCompanyCode);
 }

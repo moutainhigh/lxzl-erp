@@ -144,6 +144,9 @@
         <mapper resource="sqlmap/erp_k3_return_order_detail.xml" />
         <mapper resource="sqlmap/erp_k3_change_order.xml" />
         <mapper resource="sqlmap/erp_k3_change_order_detail.xml" />
+        <mapper resource="sqlmap/erp_delivery_order.xml" />
+        <mapper resource="sqlmap/erp_delivery_order_product.xml" />
+        <mapper resource="sqlmap/erp_delivery_order_material.xml" />
     </mappers>
 
 </configuration>

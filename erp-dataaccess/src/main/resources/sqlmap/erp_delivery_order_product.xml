@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderProductMapper">
+
+	<resultMap id="DeliveryOrderProductDO" type="com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="delivery_order_id" jdbcType="INTEGER" property="deliveryOrderId" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="delivery_product_sku_count" jdbcType="INTEGER" property="deliveryProductSkuCount" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		edop.id,edop.delivery_order_id,edop.order_product_id,edop.product_id,edop.product_sku_id,edop.delivery_product_sku_count,edop.is_new,edop.data_status,edop.remark,edop.create_time,edop.create_user,edop.update_time,edop.update_user
+	</sql>
+
+	<select id="findById" resultMap="DeliveryOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_delivery_order_product edop 
+		WHERE edop.id = #{id, jdbcType=INTEGER} AND edop.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(edop.id) FROM erp_delivery_order_product edop 
+		<where>
+			<if test="true">
+				AND edop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="DeliveryOrderProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_delivery_order_product edop 
+		<where>
+			<if test="true">
+				AND edop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="deliveryOrderId != null">
+				delivery_order_id = #{deliveryOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="deliveryProductSkuCount != null">
+				delivery_product_sku_count = #{deliveryProductSkuCount,jdbcType=INTEGER},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO">
+		INSERT INTO erp_delivery_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO">
+		UPDATE erp_delivery_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

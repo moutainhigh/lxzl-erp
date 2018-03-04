@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.pojo.callback.K3DeliveryOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -27,8 +28,8 @@ public class K3CallbackController extends BaseController {
 
 
     @RequestMapping(value = "receiveDeliveryInfo", method = RequestMethod.POST)
-    public Result receiveDeliveryInfo(@RequestBody K3DeliveryOrder param, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = k3CallbackService.callbackDelivery(param);
+    public Result receiveDeliveryInfo(@RequestBody DeliveryOrder deliveryOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3CallbackService.callbackDelivery(deliveryOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

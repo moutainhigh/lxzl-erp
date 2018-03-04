@@ -1305,6 +1305,57 @@ CREATE TABLE `erp_order_time_axis` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单时间轴表';
 
+DROP TABLE if exists `erp_delivery_order`;
+CREATE TABLE `erp_delivery_order` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `delivery_user` varchar(20) NOT NULL DEFAULT '' COMMENT '发货人',
+  `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
+  `sub_company_id` int(20) COMMENT '分公司ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单发货单';
+
+DROP TABLE if exists `erp_delivery_order_product`;
+CREATE TABLE `erp_delivery_order_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `delivery_order_id` int(20) NOT NULL COMMENT '发货单ID',
+  `order_product_id` int(20) NOT NULL COMMENT '订单项ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_sku_id` int(20) NOT NULL  COMMENT '发货SKU',
+  `delivery_product_sku_count` int(11) NOT NULL COMMENT '发货数量',
+  `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否全新，1是，0否',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='发货单商品项表';
+
+DROP TABLE if exists `erp_delivery_order_material`;
+CREATE TABLE `erp_delivery_order_material` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `delivery_order_id` int(20) NOT NULL COMMENT '发货单ID',
+  `order_material_id` int(20) NOT NULL COMMENT '订单项ID',
+  `material_id` int(20) NOT NULL  COMMENT '发货SKU',
+  `delivery_material_count` int(11) NOT NULL COMMENT '发货数量',
+  `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否全新，1是，0否',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='发货单配件项表';
+
 -- -------------------------------------货物调拨单（库房间调拨）-------------------------------------------------
 DROP TABLE if exists `erp_deployment_order`;
 CREATE TABLE `erp_deployment_order` (

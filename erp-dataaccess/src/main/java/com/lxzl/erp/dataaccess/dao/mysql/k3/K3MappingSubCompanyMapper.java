@@ -14,4 +14,5 @@ public interface K3MappingSubCompanyMapper extends BaseMysqlDAO<K3MappingSubComp
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
 	K3MappingSubCompanyDO findByErpCode(@Param("erpCode") String erpCode);
+	K3MappingSubCompanyDO findByK3Code(@Param("k3Code") String k3Code);
 }
