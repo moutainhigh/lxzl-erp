@@ -66,10 +66,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt>创建人：</dt><dd class="mb5">{{createUser}}&nbsp;</dd>
+                                        <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
                                         <dt>创建时间：</dt><dd class="mb5">{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                        <dt>修改人：</dt><dd class="text-danger mb5">{{updateUser}}&nbsp;</dd>
-                                        <dt>修改时间：</dt><dd class="text-danger mb5">{{#time}}{{updateTime}}{{/time}}&nbsp;</dd>
                                     </dl>
                                 </div>
                             </div>
