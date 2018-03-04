@@ -100,12 +100,23 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
+        //判断业务员和联合开发员
+        serviceResult = judgeUserOwnerAndUnion(customer);
+        serviceResult.setErrorCode(serviceResult.getErrorCode());
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            return serviceResult;
+        }
+
         CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
         if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
+
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
+        //保存业务员所属分公司
+        Integer ownerSubCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
+        customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
@@ -120,12 +131,6 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUnionUser(customer.getUnionUser());
         customerMapper.save(customerDO);
 
-        //判断业务员和联合开发员
-        serviceResult = judgeUserOwnerAndUnion(customer);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
-            return serviceResult;
-        }
 
         //用于记录客户所需设备的计算结果
         ServiceResult<String,BigDecimal> setServiceResult = new ServiceResult<>();
@@ -195,7 +200,17 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
+        //判断业务员和联合开发员
+        serviceResult = judgeUserOwnerAndUnion(customer);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode());
+            return serviceResult;
+        }
+
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
+        //保存业务员所属分公司
+        Integer ownerSubCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
+        customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_PERSON));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
@@ -207,12 +222,6 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
-        //判断业务员和联合开发员
-        serviceResult = judgeUserOwnerAndUnion(customer);
-        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-            serviceResult.setErrorCode(serviceResult.getErrorCode());
-            return serviceResult;
-        }
         customerDO.setOwner(customer.getOwner());
         customerDO.setUnionUser(customer.getUnionUser());
         customerMapper.save(customerDO);
@@ -503,6 +512,9 @@ public class CustomerServiceImpl implements CustomerService {
         //更改发货方式
         customerDO.setDeliveryMode(customer.getDeliveryMode());
 
+        //更改业务员所属分公司ID
+        Integer ownerSubCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
+        customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
@@ -569,7 +581,10 @@ public class CustomerServiceImpl implements CustomerService {
         //更改短租应收上限
         customerDO.setShortLimitReceivableAmount(customer.getShortLimitReceivableAmount());
         //更改发货方式
-//        customerDO.setDeliveryMode(customer.getDeliveryMode());
+        //customerDO.setDeliveryMode(customer.getDeliveryMode());
+        //更改业务员所属分公司ID
+        Integer ownerSubCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
+        customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
 
         customerDO.setIsDisabled(null);
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());

@@ -53,16 +53,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("飞时文化");
+        customerCompany.setCompanyName("齐跑文化");
         customerCompany.setIndustry("2");
-        customerCompany.setIsLegalPersonApple(1);
+        customerCompany.setIsLegalPersonApple(0);
 //        customerCompany.setConnectRealName("测试紧急联系人");
 //        customerCompany.setConnectPhone("18566324590");
 //        customerCompany.setAddress("彭企业信息详细地址测试103");
 //        customerCompany.setProductPurpose("测试设备用途");
 //        customerCompany.setIndustry("2");
 //        customerCompany.setRemark("记住这是公司的备注不是客户的备注");
-        customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
+//        customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 //        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 //        customerCompany.setIsLegalPersonApple(1);
         customerCompany.setAgentPersonPhone("18566324595");
@@ -98,7 +98,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
-        Thread.sleep(1000000);
+        Thread.sleep(100000);
     }
 
 
@@ -115,7 +115,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerPerson.setPersonNo("422827999857463210");
         customerPerson.setConnectRealName("赵二天");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("砰砰小兵");
+        customerPerson.setRealName("武神么");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
@@ -125,8 +125,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180301-00002");
-        customer.setOwner(500021);
+        customer.setCustomerNo("LXCC-1000-20180304-00031");
+        customer.setOwner(500026);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
 //        customer.setIsDefaultConsignAddress(1);
@@ -269,7 +269,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD-1000-20180127-00058");
+        customer.setCustomerNo("LXCC-1000-20180304-00032");
         customer.setOwner(500025);
         customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
@@ -346,7 +346,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180304-00029");
+        customer.setCustomerNo("LXCC-1000-20180304-00031");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -354,14 +354,14 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180211-00060");
+        customer.setCustomerNo("LXCC-1000-20180304-00029");
         TestResult result = getJsonTestResult("/customer/detailCustomer", customer);
     }
 
     @Test
     public void detailCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD-1000-20180302-00014");
+        customer.setCustomerNo("LXCD-1000-20180304-00032");
         TestResult result = getJsonTestResult("/customer/detailCustomerPerson", customer);
     }
 

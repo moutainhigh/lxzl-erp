@@ -164,6 +164,7 @@
 		SELECT <include refid="column_List"/> FROM erp_customer ec
 		WHERE ec.customer_name = #{customerName, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
+
 	<select id="findCustomerCompanyByNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="company_column_List"/>,<include refid="risk_column_List"/>
 		,eap.province_name AS provinceName
@@ -171,6 +172,7 @@
 		,ead.district_name AS districtName
 		,union_user.real_name AS unionUserName
 		,owner_user.real_name AS ownerName
+		,esc.sub_company_name AS ownerSubCompanyName
 		FROM erp_customer ec
 		LEFT JOIN erp_customer_company ecc ON ec.id=ecc.customer_id AND ec.customer_type=1 AND ecc.data_status=1
 		LEFT JOIN erp_area_province eap ON ecc.province=eap.id AND eap.data_status=1
@@ -179,8 +181,10 @@
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id AND ecrm.data_status=1
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
+
 	<select id="findCustomerPersonByNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>,<include refid="risk_column_List"/>
 		,eap.province_name AS provinceName
@@ -188,6 +192,7 @@
 		,ead.district_name AS districtName
 		,union_user.real_name AS unionUserName
 		,owner_user.real_name AS ownerName
+		,sub_company_name AS owneSubCompanyName
 		FROM erp_customer ec
 		LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ec.customer_type=2 AND ecp.data_status=1
 		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
@@ -196,6 +201,7 @@
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id AND ecrm.data_status=1
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.owner_sub_company_id AND esc.data_status = 1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 
@@ -343,13 +349,13 @@
 
 	</select>
 	<select id="findCustomerCompanyByParams" resultMap="CustomerDO" parameterType="map">
-
 		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
 		,union_user.real_name AS unionUserName
-		,owner_user.real_name AS ownerName FROM
-		(
+		,owner_user.real_name AS ownerName
+		,sub_company_name AS owneSubCompanyName
+		FROM (
 		SELECT <include refid="company_column_List"/>
 		FROM erp_customer_company ecc
 		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
@@ -395,8 +401,10 @@
 		LEFT JOIN erp_area_district ead ON ecc.ecc_district=ead.id AND ead.data_status=1
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
 		ORDER BY ecc.ecc_create_time DESC
 	</select>
+
 
 	<select id="findCustomerPersonCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT COUNT(*)
@@ -441,20 +449,19 @@
 			<include refid="permission_sql.customer_control"/>
 		</where>
 	</select>
-	<select id="findCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
 
+	<select id="findCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
 		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
 		,union_user.real_name AS unionUserName
 		,owner_user.real_name AS ownerName
-		FROM erp_customer ec LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.data_status=1
-		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
-		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
-		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
-		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
-		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
+		,sub_company_name AS owneSubCompanyName
+		FROM (
+		SELECT <include refid="person_column_List"/>
+		FROM erp_customer_person ecp
+		erp_customer ec LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.data_status=1
 		<where>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
 				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
@@ -496,6 +503,14 @@
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
-
+		) ecp
+		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
+		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
+		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
+		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
+		ORDER BY ecp.ecp_create_time DESC
 	</select>
+
 </mapper>
