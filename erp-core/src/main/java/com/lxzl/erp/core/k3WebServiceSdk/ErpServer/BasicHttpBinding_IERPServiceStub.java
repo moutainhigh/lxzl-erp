@@ -161,6 +161,15 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ArrayOfResultData");
+            cachedSerQNames.add(qName);
+            cls = ResultData[].class;
+            cachedSerClasses.add(cls);
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ResultData");
+            qName2 = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ResultData");
+            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+
             qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "FormICItem");
             cachedSerQNames.add(qName);
             cls = FormICItem.class;
@@ -220,6 +229,13 @@ public class BasicHttpBinding_IERPServiceStub extends org.apache.axis.client.Stu
             qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ItemNumber");
             cachedSerQNames.add(qName);
             cls = ItemNumber.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ResultData");
+            cachedSerQNames.add(qName);
+            cls = ResultData.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
