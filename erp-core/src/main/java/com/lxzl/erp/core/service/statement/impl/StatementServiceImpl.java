@@ -70,6 +70,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -1846,7 +1847,7 @@ public class StatementServiceImpl implements StatementService {
                             newStatementOrderDetailDO.setOrderItemType(orderItemType);
                             newStatementOrderDetailDO.setOrderItemReferId(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
                             newStatementOrderDetailDO.setStatementStartTime(k3ChangeOrderDO.getChangeTime());
-                            newStatementOrderDetailDO.setStatementExpectPayTime(k3ChangeOrderDO.getChangeTime());
+                            newStatementOrderDetailDO.setStatementExpectPayTime(com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(k3ChangeOrderDO.getChangeTime()));
                             newStatementOrderDetailDO.setStatementEndTime(k3ChangeOrderDO.getChangeTime());
                             newStatementOrderDetailDO.setStatementDetailPhase(0);
                             newStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
@@ -2461,7 +2462,9 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO = new StatementOrderDO();
                     statementOrderDO.setStatementOrderNo(generateNoSupport.generateStatementOrderNo(dateKey, statementOrderDetailDO.getCustomerId()));
                     statementOrderDO.setCustomerId(statementOrderDetailDO.getCustomerId());
-                    statementOrderDO.setStatementExpectPayTime(dateKey);
+                    if(dateKey != null){
+                        statementOrderDO.setStatementExpectPayTime(com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(dateKey));
+                    }
                     statementOrderDO.setStatementAmount(statementOrderDetailDO.getStatementDetailAmount());
                     statementOrderDO.setStatementRentDepositAmount(statementOrderDetailDO.getStatementDetailRentDepositAmount());
                     statementOrderDO.setStatementDepositAmount(statementOrderDetailDO.getStatementDetailDepositAmount());
@@ -2682,7 +2685,7 @@ public class StatementServiceImpl implements StatementService {
         statementOrderDetailDO.setOrderId(orderId);
         statementOrderDetailDO.setOrderItemType(orderItemType);
         statementOrderDetailDO.setOrderItemReferId(orderItemReferId);
-        statementOrderDetailDO.setStatementExpectPayTime(statementExpectPayTime);
+        statementOrderDetailDO.setStatementExpectPayTime(com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementExpectPayTime));
         statementOrderDetailDO.setStatementStartTime(startTime);
         statementOrderDetailDO.setStatementEndTime(endTime);
         statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(statementDetailRentDepositAmount, statementDetailDepositAmount), statementDetailRentAmount), otherAmount));
