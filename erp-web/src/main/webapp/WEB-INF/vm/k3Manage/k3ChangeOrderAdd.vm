@@ -177,7 +177,7 @@
                                             </td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs chooseChangeProduct"
+                                                    <a href="#" type="button" class="btn btn-default btn-xs {{chooseButtonClass}}"
                                                        data-orderItemId="{{orderItemId}}"
                                                        data-productno="{{productNo}}"
                                                        data-productid="{{productId}}"
