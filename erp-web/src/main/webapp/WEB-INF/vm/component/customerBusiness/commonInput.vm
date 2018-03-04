@@ -677,7 +677,7 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    {{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}
+                                                    {{#isNewValueBadge}}{{isNewProductValue}}{{/isNewValueBadge}}
                                                     {{productName}}
                                                 </td>
                                                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
@@ -687,7 +687,7 @@
                                                     <input type="hidden" name="unitPrice" value="{{currentSkuPrice}}" />
                                                 </td>
                                                 <td>
-                                                    <input type="hidden" name="isNewProduct" value="{{isNewIntValue}}" class="isNewProduct" />
+                                                    <input type="hidden" name="isNewProduct" value="{{isNewProductValue}}" class="isNewProduct" />
                                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                     <label class="field prepend-icon" style="max-width:160px">
@@ -764,7 +764,7 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    {{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}
+                                                    {{#isNewValueBadge}}{{isNewProductValue}}{{/isNewValueBadge}}
                                                     {{productName}}
                                                 </td>
                                                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
@@ -774,7 +774,7 @@
                                                     <input type="hidden" name="unitPrice" value="{{currentSkuPrice}}" />
                                                 </td>
                                                 <td>
-                                                    <input type="hidden" name="isNewProduct" value="{{isNewIntValue" class="isNewProduct" />
+                                                    <input type="hidden" name="isNewProduct" value="{{isNewProductValue}}" class="isNewProduct" />
                                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                                     <label class="field prepend-icon" style="max-width:160px">
