@@ -374,6 +374,25 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerCompanyDO.setId(customerCompanyDO.getId());
         customerCompanyMapper.update(newCustomerCompanyDO);
 
+        //对经办人身份证正面操作
+        List<Image> agentPersonNoPictureFrontImageList = new ArrayList<>();
+        agentPersonNoPictureFrontImageList.add(customerCompany.getAgentPersonNoPictureFrontImage());
+        serviceResult = updateImage(agentPersonNoPictureFrontImageList, ImgType.AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
+        }
+
+        //对经办人身份证反面操作
+        List<Image> agentPersonNoPictureBackImageList = new ArrayList<>();
+        agentPersonNoPictureBackImageList.add(customerCompany.getAgentPersonNoPictureBackImage());
+        serviceResult = updateImage(agentPersonNoPictureBackImageList, ImgType.AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
+        }
+
+
         //对营业执照图片操作
         List<Image> businessLicensePictureImageList = new ArrayList<>();
         businessLicensePictureImageList.add(customerCompany.getBusinessLicensePictureImage());
@@ -877,6 +896,20 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //开始加入附件
+        //加入经办人身份证正面照片
+        List<ImageDO> agentPersonNoPictureFrontImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+        if (CollectionUtil.isNotEmpty(agentPersonNoPictureFrontImageList)) {
+            Image agentPersonNoPictureFrontImage = ConverterUtil.convert(agentPersonNoPictureFrontImageList.get(0), Image.class);
+            customerResult.getCustomerCompany().setAgentPersonNoPictureFrontImage(agentPersonNoPictureFrontImage);
+        }
+
+        //加入经办人身份证反面照片
+        List<ImageDO> agentPersonNoPictureBackImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+        if (CollectionUtil.isNotEmpty(agentPersonNoPictureBackImageList)) {
+            Image agentPersonNoPictureBackImage = ConverterUtil.convert(agentPersonNoPictureBackImageList.get(0), Image.class);
+            customerResult.getCustomerCompany().setAgentPersonNoPictureBackImage(agentPersonNoPictureBackImage);
+        }
+
         //加入营业执照
         List<ImageDO> businessLicensePictureImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(businessLicensePictureImageList)) {
@@ -1529,6 +1562,43 @@ public class CustomerServiceImpl implements CustomerService {
 
     private ServiceResult<String, String> saveImage(Customer customer, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        //对经办人身份证正面操作
+        if (customer.getCustomerCompany().getAgentPersonNoPictureFrontImage() != null) {
+            ImageDO agentPersonNoPictureFrontImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getAgentPersonNoPictureFrontImage().getImgId());
+            if (agentPersonNoPictureFrontImageDO == null) {
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
+                return serviceResult;
+            }
+            if (StringUtil.isNotEmpty(agentPersonNoPictureFrontImageDO.getRefId())) {
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, agentPersonNoPictureFrontImageDO.getId());
+                return serviceResult;
+            }
+            agentPersonNoPictureFrontImageDO.setImgType(ImgType.AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+            agentPersonNoPictureFrontImageDO.setRefId(customer.getCustomerId().toString());
+            agentPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            agentPersonNoPictureFrontImageDO.setUpdateTime(now);
+            imgMysqlMapper.update(agentPersonNoPictureFrontImageDO);
+        }
+
+        //对经办人身份证反面操作
+        if (customer.getCustomerCompany().getAgentPersonNoPictureBackImage() != null) {
+            ImageDO agentPersonNoPictureBackImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getAgentPersonNoPictureBackImage().getImgId());
+            if (agentPersonNoPictureBackImageDO == null) {
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
+                return serviceResult;
+            }
+            if (StringUtil.isNotEmpty(agentPersonNoPictureBackImageDO.getRefId())) {
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, agentPersonNoPictureBackImageDO.getId());
+                return serviceResult;
+            }
+            agentPersonNoPictureBackImageDO.setImgType(ImgType.AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+            agentPersonNoPictureBackImageDO.setRefId(customer.getCustomerId().toString());
+            agentPersonNoPictureBackImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            agentPersonNoPictureBackImageDO.setUpdateTime(now);
+            imgMysqlMapper.update(agentPersonNoPictureBackImageDO);
+        }
+
 
         //对营业执照图片操作
         if (customer.getCustomerCompany().getBusinessLicensePictureImage() != null) {

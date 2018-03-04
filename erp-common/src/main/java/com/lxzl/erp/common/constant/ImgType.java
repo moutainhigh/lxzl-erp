@@ -25,5 +25,6 @@ public class ImgType {
     public static final Integer LOCALE_CHECKLISTS_IMG_TYPE = 12;
     public static final Integer OTHER_DATE_IMG_TYPE = 13;
     public static final Integer WORKFLOW_IMG_TYPE = 14;
-
+    public static final Integer AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE = 15;
+    public static final Integer AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE = 16;
 }

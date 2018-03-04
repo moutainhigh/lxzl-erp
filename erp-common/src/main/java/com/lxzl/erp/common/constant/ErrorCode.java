@@ -567,6 +567,8 @@ public class ErrorCode {
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
     public static final String IMG_REF_ID_HAD_VALUE = "J1100032";
     public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
+    public static final String AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100034";
+    public static final String AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100035";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -1239,6 +1241,9 @@ public class ErrorCode {
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
         MAP.put(IMG_REF_ID_HAD_VALUE, "编号【%s 】的图片已经关联了客户，请重新选择图片");
         MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
+        MAP.put(AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "经办人身份证正面不能为空");
+        MAP.put(AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "经办人身份证反面面不能为空");
+
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
         MAP.put(TRANSFER_ORDER_ID_NOT_NULL, "转移单ID不能为空");

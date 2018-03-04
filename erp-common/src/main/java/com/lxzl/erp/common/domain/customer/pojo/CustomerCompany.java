@@ -85,6 +85,12 @@ public class CustomerCompany extends BasePO {
     private String districtName; //地区名
 
     @Valid
+    private Image agentPersonNoPictureFrontImage;//经办人身份证正面
+    @Valid
+    private Image agentPersonNoPictureBackImage;//经办人身份证反面
+
+
+    @Valid
 //    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Image businessLicensePictureImage;//营业执照
     @Valid
@@ -570,5 +576,21 @@ public class CustomerCompany extends BasePO {
 
     public void setLaterListTotalPrice(BigDecimal laterListTotalPrice) {
         this.laterListTotalPrice = laterListTotalPrice;
+    }
+
+    public Image getAgentPersonNoPictureFrontImage() {
+        return agentPersonNoPictureFrontImage;
+    }
+
+    public void setAgentPersonNoPictureFrontImage(Image agentPersonNoPictureFrontImage) {
+        this.agentPersonNoPictureFrontImage = agentPersonNoPictureFrontImage;
+    }
+
+    public Image getAgentPersonNoPictureBackImage() {
+        return agentPersonNoPictureBackImage;
+    }
+
+    public void setAgentPersonNoPictureBackImage(Image agentPersonNoPictureBackImage) {
+        this.agentPersonNoPictureBackImage = agentPersonNoPictureBackImage;
     }
 }
