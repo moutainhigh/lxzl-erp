@@ -517,18 +517,18 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date now = new Date();
 
             PeerDeploymentOrderDO peerDeploymentOrderDO = peerDeploymentOrderMapper.findByPeerDeploymentOrderNo(businessNo);
             if (peerDeploymentOrderDO == null) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             //不是审核中状态的同行调拨单，拒绝处理
             if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())
                     && !PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING_OUT.equals(peerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
 
             if (verifyResult) {
@@ -558,12 +558,12 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             peerDeploymentOrderDO.setUpdateTime(new Date());
             peerDeploymentOrderMapper.update(peerDeploymentOrderDO);
 
-            return true;
+            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("【同行调拨单审核，业务处理异常】", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             logger.error("【数据已回滚】");
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
     }
 

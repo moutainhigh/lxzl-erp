@@ -152,8 +152,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     return serviceResult;
                 }
             } else {
-                boolean result = receiveVerifyResult(true, statementOrderCorrectParam.getStatementCorrectNo());
-                if (!result) {
+                String code = receiveVerifyResult(true, statementOrderCorrectParam.getStatementCorrectNo());
+                if (!ErrorCode.SUCCESS.equals(code)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_CORRECT_FAIL);
                     return serviceResult;
@@ -390,37 +390,37 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         //校验结算冲正单是否存在记录和是否是已结算状态
         Date currentTime = new Date();
         StatementOrderCorrectDO statementOrderCorrectDO = statementOrderCorrectMapper.findByNo(businessNo);
         ServiceResult<String, String> serviceResult = commitVerify(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
         if (statementOrderCorrectDO == null || !StatementOrderCorrectStatus.VERIFY_STATUS_COMMIT.equals(statementOrderCorrectDO.getStatementOrderCorrectStatus())) {
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
         //校验结算单是否存在记录和是否是已结算状态
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderCorrectDO.getStatementOrderId());
         if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus()) || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
         //校验结算单项是否存在
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderIdAndItemReferId(statementOrderCorrectDO.getStatementOrderItemId(), statementOrderDO.getId());
         if (CollectionUtil.isEmpty(statementOrderDetailDOList)) {
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
         if (verifyResult) {
             BigDecimal statementCorrectAmount = statementOrderCorrectDO.getStatementCorrectAmount();
             if (BigDecimalUtil.compare(statementCorrectAmount, BigDecimal.ZERO) < 0) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
 
             //判断每次跟新是否超出
             ServiceResult<String, String> result = commitVerify(ConverterUtil.convert(statementOrderCorrectDO, StatementOrderCorrect.class));
             if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             String rentTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + "-" + statementOrderCorrectDO.getStatementOrderReferId() + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
             String rentDepositTypeAmountKey = statementOrderCorrectDO.getStatementOrderId() + statementOrderCorrectDO.getStatementOrderReferId() + "-" + "-" + StatementCorrectAmountType.AMOUNT_TYPE_RENT_DEPOSIT + "-" + statementOrderCorrectDO.getStatementOrderItemId();
@@ -473,7 +473,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     BigDecimal statementDetailOtherAmount = BigDecimalUtil.sub(realStatementDetailOtherAmount, statementCorrectOtherAmount);
                     if (BigDecimalUtil.compare(statementDetailOtherAmount, BigDecimal.ZERO) < 0) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
+                        return ErrorCode.BUSINESS_EXCEPTION;
                     }
                     thisCorrectBusinessDetailAmount = statementCorrectOtherAmount;
                 } else if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())) {
@@ -482,7 +482,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     BigDecimal statementDetailRentAmount = BigDecimalUtil.sub(realStatementDetailRentAmount, statementCorrectRentAmount);
                     if (BigDecimalUtil.compare(statementDetailRentAmount, BigDecimal.ZERO) < 0) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
+                        return ErrorCode.BUSINESS_EXCEPTION;
                     }
                     thisCorrectBusinessDetailAmount = statementCorrectRentAmount;
                 } else if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
@@ -496,11 +496,11 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                     BigDecimal statementDetailDepositAmount = BigDecimalUtil.sub(realStatementDetailDepositAmount, statementCorrectDepositAmount);
                     if (BigDecimalUtil.compare(statementDetailDepositAmount, BigDecimal.ZERO) < 0) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
+                        return ErrorCode.BUSINESS_EXCEPTION;
                     }
                     if (BigDecimalUtil.compare(statementDetailRentDepositAmount, BigDecimal.ZERO) < 0) {
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return false;
+                        return ErrorCode.BUSINESS_EXCEPTION;
                     }
                     thisCorrectBusinessDetailAmount = BigDecimalUtil.add(statementCorrectRentDepositAmount, statementCorrectDepositAmount);
                 }
@@ -552,7 +552,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
                 // 逾期金额如果冲多了，就要回滚
                 if (BigDecimalUtil.compare(statementCorrectOverdueAmount, BigDecimal.ZERO) < 0) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return false;
+                    return ErrorCode.BUSINESS_EXCEPTION;
                 }
             }
 
@@ -579,12 +579,12 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             }
             statementOrderDO.setStatementCorrectAmount(thisCorrectAllAmount);
             statementOrderMapper.update(statementOrderDO);
-            return true;
+            return ErrorCode.SUCCESS;
         } else {
             statementOrderCorrectDO.setStatementOrderCorrectStatus(StatementOrderCorrectStatus.CORRECT_FAIL);
             statementOrderCorrectDO.setStatementCorrectSuccessTime(currentTime);
             statementOrderCorrectMapper.update(statementOrderCorrectDO);
-            return true;
+            return ErrorCode.SUCCESS;
         }
     }
 

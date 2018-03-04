@@ -930,12 +930,12 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
     }
 
     @Override
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(businessNo);
         if (dbDeploymentOrderDO == null || !DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_VERIFYING.equals(dbDeploymentOrderDO.getDeploymentOrderStatus())) {
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
         if (verifyResult) {
             dbDeploymentOrderDO.setDeploymentOrderStatus(DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING);
@@ -945,7 +945,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         dbDeploymentOrderDO.setUpdateTime(currentTime);
         dbDeploymentOrderDO.setUpdateUser(loginUser.getUserId().toString());
         deploymentOrderMapper.update(dbDeploymentOrderDO);
-        return true;
+        return ErrorCode.SUCCESS;
     }
 
     @Autowired

@@ -330,8 +330,8 @@ public class OrderServiceImpl implements OrderService {
             customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
         }
         if (!isNeedVerify) {
-            boolean verifyResult = receiveVerifyResult(true, orderDO.getOrderNo());
-            if (!verifyResult) {
+            String code = receiveVerifyResult(true, orderDO.getOrderNo());
+            if (!ErrorCode.SUCCESS.equals(code)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
                 return result;
@@ -721,13 +721,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             Date currentTime = new Date();
             User loginUser = userSupport.getCurrentUser();
             OrderDO orderDO = orderMapper.findByOrderNo(businessNo);
             if (orderDO == null || !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             if (verifyResult) {
                 CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
@@ -735,7 +735,7 @@ public class OrderServiceImpl implements OrderService {
                 String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
                 if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return false;
+                    return ErrorCode.BUSINESS_EXCEPTION;
                 }
 
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
@@ -743,7 +743,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderDO.getOrderNo());
                 if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return false;
+                    return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
@@ -769,9 +769,9 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("审批订单通知失败： {} {}", businessNo, e.toString());
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
-        return true;
+        return ErrorCode.SUCCESS;
     }
 
     @Override

@@ -1804,15 +1804,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.findDetailByPurchaseNo(businessNo);
             if (purchaseOrderDO == null) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             //不是审核中状态的采购单，拒绝处理
             if (!PurchaseOrderStatus.PURCHASE_ORDER_STATUS_VERIFYING.equals(purchaseOrderDO.getPurchaseOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
 
             if (verifyResult) {
@@ -1825,17 +1825,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             purchaseOrderDO.setUpdateTime(new Date());
             purchaseOrderMapper.update(purchaseOrderDO);
 
-            return true;
+            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("【采购单审核后，业务处理异常，未生成发货单】", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             logger.error("【数据已回滚】");
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         } catch (Throwable t) {
             logger.error("【采购单审核后，业务处理异常，未生成发货单】", t);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             logger.error("【数据已回滚】");
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
     }
 

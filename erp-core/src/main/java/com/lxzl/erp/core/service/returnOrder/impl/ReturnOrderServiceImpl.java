@@ -1035,15 +1035,15 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             ReturnOrderDO returnOrderDO = returnOrderMapper.findByNo(businessNo);
             if (returnOrderDO == null) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             //不是审核中状态的退还单，拒绝处理
             if (!ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(returnOrderDO.getReturnOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             if (verifyResult) {
                 returnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_TAKEN);
@@ -1053,17 +1053,17 @@ public class ReturnOrderServiceImpl implements ReturnOrderService {
             returnOrderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
             returnOrderDO.setUpdateTime(new Date());
             returnOrderMapper.update(returnOrderDO);
-            return true;
+            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("【退还单审核业务处理异常】", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             logger.error("【数据已回滚】");
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         } catch (Throwable t) {
             logger.error("【退还单审核业务处理异常】", t);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             logger.error("【数据已回滚】");
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
     }
 

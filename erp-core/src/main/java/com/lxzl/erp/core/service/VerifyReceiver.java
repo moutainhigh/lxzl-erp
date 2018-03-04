@@ -10,7 +10,7 @@ public interface VerifyReceiver extends BaseService {
     /**
      * @param verifyResult
      * @param businessNo
-     * @return 业务处理结果
+     * @return 业务处理结果，ErrorCode
      */
-    boolean receiveVerifyResult(boolean verifyResult,String businessNo);
+    String receiveVerifyResult(boolean verifyResult,String businessNo);
 }

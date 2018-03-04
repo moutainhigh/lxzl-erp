@@ -233,11 +233,11 @@ public class RepairOrderServiceImpl implements RepairOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public boolean receiveVerifyResult(boolean verifyResult, String repairOrderNo) {
+    public String receiveVerifyResult(boolean verifyResult, String repairOrderNo) {
         try {
             RepairOrderDO repairOrderDO = repairOrderMapper.findByRepairOrderNo(repairOrderNo);
             if (repairOrderDO == null || !RepairOrderStatus.REPAIR_ORDER_STATUS_VERIFYING.equals(repairOrderDO.getRepairOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             if (verifyResult) {
                 //审核通过
@@ -248,10 +248,10 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             repairOrderDO.setUpdateTime(new Date());
             repairOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             repairOrderMapper.update(repairOrderDO);
-            return true;
+            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("审批设备维修单通知失败： {}", repairOrderNo);
-            return false;
+            return ErrorCode.SUCCESS;
         }
     }
 

@@ -887,13 +887,13 @@ public class TransferOrderServiceImpl implements TransferOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public boolean receiveVerifyResult(boolean verifyResult, String transferOrderNo) {
+    public String receiveVerifyResult(boolean verifyResult, String transferOrderNo) {
         try {
             ServiceResult<String,String> serviceResult = new ServiceResult<>();
             Date now = new Date();
             TransferOrderDO transferOrderDO = transferOrderMapper.findDetailByNo(transferOrderNo);
             if (transferOrderDO == null || !TransferOrderStatus.TRANSFER_ORDER_STATUS_VERIFYING.equals(transferOrderDO.getTransferOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             if (verifyResult) {
                 //审核通过
@@ -901,7 +901,7 @@ public class TransferOrderServiceImpl implements TransferOrderService {
                 //改变与转移单相关的设备和物料表的状态
                 serviceResult = updateTransferOrderRelevantStatus(transferOrderDO,now);
                 if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-                    return false;
+                    return ErrorCode.BUSINESS_EXCEPTION;
                 }
             } else {
                 if (TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
@@ -913,10 +913,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             transferOrderDO.setUpdateTime(new Date());
             transferOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             transferOrderMapper.update(transferOrderDO);
-            return true;
+            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("审批转移单通知失败： {}", transferOrderNo,e.toString());
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
     }
 

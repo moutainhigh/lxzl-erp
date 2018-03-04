@@ -918,14 +918,14 @@ public class K3ServiceImpl implements K3Service {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
         try {
             if (k3ChangeOrderDO != null) {//k3换货单
                 //不是审核中状态的收货单，拒绝处理
                 if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
-                    return false;
+                    return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 if (verifyResult) {
                     k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_END);
@@ -933,11 +933,11 @@ public class K3ServiceImpl implements K3Service {
                     k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT);
                 }
                 k3ChangeOrderMapper.update(k3ChangeOrderDO);
-                return true;
+                return ErrorCode.SUCCESS;
             } else if (k3ReturnOrderDO != null) {//k3退货单
                 //不是审核中状态的收货单，拒绝处理
                 if (!ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
-                    return false;
+                    return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 if (verifyResult) {
                     k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
@@ -945,9 +945,9 @@ public class K3ServiceImpl implements K3Service {
                     k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
                 }
                 k3ReturnOrderMapper.update(k3ReturnOrderDO);
-                return true;
+                return ErrorCode.SUCCESS;
             } else {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
         } catch (Exception e) {
             if (k3ChangeOrderDO != null) {
@@ -959,7 +959,7 @@ public class K3ServiceImpl implements K3Service {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 logger.error("【数据已回滚】");
             }
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
     }
 

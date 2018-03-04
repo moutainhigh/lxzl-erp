@@ -547,15 +547,15 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
-    public boolean receiveVerifyResult(boolean verifyResult, String businessNo) {
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         try {
             PurchaseApplyOrderDO purchaseApplyOrderDO = purchaseApplyOrderMapper.findByNo(businessNo);
             if (purchaseApplyOrderDO == null) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
             //不是审核中状态的采购单，拒绝处理
             if (!PurchaseApplyOrderStatus.PURCHASE_APPLY_ORDER_STATUS_VERIFYING.equals(purchaseApplyOrderDO.getPurchaseApplyOrderStatus())) {
-                return false;
+                return ErrorCode.BUSINESS_EXCEPTION;
             }
 
             if (verifyResult) {
@@ -566,15 +566,15 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
             purchaseApplyOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             purchaseApplyOrderDO.setUpdateTime(new Date());
             purchaseApplyOrderMapper.update(purchaseApplyOrderDO);
-            return true;
+            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("【采购申请单审核业务处理异常】", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         } catch (Throwable t) {
             logger.error("【采购申请单审核业务处理异常】", t);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            return false;
+            return ErrorCode.BUSINESS_EXCEPTION;
         }
     }
 }
