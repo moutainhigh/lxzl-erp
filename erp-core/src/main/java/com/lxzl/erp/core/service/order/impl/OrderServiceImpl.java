@@ -210,6 +210,11 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
+        CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
             int oldProductCount = 0, newProductCount = 0;
             Map<Integer, Integer> productNewStockMap = new HashMap<>();
@@ -327,6 +332,11 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
+        if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
+            result.setErrorCode(verifyOrderShortRentReceivableResult);
+            return result;
+        }
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -860,7 +870,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())||PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1452,7 +1462,7 @@ public class OrderServiceImpl implements OrderService {
                 // 如果走风控
                 if (isCheckRiskManagement) {
                     ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
-                    if(!productServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)){
+                    if (!productServiceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
                         throw new BusinessException(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
                     }
                     Product product = productServiceResult.getResult();
@@ -2075,23 +2085,6 @@ public class OrderServiceImpl implements OrderService {
         // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
 
-        BigDecimal totalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
-
-        //分公司的应收短期上线
-        BigDecimal subCompanyTotalShortRentReceivable = statementOrderSupport.getSubCompanyShortRentReceivable(customerDO.getId());
-        if(BigDecimalUtil.compare(subCompanyTotalShortRentReceivable,BigDecimal.ZERO) <0){
-            return ErrorCode.SHORT_RECEIVABLE_CALCULATE_FAIL;
-        }
-
-        BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
-
-        //得到分公司设置的短期上线
-        List<RoleDO> roleDOListFindAll = roleMapper.findByUserId(customerDO.getOwner());
-        RoleDO roleDOFindAll = roleDOListFindAll.get(0);
-        Integer subCompanyId = roleDOFindAll.getSubCompanyId();
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
-        BigDecimal subCompanyShortLimitReceivableAmount = subCompanyDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : subCompanyDO.getShortLimitReceivableAmount();
-
 
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(order.getCustomerConsignId());
         if (customerConsignInfoDO == null || !customerConsignInfoDO.getCustomerId().equals(customerDO.getId())) {
@@ -2181,21 +2174,6 @@ public class OrderServiceImpl implements OrderService {
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
-
-                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
-                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(orderProduct.getProductCount()), orderProduct.getProductUnitAmount()), new BigDecimal(order.getRentTimeLength()));
-                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProduct.getDepositAmount());
-                    totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
-                    if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
-                        return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
-                    }
-
-                    //检验分公司是否超出
-                    subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
-                    if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
-                        return ErrorCode.SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
-                    }
-                }
             }
         }
 
@@ -2239,19 +2217,41 @@ public class OrderServiceImpl implements OrderService {
                 }
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
-                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(orderMaterial.getRentType()) && orderMaterial.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
-                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(order.getRentLengthType())
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
-                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(rentLengthType)) {
-                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()), orderMaterial.getMaterialUnitAmount()), new BigDecimal(order.getRentTimeLength()));
-                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterial.getDepositAmount());
-                    totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, thisTotalAmount);
-                    if (BigDecimalUtil.compare(shortLimitReceivableAmount, totalShortRentReceivable) < 0) {
+            }
+        }
+        return verifyOrderShortRentReceivable(customerDO, ConverterUtil.convert(order, OrderDO.class));
+    }
+
+    String verifyOrderShortRentReceivable(CustomerDO customerDO, OrderDO orderDO) {
+        BigDecimal customerTotalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
+        //分公司的应收短期上线
+        BigDecimal subCompanyTotalShortRentReceivable = statementOrderSupport.getSubCompanyShortRentReceivable(customerDO.getOwnerSubCompanyId());
+        if (BigDecimalUtil.compare(subCompanyTotalShortRentReceivable, BigDecimal.ZERO) < 0) {
+            return ErrorCode.SHORT_RECEIVABLE_CALCULATE_FAIL;
+        }
+        //得到分公司设置的短期上线
+        Integer subCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(subCompanyId);
+        BigDecimal shortLimitReceivableAmount = customerDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : customerDO.getShortLimitReceivableAmount();
+        BigDecimal subCompanyShortLimitReceivableAmount = subCompanyDO.getShortLimitReceivableAmount() == null ? new BigDecimal(Integer.MAX_VALUE) : subCompanyDO.getShortLimitReceivableAmount();
+
+        BigDecimal otherAmount = orderDO.getLogisticsAmount();
+        customerTotalShortRentReceivable = BigDecimalUtil.add(customerTotalShortRentReceivable, otherAmount);
+
+
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+            for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(orderDO.getRentLengthType())) {
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(orderProductDO.getProductCount()), orderProductDO.getProductUnitAmount()), new BigDecimal(orderDO.getRentTimeLength()));
+                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderProductDO.getDepositAmount());
+                    customerTotalShortRentReceivable = BigDecimalUtil.add(customerTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(shortLimitReceivableAmount, customerTotalShortRentReceivable) < 0) {
                         return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
                     }
-
                     //检验分公司是否超出
                     subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
                     if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
@@ -2260,6 +2260,25 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
+
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
+            for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_SHORT.equals(orderDO.getRentLengthType())) {
+                    BigDecimal thisTotalAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(new BigDecimal(orderMaterialDO.getMaterialCount()), orderMaterialDO.getMaterialUnitAmount()), new BigDecimal(orderDO.getRentTimeLength()));
+                    thisTotalAmount = BigDecimalUtil.add(thisTotalAmount, orderMaterialDO.getDepositAmount());
+                    customerTotalShortRentReceivable = BigDecimalUtil.add(customerTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(shortLimitReceivableAmount, customerTotalShortRentReceivable) < 0) {
+                        return ErrorCode.CUSTOMER_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
+                    //检验分公司是否超出
+                    subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, thisTotalAmount);
+                    if (BigDecimalUtil.compare(subCompanyShortLimitReceivableAmount, subCompanyTotalShortRentReceivable) < 0) {
+                        return ErrorCode.SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW;
+                    }
+                }
+            }
+        }
+
         return ErrorCode.SUCCESS;
     }
 
