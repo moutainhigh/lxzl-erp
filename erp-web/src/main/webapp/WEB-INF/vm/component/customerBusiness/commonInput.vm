@@ -58,20 +58,20 @@
                         </label>
                     </div>
                     <div class="col-md-4 mt20">
+                        <label for="companyAbb" class="field-label">公司简称</label>
+                        <label for="companyAbb" class="field prepend-icon">
+                            <input type="text" name="companyAbb" id="companyAbb" class="gui-input" />
+                            <label for="companyAbb" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
                         <label for="industry" class="field-label"><em class="text-danger">*</em>所属行业</label>
                         <label class="field select">
                             <select id="industry" name="industry" class="required">
                                 <option value="">请选择</option>
                             </select>
                             <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-4 mt20">
-                        <label for="landline" class="field-label">座机电话</label>
-                        <label for="landline" class="field prepend-icon">
-                            <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
-                            <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
-                            </label>
                         </label>
                     </div>
                 </div>
@@ -90,6 +90,30 @@
                             <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
                             <label for="unitInsuredNumber" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="landline" class="field-label">座机电话</label>
+                        <label for="landline" class="field prepend-icon">
+                            <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
+                            <label for="landline" class="field-icon"><i class="fa fa-phone"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-4 mt20">
+                        <label for="companyFoundTime" class="field-label">企业成立时间</label>
+                        <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
+                            <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
+                            <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+                        </label>
+                    </div>
+                    <div class="col-md-4 mt20">
+                        <label for="deliveryMode" class="field-label"><em class="text-danger">*</em>送货方式</label>
+                        <label class="field select">
+                            <select id="deliveryMode" name="deliveryMode" class="required"></select>
+                            <i class="arrow"></i>
                         </label>
                     </div>
                     <div class="col-md-4 mt20">
@@ -136,13 +160,6 @@
                             <input type="text" name="shortLimitReceivableAmount" id="shortLimitReceivableAmount" class="gui-input number" />
                             <label for="shortLimitReceivableAmount" class="field-icon"><i class="fa fa-user"></i>
                             </label>
-                        </label>
-                    </div>
-                    <div class="col-md-4 mt20">
-                        <label for="deliveryMode" class="field-label"><em class="text-danger">*</em>送货方式</label>
-                        <label class="field select">
-                            <select id="deliveryMode" name="deliveryMode" class="required"></select>
-                            <i class="arrow"></i>
                         </label>
                     </div>
                 </div>
