@@ -347,13 +347,13 @@ CREATE TABLE `erp_customer` (
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `pass_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '通过原因',
   `fail_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '拒绝原因',
-  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
+  `delivery_mode` int(11) DEFAULT NULL COMMENT '发货方式，1快递，2自提,3凌雄配送',
+  `owner_sub_company_id` int(20) NOT NULL COMMENT '业务员所属分公司ID',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  `delivery_mode` int(11) DEFAULT NULL COMMENT '发货方式，1快递，2自提,3凌雄配送',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=700001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户表';
 

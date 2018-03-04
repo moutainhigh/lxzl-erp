@@ -48,6 +48,7 @@ public class Customer extends BasePO {
 	private String failReason; //拒绝原因
 	@NotNull(message = ErrorCode.DELIVERY_MODE_NOT_NULL , groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private Integer deliveryMode; //发货方式，1快递，2自提,3凌雄配送'
+	private Integer ownerSubCompanyId;
 
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
@@ -358,5 +359,13 @@ public class Customer extends BasePO {
 
 	public void setCustomerArea(String customerArea) {
 		this.customerArea = customerArea;
+	}
+
+	public Integer getOwnerSubCompanyId() {
+		return ownerSubCompanyId;
+	}
+
+	public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+		this.ownerSubCompanyId = ownerSubCompanyId;
 	}
 }
