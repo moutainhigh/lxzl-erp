@@ -1770,11 +1770,13 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(k3ChangeOrderDetailDOList)) {
             for (K3ChangeOrderDetailDO k3ChangeOrderDetailDO : k3ChangeOrderDetailDOList) {
                 Integer orderItemType = null;
+                //获取更换类型
                 if (k3ChangeOrderDetailDO.getChangeSkuId() != null) {
                     orderItemType = OrderItemType.ORDER_ITEM_TYPE_CHANGE_PRODUCT;
                 } else {
                     orderItemType = OrderItemType.ORDER_ITEM_TYPE_CHANGE_MATERIAL;
                 }
+
                 BigDecimal productDiffAmount = k3ChangeOrderDetailDO.getProductDiffAmount();
                 BigDecimal totalProductDiffAmount = BigDecimalUtil.mul(productDiffAmount, new BigDecimal(k3ChangeOrderDetailDO.getProductCount()));
                 if (BigDecimalUtil.compare(totalProductDiffAmount, BigDecimal.ZERO) <= 0) {
@@ -1782,93 +1784,93 @@ public class StatementServiceImpl implements StatementService {
                 }
                 //当月差价
                 BigDecimal thisMonthDiff = BigDecimal.ZERO;
-                ServiceResult<String, com.lxzl.erp.common.domain.k3.pojo.order.Order> orderServiceResult = k3Service.queryOrder(k3ChangeOrderDetailDO.getOrderNo());
-                if (ErrorCode.SUCCESS.equals(orderServiceResult.getErrorCode())) {
-                    //如果订单是本系统订单才处理结算单
-                    OrderDO orderDO = orderMapper.findByOrderNo(k3ChangeOrderDetailDO.getOrderNo());
-                    if (orderDO == null) {
-                        continue;
-                    }
-                    //获取结算单
-                    List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
-                    //获取下次结算点（如果没有下次了，就当天）
 
-                    StatementOrderDetailDO nextStatement = null;
-                    for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
-                        if (nextStatement != null) {
-                            break;
-                        }
-                        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
-                        //换货时间在结算开始时间和结算结束时间之间，且结算类型为租金，就计算换货时间到结算结束时间期间
-                        if (statementOrderDetailDO.getStatementStartTime().getTime() < k3ChangeOrderDO.getChangeTime().getTime() &&
-                                statementOrderDetailDO.getStatementEndTime().getTime() >= k3ChangeOrderDO.getChangeTime().getTime()) {
-                            //按天算钱
-                            if (OrderRentType.RENT_TYPE_DAY.equals(k3ChangeOrderDetailDO.getRentType())) {
-                                int dayCount = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime());
-                                thisMonthDiff = BigDecimalUtil.mul(new BigDecimal(dayCount * k3ChangeOrderDetailDO.getProductCount()), k3ChangeOrderDetailDO.getProductDiffAmount());
-                            } else if (OrderRentType.RENT_TYPE_MONTH.equals(k3ChangeOrderDetailDO.getRentType())) {
-                                //按月算钱
-                                thisMonthDiff = amountSupport.calculateRentAmount(k3ChangeOrderDO.getChangeTime(), statementOrderDetailDO.getStatementEndTime(), totalProductDiffAmount);
-                            }
-                            if (i != statementOrderDetailDOList.size() - 1) {
-                                nextStatement = statementOrderDetailDOList.get(i + 1);
-                            } else {
-                                StatementOrderDetailDO newStatementOrderDetailDO = new StatementOrderDetailDO();
-                                newStatementOrderDetailDO.setCustomerId(statementOrderDetailDO.getCustomerId());
-                                newStatementOrderDetailDO.setOrderId(statementOrderDetailDO.getOrderId());
-                                newStatementOrderDetailDO.setOrderItemType(statementOrderDetailDO.getOrderItemType());
-                                newStatementOrderDetailDO.setOrderItemReferId(statementOrderDetailDO.getOrderItemReferId());
-                                newStatementOrderDetailDO.setStatementStartTime(k3ChangeOrderDO.getChangeTime());
-                                newStatementOrderDetailDO.setStatementExpectPayTime(k3ChangeOrderDO.getChangeTime());
-                                newStatementOrderDetailDO.setStatementEndTime(k3ChangeOrderDO.getChangeTime());
-                                nextStatement = newStatementOrderDetailDO;
-                            }
-                        }
-                    }
+                //如果订单是本系统订单才处理结算单
+                OrderDO orderDO = orderMapper.findByOrderNo(k3ChangeOrderDetailDO.getOrderNo());
+                if (orderDO == null) {
+                    continue;
+                }
+                //获取结算单
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+                //获取下次结算点（如果没有下次了，就当天）
+
+                StatementOrderDetailDO nextStatement = null;
+                for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                     if (nextStatement != null) {
-                        //如果差价大于0
-                        if (BigDecimalUtil.compare(thisMonthDiff, BigDecimal.ZERO) > 0) {
-
-                            StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(nextStatement.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
-                                    k3ChangeOrderDetailDO.getChangeOrderId(), orderItemType, Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()),
-                                    nextStatement.getStatementExpectPayTime(), nextStatement.getStatementStartTime(), nextStatement.getStatementEndTime(),
-                                    thisMonthDiff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
-                            addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
-                        }
-                        //如果其他费用没有计算过，且其他费用大于0
-                        if (!isCountOther && BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(nextStatement.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
-                                    k3ChangeOrderDetailDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, 0,
-                                    nextStatement.getStatementExpectPayTime(), nextStatement.getStatementStartTime(), nextStatement.getStatementEndTime(),
-                                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId());
-                            addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
-                            isCountOther = true;
-                        }
+                        break;
                     }
+                    //只取该订单下结算单更换类型匹配且单项ID也相同的数据
 
-
-                    for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
-                        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
-                        //结算开始时间小于等于换货时间，不处理，不是租金不处理
-                        if (!StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType()) &&
-                                statementOrderDetailDO.getStatementStartTime().getTime() <= k3ChangeOrderDO.getChangeTime().getTime()) {
-                            continue;
-                        }
-                        BigDecimal diff = BigDecimal.ZERO;
+                    StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
+                    //换货时间在结算开始时间和结算结束时间之间，且结算类型为租金，就计算换货时间到结算结束时间期间
+                    if (statementOrderDetailDO.getStatementStartTime().getTime() < k3ChangeOrderDO.getChangeTime().getTime() &&
+                            statementOrderDetailDO.getStatementEndTime().getTime() >= k3ChangeOrderDO.getChangeTime().getTime()) {
                         //按天算钱
                         if (OrderRentType.RENT_TYPE_DAY.equals(k3ChangeOrderDetailDO.getRentType())) {
                             int dayCount = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime());
-                            diff = BigDecimalUtil.mul(new BigDecimal(dayCount * k3ChangeOrderDetailDO.getProductCount()), k3ChangeOrderDetailDO.getProductDiffAmount());
+                            thisMonthDiff = BigDecimalUtil.mul(new BigDecimal(dayCount * k3ChangeOrderDetailDO.getProductCount()), k3ChangeOrderDetailDO.getProductDiffAmount());
                         } else if (OrderRentType.RENT_TYPE_MONTH.equals(k3ChangeOrderDetailDO.getRentType())) {
                             //按月算钱
-                            diff = amountSupport.calculateRentAmount(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime(), totalProductDiffAmount);
+                            thisMonthDiff = amountSupport.calculateRentAmount(k3ChangeOrderDO.getChangeTime(), statementOrderDetailDO.getStatementEndTime(), totalProductDiffAmount);
                         }
-                        StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
+                        if (i != statementOrderDetailDOList.size() - 1) {
+                            nextStatement = statementOrderDetailDOList.get(i + 1);
+                        } else {
+                            StatementOrderDetailDO newStatementOrderDetailDO = new StatementOrderDetailDO();
+                            newStatementOrderDetailDO.setCustomerId(statementOrderDetailDO.getCustomerId());
+                            newStatementOrderDetailDO.setOrderId(k3ChangeOrderDetailDO.getChangeOrderId());
+                            newStatementOrderDetailDO.setOrderItemType(orderItemType);
+                            newStatementOrderDetailDO.setOrderItemReferId(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                            newStatementOrderDetailDO.setStatementStartTime(k3ChangeOrderDO.getChangeTime());
+                            newStatementOrderDetailDO.setStatementExpectPayTime(k3ChangeOrderDO.getChangeTime());
+                            newStatementOrderDetailDO.setStatementEndTime(k3ChangeOrderDO.getChangeTime());
+                            nextStatement = newStatementOrderDetailDO;
+                        }
+                    }
+                }
+                if (nextStatement != null) {
+                    //如果差价大于0
+                    if (BigDecimalUtil.compare(thisMonthDiff, BigDecimal.ZERO) > 0) {
+
+                        StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(nextStatement.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
                                 k3ChangeOrderDetailDO.getChangeOrderId(), orderItemType, Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()),
-                                statementOrderDetailDO.getStatementExpectPayTime(), statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime(),
-                                diff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                                nextStatement.getStatementExpectPayTime(), nextStatement.getStatementStartTime(), nextStatement.getStatementEndTime(),
+                                thisMonthDiff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
                         addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
                     }
+                    //如果其他费用没有计算过，且其他费用大于0
+                    if (!isCountOther && BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
+                        StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(nextStatement.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
+                                k3ChangeOrderDetailDO.getChangeOrderId(), OrderItemType.ORDER_ITEM_TYPE_CHANGE_OTHER, 0,
+                                nextStatement.getStatementExpectPayTime(), nextStatement.getStatementStartTime(), nextStatement.getStatementEndTime(),
+                                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUser.getUserId());
+                        addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
+                        isCountOther = true;
+                    }
+                }
+
+
+                for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
+                    StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
+                    //结算开始时间小于等于换货时间，不处理，不是租金不处理
+                    if (!StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType()) &&
+                            statementOrderDetailDO.getStatementStartTime().getTime() <= k3ChangeOrderDO.getChangeTime().getTime()) {
+                        continue;
+                    }
+                    BigDecimal diff = BigDecimal.ZERO;
+                    //按天算钱
+                    if (OrderRentType.RENT_TYPE_DAY.equals(k3ChangeOrderDetailDO.getRentType())) {
+                        int dayCount = DateUtil.daysBetween(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime());
+                        diff = BigDecimalUtil.mul(new BigDecimal(dayCount * k3ChangeOrderDetailDO.getProductCount()), k3ChangeOrderDetailDO.getProductDiffAmount());
+                    } else if (OrderRentType.RENT_TYPE_MONTH.equals(k3ChangeOrderDetailDO.getRentType())) {
+                        //按月算钱
+                        diff = amountSupport.calculateRentAmount(statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime(), totalProductDiffAmount);
+                    }
+                    StatementOrderDetailDO changeStatementOrderDetailDO = buildStatementOrderDetailDO(statementOrderDetailDO.getCustomerId(), OrderType.ORDER_TYPE_CHANGE,
+                            k3ChangeOrderDetailDO.getChangeOrderId(), orderItemType, Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()),
+                            statementOrderDetailDO.getStatementExpectPayTime(), statementOrderDetailDO.getStatementStartTime(), statementOrderDetailDO.getStatementEndTime(),
+                            diff, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentTime, loginUser.getUserId());
+                    addStatementOrderDetailDOList.add(changeStatementOrderDetailDO);
                 }
             }
         }
