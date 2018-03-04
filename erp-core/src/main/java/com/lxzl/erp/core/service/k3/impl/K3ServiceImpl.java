@@ -106,6 +106,11 @@ public class K3ServiceImpl implements K3Service {
             if (param.getRentType() == null) {
                 jsonObject.remove("rentType");
             }
+            if (userSupport.isSuperUser()) {
+                jsonObject.remove("orderSellerId");
+            } else {
+                jsonObject.put("orderSellerId", userSupport.getCurrentUser().getRealName());
+            }
             if (param.getCreateStartTime() == null) {
                 jsonObject.remove("createStartTime");
             } else {
