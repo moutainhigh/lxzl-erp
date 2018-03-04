@@ -995,7 +995,7 @@ public class ErrorCode {
         MAP.put(BENEFICIARY_ACCOUNT_IS_LENGTH, "收款帐号长度不能超过30");
         MAP.put(SUPPLIER_CODE_IS_EXISTS, "自定义供应商编号已经存在");
         MAP.put(SHORT_LIMIT_RECEIVABLE_AMOUNT_NOT_NULL, "客户的短期应收上限金额不能为空");
-        MAP.put(CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY, "客户的开发人员不能由地方分公司转为电销人员");
+        MAP.put(CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY, "客户的业务员不能由地方分公司转为电销人员");
         MAP.put(CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY, "客户的联合开发员不能由地方分公司转为电销人员");
         MAP.put(CUSTOMER_OWNER_IS_NOT_HEADER_COMPANY, "客户的开发员不能为总公司人员");
         MAP.put(CUSTOMER_UNION_USER_IS_NOT_HEADER_COMPANY, "客户的联合开发员不能为总公司人员");

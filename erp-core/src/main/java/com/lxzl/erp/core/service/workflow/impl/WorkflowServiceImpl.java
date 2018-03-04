@@ -130,6 +130,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
 
         Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo);
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
+            subCompanyId = CommonConstant.HEAD_COMPANY_ID;
+        }
         WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
         if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser, subCompanyId)) {
             result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
@@ -288,6 +291,9 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
         Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo);
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
+            subCompanyId = CommonConstant.HEAD_COMPANY_ID;
+        }
         List<User> userList = getUserListByNode(workflowNodeDO, subCompanyId);
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -310,7 +316,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (CollectionUtil.isNotEmpty(workflowLinkDO.getWorkflowLinkDetailDOList())) {
             for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
                 List<ImageDO> imageDOList = imgMysqlMapper.findByRefIdAndType(workflowLinkDetailDO.getId().toString(), ImgType.WORKFLOW_IMG_TYPE);
-                if(CollectionUtil.isNotEmpty(imageDOList)){
+                if (CollectionUtil.isNotEmpty(imageDOList)) {
                     workflowLinkDetailDO.setImageDOList(imageDOList);
                 }
             }

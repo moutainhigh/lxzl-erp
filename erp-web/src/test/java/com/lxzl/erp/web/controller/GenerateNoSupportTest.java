@@ -268,7 +268,7 @@ public class GenerateNoSupportTest extends ERPUnTransactionalTest {
 //        generateNoSupport.generateOrderNo(new Date(), 700003);
         long startTime = System.currentTimeMillis();
 //        for (int i = 0; i < 3000; i++) {
-        String orderNo = generateNoSupport.generateOrderNo(new Date(), 700003);
+        String orderNo = generateNoSupport.generateOrderNo(new Date(), "");
 //        }
         long endTime = System.currentTimeMillis();
         float excTime = (float) (endTime - startTime) / 1000;

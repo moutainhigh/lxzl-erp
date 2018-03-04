@@ -36,6 +36,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -71,7 +73,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        Date deliveryTime = deliveryOrder.getDeliveryTime() == null ? currentTime : deliveryOrder.getDeliveryTime();
+        Date deliveryTime = null;
+        try {
+            deliveryTime = deliveryOrder.getDeliveryTimeStr() == null ? currentTime : new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(deliveryOrder.getDeliveryTimeStr());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         orderDO.setDeliveryTime(deliveryTime);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_DELIVERED);

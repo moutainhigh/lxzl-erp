@@ -54,6 +54,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,9 +71,9 @@ public class GenerateNoSupport {
     /**
      * 生成订单编号
      */
-    public String generateOrderNo(Date currentTime, Integer buyerCustomerId) {
-        if (buyerCustomerId == null || buyerCustomerId == 0) {
-            buyerCustomerId = CommonConstant.SUPER_CUSTOMER_ID;
+    public String generateOrderNo(Date currentTime, String subCustomerCode) {
+        if (StringUtil.isBlank(subCustomerCode)) {
+            subCustomerCode = "1000";
         }
         synchronized (this) {
             Map<String, Object> maps = new HashMap<>();
@@ -86,7 +87,7 @@ public class GenerateNoSupport {
             builder.append("LXO-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append("-");
-            builder.append(buyerCustomerId);
+            builder.append(subCustomerCode);
             builder.append("-");
             builder.append(String.format("%05d", orderCount + 1));
             return builder.toString();

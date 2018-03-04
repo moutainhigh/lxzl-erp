@@ -13,6 +13,7 @@ public class DeliveryOrder extends BasePO {
 	private String orderNo;   //订单No
 	private Integer orderId;   //订单ID
 	private String deliveryUser;   //发货人
+	private String deliveryTimeStr;   //发货时间
 	private Date deliveryTime;   //发货时间
 	private String subCompanyCode;   //分公司Code
 	private Integer subCompanyId;   //分公司ID
@@ -145,5 +146,13 @@ public class DeliveryOrder extends BasePO {
 
 	public void setSubCompanyCode(String subCompanyCode) {
 		this.subCompanyCode = subCompanyCode;
+	}
+
+	public String getDeliveryTimeStr() {
+		return deliveryTimeStr;
+	}
+
+	public void setDeliveryTimeStr(String deliveryTimeStr) {
+		this.deliveryTimeStr = deliveryTimeStr;
 	}
 }

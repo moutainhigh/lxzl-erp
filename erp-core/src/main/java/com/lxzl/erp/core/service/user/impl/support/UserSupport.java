@@ -4,6 +4,7 @@ import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DepartmentType;
 import com.lxzl.erp.common.constant.SubCompanyType;
+import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
