@@ -87,7 +87,7 @@ public class StatementOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void detail() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-731857-20180302-00035");
+        param.setStatementOrderNo("LXSO-704187-20180601-00002");
         TestResult testResult = getJsonTestResult("/statementOrder/detail", param);
     }
 

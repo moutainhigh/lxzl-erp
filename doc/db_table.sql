@@ -1955,7 +1955,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '结算押金金额',
   `statement_detail_deposit_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已付押金金额',
   `statement_detail_deposit_return_amount` decimal(15,2) DEFAULT 0 COMMENT '退还押金金额',
-  `statement_detail_deposit_return_time` decimal(15,2) DEFAULT 0 COMMENT '退还押金时间',
+  `statement_detail_deposit_return_time` decimal(15,2) DEFAULT NULL COMMENT '退还押金时间',
   `statement_detail_rent_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单租金金额',
   `statement_detail_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',

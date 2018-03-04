@@ -308,6 +308,13 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
+        for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+            if (StringUtil.isBlank(k3ReturnOrderDetail.getOrderItemId())
+                    || StringUtil.isBlank(k3ReturnOrderDetail.getProductNo())) {
+                result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+                return result;
+            }
+        }
 
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         k3ReturnOrderDO.setReturnOrderNo("LXK3RO" + DateUtil.formatDate(currentTime, "yyyyMMddHHmmssSSS"));
