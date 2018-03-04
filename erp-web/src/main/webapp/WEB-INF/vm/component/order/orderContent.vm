@@ -23,7 +23,7 @@
                 </div>
                 <div class="form-group field">
                     <div class="col-md-6">
-                        <label class="col-md-6 control-label">送货方式</label>
+                        <label class="col-md-6 control-label">配送方式</label>
                         <div class="col-md-6">
                             <div>
                                 <select class="form-control bradius required" name="deliveryMode" id="deliveryMode"></select>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">送货日期</label>
+                    <label class="col-md-3 control-label">配送日期</label>
                     <div class="col-md-3">
                         <div class="input-group date" id="createExpectDeliveryTimePicker">
                             <input id="expectDeliveryTime" name="expectDeliveryTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择交货日期" />
