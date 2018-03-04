@@ -8,6 +8,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingMaterialTypeMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialTypeDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,17 @@ public class K3MaterialConverter implements ConvertK3DataService {
                 new ItemNumber(true, material.getMaterialModel(), number, "物料")});//型号
         return formICItem;
     }
+
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
 
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;

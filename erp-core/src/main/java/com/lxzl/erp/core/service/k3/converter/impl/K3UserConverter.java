@@ -27,6 +27,16 @@ public class K3UserConverter implements ConvertK3DataService {
         return formUser;
     }
 
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
     @Autowired
     private K3MappingSubCompanyMapper k3MappingSubCompanyMapper;
     @Autowired

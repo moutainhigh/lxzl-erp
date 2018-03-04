@@ -331,6 +331,17 @@ public class K3OrderConverter implements ConvertK3DataService {
         return formSEOrder;
     }
 
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+
     @Autowired
     private K3Support k3Support;
     @Autowired

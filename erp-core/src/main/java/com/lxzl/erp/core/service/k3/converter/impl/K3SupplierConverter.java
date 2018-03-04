@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSupply;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ItemNumber;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.jsoup.helper.StringUtil;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,17 @@ public class K3SupplierConverter implements ConvertK3DataService {
 
         return formSupply;
     }
+
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
     private String getString(String s ){
         if(s==null){
             return "";

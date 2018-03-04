@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
@@ -11,11 +12,14 @@ import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.area.AreaCityMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.area.AreaCityDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,8 +105,59 @@ public class K3CustomerConverter implements ConvertK3DataService{
         return formOrganization;
     }
 
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+        String responseJson = k3SendRecordDO.getResponseJson();
+        K3Response k3Response = JSON.parseObject(responseJson,K3Response.class);
+        Integer customerId = k3SendRecordDO.getRecordReferId();
+        CustomerDO customerDO = customerMapper.findById(customerId);
+        K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByErpCode(customerDO.getCustomerNo());
+        if(!k3MappingCustomerDO.getK3CustomerCode().equals(k3Response.getK3CustomerCode())){
+            k3MappingCustomerDO.setK3CustomerCode(k3Response.getK3CustomerCode());
+        }
+        k3MappingCustomerMapper.update(k3MappingCustomerDO);
+    }
+
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+
+    class K3Response{
+        private String status;
+        private String result;
+        private String k3CustomerCode;
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getResult() {
+            return result;
+        }
+
+        public void setResult(String result) {
+            this.result = result;
+        }
+
+        public String getK3CustomerCode() {
+            return k3CustomerCode;
+        }
+
+        public void setK3CustomerCode(String k3CustomerCode) {
+            this.k3CustomerCode = k3CustomerCode;
+        }
+    }
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
     @Autowired
     private K3Support k3Support;
+    @Autowired
+    private CustomerMapper customerMapper;
 }

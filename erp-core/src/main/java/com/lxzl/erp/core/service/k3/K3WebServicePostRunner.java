@@ -6,10 +6,14 @@ import com.lxzl.erp.common.constant.PostK3Type;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
+import com.lxzl.erp.core.service.dingding.DingdingService;
+import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.xml.rpc.ServiceException;
 import java.util.Date;
@@ -22,12 +26,17 @@ public class K3WebServicePostRunner implements Runnable {
     private K3SendRecordMapper k3SendRecordMapper;
     private Integer postK3Type;
     private K3SendRecordDO k3SendRecordDO;
+    private ConvertK3DataService convertK3DataService;
+    private DingDingSupport dingDingSupport;
 
-    public K3WebServicePostRunner(Integer postK3Type, Object postData, K3SendRecordMapper k3SendRecordMapper,K3SendRecordDO k3SendRecordDO ) {
+    public K3WebServicePostRunner(Integer postK3Type, Object postData, K3SendRecordMapper k3SendRecordMapper,K3SendRecordDO k3SendRecordDO ,ConvertK3DataService convertK3DataService,
+                                  DingDingSupport dingDingSupport) {
         this.postData = postData;
         this.k3SendRecordMapper = k3SendRecordMapper;
         this.postK3Type = postK3Type;
         this.k3SendRecordDO = k3SendRecordDO;
+        this.convertK3DataService = convertK3DataService;
+        this.dingDingSupport = dingDingSupport;
     }
 
     private void printSuccessLog(ServiceResult response) {
@@ -72,11 +81,12 @@ public class K3WebServicePostRunner implements Runnable {
             k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
             k3SendRecordMapper.update(k3SendRecordDO);
             logger.info("【返回结果】" + response);
-
+            convertK3DataService.successNotify(k3SendRecordDO);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("=============【PUSH DATA TO K3 ERROR】=============");
             logger.error("【ERROR INFO】" , e);
+
         } catch (Throwable t) {
             logger.error("=============【PUSH DATA TO K3 ERROR】=============");
             logger.error("【ERROR INFO】" ,t);
@@ -84,10 +94,31 @@ public class K3WebServicePostRunner implements Runnable {
 
             if (response == null || response.getStatus() != 0) {
                 printErrorLog(response);
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response));
             } else {
                 printSuccessLog(response);
             }
         }
     }
 
+    public String getErrorMessage(ServiceResult response){
+        StringBuffer sb = new StringBuffer();
+        if (PostK3Type.POST_K3_TYPE_PRODUCT.equals(postK3Type)) {
+            sb.append("向K3推送【商品】数据失败：");
+        } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(postK3Type)) {
+            sb.append("向K3推送【配件】数据失败：");
+        } else if (PostK3Type.POST_K3_TYPE_CUSTOMER.equals(postK3Type)) {
+            sb.append("向K3推送【客户】数据失败：");
+        } else if (PostK3Type.POST_K3_TYPE_SUPPLIER.equals(postK3Type)) {
+            sb.append("向K3推送【供应商】数据失败：");
+        }else if (PostK3Type.POST_K3_TYPE_ORDER.equals(postK3Type)) {
+            sb.append("向K3推送【订单】数据失败：");
+        }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
+            sb.append("向K3推送【用户】数据失败：");
+        }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
+            sb.append("向K3推送【退货】数据失败：");
+        }
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
+    }
 }
