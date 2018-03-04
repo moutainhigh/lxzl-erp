@@ -24,6 +24,7 @@ public class CustomerCompanyNeed {
     private BigDecimal unitPrice;  //设备单台价值
     @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer rentCount;  //租赁数量
+    @NotNull(message = ErrorCode.IS_NEW_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer isNew;  //是否为新机,新是1，旧是0
     private BigDecimal totalPrice;  //总价值
     private Integer rentLength;  //租赁期限

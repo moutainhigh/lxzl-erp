@@ -2083,7 +2083,7 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                 return serviceResult;
             }
-            if (customerCompanyNeed.getIsNew() == CommonConstant.COMMON_CONSTANT_YES){
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getIsNew())){
                 customerCompanyNeed.setUnitPrice(productSkuDO.getNewSkuPrice());
             }else {
                 customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
