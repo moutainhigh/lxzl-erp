@@ -7,6 +7,8 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerPerson;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormOrganization;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ItemNumber;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ResultData;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -24,6 +26,8 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -110,15 +114,21 @@ public class K3CustomerConverter implements ConvertK3DataService{
     @Override
     public void successNotify(K3SendRecordDO k3SendRecordDO) {
         String responseJson = k3SendRecordDO.getResponseJson();
-        K3Response k3Response = JSON.parseObject(responseJson,K3Response.class);
+        ServiceResult serviceResult = JSON.parseObject(responseJson,ServiceResult.class);
         Integer customerId = k3SendRecordDO.getRecordReferId();
         CustomerDO customerDO = customerMapper.findById(customerId);
         K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByErpCode(customerDO.getCustomerNo());
 
-        if(!k3MappingCustomerDO.getK3CustomerCode().equals(k3Response.getData().get("k3CustomerCode"))){
-            k3MappingCustomerDO.setK3CustomerCode(k3Response.getData().get("k3CustomerCode"));
+        if(serviceResult.getData()!=null&&serviceResult.getData().length>0){
+            Map<String,String> map = new HashMap<>();
+            for(ResultData resultData : serviceResult.getData()){
+                map.put(resultData.getKey(),resultData.getValue());
+            }
+            if(!k3MappingCustomerDO.getK3CustomerCode().equals(map.get("k3CustomerCode"))){
+                k3MappingCustomerDO.setK3CustomerCode(map.get("k3CustomerCode"));
+                k3MappingCustomerMapper.update(k3MappingCustomerDO);
+            }
         }
-        k3MappingCustomerMapper.update(k3MappingCustomerDO);
     }
 
 
@@ -128,34 +138,9 @@ public class K3CustomerConverter implements ConvertK3DataService{
     }
 
 
-    class K3Response{
-        private String status;
-        private String result;
-        private Map<String,String> data;
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getResult() {
-            return result;
-        }
-
-        public void setResult(String result) {
-            this.result = result;
-        }
-
-        public Map<String, String> getData() {
-            return data;
-        }
-
-        public void setData(Map<String, String> data) {
-            this.data = data;
-        }
+    public static void main(String[] args) {
+        String s = "{\"data\":[],\"result\":\"OK\",\"status\":0}";
+        ServiceResult serviceResult = JSON.parseObject(s,ServiceResult.class);
     }
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;

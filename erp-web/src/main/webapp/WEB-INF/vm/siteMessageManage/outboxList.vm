@@ -73,8 +73,8 @@
                                                 <th>收件人</th>
                                                 <th>主题</th>
                                                 <th>内容</th>
-                                                <th  class="text-center">时间</th>
-                ##                                <th class="hidden-xs">操作</th>
+                                                <th>时间</th>
+                                                <th class="text-right">操作</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -91,9 +91,9 @@
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
                                                 <td class="text-center">{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
-                ##                                <td>
-                ##                                    <a href="" type="button" class="btn btn-default btn-xs" data-orderno="">查看</a>
-                ##                                </td>
+                                                <td class="text-right">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText={{messageText}}>查看</a>
+                                                </td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
@@ -107,6 +107,8 @@
                                         <table class="table" id="dataListTable" style="table-layout:fixed;"></table>
                                     </div>
                                 </div>
+
+                                <div id="messageContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
 
                                 <div class="panel-footer">
                                     <div class="row">
