@@ -7,6 +7,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStockEntry;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -60,6 +61,18 @@ public class K3ReturnOrderConverter implements ConvertK3DataService {
 
         return formSEOutStock;
     }
+
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+
     private String getString(String str){
         return str==null?"":str;
     }

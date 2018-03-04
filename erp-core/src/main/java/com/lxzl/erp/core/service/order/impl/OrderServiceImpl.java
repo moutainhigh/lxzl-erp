@@ -334,6 +334,7 @@ public class OrderServiceImpl implements OrderService {
 
         String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
         if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(verifyOrderShortRentReceivableResult);
             return result;
         }
@@ -2241,6 +2242,7 @@ public class OrderServiceImpl implements OrderService {
 
         BigDecimal otherAmount = orderDO.getLogisticsAmount();
         customerTotalShortRentReceivable = BigDecimalUtil.add(customerTotalShortRentReceivable, otherAmount);
+        subCompanyTotalShortRentReceivable = BigDecimalUtil.add(subCompanyTotalShortRentReceivable, otherAmount);
 
 
         if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {

@@ -8,6 +8,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,16 @@ public class K3ProductConverter implements ConvertK3DataService {
                 new ItemNumber(false, k3MappingBrandDO.getBrandName(), "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode(), "物料"),//品牌
                 new ItemNumber(true, product.getProductModel(), number, "物料")});//型号
         return formICItem;
+    }
+
+    @Override
+    public void successNotify(K3SendRecordDO k3SendRecordDO) {
+
+    }
+
+    @Override
+    public void failNotify(K3SendRecordDO k3SendRecordDO) {
+
     }
 
     @Autowired
