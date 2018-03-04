@@ -347,13 +347,13 @@ CREATE TABLE `erp_customer` (
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `pass_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '通过原因',
   `fail_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '拒绝原因',
-  `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
+  `delivery_mode` int(11) DEFAULT NULL COMMENT '发货方式，1快递，2自提,3凌雄配送',
+  `owner_sub_company_id` int(20) NOT NULL COMMENT '业务员所属分公司ID',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  `delivery_mode` int(11) DEFAULT NULL COMMENT '发货方式，1快递，2自提,3凌雄配送',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=700001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户表';
 
@@ -1955,7 +1955,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_deposit_amount` decimal(15,2) DEFAULT 0 COMMENT '结算押金金额',
   `statement_detail_deposit_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已付押金金额',
   `statement_detail_deposit_return_amount` decimal(15,2) DEFAULT 0 COMMENT '退还押金金额',
-  `statement_detail_deposit_return_time` decimal(15,2) DEFAULT 0 COMMENT '退还押金时间',
+  `statement_detail_deposit_return_time` decimal(15,2) DEFAULT NULL COMMENT '退还押金时间',
   `statement_detail_rent_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单租金金额',
   `statement_detail_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
@@ -2901,6 +2901,7 @@ CREATE TABLE `erp_k3_change_order_detail` (
   `change_product_name` varchar(64) NOT NULL COMMENT '换货产品名称',
   `product_count` int(11) NOT NULL COMMENT '换货数量',
   `product_diff_amount` decimal(15,2) NOT NULL DEFAULT 0 COMMENT '商品差价',
+  `rent_type` int(20) COMMENT '租赁方式',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

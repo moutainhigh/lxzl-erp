@@ -18,6 +18,7 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -25,19 +26,25 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
-import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.UUIDUtil;
@@ -87,6 +94,11 @@ public class K3ServiceImpl implements K3Service {
             }
             if (StringUtil.isBlank(param.getBuyerCustomerNo())) {
                 jsonObject.remove("buyerCustomerNo");
+            } else {
+                K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByErpCode(param.getBuyerCustomerNo());
+                if (k3MappingCustomerDO != null && StringUtil.isNotBlank(k3MappingCustomerDO.getK3CustomerCode())) {
+                    jsonObject.put("buyerCustomerNo", k3MappingCustomerDO.getK3CustomerCode());
+                }
             }
             if (param.getSubCompanyId() == null) {
                 jsonObject.remove("subCompanyId");
@@ -296,6 +308,13 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
+        for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+            if (StringUtil.isBlank(k3ReturnOrderDetail.getOrderItemId())
+                    || StringUtil.isBlank(k3ReturnOrderDetail.getProductNo())) {
+                result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
+                return result;
+            }
+        }
 
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         k3ReturnOrderDO.setReturnOrderNo("LXK3RO" + DateUtil.formatDate(currentTime, "yyyyMMddHHmmssSSS"));
@@ -339,7 +358,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE);
             return result;
         }
@@ -369,7 +388,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if (ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
@@ -454,7 +473,7 @@ public class K3ServiceImpl implements K3Service {
         Date now = new Date();
 
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
-        if(k3ReturnOrderDO == null){
+        if (k3ReturnOrderDO == null) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
         }
@@ -517,7 +536,7 @@ public class K3ServiceImpl implements K3Service {
             }
             //调用提交审核服务
             k3ReturnOrderCommitParam.setVerifyMatters("K3退货单审核事项：1.服务费和运费 2.退还方式 3.商品与配件的退货数量");
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_RETURN, k3ReturnOrderCommitParam.getReturnOrderNo(), k3ReturnOrderCommitParam.getVerifyUserId(),k3ReturnOrderCommitParam.getVerifyMatters(), k3ReturnOrderCommitParam.getRemark(), k3ReturnOrderCommitParam.getImgIdList());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_RETURN, k3ReturnOrderCommitParam.getReturnOrderNo(), k3ReturnOrderCommitParam.getVerifyUserId(), k3ReturnOrderCommitParam.getVerifyMatters(), k3ReturnOrderCommitParam.getRemark(), k3ReturnOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
@@ -570,7 +589,7 @@ public class K3ServiceImpl implements K3Service {
             return result;
         }
         K3ChangeOrderDO k3ChangeOrderDO = ConverterUtil.convert(k3ChangeOrder, K3ChangeOrderDO.class);
-        k3ChangeOrderDO.setChangeOrderNo(UUIDUtil.getUUID());
+        k3ChangeOrderDO.setChangeOrderNo("LXK3RO" + DateUtil.formatDate(now, "yyyyMMddHHmmssSSS"));
         k3ChangeOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT);
         k3ChangeOrderDO.setCreateTime(now);
@@ -583,6 +602,34 @@ public class K3ServiceImpl implements K3Service {
         if (CollectionUtil.isNotEmpty(k3ChangeOrderDetailList)) {
             for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrderDetailList) {
                 K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
+                if (k3ChangeOrderDetailDO.getChangeSkuId() != null) {
+                    ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(k3ChangeOrderDetailDO.getChangeSkuId());
+                    Product product = productServiceResult.getResult();
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+                    String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+                    k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                    OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                    if (orderProductDO != null) {
+                        k3ChangeOrderDetailDO.setRentType(orderProductDO.getRentType());
+                    }
+                } else if (k3ChangeOrderDetailDO.getChangeMaterialId() != null) {
+                    MaterialDO materialDO = materialMapper.findById(k3ChangeOrderDetailDO.getChangeMaterialId());
+                    K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
+                    FormICItem formICItem = new FormICItem();
+                    formICItem.setModel(materialDO.getMaterialModel());//型号名称
+                    formICItem.setName(materialDO.getMaterialName());//商品名称
+                    String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                    k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                    if (orderMaterialDO != null) {
+                        k3ChangeOrderDetailDO.setRentType(orderMaterialDO.getRentType());
+                    }
+                }
+
                 k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
                 k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 k3ChangeOrderDetailDO.setCreateTime(now);
@@ -614,7 +661,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ChangeOrderDO.getChangeOrderStatus())) {
+        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ChangeOrderDO.getChangeOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_UPDATE);
             return result;
         }
@@ -635,7 +682,7 @@ public class K3ServiceImpl implements K3Service {
     public ServiceResult<String, String> addChangeOrder(K3ChangeOrder k3ChangeOrder) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
-        Date currentTime = new Date();
+        Date now = new Date();
         K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrder.getChangeOrderNo());
         if (k3ChangeOrderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
@@ -645,21 +692,49 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if (ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
+        if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_WAIT_COMMIT.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
+
         for (K3ChangeOrderDetail k3ChangeOrderDetail : k3ChangeOrder.getK3ChangeOrderDetailList()) {
             K3ChangeOrderDetailDO k3ChangeOrderDetailDO = ConverterUtil.convert(k3ChangeOrderDetail, K3ChangeOrderDetailDO.class);
+            if (k3ChangeOrderDetailDO.getChangeSkuId() != null) {
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(k3ChangeOrderDetailDO.getChangeSkuId());
+                Product product = productServiceResult.getResult();
+                K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+                String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+                k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                if (orderProductDO != null) {
+                    k3ChangeOrderDetailDO.setRentType(orderProductDO.getRentType());
+                }
+            } else if (k3ChangeOrderDetailDO.getChangeMaterialId() != null) {
+                MaterialDO materialDO = materialMapper.findById(k3ChangeOrderDetailDO.getChangeMaterialId());
+                K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
+                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
+                FormICItem formICItem = new FormICItem();
+                formICItem.setModel(materialDO.getMaterialModel());//型号名称
+                formICItem.setName(materialDO.getMaterialName());//商品名称
+                String number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                k3ChangeOrderDetailDO.setChangeProductNo(number);
+
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ChangeOrderDetailDO.getOrderItemId()));
+                if (orderMaterialDO != null) {
+                    k3ChangeOrderDetailDO.setRentType(orderMaterialDO.getRentType());
+                }
+            }
+
             k3ChangeOrderDetailDO.setChangeOrderId(k3ChangeOrderDO.getId());
             k3ChangeOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            k3ChangeOrderDetailDO.setCreateTime(currentTime);
+            k3ChangeOrderDetailDO.setCreateTime(now);
             k3ChangeOrderDetailDO.setCreateUser(loginUser.getUserId().toString());
-            k3ChangeOrderDetailDO.setUpdateTime(currentTime);
+            k3ChangeOrderDetailDO.setUpdateTime(now);
             k3ChangeOrderDetailDO.setUpdateUser(loginUser.getUserId().toString());
             k3ChangeOrderDetailMapper.save(k3ChangeOrderDetailDO);
         }
-
         result.setResult(k3ChangeOrderDO.getChangeOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -731,7 +806,7 @@ public class K3ServiceImpl implements K3Service {
         Date now = new Date();
 
         K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(k3ChangeOrder.getChangeOrderNo());
-        if(k3ChangeOrderDO == null){
+        if (k3ChangeOrderDO == null) {
             result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_IS_NOT_NULL);
             return result;
         }
@@ -795,7 +870,7 @@ public class K3ServiceImpl implements K3Service {
             }
             //调用提交审核服务
             k3ChangeOrderCommitParam.setVerifyMatters("K3换货单审核事项：1.服务费和运费 2.换货方式 3.商品与配件的商品差价和换货数量");
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_CHANGE, k3ChangeOrderCommitParam.getChangeOrderNo(), k3ChangeOrderCommitParam.getVerifyUserId(),k3ChangeOrderCommitParam.getVerifyMatters(), k3ChangeOrderCommitParam.getRemark(), k3ChangeOrderCommitParam.getImgIdList());
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_CHANGE, k3ChangeOrderCommitParam.getChangeOrderNo(), k3ChangeOrderCommitParam.getVerifyUserId(), k3ChangeOrderCommitParam.getVerifyMatters(), k3ChangeOrderCommitParam.getRemark(), k3ChangeOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING);
@@ -836,6 +911,7 @@ public class K3ServiceImpl implements K3Service {
         k3ChangeOrderDO.setUpdateTime(currentTime);
         k3ChangeOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ChangeOrderMapper.update(k3ChangeOrderDO);
+        statementService.createK3ChangeOrderStatement(changeOrderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -846,7 +922,7 @@ public class K3ServiceImpl implements K3Service {
         K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
         try {
-            if(k3ChangeOrderDO != null){//k3换货单
+            if (k3ChangeOrderDO != null) {//k3换货单
                 //不是审核中状态的收货单，拒绝处理
                 if (!ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING.equals(k3ChangeOrderDO.getChangeOrderStatus())) {
                     return false;
@@ -858,7 +934,7 @@ public class K3ServiceImpl implements K3Service {
                 }
                 k3ChangeOrderMapper.update(k3ChangeOrderDO);
                 return true;
-            }else if(k3ReturnOrderDO != null){//k3退货单
+            } else if (k3ReturnOrderDO != null) {//k3退货单
                 //不是审核中状态的收货单，拒绝处理
                 if (!ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
                     return false;
@@ -870,15 +946,15 @@ public class K3ServiceImpl implements K3Service {
                 }
                 k3ReturnOrderMapper.update(k3ReturnOrderDO);
                 return true;
-            }else{
+            } else {
                 return false;
             }
         } catch (Exception e) {
-            if(k3ChangeOrderDO != null){
+            if (k3ChangeOrderDO != null) {
                 logger.error("【K3换货单审核后，业务处理异常】", e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 logger.error("【数据已回滚】");
-            }else if(k3ReturnOrderDO != null){
+            } else if (k3ReturnOrderDO != null) {
                 logger.error("【K3退货单审核后，业务处理异常】", e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 logger.error("【数据已回滚】");
@@ -916,4 +992,21 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private MaterialMapper materialMapper;
+
+    @Autowired
+    private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
+
+    @Autowired
+    private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderMaterialMapper orderMaterialMapper;
+    @Autowired
+    private StatementService statementService;
 }

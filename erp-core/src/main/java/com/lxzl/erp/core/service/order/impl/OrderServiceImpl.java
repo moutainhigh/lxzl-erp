@@ -860,6 +860,10 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())||PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+            result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
+            return result;
+        }
         if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) &&
                 !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) &&
                 !OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {

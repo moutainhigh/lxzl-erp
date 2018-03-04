@@ -87,6 +87,12 @@
 		ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
 	</select>
 
+	<select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
+		WHERE esod.order_type = #{orderType, jdbcType=INTEGER} AND esod.order_id = #{orderId, jdbcType=INTEGER} AND esod.data_status = 1
+		ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
+	</select>
+
 	<select id="findByOrderNo" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
 		WHERE esod.order_id = #{orderId, jdbcType=INTEGER} AND esod.data_status = 1
@@ -96,12 +102,16 @@
 		SELECT count(esod.id) FROM erp_statement_order_detail esod
 		LEFT JOIN erp_order_product eop ON esod.order_item_refer_id = eop.id AND esod.order_item_type = 1
 		LEFT JOIN erp_order_material eom ON esod.order_item_refer_id = eom.id AND esod.order_item_type = 2
+		LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
 		<where>
 			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.rentLengthType != null">
 				and (eop.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER} OR eom.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER})
 			</if>
 			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
 				and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderDetailQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay == 1">
 				and esod.statement_detail_status = 0
@@ -125,12 +135,16 @@
 		SELECT <include refid="column_List"/> FROM erp_statement_order_detail esod
 		LEFT JOIN erp_order_product eop ON esod.order_item_refer_id = eop.id AND esod.order_item_type = 1
 		LEFT JOIN erp_order_material eom ON esod.order_item_refer_id = eom.id AND esod.order_item_type = 2
+		LEFT JOIN erp_customer ec ON esod.customer_id = ec.id
 		<where>
 			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.rentLengthType != null">
 				and (eop.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER} OR eom.rent_length_type = #{maps.statementOrderDetailQueryParam.rentLengthType, jdbcType=INTEGER})
 			</if>
 			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.customerId != null">
 				and esod.customer_id = #{maps.statementOrderDetailQueryParam.customerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.subCompanyId != null">
+				and ec.owner_sub_company_id = #{maps.statementOrderDetailQueryParam.subCompanyId, jdbcType=INTEGER}
 			</if>
 			<if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay != null &amp;&amp; maps.statementOrderDetailQueryParam.isNeedToPay == 1">
 				and esod.statement_detail_status = 0

@@ -132,7 +132,12 @@
                                         <div class="btn-group text-right">
                                             {{#rowActionButtons}}
                                             {{#buttons}}
-                                            <a href="${ctx}{{menuUrl}}?no={{statementOrderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-no="{{statementOrderNo}}" data-statementamount="{{statementAmount}}">{{text}}</a>
+                                            <a href="${ctx}{{menuUrl}}?no={{statementOrderNo}}"
+                                               type="button"
+                                               class="btn btn-default btn-xs {{class}}"
+                                               data-no="{{statementOrderNo}}"
+                                               data-statementPaidAmount="{{statementPaidAmount}}"
+                                               data-statementamount="{{statementAmount}}">{{text}}</a>
                                             {{/buttons}}
                                             {{/rowActionButtons}}
                                         </div>

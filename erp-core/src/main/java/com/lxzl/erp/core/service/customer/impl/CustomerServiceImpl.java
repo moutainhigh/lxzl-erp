@@ -63,51 +63,41 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
 
-        //校验法人手机号,经办人电话,紧急联系人手机号
-        if (customerCompany.getIsLegalPersonApple() == 0) {
-            if (customerCompany.getLegalPerson() == null || customerCompany.getLegalPersonNo() == null || customerCompany.getLegalPersonPhone() == null){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL);
-                return serviceResult;
-            }
-            if (customerCompany.getLegalPersonPhone() != null && customerCompany.getLegalPersonPhone() != "") {
-                String regExp = "^1[0-9]{10}$";
-                Pattern pattern = Pattern.compile(regExp);
-                Matcher matcher = pattern.matcher(customerCompany.getLegalPersonPhone());
-                if (!matcher.matches() || customerCompany.getLegalPersonPhone().length() != 11) {
-                    serviceResult.setErrorCode(ErrorCode.PHONE_ERROR);
-                    return serviceResult;
-                }
-            }
-            if (customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone())) {
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
-                return serviceResult;
-            }
-            if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
-                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
-                return serviceResult;
-            }
-            if (customerCompany.getConnectPhone().equals(customerCompany.getLegalPersonPhone())) {
-                serviceResult.setErrorCode(ErrorCode.CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE);
-                return serviceResult;
-            }
-            if (customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPersonNo())) {
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
-                return serviceResult;
-            }
-            if (customerCompany.getAgentPersonName().equals(customerCompany.getLegalPerson())) {
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
-                return serviceResult;
-            }
-        }
-
+        //如果是否为法人代表申请，为是
         if (customerCompany.getIsLegalPersonApple() == 1) {
-            if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
-                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
-                return serviceResult;
-            }
             customerCompany.setLegalPerson(customerCompany.getAgentPersonName());
             customerCompany.setLegalPersonNo(customerCompany.getAgentPersonNo());
             customerCompany.setLegalPersonPhone(customerCompany.getAgentPersonPhone());
+        }
+        //校验法人手机号,经办人电话,紧急联系人手机号
+        if (customerCompany.getIsLegalPersonApple() == 0) {
+
+            if (customerCompany.getLegalPerson() != null) {
+                if (customerCompany.getAgentPersonName().equals(customerCompany.getLegalPerson())) {
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
+                    return serviceResult;
+                }
+            }
+
+            if (customerCompany.getLegalPersonNo() != null ){
+                if (customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPersonNo())) {
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
+                    return serviceResult;
+                }
+            }
+            if(customerCompany.getLegalPersonPhone() != null){
+                if (customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone())) {
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
+                    return serviceResult;
+                }
+            }
+
+            if (customerCompany.getConnectPhone() != null){
+                if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
+                    serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
+                    return serviceResult;
+                }
+            }
         }
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
@@ -254,51 +244,41 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
 
-        //校验法人手机号,经办人电话,紧急联系人手机号
-        if (CommonConstant.COMMON_CONSTANT_NO.equals(customerCompany.getIsLegalPersonApple())) {
-            if (customerCompany.getLegalPerson() == null || customerCompany.getLegalPersonNo() == null || customerCompany.getLegalPersonPhone() == null){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL);
-                return serviceResult;
-            }
-            if (customerCompany.getLegalPersonPhone() != null && customerCompany.getLegalPersonPhone() != "") {
-                String regExp = "^1[0-9]{10}$";
-                Pattern pattern = Pattern.compile(regExp);
-                Matcher matcher = pattern.matcher(customerCompany.getLegalPersonPhone());
-                if (!matcher.matches() || customerCompany.getLegalPersonPhone().length() != 11) {
-                    serviceResult.setErrorCode(ErrorCode.PHONE_ERROR);
+        //如果是否为法人代表申请，为是
+        if (customerCompany.getIsLegalPersonApple() == 1) {
+            customerCompany.setLegalPerson(customerCompany.getAgentPersonName());
+            customerCompany.setLegalPersonNo(customerCompany.getAgentPersonNo());
+            customerCompany.setLegalPersonPhone(customerCompany.getAgentPersonPhone());
+        }
+
+        //如果是否为法人代表申请，为否
+        if (customerCompany.getIsLegalPersonApple() == 0) {
+            if (customerCompany.getLegalPerson() != null) {
+                if (customerCompany.getAgentPersonName().equals(customerCompany.getLegalPerson())) {
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
                     return serviceResult;
                 }
             }
-            if (customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone())) {
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
-                return serviceResult;
-            }
-            if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
-                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
-                return serviceResult;
-            }
-            if (customerCompany.getConnectPhone().equals(customerCompany.getLegalPersonPhone())) {
-                serviceResult.setErrorCode(ErrorCode.CONNECT_PHONE_EQUAL_TO_LEGAL_PERSON_PHONE);
-                return serviceResult;
-            }
-            if (customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPersonNo())) {
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
-                return serviceResult;
-            }
-            if (customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPerson())) {
-                serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME);
-                return serviceResult;
-            }
-        }
 
-        if (customer.getCustomerCompany().getIsLegalPersonApple() == 1) {
-            if (customer.getCustomerCompany().getAgentPersonPhone().equals(customer.getCustomerCompany().getConnectPhone())) {
-                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
-                return serviceResult;
+            if (customerCompany.getLegalPersonNo() != null ){
+                if (customerCompany.getAgentPersonNo().equals(customerCompany.getLegalPersonNo())) {
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO);
+                    return serviceResult;
+                }
             }
-            customer.getCustomerCompany().setLegalPerson(customer.getCustomerCompany().getAgentPersonName());
-            customer.getCustomerCompany().setLegalPersonNo(customer.getCustomerCompany().getAgentPersonNo());
-            customer.getCustomerCompany().setLegalPersonPhone(customer.getCustomerCompany().getAgentPersonPhone());
+            if(customerCompany.getLegalPersonPhone() != null){
+                if (customerCompany.getLegalPersonPhone().equals(customerCompany.getAgentPersonPhone())) {
+                    serviceResult.setErrorCode(ErrorCode.LEGAL_PERSON_PHONE_EQUAL_TO_AGENT_PERSON_PHONE);
+                    return serviceResult;
+                }
+            }
+
+            if (customerCompany.getConnectPhone() != null){
+                if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
+                    serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_PHONE_EQUAL_TO_CONNECT_PHONE);
+                    return serviceResult;
+                }
+            }
         }
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
@@ -393,6 +373,25 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         newCustomerCompanyDO.setId(customerCompanyDO.getId());
         customerCompanyMapper.update(newCustomerCompanyDO);
+
+        //对经办人身份证正面操作
+        List<Image> agentPersonNoPictureFrontImageList = new ArrayList<>();
+        agentPersonNoPictureFrontImageList.add(customerCompany.getAgentPersonNoPictureFrontImage());
+        serviceResult = updateImage(agentPersonNoPictureFrontImageList, ImgType.AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
+        }
+
+        //对经办人身份证反面操作
+        List<Image> agentPersonNoPictureBackImageList = new ArrayList<>();
+        agentPersonNoPictureBackImageList.add(customerCompany.getAgentPersonNoPictureBackImage());
+        serviceResult = updateImage(agentPersonNoPictureBackImageList, ImgType.AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE, customerDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
+        }
+
 
         //对营业执照图片操作
         List<Image> businessLicensePictureImageList = new ArrayList<>();
@@ -627,43 +626,12 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
             //判断客户资料中必填项是否填写
 
-            //送货方式是否有值
-            if(customerDO.getDeliveryMode() == null){
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+            if (customerCompanyDO.getIsLegalPersonApple() == CommonConstant.COMMON_CONSTANT_YES){
+                if (customerCompanyDO.getLegalPerson() == null || customerCompanyDO.getLegalPersonNo() == null || customerCompanyDO.getLegalPersonPhone() == null){
+                    result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
+                    return result;
+                }
             }
-
-            //1.租赁设备明细
-            String customerCompanyNeedFirstJson = customerCompanyDO.getCustomerCompanyNeedFirstJson();
-            List<CustomerCompanyNeed> customerCompanyNeedList = JSONObject.parseArray(customerCompanyNeedFirstJson, CustomerCompanyNeed.class);
-
-            //对租赁设备进行判断
-            if(CollectionUtil.isEmpty(customerCompanyNeedList)){
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
-            }
-
-//            if (CollectionUtil.isNotEmpty(customerCompanyNeedList)) {
-//                for (CustomerCompanyNeed customerCompanyNeed : customerCompanyNeedList) {
-//                    ProductSkuDO productSkuDO = productSkuMapper.findById(customerCompanyNeed.getSkuId());
-//                    if (productSkuDO == null) {
-//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
-//                        return result;
-//                    }
-//                    if (customerCompanyNeed.getUnitPrice() == null) {
-//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL);
-//                        return result;
-//                    }
-//                    if (customerCompanyNeed.getRentCount() == null) {
-//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
-//                        return result;
-//                    }
-//                    if (customerCompanyNeed.getTotalPrice() == null) {
-//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_TOTAL_PRICE_NOT_NULL);
-//                        return result;
-//                    }
-//                }
-//            }
 
             //对图片附件进行判断
             List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
@@ -928,6 +896,20 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //开始加入附件
+        //加入经办人身份证正面照片
+        List<ImageDO> agentPersonNoPictureFrontImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+        if (CollectionUtil.isNotEmpty(agentPersonNoPictureFrontImageList)) {
+            Image agentPersonNoPictureFrontImage = ConverterUtil.convert(agentPersonNoPictureFrontImageList.get(0), Image.class);
+            customerResult.getCustomerCompany().setAgentPersonNoPictureFrontImage(agentPersonNoPictureFrontImage);
+        }
+
+        //加入经办人身份证反面照片
+        List<ImageDO> agentPersonNoPictureBackImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+        if (CollectionUtil.isNotEmpty(agentPersonNoPictureBackImageList)) {
+            Image agentPersonNoPictureBackImage = ConverterUtil.convert(agentPersonNoPictureBackImageList.get(0), Image.class);
+            customerResult.getCustomerCompany().setAgentPersonNoPictureBackImage(agentPersonNoPictureBackImage);
+        }
+
         //加入营业执照
         List<ImageDO> businessLicensePictureImageList = imgMysqlMapper.findByRefIdAndType(customerDO.getId().toString(), ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
         if (CollectionUtil.isNotEmpty(businessLicensePictureImageList)) {
@@ -1266,9 +1248,11 @@ public class CustomerServiceImpl implements CustomerService {
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(companyId);
             customerResult.setCustomerArea(subCompanyDO.getSubCompanyName());
         }
+
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -1578,6 +1562,43 @@ public class CustomerServiceImpl implements CustomerService {
 
     private ServiceResult<String, String> saveImage(Customer customer, Date now) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        //对经办人身份证正面操作
+        if (customer.getCustomerCompany().getAgentPersonNoPictureFrontImage() != null) {
+            ImageDO agentPersonNoPictureFrontImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getAgentPersonNoPictureFrontImage().getImgId());
+            if (agentPersonNoPictureFrontImageDO == null) {
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS);
+                return serviceResult;
+            }
+            if (StringUtil.isNotEmpty(agentPersonNoPictureFrontImageDO.getRefId())) {
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, agentPersonNoPictureFrontImageDO.getId());
+                return serviceResult;
+            }
+            agentPersonNoPictureFrontImageDO.setImgType(ImgType.AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+            agentPersonNoPictureFrontImageDO.setRefId(customer.getCustomerId().toString());
+            agentPersonNoPictureFrontImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            agentPersonNoPictureFrontImageDO.setUpdateTime(now);
+            imgMysqlMapper.update(agentPersonNoPictureFrontImageDO);
+        }
+
+        //对经办人身份证反面操作
+        if (customer.getCustomerCompany().getAgentPersonNoPictureBackImage() != null) {
+            ImageDO agentPersonNoPictureBackImageDO = imgMysqlMapper.findById(customer.getCustomerCompany().getAgentPersonNoPictureBackImage().getImgId());
+            if (agentPersonNoPictureBackImageDO == null) {
+                serviceResult.setErrorCode(ErrorCode.AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS);
+                return serviceResult;
+            }
+            if (StringUtil.isNotEmpty(agentPersonNoPictureBackImageDO.getRefId())) {
+                serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, agentPersonNoPictureBackImageDO.getId());
+                return serviceResult;
+            }
+            agentPersonNoPictureBackImageDO.setImgType(ImgType.AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+            agentPersonNoPictureBackImageDO.setRefId(customer.getCustomerId().toString());
+            agentPersonNoPictureBackImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            agentPersonNoPictureBackImageDO.setUpdateTime(now);
+            imgMysqlMapper.update(agentPersonNoPictureBackImageDO);
+        }
+
 
         //对营业执照图片操作
         if (customer.getCustomerCompany().getBusinessLicensePictureImage() != null) {
@@ -2132,13 +2153,17 @@ public class CustomerServiceImpl implements CustomerService {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL);
                 return serviceResult;
             }
-            customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyNeed.getIsNew())){
+                customerCompanyNeed.setUnitPrice(productSkuDO.getNewSkuPrice());
+            }else {
+                customerCompanyNeed.setUnitPrice(productSkuDO.getSkuPrice());
+            }
             if (customerCompanyNeed.getRentCount() == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL);
                 return serviceResult;
             }
 
-            BigDecimal totalPrice = BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
+            BigDecimal totalPrice = BigDecimalUtil.mul(customerCompanyNeed.getUnitPrice(), new BigDecimal(customerCompanyNeed.getRentCount()));
             customerCompanyNeed.setTotalPrice(totalPrice);
             ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(customerCompanyNeed.getSkuId());
             customerCompanyNeed.setProduct(productServiceResult.getResult());

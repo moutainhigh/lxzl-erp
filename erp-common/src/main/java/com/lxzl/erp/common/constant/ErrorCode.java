@@ -512,6 +512,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL = "J500112";
     public static final String CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL = "J500113";
     public static final String CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL = "J500114";
+    public static final String DELIVERY_MODE_NOT_NULL = "J500115";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -566,6 +567,8 @@ public class ErrorCode {
     public static final String IMG_REF_ID_NOT_NULL = "J1100031";
     public static final String IMG_REF_ID_HAD_VALUE = "J1100032";
     public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
+    public static final String AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100034";
+    public static final String AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100035";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -679,6 +682,7 @@ public class ErrorCode {
     public static final String K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000010";
     public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
     public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
+    public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1011,13 +1015,14 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人人身份证与法人身份证相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人人身份证与法人姓名相同相同");
-        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，客户的收货地址、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
+        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，紧急联系人姓名，紧急联系人手机号、客户的收货地址、是否是法人代表申请(如果选择为“是”，法人姓名、手机号、身份证号码也不能为空）、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
         MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
         MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
         MAP.put(CUSTOMER_DELIVERY_MODE_NOT_NULL , "客户的发货方式不能为空");
         MAP.put(CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL , "企业客户的是否是法人申请选项不能为空");
         MAP.put(CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL , "企业客户的客户来源不能为空");
         MAP.put(CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL , "企业客户法人姓名、身份证号码、手机号不能为空");
+        MAP.put(DELIVERY_MODE_NOT_NULL , "企业客户的送货方式不能为空");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1236,6 +1241,9 @@ public class ErrorCode {
         MAP.put(IMG_REF_ID_NOT_NULL, "图片的ref-ID不能为空");
         MAP.put(IMG_REF_ID_HAD_VALUE, "编号【%s 】的图片已经关联了客户，请重新选择图片");
         MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
+        MAP.put(AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "经办人身份证正面不能为空");
+        MAP.put(AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "经办人身份证反面面不能为空");
+
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
         MAP.put(TRANSFER_ORDER_ID_NOT_NULL, "转移单ID不能为空");
@@ -1350,6 +1358,7 @@ public class ErrorCode {
         MAP.put(K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3换货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
+        MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
 
     }
 

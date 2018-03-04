@@ -11,6 +11,7 @@ public class K3ChangeOrderDetail extends BasePO {
 	private Integer k3ChangeOrderDetailId;   //唯一标识
 	private Integer changeOrderId;   //K3换货单ID
 	private String orderItemId;   //订单项id
+	private Integer rentType;   //租赁方式，1按天租，2按月租
 	private String orderNo;   //订单号
 	private String orderEntry;   //订单行号
 	private String productNo;   //产品代码
@@ -51,6 +52,14 @@ public class K3ChangeOrderDetail extends BasePO {
 
 	public void setOrderItemId(String orderItemId) {
 		this.orderItemId = orderItemId;
+	}
+
+	public Integer getRentType() {
+		return rentType;
+	}
+
+	public void setRentType(Integer rentType) {
+		this.rentType = rentType;
 	}
 
 	public String getOrderNo(){

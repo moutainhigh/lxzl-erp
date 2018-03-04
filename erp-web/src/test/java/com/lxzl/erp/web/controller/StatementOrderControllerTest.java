@@ -1,8 +1,10 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -21,7 +23,7 @@ import java.util.List;
  * @author gaochao
  * @date 2017-12-12 8:52
  */
-public class StatementOrderControllerTest extends ERPUnTransactionalTest {
+public class StatementOrderControllerTest extends ERPTransactionalTest {
 
     @Test
     public void createNew() throws Exception {
@@ -45,9 +47,16 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void createK3ReturnOrderStatement() throws Exception {
+        K3ReturnOrder param = new K3ReturnOrder();
+        param.setReturnOrderNo("LXK3RO20180302142236358");
+        TestResult testResult = getJsonTestResult("/statementOrder/createK3ReturnOrderStatement", param);
+    }
+
+    @Test
     public void pay() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-731529-20180201-00197");
+        param.setStatementOrderNo("LXSO-731857-20180301-00018");
         param.setStatementOrderPayType(StatementOrderPayType.PAY_TYPE_BALANCE);
         TestResult testResult = getJsonTestResult("/statementOrder/pay", param);
     }
@@ -78,7 +87,7 @@ public class StatementOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detail() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-731827-20180222-00409");
+        param.setStatementOrderNo("LXSO-731819-20180301-00388");
         TestResult testResult = getJsonTestResult("/statementOrder/detail", param);
     }
 

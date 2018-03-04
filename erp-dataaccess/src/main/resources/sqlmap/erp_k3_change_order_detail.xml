@@ -15,6 +15,8 @@
 		<result column="change_product_name" jdbcType="VARCHAR" property="changeProductName" />
 		<result column="product_count" jdbcType="INTEGER" property="productCount" />
 		<result column="product_diff_amount" jdbcType="DECIMAL" property="productDiffAmount" />
+		<result column="order_item_id" jdbcType="VARCHAR" property="orderItemId" />
+		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -24,7 +26,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ekcod.id,ekcod.change_order_id,ekcod.order_no,ekcod.order_entry,ekcod.product_no,ekcod.product_name,ekcod.change_sku_id,ekcod.change_material_id,ekcod.change_product_no,ekcod.change_product_name,ekcod.product_count,ekcod.product_diff_amount,ekcod.data_status,ekcod.remark,ekcod.create_time,ekcod.create_user,ekcod.update_time,ekcod.update_user
+		ekcod.id,ekcod.change_order_id,ekcod.order_no,ekcod.order_entry,ekcod.product_no,ekcod.product_name,ekcod.change_sku_id,ekcod.change_material_id,ekcod.change_product_no,ekcod.change_product_name,ekcod.product_count,ekcod.product_diff_amount,ekcod.order_item_id,ekcod.rent_type,ekcod.data_status,ekcod.remark,ekcod.create_time,ekcod.create_user,ekcod.update_time,ekcod.update_user
 	</sql>
 
 	<select id="findById" resultMap="K3ChangeOrderDetailDO" parameterType="java.lang.Integer">
@@ -85,6 +87,12 @@
 			</if>
 			<if test="productDiffAmount != null">
 				product_diff_amount = #{productDiffAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderItemId != null">
+				order_item_id = #{orderItemId,jdbcType=DECIMAL},
+			</if>
+			<if test="rentType != null">
+				rent_type = #{rentType,jdbcType=DECIMAL},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

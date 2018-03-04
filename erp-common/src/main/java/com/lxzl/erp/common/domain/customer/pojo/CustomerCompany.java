@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.CommitCustomerGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -25,11 +26,11 @@ public class CustomerCompany extends BasePO {
     private Integer customerId;   //客户ID
     private String customerNo;  //客户编码
     private String landline;   //座机电话
-    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @NotBlank(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {CommitCustomerGroup.class})
     private String connectRealName;   //紧急联系人
-    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_CONNECT_PHONE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
-    @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
-    @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
+    @NotBlank(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {CommitCustomerGroup.class})
+//    @Length(min = 11,max = 11,message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
+//    @Pattern(regexp = "^1[0-9]{10}$",message = ErrorCode.PHONE_ERROR,groups = {AddCustomerCompanyGroup.class, UpdateCustomerCompanyGroup.class})
     private String connectPhone;   //紧急联系人手机号
     @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String companyName;   //公司名称
@@ -37,10 +38,10 @@ public class CustomerCompany extends BasePO {
     private Integer province;   //省份ID，省份ID
     private Integer city;   //城市ID，对应城市ID
     private Integer district;   //区ID，对应区ID
-    @NotBlank(message = ErrorCode.CUSTOMER_COMPANY_ADDRESS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @NotBlank(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {CommitCustomerGroup.class})
     private String address;   //公司经营地址
     private Integer defaultAddressReferId; //默认地址关联ID
-    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @NotNull(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class,CommitCustomerGroup.class})
     private Integer isLegalPersonApple;   //是否法人代表申请
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
@@ -59,10 +60,10 @@ public class CustomerCompany extends BasePO {
     private String industry;  //所属行业
     private BigDecimal registeredCapital;  //注册资本
     private Integer officeNumber;  //办公人数
-//    @NotBlank(message = ErrorCode.PRODUCT_PURPOSE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @NotBlank(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {CommitCustomerGroup.class})
     private String productPurpose;  //设备用途
-    @Valid
-    @NotEmpty(message = ErrorCode.CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+//    @Valid
+    @NotEmpty(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {CommitCustomerGroup.class})
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private BigDecimal firstListTotalPrice; //首次所需设备总金额
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
@@ -74,6 +75,7 @@ public class CustomerCompany extends BasePO {
     private String agentPersonPhone;  //经办人电话
     @NotBlank(message = ErrorCode.AGENT_PERSON_NO_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private String agentPersonNo;  //经办人身份证号码
+    @NotBlank(message = ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL,groups = {CommitCustomerGroup.class})
     private String unifiedCreditCode;  //统一信用代码
     private Double operatingArea; //经营面积
     private Integer unitInsuredNumber; //单位参保人数
@@ -81,6 +83,12 @@ public class CustomerCompany extends BasePO {
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
+
+    @Valid
+    private Image agentPersonNoPictureFrontImage;//经办人身份证正面
+    @Valid
+    private Image agentPersonNoPictureBackImage;//经办人身份证反面
+
 
     @Valid
 //    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
@@ -568,5 +576,21 @@ public class CustomerCompany extends BasePO {
 
     public void setLaterListTotalPrice(BigDecimal laterListTotalPrice) {
         this.laterListTotalPrice = laterListTotalPrice;
+    }
+
+    public Image getAgentPersonNoPictureFrontImage() {
+        return agentPersonNoPictureFrontImage;
+    }
+
+    public void setAgentPersonNoPictureFrontImage(Image agentPersonNoPictureFrontImage) {
+        this.agentPersonNoPictureFrontImage = agentPersonNoPictureFrontImage;
+    }
+
+    public Image getAgentPersonNoPictureBackImage() {
+        return agentPersonNoPictureBackImage;
+    }
+
+    public void setAgentPersonNoPictureBackImage(Image agentPersonNoPictureBackImage) {
+        this.agentPersonNoPictureBackImage = agentPersonNoPictureBackImage;
     }
 }

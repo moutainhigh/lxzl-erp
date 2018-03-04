@@ -110,7 +110,7 @@
 			WHERE eso.id = #{id, jdbcType=INTEGER} AND eso.data_status = 1
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
-		ORDER BY statement_main.statement_expect_pay_time ASC,esod.statement_detail_phase ASC, esod.statement_expect_pay_time ASC
+		ORDER BY esod.order_type ASC,esod.order_id ASC,statement_main.statement_expect_pay_time ASC,esod.statement_detail_phase ASC, esod.statement_expect_pay_time ASC
 	</select>
 
 	<select id="findByNo" resultMap="StatementOrderDO" parameterType="java.lang.String">
@@ -133,7 +133,7 @@
 			WHERE eso.statement_order_no = #{statementOrderNo, jdbcType=INTEGER} AND eso.data_status = 1
 		) statement_main
 		LEFT JOIN erp_statement_order_detail esod ON statement_main.id = esod.statement_order_id AND esod.data_status = 1
-		ORDER BY statement_main.statement_expect_pay_time ASC,esod.statement_detail_phase ASC, esod.statement_expect_pay_time ASC, esod.id DESC
+		ORDER BY esod.order_type ASC,esod.order_id ASC,statement_main.statement_expect_pay_time ASC,esod.statement_detail_phase ASC, esod.statement_expect_pay_time ASC, esod.id DESC
 	</select>
 
 	<select id="findByCustomerId" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
@@ -174,7 +174,7 @@
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16)
+					and eso.statement_status in (0,4,8,16,20)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -232,7 +232,7 @@
 						and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 					</when>
 					<otherwise>
-						and eso.statement_status in (0,4,8,16)
+						and eso.statement_status in (0,4,8,16,20)
 					</otherwise>
 				</choose>
 				<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -286,7 +286,7 @@
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16)
+					and eso.statement_status in (0,4,8,16,20)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
@@ -346,7 +346,7 @@
 					and eso.statement_status = #{maps.statementOrderQueryParam.statementOrderStatus, jdbcType=INTEGER}
 				</when>
 				<otherwise>
-					and eso.statement_status in (0,4,8,16)
+					and eso.statement_status in (0,4,8,16,20)
 				</otherwise>
 			</choose>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementExpectPayStartTime != null ">
