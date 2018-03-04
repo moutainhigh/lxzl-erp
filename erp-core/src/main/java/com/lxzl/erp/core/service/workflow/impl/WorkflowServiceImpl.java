@@ -525,7 +525,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             String code = verifyReceiver.receiveVerifyResult(VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus), workflowLinkDO.getWorkflowReferNo());
             if (!ErrorCode.SUCCESS.equals(code)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
-                result.setErrorCode(ErrorCode.SYSTEM_ERROR);
+                result.setErrorCode(code);
                 return result;
             }
         }

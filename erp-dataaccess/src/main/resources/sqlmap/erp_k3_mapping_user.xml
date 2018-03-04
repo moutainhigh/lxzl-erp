@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingUserMapper">
+
+	<resultMap id="K3MappingUserDO" type="com.lxzl.erp.dataaccess.domain.k3.K3MappingUserDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="erp_user_code" jdbcType="VARCHAR" property="erpUserCode" />
+		<result column="k3_user_code" jdbcType="VARCHAR" property="k3UserCode" />
+		<result column="user_real_name" jdbcType="VARCHAR" property="userRealName" />
+	</resultMap>
+
+	<sql id="column_List">
+		ekmu.id,ekmu.erp_user_code,ekmu.k3_user_code,ekmu.user_real_name
+	</sql>
+
+	<select id="findById" resultMap="K3MappingUserDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_user ekmu 
+		WHERE ekmu.id = #{id, jdbcType=INTEGER} AND ekmu.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ekmu.id) FROM erp_k3_mapping_user ekmu 
+		<where>
+			<if test="true">
+				AND ekmu.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="K3MappingUserDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_user ekmu 
+		<where>
+			<if test="true">
+				AND ekmu.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="erpUserCode != null">
+				erp_user_code = #{erpUserCode,jdbcType=VARCHAR},
+			</if>
+			<if test="k3UserCode != null">
+				k3_user_code = #{k3UserCode,jdbcType=VARCHAR},
+			</if>
+			<if test="userRealName != null">
+				user_real_name = #{userRealName,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingUserDO">
+		INSERT INTO erp_k3_mapping_user <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.K3MappingUserDO">
+		UPDATE erp_k3_mapping_user <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

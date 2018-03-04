@@ -628,11 +628,12 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
+        StringBuilder errorCodeMsg = new StringBuilder();
+
         //判断是否有收货地址
         List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
         if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
-            result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-            return result;
+            errorCodeMsg.append("收货地址，");
         }
 
 
@@ -641,18 +642,16 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
             //判断客户资料中必填项是否填写
 
-            if (customerCompanyDO.getIsLegalPersonApple() == CommonConstant.COMMON_CONSTANT_YES){
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyDO.getIsLegalPersonApple())){
                 if (customerCompanyDO.getLegalPerson() == null || customerCompanyDO.getLegalPersonNo() == null || customerCompanyDO.getLegalPersonPhone() == null){
-                    result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                    return result;
+                    errorCodeMsg.append("法人身份证、姓名、电话，");
                 }
             }
 
             //对图片附件进行判断
             List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
             if (CollectionUtil.isEmpty(imageDOList)) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("图片信息不能为空，");
             }
 
             List<ImageDO> businessLicensePicture = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
@@ -660,50 +659,46 @@ public class CustomerServiceImpl implements CustomerService {
             List<ImageDO> legalPersonNoPictureBack = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
 
             if (businessLicensePicture.size() == 0) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("营业执照，");
             }
             if (legalPersonNoPictureFront.size() == 0) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("法人身份证正面照，");
             }
             if (legalPersonNoPictureBack.size() == 0) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("法人身份证反面照，");
             }
 
             //对注册资本判断
             if (customerCompanyDO.getRegisteredCapital() == null) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("注册资本，");
             }
             //对企业所属行业判断
             if (StringUtil.isEmpty(customerCompanyDO.getIndustry())) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("所属行业，");
             }
 
             //对设备用途判断
             if (StringUtil.isEmpty(customerCompanyDO.getProductPurpose())) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("设备用户，");
             }
 
             //对企业成立时间判断
             if (customerCompanyDO.getCompanyFoundTime() == null) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("成立时间，");
             }
 
             //对企业办公人数判断
             if (customerCompanyDO.getOfficeNumber() == null) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
-                return result;
+                errorCodeMsg.append("办公人数");
             }
 
             //对企业的经营面积判断
             if (customerCompanyDO.getOperatingArea() == null) {
-                result.setErrorCode(ErrorCode.COMMIT_CUSTOMER_PARAM_IS_NOT_NULL);
+                errorCodeMsg.append("经营面积,");
+            }
+            if(StringUtil.isNotBlank(errorCodeMsg.toString())){
+                errorCodeMsg.append("以上信息为长租必填项，请完善！");
+                result.setErrorCode(errorCodeMsg.toString());
                 return result;
             }
         }

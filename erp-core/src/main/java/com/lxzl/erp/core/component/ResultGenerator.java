@@ -17,7 +17,7 @@ public class ResultGenerator {
             result = new Result(SUCCESS_CODE, ErrorCode.getMessage(SUCCESS_CODE), true);
             result.setProperty("data", obj);
         } else if (StringUtil.isEmpty(ErrorCode.getMessage(code))) {
-            result = new Result(ErrorCode.BUSINESS_EXCEPTION, obj.toString(), false);
+            result = new Result(ErrorCode.BUSINESS_EXCEPTION, code, false);
         } else {
             result = new Result(code, ErrorCode.getMessage(code), false);
         }

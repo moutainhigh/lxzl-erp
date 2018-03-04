@@ -17,6 +17,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingSubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingUserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
@@ -25,6 +26,7 @@ import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingSubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingUserDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -145,6 +147,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
     @Autowired
     private DeliveryOrderMapper deliveryOrderMapper;
+
+    @Autowired
+    private K3MappingUserMapper k3MappingUserMapper;
 
     @Autowired
     private DeliveryOrderProductMapper deliveryOrderProductMapper;

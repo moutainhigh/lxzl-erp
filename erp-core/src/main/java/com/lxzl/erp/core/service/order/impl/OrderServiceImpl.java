@@ -735,7 +735,7 @@ public class OrderServiceImpl implements OrderService {
                 String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
                 if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return ErrorCode.BUSINESS_EXCEPTION;
+                    return verifyOrderShortRentReceivableResult;
                 }
 
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_DELIVERY);
@@ -743,7 +743,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createOrderStatement(orderDO.getOrderNo());
                 if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return ErrorCode.BUSINESS_EXCEPTION;
+                    return createStatementOrderResult.getErrorCode();
                 }
                 orderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
                 orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
