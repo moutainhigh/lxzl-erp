@@ -1190,13 +1190,12 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if (!"10.".equals(k3ReturnOrderDetailDO.getProductNo()) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("10.") && !k3ReturnOrderDetailDO.getProductNo().startsWith("90.")) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
                     continue;
                 }
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 if (orderProductDO == null) {
-                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_NOT_EXISTS);
-                    return result;
+                    continue;
                 }
 
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
@@ -1231,9 +1230,7 @@ public class StatementServiceImpl implements StatementService {
 
                         // 如果有押金还没交，不让退货
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
-                            return result;
+                            continue;
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
@@ -1308,13 +1305,12 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if (!"20.".equals(k3ReturnOrderDetailDO.getProductNo()) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                if (!k3ReturnOrderDetailDO.getProductNo().startsWith("20.") || k3ReturnOrderDetailDO.getOrderItemId() == null) {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 if (orderMaterialDO == null) {
-                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_NOT_EXISTS);
-                    return result;
+                    continue;
                 }
 
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
@@ -1349,9 +1345,7 @@ public class StatementServiceImpl implements StatementService {
 
                         // 如果有押金还没交，不让退货
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
-                            return result;
+                            continue;
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
