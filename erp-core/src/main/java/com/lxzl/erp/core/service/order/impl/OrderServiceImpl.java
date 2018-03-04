@@ -334,6 +334,7 @@ public class OrderServiceImpl implements OrderService {
 
         String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, orderDO);
         if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(verifyOrderShortRentReceivableResult);
             return result;
         }
