@@ -7,6 +7,8 @@
 
 package com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models;
 
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
+
 public class FormSEOrder  implements java.io.Serializable {
     private String acctDeptName;
 

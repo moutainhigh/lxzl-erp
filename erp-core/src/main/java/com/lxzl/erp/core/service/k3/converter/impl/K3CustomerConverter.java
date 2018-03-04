@@ -24,6 +24,8 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 
 @Service
 public class K3CustomerConverter implements ConvertK3DataService{
@@ -112,8 +114,9 @@ public class K3CustomerConverter implements ConvertK3DataService{
         Integer customerId = k3SendRecordDO.getRecordReferId();
         CustomerDO customerDO = customerMapper.findById(customerId);
         K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByErpCode(customerDO.getCustomerNo());
-        if(!k3MappingCustomerDO.getK3CustomerCode().equals(k3Response.getK3CustomerCode())){
-            k3MappingCustomerDO.setK3CustomerCode(k3Response.getK3CustomerCode());
+
+        if(!k3MappingCustomerDO.getK3CustomerCode().equals(k3Response.getData().get("k3CustomerCode"))){
+            k3MappingCustomerDO.setK3CustomerCode(k3Response.getData().get("k3CustomerCode"));
         }
         k3MappingCustomerMapper.update(k3MappingCustomerDO);
     }
@@ -128,7 +131,7 @@ public class K3CustomerConverter implements ConvertK3DataService{
     class K3Response{
         private String status;
         private String result;
-        private String k3CustomerCode;
+        private Map<String,String> data;
 
         public String getStatus() {
             return status;
@@ -146,12 +149,12 @@ public class K3CustomerConverter implements ConvertK3DataService{
             this.result = result;
         }
 
-        public String getK3CustomerCode() {
-            return k3CustomerCode;
+        public Map<String, String> getData() {
+            return data;
         }
 
-        public void setK3CustomerCode(String k3CustomerCode) {
-            this.k3CustomerCode = k3CustomerCode;
+        public void setData(Map<String, String> data) {
+            this.data = data;
         }
     }
     @Autowired

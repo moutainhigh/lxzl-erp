@@ -95,20 +95,16 @@ public class K3OrderConverter implements ConvertK3DataService {
         }
         formSEOrder.setFetchStyleNumber(fetchStyleNumber);// 交货方式  FJH01 客户自提 FJH02 送货上门 FJH03 物流发货
         List<RoleDO> roleDOList = roleMapper.findByUserId(erpOrder.getOrderSellerId());
-        for(int i = 0 ; i < roleDOList.size() ; i++){
-            RoleDO roleDO = roleDOList.get(i);
-            K3MappingDepartmentDO k3MappingDepartmentDO = k3MappingDepartmentMapper.findByErpId(roleDO.getDepartmentId());
-            if(i==0){
-                if(k3MappingDepartmentDO!=null){
-                    formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
-                    formSEOrder.setDeptName(k3MappingDepartmentDO.getDepartmentName());
-                }
-            }else{
-                DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
-                if(DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())){
-                    formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
-                    formSEOrder.setDeptName(k3MappingDepartmentDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
-                }
+        RoleDO roleDO = roleDOList.get(0);
+        K3MappingDepartmentDO k3MappingDepartmentDO = k3MappingDepartmentMapper.findByErpId(roleDO.getDepartmentId());
+        if(k3MappingDepartmentDO!=null){
+            formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
+            formSEOrder.setDeptName(k3MappingDepartmentDO.getDepartmentName());
+        }else{
+            DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
+            if(DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())){
+                formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
+                formSEOrder.setDeptName(k3MappingDepartmentDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
             }
         }
 
@@ -241,6 +237,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSEOrderEntry.setEQPrice(productSkuDO.getSkuPrice());//  单台设备价值
                     formSEOrderEntry.setEQAmount( BigDecimalUtil.mul(productSkuDO.getSkuPrice(),new BigDecimal(orderProduct.getProductCount())));//  设备价值
                     formSEOrderEntry.setSupplyNumber("");//  同行供应商
+                    formSEOrderEntry.setOrderItemId(orderProduct.getOrderProductId());
                     if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProduct.getPayMode())){
                         formSEOrderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
                         formSEOrder.setPayMethodNumber("03");//订单里也要
@@ -300,6 +297,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSEOrderEntry.setEQPrice(materialDO.getMaterialPrice());//  单台设备价值
                     formSEOrderEntry.setEQAmount(BigDecimalUtil.mul(new BigDecimal(orderMaterial.getMaterialCount()),materialDO.getMaterialPrice()));//  设备价值
                     formSEOrderEntry.setSupplyNumber("");//  同行供应商
+                    formSEOrderEntry.setOrderItemId(orderMaterial.getOrderMaterialId());
                     if(OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderMaterial.getPayMode())){
                         formSEOrderEntry.setPayMethodNumber("03");//  01	先付后用 02	先付后用(货到付款) 03	先用后付
                         formSEOrder.setPayMethodNumber("03");//订单里也要

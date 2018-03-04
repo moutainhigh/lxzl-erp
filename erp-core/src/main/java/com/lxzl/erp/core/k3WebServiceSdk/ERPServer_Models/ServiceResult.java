@@ -8,6 +8,8 @@
 package com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models;
 
 public class ServiceResult  implements java.io.Serializable {
+    private ResultData[] data;
+
     private String result;
 
     private Integer status;
@@ -16,10 +18,32 @@ public class ServiceResult  implements java.io.Serializable {
     }
 
     public ServiceResult(
+           ResultData[] data,
            String result,
            Integer status) {
+           this.data = data;
            this.result = result;
            this.status = status;
+    }
+
+
+    /**
+     * Gets the data value for this ServiceResult.
+     * 
+     * @return data
+     */
+    public ResultData[] getData() {
+        return data;
+    }
+
+
+    /**
+     * Sets the data value for this ServiceResult.
+     * 
+     * @param data
+     */
+    public void setData(ResultData[] data) {
+        this.data = data;
     }
 
 
@@ -74,6 +98,9 @@ public class ServiceResult  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true && 
+            ((this.data==null && other.getData()==null) || 
+             (this.data!=null &&
+              java.util.Arrays.equals(this.data, other.getData()))) &&
             ((this.result==null && other.getResult()==null) || 
              (this.result!=null &&
               this.result.equals(other.getResult()))) &&
@@ -91,6 +118,17 @@ public class ServiceResult  implements java.io.Serializable {
         }
         __hashCodeCalc = true;
         int _hashCode = 1;
+        if (getData() != null) {
+            for (int i=0;
+                 i<java.lang.reflect.Array.getLength(getData());
+                 i++) {
+                Object obj = java.lang.reflect.Array.get(getData(), i);
+                if (obj != null &&
+                    !obj.getClass().isArray()) {
+                    _hashCode += obj.hashCode();
+                }
+            }
+        }
         if (getResult() != null) {
             _hashCode += getResult().hashCode();
         }
@@ -108,6 +146,14 @@ public class ServiceResult  implements java.io.Serializable {
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ServiceResult"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("data");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "Data"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ResultData"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(true);
+        elemField.setItemQName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "ResultData"));
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("result");
         elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "Result"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
