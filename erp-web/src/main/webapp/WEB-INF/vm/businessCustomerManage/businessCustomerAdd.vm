@@ -29,10 +29,6 @@
                                     <span class="panel-title"><i class="fa fa-pencil"></i>添加企业客户</span>
                                 </div>
                                 #parse("component/customerBusiness/commonInput.vm")
-<<<<<<< HEAD
-=======
-                                #parse("component/customerBusiness/imageFiles.vm")
->>>>>>> 4f3ac87cf30e6e7ce46c2878488c71d7379a70a4
                                 <div class="panel-footer text-right">
                                     <button type="submit" class="button btn-primary">确定</button>
                                     <button type="button" class="button btn-default goBack">返回</button>
