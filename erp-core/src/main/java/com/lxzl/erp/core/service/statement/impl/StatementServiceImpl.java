@@ -979,6 +979,18 @@ public class StatementServiceImpl implements StatementService {
                     newStatementOrderDetail.setStatementDetailAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailAmount(), statementOrderDetail.getStatementDetailAmount()));
 
                     newStatementOrderDetail.setStatementDetailPaidAmount(BigDecimalUtil.add(newStatementOrderDetail.getStatementDetailPaidAmount(), statementOrderDetail.getStatementDetailPaidAmount()));
+                    
+                    // 开始计算结算时间
+                    if (newStatementOrderDetail.getStatementStartTime() != null && statementOrderDetail.getStatementStartTime() != null) {
+                        if (newStatementOrderDetail.getStatementStartTime().getTime() > statementOrderDetail.getStatementStartTime().getTime()) {
+                            newStatementOrderDetail.setStatementStartTime(statementOrderDetail.getStatementStartTime());
+                        }
+                    }
+                    if (newStatementOrderDetail.getStatementEndTime() != null && statementOrderDetail.getStatementEndTime() != null) {
+                        if (newStatementOrderDetail.getStatementEndTime().getTime() < statementOrderDetail.getStatementEndTime().getTime()) {
+                            newStatementOrderDetail.setStatementEndTime(statementOrderDetail.getStatementEndTime());
+                        }
+                    }
                 } else {
                     //各项总金额
                     hashMap.put(key, statementOrderDetail);
