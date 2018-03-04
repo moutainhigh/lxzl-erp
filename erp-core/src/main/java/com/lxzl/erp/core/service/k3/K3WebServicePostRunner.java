@@ -104,19 +104,19 @@ public class K3WebServicePostRunner implements Runnable {
     public String getErrorMessage(ServiceResult response){
         StringBuffer sb = new StringBuffer();
         if (PostK3Type.POST_K3_TYPE_PRODUCT.equals(postK3Type)) {
-            sb.append("向K3推送【商品】数据失败：");
+            sb.append("向K3推送【商品-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(postK3Type)) {
-            sb.append("向K3推送【配件】数据失败：");
+            sb.append("向K3推送【配件-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         } else if (PostK3Type.POST_K3_TYPE_CUSTOMER.equals(postK3Type)) {
-            sb.append("向K3推送【客户】数据失败：");
+            sb.append("向K3推送【客户-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         } else if (PostK3Type.POST_K3_TYPE_SUPPLIER.equals(postK3Type)) {
-            sb.append("向K3推送【供应商】数据失败：");
+            sb.append("向K3推送【供应商-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }else if (PostK3Type.POST_K3_TYPE_ORDER.equals(postK3Type)) {
-            sb.append("向K3推送【订单】数据失败：");
+            sb.append("向K3推送【订单-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
-            sb.append("向K3推送【用户】数据失败：");
+            sb.append("向K3推送【用户-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
-            sb.append("向K3推送【退货】数据失败：");
+            sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }
         sb.append(JSON.toJSONString(response));
         return sb.toString();
