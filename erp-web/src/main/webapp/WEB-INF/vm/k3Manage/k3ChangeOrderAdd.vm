@@ -139,6 +139,7 @@
                                             </th>
                                             <th>编号</th>
                                             <th>商品名称</th>
+                                            <th>租期类型</th>
                                             <th>更换商品名称</th>
                                             <th>换货数量</th>
                                             <th>商品差价</th>
@@ -157,6 +158,10 @@
                                             </td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
+                                            <td>
+                                                <p>{{rentTypeValue}}</p>
+##                                                <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                            </td>
                                             <td>{{changeProductName}}</td>
                                             <td>
                                                 <label class="field prepend-icon mw200">
