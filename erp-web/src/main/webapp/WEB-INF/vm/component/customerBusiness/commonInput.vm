@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="companyName" class="field-label"><em class="text-danger">*</em>公司名称</label>
                         <label for="companyName" class="field prepend-icon">
                             <input type="text" name="companyName" id="companyName" class="gui-input required" />
@@ -57,7 +57,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="companyAbb" class="field-label">公司简称</label>
                         <label for="companyAbb" class="field prepend-icon">
                             <input type="text" name="companyAbb" id="companyAbb" class="gui-input" />
@@ -65,7 +65,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="industry" class="field-label"><em class="text-danger">*</em>所属行业</label>
                         <label class="field select">
                             <select id="industry" name="industry" class="required">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="affiliatedEnterprise" class="field-label">关联企业</label>
                         <label for="affiliatedEnterprise" class="field prepend-icon">
                             <input type="text" name="affiliatedEnterprise" id="affiliatedEnterprise" class="gui-input" />
@@ -84,7 +84,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="unitInsuredNumber" class="field-label">单位参保人数</label>
                         <label for="unitInsuredNumber" class="field prepend-icon">
                             <input type="text" name="unitInsuredNumber" id="unitInsuredNumber" class="gui-input number" />
@@ -92,7 +92,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="landline" class="field-label">座机电话</label>
                         <label for="landline" class="field prepend-icon">
                             <input type="text" name="landline" id="landline" class="gui-input telephone" placeholder="输入座机号（例如：0755-4006785432）" />
@@ -102,21 +102,22 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-4 mt20">
-                        <label for="companyFoundTime" class="field-label">企业成立时间</label>
-                        <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
-                            <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
-                            <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+                    <div class="col-md-4">
+                        <label for="shortLimitReceivableAmount" class="field-label">短租应收上限</label>
+                        <label for="shortLimitReceivableAmount" class="field prepend-icon">
+                            <input type="text" name="shortLimitReceivableAmount" id="shortLimitReceivableAmount" class="gui-input number" />
+                            <label for="shortLimitReceivableAmount" class="field-icon"><i class="fa fa-user"></i>
+                            </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="deliveryMode" class="field-label"><em class="text-danger">*</em>送货方式</label>
                         <label class="field select">
                             <select id="deliveryMode" name="deliveryMode" class="required"></select>
                             <i class="arrow"></i>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="isLegalPersonApple" class="field-label"><em class="text-danger">*</em>是否由法人代表申请</label>
                         <label class="field select">
                             <select id="isLegalPersonApple" name="isLegalPersonApple" class="required">
@@ -128,7 +129,7 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="agentPersonName" class="field-label"><em class="text-danger">*</em>经办人姓名</label>
                         <label for="agentPersonName" class="field prepend-icon">
                             <input type="text" name="agentPersonName" id="agentPersonName" class="gui-input required letterOrChinese" />
@@ -136,7 +137,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
                         <label for="agentPersonNo" class="field prepend-icon">
                             <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required" />
@@ -144,21 +145,11 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="agentPersonPhone" class="field-label"><em class="text-danger">*</em>经办人电话</label>
-                        <label for="agentPersonPhone" class="field">
+                        <label for="agentPersonPhone" class="field prepend-icon">
                             <input type="text" name="agentPersonPhone" id="agentPersonPhone" class="gui-input required mobilephone" />
                             <label for="agentPersonPhone" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
-                            </label>
-                        </label>
-                    </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-4 mt20">
-                        <label for="shortLimitReceivableAmount" class="field-label">短租应收上限</label>
-                        <label for="shortLimitReceivableAmount" class="field prepend-icon">
-                            <input type="text" name="shortLimitReceivableAmount" id="shortLimitReceivableAmount" class="gui-input number" />
-                            <label for="shortLimitReceivableAmount" class="field-icon"><i class="fa fa-user"></i>
                             </label>
                         </label>
                     </div>
@@ -453,7 +444,7 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="registeredCapital" class="field-label">注册资本</label>
                         <div class="smart-widget sm-right">
                             <label for="registeredCapital" class="field prepend-icon">
@@ -464,7 +455,7 @@
                             <label for="registeredCapital" class="button">万</label>
                         </div>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="officeNumber" class="field-label">办公人数</label>
                         <label for="officeNumber" class="field prepend-icon">
                             <input type="text" name="officeNumber" id="officeNumber" class="gui-input number" />
@@ -472,7 +463,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="unifiedCreditCode" class="field-label">统一信用代码</label>
                         <label for="unifiedCreditCode" class="field prepend-icon">
                             <input type="text" name="unifiedCreditCode" id="unifiedCreditCode" class="gui-input" />
@@ -480,7 +471,9 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                </div>
+                <div class="section row">
+                    <div class="col-md-4">
                         <label for="registeredCapital" class="field-label">经营面积</label>
                         <div class="smart-widget sm-right">
                             <label for="operatingArea" class="field prepend-icon">
@@ -491,14 +484,14 @@
                             <label for="operatingArea" class="button">㎡</label>
                         </div>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="connectRealName" class="field-label">紧急联系人姓名</label>
                         <label for="connectRealName" class="field prepend-icon">
                             <input type="text" name="connectRealName" id="connectRealName" class="gui-input letterOrChinese" />
                             <label for="connectRealName" class="field-icon"><i class="fa fa-user"></i></label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="connectPhone" class="field-label">紧急联系人手机号</label>
                         <label for="connectPhone" class="field prepend-icon">
                             <input type="text" name="connectPhone" id="connectPhone" class="gui-input mobilephone" />
@@ -506,7 +499,9 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                </div>
+                <div class="section row">
+                    <div class="col-md-4">
                         <label for="productPurpose" class="field-label">设备用途</label>
                         <label for="productPurpose" class="field prepend-icon">
                             <input type="text" name="productPurpose" id="productPurpose" class="gui-input" />
@@ -514,7 +509,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="firstApplyAmount" class="field-label">首期申请额度</label>
                         <label for="firstApplyAmount" class="field prepend-icon">
                             <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="gui-input form-control moneyNumber" placeholder="0" />
@@ -522,7 +517,7 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                    <div class="col-md-4">
                         <label for="laterApplyAmount" class="field-label">后续申请额度</label>
                         <label for="laterApplyAmount" class="field prepend-icon">
                             <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="gui-input form-control moneyNumber" placeholder="0" />
@@ -530,7 +525,16 @@
                             </label>
                         </label>
                     </div>
-                    <div class="col-md-4 mt20">
+                </div>
+                <div class="section row">
+                    <div class="col-md-4">
+                        <label for="companyFoundTime" class="field-label">企业成立时间</label>
+                        <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
+                            <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
+                            <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
                         <label for="isDefaultConsignAddress" class="field-label">经营地址、收货地址是否一致</label>
                         <label class="field select">
                             <select id="isDefaultConsignAddress" name="isDefaultConsignAddress" aria-required="true" aria-invalid="false">
