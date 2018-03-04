@@ -98,39 +98,24 @@ public class StatementOrderSupport {
         return totalShortRentReceivable;
     }
 
-    /**
-     * 获取分公司应收短租金额
-     *
-     * @param : customerId
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/3/1 15:07
-     * @Return : java.math.BigDecimal
-     */
-    public BigDecimal getSubCompanyShortRentReceivable(Integer customerId) {
 
-        ServiceResult<String, StatisticsUnReceivableForSubCompany> serviceResult = statisticsService.queryStatisticsUnReceivableForSubCompany();
-        StatisticsUnReceivableForSubCompany statisticsUnReceivableForSubCompany = serviceResult.getResult();
-        List<StatisticsUnReceivableDetailForSubCompany> statisticsUnReceivableDetailForSubCompanyList = statisticsUnReceivableForSubCompany.getStatisticsUnReceivableDetailForSubCompanyList();
-        Map<String, StatisticsUnReceivableDetailForSubCompany> statisticsUnReceivableDetailForSubCompanyMap = ListUtil.listToMap(statisticsUnReceivableDetailForSubCompanyList, "subCompanyName");
-        CustomerDO customerDO = customerMapper.findById(customerId);
-        if (customerDO == null) {
-            BigDecimal bigDecimal = new BigDecimal("-1");
-            return bigDecimal;
+    public BigDecimal getSubCompanyShortRentReceivable(Integer subCompanyId) {
+        StatementOrderDetailQueryParam param = new StatementOrderDetailQueryParam();
+        param.setSubCompanyId(subCompanyId);
+        param.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        param.setIsNeedToPay(CommonConstant.COMMON_CONSTANT_YES);
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("statementOrderDetailQueryParam", param);
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listPage(maps);
+        BigDecimal totalShortRentReceivable = BigDecimal.ZERO;
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                totalShortRentReceivable = BigDecimalUtil.add(totalShortRentReceivable, statementOrderDetailDO.getStatementDetailAmount());
+            }
         }
-        Integer owner = customerDO.getOwner();
-        List<RoleDO> roleDOList = roleMapper.findByUserId(owner);
-        if (CollectionUtil.isEmpty(roleDOList)) {
-            BigDecimal bigDecimal = new BigDecimal("-1");
-            return bigDecimal;
-        }
-        RoleDO roleDO = roleDOList.get(0);
-        String subCompanyName = roleDO.getSubCompanyName();
-
-        StatisticsUnReceivableDetailForSubCompany statisticsUnReceivableDetailForSubCompany = statisticsUnReceivableDetailForSubCompanyMap.get(subCompanyName);
-
-        BigDecimal unReceivableShort = statisticsUnReceivableDetailForSubCompany.getUnReceivableShort();
-
-        return unReceivableShort;
-
+        return totalShortRentReceivable;
     }
+
 }

@@ -18,6 +18,7 @@ public class StatementOrderDetailQueryParam extends BasePageParam {
     private Integer isOverdue;
     private Integer rentLengthType;
     private Integer customerId;
+    private Integer subCompanyId;
     private Date createStartTime;
     private Date createEndTime;
 
@@ -67,5 +68,13 @@ public class StatementOrderDetailQueryParam extends BasePageParam {
 
     public void setIsOverdue(Integer isOverdue) {
         this.isOverdue = isOverdue;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
     }
 }
