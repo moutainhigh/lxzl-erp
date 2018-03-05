@@ -101,15 +101,20 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
             formSEOrder.setDeptName(k3MappingDepartmentDO.getDepartmentName());
         }else{
-            DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
-            if(DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())){
-                formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
-                formSEOrder.setDeptName(k3MappingDepartmentDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
-            }
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(erpOrder.getOrderSubCompanyId());
+            K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(subCompanyDO.getSubCompanyCode());
+            formSEOrder.setDeptNumber(k3MappingSubCompanyDO.getK3SubCompanyCode()+".06");// 部门代码
+            formSEOrder.setDeptNumber(k3MappingSubCompanyDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
+//                formSEOrder.setDeptName(k3MappingDepartmentDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
+//            DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
+//            if(DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())){
+//                formSEOrder.setDeptNumber(k3MappingDepartmentDO.getK3DepartmentCode());// 部门代码
+//                formSEOrder.setDeptName(k3MappingDepartmentDO.getSubCompanyName()+"-"+k3MappingDepartmentDO.getDepartmentName());
+//            }
         }
 
 //        formSEOrder.setDeptNumber("01.06");// 部门代码
-//        formSEOrder.setDeptName("深圳-租赁业务部");// 部门名称
+//        formSEOrder.setDeptName("深圳-租赁业务部");// 部门名称445
         Integer subCompanyId = userSupport.getCompanyIdByUser(erpOrder.getOrderSellerId());
         SubCompanyDO sellerSubCompanyDO = subCompanyMapper.findById(subCompanyId);
         String empNumber = k3Support.getK3CityCode(sellerSubCompanyDO.getSubCompanyCode())+"."+erpOrder.getOrderSellerId();
