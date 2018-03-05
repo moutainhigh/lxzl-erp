@@ -375,6 +375,8 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
+        }else {
+            newCustomerCompanyDO.setCustomerCompanyNeedLaterJson("");
         }
 
         newCustomerCompanyDO.setDataStatus(null);
