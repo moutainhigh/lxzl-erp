@@ -2237,6 +2237,7 @@ public class OrderServiceImpl implements OrderService {
     String verifyOrderShortRentReceivable(CustomerDO customerDO, OrderDO orderDO) {
 
         Integer subCompanyId = orderDO.getOrderSubCompanyId();
+        subCompanyId = subCompanyId == null ? userSupport.getCurrentUserCompanyId() : subCompanyId;
 
         BigDecimal customerTotalShortRentReceivable = statementOrderSupport.getShortRentReceivable(customerDO.getId());
         //分公司的应收短期上线
