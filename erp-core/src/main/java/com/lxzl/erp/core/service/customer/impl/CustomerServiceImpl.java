@@ -375,7 +375,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
-        }else {
+        } else {
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson("");
         }
 
@@ -713,11 +713,14 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerCompanyDO.getUnifiedCreditCode() == null) {
                 errorCodeMsg.append("统一信用代码，");
             }
-            List<CustomerCompanyNeed> customerCompanyNeedFirstList = JSONObject.parseArray(customerCompanyDO.getCustomerCompanyNeedFirstJson(), CustomerCompanyNeed.class);
-            if (CollectionUtil.isEmpty(customerCompanyNeedFirstList)) {
+            if (StringUtil.isBlank(customerCompanyDO.getCustomerCompanyNeedFirstJson())) {
                 errorCodeMsg.append("首次所租设备不能为空，");
+            } else {
+                List<CustomerCompanyNeed> customerCompanyNeedFirstList = JSONObject.parseArray(customerCompanyDO.getCustomerCompanyNeedFirstJson(), CustomerCompanyNeed.class);
+                if (CollectionUtil.isEmpty(customerCompanyNeedFirstList)) {
+                    errorCodeMsg.append("首次所租设备不能为空，");
+                }
             }
-
 
             //对企业的经营面积判断
             if (customerCompanyDO.getOperatingArea() == null) {
