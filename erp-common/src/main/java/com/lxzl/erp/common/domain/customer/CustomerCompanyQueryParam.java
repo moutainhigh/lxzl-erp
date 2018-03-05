@@ -17,6 +17,7 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private Integer district;   //区ID，对应区ID
     private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，0不可用；1可用
+    private Integer ownerSubCompanyId; //业务员所在分公司
 
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
@@ -31,8 +32,6 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String affiliatedEnterprise; //关联企业
 
     private List<Integer> passiveUserIdList;
-
-
 
     public Integer getCustomerId() {
         return customerId;
@@ -216,5 +215,13 @@ public class CustomerCompanyQueryParam extends BasePageParam {
 
     public void setCustomerStatus(Integer customerStatus) {
         this.customerStatus = customerStatus;
+    }
+
+    public Integer getOwnerSubCompanyId() {
+        return ownerSubCompanyId;
+    }
+
+    public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+        this.ownerSubCompanyId = ownerSubCompanyId;
     }
 }
