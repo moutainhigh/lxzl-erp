@@ -23,6 +23,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,10 @@ public class K3CustomerConverter implements ConvertK3DataService{
             String customerNumber = cityCode + "."+customer.getCustomerId();
             k3MappingCustomerDO.setK3CustomerCode(customerNumber);
             k3MappingCustomerMapper.save(k3MappingCustomerDO);
+        }else if(StringUtil.isEmpty(k3MappingCustomerDO.getK3CustomerCode())){
+            String customerNumber = cityCode + "."+customer.getCustomerId();
+            k3MappingCustomerDO.setK3CustomerCode(customerNumber);
+            k3MappingCustomerMapper.update(k3MappingCustomerDO);
         }
         UserDO ownerUser = userMapper.findByUserId(customer.getOwner());
         String empNumber = cityCode + "."+ownerUser.getId();
