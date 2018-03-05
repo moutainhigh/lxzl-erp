@@ -264,7 +264,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
         Date currentTime = new Date();
         PeerDeploymentOrderDO dbPeerDeploymentOrderDO = peerDeploymentOrderMapper.findPeerDeploymentOrderByNo(peerDeploymentOrderCommitParam.getPeerDeploymentOrderNo());
         if (dbPeerDeploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         if (!PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(dbPeerDeploymentOrderDO.getPeerDeploymentOrderStatus())) {
@@ -850,7 +850,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 }
                 if (peerDeploymentOrderProductDO.getProductSkuCount() == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                    result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_PRODUCT_COUNT_IS_ERROR);
                     return result;
                 }
                 if (peerDeploymentOrderProductDO.getProductUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderProductDO.getProductUnitAmount(), BigDecimal.ZERO) < 0) {
@@ -903,7 +903,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
                 PeerDeploymentOrderProductDO oldPeerDeploymentOrderProductDO = peerDeploymentOrderProductMapper.findByPeerDeploymentOrderNoAndSkuIdAndIsNew(peerDeploymentOrderNo, peerDeploymentOrderProductDO.getProductSkuId(), peerDeploymentOrderProductDO.getIsNew());
                 if (oldPeerDeploymentOrderProductDO == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    throw new BusinessException(ErrorCode.RECORD_NOT_EXISTS);
+                    throw new BusinessException(ErrorCode.PEER_DEPLOYMENT_ORDER_PRODUCT_IS_NOT_EXISTS);
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(peerDeploymentOrderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
@@ -957,7 +957,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
 
                 if (peerDeploymentOrderMaterialDO.getMaterialCount() == null) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                    result.setErrorCode(ErrorCode.PEER_DEPLOYMENT_ORDER_MATERIAL_COUNT_IS_ERROR);
                     return result;
                 }
                 if (peerDeploymentOrderMaterialDO.getMaterialUnitAmount() == null || BigDecimalUtil.compare(peerDeploymentOrderMaterialDO.getMaterialUnitAmount(), BigDecimal.ZERO) < 0) {

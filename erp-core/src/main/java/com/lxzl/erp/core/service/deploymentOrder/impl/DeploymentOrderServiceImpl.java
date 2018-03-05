@@ -250,11 +250,11 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
             return ErrorCode.PARAM_IS_NOT_NULL;
         }
         if (!DeploymentType.inThisScope(deploymentOrder.getDeploymentType())) {
-            return ErrorCode.PARAM_IS_ERROR;
+            return ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS;
         }
         if (CollectionUtil.isEmpty(deploymentOrder.getDeploymentOrderProductList())
                 && CollectionUtil.isEmpty(deploymentOrder.getDeploymentOrderMaterialList())) {
-            return ErrorCode.PARAM_IS_ERROR;
+            return ErrorCode.DEPLOYMENT_ORDER_ITEM_IS_CAN_NOT_NULL;
         }
         if (deploymentOrder.getSrcWarehouseId() == null
                 || deploymentOrder.getTargetWarehouseId() == null) {
@@ -333,7 +333,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
 
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrder.getDeploymentOrderNo());
         if (dbDeploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         String verifyCode = verifyDeploymentOrderInfo(deploymentOrder);
@@ -390,7 +390,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         String commitRemark = param.getCommitRemark();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (dbDeploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(dbDeploymentOrderDO.getDeploymentOrderStatus())) {
@@ -439,7 +439,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
         DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(param.getDeploymentOrderNo());
         if (deploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING.equals(deploymentOrderDO.getDeploymentOrderStatus())) {
@@ -485,12 +485,12 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         if (deploymentOrderNo == null) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NO_IS_NOT_NULL);
             return result;
         }
         DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (deploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_WAIT_COMMIT.equals(deploymentOrderDO.getDeploymentOrderStatus())
@@ -529,12 +529,12 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         if (deploymentOrderNo == null) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NO_IS_NOT_NULL);
             return result;
         }
         DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (deploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_PROCESSING.equals(deploymentOrderDO.getDeploymentOrderStatus())) {
@@ -741,7 +741,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Date currentTime = new Date();
         DeploymentOrderDO dbDeploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (dbDeploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
         if (!DeploymentOrderStatus.DEPLOYMENT_ORDER_STATUS_DELIVERED.equals(dbDeploymentOrderDO.getDeploymentOrderStatus())) {
@@ -829,7 +829,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         ServiceResult<String, DeploymentOrder> result = new ServiceResult<>();
         DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(deploymentOrderNo);
         if (deploymentOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NOT_EXISTS);
             return result;
         }
 
@@ -856,7 +856,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         Date currentTime = new Date();
 
         if (param == null || param.getDeploymentOrderNo() == null) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_NO_IS_NOT_NULL);
             return result;
         }
 
@@ -867,7 +867,7 @@ public class DeploymentOrderServiceImpl implements DeploymentOrderService {
         }
 
         if (CollectionUtil.isEmpty(param.getEquipmentNoList()) && (param.getMaterialCount() == null || param.getMaterialCount() < 0)) {
-            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            result.setErrorCode(ErrorCode.DEPLOYMENT_ORDER_MATERIAL_COUNT_IS_NOT_NULL);
             return result;
         }
 

@@ -414,7 +414,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findById(workflowLinkDO.getWorkflowTemplateId());
         if (workflowTemplateDO == null) {
-            result.setErrorCode(ErrorCode.WORKFLOW_NOT_BELONG_TO_YOU);
+            result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_NOT_EXISTS);
             return result;
         }
         List<WorkflowNodeDO> workflowNodeDOList = workflowTemplateDO.getWorkflowNodeDOList();

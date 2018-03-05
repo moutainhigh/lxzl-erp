@@ -385,7 +385,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         RoleDO roleDO = roleMapper.findById(roleDepartmentData.getRoleId());
         if(roleDO == null ){
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.ROLE_NOT_NULL);
             return result;
         }
         String currentUserId = userSupport.getCurrentUserId().toString();

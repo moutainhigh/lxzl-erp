@@ -85,7 +85,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList = purchaseApplyOrder.getPurchaseApplyOrderProductList();
         List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList = purchaseApplyOrder.getPurchaseApplyOrderMaterialList();
         if (CollectionUtil.isEmpty(purchaseApplyOrderProductList) && CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)) {
-            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_ITEM_IS_NULL);
             return serviceResult;
         }
         Date now = new Date();
@@ -262,7 +262,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
         List<PurchaseApplyOrderProduct> purchaseApplyOrderProductList = purchaseApplyOrder.getPurchaseApplyOrderProductList();
         List<PurchaseApplyOrderMaterial> purchaseApplyOrderMaterialList = purchaseApplyOrder.getPurchaseApplyOrderMaterialList();
         if (CollectionUtil.isEmpty(purchaseApplyOrderProductList) && CollectionUtil.isEmpty(purchaseApplyOrderMaterialList)) {
-            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_ITEM_IS_NULL);
             return serviceResult;
         }
         User user = userSupport.getCurrentUser();
@@ -282,7 +282,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                     //修改列表加入
                     PurchaseApplyOrderProductDO purchaseApplyOrderProductDO = purchaseApplyOrderProductMapper.findById(purchaseApplyOrderProduct.getPurchaseApplyOrderProductId());
                     if (purchaseApplyOrderProductDO == null) {
-                        serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                        serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS);
                         return serviceResult;
                     }
                     ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(purchaseApplyOrderProduct.getProductSkuId());
@@ -327,7 +327,7 @@ public class PurchaseApplyOrderServiceImpl implements PurchaseApplyOrderService 
                     //修改列表加入
                     PurchaseApplyOrderMaterialDO purchaseApplyOrderMaterialDO = purchaseApplyOrderMaterialMapper.findById(purchaseApplyOrderMaterial.getPurchaseApplyOrderMaterialId());
                     if (purchaseApplyOrderMaterialDO == null) {
-                        serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                        serviceResult.setErrorCode(ErrorCode.PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS);
                         return serviceResult;
                     }
                     MaterialDO materialDO = materialMapper.findByNo(purchaseApplyOrderMaterial.getMaterialNo());

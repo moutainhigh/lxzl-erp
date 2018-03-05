@@ -112,7 +112,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
         User loginUser = userSupport.getCurrentUser();
@@ -158,7 +158,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
@@ -211,7 +211,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
         if (orderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
@@ -410,7 +410,7 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
         if (statementOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return result;
         }
         String payVerifyResult = payVerify(statementOrderDO);
@@ -537,6 +537,11 @@ public class StatementServiceImpl implements StatementService {
         }
 
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementPayOrderDO.getStatementOrderId());
+        if(statementOrderDO == null){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+            return result;
+        }
 
         BigDecimal payRentAmount = statementPayOrderDO.getPayRentAmount();
         BigDecimal payRentDepositAmount = statementPayOrderDO.getPayRentDepositAmount();
@@ -577,7 +582,7 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
         if (statementOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return result;
         }
         String payVerifyResult = payVerify(statementOrderDO);
@@ -664,7 +669,7 @@ public class StatementServiceImpl implements StatementService {
         for (int i = 0; i < param.size(); i++) {
             StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(param.get(i).getStatementOrderNo());
             if (statementOrderDO == null) {
-                result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+                result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
                 return result;
             }
             if (statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT && statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART) {
@@ -840,7 +845,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, StatementOrder> result = new ServiceResult<>();
         StatementOrderDO statementOrderDO = statementOrderMapper.findByNo(statementOrderNo);
         if (statementOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return result;
         }
         StatementOrder statementOrder = ConverterUtil.convert(statementOrderDO, StatementOrder.class);
@@ -1180,7 +1185,7 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
         if (k3ReturnOrderDO == null) {
-            result.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
         }
 
@@ -1772,7 +1777,7 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(changeOrderNo);
         if (k3ChangeOrderDO == null) {
-            result.setErrorCode(ErrorCode.CHANGE_ORDER_NOT_EXISTS);
+            result.setErrorCode(ErrorCode.K3_CHANGE_ORDER_IS_NOT_NULL);
             return result;
         }
 
