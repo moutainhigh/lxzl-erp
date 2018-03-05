@@ -39,7 +39,7 @@
                     <div class="col-md-4">
                         <label for="customerOrigin" class="field-label">联合开发人</label>
                         <div class="smart-widget sm-right smr-50">
-                            <label class="field prepend-icon">
+                            <label class="field">
                                 <input type="text" name="unionUserName" id="unionUserName" class="gui-input" readonly placeholder=" 请选择联合开发人" />
                                 <input type="hidden" name="unionUser" id="unionUser" class="gui-input" />
                             </label>
@@ -106,7 +106,7 @@
                         <label for="shortLimitReceivableAmount" class="field-label">短租应收上限</label>
                         <label for="shortLimitReceivableAmount" class="field prepend-icon">
                             <input type="text" name="shortLimitReceivableAmount" id="shortLimitReceivableAmount" class="gui-input number" />
-                            <label for="shortLimitReceivableAmount" class="field-icon"><i class="fa fa-user"></i>
+                            <label for="shortLimitReceivableAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
                         </label>
                     </div>
@@ -478,7 +478,7 @@
                         <div class="smart-widget sm-right">
                             <label for="operatingArea" class="field prepend-icon">
                                 <input type="text" name="operatingArea" id="operatingArea" class="gui-input number" />
-                                <label for="operatingArea" class="field-icon"><i class="fa fa-jpy"></i>
+                                <label for="operatingArea" class="field-icon"><i class="fa fa-tag"></i>
                                 </label>
                             </label>
                             <label for="operatingArea" class="button">㎡</label>
@@ -513,7 +513,7 @@
                         <label for="firstApplyAmount" class="field-label">首期申请额度</label>
                         <label for="firstApplyAmount" class="field prepend-icon">
                             <input type="text" name="firstApplyAmount" id="firstApplyAmount" class="gui-input form-control moneyNumber" placeholder="0" />
-                            <label for="firstApplyAmount" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                            <label for="firstApplyAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
                         </label>
                     </div>
@@ -521,7 +521,7 @@
                         <label for="laterApplyAmount" class="field-label">后续申请额度</label>
                         <label for="laterApplyAmount" class="field prepend-icon">
                             <input type="text" name="laterApplyAmount" id="laterApplyAmount" class="gui-input form-control moneyNumber" placeholder="0" />
-                            <label for="laterApplyAmount" class="field-icon"><i class="glyphicons glyphicons-iphone"></i>
+                            <label for="laterApplyAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
                         </label>
                     </div>
