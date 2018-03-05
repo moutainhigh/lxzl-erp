@@ -244,6 +244,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                     }else if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderProduct.getPayMode())){
                         formSEOrderEntry.setPayMethodNumber("01");
                         formSEOrder.setPayMethodNumber("03");//订单里也要
+                    }else if(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProduct.getPayMode())){
+                        formSEOrderEntry.setPayMethodNumber("01");
+                        formSEOrder.setPayMethodNumber("01");
                     }
 
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())){
@@ -304,6 +307,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                     }else if(OrderPayMode.PAY_MODE_PAY_BEFORE.equals(orderMaterial.getPayMode())){
                         formSEOrderEntry.setPayMethodNumber("01");
                         formSEOrder.setPayMethodNumber("01");//订单里也要
+                    }else if(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterial.getPayMode())){
+                        formSEOrderEntry.setPayMethodNumber("01");
+                        formSEOrder.setPayMethodNumber("01");
                     }
                     if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType())){
                         formSEOrderEntry.setStdPrice(materialDO.getDayRentPrice());//  设备标准租金
