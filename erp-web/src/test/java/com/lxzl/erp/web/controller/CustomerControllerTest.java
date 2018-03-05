@@ -101,8 +101,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Thread.sleep(100000);
     }
 
-
-
     @Test
     public void addCustomerPerson() throws Exception {
         Customer customer = new Customer();
@@ -315,6 +313,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //        customerCompanyQueryParam.setConnectPhone("13726273851");
+        customerCompanyQueryParam.setOwnerSubCompanyId(2);
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
