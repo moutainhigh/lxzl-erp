@@ -68,37 +68,30 @@
                                         <!-- message listings table -->
                                         <script type="text/html" id="dataListTpl">
                                             <thead>
-                                            <tr class="">
-                                                <th>选择</th>
+                                            <tr>
                                                 <th>收件人</th>
                                                 <th>主题</th>
                                                 <th>内容</th>
                                                 <th>时间</th>
-                                                <th class="text-right">操作</th>
+                                                <th class="text-right" style="width:50px;">操作</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
                                             <tr class="message-unread">
-                                                <td>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="mobileos" value="FR">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </td>
                                                 <td>{{receiverName}}</td>
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
-                                                <td class="text-center">{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
-                                                <td class="text-right">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText={{messageText}}>查看</a>
+                                                <td>{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
+                                                <td class="text-right" style="width:50px;">
+                                                    <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText="{{messageText}}">查看</a>
                                                 </td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="7" class="text-center">没有查询到信息</td>
+                                                <td valign="top" colspan="5" class="text-center">没有查询到信息</td>
                                             </tr>
                                             {{/listData}}
                                             {{/dataSource}}
