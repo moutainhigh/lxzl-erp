@@ -450,6 +450,9 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
 				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
 			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerSubCompanyId != null">
+				AND ec.owner_sub_company_id = #{maps.customerPersonQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ec.data_status = 1 AND ec.customer_type = 2
 			</if>
@@ -509,6 +512,9 @@
 			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
 				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerSubCompanyId != null">
+				AND ec.owner_sub_company_id = #{maps.customerPersonQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>

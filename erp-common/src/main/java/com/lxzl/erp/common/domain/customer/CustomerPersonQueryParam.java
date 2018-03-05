@@ -18,6 +18,7 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private String connectPhone;//紧急联系人电话'
     private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，1不可用；0可用
+    private Integer ownerSubCompanyId; //业务员所在分公司
 
     private List<Integer> passiveUserIdList;
 
@@ -120,4 +121,12 @@ public class CustomerPersonQueryParam extends BasePageParam {
     public List<Integer> getPassiveUserIdList() { return passiveUserIdList; }
 
     public void setPassiveUserIdList(List<Integer> passiveUserIdList) { this.passiveUserIdList = passiveUserIdList; }
+
+    public Integer getOwnerSubCompanyId() {
+        return ownerSubCompanyId;
+    }
+
+    public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+        this.ownerSubCompanyId = ownerSubCompanyId;
+    }
 }
