@@ -75,10 +75,10 @@
                                 {{/hasCommonActionButtons}}
                                 <th>工作流编号</th>
                                 <th>关联编号</th>
+                                <th>工作流说明</th>
                                 <th>类型</th>
                                 <th>模板名</th>
                                 <th>当前/最后(步骤)</th>
-
 
 ##                                <th>当前结点名</th>
 ##                                <th>当前审批人</th>
@@ -107,6 +107,7 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{workflowLinkNo}}</td>
                                 <td><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></td>
+                                <td>{{remark}}</td>
                                 <td>{{workflowTypeStr}}</td>
                                 <td>{{workflowTemplateName}}</td>
                                 <td>{{workflowStep}}/{{workflowLastStep}}</td>
