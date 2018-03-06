@@ -4,6 +4,7 @@
         <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
         </span>
         <span class="panel-title">收货地址</span>
+        <span style="display:inline-block; margin-left:10px;" id="deliveryMode"></span>
         <div class="widget-menu pull-right">
             {{#addButton}}
             <button class="btn btn-xs btn-default {{class}}" data-customerno="{{customerno}}">{{text}}</button>
