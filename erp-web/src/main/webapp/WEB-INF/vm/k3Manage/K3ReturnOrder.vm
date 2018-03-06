@@ -3,8 +3,6 @@
 <head>
     <title>凌雄ERP-K3数据-退货单</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -154,8 +152,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.k3.return.order.handle.mixin.js',
