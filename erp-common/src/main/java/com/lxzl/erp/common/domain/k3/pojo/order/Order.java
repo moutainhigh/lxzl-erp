@@ -56,6 +56,7 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
+    private String productName;                                 // 商品名称
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
@@ -520,5 +521,13 @@ public class Order extends BasePO {
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }
