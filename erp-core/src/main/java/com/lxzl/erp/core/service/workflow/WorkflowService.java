@@ -25,10 +25,11 @@ public interface WorkflowService extends BaseService {
      * @param workflowReferNo 工作流关联ID，业务NO
      * @param verifyUser      目标审核人
      * @param commitRemark    提交备注
+     * @param orderRemark    订单备注（EX:订单：天租，月租）
      * @param imgIdList       审核资料图片
      * @return 错误代码，生成的工作流ID
      */
-    ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters,String commitRemark, List<Integer> imgIdList);
+    ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters,String commitRemark, List<Integer> imgIdList,String orderRemark);
 
 
     /**
