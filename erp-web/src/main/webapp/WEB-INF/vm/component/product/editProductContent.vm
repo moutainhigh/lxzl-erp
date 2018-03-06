@@ -225,14 +225,14 @@
 
                         <div class="smart-widget sm-left sml-80">
                             <label class="field prepend-icon">
-                                <input type="text" name="skuPrice-{{rowId}}" value="{{skuPrice}}" class="skuPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="skuPrice-{{rowId}}" value="{{skuPrice}}" class="skuPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">次新</label>
                         </div>
                         <div class="smart-widget sm-left sml-80 mt10">
                             <label class="field prepend-icon">
-                                <input type="text" name="newSkuPrice-{{rowId}}" value="{{newSkuPrice}}" class="newSkuPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="newSkuPrice-{{rowId}}" value="{{newSkuPrice}}" class="newSkuPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">全新</label>
@@ -242,14 +242,14 @@
                     <td>
                         <div class="smart-widget sm-left sml-80">
                             <label class="field prepend-icon">
-                                <input type="text" name="dayRentPrice-{{rowId}}" value="{{dayRentPrice}}" class="dayRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="dayRentPrice-{{rowId}}" value="{{dayRentPrice}}" class="dayRentPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">次新</label>
                         </div>
                         <div class="smart-widget sm-left sml-80 mt10">
                             <label class="field prepend-icon">
-                                <input type="text" name="newDayRentPrice-{{rowId}}" value="{{newDayRentPrice}}" class="newDayRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="newDayRentPrice-{{rowId}}" value="{{newDayRentPrice}}" class="newDayRentPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">全新</label>
@@ -259,13 +259,13 @@
                         <div class="smart-widget sm-left sml-80">
                             <label class="field prepend-icon">
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                <input type="text" name="monthRentPrice-{{rowId}}" value="{{monthRentPrice}}" class="monthRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="monthRentPrice-{{rowId}}" value="{{monthRentPrice}}" class="monthRentPrice form-control gui-input required moneyNumber2" />
                             </label>
                             <label for="verification" class="button bradiusN">次新</label>
                         </div>
                         <div class="smart-widget sm-left sml-80 mt10">
                             <label class="field prepend-icon">
-                                <input type="text" name="newMonthRentPrice-{{rowId}}" value="{{newMonthRentPrice}}" class="newMonthRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="newMonthRentPrice-{{rowId}}" value="{{newMonthRentPrice}}" class="newMonthRentPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">全新</label>
