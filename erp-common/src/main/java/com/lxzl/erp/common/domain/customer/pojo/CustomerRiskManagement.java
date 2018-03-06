@@ -1,9 +1,11 @@
 package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
@@ -25,13 +27,7 @@ public class CustomerRiskManagement extends BasePO {
 	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_ERROR , groups = {UpdateGroup.class})
 	private BigDecimal creditAmount;   //授信额度
 	private BigDecimal creditAmountUsed;   //已用授信额度
-	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
-	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
-	@Min(value = 0,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	private Integer depositCycle;   //押金期数
-	@NotNull(message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL , groups = {UpdateGroup.class})
-	@Max(value = 120,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
-	@Min(value = 1,message = ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR , groups = {UpdateGroup.class})
 	private Integer paymentCycle;   //付款期数
 	private Integer appleDepositCycle;	// 苹果设备租赁方案
 	private Integer applePaymentCycle;	// 苹果设备付款期数
@@ -43,6 +39,9 @@ public class CustomerRiskManagement extends BasePO {
 	private Integer isLimitApple;		// 是否限制苹果
 	private Integer isLimitNew;			// 是否限制全新
 	private BigDecimal singleLimitPrice;	// 单台限制设备价值
+	@NotNull(message = ErrorCode.CUSTOMER_RETURN_VISIT_FREQUENCY_NOT_NULL , groups = {UpdateGroup.class})
+	@Max(value = 12,message = ErrorCode.CUSTOMER_RETURN_VISIT_FREQUENCY_ERROR , groups = {UpdateGroup.class})
+	@Min(value = 0,message = ErrorCode.CUSTOMER_RETURN_VISIT_FREQUENCY_ERROR , groups = {UpdateGroup.class})
 	private Integer returnVisitFrequency; 	// 回访频率
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
@@ -50,6 +49,8 @@ public class CustomerRiskManagement extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	@NotNull(message = ErrorCode.CUSTOMER_IS_FULL_DEPOSIT_NOT_NULL , groups = {UpdateGroup.class})
+	@In(value = {CommonConstant.NO,CommonConstant.YES}, message = ErrorCode.CUSTOMER_IS_FULL_DEPOSIT_ERROR)
 	private Integer isFullDeposit;   //是否是全额押金客户
 
 	private String customerName;
