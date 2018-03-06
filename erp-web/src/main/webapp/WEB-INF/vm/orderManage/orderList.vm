@@ -135,7 +135,7 @@
                                             </td>
                                             <td>
                                                 <p class="mn" style="white-space: nowrap;">{{rentTypeValue}}</p>
-                                                <p class="mn mt5">{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                                <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
                                             </td>
 ##                                            <td>
 ##
@@ -151,11 +151,28 @@
                                             </td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
-                                                <div class="btn-group text-right">
-                                                    {{#rowActionButtons}}
-                                                    <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
-                                                    {{/rowActionButtons}}
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                                    <ul class="dropdown-menu pull-right" role="menu">
+                                                        {{#rowActionButtons}}
+                                                        <li>
+                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+##                                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
+##                                                               data-customerno="{{customerNo}}"
+##                                                               data-statementdate="{{statementDate}}"
+##                                                               data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
+##                                                               data-customertype="{{customerType}}"
+##                                                               class="{{class}}">{{text}}</a>
+                                                        </li>
+                                                        {{/rowActionButtons}}
+                                                    </ul>
                                                 </div>
+
+##                                                <div class="btn-group text-right">
+##                                                    {{#rowActionButtons}}
+##                                                    <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+##                                                    {{/rowActionButtons}}
+##                                                </div>
                                             </td>
                                             {{/hasRowActionButtons}}
                                         </tr>
