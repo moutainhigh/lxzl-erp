@@ -311,14 +311,14 @@ public class OrderServiceImpl implements OrderService {
         boolean isNeedVerify = isNeedVerifyResult.getResult();
 
         String orderRemark = null;
-        if(orderDO.getRentType() == OrderRentType.RENT_TYPE_DAY){
+        if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
             orderRemark = "租赁类型：天租";
-        }else if(orderDO.getRentType() == OrderRentType.RENT_TYPE_MONTH){
+        } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
             orderRemark = "租赁类型：月租";
         }
 
         if (isNeedVerify) {
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark, orderCommitParam.getImgIdList(),orderRemark);
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());
