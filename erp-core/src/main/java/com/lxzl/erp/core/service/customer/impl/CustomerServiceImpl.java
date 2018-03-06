@@ -640,7 +640,6 @@ public class CustomerServiceImpl implements CustomerService {
             errorCodeMsg.append("收货地址，");
         }
 
-
         //如果客户是企业
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
@@ -1416,6 +1415,17 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //查看被修改的地址信息是否有企业的关联地址信息
+        CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByDefaultAddressReferId(customerConsignInfoDO.getId());
+        if (customerCompanyDO != null) {
+            customerConsignInfo.setCustomerNo(customerCompanyDO.getCustomerNo());
+            serviceResult = addCustomerConsignInfo(customerConsignInfo);
+
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            serviceResult.setResult(serviceResult.getResult());
             return serviceResult;
         }
 
