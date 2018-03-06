@@ -399,7 +399,7 @@ public class OrderServiceImpl implements OrderService {
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
                     productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getNewDayRentPrice() : thisProductSku.getDayRentPrice();
                 } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getMonthRentPrice() : thisProductSku.getNewMonthRentPrice();
+                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? thisProductSku.getNewMonthRentPrice() : thisProductSku.getMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价，需要商务审批
                 if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), productUnitAmount) < 0) {
