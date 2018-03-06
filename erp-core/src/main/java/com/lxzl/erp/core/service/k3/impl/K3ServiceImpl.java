@@ -73,6 +73,7 @@ public class K3ServiceImpl implements K3Service {
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
     private String k3OrderUrl = "http://103.239.207.170:9090/api/OrderSearch";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/api/OrderDetailSearch";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
