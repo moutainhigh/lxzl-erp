@@ -718,16 +718,22 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control rentType" name="rentType">
-                                                        <option value="">请选择</option>
-                                                        <option value="1">按天租</option>
-                                                        <option value="2">按月租</option>
-                                                    </select>
+                                                    <label class="field select">
+                                                        <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
+                                                            <option value="">选择租赁类型</option>
+                                                            {{#rentTypeList}}
+                                                            <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                            {{/rentTypeList}}
+                                                        </select>
+                                                        <i class="arrow"></i>
+                                                    </label>
                                                 </td>
                                                 <td>
-                                                    <label class="field" style="max-width:160px">
-                                                        <input name="rentTimeLength" class="form-control rentTimeLength" type="text" placeholder="输入租赁时长" value="{{rentTimeLength}}"/>
-                                                    </label>
+                                                    <div class="mw200">
+                                                        <label class="field prepend-icon">
+                                                            <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
+                                                        </label>
+                                                    </div>
                                                 </td>
                                                 <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
                                                 <td class="text-right">
@@ -819,16 +825,22 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control rentType" name="rentType">
-                                                        <option value="">请选择</option>
-                                                        <option value="1">按天租</option>
-                                                        <option value="2">按月租</option>
-                                                    </select>
+                                                    <label class="field select">
+                                                        <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
+                                                            <option value="">选择租赁类型</option>
+                                                            {{#rentTypeList}}
+                                                            <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                            {{/rentTypeList}}
+                                                        </select>
+                                                        <i class="arrow"></i>
+                                                    </label>
                                                 </td>
                                                 <td>
-                                                    <label class="field" style="max-width:160px">
-                                                        <input name="rentTimeLength" class="form-control rentTimeLength" type="text" placeholder="输入租赁时长"  value="{{rentTimeLength}}"/>
-                                                    </label>
+                                                    <div class="mw200">
+                                                        <label class="field prepend-icon">
+                                                            <input type="text" name="rentTimeLength-{{skuId}}-{{rowKey}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
+                                                        </label>
+                                                    </div>
                                                 </td>
                                                 <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
                                                 <td class="text-right">
