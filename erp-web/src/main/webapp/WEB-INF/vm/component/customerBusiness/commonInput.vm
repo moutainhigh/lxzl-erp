@@ -140,7 +140,7 @@
                     <div class="col-md-4">
                         <label for="agentPersonNo" class="field-label"><em class="text-danger">*</em>经办人身份证号码</label>
                         <label for="agentPersonNo" class="field prepend-icon">
-                            <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required" />
+                            <input type="text" name="agentPersonNo" id="agentPersonNo" class="gui-input required checkIDCard" />
                             <label for="agentPersonNo" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -429,7 +429,7 @@
                     <div class="col-md-4">
                         <label for="legalPersonNo" class="field-label">法人身份证号</label>
                         <label for="legalPersonNo" class="field prepend-icon">
-                            <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input" />
+                            <input type="text" name="legalPersonNo" id="legalPersonNo" class="gui-input checkIDCard" />
                             <label for="legalPersonNo" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
