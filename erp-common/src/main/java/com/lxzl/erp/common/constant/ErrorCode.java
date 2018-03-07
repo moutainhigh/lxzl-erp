@@ -124,7 +124,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL = "J200064";
     public static final String CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL = "J200065";
     public static final String CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL = "J200066";
-    public static final String CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL = "J200067";
+    public static final String CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL = "J200067";
     public static final String CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL = "J200068";
     public static final String WAREHOUSE_NOT_AVAILABLE = "J200069";
     public static final String PRODUCT_EQUIPMENT_NOT_NEW = "J200070";
@@ -154,6 +154,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR = "J800094";
     public static final String FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800095";
     public static final String LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE = "J800096";
+    public static final String CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL = "J800097";
 
 
     public static final String WORKFLOW_TYPE_NOT_EXISTS = "J800001";
@@ -812,7 +813,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NEED_SKU_ID_NOT_NULL, "企业客户首次所需设备的sku的ID不能为空");
         MAP.put(CUSTOMER_COMPANY_NEED_UNIT_PRICE_NOT_NULL, "企业客户首次所需设备的单台价值不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL, "企业客户首次所需设备的租赁数量不能空");
-        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGHT_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
+        MAP.put(CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL, "企业客户首次所需设备的租赁期限不能空");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_NOT_NULL, "企业客户首次所需设备选项不能空");
         MAP.put(ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT, "全新配件库存不足！");
         MAP.put(ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT, "次新配件库存不足！");
@@ -891,6 +892,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NEED_TOTAL_PRICE_IS_ERROR, "所需设备的总金额计算出错");
         MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
         MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
+        MAP.put(CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL, "客户所需的设备的新或旧的值不能为空");
 
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
