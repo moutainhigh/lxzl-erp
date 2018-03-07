@@ -1980,16 +1980,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName) {
+    public ServiceResult<String, Customer> queryCustomerByCustomerName(String customerName) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
-        //公司客户信息
-        CustomerDO companyCustomerDO = customerMapper.findCustomerCompanyByCustomerName(companyName);
-        if (companyCustomerDO == null) {
+        //客户信息
+        CustomerDO customerDO = customerMapper.findByName(customerName);
+        if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        //封装数据
-        Customer customerResult = ConverterUtil.convert(companyCustomerDO, Customer.class);
+        //判断个人客户与公司客户信息
+        Customer customerResult = new Customer();
+        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            CustomerDO companyCustomerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+            //封装数据
+            customerResult = ConverterUtil.convert(companyCustomerDO, Customer.class);
+        }else if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+            CustomerDO personCustomerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
+            //封装数据
+            customerResult = ConverterUtil.convert(personCustomerDO, Customer.class);
+        }
 
         CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerResult.getCustomerNo());
         if (customerAccount != null) {

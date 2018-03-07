@@ -100,7 +100,7 @@ public interface CustomerService {
     * @param : customerName
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.customer.pojo.Customer>>
     */
-    ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName);
+    ServiceResult<String, Customer> queryCustomerByCustomerName(String customerName);
 
     /**
      * 增加短租应收上限金额
