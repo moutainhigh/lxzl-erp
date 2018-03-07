@@ -1100,6 +1100,7 @@ CREATE TABLE `erp_order` (
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
   `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
+  `buyer_customer_name` varchar(64) NOT NULL COMMENT '客户名称',
   `expect_delivery_time` datetime NOT NULL COMMENT '送货时间',
   `rent_type` int(20) NOT NULL COMMENT '租赁类型',
   `rent_time_length` int(20) NOT NULL COMMENT '租赁时长',
