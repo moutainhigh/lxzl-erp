@@ -207,7 +207,6 @@
                                         </div>
 
                                         <div class="col-md-4">
-                                            {{#customerCompany}}
                                             <table class="table mbn">
                                                 <tbody>
                                                 <tr>
@@ -220,27 +219,26 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">公司座机</td>
-                                                    <td class="fs15 fw700 text-right">{{landline}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.landline}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">紧急联系人</td>
-                                                    <td class="fs15 fw700 text-right">{{connectRealName}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectRealName}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">紧急联系人手机号</td>
-                                                    <td class="fs15 fw700 text-right">{{connectPhone}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectPhone}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">公司地址</td>
-                                                    <td class="fs15 fw700 text-right">{{provinceName}}{{cityName}}{{districtName}}{{address}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.provinceName}}{{customerCompany.cityName}}{{customerCompany.districtName}}{{address}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">是否以地址作为收货地址</td>
-                                                    <td class="fs15 fw700 text-right">{{isDefaultConsignAddressValue}}</td>
+                                                    <td class="fs15 fw700 text-right">{{#boolText}}{{isDefaultConsignAddressValue}}{{/boolText}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                            {{/customerCompany}}
                                         </div>
 
                                     </div>
