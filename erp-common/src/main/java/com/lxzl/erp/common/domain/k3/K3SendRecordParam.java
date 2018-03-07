@@ -9,7 +9,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class K3SendRecordParam extends BasePageParam implements Serializable {
 
-    private Integer k3SendRecordId;   //唯一标识
     private Integer recordType;   //记录类型，1推送客户、2推送供应商、3推送商品、4推送配件、5推送订单、6推送用户、7推送退货单
     private Integer sendResult;   //是否推送成功，1是0否
     private Integer receiveResult;   //是否接收成功，1是0否
@@ -17,10 +16,6 @@ public class K3SendRecordParam extends BasePageParam implements Serializable {
     private Date sendEndTime;   //发送最后时间
     private Integer recordReferId;	//记录关联ID
     private String recordReferNo;	//记录关联编号
-
-    public Integer getK3SendRecordId() { return k3SendRecordId; }
-
-    public void setK3SendRecordId(Integer k3SendRecordId) { this.k3SendRecordId = k3SendRecordId; }
 
     public Integer getRecordType() { return recordType; }
 

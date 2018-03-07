@@ -56,6 +56,7 @@ public class ErrorCode {
     public static final String BUSINESS_APP_SECRET_NOT_NULL = "J100027";
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
+    public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -719,8 +720,7 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
     public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
     public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
-    public static final String K3_SEND_RECORD_IS_RECORD_REFER_NO = "J17000014";
-    public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000015";
+    public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -772,6 +772,7 @@ public class ErrorCode {
         MAP.put(USER_OWNER_NOT_EXISTS, "填写的开发员不存在，请查询清楚");
         MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
+        MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1432,7 +1433,6 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
-        MAP.put(K3_SEND_RECORD_IS_RECORD_REFER_NO, "K3数据发送记录表，查询编号需记录类型也要选择");
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
 
     }

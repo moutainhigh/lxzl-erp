@@ -77,5 +77,5 @@ public interface K3Service extends VerifyReceiver {
      */
     ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam);
 
-    ServiceResult<String, Integer> seedAgainK3SendRecord(K3SendRecordParam k3SendRecordParam);
+    ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord);
 }

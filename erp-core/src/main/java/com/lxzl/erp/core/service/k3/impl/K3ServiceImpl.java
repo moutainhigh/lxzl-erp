@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
@@ -33,27 +32,24 @@ import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
-import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
-import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
-import com.lxzl.se.common.util.UUIDUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -906,16 +902,15 @@ public class K3ServiceImpl implements K3Service {
     @Override
     public ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam) {
         ServiceResult<String, Page<K3SendRecord>> result = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(k3SendRecordParam.getPageNo(), k3SendRecordParam.getPageSize());
 
-        if(k3SendRecordParam.getRecordReferNo() != null){
-            if(k3SendRecordParam.getRecordType() == null){
-                result.setErrorCode(ErrorCode.K3_SEND_RECORD_IS_RECORD_REFER_NO);
-                return result;
-            }else{
-                k3SendRecordParam.setRecordReferId(recordTypeSupport.recordTypeAndNoByRecordReferId(k3SendRecordParam.getRecordType(),k3SendRecordParam.getRecordReferNo()));
-            }
+        User loginUser = userSupport.getCurrentUser();
+        //超级管理员权限控制
+        if(!userRoleService.isSuperAdmin(loginUser.getUserId())){
+            result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+            return result;
         }
+
+        PageQuery pageQuery = new PageQuery(k3SendRecordParam.getPageNo(), k3SendRecordParam.getPageSize());
 
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
@@ -941,21 +936,29 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, Integer> seedAgainK3SendRecord(K3SendRecordParam k3SendRecordParam) {
+    public ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord) {
         ServiceResult<String, Integer> result = new ServiceResult<>();
 
-        K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findById(k3SendRecordParam.getK3SendRecordId());
+        User loginUser = userSupport.getCurrentUser();
+        //超级管理员权限控制
+        if(!userRoleService.isSuperAdmin(loginUser.getUserId())){
+            result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+            return result;
+        }
+
+        K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findById(k3SendRecord.getK3SendRecordId());
         if(k3SendRecordDO == null){
             result.setErrorCode(ErrorCode.K3_SEND_RECORD_ID_IS_NOT_EXISTS);
             return result;
         }
         Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId());
-        try {
-            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,k3SendRecordDO.getRecordType(),data);
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDO.getRecordType())){
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDO.getRecordType(),data,false);
+        }else{
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,k3SendRecordDO.getRecordType(),data,false);
         }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(k3SendRecordDO.getRecordReferId());
         return result;
@@ -1088,4 +1091,7 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private WebServiceHelper webServiceHelper;
+
+    @Autowired
+    private UserRoleService userRoleService;
 }

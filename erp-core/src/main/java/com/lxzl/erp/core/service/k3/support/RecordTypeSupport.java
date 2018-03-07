@@ -11,9 +11,7 @@ import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
@@ -49,10 +47,6 @@ public class RecordTypeSupport {
     private K3ReturnOrderMapper k3ReturnOrderMapper;
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private CustomerCompanyMapper customerCompanyMapper;
-    @Autowired
-    private CustomerPersonMapper customerPersonMapper;
 
     public String getNoByRecordType(Integer recordType,Integer recordReferId){
 
@@ -96,51 +90,8 @@ public class RecordTypeSupport {
         return recordRefer;
     }
 
-    public Integer recordTypeAndNoByRecordReferId(Integer recordType,String recordReferNo){
-
-        Integer recordRefer = null;
-        if(PostK3Type.POST_K3_TYPE_CUSTOMER.equals(recordType)){
-            CustomerDO customerDO = customerMapper.findByNo(recordReferNo);
-            if(customerDO != null){
-                recordRefer = customerDO.getId();
-            }
-        }else if(PostK3Type.POST_K3_TYPE_PRODUCT.equals(recordType)){
-            ProductDO productDO = productMapper.findByProductNo(recordReferNo);
-            if(productDO != null){
-                recordRefer = productDO.getId();
-            }
-        }else if(PostK3Type.POST_K3_TYPE_MATERIAL.equals(recordType)){
-            MaterialDO materialDO = materialMapper.findByNo(recordReferNo);
-            if(materialDO != null){
-                recordRefer = materialDO.getId();
-            }
-        }else if(PostK3Type.POST_K3_TYPE_SUPPLIER.equals(recordType)){
-            SupplierDO supplierDO = supplierMapper.findByNo(recordReferNo);
-            if(supplierDO != null){
-                recordRefer = supplierDO.getId();
-            }
-        }else if(PostK3Type.POST_K3_TYPE_ORDER.equals(recordType)){
-            OrderDO orderDO = orderMapper.findByOrderNo(recordReferNo);
-            if(orderDO != null){
-                recordRefer = orderDO.getId();
-            }
-        }else if(PostK3Type.POST_K3_TYPE_USER.equals(recordType)){
-            UserDO userDO = userMapper.findByUsername(recordReferNo);
-            if(userDO != null){
-                recordRefer = userDO.getId();
-            }
-        }else if(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(recordType)){
-            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(recordReferNo);
-            if(k3ReturnOrderDO != null){
-                recordRefer = k3ReturnOrderDO.getId();
-            }
-        }
-        return recordRefer;
-    }
-
     public Object recordTypeAndRecordReferIdByClass(Integer recordType,Integer recordReferId){
 
-        Object nameClass;
         if(PostK3Type.POST_K3_TYPE_CUSTOMER.equals(recordType)){
             CustomerDO customerDO = customerMapper.findById(recordReferId);
             if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
@@ -169,7 +120,6 @@ public class RecordTypeSupport {
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
             return ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
         }
-
         return false;
     }
 

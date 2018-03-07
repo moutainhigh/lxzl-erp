@@ -363,14 +363,17 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         K3SendRecordParam param = new K3SendRecordParam();
         param.setPageNo(1);
         param.setPageSize(15);
+//        param.setRecordReferNo("LXCC-1000-20180305-00299");
+//        param.setRecordType(1);
         TestResult testResult = getJsonTestResult("/k3/queryK3SendRecord", param);
     }
 
     @Test
     public void seedAgainK3SendRecord() throws Exception {
-        K3SendRecordParam param = new K3SendRecordParam();
-        param.setK3SendRecordId(1425);
-        TestResult testResult = getJsonTestResult("/k3/seedAgainK3SendRecord", param);
+        K3SendRecord k3SendRecord = new K3SendRecord();
+        k3SendRecord.setK3SendRecordId(1418);
+        TestResult testResult = getJsonTestResult("/k3/seedAgainK3SendRecord", k3SendRecord);
+        Thread.sleep(300000);
     }
 
 
