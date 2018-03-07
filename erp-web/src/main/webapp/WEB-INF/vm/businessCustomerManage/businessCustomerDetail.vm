@@ -23,32 +23,33 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">客户编号</dt><dd>{{customerNo}}</dd>
-                                        <dt class="mb10">公司名</dt><dd>{{customerCompany.companyName}}</dd>
-                                        <dt class="mb10">公司简称</dt><dd>{{customerCompany.companyAbb}}</dd>
-                                        <dt class="mb10">备注</dt><dd>{{customerCompany.remark}}</dd>
+                                        <dt class="mb10">客户编号：</dt><dd>{{customerNo}}</dd>
+                                        <dt class="mb10">公司名：</dt><dd>{{customerCompany.companyName}}</dd>
+                                        <dt class="mb10">公司简称：</dt><dd>{{customerCompany.companyAbb}}</dd>
+                                        <dt class="mb10">短租应收上限：</dt><dd class="text-danger">￥{{#price}}{{shortLimitReceivableAmount}}{{/price}}</dd>
+                                        <dt class="mb10">结算时间：</dt><dd>{{settlementDateValue}}</dd>
+                                        <dt class="mb10">备注：</dt><dd>{{customerCompany.remark}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">用户类型</dt><dd>{{cutomerTypeValue}}</dd>
-                                        <dt class="mb10">客户来源</dt><dd>{{customerOriginValue}}</dd>
-                                        <dt class="mb10">是否禁用</dt><dd>{{isDisabledValue}}</dd>
-                                        <dt class="mb10">客户状态</dt><dd>{{customerStatusValue}}</dd>
+                                        <dt class="mb10">用户类型：</dt><dd>{{cutomerTypeValue}}</dd>
+                                        <dt class="mb10">客户来源：</dt><dd>{{customerOriginValue}}</dd>
+                                        <dt class="mb10">是否禁用：</dt><dd>{{isDisabledValue}}</dd>
+                                        <dt class="mb10">客户状态：</dt><dd>{{customerStatusValue}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}</dd>
-                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
-                                        <dt class="mb10">联合开发人</dt><dd>{{unionUserName}}</dd>
-                                        <dt class="mb10">业务员</dt><dd>{{ownerName}}</dd>
+                                        <dt class="mb10">创建人：</dt><dd>{{createUserRealName}}</dd>
+                                        <dt class="mb10">创建时间：</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
+                                        <dt class="mb10">联合开发人：</dt><dd>{{unionUserName}}</dd>
+                                        <dt class="mb10">业务员：</dt><dd>{{ownerName}}</dd>
                                     </dl>
                                 </div>
                             </div>
                             <hr />
                             <div class="row">
-
                                 <div class="col-md-3">
                                     <div class="panel panel-tile text-center">
                                         <div class="panel-body bg-primary light">
@@ -201,16 +202,11 @@
                                                     <td class="va-m fw600 text-muted"></i>经营面积</td>
                                                     <td class="fs15 fw700 text-right">{{customerCompany.operatingArea}}㎡</td>
                                                 </tr>
-                                                <tr>
-                                                    <td class="va-m fw600 text-muted"></i>短租应收上限</td>
-                                                    <td class="fs15 fw700 text-right">￥{{shortLimitReceivableAmount}}</td>
-                                                </tr>
                                                 </tbody>
                                             </table>
                                         </div>
 
                                         <div class="col-md-4">
-                                            {{#customerCompany}}
                                             <table class="table mbn">
                                                 <tbody>
                                                 <tr>
@@ -223,27 +219,26 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">公司座机</td>
-                                                    <td class="fs15 fw700 text-right">{{landline}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.landline}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">紧急联系人</td>
-                                                    <td class="fs15 fw700 text-right">{{connectRealName}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectRealName}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">紧急联系人手机号</td>
-                                                    <td class="fs15 fw700 text-right">{{connectPhone}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.connectPhone}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">公司地址</td>
-                                                    <td class="fs15 fw700 text-right">{{provinceName}}{{cityName}}{{districtName}}{{address}}</td>
+                                                    <td class="fs15 fw700 text-right">{{customerCompany.provinceName}}{{customerCompany.cityName}}{{customerCompany.districtName}}{{address}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">是否以地址作为收货地址</td>
-                                                    <td class="fs15 fw700 text-right">{{isDefaultConsignAddressValue}}</td>
+                                                    <td class="fs15 fw700 text-right">{{#boolText}}{{isDefaultConsignAddressValue}}{{/boolText}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                            {{/customerCompany}}
                                         </div>
 
                                     </div>
