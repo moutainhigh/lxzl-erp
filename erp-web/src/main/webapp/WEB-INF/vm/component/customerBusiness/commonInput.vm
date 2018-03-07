@@ -684,6 +684,8 @@
                                                 <th>商品参数（SKU）</th>
                                                 <th>单台商品价值</th>
                                                 <th>租赁数量</th>
+                                                <th>租赁类型</th>
+                                                <th>租赁时长</th>
                                                 <th>商品总价值</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
@@ -715,6 +717,18 @@
                                                         <input type="text" name="rentCount-{{skuId}}-{{rowKey}}" value="{{rentCount}}" class="rentCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
                                                     </label>
                                                 </td>
+                                                <td>
+                                                    <select class="form-control rentType" name="rentType">
+                                                        <option value="">请选择</option>
+                                                        <option value="1">按天租</option>
+                                                        <option value="2">按月租</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <label class="field" style="max-width:160px">
+                                                        <input name="rentTimeLength" class="form-control number rentTimeLength" type="text" placeholder="输入租赁时长" />
+                                                    </label>
+                                                </td>
                                                 <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
                                                 <td class="text-right">
                                                     <div class="btn-group text-right">
@@ -725,11 +739,11 @@
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="9" class="text-center">没有选择商品</td>
+                                                <td valign="top" colspan="11" class="text-center">没有选择商品</td>
                                             </tr>
                                             {{/listData}}
                                             <tr>
-                                                <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
+                                                <td colspan="9" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
                                                 <td colspan="2" class="text-danger">
                                                     <div class="text-danger" id="firstListTotalPriceBox"></div>
                                                     <input type="hidden" name="firstListTotalPrice" id="firstListTotalPrice" />
@@ -771,6 +785,8 @@
                                                 <th>商品参数（SKU）</th>
                                                 <th>单台商品价值</th>
                                                 <th>租赁数量</th>
+                                                <th>租赁类型</th>
+                                                <th>租赁时长</th>
                                                 <th>商品总价值</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
@@ -802,6 +818,18 @@
                                                         <input type="text" name="rentCount-{{skuId}}-{{rowKey}}" value="{{rentCount}}" class="rentCount form-control required checkInteger pl10" placeholder="输入租赁数量" aria-required="true" aria-invalid="false"/>
                                                     </label>
                                                 </td>
+                                                <td>
+                                                    <select class="form-control rentType" name="rentType">
+                                                        <option value="">请选择</option>
+                                                        <option value="1">按天租</option>
+                                                        <option value="2">按月租</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <label class="field" style="max-width:160px">
+                                                        <input name="rentTimeLength" class="form-control number rentTimeLength" type="text" placeholder="输入租赁时长" />
+                                                    </label>
+                                                </td>
                                                 <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
                                                 <td class="text-right">
                                                     <div class="btn-group text-right">
@@ -812,11 +840,11 @@
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="9" class="text-center">没有选择商品</td>
+                                                <td valign="top" colspan="11" class="text-center">没有选择商品</td>
                                             </tr>
                                             {{/listData}}
                                             <tr>
-                                                <td colspan="7" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
+                                                <td colspan="9" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
                                                 <td colspan="2" class="text-danger">
                                                     <div class="text-danger" id="laterListTotalPriceBox"></div>
                                                     <input type="hidden" name="laterListTotalPrice" id="laterListTotalPrice" />
