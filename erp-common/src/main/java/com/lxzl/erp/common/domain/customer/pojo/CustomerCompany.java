@@ -55,7 +55,7 @@ public class CustomerCompany extends BasePO {
     private BigDecimal registeredCapital;  //注册资本
     private Integer officeNumber;  //办公人数
     private String productPurpose;  //设备用途
-//    @Valid
+    @Valid
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private BigDecimal firstListTotalPrice; //首次所需设备总金额
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
@@ -79,7 +79,6 @@ public class CustomerCompany extends BasePO {
     private Image agentPersonNoPictureFrontImage;//经办人身份证正面
     @Valid
     private Image agentPersonNoPictureBackImage;//经办人身份证反面
-
 
     @Valid
 //    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
