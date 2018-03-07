@@ -1,13 +1,13 @@
 <div class="panel">
     <div class="panel-heading">
         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-            <li class="active">
+            <li class="active"  id="productFirstNeedTab">
                 <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备</a>
             </li>
-            <li>
+            <li id="productLastNeedTab">
                 <a href="#productLastNeed" data-toggle="tab" aria-expanded="false">后续所需设备</a>
             </li>
-            <li>
+            <li id="orderListTab">
                 <a href="#orderList" data-toggle="tab" aria-expanded="false">订单</a>
             </li>
             <li>
@@ -35,6 +35,8 @@
                                 <th>商品参数</th>
                                 <th>单台商品价值</th>
                                 <th>租赁数量</th>
+                                <th>租赁类型</th>
+                                <th>租赁时长</th>
                                 <th>商品总价值</th>
                             </tr>
                             </thead>
@@ -48,16 +50,18 @@
                                 <td>{{propertiesToStr}}</td>
                                 <td>￥{{unitPrice}}</td>
                                 <td>{{rentCount}}</td>
+                                <td>{{rentTypeValue}}</td>
+                                <td>{{rentTimeLength}}</td>
                                 <td>￥{{totalPrice}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="8" class="text-center">没有查询到首次所需设备</td>
+                                <td valign="top" colspan="9" class="text-center">没有查询到首次所需设备</td>
                             </tr>
                             {{/listData}}
                             <tr>
-                                <td colspan="6" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
+                                <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
                                 <td class="text-danger">
                                     <div class="text-danger" id="firstListTotalPriceBox"></div>
                                 </td>
@@ -81,6 +85,8 @@
                                 <th>商品参数</th>
                                 <th>单台商品价值</th>
                                 <th>租赁数量</th>
+                                <th>租赁类型</th>
+                                <th>租赁时长</th>
                                 <th>商品总价值</th>
                             </tr>
                             </thead>
@@ -94,16 +100,18 @@
                                 <td>{{propertiesToStr}}</td>
                                 <td>￥{{unitPrice}}</td>
                                 <td>{{rentCount}}</td>
+                                <td>{{rentTypeValue}}</td>
+                                <td>{{rentTimeLength}}</td>
                                 <td>￥{{totalPrice}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="8" class="text-center">没有查询到后续所需设备</td>
+                                <td valign="top" colspan="9" class="text-center">没有查询到后续所需设备</td>
                             </tr>
                             {{/listData}}
                             <tr>
-                                <td colspan="6" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
+                                <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
                                 <td class="text-danger">
                                     <div class="text-danger" id="laterListTotalPriceBox"></div>
                                 </td>

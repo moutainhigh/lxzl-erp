@@ -11,7 +11,7 @@
         <div class="col-md-3">
             <label for="personNo" class="field-label"><em class="text-danger">*</em>身份证号</label>
             <label for="personNo" class="field prepend-icon">
-                <input type="text" name="personNo" id="personNo" class="gui-input required number" placeholder="请输入身份证号..." />
+                <input type="text" name="personNo" id="personNo" class="gui-input required checkIDCard" placeholder="请输入身份证号..." />
                 <label for="personNo" class="field-icon"><i class="fa fa-user"></i>
                 </label>
             </label>
