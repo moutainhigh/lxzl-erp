@@ -93,7 +93,7 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postCustomer() throws InterruptedException {
-        String customerNo  = "LXCC-2000-20180306-00272";
+        String customerNo  = "LXCC-1000-20180306-00314";
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);

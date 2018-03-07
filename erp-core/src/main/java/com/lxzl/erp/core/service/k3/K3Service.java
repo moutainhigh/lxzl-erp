@@ -5,7 +5,9 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
+import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
+import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
@@ -66,4 +68,14 @@ public interface K3Service extends VerifyReceiver {
     ServiceResult<String, String> cancelK3ChangeOrder(K3ChangeOrder k3ChangeOrder);
 
     ServiceResult<String, String> commitK3ChangeOrder(K3ChangeOrderCommitParam k3ChangeOrderCommitParam);
+
+    /**
+     * K3数据发送记录表分页
+     *
+     * @param k3SendRecordParam
+     * @return
+     */
+    ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam);
+
+    ServiceResult<String, Integer> seedAgainK3SendRecord(K3SendRecordParam k3SendRecordParam);
 }

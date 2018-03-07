@@ -719,6 +719,8 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
     public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
     public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
+    public static final String K3_SEND_RECORD_IS_RECORD_REFER_NO = "J17000014";
+    public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000015";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -918,7 +920,6 @@ public class ErrorCode {
         MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
         MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
         MAP.put(CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL, "客户所需的设备的新或旧的值不能为空");
-
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
@@ -1431,6 +1432,8 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
+        MAP.put(K3_SEND_RECORD_IS_RECORD_REFER_NO, "K3数据发送记录表，查询编号需记录类型也要选择");
+        MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
 
     }
 

@@ -10,8 +10,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
+import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -354,6 +356,21 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         k3ChangeOrderCommitParam.setChangeOrderNo("05e9b5d1327a43368bbabd8e44b81974");
         k3ChangeOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/k3/commitK3ChangeOrder", k3ChangeOrderCommitParam);
+    }
+
+    @Test
+    public void queryK3SendRecord() throws Exception {
+        K3SendRecordParam param = new K3SendRecordParam();
+        param.setPageNo(1);
+        param.setPageSize(15);
+        TestResult testResult = getJsonTestResult("/k3/queryK3SendRecord", param);
+    }
+
+    @Test
+    public void seedAgainK3SendRecord() throws Exception {
+        K3SendRecordParam param = new K3SendRecordParam();
+        param.setK3SendRecordId(1425);
+        TestResult testResult = getJsonTestResult("/k3/seedAgainK3SendRecord", param);
     }
 
 

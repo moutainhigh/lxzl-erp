@@ -5,8 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
+import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
@@ -154,6 +156,26 @@ public class K3Controller extends BaseController {
         ServiceResult<String, String> serviceResult = k3Service.commitK3ChangeOrder(k3ChangeOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * K3数据发送记录表
+     *
+     * @param k3SendRecordParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryK3SendRecord", method = RequestMethod.POST)
+    public Result queryK3SendRecord(@RequestBody K3SendRecordParam k3SendRecordParam, BindingResult validResult) {
+        ServiceResult<String, Page<K3SendRecord>> serviceResult = k3Service.queryK3SendRecord(k3SendRecordParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "seedAgainK3SendRecord", method = RequestMethod.POST)
+    public Result seedAgainK3SendRecord(@RequestBody K3SendRecordParam param, BindingResult validResult) {
+        ServiceResult<String,Integer> serviceResult = k3Service.seedAgainK3SendRecord(param);
+        return resultGenerator.generate(serviceResult);
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;
