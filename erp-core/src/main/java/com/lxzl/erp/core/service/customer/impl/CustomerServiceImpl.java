@@ -49,8 +49,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -1300,6 +1298,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        //校验风控信息
+        ServiceResult<String, String> result = verifyRiskManagement(customerRiskManagement);
+        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+            return result;
+        }
         CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -2220,6 +2223,144 @@ public class CustomerServiceImpl implements CustomerService {
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
+    }
+
+    /**
+    * 校验风控信息
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/6 20:46
+    * @param : customerRiskManagement
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    private ServiceResult<String, String> verifyRiskManagement(CustomerRiskManagement customerRiskManagement){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsFullDeposit())){
+            //限制单台设备价值
+            if(customerRiskManagement.getSingleLimitPrice() == null ){
+                result.setErrorCode(ErrorCode.SINGLE_LIMIT_PRICE_NOT_NULL);
+                return result;
+            }
+            if(BigDecimalUtil.compare(customerRiskManagement.getSingleLimitPrice(),BigDecimal.ZERO)<0 ){
+                result.setErrorCode(ErrorCode.SINGLE_LIMIT_PRICE_ERROR);
+                return result;
+            }
+            //押金期数
+            if(customerRiskManagement.getDepositCycle() == null){
+                result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL);
+                return result;
+            }
+            //押金期数范围
+            if(0>customerRiskManagement.getDepositCycle() || customerRiskManagement.getDepositCycle()>120){
+                result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR);
+                return result;
+            }
+
+            //付款期数
+            if(customerRiskManagement.getPaymentCycle() == null){
+                result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL);
+                return result;
+            }
+            //付款期数范围
+            if(1>customerRiskManagement.getPaymentCycle() || customerRiskManagement.getPaymentCycle()>120){
+                result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR);
+                return result;
+            }
+            //支付方式
+            if(customerRiskManagement.getPayMode() == null){
+                result.setErrorCode(ErrorCode.PAY_MODE_NOT_NULL);
+                return result;
+            }
+            if(!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getPayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getPayMode())){
+                result.setErrorCode(ErrorCode.PAY_MODE_ERROR);
+                return result;
+            }
+            //是否限制苹果
+            if(customerRiskManagement.getIsLimitApple() == null){
+                result.setErrorCode(ErrorCode.IS_LIMIT_APPLE_NOT_NULL);
+                return result;
+            }else {
+                if(!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagement.getIsLimitApple()) && !CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitApple())){
+                    result.setErrorCode(ErrorCode.IS_LIMIT_APPLE_ERROR);
+                    return result;
+                }
+                if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitApple())){
+                    //苹果押金期数
+                    if(customerRiskManagement.getAppleDepositCycle() == null){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_NOT_NULL);
+                        return result;
+                    }
+                    //苹果押金期数范围
+                    if(0>customerRiskManagement.getAppleDepositCycle() || customerRiskManagement.getAppleDepositCycle()>120){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_ERROR);
+                        return result;
+                    }
+                    //苹果付款期数
+                    if(customerRiskManagement.getApplePaymentCycle() == null){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_NOT_NULL);
+                        return result;
+                    }
+                    //苹果付款期数范围
+                    if(1>customerRiskManagement.getApplePaymentCycle() || customerRiskManagement.getApplePaymentCycle()>120){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR);
+                        return result;
+                    }
+                    //苹果支付方式
+                    if(customerRiskManagement.getApplePayMode() == null){
+                        result.setErrorCode(ErrorCode.APPLE_PAY_MODE_NOT_NULL);
+                        return result;
+                    }
+                    if(!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getApplePayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getApplePayMode())){
+                        result.setErrorCode(ErrorCode.APPLE_PAY_MODE_ERROR);
+                        return result;
+                    }
+                }
+
+            }
+            //是否限制全新
+            if(customerRiskManagement.getIsLimitNew() == null){
+                result.setErrorCode(ErrorCode.IS_LIMIT_NEW_NOT_NULL);
+                return result;
+            }else {
+                if(!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagement.getIsLimitNew()) && !CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitNew())){
+                    result.setErrorCode(ErrorCode.IS_LIMIT_NEW_ERROR);
+                    return result;
+                }
+                if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitNew())){
+                    //全新押金期数
+                    if(customerRiskManagement.getNewDepositCycle() == null){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_NOT_NULL);
+                        return result;
+                    }
+                    //全新押金期数范围
+                    if(0>customerRiskManagement.getNewDepositCycle() || customerRiskManagement.getNewDepositCycle()>120){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR);
+                        return result;
+                    }
+                    //全新付款期数
+                    if(customerRiskManagement.getNewPaymentCycle() == null){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_NOT_NULL);
+                        return result;
+                    }
+                    //全新付款期数范围
+                    if(1>customerRiskManagement.getNewPaymentCycle() || customerRiskManagement.getNewPaymentCycle()>120){
+                        result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR);
+                        return result;
+                    }
+                    //全新支付方式
+                    if(customerRiskManagement.getNewPayMode() == null){
+                        result.setErrorCode(ErrorCode.NEW_PAY_MODE_NOT_NULL);
+                        return result;
+                    }
+                    if(!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getNewPayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getNewPayMode())){
+                        result.setErrorCode(ErrorCode.APPLE_PAY_MODE_ERROR);
+                        return result;
+                    }
+                }
+            }
+
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
     }
 
     @Autowired
