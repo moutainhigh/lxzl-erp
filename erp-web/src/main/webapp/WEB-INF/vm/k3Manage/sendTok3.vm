@@ -73,13 +73,13 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr data-recordJson="{{recordJson}}" data-responseJson="{{responseJson}}">
-                                <th>{{k3SendRecordId}}</th>
-                                <th>{{recordTypeValue}}</th>
-                                <th>{{sendResultValue}}</th>
-                                <th>{{receiveResultValue}}</th>
-                                <th>{{#time}}{{sendTime}}{{/time}}</th>
-                                <th>{{recordReferId}}</th>
-                                <th>{{recordReferNo}}</th>
+                                <td>{{k3SendRecordId}}</td>
+                                <td>{{recordTypeValue}}</td>
+                                <td>{{sendResultValue}}</td>
+                                <td>{{receiveResultValue}}</td>
+                                <td>{{#time}}{{sendTime}}{{/time}}</td>
+                                <td>{{recordReferId}}</td>
+                                <td>{{recordReferNo}}</td>
                                 <td class="text-right">
                                     {{#noSend}}
                                     <div class="btn-group text-right">
