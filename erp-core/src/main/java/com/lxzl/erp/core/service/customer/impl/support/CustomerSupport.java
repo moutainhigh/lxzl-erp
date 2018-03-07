@@ -138,10 +138,10 @@ public class CustomerSupport {
                 if (customerRiskManagementDO == null) {
                     throw new BusinessException();
                 }
-                BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), amount);
-                //减成负值不处理，直接保存
-                customerRiskManagementDO.setCreditAmountUsed(newValue);
             }
+            BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), amount);
+            //减成负值不处理，直接保存
+            customerRiskManagementDO.setCreditAmountUsed(newValue);
             customerRiskManagementMapper.update(customerRiskManagementDO);
             return ErrorCode.SUCCESS;
         }

@@ -910,8 +910,9 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
+        //审核中或者待发货订单，处理风控额度及结算单
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())||
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
