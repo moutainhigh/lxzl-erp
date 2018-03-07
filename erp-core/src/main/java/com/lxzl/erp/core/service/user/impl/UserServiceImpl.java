@@ -136,7 +136,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         CommonCache.userMap.put(userDO.getId(),user );
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
 
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_USER, user);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_USER, user,true);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
         return result;

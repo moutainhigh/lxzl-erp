@@ -181,7 +181,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult1;
         }
 
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class));
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class),true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
@@ -237,7 +237,7 @@ public class CustomerServiceImpl implements CustomerService {
 //        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
 //            saveCustomerPersonConsignInfo(customerDO,customerPersonDO,now,userSupport.getCurrentUserId());
 //        }
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class));
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class),true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
@@ -1983,59 +1983,35 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName) {
+    public ServiceResult<String, Customer> queryCustomerByCustomerName(String customerName) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
-        CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
-        customerCompanyQueryParam.setFullCompanyName(companyName);
-        Map<String, Object> map = new HashMap<>();
-        map.put("start", 0);
-        map.put("pageSize", Integer.MAX_VALUE);
-        map.put("customerCompanyQueryParam", customerCompanyQueryParam);
-        List<CustomerCompanyDO> customerCompanyDOList = customerCompanyMapper.findCustomerCompanyByParams(map);
-        if (CollectionUtil.isEmpty(customerCompanyDOList)) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return serviceResult;
-        }
-
-        //公司客户信息
-        CustomerCompanyDO customerCompanyDO = customerCompanyDOList.get(0);
         //客户信息
-        CustomerDO customerDO = customerMapper.findById(customerCompanyDO.getCustomerId());
+        CustomerDO customerDO = customerMapper.findByName(customerName);
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-
-        //客户分控信息
-        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
-        if (customerRiskManagementDO != null) {
-            customerDO.setCustomerRiskManagementDO(customerRiskManagementDO);
-        }
-        //业务员信息
-        UserDO ownerUserDO = userMapper.findByUserId(customerDO.getOwner());
-        if (ownerUserDO != null) {
-            customerDO.setOwnerName(ownerUserDO.getUserName());
-        }
-        customerDO.setCustomerCompanyDO(customerCompanyDO);
-        //封装数据
-        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
-        //联合开发人
-        UserDO unionUserDO = userMapper.findByUserId(customerDO.getUnionUser());
-        if (unionUserDO != null) {
-            customerResult.setUnionUserName(unionUserDO.getUserName());
-            SubCompanyDO subCompanyDO = userRoleMapper.findSubCompanyByUserId(unionUserDO.getId());
-
-            subCompanyDO = subCompanyMapper.findById(subCompanyDO.getId());
-            customerResult.setUnionAreaProvinceName(subCompanyDO.getProvinceName());
-            customerResult.setUnionAreaCityName(subCompanyDO.getCityName());
-            customerResult.setUnionAreaDistrictName(subCompanyDO.getDistrictName());
+        //判断个人客户与公司客户信息
+        Customer customerResult = new Customer();
+        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            CustomerDO companyCustomerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+            //封装数据
+            customerResult = ConverterUtil.convert(companyCustomerDO, Customer.class);
+        }else if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+            CustomerDO personCustomerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
+            //封装数据
+            customerResult = ConverterUtil.convert(personCustomerDO, Customer.class);
         }
 
-        CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerDO.getCustomerNo());
-
+        CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerResult.getCustomerNo());
         if (customerAccount != null) {
             customerResult.setCustomerAccount(customerAccount);
         }
+        //业务员信息
+        UserDO ownerUserDO = userMapper.findByUserId(customerResult.getOwner());
+        //联合开发人
+        UserDO unionUserDO = userMapper.findByUserId(customerResult.getUnionUser());
+
         customerResult.setCustomerOwnerUser(ConverterUtil.convert(ownerUserDO, User.class));
         customerResult.setCustomerUnionUser(ConverterUtil.convert(unionUserDO, User.class));
 

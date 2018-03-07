@@ -76,7 +76,7 @@ public class HttpClientControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void test() throws Exception {
-        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName("新的测试数据");
+        ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCustomerName("奇奇文化");
     }
 
     @Test
