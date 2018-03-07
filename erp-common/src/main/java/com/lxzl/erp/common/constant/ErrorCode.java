@@ -520,6 +520,31 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL = "J500113";
     public static final String CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL = "J500114";
     public static final String DELIVERY_MODE_NOT_NULL = "J500115";
+    public static final String CUSTOMER_RETURN_VISIT_FREQUENCY_NOT_NULL = "J500116";
+    public static final String CUSTOMER_IS_FULL_DEPOSIT_NOT_NULL = "J500117";
+    public static final String CUSTOMER_RETURN_VISIT_FREQUENCY_ERROR = "J500118";
+    public static final String CUSTOMER_IS_FULL_DEPOSIT_ERROR = "J500119";
+    public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_NOT_NULL = "J500120";
+    public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_NOT_NULL = "J500121";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_NOT_NULL = "J500122";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_NOT_NULL = "J500123";
+    public static final String SINGLE_LIMIT_PRICE_NOT_NULL = "J500124";
+    public static final String SINGLE_LIMIT_PRICE_ERROR = "J500125";
+    public static final String IS_LIMIT_APPLE_NOT_NULL = "J500126";
+    public static final String IS_LIMIT_APPLE_ERROR = "J500127";
+    public static final String IS_LIMIT_NEW_NOT_NULL = "J500128";
+    public static final String IS_LIMIT_NEW_ERROR = "J500129";
+    public static final String PAY_MODE_NOT_NULL = "J500130";
+    public static final String PAY_MODE_ERROR = "J500131";
+    public static final String APPLE_PAY_MODE_NOT_NULL = "J500132";
+    public static final String APPLE_PAY_MODE_ERROR = "J500133";
+    public static final String NEW_PAY_MODE_NOT_NULL = "J500134";
+    public static final String NEW_PAY_MODE_ERROR = "J500135";
+    public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_ERROR = "J500136";
+    public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR = "J500137";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR = "J500138";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR = "J500139";
+
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1204,6 +1229,31 @@ public class ErrorCode {
         MAP.put(CITY_NOT_EXISTS, "城市不存在");
         MAP.put(MATERIAL_TYPE_NOT_NULL, "商品的配件类型不存在");
         MAP.put(CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL, "客户的首期申请额度不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_FREQUENCY_NOT_NULL, "客户回访频率不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_FREQUENCY_ERROR, "客户回访频率填写范围超出");
+        MAP.put(CUSTOMER_IS_FULL_DEPOSIT_NOT_NULL, "是否是全额押金客户不能为空");
+        MAP.put(CUSTOMER_IS_FULL_DEPOSIT_ERROR, "是否是全额押金客户错误");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_NOT_NULL, "苹果押金期数不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_ERROR, "苹果押金期数填写范围超出");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_NOT_NULL, "苹果付款期数不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR, "苹果付款期数填写范围超出");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_NOT_NULL, "全新押金期数不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR, "全新押金期数填写范围超出");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_NOT_NULL, "全新付款期数不能为空");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR, "全新付款期数填写范围超出");
+        MAP.put(SINGLE_LIMIT_PRICE_NOT_NULL, "不是全额押金账户,限制单台设备价值不能为空");
+        MAP.put(SINGLE_LIMIT_PRICE_ERROR, "不是全额押金账户,限制单台设备金额填写不能为负数");
+        MAP.put(IS_LIMIT_APPLE_NOT_NULL, "是否限制苹果机不能为空");
+        MAP.put(IS_LIMIT_APPLE_ERROR, "是否限制苹果机填写范围超出");
+        MAP.put(IS_LIMIT_NEW_NOT_NULL, "是否限制全新机不能为空");
+        MAP.put(IS_LIMIT_NEW_ERROR, "是否限制全新机填写范围超出");
+        MAP.put(PAY_MODE_NOT_NULL, "支付方式不能为空");
+        MAP.put(PAY_MODE_ERROR, "支付方式填写范围超出");
+        MAP.put(APPLE_PAY_MODE_NOT_NULL, "苹果设备支付方式不能为空");
+        MAP.put(APPLE_PAY_MODE_ERROR, "苹果设备支付方式填写范围超出");
+        MAP.put(NEW_PAY_MODE_NOT_NULL, "全新设备支付方式不能为空");
+        MAP.put(NEW_PAY_MODE_ERROR, "全新设备支付方式填写范围超出");
+
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
