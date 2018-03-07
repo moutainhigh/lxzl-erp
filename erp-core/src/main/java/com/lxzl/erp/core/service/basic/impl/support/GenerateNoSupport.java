@@ -347,7 +347,7 @@ public class GenerateNoSupport {
                 builder.append("LXCC-");
             }
             if (customerType.equals(CustomerType.CUSTOMER_TYPE_PERSON)) {
-                builder.append("LXCD-");
+                builder.append("LXCP-");
             }
             builder.append(subCompanyCode);
             builder.append("-");

@@ -29,7 +29,9 @@
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eksr.id) FROM erp_k3_send_record eksr
 	</select>
-
+	<select id="findAllFailByType" resultMap="K3SendRecordDO">
+		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr where eksr.record_type =  #{type, jdbcType=INTEGER} and receive_result = 0
+	</select>
 	<select id="listPage" resultMap="K3SendRecordDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr
 		LIMIT #{maps.start},#{maps.pageSize}
