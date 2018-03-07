@@ -235,15 +235,41 @@
 			</if>
 		</where>
 	</select>
-	<select id="findCustomerCompanyByParams" resultMap="CustomerCompanyDO" parameterType="java.lang.String">
+	<select id="findCustomerCompanyByParams" resultMap="CustomerCompanyDO" parameterType="map">
 
 		SELECT <include refid="column_List"/>,eac.city_name as cityName,ead.district_name as districtName,eap.province_name as provinceName
 		FROM erp_customer_company ecc
 		LEFT JOIN erp_area_city eac on eac.id = ecc.city and eac.data_status=1
 		LEFT JOIN erp_area_district ead on ead.id = ecc.district and ead.data_status=1
 		LEFT JOIN erp_area_province eap on eap.id = ecc.province and eap.data_status=1
-		WHERE ecc.company_name = #{companyName, jdbcType=VARCHAR} AND ecc.data_status = 1 and ecc.data_status = 1
-
+		<where>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
+				and ecc.customer_no = #{maps.customerCompanyQueryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != null">
+				and ecc.connect_real_name like CONCAT('%','${maps.customerCompanyQueryParam.connectRealName}','%' )
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != ''">
+				and ecc.connect_phone = #{maps.customerCompanyQueryParam.connectPhone, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
+				and ecc.company_name like CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.province != null">
+				and ecc.province = #{maps.customerCompanyQueryParam.province, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.city != null">
+				and ecc.city = #{maps.customerCompanyQueryParam.city, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
+				and ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
+			</if>
+			<if test="true">
+				and ecc.data_status = 1
+			</if>
+		</where>
+		ORDER BY ecc.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
 
 	</select>
 

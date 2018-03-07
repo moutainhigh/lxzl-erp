@@ -1983,29 +1983,22 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName) {
         ServiceResult<String, Customer> serviceResult = new ServiceResult<>();
         //公司客户信息
-        CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findCustomerCompanyByParams(companyName);
-        if (customerCompanyDO == null) {
+        CustomerDO companyCustomerDO = customerMapper.findCustomerCompanyByCustomerName(companyName);
+        if (companyCustomerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customerCompanyDO.getCustomerNo());
-        //客户信息
-        if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return serviceResult;
-        }
-
         //封装数据
-        Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
+        Customer customerResult = ConverterUtil.convert(companyCustomerDO, Customer.class);
 
-        CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerDO.getCustomerNo());
+        CustomerAccount customerAccount = paymentService.queryCustomerAccountNoLogin(customerResult.getCustomerNo());
         if (customerAccount != null) {
             customerResult.setCustomerAccount(customerAccount);
         }
         //业务员信息
-        UserDO ownerUserDO = userMapper.findByUserId(customerDO.getOwner());
+        UserDO ownerUserDO = userMapper.findByUserId(customerResult.getOwner());
         //联合开发人
-        UserDO unionUserDO = userMapper.findByUserId(customerDO.getUnionUser());
+        UserDO unionUserDO = userMapper.findByUserId(customerResult.getUnionUser());
 
         customerResult.setCustomerOwnerUser(ConverterUtil.convert(ownerUserDO, User.class));
         customerResult.setCustomerUnionUser(ConverterUtil.convert(unionUserDO, User.class));

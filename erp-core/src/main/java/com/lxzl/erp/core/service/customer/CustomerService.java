@@ -95,9 +95,9 @@ public interface CustomerService {
 
     /**
     * 通过公司名称查找
-    * @Author : XiaoLuYu
-    * @Date : Created in 2018/1/17 9:46
-    * @param : customerQueryParam
+    * @Author : XiaoLuYu--kai
+    * @Date : Created in 2018/1/17 9:46  update in 2018/3/7 11:27
+    * @param : customerName
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.customer.pojo.Customer>>
     */
     ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName);
