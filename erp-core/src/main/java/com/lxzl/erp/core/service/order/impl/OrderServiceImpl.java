@@ -39,7 +39,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
@@ -50,7 +49,6 @@ import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -88,6 +86,7 @@ public class OrderServiceImpl implements OrderService {
         }
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
@@ -113,6 +112,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setCreateTime(currentTime);
         orderDO.setUpdateTime(currentTime);
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
@@ -182,6 +183,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
@@ -2300,7 +2303,6 @@ public class OrderServiceImpl implements OrderService {
 
         return ErrorCode.SUCCESS;
     }
-
 
     @Autowired
     private UserSupport userSupport;

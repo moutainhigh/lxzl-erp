@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
+import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
@@ -13,7 +14,11 @@ import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
+import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -24,7 +29,7 @@ import java.util.*;
  * @author gaochao
  * @date 2017-11-15 14:14
  */
-public class OrderTest extends ERPTransactionalTest {
+public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCreateOrder() throws Exception {
@@ -32,7 +37,7 @@ public class OrderTest extends ERPTransactionalTest {
 
         order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
         order.setLogisticsAmount(new BigDecimal(12));
-        order.setBuyerRemark("仔细包装，别弄坏了");
+        order.setBuyerRemark("2018.3.7 11:34 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
 
@@ -42,12 +47,13 @@ public class OrderTest extends ERPTransactionalTest {
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderProduct.setProductSkuId(222);
+        orderProduct.setProductSkuId(219);
         orderProduct.setProductCount(5);
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
         orderProduct.setProductUnitAmount(new BigDecimal(20.0));
         orderProduct.setInsuranceAmount(new BigDecimal(15.0));
         orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct.setDepositAmount(new BigDecimal("120"));
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 
@@ -55,18 +61,18 @@ public class OrderTest extends ERPTransactionalTest {
 
         OrderMaterial orderMaterial = new OrderMaterial();
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderMaterial.setMaterialId(78);
+        orderMaterial.setMaterialId(228);
         orderMaterial.setMaterialCount(3);
         orderMaterial.setInsuranceAmount(new BigDecimal(20));
         orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
         orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
         orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-
+        orderMaterial.setDepositAmount(new BigDecimal("30"));
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCD10002017123000034");
-        order.setCustomerConsignId(89);
+        order.setBuyerCustomerNo("LXCD-1000-20180306-00302");
+        order.setCustomerConsignId(973);
         order.setRentStartTime(new Date());
         TestResult testResult = getJsonTestResult("/order/create", order);
     }
@@ -197,13 +203,16 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void queryAllOrder() throws Exception {
         OrderQueryParam param = new OrderQueryParam();
+        param.setOrderId(1);
+        param.setBuyerRealName("二零一八三月");
 //        param.setBuyerRealName("荣焱");
-        param.setIsPendingDelivery(1);
+//        param.setIsPendingDelivery(1);
+//        param.setOrderNo("LXO-20180307-1000-00014");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
     @Test
     public void queryAllOrderJSON() throws Exception {
-        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderNo\":\"\",\"buyerRealName\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\"}";
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"orderNo\":\"LXO-20180307-1000-00014\",\"buyerRealName\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\"}";
         OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
@@ -213,9 +222,9 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void queryLastPrice() throws Exception {
         LastRentPriceRequest request = new LastRentPriceRequest();
-        request.setCustomerNo("CP201712060843154191841");
-        request.setProductSkuId(40);
-        request.setMaterialId(5);
+        request.setCustomerNo("LXCD-1000-20180306-00302");
+        request.setProductSkuId(219);
+        request.setMaterialId(228);
 
         TestResult testResult = getJsonTestResult("/order/queryLastPrice", request);
     }
@@ -224,7 +233,7 @@ public class OrderTest extends ERPTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180301-731846-00002");
+        order.setOrderNo("LXO-20180307-1000-00014");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
@@ -244,4 +253,5 @@ public class OrderTest extends ERPTransactionalTest {
         map.put("changeEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
         TestResult testResult = getJsonTestResult("/order/returnEquipment", map);
     }
+
 }

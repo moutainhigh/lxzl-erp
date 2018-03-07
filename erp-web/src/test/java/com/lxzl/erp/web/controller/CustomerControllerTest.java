@@ -372,18 +372,20 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateRisk() throws Exception {
         CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
-        customerRiskManagement.setCustomerNo("LXCC-1000-20180126-00054");
+        customerRiskManagement.setCustomerNo("LXCD-1000-20180306-00283");
         customerRiskManagement.setPaymentCycle(12);
+        customerRiskManagement.setPayMode(1);
+        customerRiskManagement.setReturnVisitFrequency(12);
         customerRiskManagement.setCreditAmount(new BigDecimal(80000d));
         customerRiskManagement.setDepositCycle(12);
         customerRiskManagement.setIsFullDeposit(0);
-        customerRiskManagement.setIsLimitApple(1);
-        customerRiskManagement.setApplePayMode(0);
+        customerRiskManagement.setIsLimitApple(0);
+        customerRiskManagement.setApplePayMode(1);
         customerRiskManagement.setAppleDepositCycle(11);
         customerRiskManagement.setApplePaymentCycle(12);
         customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
-        customerRiskManagement.setIsLimitNew(1);
-        customerRiskManagement.setNewPayMode(0);
+        customerRiskManagement.setIsLimitNew(0);
+        customerRiskManagement.setNewPayMode(1);
         customerRiskManagement.setNewDepositCycle(11);
         customerRiskManagement.setNewPaymentCycle(12);
         customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
