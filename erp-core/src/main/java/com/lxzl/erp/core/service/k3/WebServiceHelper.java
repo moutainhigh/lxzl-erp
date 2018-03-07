@@ -35,7 +35,7 @@ public class WebServiceHelper {
     @Autowired
     private DingDingSupport dingdingSupport;
 
-    public void post(Integer postK3OperatorType, Integer postK3Type, Object data) {
+    public void post(Integer postK3OperatorType, Integer postK3Type, Object data,boolean skipSuccess) {
 
 
         try {
@@ -75,7 +75,7 @@ public class WebServiceHelper {
                 k3SendRecordMapper.save(k3SendRecordDO);
             }
             //成功过的不再发
-            if (CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())) {
+            if (skipSuccess && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())) {
                 return;
             }
             ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(postK3Type);

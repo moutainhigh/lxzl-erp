@@ -762,7 +762,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(orderDO);
                 //获取订单详细信息，发送给k3
                 Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order,true);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
