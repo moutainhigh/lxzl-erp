@@ -81,9 +81,11 @@
                                 <th>{{recordReferId}}</th>
                                 <th>{{recordReferNo}}</th>
                                 <td class="text-right">
+                                    {{#noSend}}
                                     <div class="btn-group text-right">
-                                        <a href="#" type="button" class="btn btn-default btn-xs sendToK3">发送</a>
+                                        <a href="#" type="button" class="btn btn-default btn-xs sendToK3" data-k3sendrecordid="{{k3SendRecordId}}">发送</a>
                                     </div>
+                                    {{/noSend}}
                                 </td>
                             </tr>
                             {{/listData}}
