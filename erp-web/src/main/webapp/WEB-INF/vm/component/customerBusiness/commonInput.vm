@@ -726,7 +726,7 @@
                                                 </td>
                                                 <td>
                                                     <label class="field" style="max-width:160px">
-                                                        <input name="rentTimeLength" class="form-control number rentTimeLength" type="text" placeholder="输入租赁时长" />
+                                                        <input name="rentTimeLength" class="form-control rentTimeLength" type="text" placeholder="输入租赁时长" value="{{rentTimeLength}}"/>
                                                     </label>
                                                 </td>
                                                 <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
@@ -827,7 +827,7 @@
                                                 </td>
                                                 <td>
                                                     <label class="field" style="max-width:160px">
-                                                        <input name="rentTimeLength" class="form-control number rentTimeLength" type="text" placeholder="输入租赁时长" />
+                                                        <input name="rentTimeLength" class="form-control rentTimeLength" type="text" placeholder="输入租赁时长"  value="{{rentTimeLength}}"/>
                                                     </label>
                                                 </td>
                                                 <td class="totalPrice">￥<span class="num">{{totalRowCurrentSkuPrice}}</span></td>
