@@ -741,6 +741,10 @@ public class PageController extends BaseController {
     public String k3ChangeOrderEdit() {
         return "/k3Manage/k3ChangeOrderEdit";
     }
+    @RequestMapping("/k3-data/list")
+    public String k3DataManageList() {
+        return "/k3Manage/sendTok3";
+    }
 
     //分公司列表
     @RequestMapping("/company-manage/list")

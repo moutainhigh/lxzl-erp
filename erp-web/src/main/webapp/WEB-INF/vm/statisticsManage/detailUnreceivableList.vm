@@ -80,8 +80,8 @@
                                 <th>业务员</th>
                                 <th>未收金额</th>
                                 <th>逾期期数</th>
-                                <th>订单项ID</th>
-                                <th>订单项类型</th>
+##                                <th>订单项ID</th>
+##                                <th>订单项类型</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -95,8 +95,8 @@
                                 <td>{{orderSellerName}}</td>
                                 <td>￥{{#price}}{{unReceivable}}{{/price}}</td>
                                 <td>{{overduePhaseCount}}</td>
-                                <td>{{orderItemReferId}}</td>
-                                <td>{{orderItemTypeValue}}</td>
+##                                <td>{{orderItemReferId}}</td>
+##                                <td>{{orderItemTypeValue}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}

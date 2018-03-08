@@ -64,289 +64,75 @@
 
 	<sql id="set_column_sql">
 		<set>
-			<if test="isFullDeposit != null &amp;&amp; isFullDeposit == 1">
-				deposit_cycle = null,
-				payment_cycle = null,
-				apple_deposit_cycle = null,
-				apple_payment_cycle = null,
-				new_deposit_cycle = null,
-				new_payment_cycle = null,
-				apple_pay_mode = null,
-				pay_mode = null,
-				new_pay_mode = null,
-				is_limit_apple = 0,
-				is_limit_new = 0,
-				single_limit_price = null,
-				is_full_deposit = 1,
-				<if test="customerId != null">
-					customer_id = #{customerId,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmount != null">
-					credit_amount = #{creditAmount,jdbcType=DECIMAL},
-				</if>
-				<if test="creditAmountUsed != null">
-					credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
-				</if>
-				<if test="returnVisitFrequency != null">
-					return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
-				</if>
-				<if test="dataStatus != null">
-					data_status = #{dataStatus,jdbcType=INTEGER},
-				</if>
-				<if test="remark != null">
-					remark = #{remark,jdbcType=VARCHAR},
-				</if>
-				<if test="createTime != null">
-					create_time = #{createTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="createUser != null">
-					create_user = #{createUser,jdbcType=VARCHAR},
-				</if>
-				<if test="updateTime != null">
-					update_time = #{updateTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="updateUser != null">
-					update_user = #{updateUser,jdbcType=VARCHAR},
-				</if>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
 			</if>
-			<if test="(isFullDeposit == null || isFullDeposit == 0) &amp;&amp; (isLimitApple == 0 || isLimitApple == null)&amp;&amp; isLimitNew == 1">
-				new_deposit_cycle = null,
-				new_payment_cycle = null,
-				new_pay_mode = null,
-				is_limit_apple = 0,
-				is_limit_new = 1,
-				is_full_deposit = 0,
-				<if test="customerId != null">
-					customer_id = #{customerId,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmount != null">
-					credit_amount = #{creditAmount,jdbcType=DECIMAL},
-				</if>
-				<if test="depositCycle != null">
-					deposit_cycle = #{depositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="paymentCycle != null">
-					payment_cycle = #{paymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmountUsed != null">
-					credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
-				</if>
-				<if test="returnVisitFrequency != null">
-					return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
-				</if>
-				<if test="appleDepositCycle != null">
-					apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="applePaymentCycle != null">
-					apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="applePayMode != null">
-					apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
-				</if>
-				<if test="singleLimitPrice != null">
-					single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
-				</if>
-				<if test="payMode != null">
-					pay_mode = #{payMode,jdbcType=INTEGER},
-				</if>
-				<if test="dataStatus != null">
-					data_status = #{dataStatus,jdbcType=INTEGER},
-				</if>
-				<if test="remark != null">
-					remark = #{remark,jdbcType=VARCHAR},
-				</if>
-				<if test="createTime != null">
-					create_time = #{createTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="createUser != null">
-					create_user = #{createUser,jdbcType=VARCHAR},
-				</if>
-				<if test="updateTime != null">
-					update_time = #{updateTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="updateUser != null">
-					update_user = #{updateUser,jdbcType=VARCHAR},
-				</if>
+			<if test="creditAmount != null">
+				credit_amount = #{creditAmount,jdbcType=DECIMAL},
 			</if>
-			<if test="(isFullDeposit == null || isFullDeposit == 0)  &amp;&amp; (isLimitNew == 0 || isLimitNew == null) &amp;&amp; isLimitApple == 1 ">
-				apple_deposit_cycle = null,
-				apple_payment_cycle = null,
-				apple_pay_mode = null,
-				is_limit_apple = 1,
-				is_limit_new = 0,
-				is_full_deposit = 0,
-				<if test="customerId != null">
-					customer_id = #{customerId,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmount != null">
-					credit_amount = #{creditAmount,jdbcType=DECIMAL},
-				</if>
-				<if test="depositCycle != null">
-					deposit_cycle = #{depositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="paymentCycle != null">
-					payment_cycle = #{paymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmountUsed != null">
-					credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
-				</if>
-				<if test="returnVisitFrequency != null">
-					return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
-				</if>
-				<if test="newDepositCycle != null">
-					new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="newPaymentCycle != null">
-					new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="newPayMode != null">
-					new_pay_mode = #{newPayMode,jdbcType=INTEGER},
-				</if>
-				<if test="payMode != null">
-					pay_mode = #{payMode,jdbcType=INTEGER},
-				</if>
-				<if test="singleLimitPrice != null">
-					single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
-				</if>
-				<if test="dataStatus != null">
-					data_status = #{dataStatus,jdbcType=INTEGER},
-				</if>
-				<if test="remark != null">
-					remark = #{remark,jdbcType=VARCHAR},
-				</if>
-				<if test="createTime != null">
-					create_time = #{createTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="createUser != null">
-					create_user = #{createUser,jdbcType=VARCHAR},
-				</if>
-				<if test="updateTime != null">
-					update_time = #{updateTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="updateUser != null">
-					update_user = #{updateUser,jdbcType=VARCHAR},
-				</if>
+			<if test="creditAmountUsed != null">
+				credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
 			</if>
-			<if test="(isFullDeposit == null || isFullDeposit == 0)  &amp;&amp; (isLimitNew == null || isLimitNew == 0) &amp;&amp; (isLimitApple == null || isLimitApple == 0)">
-				is_limit_apple = 0,
-				is_limit_new = 0,
-				is_full_deposit = 0,
-				<if test="customerId != null">
-					customer_id = #{customerId,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmount != null">
-					credit_amount = #{creditAmount,jdbcType=DECIMAL},
-				</if>
-				<if test="creditAmountUsed != null">
-					credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
-				</if>
-				<if test="depositCycle != null">
-					deposit_cycle = #{depositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="paymentCycle != null">
-					payment_cycle = #{paymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="appleDepositCycle != null">
-					apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="applePaymentCycle != null">
-					apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="newDepositCycle != null">
-					new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="newPaymentCycle != null">
-					new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="applePayMode != null">
-					apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
-				</if>
-				<if test="payMode != null">
-					pay_mode = #{payMode,jdbcType=INTEGER},
-				</if>
-				<if test="newPayMode != null">
-					new_pay_mode = #{newPayMode,jdbcType=INTEGER},
-				</if>
-				<if test="singleLimitPrice != null">
-					single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
-				</if>
-				<if test="returnVisitFrequency != null">
-					return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
-				</if>
-				<if test="dataStatus != null">
-					data_status = #{dataStatus,jdbcType=INTEGER},
-				</if>
-				<if test="remark != null">
-					remark = #{remark,jdbcType=VARCHAR},
-				</if>
-				<if test="createTime != null">
-					create_time = #{createTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="createUser != null">
-					create_user = #{createUser,jdbcType=VARCHAR},
-				</if>
-				<if test="updateTime != null">
-					update_time = #{updateTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="updateUser != null">
-					update_user = #{updateUser,jdbcType=VARCHAR},
-				</if>
+			<if test="depositCycle != null">
+				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
 			</if>
-
-			<if test="(isFullDeposit == null || isFullDeposit == 0)  &amp;&amp; isLimitNew == 1 &amp;&amp; isLimitApple == 1">
-				apple_deposit_cycle = null,
-				apple_payment_cycle = null,
-				new_deposit_cycle = null,
-				new_payment_cycle = null,
-				apple_pay_mode = null,
-				new_pay_mode = null,
-				is_limit_apple = 1,
-				is_limit_new = 1,
-				is_full_deposit = 0,
-				<if test="customerId != null">
-					customer_id = #{customerId,jdbcType=INTEGER},
-				</if>
-				<if test="depositCycle != null">
-					deposit_cycle = #{depositCycle,jdbcType=INTEGER},
-				</if>
-				<if test="paymentCycle != null">
-					payment_cycle = #{paymentCycle,jdbcType=INTEGER},
-				</if>
-				<if test="singleLimitPrice != null">
-					single_limit_price = #{singleLimitPrice,jdbcType=DECIMAL},
-				</if>
-				<if test="payMode != null">
-					pay_mode = #{payMode,jdbcType=INTEGER},
-				</if>
-				<if test="creditAmount != null">
-					credit_amount = #{creditAmount,jdbcType=DECIMAL},
-				</if>
-				<if test="creditAmountUsed != null">
-					credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
-				</if>
-				<if test="returnVisitFrequency != null">
-					return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
-				</if>
-				<if test="dataStatus != null">
-					data_status = #{dataStatus,jdbcType=INTEGER},
-				</if>
-				<if test="remark != null">
-					remark = #{remark,jdbcType=VARCHAR},
-				</if>
-				<if test="createTime != null">
-					create_time = #{createTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="createUser != null">
-					create_user = #{createUser,jdbcType=VARCHAR},
-				</if>
-				<if test="updateTime != null">
-					update_time = #{updateTime,jdbcType=TIMESTAMP},
-				</if>
-				<if test="updateUser != null">
-					update_user = #{updateUser,jdbcType=VARCHAR},
-				</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
 			</if>
-
+			<if test="appleDepositCycle != null">
+				apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="applePaymentCycle != null">
+				apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="newDepositCycle != null">
+				new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
+			</if>
+			<if test="newPaymentCycle != null">
+				new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="applePayMode != null">
+				apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
+			<if test="newPayMode != null">
+				new_pay_mode = #{newPayMode,jdbcType=INTEGER},
+			</if>
+			<if test="isLimitApple != null">
+				is_limit_apple = #{isLimitApple, jdbcType=INTEGER},
+			</if>
+			<if test="isLimitNew != null">
+				is_limit_new = #{isLimitNew, jdbcType=INTEGER},
+			</if>
+			<if test="singleLimitPrice != null">
+				single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
+			</if>
+			<if test="isFullDeposit != null">
+				is_full_deposit = #{isFullDeposit, jdbcType=INTEGER},
+			</if>
+			<if test="returnVisitFrequency != null">
+				return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
 		</set>
 	</sql>
 

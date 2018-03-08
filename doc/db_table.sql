@@ -1100,6 +1100,7 @@ CREATE TABLE `erp_order` (
   `order_no` varchar(100) NOT NULL COMMENT '订单编号',
   `delivery_mode` int(11) COMMENT '发货方式，1快递，2自提,3凌雄配送',
   `buyer_customer_id` int(20) NOT NULL COMMENT '购买人ID',
+  `buyer_customer_name` varchar(64) NOT NULL COMMENT '客户名称',
   `expect_delivery_time` datetime NOT NULL COMMENT '送货时间',
   `rent_type` int(20) NOT NULL COMMENT '租赁类型',
   `rent_time_length` int(20) NOT NULL COMMENT '租赁时长',
@@ -2862,7 +2863,7 @@ CREATE TABLE `erp_k3_mapping_department` (
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `record_type` int(20) COMMENT '记录类型，1客户、2供应商、3商品、4配件、5订单',
+  `record_type` int(20) COMMENT '记录类型，1推送客户、2推送供应商、3推送商品、4推送配件、5推送订单、6推送用户、7推送退货单',
   `record_refer_id` int(20) COMMENT '记录关联ID',
   `record_json` text COMMENT '推送的json数据',
   `response_json` text COMMENT '返回的json数据',

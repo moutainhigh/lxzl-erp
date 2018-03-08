@@ -26,7 +26,7 @@
                                         <dt class="mb10">客户编号：</dt><dd>{{customerNo}}</dd>
                                         <dt class="mb10">公司名：</dt><dd>{{customerCompany.companyName}}</dd>
                                         <dt class="mb10">公司简称：</dt><dd>{{customerCompany.companyAbb}}</dd>
-                                        <dt class="mb10">短租应收上限：</dt><dd class="text-danger">￥{{#price}}{{shortLimitReceivableAmount}}{{/price}}</dd>
+                                        <dt class="mb10">短租应收上限：</dt><dd class="text-danger">{{shortLimitReceivableAmountValue}}</dd>
                                         <dt class="mb10">结算时间：</dt><dd>{{settlementDateValue}}</dd>
                                         <dt class="mb10">备注：</dt><dd>{{customerCompany.remark}}</dd>
                                     </dl>
@@ -235,7 +235,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted">是否以地址作为收货地址</td>
-                                                    <td class="fs15 fw700 text-right">{{#boolText}}{{isDefaultConsignAddressValue}}{{/boolText}}</td>
+                                                    <td class="fs15 fw700 text-right">{{#boolText}}{{isDefaultConsignAddress}}{{/boolText}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>

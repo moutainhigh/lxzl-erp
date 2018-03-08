@@ -43,6 +43,7 @@
 
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+//                'manage.order.item.render.js',
                 'manage.customer.mixin.js',
                 'manage.customer.add.js',
                 'modal.choose.user.js');
