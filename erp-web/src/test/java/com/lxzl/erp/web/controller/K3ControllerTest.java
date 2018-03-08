@@ -17,7 +17,6 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
-import com.lxzl.erp.core.service.statement.StatementService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
