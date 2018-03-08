@@ -7,10 +7,7 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
-import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
@@ -381,17 +378,15 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void batchSendAgainK3SendRecord() throws Exception {
-        String start = "2018-03-06";
+        String start = "2018-03-08";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date rentStartTime = sdf.parse(start);
 
-        K3SendRecordParam param = new K3SendRecordParam();
-        param.setRecordType(1);
-//        param.setRecordReferId(2000065);
-        param.setTypeStartTime(rentStartTime);
-        param.setTypeEndTime(new Date());
-        param.setSendStartTime(rentStartTime);
-        param.setSendEndTime(new Date());
+        K3SendRecordBatchParam param = new K3SendRecordBatchParam();
+        param.setRecordType(3);
+        param.setBatchType(1);
+        param.setStartTime(rentStartTime);
+        param.setEndTime(new Date());
         TestResult testResult = getJsonTestResult("/k3/batchSendK3SendRecord", param);
         Thread.sleep(1000);
     }

@@ -2,10 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
-import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
@@ -182,8 +179,8 @@ public class K3Controller extends BaseController {
     }
 
     @RequestMapping(value = "batchSendK3SendRecord", method = RequestMethod.POST)
-    public Result batchSendK3SendRecord(@RequestBody K3SendRecordParam k3SendRecordParam, BindingResult validResult) {
-        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendK3SendRecord(k3SendRecordParam);
+    public Result batchSendK3SendRecord(@RequestBody K3SendRecordBatchParam k3SendRecordBatchParam, BindingResult validResult) {
+        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendK3SendRecord(k3SendRecordBatchParam);
         return resultGenerator.generate(serviceResult);
     }
 

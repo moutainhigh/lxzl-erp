@@ -22,6 +22,5 @@ public interface SupplierMapper extends BaseMysqlDAO<SupplierDO> {
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     List<SupplierDO> findAllSupplier();
-
-    SupplierDO findByIdAndTime(@Param("id") Integer id, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
+    
 }

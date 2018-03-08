@@ -2863,7 +2863,7 @@ CREATE TABLE `erp_k3_mapping_department` (
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `record_type` int(20) COMMENT '记录类型，1推送客户、2推送供应商、3推送商品、4推送配件、5推送订单、6推送用户、7推送退货单',
+  `record_type` int(20) COMMENT '记录类型，1推送客户、2推送商品、3推送配件、4推送供应商、5推送订单、6推送用户、7推送退货单',
   `record_refer_id` int(20) COMMENT '记录关联ID',
   `record_json` text COMMENT '推送的json数据',
   `response_json` text COMMENT '返回的json数据',

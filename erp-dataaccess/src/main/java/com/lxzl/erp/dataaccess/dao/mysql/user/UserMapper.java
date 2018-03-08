@@ -16,7 +16,7 @@ public interface UserMapper extends BaseMysqlDAO<UserDO> {
 
     UserDO findByUserId(@Param("userId") Integer userId);
 
-    UserDO findByUserIdAndTime(@Param("userId") Integer id, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
+    List<UserDO> findByUserParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 
     List<UserDO> listPage(@Param("maps") Map<String, Object> paramMap);
 

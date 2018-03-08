@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
-import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
@@ -38,16 +35,25 @@ import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.supplier.SupplierMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -951,7 +957,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.K3_SEND_RECORD_ID_IS_NOT_EXISTS);
             return result;
         }
-        Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId(),null,null);
+        Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId());
 
         if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDO.getRecordType())){
             webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDO.getRecordType(),data,false);
@@ -965,7 +971,7 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordParam k3SendRecordParam) {
+    public ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordBatchParam k3SendRecordBatchParam) {
         ServiceResult<String, Map<String, String>> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         //超级管理员权限控制
@@ -973,66 +979,76 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return result;
         }
+        //缓冲k3
+        k3SendRecordBatchParam.setBufferTime(1000);
 
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("k3SendRecordParam", k3SendRecordParam);
-
-        List<K3SendRecordDO> k3SendRecordDOList = k3SendRecordMapper.listPage(maps);
-
-        String success = null;
-        String fail = null;
-        String notPushData = null;
-        K3SendRecordDO k3SendRecordDO ;
-        for(int i=0;i<k3SendRecordDOList.size();i++){
-            try {
-                Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDOList.get(i).getRecordType(),k3SendRecordDOList.get(i).getRecordReferId(),k3SendRecordParam.getTypeStartTime(),k3SendRecordParam.getTypeEndTime());
-
-                if(data != null){
-                    if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDOList.get(i).getRecordType())){
-                        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDOList.get(i).getRecordType(),data,false);
-                    }else{
-                        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,k3SendRecordDOList.get(i).getRecordType(),data,false);
-                    }
-                    Thread.sleep(500);
-                    k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(k3SendRecordDOList.get(i).getRecordReferId(), k3SendRecordDOList.get(i).getRecordType());
-                    if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
-                        //推送成功的数据
-                        if(success == null){
-                            success = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                        }else{
-                            success = success + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                        }
-                    }else{
-                        //推送失败的数据
-                        if(fail == null){
-                            fail = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                        }else{
-                            fail = fail + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                        }
-                    }
+        Map<String,String> strMap = new HashMap<>();
+        if(PostK3Type.POST_K3_TYPE_CUSTOMER.equals(k3SendRecordBatchParam.getRecordType())){
+            List<CustomerDO> customerDOList = customerMapper.findByCustomerParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            List<CustomerDO> successCustomerDOList = new ArrayList<>();
+            List<CustomerDO> failCustomerDOList = new ArrayList<>();
+            for(int i=0;i<customerDOList.size();i++){
+                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(customerDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                    successCustomerDOList.add(customerDOList.get(i));
                 }else{
-                    //没推送的数据--选择了时间范围
-                    if(notPushData == null){
-                        notPushData = String.valueOf(k3SendRecordDOList.get(i).getRecordReferId()) + ",";
-                    }else{
-                        notPushData = notPushData + String.valueOf(k3SendRecordDOList.get(i).getRecordReferId()) + ",";
-                    }
+                    failCustomerDOList.add(customerDOList.get(i));
                 }
-
-
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+            strMap = recordTypeSupport.customerK3SendRecord(customerDOList,successCustomerDOList,failCustomerDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+        }else if(PostK3Type.POST_K3_TYPE_PRODUCT.equals(k3SendRecordBatchParam.getRecordType())){
+            List<ProductDO> productDOList = productMapper.findByProductParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            List<ProductDO> successProductDOList = new ArrayList<>();
+            List<ProductDO> failProductDOList = new ArrayList<>();
+            for(int i=0;i<productDOList.size();i++){
+                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(productDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                    successProductDOList.add(productDOList.get(i));
+                }else{
+                    failProductDOList.add(productDOList.get(i));
+                }
+            }
+            strMap = recordTypeSupport.productK3SendRecord(productDOList,successProductDOList,failProductDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+        }else if(PostK3Type.POST_K3_TYPE_MATERIAL.equals(k3SendRecordBatchParam.getRecordType())){
+            List<MaterialDO> materialDOList = materialMapper.findByMaterialParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            List<MaterialDO> successMaterialDOList = new ArrayList<>();
+            List<MaterialDO> failMaterialDOList = new ArrayList<>();
+            for(int i=0;i<materialDOList.size();i++){
+                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(materialDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                    successMaterialDOList.add(materialDOList.get(i));
+                }else{
+                    failMaterialDOList.add(materialDOList.get(i));
+                }
+            }
+            strMap = recordTypeSupport.materialK3SendRecord(materialDOList,successMaterialDOList,failMaterialDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+        }else if(PostK3Type.POST_K3_TYPE_USER.equals(k3SendRecordBatchParam.getRecordType())){
+            List<UserDO> userDOList = userMapper.findByUserParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            List<UserDO> successUserDOList = new ArrayList<>();
+            List<UserDO> failUserDOList = new ArrayList<>();
+            for(int i=0;i<userDOList.size();i++){
+                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(userDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                    successUserDOList.add(userDOList.get(i));
+                }else{
+                    failUserDOList.add(userDOList.get(i));
+                }
+            }
+            strMap = recordTypeSupport.userK3SendRecord(userDOList,successUserDOList,failUserDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+        }else if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordBatchParam.getRecordType())){
+            List<OrderDO> orderDOList = orderMapper.findByOrderParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            List<OrderDO> successOrderDOList = new ArrayList<>();
+            List<OrderDO> failOrderDOList = new ArrayList<>();
+            for(int i=0;i<orderDOList.size();i++){
+                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                    successOrderDOList.add(orderDOList.get(i));
+                }else{
+                    failOrderDOList.add(orderDOList.get(i));
+                }
+            }
+            strMap = recordTypeSupport.orderK3SendRecord(orderDOList,successOrderDOList,failOrderDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
         }
-
-        Map<String, String> strMap = new HashMap<>();
-        strMap.put("推送成功的数据:",success);
-        strMap.put("推送失败的数据:",fail);
-        strMap.put("没推送的数据:",notPushData);
-
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(strMap);
         return result;
@@ -1168,4 +1184,13 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private UserMapper userMapper;
 }

@@ -17,9 +17,6 @@ public class K3SendRecordParam extends BasePageParam implements Serializable {
     private Integer recordReferId;	//记录关联ID
     private String recordReferNo;	//记录关联编号
 
-    private Date typeStartTime;
-    private Date typeEndTime;
-
     public Integer getRecordType() { return recordType; }
 
     public void setRecordType(Integer recordType) { this.recordType = recordType; }
@@ -47,12 +44,4 @@ public class K3SendRecordParam extends BasePageParam implements Serializable {
     public String getRecordReferNo() { return recordReferNo; }
 
     public void setRecordReferNo(String recordReferNo) { this.recordReferNo = recordReferNo; }
-
-    public Date getTypeStartTime() { return typeStartTime; }
-
-    public void setTypeStartTime(Date typeStartTime) { this.typeStartTime = typeStartTime; }
-
-    public Date getTypeEndTime() { return typeEndTime; }
-
-    public void setTypeEndTime(Date typeEndTime) { this.typeEndTime = typeEndTime; }
 }

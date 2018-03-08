@@ -23,5 +23,5 @@ public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
 
     ProductDO findExistsProduct(@Param("brandId") Integer brandId,@Param("categoryId") Integer categoryId,@Param("productModel") String productModel);
 
-    ProductDO findByProductIdAndTime(@Param("productId") Integer productId, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
+    List<ProductDO> findByProductParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 }

@@ -81,31 +81,17 @@
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
-	<select id="findByIdAndTime" resultMap="MaterialDO" parameterType="java.lang.Integer">
-		SELECT material_main.*, <include refid="img_column_List"/> FROM
-		(
-		select
-		<include refid="column_List"/>
-		<trim prefix=",">
-			emm.model_name AS material_model_name, eb.brand_name as brand_name, emt.material_type_name as material_type_name
-		</trim>
-		from erp_material em
-		LEFT JOIN erp_material_model emm ON em.material_model_id = emm.id
-		LEFT JOIN erp_material_type emt ON em.material_type = emt.id
-		LEFT JOIN erp_brand eb ON eb.id = em.brand_id
+	<select id="findByMaterialParam" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_material em
 		<where>
-			<if test="id != null">
-				AND em.id = #{id, jdbcType=INTEGER}
+			<if test="startTime != null ">
+				<![CDATA[ AND em.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="typeStartTime != null ">
-				<![CDATA[ AND em.create_time >= #{typeStartTime,jdbcType=TIMESTAMP} ]]>
-			</if>
-			<if test="typeEndTime != null">
-				<![CDATA[ AND em.create_time <= #{typeEndTime,jdbcType=TIMESTAMP} ]]>
+			<if test="endTime != null">
+				<![CDATA[ AND em.create_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			AND em.data_status = 1
 		</where>
-		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
 	<select id="findAllMaterial" resultMap="MaterialDO">

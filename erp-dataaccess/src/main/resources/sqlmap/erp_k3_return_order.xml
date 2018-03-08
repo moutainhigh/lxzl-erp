@@ -63,31 +63,6 @@
         LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
     </select>
 
-    <select id="findByIdAndTime" resultMap="K3ReturnOrderDO" parameterType="java.lang.Integer">
-        SELECT m_order.*
-        <trim prefix=",">
-            <include refid="detail_column_List" />
-        </trim>
-        FROM (
-        SELECT
-        <include refid="column_List"/>
-        FROM erp_k3_return_order ekro
-        <where>
-            <if test="id != null">
-                AND ekro.id = #{id, jdbcType=INTEGER}
-            </if>
-            <if test="typeStartTime != null ">
-                <![CDATA[ AND ekro.create_time >= #{typeStartTime,jdbcType=TIMESTAMP} ]]>
-            </if>
-            <if test="typeEndTime != null">
-                <![CDATA[ AND ekro.create_time <= #{typeEndTime,jdbcType=TIMESTAMP} ]]>
-            </if>
-            AND ekro.data_status = 1
-        </where>
-        ) m_order
-        LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
-    </select>
-
 	<select id="findByNo" resultMap="K3ReturnOrderDO" parameterType="java.lang.String">
         SELECT m_order.*
         <trim prefix=",">

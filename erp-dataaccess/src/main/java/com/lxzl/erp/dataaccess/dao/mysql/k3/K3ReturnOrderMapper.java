@@ -19,6 +19,4 @@ public interface K3ReturnOrderMapper extends BaseMysqlDAO<K3ReturnOrderDO> {
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     K3ReturnOrderDO findByNo(@Param("returnOrderNo") String returnOrderNo);
-
-    K3ReturnOrderDO findByIdAndTime(@Param("id") Integer id, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
 }

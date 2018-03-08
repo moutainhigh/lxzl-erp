@@ -30,5 +30,5 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
 
     List<MaterialDO> findAllMaterial();
 
-    MaterialDO findByIdAndTime(@Param("id") Integer id, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
+    List<MaterialDO> findByMaterialParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 }

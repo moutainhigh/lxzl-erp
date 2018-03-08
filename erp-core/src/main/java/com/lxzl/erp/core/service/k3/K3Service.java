@@ -2,10 +2,7 @@ package com.lxzl.erp.core.service.k3;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
-import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
@@ -82,5 +79,5 @@ public interface K3Service extends VerifyReceiver {
 
     ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord);
 
-    ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordParam k3SendRecordParamList);
+    ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordBatchParam k3SendRecordBatchParam);
 }
