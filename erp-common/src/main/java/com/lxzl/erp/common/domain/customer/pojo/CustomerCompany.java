@@ -58,7 +58,6 @@ public class CustomerCompany extends BasePO {
     @Valid
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private BigDecimal firstListTotalPrice; //首次所需设备总金额
-    @Valid
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
     private BigDecimal laterListTotalPrice; //后续所需设备总金额
     @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
