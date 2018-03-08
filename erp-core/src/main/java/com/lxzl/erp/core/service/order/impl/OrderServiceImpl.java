@@ -213,6 +213,13 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
+
+        //只有创建订单本人可以提交
+        if (!orderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            result.setErrorCode(ErrorCode.ORDER_COMMIT_IS_CREATE_USER);
+            return result;
+        }
+
         CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
         if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
