@@ -65,7 +65,6 @@
 		emi.id as img_id,emi.img_type as img_img_type,emi.original_name as img_original_name,emi.material_id as img_material_id,emi.img_url as img_img_url,emi.is_main as img_is_main,emi.img_order as img_img_order,emi.data_status as img_data_status,emi.remark as img_remark,emi.create_time as img_create_time,emi.create_user as img_create_user,emi.update_time as img_update_time,emi.update_user as img_update_user
 	</sql>
 
-
 	<select id="findById" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(
@@ -81,6 +80,20 @@
 			where em.id = #{id, jdbcType=INTEGER} and em.data_status = 1
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
+
+	<select id="findByMaterialParam" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_material em
+		<where>
+			<if test="startTime != null ">
+				<![CDATA[ AND em.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[ AND em.create_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			AND em.data_status = 1
+		</where>
+	</select>
+
 	<select id="findAllMaterial" resultMap="MaterialDO">
 		SELECT material_main.*, <include refid="img_column_List"/> FROM
 		(

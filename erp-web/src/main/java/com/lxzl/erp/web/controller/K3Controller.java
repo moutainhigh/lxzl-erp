@@ -2,10 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
-import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
@@ -27,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Map;
 
 @Controller
 @ControllerLog
@@ -175,6 +174,12 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "seedAgainK3SendRecord", method = RequestMethod.POST)
     public Result seedAgainK3SendRecord(@RequestBody @Validated(IdGroup.class)K3SendRecord k3SendRecord, BindingResult validResult) {
         ServiceResult<String,Integer> serviceResult = k3Service.sendAgainK3SendRecord(k3SendRecord);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "batchSendDataToK3", method = RequestMethod.POST)
+    public Result batchSendDataToK3(@RequestBody K3SendRecordBatchParam k3SendRecordBatchParam, BindingResult validResult) {
+        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendDataToK3(k3SendRecordBatchParam);
         return resultGenerator.generate(serviceResult);
     }
 
