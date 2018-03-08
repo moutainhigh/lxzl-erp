@@ -7,10 +7,7 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
-import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
-import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
+import com.lxzl.erp.common.domain.k3.*;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
@@ -20,11 +17,11 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
-import com.lxzl.erp.core.service.statement.StatementService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -364,16 +361,34 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         param.setPageNo(1);
         param.setPageSize(15);
 //        param.setRecordReferNo("LXCC-1000-20180305-00299");
-//        param.setRecordType(1);
+        param.setRecordType(5);
+//        param.setSendResult(1);
+        param.setReceiveResult(1);
         TestResult testResult = getJsonTestResult("/k3/queryK3SendRecord", param);
     }
 
     @Test
     public void seedAgainK3SendRecord() throws Exception {
         K3SendRecord k3SendRecord = new K3SendRecord();
-        k3SendRecord.setK3SendRecordId(1418);
+        k3SendRecord.setK3SendRecordId(1417);
         TestResult testResult = getJsonTestResult("/k3/seedAgainK3SendRecord", k3SendRecord);
-        Thread.sleep(300000);
+        Thread.sleep(1000);
+    }
+
+    @Test
+    public void batchSendAgainK3SendRecord() throws Exception {
+        String start = "2018-03-08";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date rentStartTime = sdf.parse(start);
+
+        K3SendRecordBatchParam param = new K3SendRecordBatchParam();
+        param.setRecordType(1);
+        param.setBatchType(1);
+        param.setStartTime(rentStartTime);
+        param.setEndTime(new Date());
+        param.setIntervalTime(1000);
+        TestResult testResult = getJsonTestResult("/k3/batchSendDataToK3", param);
+        Thread.sleep(1000);
     }
 
 

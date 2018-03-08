@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.*;
@@ -60,11 +59,12 @@ public class Customer extends BasePO {
 	private String verifyRemark;	//审核备注
 	private String customerArea; //所属区域
 
+
 	@Valid
-	@CollectionNotNull(message = ErrorCode.CUSTOMER_PERSON_NOT_NULL , groups = {AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
+	@NotNull(message = ErrorCode.CUSTOMER_PERSON_NOT_NULL ,groups = {AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
 	private CustomerPerson customerPerson;
 	@Valid
-	@CollectionNotNull(message = ErrorCode.CUSTOMER_COMPANY_NOT_NULL , groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+	@NotNull(message = ErrorCode.CUSTOMER_COMPANY_NOT_NULL ,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
 	private CustomerCompany customerCompany;
 
 	private CustomerRiskManagement customerRiskManagement;
