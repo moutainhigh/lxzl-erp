@@ -1078,27 +1078,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
 
-        //客户风控信息显示限制
-        CustomerRiskManagement customerRiskManagement = customerResult.getCustomerRiskManagement();
-        if (customerRiskManagement != null) {
-            Integer isFullDeposit = customerRiskManagement.getIsFullDeposit();
-            //是全额押金客户
-            if (isFullDeposit == 0) {
-                //限制全新
-                if (customerRiskManagement.getIsLimitNew() == 1) {
-                    customerRiskManagement.setNewPaymentCycle(null);
-                    customerRiskManagement.setNewDepositCycle(null);
-                    customerRiskManagement.setNewPayMode(null);
-                }
-                //限制苹果
-                if (customerRiskManagement.getIsLimitApple() == 1) {
-                    customerRiskManagement.setAppleDepositCycle(null);
-                    customerRiskManagement.setApplePaymentCycle(null);
-                    customerRiskManagement.setApplePayMode(null);
-                }
-            }
-        }
-
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
