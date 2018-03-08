@@ -177,9 +177,9 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult);
     }
 
-    @RequestMapping(value = "batchSendK3SendRecord", method = RequestMethod.POST)
-    public Result batchSendK3SendRecord(@RequestBody K3SendRecordBatchParam k3SendRecordBatchParam, BindingResult validResult) {
-        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendK3SendRecord(k3SendRecordBatchParam);
+    @RequestMapping(value = "batchSendDataToK3", method = RequestMethod.POST)
+    public Result batchSendDataToK3(@RequestBody K3SendRecordBatchParam k3SendRecordBatchParam, BindingResult validResult) {
+        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendDataToK3(k3SendRecordBatchParam);
         return resultGenerator.generate(serviceResult);
     }
 

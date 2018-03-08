@@ -970,7 +970,7 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordBatchParam k3SendRecordBatchParam) {
+    public ServiceResult<String, Map<String, String>> batchSendDataToK3(K3SendRecordBatchParam k3SendRecordBatchParam) {
         ServiceResult<String, Map<String, String>> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         //超级管理员权限控制
@@ -985,16 +985,12 @@ public class K3ServiceImpl implements K3Service {
             List<CustomerDO> successCustomerDOList = new ArrayList<>();
             List<CustomerDO> failCustomerDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_CUSTOMER);
-            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_CUSTOMER);
             Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<customerDOList.size();i++){
                 k3SendRecordDO = successK3SendRecordDOMap.get(customerDOList.get(i).getId());
                 if(k3SendRecordDO != null){
                     successCustomerDOList.add(customerDOList.get(i));
-                }
-                k3SendRecordDO = failK3SendRecordDOMap.get(customerDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                }else{
                     failCustomerDOList.add(customerDOList.get(i));
                 }
             }
@@ -1005,16 +1001,12 @@ public class K3ServiceImpl implements K3Service {
             List<ProductDO> successProductDOList = new ArrayList<>();
             List<ProductDO> failProductDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_PRODUCT);
-            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_PRODUCT);
             Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<productDOList.size();i++){
                 k3SendRecordDO = successK3SendRecordDOMap.get(productDOList.get(i).getId());
                 if(k3SendRecordDO != null){
                     successProductDOList.add(productDOList.get(i));
-                }
-                k3SendRecordDO = failK3SendRecordDOMap.get(productDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                }else{
                     failProductDOList.add(productDOList.get(i));
                 }
             }
@@ -1024,16 +1016,12 @@ public class K3ServiceImpl implements K3Service {
             List<MaterialDO> successMaterialDOList = new ArrayList<>();
             List<MaterialDO> failMaterialDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_MATERIAL);
-            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_MATERIAL);
             Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<materialDOList.size();i++){
                 k3SendRecordDO = successK3SendRecordDOMap.get(materialDOList.get(i).getId());
                 if(k3SendRecordDO != null){
                     successMaterialDOList.add(materialDOList.get(i));
-                }
-                k3SendRecordDO = failK3SendRecordDOMap.get(materialDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                }else{
                     failMaterialDOList.add(materialDOList.get(i));
                 }
             }
@@ -1043,16 +1031,12 @@ public class K3ServiceImpl implements K3Service {
             List<UserDO> successUserDOList = new ArrayList<>();
             List<UserDO> failUserDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_USER);
-            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_USER);
             Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<userDOList.size();i++){
                 k3SendRecordDO = successK3SendRecordDOMap.get(userDOList.get(i).getId());
                 if(k3SendRecordDO != null){
                     successUserDOList.add(userDOList.get(i));
-                }
-                k3SendRecordDO = failK3SendRecordDOMap.get(userDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                }else{
                     failUserDOList.add(userDOList.get(i));
                 }
             }
@@ -1062,16 +1046,12 @@ public class K3ServiceImpl implements K3Service {
             List<OrderDO> successOrderDOList = new ArrayList<>();
             List<OrderDO> failOrderDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_ORDER);
-            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_ORDER);
             Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<orderDOList.size();i++){
                 k3SendRecordDO = successK3SendRecordDOMap.get(orderDOList.get(i).getId());
                 if(k3SendRecordDO != null){
                     successOrderDOList.add(orderDOList.get(i));
-                }
-                k3SendRecordDO = failK3SendRecordDOMap.get(orderDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                }else{
                     failOrderDOList.add(orderDOList.get(i));
                 }
             }
