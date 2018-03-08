@@ -133,63 +133,63 @@ public class RecordTypeSupport {
         return null;
     }
 
-    public Map<String, String> customerK3SendRecord(List<CustomerDO> customerDOList, List<CustomerDO> successCustomerDOList, List<CustomerDO> failCustomerDOList, Integer batchType,Integer bufferTime){
+    public Map<String, String> customerK3SendRecord(List<CustomerDO> customerDOList, List<CustomerDO> successCustomerDOList, List<CustomerDO> failCustomerDOList, Integer batchType,Integer intervalTime){
 
         if(BatchType.BATCH_TYPE_TOTAL.equals(batchType)){
-            return customerDOK3SendType(customerDOList,bufferTime);
+            return customerDOK3SendType(customerDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_SUCCESS.equals(batchType)){
-            return customerDOK3SendType(successCustomerDOList,bufferTime);
+            return customerDOK3SendType(successCustomerDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_FAIL.equals(batchType)){
-            return customerDOK3SendType(failCustomerDOList,bufferTime);
+            return customerDOK3SendType(failCustomerDOList,intervalTime);
         }
         return null;
     }
 
-    public Map<String, String>  productK3SendRecord(List<ProductDO> productDOList,List<ProductDO> successProductDOList,List<ProductDO> failProductDOList,Integer batchType,Integer bufferTime){
+    public Map<String, String>  productK3SendRecord(List<ProductDO> productDOList,List<ProductDO> successProductDOList,List<ProductDO> failProductDOList,Integer batchType,Integer intervalTime){
         if(BatchType.BATCH_TYPE_TOTAL.equals(batchType)){
-            return productDOK3SendType(productDOList,bufferTime);
+            return productDOK3SendType(productDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_SUCCESS.equals(batchType)){
-            return productDOK3SendType(successProductDOList,bufferTime);
+            return productDOK3SendType(successProductDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_FAIL.equals(batchType)){
-            return productDOK3SendType(failProductDOList,bufferTime);
+            return productDOK3SendType(failProductDOList,intervalTime);
         }
         return null;
     }
 
-    public Map<String, String>  materialK3SendRecord(List<MaterialDO> materialDOList,List<MaterialDO> successMaterialDOList,List<MaterialDO> failMaterialDOList,Integer batchType,Integer bufferTime){
+    public Map<String, String>  materialK3SendRecord(List<MaterialDO> materialDOList,List<MaterialDO> successMaterialDOList,List<MaterialDO> failMaterialDOList,Integer batchType,Integer intervalTime){
         if(BatchType.BATCH_TYPE_TOTAL.equals(batchType)){
-            return materialDOK3SendType(materialDOList,bufferTime);
+            return materialDOK3SendType(materialDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_SUCCESS.equals(batchType)){
-            return materialDOK3SendType(successMaterialDOList,bufferTime);
+            return materialDOK3SendType(successMaterialDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_FAIL.equals(batchType)){
-            return materialDOK3SendType(failMaterialDOList,bufferTime);
+            return materialDOK3SendType(failMaterialDOList,intervalTime);
         }
         return null;
     }
 
-    public Map<String, String>  userK3SendRecord(List<UserDO> userDOList,List<UserDO> successUserDOList,List<UserDO> failUserDOList,Integer batchType,Integer bufferTime){
+    public Map<String, String>  userK3SendRecord(List<UserDO> userDOList,List<UserDO> successUserDOList,List<UserDO> failUserDOList,Integer batchType,Integer intervalTime){
         if(BatchType.BATCH_TYPE_TOTAL.equals(batchType)){
-            return userDOK3SendType(userDOList,bufferTime);
+            return userDOK3SendType(userDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_SUCCESS.equals(batchType)){
-            return userDOK3SendType(successUserDOList,bufferTime);
+            return userDOK3SendType(successUserDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_FAIL.equals(batchType)){
-            return userDOK3SendType(failUserDOList,bufferTime);
+            return userDOK3SendType(failUserDOList,intervalTime);
         }
         return null;
     }
 
-    public Map<String, String>  orderK3SendRecord(List<OrderDO> orderDOList, List<OrderDO> successOrderDOList, List<OrderDO> failOrderDOList, Integer batchType,Integer bufferTime){
+    public Map<String, String>  orderK3SendRecord(List<OrderDO> orderDOList, List<OrderDO> successOrderDOList, List<OrderDO> failOrderDOList, Integer batchType,Integer intervalTime){
         if(BatchType.BATCH_TYPE_TOTAL.equals(batchType)){
-            return orderDOK3SendType(orderDOList,bufferTime);
+            return orderDOK3SendType(orderDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_SUCCESS.equals(batchType)){
-            return orderDOK3SendType(successOrderDOList,bufferTime);
+            return orderDOK3SendType(successOrderDOList,intervalTime);
         }else if(BatchType.BATCH_TYPE_FAIL.equals(batchType)){
-            return orderDOK3SendType(failOrderDOList,bufferTime);
+            return orderDOK3SendType(failOrderDOList,intervalTime);
         }
         return null;
     }
 
-    public Map<String, String> customerDOK3SendType(List<CustomerDO> typeList,Integer bufferTime){
+    public Map<String, String> customerDOK3SendType(List<CustomerDO> typeList,Integer intervalTime){
         K3SendRecordDO k3SendRecordDO;
         String success = null;
         String fail = null;
@@ -197,7 +197,7 @@ public class RecordTypeSupport {
             try {
                 Object data = recordTypeAndRecordReferIdByClass(PostK3Type.POST_K3_TYPE_CUSTOMER,typeList.get(i).getId());
                 webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_CUSTOMER,data,false);
-                Thread.sleep(bufferTime);
+                Thread.sleep(intervalTime);
                 k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_CUSTOMER);
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
                     //推送成功的数据
@@ -224,7 +224,7 @@ public class RecordTypeSupport {
         return strMap;
     }
 
-    public Map<String, String> productDOK3SendType(List<ProductDO> typeList,Integer bufferTime){
+    public Map<String, String> productDOK3SendType(List<ProductDO> typeList,Integer intervalTime){
         K3SendRecordDO k3SendRecordDO;
         String success = null;
         String fail = null;
@@ -233,7 +233,7 @@ public class RecordTypeSupport {
             try {
                 Object data = recordTypeAndRecordReferIdByClass(PostK3Type.POST_K3_TYPE_PRODUCT,typeList.get(i).getId());
                 webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT,data,false);
-                Thread.sleep(bufferTime);
+                Thread.sleep(intervalTime);
                 k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_PRODUCT);
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
                     //推送成功的数据
@@ -241,11 +241,6 @@ public class RecordTypeSupport {
                         success = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
                     }else{
                         success = success + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                    }
-                    try {
-                        Thread.sleep(bufferTime);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }else{
                     //推送失败的数据
@@ -265,7 +260,7 @@ public class RecordTypeSupport {
         return strMap;
     }
 
-    public Map<String, String> materialDOK3SendType(List<MaterialDO> typeList,Integer bufferTime){
+    public Map<String, String> materialDOK3SendType(List<MaterialDO> typeList,Integer intervalTime){
         K3SendRecordDO k3SendRecordDO;
         String success = null;
         String fail = null;
@@ -273,7 +268,7 @@ public class RecordTypeSupport {
             try {
                 Object data = recordTypeAndRecordReferIdByClass(PostK3Type.POST_K3_TYPE_MATERIAL,typeList.get(i).getId());
                 webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL,data,false);
-                Thread.sleep(bufferTime);
+                Thread.sleep(intervalTime);
                 k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_MATERIAL);
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
                     //推送成功的数据
@@ -300,7 +295,7 @@ public class RecordTypeSupport {
         return strMap;
     }
 
-    public Map<String, String> userDOK3SendType(List<UserDO> typeList,Integer bufferTime){
+    public Map<String, String> userDOK3SendType(List<UserDO> typeList,Integer intervalTime){
         K3SendRecordDO k3SendRecordDO;
         String success = null;
         String fail = null;
@@ -308,7 +303,7 @@ public class RecordTypeSupport {
             try {
                 Object data = recordTypeAndRecordReferIdByClass(PostK3Type.POST_K3_TYPE_USER,typeList.get(i).getId());
                 webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_USER,data,false);
-                Thread.sleep(bufferTime);
+                Thread.sleep(intervalTime);
                 k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_USER);
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
                     //推送成功的数据
@@ -335,7 +330,7 @@ public class RecordTypeSupport {
         return strMap;
     }
 
-    public Map<String, String> orderDOK3SendType(List<OrderDO> typeList,Integer bufferTime){
+    public Map<String, String> orderDOK3SendType(List<OrderDO> typeList,Integer intervalTime){
         K3SendRecordDO k3SendRecordDO;
         String success = null;
         String fail = null;
@@ -343,7 +338,7 @@ public class RecordTypeSupport {
             try {
                 Object data = recordTypeAndRecordReferIdByClass(PostK3Type.POST_K3_TYPE_ORDER,typeList.get(i).getId());
                 webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER,data,false);
-                Thread.sleep(bufferTime);
+                Thread.sleep(intervalTime);
                 k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_ORDER);
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
                     //推送成功的数据

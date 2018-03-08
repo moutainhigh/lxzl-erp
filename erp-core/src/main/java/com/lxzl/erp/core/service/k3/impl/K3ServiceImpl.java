@@ -978,75 +978,104 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return result;
         }
-        //缓冲k3
-        k3SendRecordBatchParam.setBufferTime(1000);
-
+        K3SendRecordDO k3SendRecordDO = null;
         Map<String,String> strMap = new HashMap<>();
         if(PostK3Type.POST_K3_TYPE_CUSTOMER.equals(k3SendRecordBatchParam.getRecordType())){
             List<CustomerDO> customerDOList = customerMapper.findByCustomerParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
             List<CustomerDO> successCustomerDOList = new ArrayList<>();
             List<CustomerDO> failCustomerDOList = new ArrayList<>();
+            List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_CUSTOMER);
+            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_CUSTOMER);
+            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<customerDOList.size();i++){
-                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(customerDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                k3SendRecordDO = successK3SendRecordDOMap.get(customerDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     successCustomerDOList.add(customerDOList.get(i));
-                }else{
+                }
+                k3SendRecordDO = failK3SendRecordDOMap.get(customerDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     failCustomerDOList.add(customerDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.customerK3SendRecord(customerDOList,successCustomerDOList,failCustomerDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+
+            strMap = recordTypeSupport.customerK3SendRecord(customerDOList,successCustomerDOList,failCustomerDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
         }else if(PostK3Type.POST_K3_TYPE_PRODUCT.equals(k3SendRecordBatchParam.getRecordType())){
             List<ProductDO> productDOList = productMapper.findByProductParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
             List<ProductDO> successProductDOList = new ArrayList<>();
             List<ProductDO> failProductDOList = new ArrayList<>();
+            List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_PRODUCT);
+            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_PRODUCT);
+            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<productDOList.size();i++){
-                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(productDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                k3SendRecordDO = successK3SendRecordDOMap.get(productDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     successProductDOList.add(productDOList.get(i));
-                }else{
+                }
+                k3SendRecordDO = failK3SendRecordDOMap.get(productDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     failProductDOList.add(productDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.productK3SendRecord(productDOList,successProductDOList,failProductDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+            strMap = recordTypeSupport.productK3SendRecord(productDOList,successProductDOList,failProductDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
         }else if(PostK3Type.POST_K3_TYPE_MATERIAL.equals(k3SendRecordBatchParam.getRecordType())){
             List<MaterialDO> materialDOList = materialMapper.findByMaterialParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
             List<MaterialDO> successMaterialDOList = new ArrayList<>();
             List<MaterialDO> failMaterialDOList = new ArrayList<>();
+            List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_MATERIAL);
+            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_MATERIAL);
+            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<materialDOList.size();i++){
-                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(materialDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                k3SendRecordDO = successK3SendRecordDOMap.get(materialDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     successMaterialDOList.add(materialDOList.get(i));
-                }else{
+                }
+                k3SendRecordDO = failK3SendRecordDOMap.get(materialDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     failMaterialDOList.add(materialDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.materialK3SendRecord(materialDOList,successMaterialDOList,failMaterialDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+            strMap = recordTypeSupport.materialK3SendRecord(materialDOList,successMaterialDOList,failMaterialDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
         }else if(PostK3Type.POST_K3_TYPE_USER.equals(k3SendRecordBatchParam.getRecordType())){
             List<UserDO> userDOList = userMapper.findByUserParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
             List<UserDO> successUserDOList = new ArrayList<>();
             List<UserDO> failUserDOList = new ArrayList<>();
+            List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_USER);
+            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_USER);
+            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<userDOList.size();i++){
-                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(userDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                k3SendRecordDO = successK3SendRecordDOMap.get(userDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     successUserDOList.add(userDOList.get(i));
-                }else{
+                }
+                k3SendRecordDO = failK3SendRecordDOMap.get(userDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     failUserDOList.add(userDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.userK3SendRecord(userDOList,successUserDOList,failUserDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+            strMap = recordTypeSupport.userK3SendRecord(userDOList,successUserDOList,failUserDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
         }else if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordBatchParam.getRecordType())){
             List<OrderDO> orderDOList = orderMapper.findByOrderParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
             List<OrderDO> successOrderDOList = new ArrayList<>();
             List<OrderDO> failOrderDOList = new ArrayList<>();
+            List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_ORDER);
+            List<K3SendRecordDO> failK3SendRecordDOList = k3SendRecordMapper.findAllFailByType(PostK3Type.POST_K3_TYPE_ORDER);
+            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            Map<String,K3SendRecordDO> failK3SendRecordDOMap = ListUtil.listToMap(failK3SendRecordDOList, "recordReferId");
             for(int i=0;i<orderDOList.size();i++){
-                K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDOList.get(i).getId(),PostK3Type.POST_K3_TYPE_CUSTOMER);
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                k3SendRecordDO = successK3SendRecordDOMap.get(orderDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     successOrderDOList.add(orderDOList.get(i));
-                }else{
+                }
+                k3SendRecordDO = failK3SendRecordDOMap.get(orderDOList.get(i).getId());
+                if(k3SendRecordDO != null){
                     failOrderDOList.add(orderDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.orderK3SendRecord(orderDOList,successOrderDOList,failOrderDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getBufferTime());
+            strMap = recordTypeSupport.orderK3SendRecord(orderDOList,successOrderDOList,failOrderDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(strMap);

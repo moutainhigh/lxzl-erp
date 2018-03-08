@@ -382,10 +382,11 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         Date rentStartTime = sdf.parse(start);
 
         K3SendRecordBatchParam param = new K3SendRecordBatchParam();
-        param.setRecordType(3);
+        param.setRecordType(1);
         param.setBatchType(1);
         param.setStartTime(rentStartTime);
         param.setEndTime(new Date());
+        param.setIntervalTime(1000);
         TestResult testResult = getJsonTestResult("/k3/batchSendK3SendRecord", param);
         Thread.sleep(1000);
     }

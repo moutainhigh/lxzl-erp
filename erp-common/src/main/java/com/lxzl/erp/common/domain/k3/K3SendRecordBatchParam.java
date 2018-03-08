@@ -11,7 +11,7 @@ public class K3SendRecordBatchParam {
     private Integer batchType;   //类型，1 全部 2 成功 3 失败
     private Date startTime;
     private Date endTime;
-    private Integer bufferTime; //缓冲时间
+    private Integer intervalTime; //间隔时间
 
     public Integer getRecordType() { return recordType; }
 
@@ -29,7 +29,7 @@ public class K3SendRecordBatchParam {
 
     public void setEndTime(Date endTime) { this.endTime = endTime; }
 
-    public Integer getBufferTime() { return bufferTime; }
+    public Integer getIntervalTime() { return intervalTime; }
 
-    public void setBufferTime(Integer bufferTime) { this.bufferTime = bufferTime; }
+    public void setIntervalTime(Integer intervalTime) { this.intervalTime = intervalTime; }
 }

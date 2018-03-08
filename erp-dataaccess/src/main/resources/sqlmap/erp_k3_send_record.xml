@@ -54,6 +54,10 @@
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr where eksr.record_type =  #{type, jdbcType=INTEGER} and receive_result = 0
 	</select>
 
+	<select id="findAllSuccessByType" resultMap="K3SendRecordDO">
+		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr where eksr.record_type =  #{type, jdbcType=INTEGER} and receive_result = 1 and send_result = 1
+	</select>
+
 	<select id="listPage" resultMap="K3SendRecordDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr
 		<where>
