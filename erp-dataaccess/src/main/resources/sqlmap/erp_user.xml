@@ -149,6 +149,35 @@
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
     </select>
 
+    <select id="findByUserIdAndTime" resultMap="userResult">
+        select a.*,<include refid="role_columnList"/>,
+        ed.id as role_department_id, ed.department_name as role_department_name,
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
+        from
+        (
+        select
+        <include refid="columnList" />
+        from
+        erp_user u
+        <where>
+            <if test="userId != null">
+                AND u.id = #{userId}
+            </if>
+            <if test="typeStartTime != null ">
+                <![CDATA[ AND u.create_time >= #{typeStartTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="typeEndTime != null">
+                <![CDATA[ AND u.create_time <= #{typeEndTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+        </where>
+        where
+        ) a
+        left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
+        left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
+        left join erp_department ed on ed.id = tr.department_id and tr.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
+    </select>
+
     <select id="listCount" resultType="java.lang.Integer" parameterType="java.util.Map">
         select count(user_main.id)
         from

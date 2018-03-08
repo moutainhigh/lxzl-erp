@@ -42,10 +42,10 @@
 				and eksr.receive_result = #{maps.k3SendRecordParam.receiveResult, jdbcType=INTEGER}
 			</if>
 			<if test="maps.k3SendRecordParam.sendStartTime != null">
-				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendStartTime} ]]>
+				<![CDATA[ AND eksr.send_time >= #{maps.k3SendRecordParam.sendStartTime} ]]>
 			</if>
 			<if test="maps.k3SendRecordParam.sendEndTime != null">
-				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendEndTime} ]]>
+				<![CDATA[ AND eksr.send_time <= #{maps.k3SendRecordParam.sendEndTime} ]]>
 			</if>
 		</where>
 	</select>
@@ -57,23 +57,23 @@
 	<select id="listPage" resultMap="K3SendRecordDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr
 		<where>
-			<if test="maps.k3SendRecordParam.recordType != null &amp;&amp; maps.k3SendRecordParam.recordType != ''">
+			<if test="maps.k3SendRecordParam.recordType != null">
 				and eksr.record_type = #{maps.k3SendRecordParam.recordType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.k3SendRecordParam.recordReferId != null &amp;&amp; maps.k3SendRecordParam.recordReferId != ''">
+			<if test="maps.k3SendRecordParam.recordReferId != null">
 				and eksr.record_refer_id = #{maps.k3SendRecordParam.recordReferId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.k3SendRecordParam.sendResult != null &amp;&amp; maps.k3SendRecordParam.sendResult != ''">
+			<if test="maps.k3SendRecordParam.sendResult != null">
 				and eksr.send_result = #{maps.k3SendRecordParam.sendResult, jdbcType=INTEGER}
 			</if>
-			<if test="maps.k3SendRecordParam.receiveResult != null &amp;&amp; maps.k3SendRecordParam.receiveResult != ''">
+			<if test="maps.k3SendRecordParam.receiveResult != null">
 				and eksr.receive_result = #{maps.k3SendRecordParam.receiveResult, jdbcType=INTEGER}
 			</if>
 			<if test="maps.k3SendRecordParam.sendStartTime != null">
-				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendStartTime} ]]>
+				<![CDATA[ AND eksr.send_time >= #{maps.k3SendRecordParam.sendStartTime} ]]>
 			</if>
 			<if test="maps.k3SendRecordParam.sendEndTime != null">
-				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendEndTime} ]]>
+				<![CDATA[ AND eksr.send_time <= #{maps.k3SendRecordParam.sendEndTime} ]]>
 			</if>
 		</where>
 		ORDER BY eksr.send_time DESC

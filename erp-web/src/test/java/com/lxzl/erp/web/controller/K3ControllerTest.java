@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -364,16 +365,35 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         param.setPageNo(1);
         param.setPageSize(15);
 //        param.setRecordReferNo("LXCC-1000-20180305-00299");
-//        param.setRecordType(1);
+        param.setRecordType(5);
+//        param.setSendResult(1);
+        param.setReceiveResult(1);
         TestResult testResult = getJsonTestResult("/k3/queryK3SendRecord", param);
     }
 
     @Test
     public void seedAgainK3SendRecord() throws Exception {
         K3SendRecord k3SendRecord = new K3SendRecord();
-        k3SendRecord.setK3SendRecordId(1418);
+        k3SendRecord.setK3SendRecordId(1417);
         TestResult testResult = getJsonTestResult("/k3/seedAgainK3SendRecord", k3SendRecord);
-        Thread.sleep(300000);
+        Thread.sleep(1000);
+    }
+
+    @Test
+    public void batchSendAgainK3SendRecord() throws Exception {
+        String start = "2018-03-06";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date rentStartTime = sdf.parse(start);
+
+        K3SendRecordParam param = new K3SendRecordParam();
+        param.setRecordType(1);
+//        param.setRecordReferId(2000065);
+        param.setTypeStartTime(rentStartTime);
+        param.setTypeEndTime(new Date());
+        param.setSendStartTime(rentStartTime);
+        param.setSendEndTime(new Date());
+        TestResult testResult = getJsonTestResult("/k3/batchSendK3SendRecord", param);
+        Thread.sleep(1000);
     }
 
 

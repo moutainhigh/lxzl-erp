@@ -6,6 +6,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -21,4 +22,6 @@ public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     List<ProductDO> findProductByName(@Param("productName") String productName);
 
     ProductDO findExistsProduct(@Param("brandId") Integer brandId,@Param("categoryId") Integer categoryId,@Param("productModel") String productModel);
+
+    ProductDO findByProductIdAndTime(@Param("productId") Integer productId, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
 }

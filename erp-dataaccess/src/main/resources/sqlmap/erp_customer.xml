@@ -155,6 +155,24 @@
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
 	</select>
+
+	<select id="findByIdAndTime" resultMap="CustomerDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
+		<where>
+			<if test="id != null">
+				AND ec.id = #{id, jdbcType=INTEGER}
+			</if>
+			<if test="typeStartTime != null ">
+				<![CDATA[ AND ec.create_time >= #{typeStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="typeEndTime != null">
+				<![CDATA[ AND ec.create_time <= #{typeEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			AND ec.data_status = 1
+		</where>
+	</select>
+
 	<select id="findByNo" resultMap="CustomerDO" parameterType="java.lang.String">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1

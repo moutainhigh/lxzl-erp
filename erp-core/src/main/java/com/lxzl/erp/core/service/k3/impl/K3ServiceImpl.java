@@ -951,7 +951,7 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.K3_SEND_RECORD_ID_IS_NOT_EXISTS);
             return result;
         }
-        Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId());
+        Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId(),null,null);
 
         if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDO.getRecordType())){
             webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDO.getRecordType(),data,false);
@@ -961,6 +961,80 @@ public class K3ServiceImpl implements K3Service {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(k3SendRecordDO.getRecordReferId());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordParam k3SendRecordParam) {
+        ServiceResult<String, Map<String, String>> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        //超级管理员权限控制
+        if(!userRoleService.isSuperAdmin(loginUser.getUserId())){
+            result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+            return result;
+        }
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("k3SendRecordParam", k3SendRecordParam);
+
+        List<K3SendRecordDO> k3SendRecordDOList = k3SendRecordMapper.listPage(maps);
+
+        String success = null;
+        String fail = null;
+        String notPushData = null;
+        K3SendRecordDO k3SendRecordDO ;
+        for(int i=0;i<k3SendRecordDOList.size();i++){
+            try {
+                Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDOList.get(i).getRecordType(),k3SendRecordDOList.get(i).getRecordReferId(),k3SendRecordParam.getTypeStartTime(),k3SendRecordParam.getTypeEndTime());
+
+                if(data != null){
+                    if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDOList.get(i).getRecordType())){
+                        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDOList.get(i).getRecordType(),data,false);
+                    }else{
+                        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,k3SendRecordDOList.get(i).getRecordType(),data,false);
+                    }
+                    Thread.sleep(500);
+                    k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(k3SendRecordDOList.get(i).getRecordReferId(), k3SendRecordDOList.get(i).getRecordType());
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                        //推送成功的数据
+                        if(success == null){
+                            success = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }else{
+                            success = success + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }
+                    }else{
+                        //推送失败的数据
+                        if(fail == null){
+                            fail = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }else{
+                            fail = fail + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }
+                    }
+                }else{
+                    //没推送的数据--选择了时间范围
+                    if(notPushData == null){
+                        notPushData = String.valueOf(k3SendRecordDOList.get(i).getRecordReferId()) + ",";
+                    }else{
+                        notPushData = notPushData + String.valueOf(k3SendRecordDOList.get(i).getRecordReferId()) + ",";
+                    }
+                }
+
+
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Map<String, String> strMap = new HashMap<>();
+        strMap.put("推送成功的数据:",success);
+        strMap.put("推送失败的数据:",fail);
+        strMap.put("没推送的数据:",notPushData);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(strMap);
         return result;
     }
 

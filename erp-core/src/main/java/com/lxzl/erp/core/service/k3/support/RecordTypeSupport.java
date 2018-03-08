@@ -28,6 +28,8 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 public class RecordTypeSupport {
 
@@ -90,38 +92,51 @@ public class RecordTypeSupport {
         return recordRefer;
     }
 
-    public Object recordTypeAndRecordReferIdByClass(Integer recordType,Integer recordReferId){
+    public Object recordTypeAndRecordReferIdByClass(Integer recordType, Integer recordReferId, Date typeStartTime, Date typeEndTime){
 
         if(PostK3Type.POST_K3_TYPE_CUSTOMER.equals(recordType)){
-            CustomerDO customerDO = customerMapper.findById(recordReferId);
-            if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
-                customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
-            } else {
-                customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
+            CustomerDO customerDO = customerMapper.findByIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(customerDO != null){
+                if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+                    customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+                } else {
+                    customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
+                }
+                return ConverterUtil.convert(customerDO, Customer.class);
             }
-            return ConverterUtil.convert(customerDO, Customer.class);
         }else if(PostK3Type.POST_K3_TYPE_PRODUCT.equals(recordType)){
-            ProductDO productDO = productMapper.findByProductId(recordReferId);
-            return ConverterUtil.convert(productDO, Product.class);
+            ProductDO productDO = productMapper.findByProductIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(productDO != null){
+                return ConverterUtil.convert(productDO, Product.class);
+            }
         }else if(PostK3Type.POST_K3_TYPE_MATERIAL.equals(recordType)){
-            MaterialDO materialDO = materialMapper.findById(recordReferId);
-            return ConverterUtil.convert(materialDO, Material.class);
+            MaterialDO materialDO = materialMapper.findByIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(materialDO != null){
+                return ConverterUtil.convert(materialDO, Material.class);
+            }
         }else if(PostK3Type.POST_K3_TYPE_SUPPLIER.equals(recordType)){
-            SupplierDO supplierDO = supplierMapper.findById(recordReferId);
-            return ConverterUtil.convert(supplierDO, Supplier.class);
+            SupplierDO supplierDO = supplierMapper.findByIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(supplierDO != null){
+                return ConverterUtil.convert(supplierDO, Supplier.class);
+            }
         }else if(PostK3Type.POST_K3_TYPE_ORDER.equals(recordType)){
-            OrderDO orderDO = orderMapper.findByOrderId(recordReferId);
-            Order order =  orderService.queryOrderByNo(orderDO.getOrderNo()).getResult();
-            return order;
+            OrderDO orderDO = orderMapper.findByOrderIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(orderDO != null){
+                Order order =  orderService.queryOrderByNo(orderDO.getOrderNo()).getResult();
+                return order;
+            }
         }else if(PostK3Type.POST_K3_TYPE_USER.equals(recordType)){
-            UserDO userDO = userMapper.findByUserId(recordReferId);
-            return ConverterUtil.convert(userDO,User.class);
+            UserDO userDO = userMapper.findByUserIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(userDO != null){
+                return ConverterUtil.convert(userDO,User.class);
+            }
         }else if(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(recordType)){
-            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
-            return ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByIdAndTime(recordReferId,typeStartTime,typeEndTime);
+            if(k3ReturnOrderDO != null){
+                return ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
+            }
         }
-        return false;
+        return null;
     }
-
 
 }

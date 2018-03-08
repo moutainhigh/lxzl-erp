@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -21,4 +22,6 @@ public interface SupplierMapper extends BaseMysqlDAO<SupplierDO> {
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     List<SupplierDO> findAllSupplier();
+
+    SupplierDO findByIdAndTime(@Param("id") Integer id, @Param("typeStartTime")Date typeStartTime, @Param("typeEndTime")Date typeEndTime);
 }

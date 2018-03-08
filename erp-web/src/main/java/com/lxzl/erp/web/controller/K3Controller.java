@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @ControllerLog
 @RequestMapping("k3")
@@ -175,6 +178,12 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "seedAgainK3SendRecord", method = RequestMethod.POST)
     public Result seedAgainK3SendRecord(@RequestBody @Validated(IdGroup.class)K3SendRecord k3SendRecord, BindingResult validResult) {
         ServiceResult<String,Integer> serviceResult = k3Service.sendAgainK3SendRecord(k3SendRecord);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "batchSendK3SendRecord", method = RequestMethod.POST)
+    public Result batchSendK3SendRecord(@RequestBody K3SendRecordParam k3SendRecordParam, BindingResult validResult) {
+        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendK3SendRecord(k3SendRecordParam);
         return resultGenerator.generate(serviceResult);
     }
 

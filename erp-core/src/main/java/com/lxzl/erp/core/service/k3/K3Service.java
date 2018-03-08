@@ -15,6 +15,9 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -78,4 +81,6 @@ public interface K3Service extends VerifyReceiver {
     ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam);
 
     ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord);
+
+    ServiceResult<String, Map<String, String>> batchSendK3SendRecord(K3SendRecordParam k3SendRecordParamList);
 }
