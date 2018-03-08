@@ -216,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
 
         //只有创建订单本人可以提交
         if (!orderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
-            result.setErrorCode(ErrorCode.ORDER_COMMIT_IS_CREATE_USER);
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
             return result;
         }
 
