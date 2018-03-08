@@ -107,7 +107,7 @@ public class InterfaceController extends BaseController {
 
         boolean erpIdentity = businessSystemConfigService.verifyErpIdentity(interfaceCustomerQueryParam.getErpAppId(), interfaceCustomerQueryParam.getErpAppSecret());
         if(erpIdentity){
-            ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCompanyName(interfaceCustomerQueryParam.getCustomerName());
+            ServiceResult<String, Customer> serviceResult = customerService.queryCustomerByCustomerName(interfaceCustomerQueryParam.getCustomerName());
             return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
         }
         return resultGenerator.generate(ErrorCode.BUSINESS_SYSTEM_ERROR);

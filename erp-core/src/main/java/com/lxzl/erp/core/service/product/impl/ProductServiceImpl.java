@@ -151,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
             result.setErrorCode(errorCode);
             return result;
         }
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class));
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class),true);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(productId);
         return result;

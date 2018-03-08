@@ -28,12 +28,55 @@
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(eksr.id) FROM erp_k3_send_record eksr
+		<where>
+			<if test="maps.k3SendRecordParam.recordType != null">
+				and eksr.record_type = #{maps.k3SendRecordParam.recordType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.recordReferId != null">
+				and eksr.record_refer_id = #{maps.k3SendRecordParam.recordReferId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.sendResult != null">
+				and eksr.send_result = #{maps.k3SendRecordParam.sendResult, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.receiveResult != null">
+				and eksr.receive_result = #{maps.k3SendRecordParam.receiveResult, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.sendStartTime != null">
+				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendStartTime} ]]>
+			</if>
+			<if test="maps.k3SendRecordParam.sendEndTime != null">
+				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendEndTime} ]]>
+			</if>
+		</where>
 	</select>
+
 	<select id="findAllFailByType" resultMap="K3SendRecordDO">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr where eksr.record_type =  #{type, jdbcType=INTEGER} and receive_result = 0
 	</select>
+
 	<select id="listPage" resultMap="K3SendRecordDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_k3_send_record eksr
+		<where>
+			<if test="maps.k3SendRecordParam.recordType != null &amp;&amp; maps.k3SendRecordParam.recordType != ''">
+				and eksr.record_type = #{maps.k3SendRecordParam.recordType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.recordReferId != null &amp;&amp; maps.k3SendRecordParam.recordReferId != ''">
+				and eksr.record_refer_id = #{maps.k3SendRecordParam.recordReferId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.sendResult != null &amp;&amp; maps.k3SendRecordParam.sendResult != ''">
+				and eksr.send_result = #{maps.k3SendRecordParam.sendResult, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.receiveResult != null &amp;&amp; maps.k3SendRecordParam.receiveResult != ''">
+				and eksr.receive_result = #{maps.k3SendRecordParam.receiveResult, jdbcType=INTEGER}
+			</if>
+			<if test="maps.k3SendRecordParam.sendStartTime != null">
+				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendStartTime} ]]>
+			</if>
+			<if test="maps.k3SendRecordParam.sendEndTime != null">
+				<![CDATA[ AND eksr.send_time >= #{maps.orderQueryParam.sendEndTime} ]]>
+			</if>
+		</where>
+		ORDER BY eksr.send_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
