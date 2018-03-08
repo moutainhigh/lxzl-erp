@@ -1082,7 +1082,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void processCustomerPhone(CustomerDO customerDO) {
-        if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
+        if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
+                !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))&&
+                !userSupport.isSuperUser()) {
             CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
             if (customerCompanyDO != null) {
 //                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
@@ -2202,12 +2205,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
-    * 校验风控信息
-    * @Author : XiaoLuYu
-    * @Date : Created in 2018/3/6 20:46
-    * @param : customerRiskManagement
-    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-    */
+     * 校验风控信息
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/3/6 20:46
+     * @param : customerRiskManagement
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
     private ServiceResult<String, String> verifyRiskManagement(CustomerRiskManagement customerRiskManagement){
         ServiceResult<String, String> result = new ServiceResult<>();
         if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsFullDeposit())){
