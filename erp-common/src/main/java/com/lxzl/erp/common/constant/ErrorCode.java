@@ -513,14 +513,15 @@ public class ErrorCode {
     public static final String CITY_NOT_EXISTS = "J500105";
     public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
     public static final String CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL = "J500107";
-    public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
+    public static final String DELIVERY_MODE_NOT_NULL = "J500108";
     public static final String SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500109";
     public static final String SHORT_RECEIVABLE_CALCULATE_FAIL = "J500110";
     public static final String CUSTOMER_DELIVERY_MODE_NOT_NULL = "J500111";
     public static final String CUSTOMER_COMPANY_IS_LEGAL_PERSON_APPLE_NOT_NULL = "J500112";
     public static final String CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL = "J500113";
     public static final String CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL = "J500114";
-    public static final String DELIVERY_MODE_NOT_NULL = "J500115";
+    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME = "J500115";
+    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500116";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1027,7 +1028,6 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人身份证与法人身份证不能相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人姓名与法人姓名不能相同");
-        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，紧急联系人姓名，紧急联系人手机号、客户的收货地址、是否是法人代表申请(如果选择为“是”，法人姓名、手机号、身份证号码也不能为空）、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
         MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
         MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
         MAP.put(CUSTOMER_DELIVERY_MODE_NOT_NULL , "客户的发货方式不能为空");
@@ -1035,6 +1035,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL , "企业客户的客户来源不能为空");
         MAP.put(CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL , "企业客户法人姓名、身份证号码、手机号不能为空");
         MAP.put(DELIVERY_MODE_NOT_NULL , "企业客户的送货方式不能为空");
+        MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME , "紧急联系人姓名不能与客户真实姓名相同");
+        MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE , "紧急联系人电话不能与客户电话相同");
+
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
