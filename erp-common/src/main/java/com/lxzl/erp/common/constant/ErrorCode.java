@@ -546,6 +546,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR = "J500137";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR = "J500138";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR = "J500139";
+    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME = "J500115";
+    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500116";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -1062,6 +1064,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL , "企业客户的客户来源不能为空");
         MAP.put(CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL , "企业客户法人姓名、身份证号码、手机号不能为空");
         MAP.put(DELIVERY_MODE_NOT_NULL , "企业客户的送货方式不能为空");
+        MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME , "紧急联系人姓名不能与客户真实姓名相同");
+        MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE , "紧急联系人电话不能与客户电话相同");
+
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
