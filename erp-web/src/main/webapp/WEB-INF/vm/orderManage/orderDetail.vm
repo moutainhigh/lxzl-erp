@@ -80,6 +80,9 @@
 
                                     <dt><label style="letter-spacing: 1em">地址</label><span class="mr5">：</span></dt>
                                     <dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}&nbsp;</dd>
+
+                                    <dt><label>订单备注</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-4">
