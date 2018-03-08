@@ -546,8 +546,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR = "J500137";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR = "J500138";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR = "J500139";
-    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME = "J500115";
-    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500116";
+    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME = "J500140";
+    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500141";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";

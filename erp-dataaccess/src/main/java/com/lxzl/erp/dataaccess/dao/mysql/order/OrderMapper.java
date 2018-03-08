@@ -6,12 +6,14 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
 public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
 
     OrderDO findByOrderId(@Param("orderId") Integer orderId);
+    List<OrderDO> findByOrderParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
     OrderDO findByOrderNo(@Param("orderNo") String orderNo);
     List<OrderDO> findByCustomerId(@Param("customerId") Integer customerId);
     Integer findOrderCountByParams(@Param("maps") Map<String, Object> paramMap);

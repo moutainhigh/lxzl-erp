@@ -137,8 +137,8 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void testCommitOrder() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180305-2000-00013");
-        order.setVerifyUser(500013);//采购审核人员
+        order.setOrderNo("LXO-20180307-1000-00014");
+        order.setVerifyUser(500006);//采购审核人员
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }
 

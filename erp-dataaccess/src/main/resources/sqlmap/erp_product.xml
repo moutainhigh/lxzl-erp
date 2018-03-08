@@ -268,6 +268,19 @@
         ORDER BY epcp.data_order DESC,epcpv.data_order DESC,epi.img_order DESC,epidesc.img_order DESC
     </select>
 
+    <select id="findByProductParam" resultMap="ProductDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/> FROM erp_product ep
+        <where>
+            <if test="startTime != null ">
+                <![CDATA[ AND ep.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[ AND ep.create_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            AND ep.data_status = 1
+        </where>
+    </select>
+
     <select id="findByProductNo" resultMap="ProductDO" parameterType="java.lang.Integer">
         SELECT m_product.*
         <trim prefix=",">

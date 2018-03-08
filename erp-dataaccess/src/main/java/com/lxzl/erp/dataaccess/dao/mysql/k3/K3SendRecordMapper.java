@@ -16,4 +16,6 @@ public interface K3SendRecordMapper extends BaseMysqlDAO<K3SendRecordDO> {
 	K3SendRecordDO findByReferIdAndType(@Param("referId") Integer referId , @Param("type") Integer type);
 
 	List<K3SendRecordDO> findAllFailByType( @Param("type") Integer type);
+
+	List<K3SendRecordDO> findAllSuccessByType( @Param("type") Integer type);
 }

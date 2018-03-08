@@ -183,6 +183,21 @@
         from erp_order eo where id = #{id, jdbcType=INTEGER}
     </select>
 
+    <select id="findByOrderParam" resultMap="OrderDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_order eo
+        <where>
+            <if test="startTime != null ">
+                <![CDATA[ AND eo.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[ AND eo.create_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            AND eo.data_status = 1
+        </where>
+    </select>
+
     <select id="findByOrderId" resultMap="OrderDO" parameterType="java.lang.Integer">
         SELECT m_order.*
         <trim prefix=",">

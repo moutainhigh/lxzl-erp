@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ public interface UserMapper extends BaseMysqlDAO<UserDO> {
     UserDO findByUsername(@Param("userName") String username);
 
     UserDO findByUserId(@Param("userId") Integer userId);
+
+    List<UserDO> findByUserParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 
     List<UserDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
