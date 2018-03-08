@@ -1,0 +1,63 @@
+<div id="inputEndInfoModal" class="popup-basic admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i><span class="modalTitle"></span></span>
+        </div>
+        <form method="post" class="inputForm">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="isDamage" class="field-label">记录类型</label>
+                        <label class="field select">
+                            <select name="recordType" class="required">
+                                <option value="">请选择</option>
+
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="isDamage" class="field-label">批量类型</label>
+                        <label class="field select">
+                            <select id="batchType" name="batchType" class="required">
+                                <option value="1">全部</option>
+                                <option value="2">成功</option>
+                                <option value="3">失败及未发送</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label class="field-label">退还时间</label>
+                        <div for="returnTime" id="sendTimePicker" class="field prepend-icon">
+                            <input type="hidden" name="startTime" id="startTime" />
+                            <input type="hidden" name="endTime" id="endTime" />
+                            <input type="text" id="sendTime" name="sendTime" class="gui-input hasDatepicker required" placeholder="">
+                            <label class="field-icon"><i class="fa fa-calendar-o"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="damageCost" class="field-label">间隔时间</label>
+                        <label for="damageCost" class="field prepend-icon">
+                            <input type="text" name="intervalTime" id="intervalTime" class="gui-input required checkInteger" maxlength="10">
+                            <label for="damageCost" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary">确定</button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

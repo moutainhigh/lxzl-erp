@@ -26,6 +26,7 @@
                         <div class="col-md-3">
                             <div class="btn-group" id="actionCommonButtons">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                <button type="button" class="btn btn-primary btn-sm batchSendDataToK3" title="" id="batchSendDataToK3">批量发送任务</button>
                             </div>
                         </div>
                         <div class="col-md-9 text-right">
@@ -115,7 +116,9 @@
 </div>
     #parse("layout/footer.vm")
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js', 'manage.k3.sendto.js');
+    management_load_script('${staticManagement}/js',
+            'manage.k3.sendto.js',
+            'modal.input.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
