@@ -328,6 +328,11 @@ public class PageController extends BaseController {
         return "/component/customer/setShortRentalUpperLimit";
     }
 
+    @RequestMapping("/customer/set-risk-credit-amount-used")
+    public String customerSetRiskCreditAmountUsed() {
+        return "/component/customer/updateRiskCreditAmountUsed";
+    }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
