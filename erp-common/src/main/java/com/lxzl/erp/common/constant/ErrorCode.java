@@ -548,6 +548,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR = "J500139";
     public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME = "J500140";
     public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500141";
+    public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT = "J500142";
+    public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL = "J500143";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -1066,6 +1068,8 @@ public class ErrorCode {
         MAP.put(DELIVERY_MODE_NOT_NULL , "企业客户的送货方式不能为空");
         MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME , "紧急联系人姓名不能与客户真实姓名相同");
         MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE , "紧急联系人电话不能与客户电话相同");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT , "已用授信额度大于授信额度，请仔细检查");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL , "已用授信额度不能为空");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
