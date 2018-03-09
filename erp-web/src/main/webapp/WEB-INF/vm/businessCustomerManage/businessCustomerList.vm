@@ -61,12 +61,16 @@
                                     </div>
                                     <div class="form-group pull-right mn mr10" style="width: 140px;">
                                         <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus"></select>
+                                            <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus">
+                                                <option value="">全部 （客户状态）</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group pull-right mn mr10">
                                         <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId"></select>
+                                            <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId">
+                                                <option value="">请选择客户所属公司</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </form>

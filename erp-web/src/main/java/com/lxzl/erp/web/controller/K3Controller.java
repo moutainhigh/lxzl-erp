@@ -5,13 +5,16 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3ChangeOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
+import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.k3.K3Service;
@@ -20,6 +23,7 @@ import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -154,6 +158,26 @@ public class K3Controller extends BaseController {
         ServiceResult<String, String> serviceResult = k3Service.commitK3ChangeOrder(k3ChangeOrderCommitParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     * K3数据发送记录表
+     *
+     * @param k3SendRecordParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryK3SendRecord", method = RequestMethod.POST)
+    public Result queryK3SendRecord(@RequestBody K3SendRecordParam k3SendRecordParam, BindingResult validResult) {
+        ServiceResult<String, Page<K3SendRecord>> serviceResult = k3Service.queryK3SendRecord(k3SendRecordParam);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "seedAgainK3SendRecord", method = RequestMethod.POST)
+    public Result seedAgainK3SendRecord(@RequestBody @Validated(IdGroup.class)K3SendRecord k3SendRecord, BindingResult validResult) {
+        ServiceResult<String,Integer> serviceResult = k3Service.sendAgainK3SendRecord(k3SendRecord);
+        return resultGenerator.generate(serviceResult);
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;

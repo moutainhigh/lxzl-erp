@@ -3,6 +3,8 @@ package com.lxzl.erp.core.service.k3;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.PostK3Type;
+import com.lxzl.erp.common.domain.ApplicationConfig;
+import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
@@ -102,7 +104,17 @@ public class K3WebServicePostRunner implements Runnable {
     }
 
     public String getErrorMessage(ServiceResult response){
-        StringBuffer sb = new StringBuffer();
+        String type = null;
+        if("erp-prod".equals(ApplicationConfig.application)){
+            type="【线上环境】";
+        }else if("erp-dev".equals(ApplicationConfig.application)){
+            type="【开发环境】";
+        }else if("erp-adv".equals(ApplicationConfig.application)){
+            type="【预发环境】";
+        }else if("erp-test".equals(ApplicationConfig.application)){
+            type="【测试环境】";
+        }
+        StringBuffer sb = new StringBuffer(type);
         if (PostK3Type.POST_K3_TYPE_PRODUCT.equals(postK3Type)) {
             sb.append("向K3推送【商品-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(postK3Type)) {

@@ -56,6 +56,7 @@ public class ErrorCode {
     public static final String BUSINESS_APP_SECRET_NOT_NULL = "J100027";
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
+    public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -545,6 +546,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR = "J500137";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR = "J500138";
     public static final String CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR = "J500139";
+    public static final String CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME = "J500115";
+    public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500116";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -719,6 +722,7 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN = "J17000011";
     public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
     public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
+    public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -770,6 +774,7 @@ public class ErrorCode {
         MAP.put(USER_OWNER_NOT_EXISTS, "填写的开发员不存在，请查询清楚");
         MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
+        MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -918,7 +923,6 @@ public class ErrorCode {
         MAP.put(FIRST_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的首期申请额度与所有首次所需设备的总金额不相等");
         MAP.put(LATER_APPLY_AMOUNT_IS_NOT_MATCH_ALL_CUSTOMER_COMPANY_NEED_TOTAL_PRICE, "客户的后续申请额度与所有首次所需设备的总金额不相等");
         MAP.put(CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL, "客户所需的设备的新或旧的值不能为空");
-
         MAP.put(REMARK_PATTERN, "备注信息超过限制，最多输入200个字符");
         MAP.put(ID_NOT_NULL, "ID不能为空");
         MAP.put(MONEY_MORE_THAN_ZERO, "金额不能小于0");
@@ -1060,6 +1064,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_CUSTOMER_ORIGIN_NOT_NULL , "企业客户的客户来源不能为空");
         MAP.put(CUSTOMER_COMPANY_LEGAL_PARAM_NOT_NULL , "企业客户法人姓名、身份证号码、手机号不能为空");
         MAP.put(DELIVERY_MODE_NOT_NULL , "企业客户的送货方式不能为空");
+        MAP.put(CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME , "紧急联系人姓名不能与客户真实姓名相同");
+        MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE , "紧急联系人电话不能与客户电话相同");
+
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
@@ -1431,6 +1438,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
+        MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
 
     }
 

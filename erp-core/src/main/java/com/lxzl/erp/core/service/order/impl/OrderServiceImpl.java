@@ -213,6 +213,13 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
+
+        //只有创建订单本人可以提交
+        if (!orderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
+            return result;
+        }
+
         CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
         if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -762,7 +769,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(orderDO);
                 //获取订单详细信息，发送给k3
                 Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order,true);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
@@ -910,8 +917,9 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
+        //审核中或者待发货订单，处理风控额度及结算单
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())||
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {

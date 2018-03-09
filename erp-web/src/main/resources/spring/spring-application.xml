@@ -19,7 +19,9 @@
 		<property name="application" value="${application.name}" />
 		<property name="authKey" value="${application.auth.key}" />
 	</bean>
-
+	<bean id="k3Config" class="com.lxzl.erp.common.domain.K3Config">
+		<property name="k3Server" value="${k3.server}" />
+	</bean>
 	<!--<context:property-placeholder location="mongo.properties"/>-->
 	<bean id="taskExecutor"
 		  class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
