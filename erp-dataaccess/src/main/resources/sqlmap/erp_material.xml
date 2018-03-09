@@ -184,7 +184,7 @@
 				and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
 			</if>
 			<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
-				and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
+				and LOWER(em.material_name) like LOWER (CONCAT('%','${maps.materialQueryParam.materialName}','%' ))
 			</if>
 			<if test="maps.materialQueryParam.brandId != null &amp;&amp; maps.materialQueryParam.brandId != ''">
 				and em.brand_id = #{maps.materialQueryParam.brandId, jdbcType=INTEGER}
@@ -252,7 +252,7 @@
 					and em.material_no like CONCAT('%','${maps.materialQueryParam.materialNo}','%' )
 				</if>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialName != null &amp;&amp; maps.materialQueryParam.materialName != ''">
-					and em.material_name like CONCAT('%','${maps.materialQueryParam.materialName}','%' )
+					and LOWER(em.material_name) like LOWER (CONCAT('%','${maps.materialQueryParam.materialName}','%' ))
 				</if>
 				<if test="maps.materialQueryParam != null &amp;&amp; maps.materialQueryParam.materialMode != null &amp;&amp; maps.materialQueryParam.materialMode != ''">
 					and em.material_model like CONCAT('%','${maps.materialQueryParam.materialMode}','%' )

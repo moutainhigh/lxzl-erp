@@ -1382,7 +1382,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        if(customerRiskManagement.getCreditAmountUsed() == null){
+        if(customerRiskManagement.getCreditAmountUsed() == null || BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(), BigDecimal.ZERO) < 0){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL);
             return serviceResult;
         }
