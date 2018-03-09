@@ -7,6 +7,8 @@
 
 package com.lxzl.erp.core.k3WebServiceSdk.ErpServer;
 
+import com.lxzl.erp.common.domain.K3Config;
+
 public class ERPServiceLocator extends org.apache.axis.client.Service implements ERPService {
 
     public ERPServiceLocator() {
@@ -22,7 +24,7 @@ public class ERPServiceLocator extends org.apache.axis.client.Service implements
     }
 
     // Use to get a proxy class for BasicHttpBinding_IERPService
-    private String BasicHttpBinding_IERPService_address = "http://103.239.207.170:9090/ERPService.svc";
+    private String BasicHttpBinding_IERPService_address = K3Config.k3Server;
 
     public String getBasicHttpBinding_IERPServiceAddress() {
         return BasicHttpBinding_IERPService_address;

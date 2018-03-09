@@ -149,6 +149,18 @@
         left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
     </select>
 
+    <select id="findByUserParam" resultMap="userResult">
+        select <include refid="columnList" /> from erp_user u
+        <where>
+            <if test="startTime != null ">
+                <![CDATA[ AND u.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[ AND u.create_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+        </where>
+    </select>
+
     <select id="listCount" resultType="java.lang.Integer" parameterType="java.util.Map">
         select count(user_main.id)
         from

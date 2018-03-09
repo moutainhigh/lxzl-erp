@@ -745,6 +745,10 @@ public class PageController extends BaseController {
     public String k3DataManageList() {
         return "/k3Manage/sendTok3";
     }
+    @RequestMapping("/send-data-to-k3/modal")
+    public String sendDataToK3Modal() {
+        return "/k3Manage/bathSendTok3Modal";
+    }
 
     //分公司列表
     @RequestMapping("/company-manage/list")

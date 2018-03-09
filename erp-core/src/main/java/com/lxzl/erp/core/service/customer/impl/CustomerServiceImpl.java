@@ -205,6 +205,20 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        //判断紧急联系人和紧急联系人电话，不能和个人客户相同
+        if (customer.getCustomerPerson().getConnectRealName() != null){
+            if (customer.getCustomerPerson().getConnectRealName().equals(customer.getCustomerPerson().getRealName())){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME);
+                return serviceResult;
+            }
+        }
+        if (customer.getCustomerPerson().getConnectPhone() != null){
+            if (customer.getCustomerPerson().getConnectPhone().equals(customer.getCustomerPerson().getPhone())){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE);
+                return serviceResult;
+            }
+        }
+
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         //保存业务员所属分公司
         Integer ownerSubCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
@@ -571,6 +585,23 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
+
+        //判断紧急联系人和紧急联系人电话，不能和个人客户相同
+        if (customer.getCustomerPerson().getConnectRealName() != null){
+            if (customer.getCustomerPerson().getConnectRealName().equals(customer.getCustomerPerson().getRealName())){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME);
+                return serviceResult;
+            }
+        }
+        if (customer.getCustomerPerson().getConnectPhone() != null){
+            if (customer.getCustomerPerson().getConnectPhone().equals(customer.getCustomerPerson().getPhone())){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE);
+                return serviceResult;
+            }
+        }
+
 
         //更改开发员和联合开发员
         serviceResult = updateCustomerOwnerAndUnionUser(customerDO, customer, now);
@@ -1045,27 +1076,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
-        }
-
-        //客户风控信息显示限制
-        CustomerRiskManagement customerRiskManagement = customerResult.getCustomerRiskManagement();
-        if (customerRiskManagement != null) {
-            Integer isFullDeposit = customerRiskManagement.getIsFullDeposit();
-            //是全额押金客户
-            if (isFullDeposit == 0) {
-                //限制全新
-                if (customerRiskManagement.getIsLimitNew() == 1) {
-                    customerRiskManagement.setNewPaymentCycle(null);
-                    customerRiskManagement.setNewDepositCycle(null);
-                    customerRiskManagement.setNewPayMode(null);
-                }
-                //限制苹果
-                if (customerRiskManagement.getIsLimitApple() == 1) {
-                    customerRiskManagement.setAppleDepositCycle(null);
-                    customerRiskManagement.setApplePaymentCycle(null);
-                    customerRiskManagement.setApplePayMode(null);
-                }
-            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

@@ -110,17 +110,33 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         customer.setOwner(500021);
-        customer.setDeliveryMode(2);
+        customer.setOwner(500003);
         customer.setIsDefaultConsignAddress(1);
+        customer.setFirstApplyAmount(new BigDecimal(0));
+        customer.setLaterApplyAmount(new BigDecimal(0));
 
         CustomerPerson customerPerson = new CustomerPerson();
-        customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setConnectRealName("赵二天");
-        customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("武神么");
-        customerPerson.setPhone("13888886666");
-        customerPerson.setAddress("个人信息详细地址测试");
+        customerPerson.setPersonNo("35052119870503651X");
+        customerPerson.setConnectRealName("cd");
+        customerPerson.setConnectPhone("18171408870");
+        customerPerson.setRealName("cc");
+        customerPerson.setPhone("18171408871");
+        customerPerson.setEmail("1234567@qq.com");
+        customerPerson.setProvince(17);
+        customerPerson.setCity(172);
+        customerPerson.setDistrict(1687);
+        customerPerson.setAddress("老地方烧烤摊儿");
+
         customer.setCustomerPerson(customerPerson);
+        TestResult result = getJsonTestResult("/customer/addPerson", customer);
+    }
+
+    @Test
+    public void testAddCustomerPerson() throws Exception {
+        String str = "{\"unionUser\":\"500356\",\"owner\":\"500356\",\"firstApplyAmount\":\"0\",\"laterApplyAmount\":\"0\",\"customerPerson\":{\"realName\":\"cc\",\"personNo\":\"35052119870503651X\",\"email\":\"1234567@qq.com\",\"phone\":\"18171408870\",\"unionUserName\":\"陈涵\",\"unionUser\":\"500356\",\"ownerName\":\"陈涵\",\"owner\":\"500356\",\"firstApplyAmount\":\"0\",\"laterApplyAmount\":\"0\",\"province\":\"17\",\"city\":\"172\",\"district\":\"1687\",\"address\":\"老地方烧烤摊儿\",\"connectRealName\":\"cc\",\"connectPhone\":\"18171408870\",\"remark\":\"个人客户的备注\"}}";
+
+        Customer customer = FastJsonUtil.toBean(str, Customer.class);
+
         TestResult result = getJsonTestResult("/customer/addPerson", customer);
     }
 

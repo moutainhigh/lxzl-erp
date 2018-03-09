@@ -185,8 +185,10 @@
                             ￥{{#price}}{{productAmount}}{{/price}}
                         </td>
                         <td class="text-center">
+                            {{#isRentTypeByMonth}}
                             <P style="white-space: nowrap">{{payModeValue}}</P>
                             <p style="white-space: nowrap">{{rentalWay}}</p>
+                            {{/isRentTypeByMonth}}
                         </td>
                         <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
@@ -238,8 +240,10 @@
                             <p style="white-space: nowrap">{{rentTimeLength}}{{rentTypeUnit}}</p>
                         </td>
                         <td class="text-center">
+                            {{#isRentTypeByMonth}}
                             <p style="white-space: nowrap">{{payModeValue}}</p>
                             <p style="white-space: nowrap">{{rentalWay}}</p>
+                            {{/isRentTypeByMonth}}
                         </td>
                         <td class="text-center">￥{{#price}}{{depositAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
