@@ -677,6 +677,7 @@ DROP TABLE if exists `erp_product`;
 CREATE TABLE `erp_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
   `product_no` varchar(100) NOT NULL COMMENT '商品编码',
+  `k3_product_no` varchar(100) NOT NULL COMMENT 'k3商品编码',
   `product_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '商品名称',
   `product_model` varchar(100) COMMENT '商品型号',
   `brand_id` int(20) COMMENT '所属品牌ID',
@@ -758,6 +759,7 @@ DROP TABLE if exists `erp_material`;
 CREATE TABLE `erp_material` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '配件ID',
   `material_no` varchar(100) NOT NULL COMMENT '配件唯一编号',
+  `k3_material_no` varchar(100) NOT NULL COMMENT 'k3配件编号',
   `material_name` varchar(100) COLLATE utf8_bin COMMENT '配件名称，取属性与属性值全称',
   `material_model` varchar(100) COMMENT '商品型号（英文）',
   `material_type` int(20) NOT NULL COMMENT '配件类型',

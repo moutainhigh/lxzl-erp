@@ -22,6 +22,7 @@ public class Material extends BasePO {
     private Integer materialId;   //物料ID
     @NotNull(message = ErrorCode.MATERIAL_NO_NOT_NULL,groups = {AddReturnOrderGroup.class, AddChangeOrderParam.class})
     private String materialNo;   //物料唯一编号
+    private String k3MaterialNo;   //K3物料编号
     private String materialName;   //物料名称，取属性与属性值全称
     private String materialModel;   // 物料型号
     private Integer materialType;   //物料类型
@@ -336,4 +337,8 @@ public class Material extends BasePO {
     public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
 
     public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
+
+    public String getK3MaterialNo() { return k3MaterialNo; }
+
+    public void setK3MaterialNo(String k3MaterialNo) { this.k3MaterialNo = k3MaterialNo; }
 }
