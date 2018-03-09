@@ -176,7 +176,7 @@
                     and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
                 </if>
                 <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
-                    and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
+                    and LOWER (ep.product_name) like LOWER (CONCAT('%','${maps.productQueryParam.productName}','%' ))
                 </if>
                 <if test="maps.productQueryParam.isRent != null">
                     and ep.is_rent = #{maps.productQueryParam.isRent, jdbcType=INTEGER}
@@ -215,7 +215,7 @@
                 and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
             </if>
             <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
-                and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
+                and LOWER (ep.product_name) like LOWER (CONCAT('%','${maps.productQueryParam.productName}','%' ))
             </if>
             <if test="maps.productQueryParam.isRent != null">
                 and ep.is_rent = #{maps.productQueryParam.isRent, jdbcType=INTEGER}

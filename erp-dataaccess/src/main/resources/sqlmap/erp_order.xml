@@ -343,7 +343,7 @@
                     and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
                 </if>
                 <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
-                    and eo.order_no = #{maps.orderQueryParam.orderNo, jdbcType=VARCHAR}
+                    and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
                 </if>
                 <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                     and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
