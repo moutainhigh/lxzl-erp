@@ -343,6 +343,9 @@
                 <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
                     and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
                 </if>
+                <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
+                    and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+                </if>
                 <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
                     and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
                 </if>
@@ -434,6 +437,9 @@
             </if>
             <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
                 and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
+                and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}

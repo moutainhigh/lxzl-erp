@@ -100,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-            orderDO.setDeliverySubCompanyId(order.getOrderSubCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
             orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
@@ -175,7 +175,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-            orderDO.setDeliverySubCompanyId(order.getOrderSubCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
             orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());

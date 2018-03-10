@@ -25,6 +25,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer deliveryMode;
     private Integer isPendingDelivery;
 
@@ -156,4 +157,8 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     public void setIsPendingDelivery(Integer isPendingDelivery) {
         this.isPendingDelivery = isPendingDelivery;
     }
+
+    public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
 }
