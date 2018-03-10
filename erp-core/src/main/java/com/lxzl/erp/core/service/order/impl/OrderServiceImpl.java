@@ -94,11 +94,6 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getOrderSubCompanyId());
-            if (order.getOrderSubCompanyId() == null || subCompanyDO == null) {
-                result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-                return result;
-            }
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
             orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
@@ -169,11 +164,6 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getOrderSubCompanyId());
-            if (order.getOrderSubCompanyId() == null || subCompanyDO == null) {
-                result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-                return result;
-            }
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
             orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
