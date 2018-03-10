@@ -455,8 +455,8 @@ CREATE TABLE `erp_customer_risk_management` (
   `pay_mode` int(11) DEFAULT NULL COMMENT '其他设备支付方式',
   `apple_pay_mode` int(11) DEFAULT NULL COMMENT '苹果设备付款方式',
   `new_pay_mode` int(11) DEFAULT NULL COMMENT '全新付款方式',
-  `is_limit_apple` int(11) NOT NULL DEFAULT '0' COMMENT '是否限制苹果，1是，0否',
-  `is_limit_new` int(11) NOT NULL DEFAULT '0' COMMENT '是否限制全新，1是，0否',
+  `is_limit_apple` int(11) COMMENT '是否限制苹果，1是，0否',
+  `is_limit_new` int(11) COMMENT '是否限制全新，1是，0否',
   `single_limit_price` decimal(15,2) COMMENT '单台限制价值',
   `return_visit_frequency` int(11) NOT NULL DEFAULT '0' COMMENT '回访频率（单位，月）',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -465,6 +465,7 @@ CREATE TABLE `erp_customer_risk_management` (
   `create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  `import_credit_amount_used` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '导入已用授信额度',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户风控信息';
 

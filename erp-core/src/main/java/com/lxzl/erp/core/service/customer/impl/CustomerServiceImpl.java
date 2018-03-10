@@ -760,16 +760,6 @@ public class CustomerServiceImpl implements CustomerService {
                 return result;
             }
         }
-        //关于客户风控校验
-        CustomerRiskManagement customerRiskManagement = customer.getCustomerRiskManagement();
-        if(customerRiskManagement ==  null){
-            result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
-            return result;
-        }
-        ServiceResult<String, String> serviceResult = verifyRiskManagement(customerRiskManagement);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            return serviceResult;
-        }
         customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         customerDO.setUpdateTime(currentTime);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
