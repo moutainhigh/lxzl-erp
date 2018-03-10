@@ -99,8 +99,8 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
                 return result;
             }
-            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
-            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getOrderSubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
             orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
@@ -174,8 +174,8 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
                 return result;
             }
-            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
-            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getOrderSubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
             orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
@@ -2135,14 +2135,6 @@ public class OrderServiceImpl implements OrderService {
         }
         if (!DeliveryMode.inThisScope(order.getDeliveryMode())) {
             return ErrorCode.ORDER_DELIVERY_MODE_ERROR;
-        }
-
-        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(order.getOrderSubCompanyId()) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(order.getDeliverySubCompanyId())){
-            return  ErrorCode.ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME;
-        }
-        //非电销 如深圳分公司 只能一样
-        if(!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(order.getOrderSubCompanyId())){
-            order.setDeliverySubCompanyId(order.getOrderSubCompanyId());
         }
 
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());

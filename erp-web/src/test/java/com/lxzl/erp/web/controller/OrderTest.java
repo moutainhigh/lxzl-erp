@@ -48,8 +48,8 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerRemark("2018.3.10 11:34 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
-        order.setOrderSubCompanyId(10);
-        order.setDeliverySubCompanyId(1);
+        order.setOrderSubCompanyId(8);
+//        order.setDeliverySubCompanyId(1);
 
         order.setRentType(OrderRentType.RENT_TYPE_DAY);
         order.setRentTimeLength(6);

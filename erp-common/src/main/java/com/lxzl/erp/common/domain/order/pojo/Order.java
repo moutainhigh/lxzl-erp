@@ -44,6 +44,7 @@ public class Order extends BasePO {
     private BigDecimal logisticsAmount;                     // 运费
     private Integer orderSellerId;                          // 业务员ID
     private Integer orderSubCompanyId;                      // 分公司ID
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer orderStatus;                            // 订单状态
     private BigDecimal firstNeedPayAmount;                      // 首付租金
     private Integer payStatus;                                  // 支付状态
@@ -58,7 +59,6 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
-    private Integer deliverySubCompanyId;                       // 发货所属分公司
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
