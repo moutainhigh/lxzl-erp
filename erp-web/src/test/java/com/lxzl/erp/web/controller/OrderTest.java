@@ -218,6 +218,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setBuyerRealName("荣焱");
 //        param.setIsPendingDelivery(1);
 //        param.setOrderNo("LXO-20180307-1000-00014");
+//        param.setDeliverySubCompanyId(2);
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
     @Test
