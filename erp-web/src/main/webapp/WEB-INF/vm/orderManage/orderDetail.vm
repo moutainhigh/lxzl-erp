@@ -61,11 +61,8 @@
                                     <dt><label>配送日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
 
-                                    <dt><label>租赁类型</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
-
-                                    <dt><label>租赁时长</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
+                                    <dt><label>订单备注</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-4">
@@ -85,8 +82,13 @@
                                     <dt><label style="letter-spacing: 1em">地址</label><span class="mr5">：</span></dt>
                                     <dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}&nbsp;</dd>
 
-                                    <dt><label>订单备注</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
+                                    <dt><label>租赁类型</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
+
+                                    <dt><label>租赁时长</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
+
+
                                 </dl>
                             </div>
                             <div class="col-md-4">
