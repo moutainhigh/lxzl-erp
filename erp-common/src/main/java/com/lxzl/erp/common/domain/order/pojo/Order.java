@@ -58,12 +58,14 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
     private String buyerCustomerName;                           // 客户姓名
     private String orderSellerName;                             // 业务员姓名
     private String orderSubCompanyName;                         // 分公司名称
+    private String deliverySubCompanyName;                         // 发货所属分公司名称
 
 
     private List<OrderProduct> orderProductList;                // 订单商品项
@@ -541,4 +543,12 @@ public class Order extends BasePO {
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
     }
+
+    public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
+
+    public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
 }

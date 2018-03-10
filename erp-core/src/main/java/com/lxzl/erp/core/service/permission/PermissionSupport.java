@@ -1,6 +1,6 @@
 package com.lxzl.erp.core.service.permission;
 
-import com.lxzl.erp.common.constant.PermissionType;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PermissionParam;
 import com.lxzl.erp.common.domain.company.pojo.SubCompany;
@@ -10,7 +10,10 @@ import com.lxzl.erp.core.service.company.CompanyService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +36,8 @@ public class PermissionSupport {
     private UserRoleService userRoleService;
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     /**
      * 获取可观察用户列表
@@ -119,6 +124,19 @@ public class PermissionSupport {
         return userSupport.getCompanyIdByUser(userId);
     }
 
+    public Integer getCanAccessOrderSubCompany(Integer userId) {
+        UserDO userDO = userMapper.findByUserId(userId);
+        for(RoleDO roleDO :userDO.getRoleDOList()){
+            if(!CommonConstant.HEADER_COMPANY_ID.equals(roleDO.getSubCompanyId())){
+                DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
+                if(DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())){
+                    return roleDO.getSubCompanyId();
+                }
+            }
+        }
+        return null;
+    }
+
     public PermissionParam getPermissionParam(Integer... permissionTypes) {
         Integer userId = userSupport.getCurrentUserId();
         //超级管理员不加权限控制
@@ -149,6 +167,9 @@ public class PermissionSupport {
         }
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY)) {
             permissionParam.setPermissionSubCompanyIdList(getCanAccessSubCompanyIdList());
+        }
+        if (permissionSet.contains(PermissionType.PERMISSION_TYPE_ORDER_SUB_COMPANY)) {
+            permissionParam.setPermissionSubCompanyId(getCanAccessOrderSubCompany(userId));
         }
         return permissionParam;
     }
