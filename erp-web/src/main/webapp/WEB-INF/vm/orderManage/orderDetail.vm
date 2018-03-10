@@ -48,7 +48,7 @@
                                     <dt><label  style="letter-spacing: 0.33em">创建人</label><span class="mr5">：</span></dt>
                                     <dd class="mb5" >{{createUserRealName}}</dd>
 
-                                    <dt><label>订单归属</label><span class="mr5">：</span></dt>
+                                    <dt><label>发货公司</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{orderSubCompanyName}}</dd>
 
                                     <dt><label>配送方式</label><span class="mr5">：</span></dt>

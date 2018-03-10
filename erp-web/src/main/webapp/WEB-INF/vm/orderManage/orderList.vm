@@ -96,7 +96,7 @@
                                         </th>
                                         {{/hasCommonActionButtons}}
                                         <th>订单编号</th>
-                                        <th>订单归属</th>
+                                        <th>发货公司</th>
                                         <th>送货日期</th>
                                         <th>客户</th>
                                         <th>商品名</th>
