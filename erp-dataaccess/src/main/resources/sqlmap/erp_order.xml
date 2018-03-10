@@ -317,7 +317,7 @@
                 <include refid="consign_column_List" />
             </trim>
             <trim prefix=",">
-                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, ec.customer_no AS buyer_customer_no
+                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
             </trim>
             FROM erp_order eo
             LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
@@ -327,6 +327,7 @@
             LEFT JOIN erp_area_district ead ON ead.id = eoci.district
             LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
             LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+            LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
             <where>
                 <if test="maps.orderQueryParam.buyerRealName != null &amp;&amp; maps.orderQueryParam.buyerRealName != ''">
                     and eo.buyer_customer_name like CONCAT('%','${maps.orderQueryParam.buyerRealName}','%' )
