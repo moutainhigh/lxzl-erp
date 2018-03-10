@@ -69,6 +69,13 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="form-group pull-right mn mr10" style="width: 210px;">
                                         <input type="hidden" name="createStartTime" id="createStartTime" />
                                         <input type="hidden" name="createEndTime" id="createEndTime" />
@@ -96,6 +103,7 @@
                                         </th>
                                         {{/hasCommonActionButtons}}
                                         <th>订单编号</th>
+                                        <th>所属公司</th>
                                         <th>发货公司</th>
                                         <th>送货日期</th>
                                         <th>客户</th>
@@ -125,6 +133,7 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{orderSubCompanyName}}</td>
+                                            <td>{{deliverySubCompanyName}}</td>
                                             <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                                             <td>{{buyerCustomerName}}</td>
                                             <td>

@@ -105,7 +105,7 @@
 ##                            <input id="orderSubCompanyName" name="orderSubCompanyName" bringFiled="orderSubCompanyName" class="form-control required" type="text" readonly placeholder="请选择订单所属公司" />
 ##                            <span class="input-group-addon cursor" id="chooseSubCompany"><i class="fa fa-search"></i></span>
 ##                        </div>
-                        <select class="form-control input-sm" name="orderSubCompanyId" id="orderSubCompanyId">
+                        <select class="form-control input-sm" name="deliverySubCompanyId" id="deliverySubCompanyId">
                             <option value="">请选择</option>
                         </select>
                     </div>
