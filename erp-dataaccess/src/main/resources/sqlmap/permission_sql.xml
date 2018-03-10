@@ -64,6 +64,11 @@
 					eo.order_sub_company_id = #{maps.permissionParam.permissionSubCompanyId, jdbcType=INTEGER}
 				)
 			</if>
+			<if test="maps.permissionParam.permissionSubCompanyId!= null" >
+				OR (
+				eo.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
 			)
 		</if>
 	</sql>

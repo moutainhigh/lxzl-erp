@@ -30,6 +30,7 @@ import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -98,9 +99,11 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
                 return result;
             }
-            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
         }
         SubCompanyDO subCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
@@ -171,9 +174,11 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
                 return result;
             }
-            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
         }
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
@@ -1016,9 +1021,8 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-
         maps.put("orderQueryParam", orderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE,PermissionType.PERMISSION_TYPE_ORDER_SUB_COMPANY, PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
@@ -2429,6 +2433,4 @@ public class OrderServiceImpl implements OrderService {
     private StatementOrderDetailMapper statementOrderDetailMapper;
     @Autowired
     private StatementOrderMapper statementOrderMapper;
-    @Autowired
-    private RoleMapper roleMapper;
 }
