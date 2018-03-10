@@ -410,6 +410,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void updateRiskCreditAmountUsed() throws Exception {
+        CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
+        customerRiskManagement.setCustomerNo("CP201712060843154191841");
+        customerRiskManagement.setCreditAmountUsed(new BigDecimal(9000001));
+
+        TestResult result = getJsonTestResult("/customer/updateRiskCreditAmountUsed", customerRiskManagement);
+    }
+
+    @Test
     public void updateRiskJSON() throws Exception {
         String jsonStr = "{\"creditAmount\":\"1000000\",\"depositCycle\":\"10\",\"paymentCycle\":\"10\",\"payMode\":\"1\",\"appleDepositCycle\":\"10\",\"applePaymentCycle\":\"10\",\"applePayMode\":\"1\",\"newDepositCycle\":\"10\",\"newPaymentCycle\":\"10\",\"newPayMode\":\"1\",\"remark\":\"这是一个优质客户, 可以考虑提高授信额度\",\"customerNo\":\"CP201712060843154191841\"}";
         TestResult result = getJsonTestResult("/customer/updateRisk", JSONUtil.convertJSONToBean(jsonStr, CustomerRiskManagement.class));

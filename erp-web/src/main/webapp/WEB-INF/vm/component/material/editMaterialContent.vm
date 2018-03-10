@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <label for="userName" class="field-label">配件型号(生成配件编号)</label>
+                    <label for="userName" class="field-label">配件编号(生成配件编号)</label>
                     <label for="materialModel" class="field prepend-icon">
                         <input type="text" name="materialModel" id="materialModel" class="gui-input required letterOrNumber2" placeholder="数字、英文字母、横杠" />
                         <label for="materialModel" class="field-icon"><i class="fa fa-tag"></i></label>
@@ -98,6 +98,15 @@
                     <label for="newMonthRentPrice" class="field prepend-icon">
                         <input type="text" name="newMonthRentPrice" id="newMonthRentPrice" class="gui-input required moneyNumber" />
                         <label for="newMonthRentPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                    </label>
+                </div>
+            </div>
+            <div class="section row">
+                <div class="col-md-4">
+                    <label for="k3MaterialNo" class="field-label">K3物料编号</label>
+                    <label for="k3MaterialNo" class="field prepend-icon">
+                        <input type="text" name="k3MaterialNo" id="k3MaterialNo" class="gui-input required" />
+                        <label for="k3MaterialNo" class="field-icon"><i class="fa fa-tag"></i></label>
                     </label>
                 </div>
             </div>

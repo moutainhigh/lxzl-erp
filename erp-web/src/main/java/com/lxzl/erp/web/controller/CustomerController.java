@@ -119,6 +119,12 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "updateRiskCreditAmountUsed", method = RequestMethod.POST)
+    public Result updateRiskCreditAmountUsed(@RequestBody CustomerRiskManagement customerRiskManagement, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updateRiskCreditAmountUsed(customerRiskManagement);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "addCustomerConsignInfo", method = RequestMethod.POST)
     public Result addCustomerConsignInfo(@RequestBody @Validated(AddGroup.class) CustomerConsignInfo customerConsignInfo, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = customerService.addCustomerConsignInfo(customerConsignInfo);

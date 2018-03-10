@@ -67,6 +67,12 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "forceCancel", method = RequestMethod.POST)
+    public Result forceCancel(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.forceCancelOrder(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "queryAllOrder", method = RequestMethod.POST)
     public Result queryAllOrder(@RequestBody OrderQueryParam param, BindingResult validResult) {
         ServiceResult<String, Page<Order>> serviceResult = orderService.queryAllOrder(param);

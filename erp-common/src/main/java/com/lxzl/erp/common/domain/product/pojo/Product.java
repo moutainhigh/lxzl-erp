@@ -12,6 +12,7 @@ import java.util.List;
 public class Product extends BasePO {
     private Integer productId;
     private String productNo;
+    private String k3ProductNo;
     private String productName;
     private String productModel;
     private Integer brandId;
@@ -243,4 +244,8 @@ public class Product extends BasePO {
     public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
 
     public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
+
+    public String getK3ProductNo() { return k3ProductNo; }
+
+    public void setK3ProductNo(String k3ProductNo) { this.k3ProductNo = k3ProductNo; }
 }

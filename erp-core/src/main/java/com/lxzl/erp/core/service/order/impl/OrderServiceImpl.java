@@ -895,6 +895,37 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
+            return result;
+        }
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> forceCancelOrder(String orderNo) {
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;

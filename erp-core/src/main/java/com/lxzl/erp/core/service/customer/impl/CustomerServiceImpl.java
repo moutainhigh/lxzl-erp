@@ -760,7 +760,16 @@ public class CustomerServiceImpl implements CustomerService {
                 return result;
             }
         }
-
+        //关于客户风控校验
+        CustomerRiskManagement customerRiskManagement = customer.getCustomerRiskManagement();
+        if(customerRiskManagement ==  null){
+            result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
+            return result;
+        }
+        ServiceResult<String, String> serviceResult = verifyRiskManagement(customerRiskManagement);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            return serviceResult;
+        }
         customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         customerDO.setUpdateTime(currentTime);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1361,6 +1370,42 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO.setCustomerStatus(2);
             customerMapper.update(customerDO);
         }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerDO.getCustomerNo());
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateRiskCreditAmountUsed(CustomerRiskManagement customerRiskManagement) {
+
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        if(customerRiskManagement.getCreditAmountUsed() == null || BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(), BigDecimal.ZERO) < 0){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL);
+            return serviceResult;
+        }
+        CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
+        if(customerDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(customerDO.getCustomerRiskManagementDO() == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
+            return serviceResult;
+        }
+        //判断已用授信额度大于授信额度
+        if(BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(),customerDO.getCustomerRiskManagementDO().getCreditAmount()) == CommonConstant.YES){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT);
+            return serviceResult;
+        }
+
+        CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
+        customerRiskManagementDO.setId(customerDO.getCustomerRiskManagementDO().getId());
+        customerRiskManagementDO.setUpdateTime(now);
+        customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerRiskManagementMapper.update(customerRiskManagementDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
