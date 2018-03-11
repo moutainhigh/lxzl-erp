@@ -7,10 +7,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderProduct;
-import com.lxzl.erp.common.domain.k3.pojo.callback.K3DeliveryOrder;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.k3.K3CallbackService;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
@@ -26,7 +26,6 @@ import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingSubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingUserDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -140,8 +139,16 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, String> callbackCancelOrder(String orderNo) {
+        return orderService.cancelOrder(orderNo);
+    }
+
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private OrderTimeAxisSupport orderTimeAxisSupport;
