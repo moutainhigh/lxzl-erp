@@ -91,7 +91,7 @@ public class RecordTypeSupport {
             if(userDO != null){
                 recordRefer = userDO.getUserName();
             }
-        }else if(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(recordType)){
+        }else if(PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(recordType)){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
             if(k3ReturnOrderDO != null){
                 recordRefer = k3ReturnOrderDO.getReturnOrderNo();
@@ -126,7 +126,7 @@ public class RecordTypeSupport {
         }else if(PostK3Type.POST_K3_TYPE_USER.equals(recordType)){
             UserDO userDO = userMapper.findByUserId(recordReferId);
             return ConverterUtil.convert(userDO,User.class);
-        }else if(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(recordType)){
+        }else if(PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(recordType)){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
             return ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
         }
@@ -337,22 +337,25 @@ public class RecordTypeSupport {
         for(int i=0;i<typeList.size();i++){
             try {
                 Object data = recordTypeAndRecordReferIdByClass(PostK3Type.POST_K3_TYPE_ORDER,typeList.get(i).getId());
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER,data,false);
-                Thread.sleep(intervalTime);
-                k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_ORDER);
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
-                    //推送成功的数据
-                    if(success == null){
-                        success = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                Order order = (Order)data;
+                if(OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(order.getOrderStatus())){
+                    webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER,data,false);
+                    Thread.sleep(intervalTime);
+                    k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(typeList.get(i).getId(), PostK3Type.POST_K3_TYPE_ORDER);
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getSendResult()) && CommonConstant.COMMON_CONSTANT_YES.equals(k3SendRecordDO.getReceiveResult())){
+                        //推送成功的数据
+                        if(success == null){
+                            success = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }else{
+                            success = success + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }
                     }else{
-                        success = success + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                    }
-                }else{
-                    //推送失败的数据
-                    if(fail == null){
-                        fail = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
-                    }else{
-                        fail = fail + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        //推送失败的数据
+                        if(fail == null){
+                            fail = String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }else{
+                            fail = fail + String.valueOf(k3SendRecordDO.getRecordReferId()) + ",";
+                        }
                     }
                 }
             } catch (InterruptedException e) {

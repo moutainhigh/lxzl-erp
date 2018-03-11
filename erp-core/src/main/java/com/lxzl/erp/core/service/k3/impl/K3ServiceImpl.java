@@ -960,7 +960,13 @@ public class K3ServiceImpl implements K3Service {
         Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId());
 
         if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDO.getRecordType())){
-            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDO.getRecordType(),data,false);
+            Order order = (Order)data;
+            if(OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(order.getOrderStatus())){
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDO.getRecordType(),data,false);
+            }else{
+                result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+                return result;
+            }
         }else{
             webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,k3SendRecordDO.getRecordType(),data,false);
         }
