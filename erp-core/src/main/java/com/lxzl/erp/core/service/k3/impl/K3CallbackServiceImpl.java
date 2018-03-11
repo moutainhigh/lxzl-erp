@@ -103,6 +103,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
                 DeliveryOrderProductDO deliveryOrderProductDO = ConverterUtil.convert(deliveryOrderProduct, DeliveryOrderProductDO.class);
                 deliveryOrderProductDO.setDeliveryOrderId(deliveryOrderDO.getId());
+                if (orderProductDO == null) {
+                    continue;
+                }
                 deliveryOrderProductDO.setOrderProductId(orderProductDO.getId());
                 deliveryOrderProductDO.setProductId(orderProductDO.getProductId());
                 deliveryOrderProductDO.setProductSkuId(orderProductDO.getProductSkuId());
@@ -122,6 +125,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
                 DeliveryOrderMaterialDO deliveryOrderMaterialDO = ConverterUtil.convert(deliveryOrderMaterial, DeliveryOrderMaterialDO.class);
                 deliveryOrderMaterialDO.setDeliveryOrderId(deliveryOrderDO.getId());
+                if (orderMaterialDO == null) {
+                    continue;
+                }
                 deliveryOrderMaterialDO.setOrderMaterialId(orderMaterialDO.getId());
                 deliveryOrderMaterialDO.setMaterialId(orderMaterialDO.getMaterialId());
                 deliveryOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
