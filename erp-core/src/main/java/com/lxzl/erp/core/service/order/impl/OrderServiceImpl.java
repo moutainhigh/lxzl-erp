@@ -1,6 +1,8 @@
 package com.lxzl.erp.core.service.order.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
@@ -13,9 +15,12 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -34,6 +39,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
@@ -43,6 +49,7 @@ import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
@@ -62,7 +69,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.xml.rpc.ServiceException;
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -881,7 +890,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -1005,12 +1013,65 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         // 记录订单时间轴
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        IERPService service = null;
+        try {
+            K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDO.getId(), PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+            if (k3SendRecordDO == null) {
+                //创建推送记录，此时发送状态失败，接收状态失败
+                k3SendRecordDO = new K3SendRecordDO();
+                k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+                k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setRecordJson(orderDO.getOrderNo());
+                logger.info("【推送消息】" + orderDO.getOrderNo());
+                k3SendRecordDO.setSendTime(new Date());
+                k3SendRecordDO.setRecordReferId(orderDO.getId());
+                k3SendRecordMapper.save(k3SendRecordDO);
+            }
+            service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
+            com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = service.cancelOrder(orderDO.getOrderNo());
+            //修改推送记录
+            if (response==null||response.getStatus()!=0) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response,k3SendRecordDO));
+                //失败要回滚
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            } else {
+                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
+            }
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
+            k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
+            k3SendRecordMapper.update(k3SendRecordDO);
+            logger.info("【返回结果】" + response);
+
+        } catch (ServiceException e) {
+            throw new BusinessException("k3取消订单失败");
+        } catch (RemoteException e) {
+            throw new BusinessException("k3取消订单失败");
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
     }
-
+    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response,K3SendRecordDO k3SendRecordDO){
+        String type = null;
+        if("erp-prod".equals(ApplicationConfig.application)){
+            type="【线上环境】";
+        }else if("erp-dev".equals(ApplicationConfig.application)){
+            type="【开发环境】";
+        }else if("erp-adv".equals(ApplicationConfig.application)){
+            type="【预发环境】";
+        }else if("erp-test".equals(ApplicationConfig.application)){
+            type="【测试环境】";
+        }
+        StringBuffer sb = new StringBuffer(type);
+        sb.append("向K3推送【取消订单-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
+    }
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
@@ -2431,4 +2492,8 @@ public class OrderServiceImpl implements OrderService {
     private StatementOrderDetailMapper statementOrderDetailMapper;
     @Autowired
     private StatementOrderMapper statementOrderMapper;
+    @Autowired
+    private DingDingSupport dingDingSupport;
+    @Autowired
+    private K3SendRecordMapper k3SendRecordMapper;
 }

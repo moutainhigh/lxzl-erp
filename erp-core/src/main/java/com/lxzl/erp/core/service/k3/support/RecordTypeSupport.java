@@ -91,7 +91,7 @@ public class RecordTypeSupport {
             if(userDO != null){
                 recordRefer = userDO.getUserName();
             }
-        }else if(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(recordType)){
+        }else if(PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(recordType)){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
             if(k3ReturnOrderDO != null){
                 recordRefer = k3ReturnOrderDO.getReturnOrderNo();
@@ -126,7 +126,7 @@ public class RecordTypeSupport {
         }else if(PostK3Type.POST_K3_TYPE_USER.equals(recordType)){
             UserDO userDO = userMapper.findByUserId(recordReferId);
             return ConverterUtil.convert(userDO,User.class);
-        }else if(PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(recordType)){
+        }else if(PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(recordType)){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(recordReferId);
             return ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
         }
