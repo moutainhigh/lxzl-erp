@@ -898,6 +898,10 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
         if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
@@ -1020,7 +1024,7 @@ public class OrderServiceImpl implements OrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderQueryParam", orderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS,PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
