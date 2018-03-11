@@ -1051,9 +1051,9 @@ public class OrderServiceImpl implements OrderService {
             logger.info("【返回结果】" + response);
 
         } catch (ServiceException e) {
-            throw new BusinessException("k3取消订单失败");
+            throw new BusinessException("k3取消订单失败:", e.getMessage());
         } catch (RemoteException e) {
-            throw new BusinessException("k3取消订单失败");
+            throw new BusinessException("k3取消订单失败:", e.getMessage());
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
