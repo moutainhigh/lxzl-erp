@@ -537,18 +537,20 @@ public class StatementServiceImpl implements StatementService {
         }
 
         StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementPayOrderDO.getStatementOrderId());
-        if(statementOrderDO == null){
+        if (statementOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return result;
         }
 
-        BigDecimal payRentAmount = statementPayOrderDO.getPayRentAmount();
-        BigDecimal payRentDepositAmount = statementPayOrderDO.getPayRentDepositAmount();
-        BigDecimal payDepositAmount = statementPayOrderDO.getPayDepositAmount();
-        BigDecimal otherAmount = statementPayOrderDO.getOtherAmount();
-        BigDecimal overdueAmount = statementPayOrderDO.getOverdueAmount();
-        updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, overdueAmount, currentTime, loginUserId);
+        if (WeixinPayCallbackParam.NOTIFY_STATUS_SUCCESS.equals(param.getNotifyStatus())) {
+            BigDecimal payRentAmount = statementPayOrderDO.getPayRentAmount();
+            BigDecimal payRentDepositAmount = statementPayOrderDO.getPayRentDepositAmount();
+            BigDecimal payDepositAmount = statementPayOrderDO.getPayDepositAmount();
+            BigDecimal otherAmount = statementPayOrderDO.getOtherAmount();
+            BigDecimal overdueAmount = statementPayOrderDO.getOverdueAmount();
+            updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, otherAmount, overdueAmount, currentTime, loginUserId);
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -1829,7 +1831,7 @@ public class StatementServiceImpl implements StatementService {
                         oldOrderItemType = OrderItemType.ORDER_ITEM_TYPE_MATERIAL;
                     }
                     //如果单项类型和id不完全匹配则忽略此结算单
-                    if(!(oldOrderItemType.equals(statementOrderDetailDO.getOrderItemType())&&k3ChangeOrderDetailDO.getOrderItemId().equals(statementOrderDetailDO.getOrderItemReferId().toString()))){
+                    if (!(oldOrderItemType.equals(statementOrderDetailDO.getOrderItemType()) && k3ChangeOrderDetailDO.getOrderItemId().equals(statementOrderDetailDO.getOrderItemReferId().toString()))) {
                         continue;
                     }
                     //换货时间在结算开始时间和结算结束时间之间，且结算类型为租金，就计算换货时间到结算结束时间期间
@@ -1900,7 +1902,7 @@ public class StatementServiceImpl implements StatementService {
                         oldOrderItemType = OrderItemType.ORDER_ITEM_TYPE_MATERIAL;
                     }
                     //如果单项类型和id不完全匹配则忽略此结算单
-                    if(!(oldOrderItemType.equals(statementOrderDetailDO.getOrderItemType())&&k3ChangeOrderDetailDO.getOrderItemId().equals(statementOrderDetailDO.getOrderItemReferId().toString()))){
+                    if (!(oldOrderItemType.equals(statementOrderDetailDO.getOrderItemType()) && k3ChangeOrderDetailDO.getOrderItemId().equals(statementOrderDetailDO.getOrderItemReferId().toString()))) {
                         continue;
                     }
                     BigDecimal diff = BigDecimal.ZERO;
@@ -2467,7 +2469,7 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO = new StatementOrderDO();
                     statementOrderDO.setStatementOrderNo(generateNoSupport.generateStatementOrderNo(dateKey, statementOrderDetailDO.getCustomerId()));
                     statementOrderDO.setCustomerId(statementOrderDetailDO.getCustomerId());
-                    if(dateKey != null){
+                    if (dateKey != null) {
                         statementOrderDO.setStatementExpectPayTime(com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(dateKey));
                     }
                     statementOrderDO.setStatementAmount(statementOrderDetailDO.getStatementDetailAmount());
