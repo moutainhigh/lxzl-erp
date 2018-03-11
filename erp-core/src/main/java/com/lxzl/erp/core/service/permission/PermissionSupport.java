@@ -106,7 +106,7 @@ public class PermissionSupport {
     }
 
     /**
-     * 获取可查看公司（售后和仓库类型用户不限制）
+     * 获取可查看公司（售后、仓库、商务部类型用户不限制）
      *
      * @return
      */
@@ -116,7 +116,17 @@ public class PermissionSupport {
         }
         return null;
     }
-
+    /**
+     * 获取可查看公司（商务部类型用户不限制）
+     *
+     * @return
+     */
+    public Integer getCanAccessSubCompanyForBusinessAffairs(Integer userId) {
+        if (userSupport.isBusinessAffairsPerson()) {
+            return userSupport.getCompanyIdByUser(userId);
+        }
+        return null;
+    }
     /**
      * 获取当前用户可查看公司
      */
@@ -168,8 +178,8 @@ public class PermissionSupport {
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_WAREHOUSE_SUB_COMPANY)) {
             permissionParam.setPermissionSubCompanyIdList(getCanAccessSubCompanyIdList());
         }
-        if (permissionSet.contains(PermissionType.PERMISSION_TYPE_ORDER_SUB_COMPANY)) {
-            permissionParam.setPermissionSubCompanyId(getCanAccessOrderSubCompany(userId));
+        if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS)) {
+            permissionParam.setPermissionSubCompanyIdForDelivery(getCanAccessSubCompanyForBusinessAffairs(userId));
         }
         return permissionParam;
     }

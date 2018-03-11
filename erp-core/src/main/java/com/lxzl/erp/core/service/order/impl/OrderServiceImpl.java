@@ -30,7 +30,6 @@ import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.warehouse.impl.support.WarehouseSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
-import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -40,7 +39,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -774,7 +772,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(orderDO);
                 //获取订单详细信息，发送给k3
                 Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order,true);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order, true);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
@@ -954,7 +952,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())||
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
@@ -1022,7 +1020,7 @@ public class OrderServiceImpl implements OrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderQueryParam", orderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE,PermissionType.PERMISSION_TYPE_ORDER_SUB_COMPANY, PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS,PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
