@@ -46,8 +46,8 @@ public class ERPUnTransactionalTest extends BaseUnTransactionalTest {
         try {
 //            sessionResult = getLoginSession("lxcs","123456");//采购部审核人
 //            sessionResult = getLoginSession("liuke","Lxzl123456");
-//            sessionResult = getLoginSession("admin", "lxzl123.456");
-            sessionResult = getLoginSession("13564297176", "lxzl123.456");//分公司商务
+            sessionResult = getLoginSession("admin", "lxzl123.456");
+//            sessionResult = getLoginSession("13564297176", "lxzl123.456");//分公司商务
 //            sessionResult = getLoginSession("13725566675", "lxzl123.456");//总公司商务
 //            sessionResult = getLoginSession("13403752683", "lxzl123.456");//电销
 //            sessionResult = getLoginSession("maotao", "Lxzl123456");
