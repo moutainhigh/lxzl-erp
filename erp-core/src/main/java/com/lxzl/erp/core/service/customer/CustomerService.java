@@ -2,14 +2,13 @@ package com.lxzl.erp.core.service.customer;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.core.service.VerifyReceiver;
 
-public interface CustomerService {
+public interface CustomerService extends VerifyReceiver {
     ServiceResult<String,String> addCompany(Customer customer);
     ServiceResult<String,String> addPerson(Customer customer);
     ServiceResult<String,String> updateCompany(Customer customer);
@@ -123,5 +122,13 @@ public interface CustomerService {
      */
     ServiceResult<String, Customer> queryCustomerByNo(String customerNo);
 
-//
+    /**
+     * 提交客户审核到工作流
+     *
+     * @param customerCommitParam
+     * @return
+     */
+    ServiceResult<String,String> commitCustomerToWorkflow(CustomerCommitParam customerCommitParam);
+
+    ServiceResult<String,String> rejectPassCustomer(CustomerRejectParam customerRejectParam);
 }

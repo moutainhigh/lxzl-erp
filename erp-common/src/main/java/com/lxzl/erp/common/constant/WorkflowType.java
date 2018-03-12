@@ -70,6 +70,20 @@ public class WorkflowType {
      */
     public static final Integer WORKFLOW_TYPE_K3_RETURN = 15;
 
+    /**
+     * 各分公司客户审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_SZ_CUSTOMER = 16;
+    public static final Integer WORKFLOW_TYPE_SH_CUSTOMER = 17;
+    public static final Integer WORKFLOW_TYPE_BJ_CUSTOMER = 18;
+    public static final Integer WORKFLOW_TYPE_GZ_CUSTOMER = 19;
+    public static final Integer WORKFLOW_TYPE_NG_CUSTOMER = 20;
+    public static final Integer WORKFLOW_TYPE_XM_CUSTOMER = 21;
+    public static final Integer WORKFLOW_TYPE_WH_CUSTOMER = 22;
+    public static final Integer WORKFLOW_TYPE_CD_CUSTOMER = 23;
+    public static final Integer WORKFLOW_TYPE_DX_CUSTOMER = 24;
+
+
 
     public static String getWorkflowTypeDesc(Integer workflowType) {
         if (WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -100,6 +114,24 @@ public class WorkflowType {
             return "K3换货单";
         } else if (WORKFLOW_TYPE_K3_RETURN.equals(workflowType)) {
             return "K3退货单";
+        } else if (WORKFLOW_TYPE_SZ_CUSTOMER.equals(workflowType)) {
+            return "深圳分公司客户";
+        } else if (WORKFLOW_TYPE_SH_CUSTOMER.equals(workflowType)) {
+            return "上海分公司客户";
+        } else if (WORKFLOW_TYPE_BJ_CUSTOMER.equals(workflowType)) {
+            return "北京分公司客户";
+        } else if (WORKFLOW_TYPE_GZ_CUSTOMER.equals(workflowType)) {
+            return "广州分公司客户";
+        } else if (WORKFLOW_TYPE_NG_CUSTOMER.equals(workflowType)) {
+            return "南京分公司客户";
+        } else if (WORKFLOW_TYPE_XM_CUSTOMER.equals(workflowType)) {
+            return "厦门分公司客户";
+        } else if (WORKFLOW_TYPE_WH_CUSTOMER.equals(workflowType)) {
+            return "武汉分公司客户";
+        } else if (WORKFLOW_TYPE_CD_CUSTOMER.equals(workflowType)) {
+            return "成都分公司客户";
+        } else if (WORKFLOW_TYPE_DX_CUSTOMER.equals(workflowType)) {
+            return "电销的客户";
         } else {
             return "其他";
         }
