@@ -20,6 +20,7 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -398,11 +399,13 @@ public class PaymentServiceImpl implements PaymentService {
                 List<ChargeRecord> chargeRecordPageList = chargeRecordPage.getItemList();
                 for (int i = 0; i < chargeRecordPageList.size(); i++) {
                     ChargeRecord chargeRecord = JSONUtil.parseObject(chargeRecordPageList.get(i), ChargeRecord.class);
-                    CustomerDO dbCusetomerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
-                    if (dbCusetomerDO == null) {
-                        chargeRecord.setCustomerName("");
-                    } else {
-                        chargeRecord.setCustomerName(dbCusetomerDO.getCustomerName());
+                    if(StringUtil.isBlank(chargeRecord.getCustomerName())){
+                        CustomerDO dbCustomerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
+                        if (dbCustomerDO == null) {
+                            chargeRecord.setCustomerName("");
+                        } else {
+                            chargeRecord.setCustomerName(dbCustomerDO.getCustomerName());
+                        }
                     }
                     chargeRecordList.add(chargeRecord);
                 }
