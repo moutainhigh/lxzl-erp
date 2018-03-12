@@ -387,9 +387,7 @@ public class PaymentServiceImpl implements PaymentService {
                         requestJson = jsonObject.toJSONString();
                     }
                 }
-
             }
-
 
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
@@ -399,13 +397,15 @@ public class PaymentServiceImpl implements PaymentService {
                 List<ChargeRecord> chargeRecordPageList = chargeRecordPage.getItemList();
                 for (int i = 0; i < chargeRecordPageList.size(); i++) {
                     ChargeRecord chargeRecord = JSONUtil.parseObject(chargeRecordPageList.get(i), ChargeRecord.class);
-                    if(StringUtil.isBlank(chargeRecord.getCustomerName())){
+                    if (StringUtil.isBlank(chargeRecord.getBusinessCustomerName())) {
                         CustomerDO dbCustomerDO = customerMapper.findByNo(chargeRecord.getBusinessCustomerNo());
                         if (dbCustomerDO == null) {
                             chargeRecord.setCustomerName("");
                         } else {
                             chargeRecord.setCustomerName(dbCustomerDO.getCustomerName());
                         }
+                    } else {
+                        chargeRecord.setCustomerName(chargeRecord.getBusinessCustomerName());
                     }
                     chargeRecordList.add(chargeRecord);
                 }
@@ -413,7 +413,7 @@ public class PaymentServiceImpl implements PaymentService {
                 result.setResult(chargeRecordPage);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
-            }else if("J000031".equals(paymentResult.getCode())){
+            } else if ("J000031".equals(paymentResult.getCode())) {
                 Page<ChargeRecord> page = new Page<>();
                 result.setResult(page);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -489,11 +489,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String,  Map<String,Object>> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam) {
-        ServiceResult<String,  Map<String,Object>> result = new ServiceResult<>();
+    public ServiceResult<String, Map<String, Object>> queryCustomerAccountLogPage(CustomerAccountLogParam customerAccountLogParam) {
+        ServiceResult<String, Map<String, Object>> result = new ServiceResult<>();
 
         CustomerDO customerDO = customerMapper.findByNo(customerAccountLogParam.getBusinessCustomerNo());
-        if(customerDO == null){
+        if (customerDO == null) {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
@@ -507,15 +507,15 @@ public class PaymentServiceImpl implements PaymentService {
 
             String requestJson;
             JSONObject jsonObject;
-            if(customerAccountLogParam.getCustomerAccountLogType() == null){
+            if (customerAccountLogParam.getCustomerAccountLogType() == null) {
                 requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
-                jsonObject=JSON.parseObject(requestJson);
+                jsonObject = JSON.parseObject(requestJson);
                 jsonObject.remove("customerAccountLogType");
                 jsonObject.remove("count");
                 requestJson = jsonObject.toJSONString();
-            }else{
+            } else {
                 requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
-                jsonObject=JSON.parseObject(requestJson);
+                jsonObject = JSON.parseObject(requestJson);
                 jsonObject.remove("count");
                 requestJson = jsonObject.toJSONString();
             }
@@ -524,7 +524,7 @@ public class PaymentServiceImpl implements PaymentService {
             logger.info("query Customer Account Log Page response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
-                Map<String,Object> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+                Map<String, Object> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
 
                 result.setResult(map);
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -537,8 +537,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, Map<String,Object>> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param) {
-        ServiceResult<String,  Map<String,Object>> result = new ServiceResult<>();
+    public ServiceResult<String, Map<String, Object>> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param) {
+        ServiceResult<String, Map<String, Object>> result = new ServiceResult<>();
 
         CustomerAccountLogParam customerAccountLogParam = new CustomerAccountLogParam();
         customerAccountLogParam.setPageSize(param.getPageSize());
@@ -556,15 +556,15 @@ public class PaymentServiceImpl implements PaymentService {
 
             String requestJson;
             JSONObject jsonObject;
-            if(customerAccountLogParam.getCustomerAccountLogType() == null){
+            if (customerAccountLogParam.getCustomerAccountLogType() == null) {
                 requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
-                jsonObject=JSON.parseObject(requestJson);
+                jsonObject = JSON.parseObject(requestJson);
                 jsonObject.remove("customerAccountLogType");
                 jsonObject.remove("count");
                 requestJson = jsonObject.toJSONString();
-            }else{
+            } else {
                 requestJson = FastJsonUtil.toJSONString(customerAccountLogParam);
-                jsonObject=JSON.parseObject(requestJson);
+                jsonObject = JSON.parseObject(requestJson);
                 jsonObject.remove("count");
                 requestJson = jsonObject.toJSONString();
             }
@@ -573,7 +573,7 @@ public class PaymentServiceImpl implements PaymentService {
             logger.info("weixin Query Customer Account Log Page response:{}", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
-                Map<String,Object> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
+                Map<String, Object> map = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), HashMap.class);
 
                 result.setResult(map);
                 result.setErrorCode(ErrorCode.SUCCESS);
