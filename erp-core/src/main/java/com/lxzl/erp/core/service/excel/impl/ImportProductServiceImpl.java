@@ -75,6 +75,544 @@ public class ImportProductServiceImpl implements ImportProductService {
     @Autowired
     private GenerateNoSupport generateNoSupport;
 
+
+    // 复印机
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String importCopierProduct(String filePath) throws Exception {
+        Integer categoryId = 800008;
+        FileInputStream fileIn = new FileInputStream(filePath);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
+        XSSFSheet xssfSheet = xssfWorkbook.getSheet("复印机");
+
+        List<ProductSku> arrayList = new ArrayList<>();
+        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+            if (xssfRow.getCell(3) == null) {
+                continue;
+            }
+            if (xssfRow.getCell(2) == null) {
+                continue;
+            }
+
+            String k3ProductNo = null, productName = xssfRow.getCell(4).toString();
+
+            if (xssfRow.getCell(0) != null) {
+                k3ProductNo = xssfRow.getCell(0).toString();
+            }
+
+            List<Integer> propertyValueIdList = new ArrayList<>();
+            propertyValueIdList.add(201);
+
+            String brandName = xssfRow.getCell(2).toString();
+            Integer brandId = brandMapper.findBrandIdByName(brandName);
+            if (brandId == null) {
+                System.out.println("复印机品牌不存在，请查看, " + brandName);
+                continue;
+            }
+
+            String productModel = xssfRow.getCell(3).toString();
+            ProductDO productDO = productMapper.findExistsProduct(brandId, categoryId, productModel);
+            // 商品不存在，直接添加，如果存在，直接判定SKU是否存在，如果存在则打印，如果不存在则添加进数据库即可
+            if (productDO == null) {
+                Product product = new Product();
+                product.setProductName(productName);
+                product.setK3ProductNo(k3ProductNo);
+                product.setProductModel(productModel);
+                product.setUnit(300016);
+                product.setCategoryId(categoryId);
+                product.setBrandId(brandId);
+                product.setIsRent(CommonConstant.COMMON_CONSTANT_YES);
+                product.setIsReturnAnyTime(CommonConstant.COMMON_CONSTANT_NO);
+
+                List<ProductSkuProperty> productPropertyList = new ArrayList<>();
+                ProductSkuProperty productSkuProperty = new ProductSkuProperty();
+                productSkuProperty.setPropertyValueId(202);
+                productPropertyList.add(productSkuProperty);
+                product.setProductPropertyList(productPropertyList);
+
+                List<ProductSku> productSkuList = new ArrayList<>();
+                ProductSku productSku = new ProductSku();
+                List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                for (Integer valueId : propertyValueIdList) {
+                    ProductSkuProperty skuProperty = new ProductSkuProperty();
+                    skuProperty.setPropertyValueId(valueId);
+                    productSkuPropertyList.add(skuProperty);
+                }
+                productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+
+
+                productSkuList.add(productSku);
+
+                product.setProductSkuList(productSkuList);
+
+                ServiceResult<String, Integer> result = productService.addProduct(product);
+                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                    System.out.println("商品保存失败:" + productName);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                }
+            } else {
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("productId", productDO.getId());
+                maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
+                maps.put("propertyValueIdList", propertyValueIdList);
+                maps.put("propertyValueIdCount", propertyValueIdList.size());
+                Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
+                if (skuId == null) {
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    ProductSku productSku = new ProductSku();
+                    List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                    for (Integer valueId : propertyValueIdList) {
+                        ProductSkuProperty skuProperty = new ProductSkuProperty();
+                        skuProperty.setPropertyValueId(valueId);
+                        productSkuPropertyList.add(skuProperty);
+                    }
+                    productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                    productSku.setProductId(product.getProductId());
+
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+
+
+                    productSkuList.add(productSku);
+
+                    product.setProductSkuList(productSkuList);
+
+                    ServiceResult<String, Integer> result = productService.updateProduct(product);
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                        System.out.println("商品更新失败:" + productName);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+    // 交换机
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String importSwitchboardProduct(String filePath) throws Exception {
+        Integer categoryId = 800011;
+        FileInputStream fileIn = new FileInputStream(filePath);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
+        XSSFSheet xssfSheet = xssfWorkbook.getSheet("交换机");
+
+        List<ProductSku> arrayList = new ArrayList<>();
+        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+            if (xssfRow.getCell(3) == null) {
+                continue;
+            }
+            if (xssfRow.getCell(2) == null) {
+                continue;
+            }
+
+            String k3ProductNo = null, productName = xssfRow.getCell(4).toString();
+
+            if (xssfRow.getCell(0) != null) {
+                k3ProductNo = xssfRow.getCell(0).toString();
+            }
+
+            List<Integer> propertyValueIdList = new ArrayList<>();
+            propertyValueIdList.add(215);
+
+            String brandName = xssfRow.getCell(2).toString();
+            Integer brandId = brandMapper.findBrandIdByName(brandName);
+            if (brandId == null) {
+                System.out.println("交换机品牌不存在，请查看, " + brandName);
+                continue;
+            }
+
+            String productModel = xssfRow.getCell(3).toString();
+            ProductDO productDO = productMapper.findExistsProduct(brandId, categoryId, productModel);
+            // 商品不存在，直接添加，如果存在，直接判定SKU是否存在，如果存在则打印，如果不存在则添加进数据库即可
+            if (productDO == null) {
+                Product product = new Product();
+                product.setProductName(productName);
+                product.setK3ProductNo(k3ProductNo);
+                product.setProductModel(productModel);
+                product.setUnit(300016);
+                product.setCategoryId(categoryId);
+                product.setBrandId(brandId);
+                product.setIsRent(CommonConstant.COMMON_CONSTANT_YES);
+                product.setIsReturnAnyTime(CommonConstant.COMMON_CONSTANT_NO);
+
+                List<ProductSkuProperty> productPropertyList = new ArrayList<>();
+                ProductSkuProperty productSkuProperty = new ProductSkuProperty();
+                productSkuProperty.setPropertyValueId(216);
+                productPropertyList.add(productSkuProperty);
+                product.setProductPropertyList(productPropertyList);
+
+                List<ProductSku> productSkuList = new ArrayList<>();
+                ProductSku productSku = new ProductSku();
+                List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                for (Integer valueId : propertyValueIdList) {
+                    ProductSkuProperty skuProperty = new ProductSkuProperty();
+                    skuProperty.setPropertyValueId(valueId);
+                    productSkuPropertyList.add(skuProperty);
+                }
+                productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+
+
+                productSkuList.add(productSku);
+
+                product.setProductSkuList(productSkuList);
+
+                ServiceResult<String, Integer> result = productService.addProduct(product);
+                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                    System.out.println("商品保存失败:" + productName);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                }
+            } else {
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("productId", productDO.getId());
+                maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
+                maps.put("propertyValueIdList", propertyValueIdList);
+                maps.put("propertyValueIdCount", propertyValueIdList.size());
+                Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
+                if (skuId == null) {
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    ProductSku productSku = new ProductSku();
+                    List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                    for (Integer valueId : propertyValueIdList) {
+                        ProductSkuProperty skuProperty = new ProductSkuProperty();
+                        skuProperty.setPropertyValueId(valueId);
+                        productSkuPropertyList.add(skuProperty);
+                    }
+                    productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                    productSku.setProductId(product.getProductId());
+
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+
+
+                    productSkuList.add(productSku);
+
+                    product.setProductSkuList(productSkuList);
+
+                    ServiceResult<String, Integer> result = productService.updateProduct(product);
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                        System.out.println("商品更新失败:" + productName);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+    // 路由器
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String importRouterProduct(String filePath) throws Exception {
+        Integer categoryId = 800014;
+        FileInputStream fileIn = new FileInputStream(filePath);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
+        XSSFSheet xssfSheet = xssfWorkbook.getSheet("路由器");
+
+        List<ProductSku> arrayList = new ArrayList<>();
+        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+            if (xssfRow.getCell(3) == null) {
+                continue;
+            }
+            if (xssfRow.getCell(2) == null) {
+                continue;
+            }
+
+            String k3ProductNo = null, productName = xssfRow.getCell(4).toString();
+
+            if (xssfRow.getCell(0) != null) {
+                k3ProductNo = xssfRow.getCell(0).toString();
+            }
+
+            List<Integer> propertyValueIdList = new ArrayList<>();
+            propertyValueIdList.add(540);
+
+            String brandName = xssfRow.getCell(2).toString();
+            Integer brandId = brandMapper.findBrandIdByName(brandName);
+            if (brandId == null) {
+                System.out.println("路由器品牌不存在，请查看, " + brandName);
+                continue;
+            }
+
+            String productModel = xssfRow.getCell(3).toString();
+            ProductDO productDO = productMapper.findExistsProduct(brandId, categoryId, productModel);
+            // 商品不存在，直接添加，如果存在，直接判定SKU是否存在，如果存在则打印，如果不存在则添加进数据库即可
+            if (productDO == null) {
+                Product product = new Product();
+                product.setProductName(productName);
+                product.setK3ProductNo(k3ProductNo);
+                product.setProductModel(productModel);
+                product.setUnit(300016);
+                product.setCategoryId(categoryId);
+                product.setBrandId(brandId);
+                product.setIsRent(CommonConstant.COMMON_CONSTANT_YES);
+                product.setIsReturnAnyTime(CommonConstant.COMMON_CONSTANT_NO);
+
+                List<ProductSkuProperty> productPropertyList = new ArrayList<>();
+                ProductSkuProperty productSkuProperty = new ProductSkuProperty();
+                productSkuProperty.setPropertyValueId(541);
+                productPropertyList.add(productSkuProperty);
+                product.setProductPropertyList(productPropertyList);
+
+                List<ProductSku> productSkuList = new ArrayList<>();
+                ProductSku productSku = new ProductSku();
+                List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                for (Integer valueId : propertyValueIdList) {
+                    ProductSkuProperty skuProperty = new ProductSkuProperty();
+                    skuProperty.setPropertyValueId(valueId);
+                    productSkuPropertyList.add(skuProperty);
+                }
+                productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+
+
+                productSkuList.add(productSku);
+
+                product.setProductSkuList(productSkuList);
+
+                ServiceResult<String, Integer> result = productService.addProduct(product);
+                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                    System.out.println("商品保存失败:" + productName);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                }
+            } else {
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("productId", productDO.getId());
+                maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
+                maps.put("propertyValueIdList", propertyValueIdList);
+                maps.put("propertyValueIdCount", propertyValueIdList.size());
+                Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
+                if (skuId == null) {
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    ProductSku productSku = new ProductSku();
+                    List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                    for (Integer valueId : propertyValueIdList) {
+                        ProductSkuProperty skuProperty = new ProductSkuProperty();
+                        skuProperty.setPropertyValueId(valueId);
+                        productSkuPropertyList.add(skuProperty);
+                    }
+                    productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                    productSku.setProductId(product.getProductId());
+
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+
+
+                    productSkuList.add(productSku);
+
+                    product.setProductSkuList(productSkuList);
+
+                    ServiceResult<String, Integer> result = productService.updateProduct(product);
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                        System.out.println("商品更新失败:" + productName);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
+
+
+    // 平板电脑
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String importPadProduct(String filePath) throws Exception {
+        Integer categoryId = 800005;
+        FileInputStream fileIn = new FileInputStream(filePath);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileIn);
+        XSSFSheet xssfSheet = xssfWorkbook.getSheet("平板电脑");
+
+        List<ProductSku> arrayList = new ArrayList<>();
+        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+            if (xssfRow.getCell(3) == null) {
+                continue;
+            }
+            if (xssfRow.getCell(2) == null) {
+                continue;
+            }
+
+            String k3ProductNo = null, productName = xssfRow.getCell(4).toString(), cpu = xssfRow.getCell(5).toString(), memory = null, hdd = null, size = xssfRow.getCell(7).toString();
+            if (xssfRow.getCell(0) != null) {
+                k3ProductNo = xssfRow.getCell(0).toString();
+            }
+            if (xssfRow.getCell(6) != null) {
+                memory = xssfRow.getCell(6).toString();
+            }
+
+            List<Integer> propertyValueIdList = new ArrayList<>();
+            // 判断CPU是否存在，如果不存在，添加，否则直接用
+            ProductCategoryPropertyValueDO cpuProductCategoryPropertyValueDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryId(cpu, categoryId);
+            if (cpuProductCategoryPropertyValueDO == null) {
+                ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(cpu, 7, categoryId, "平板电脑CPU" + cpu);
+                productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+            } else {
+                propertyValueIdList.add(cpuProductCategoryPropertyValueDO.getId());
+            }
+            if (memory != null) {
+                ProductCategoryPropertyValueDO memoryProductCategoryPropertyValueDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryId(memory, categoryId);
+                if (memoryProductCategoryPropertyValueDO == null) {
+                    ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(memory, 8, categoryId, "平板电脑内存" + memory);
+                    productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+                } else {
+                    propertyValueIdList.add(memoryProductCategoryPropertyValueDO.getId());
+                }
+            }
+            ProductCategoryPropertyValueDO sizeProductCategoryPropertyValueDO = productCategoryPropertyValueMapper.findByPropertyValueNameAndCategoryId(size, categoryId);
+            if (sizeProductCategoryPropertyValueDO == null) {
+                ProductCategoryPropertyValueDO productCategoryPropertyValueDO = buildProductCategoryPropertyValueDO(size, 10, categoryId, "平板电脑尺寸" + size);
+                productCategoryPropertyValueMapper.save(productCategoryPropertyValueDO);
+            } else {
+                propertyValueIdList.add(sizeProductCategoryPropertyValueDO.getId());
+            }
+
+            String brandName = xssfRow.getCell(2).toString();
+            Integer brandId = brandMapper.findBrandIdByName(brandName);
+            if (brandId == null) {
+                System.out.println("平板电脑品牌不存在，请查看, " + brandName);
+                continue;
+            }
+
+            String productModel = xssfRow.getCell(3).toString();
+            ProductDO productDO = productMapper.findExistsProduct(brandId, categoryId, productModel);
+            // 商品不存在，直接添加，如果存在，直接判定SKU是否存在，如果存在则打印，如果不存在则添加进数据库即可
+            if (productDO == null) {
+                Product product = new Product();
+                product.setProductName(productName);
+                product.setK3ProductNo(k3ProductNo);
+                product.setProductModel(productModel);
+                product.setUnit(300016);
+                product.setCategoryId(categoryId);
+                product.setBrandId(brandId);
+                product.setIsRent(CommonConstant.COMMON_CONSTANT_YES);
+                product.setIsReturnAnyTime(CommonConstant.COMMON_CONSTANT_NO);
+
+                List<ProductSkuProperty> productPropertyList = new ArrayList<>();
+                ProductSkuProperty productSkuProperty = new ProductSkuProperty();
+                productSkuProperty.setPropertyValueId(76);
+                productPropertyList.add(productSkuProperty);
+                product.setProductPropertyList(productPropertyList);
+
+                List<ProductSku> productSkuList = new ArrayList<>();
+                ProductSku productSku = new ProductSku();
+                List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                for (Integer valueId : propertyValueIdList) {
+                    ProductSkuProperty skuProperty = new ProductSkuProperty();
+                    skuProperty.setPropertyValueId(valueId);
+                    productSkuPropertyList.add(skuProperty);
+                }
+                productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
+
+
+                productSkuList.add(productSku);
+
+                product.setProductSkuList(productSkuList);
+
+                ServiceResult<String, Integer> result = productService.addProduct(product);
+                if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                    System.out.println("商品保存失败:" + productName);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                }
+            } else {
+                Map<String, Object> maps = new HashMap<>();
+                maps.put("productId", productDO.getId());
+                maps.put("isSku", CommonConstant.COMMON_CONSTANT_YES);
+                maps.put("propertyValueIdList", propertyValueIdList);
+                maps.put("propertyValueIdCount", propertyValueIdList.size());
+                Integer skuId = productSkuPropertyMapper.findSkuIdByParams(maps);
+                if (skuId == null) {
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    ProductSku productSku = new ProductSku();
+                    List<ProductSkuProperty> productSkuPropertyList = new ArrayList<>();
+                    for (Integer valueId : propertyValueIdList) {
+                        ProductSkuProperty skuProperty = new ProductSkuProperty();
+                        skuProperty.setPropertyValueId(valueId);
+                        productSkuPropertyList.add(skuProperty);
+                    }
+                    productSku.setProductSkuPropertyList(productSkuPropertyList);
+
+                    productSku.setProductId(product.getProductId());
+
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
+
+
+                    productSkuList.add(productSku);
+
+                    product.setProductSkuList(productSkuList);
+
+                    ServiceResult<String, Integer> result = productService.updateProduct(product);
+                    if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                        System.out.println("商品更新失败:" + productName);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
     // 投影仪
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -330,7 +868,7 @@ public class ImportProductServiceImpl implements ImportProductService {
         return ErrorCode.SUCCESS;
     }
 
-    // 显示器
+    // 手机
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importPhoneProduct(String filePath) throws Exception {
@@ -458,7 +996,7 @@ public class ImportProductServiceImpl implements ImportProductService {
         return ErrorCode.SUCCESS;
     }
 
-    // 显示器
+    // 电视机
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importMonitorProduct(String filePath) throws Exception {
@@ -593,7 +1131,7 @@ public class ImportProductServiceImpl implements ImportProductService {
         return ErrorCode.SUCCESS;
     }
 
-    // 台式机
+    // 电视机
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importTVProduct(String filePath) throws Exception {
@@ -728,7 +1266,7 @@ public class ImportProductServiceImpl implements ImportProductService {
         return ErrorCode.SUCCESS;
     }
 
-    // 台式机
+    // 一体机
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String importAIOProduct(String filePath) throws Exception {

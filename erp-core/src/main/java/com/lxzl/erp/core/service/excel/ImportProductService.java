@@ -15,4 +15,8 @@ public interface ImportProductService {
     String importPhoneProduct(String filePath) throws Exception;
     String importPrinterProduct(String filePath) throws Exception;
     String importProjectorProduct(String filePath) throws Exception;
+    String importPadProduct(String filePath) throws Exception;
+    String importCopierProduct(String filePath) throws Exception;
+    String importSwitchboardProduct(String filePath) throws Exception;
+    String importRouterProduct(String filePath) throws Exception;
 }

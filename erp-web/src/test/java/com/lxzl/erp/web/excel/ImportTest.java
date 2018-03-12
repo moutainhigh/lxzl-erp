@@ -21,6 +21,10 @@ public class ImportTest extends ERPUnTransactionalTest {
 //        TestResult testResult = getJsonTestResult("/excel/importMonitorProduct", null);
 //        TestResult testResult = getJsonTestResult("/excel/importPhoneProduct", null);
 //        TestResult testResult = getJsonTestResult("/excel/importPrinterProduct", null);
-        TestResult testResult = getJsonTestResult("/excel/importProjectorProduct", null);
+//        TestResult testResult = getJsonTestResult("/excel/importProjectorProduct", null);
+//        TestResult testResult = getJsonTestResult("/excel/importPadProduct", null);
+        TestResult testResult = getJsonTestResult("/excel/importCopierProduct", null);
+//        TestResult testResult = getJsonTestResult("/excel/importSwitchboardProduct", null);
+//        TestResult testResult = getJsonTestResult("/excel/importRouterProduct", null);
     }
 }
