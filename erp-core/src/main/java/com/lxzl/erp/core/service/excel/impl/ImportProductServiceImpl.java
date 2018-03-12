@@ -6,19 +6,14 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.excel.ImportProductService;
 import com.lxzl.erp.core.service.product.ProductService;
-import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.basic.BrandMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialModelMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.*;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,9 +26,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -49,9 +41,6 @@ public class ImportProductServiceImpl implements ImportProductService {
     private ProductMapper productMapper;
 
     @Autowired
-    private ProductSkuMapper productSkuMapper;
-
-    @Autowired
     private BrandMapper brandMapper;
 
     @Autowired
@@ -61,19 +50,7 @@ public class ImportProductServiceImpl implements ImportProductService {
     private ProductSkuPropertyMapper productSkuPropertyMapper;
 
     @Autowired
-    private ProductCategoryPropertyMapper productCategoryPropertyMapper;
-
-    @Autowired
     private ProductCategoryPropertyValueMapper productCategoryPropertyValueMapper;
-
-    @Autowired
-    private MaterialModelMapper materialModelMapper;
-
-    @Autowired
-    private UserSupport userSupport;
-
-    @Autowired
-    private GenerateNoSupport generateNoSupport;
 
 
     // 服务器
@@ -1984,18 +1961,6 @@ public class ImportProductServiceImpl implements ImportProductService {
         }
 
         return ErrorCode.SUCCESS;
-    }
-
-
-    public static List removeDuplicate(List list) {
-        for (int i = 0; i < list.size() - 1; i++) {
-            for (int j = list.size() - 1; j > i; j--) {
-                if (list.get(j).equals(list.get(i))) {
-                    list.remove(j);
-                }
-            }
-        }
-        return list;
     }
 
     ProductCategoryPropertyValueDO buildProductCategoryPropertyValueDO(String propertyValueName, Integer propertyId, Integer categoryId, String remark) {
