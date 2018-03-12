@@ -220,7 +220,7 @@ public class PostTest extends ERPUnTransactionalTest {
     public void postReturnOrder() throws InterruptedException {
 
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo("53f0140d84834f4e8502619ca88bb4a4");
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER, ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class),true);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_RETURN_ORDER, ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class),true);
         Thread.sleep(100000);
     }
 
