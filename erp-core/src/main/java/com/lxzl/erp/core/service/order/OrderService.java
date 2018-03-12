@@ -153,4 +153,12 @@ public interface OrderService extends VerifyReceiver {
      * @return 操作结果
      */
     ServiceResult<String, String> returnBulkMaterial(String orderNo, String returnNBulkMaterialNo, String changeBulkMaterialNo, Date returnDate);
+    /**
+    * 强制取消订单
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/9 18:52
+    * @param : orderNo
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String, String> forceCancelOrder(String orderNo);
 }

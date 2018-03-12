@@ -23,7 +23,7 @@
                 <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="pull-left pl10">
                                 <script type="text/html" id="actionCommonButtonsTpl">
                                     <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
@@ -35,7 +35,7 @@
 
                                 <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
-                            <div class="col-md-9 text-right">
+                            <div class="text-right pull-right pr10">
                                 <form id="searchForm" class="form-horizontal">
                                     <div class="pull-right">
                                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
@@ -69,6 +69,13 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="form-group pull-right mn mr10" style="width: 210px;">
                                         <input type="hidden" name="createStartTime" id="createStartTime" />
                                         <input type="hidden" name="createEndTime" id="createEndTime" />
@@ -96,7 +103,8 @@
                                         </th>
                                         {{/hasCommonActionButtons}}
                                         <th>订单编号</th>
-                                        <th>订单归属</th>
+                                        <th>所属公司</th>
+                                        <th>发货公司</th>
                                         <th>送货日期</th>
                                         <th>客户</th>
                                         <th>商品名</th>
@@ -125,6 +133,7 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{orderSubCompanyName}}</td>
+                                            <td>{{deliverySubCompanyName}}</td>
                                             <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                                             <td>{{buyerCustomerName}}</td>
                                             <td>

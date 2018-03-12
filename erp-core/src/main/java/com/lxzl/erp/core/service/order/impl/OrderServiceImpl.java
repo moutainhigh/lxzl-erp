@@ -1,6 +1,8 @@
 package com.lxzl.erp.core.service.order.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
@@ -13,9 +15,12 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -34,16 +39,17 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
@@ -63,7 +69,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.xml.rpc.ServiceException;
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -93,14 +101,16 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getOrderSubCompanyId());
-            if (order.getOrderSubCompanyId() == null || subCompanyDO == null) {
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+            if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
                 result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
                 return result;
             }
-            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
         }
         SubCompanyDO subCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
@@ -166,14 +176,16 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getOrderSubCompanyId());
-            if (order.getOrderSubCompanyId() == null || subCompanyDO == null) {
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+            if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
                 result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
                 return result;
             }
-            orderDO.setOrderSubCompanyId(order.getOrderSubCompanyId());
+            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
         } else {
             orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+            orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
         }
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
@@ -321,14 +333,14 @@ public class OrderServiceImpl implements OrderService {
         boolean isNeedVerify = isNeedVerifyResult.getResult();
 
         String orderRemark = null;
-        if(orderDO.getRentType() == OrderRentType.RENT_TYPE_DAY){
+        if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
             orderRemark = "租赁类型：天租";
-        }else if(orderDO.getRentType() == OrderRentType.RENT_TYPE_MONTH){
+        } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
             orderRemark = "租赁类型：月租";
         }
 
         if (isNeedVerify) {
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark, orderCommitParam.getImgIdList(),orderRemark);
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());
@@ -769,7 +781,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(orderDO);
                 //获取订单详细信息，发送给k3
                 Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order,true);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order, true);
             } else {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
                 // 如果拒绝，则退还授信额度
@@ -878,7 +890,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -887,6 +898,41 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> cancelOrder(String orderNo) {
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (orderDO.getOrderStatus() == null || !OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
+            return result;
+        }
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> forceCancelOrder(String orderNo) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -918,7 +964,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())||
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
@@ -971,12 +1017,65 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         // 记录订单时间轴
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        IERPService service = null;
+        try {
+            K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDO.getId(), PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+            if (k3SendRecordDO == null) {
+                //创建推送记录，此时发送状态失败，接收状态失败
+                k3SendRecordDO = new K3SendRecordDO();
+                k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+                k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setRecordJson(orderDO.getOrderNo());
+                logger.info("【推送消息】" + orderDO.getOrderNo());
+                k3SendRecordDO.setSendTime(new Date());
+                k3SendRecordDO.setRecordReferId(orderDO.getId());
+                k3SendRecordMapper.save(k3SendRecordDO);
+            }
+            service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
+            com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = service.cancelOrder(orderDO.getOrderNo());
+            //修改推送记录
+            if (response==null||response.getStatus()!=0) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response,k3SendRecordDO));
+                //失败要回滚
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            } else {
+                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
+            }
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
+            k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
+            k3SendRecordMapper.update(k3SendRecordDO);
+            logger.info("【返回结果】" + response);
+
+        } catch (ServiceException e) {
+            throw new BusinessException("k3取消订单失败:", e.getMessage());
+        } catch (RemoteException e) {
+            throw new BusinessException("k3取消订单失败:", e.getMessage());
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
     }
-
+    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response,K3SendRecordDO k3SendRecordDO){
+        String type = null;
+        if("erp-prod".equals(ApplicationConfig.application)){
+            type="【线上环境】";
+        }else if("erp-dev".equals(ApplicationConfig.application)){
+            type="【开发环境】";
+        }else if("erp-adv".equals(ApplicationConfig.application)){
+            type="【预发环境】";
+        }else if("erp-test".equals(ApplicationConfig.application)){
+            type="【测试环境】";
+        }
+        StringBuffer sb = new StringBuffer(type);
+        sb.append("向K3推送【取消订单-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
+    }
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
@@ -985,9 +1084,8 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-
         maps.put("orderQueryParam", orderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
@@ -2399,5 +2497,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private StatementOrderMapper statementOrderMapper;
     @Autowired
-    private RoleMapper roleMapper;
+    private DingDingSupport dingDingSupport;
+    @Autowired
+    private K3SendRecordMapper k3SendRecordMapper;
 }

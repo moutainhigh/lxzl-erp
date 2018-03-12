@@ -11,6 +11,8 @@ public class PermissionParam implements Serializable {
     private List<Integer> permissionWarehouseIdList;
     //控制可查看分公司的数据权限
     private Integer permissionSubCompanyId;
+    //控制可查看发货分公司的数据权限
+    private Integer permissionSubCompanyIdForDelivery;
     //控制可查看公司的数据权限
     private List<Integer> permissionSubCompanyIdList;
 
@@ -35,4 +37,12 @@ public class PermissionParam implements Serializable {
     public List<Integer> getPermissionSubCompanyIdList() { return permissionSubCompanyIdList; }
 
     public void setPermissionSubCompanyIdList(List<Integer> permissionSubCompanyIdList) { this.permissionSubCompanyIdList = permissionSubCompanyIdList; }
+
+    public Integer getPermissionSubCompanyIdForDelivery() {
+        return permissionSubCompanyIdForDelivery;
+    }
+
+    public void setPermissionSubCompanyIdForDelivery(Integer permissionSubCompanyIdForDelivery) {
+        this.permissionSubCompanyIdForDelivery = permissionSubCompanyIdForDelivery;
+    }
 }

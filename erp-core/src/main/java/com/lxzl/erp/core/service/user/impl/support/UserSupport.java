@@ -143,22 +143,37 @@ public class UserSupport {
     }
 
     /**
-     * 是否是售后人员
+     * 是否是售后人员、仓库人员、商务人员
      */
     public boolean isServicePerson(Integer userId) {
         List<Role> userRoleList = getCurrentUser().getRoleList();
         if (CollectionUtil.isNotEmpty(userRoleList)) {
             for (Role role : userRoleList) {
                 DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
-                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())
-                        || DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())) {
+                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())||
+                        DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())||
+                        DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())) {
                     return true;
                 }
             }
         }
         return false;
     }
-
+    /**
+     * 是否是商务人员
+     */
+    public boolean isBusinessAffairsPerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * 是否是库房人员
      */

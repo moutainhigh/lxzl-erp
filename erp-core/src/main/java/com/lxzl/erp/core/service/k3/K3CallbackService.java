@@ -15,4 +15,6 @@ import com.lxzl.se.core.service.BaseService;
 public interface K3CallbackService extends BaseService {
 
     ServiceResult<String, String> callbackDelivery(DeliveryOrder deliveryOrder);
+
+    ServiceResult<String, String> callbackCancelOrder(String orderNo);
 }

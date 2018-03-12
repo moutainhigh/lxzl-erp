@@ -9,6 +9,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingBrandDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCategoryDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,12 @@ public class K3ProductConverter implements ConvertK3DataService {
         FormICItem formICItem = new FormICItem();
         formICItem.setModel(product.getProductModel());//型号名称
         formICItem.setName(product.getProductName());//商品名称
-        String number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+        String number = "";
+        if(StringUtil.isNotEmpty(product.getK3ProductNo())){
+            number = product.getK3ProductNo();
+        }else{
+            number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+        }
         formICItem.setNumber(number);//编号
         formICItem.setNumbers(new ItemNumber[]{new ItemNumber(false, "整机", "10", "物料"),//整机
                 new ItemNumber(false, k3MappingCategoryDO.getCategoryName(), "10." + k3MappingCategoryDO.getK3CategoryCode(), "物料"),//分类
