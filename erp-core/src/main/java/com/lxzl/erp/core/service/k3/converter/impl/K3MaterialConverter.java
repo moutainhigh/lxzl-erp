@@ -33,7 +33,7 @@ public class K3MaterialConverter implements ConvertK3DataService {
         String number = "";
         if(StringUtil.isNotEmpty(material.getK3MaterialNo())){
             number = material.getK3MaterialNo();
-            String[] ss = number.split(".");
+            String[] ss = number.split("\\.");
             formICItem.setNumber(number);//编号
             formICItem.setNumbers(new ItemNumber[]{new ItemNumber(false, "配件", ss[0], "物料"),//配件
                     new ItemNumber(false, k3MappingMaterialTypeDO.getMaterialTypeName(), ss[0]+"."+ss[1], "物料"),//分类

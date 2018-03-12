@@ -34,7 +34,7 @@ public class K3ProductConverter implements ConvertK3DataService {
         String number = "";
         if(StringUtil.isNotEmpty(product.getK3ProductNo())){
             number = product.getK3ProductNo();
-            String[] ss = number.split(".");
+            String[] ss = number.split("\\.");
             formICItem.setNumber(number);//编号
             formICItem.setNumbers(new ItemNumber[]{new ItemNumber(false, "整机", ss[0], "物料"),//配件
                     new ItemNumber(false, k3MappingCategoryDO.getCategoryName(), ss[0]+"."+ss[1], "物料"),//分类
