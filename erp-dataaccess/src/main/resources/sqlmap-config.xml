@@ -148,6 +148,7 @@
         <mapper resource="sqlmap/erp_delivery_order_product.xml" />
         <mapper resource="sqlmap/erp_delivery_order_material.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_user.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_industry.xml" />
     </mappers>
 
 </configuration>
