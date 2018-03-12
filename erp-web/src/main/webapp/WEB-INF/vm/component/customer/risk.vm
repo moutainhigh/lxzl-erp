@@ -67,7 +67,7 @@
                     <span class="fa fa-circle text-info"></span>
                 </td>
                 <td>限制单台设备价值</td>
-                <td><span class='text-info'>￥{{#price}}{{singleLimitPrice}}{{/price}}</span></td>
+                <td><span class='text-info'>{{singleLimitPriceValue}}</span></td>
             </tr>
             <tr>
                 <td>

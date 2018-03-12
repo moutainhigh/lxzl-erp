@@ -113,6 +113,7 @@
                                         <th>订单状态</th>
                                         <th>租期</th>
                                         <th>收货人</th>
+                                        <th>业务员</th>
                                         <th>创建人</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
@@ -160,6 +161,7 @@
                                                 <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
                                                 <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
                                             </td>
+                                            <td>{{orderSellerName}}</td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
