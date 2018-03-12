@@ -78,10 +78,13 @@ public class K3CustomerConverter implements ConvertK3DataService{
         String industryNumber = null;
         if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customer.getCustomerType())){
             CustomerCompany customerCompany = customer.getCustomerCompany();
+            K3MappingIndustryDO k3MappingIndustryDO = null;
             if(StringUtil.isEmpty(customerCompany.getIndustry())){
-                K3MappingIndustryDO k3MappingIndustryDO = k3MappingIndustryMapper.findByErpCode(CustomerIndustry.CUSTOMER_INDUSTRY_OTHER.toString());
-                industryNumber = k3MappingIndustryDO.getK3IndustryCode();
+                k3MappingIndustryDO = k3MappingIndustryMapper.findByErpCode(CustomerIndustry.CUSTOMER_INDUSTRY_OTHER.toString());
+            }else{
+                k3MappingIndustryDO = k3MappingIndustryMapper.findByErpCode(customerCompany.getIndustry());
             }
+            industryNumber = k3MappingIndustryDO.getK3IndustryCode();
             phone = customerCompany.getConnectPhone();
             address = customerCompany.getAddress();
             contact = customerCompany.getConnectRealName();
