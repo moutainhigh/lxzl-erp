@@ -765,6 +765,23 @@ public class PageController extends BaseController {
         return "/component/company/addShortReceivableAmountModal";
     }
 
+    //组合商品
+    @RequestMapping("/grouped-product/list")
+    public String groupedProductList() {
+        return "/groupedProductManage/groupedProductList";
+    }
+    @RequestMapping("/grouped-product/detail")
+    public String groupedProductDetail() {
+        return "/groupedProductManage/groupedProductDetail";
+    }
+    @RequestMapping("/grouped-product/add")
+    public String groupedProductAdd() {
+        return "/groupedProductManage/groupedProductAdd";
+    }
+    @RequestMapping("/grouped-product/edit")
+    public String groupedProductEdit() {
+        return "/groupedProductManage/groupedProductEdit";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")

@@ -2864,6 +2864,15 @@ CREATE TABLE `erp_k3_mapping_department` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3部门映射';
 
+DROP TABLE if exists `erp_k3_mapping_industry`;
+CREATE TABLE `erp_k3_mapping_industry` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `erp_industry_code` varchar(64) COMMENT 'erp的分类编码',
+  `k3_industry_code` varchar(64) COMMENT 'K3分类编码',
+  `industry_name` varchar(64) COMMENT '分类名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3行业映射';
+
 DROP TABLE if exists `erp_k3_send_record`;
 CREATE TABLE `erp_k3_send_record` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',

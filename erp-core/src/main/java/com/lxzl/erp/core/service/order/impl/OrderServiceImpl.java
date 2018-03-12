@@ -951,10 +951,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        if (!loginUser.getUserId().toString().equals(orderDO.getCreateUser())) {
-            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
-            return result;
-        }
         //审核中的订单，处理工作流
         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
             ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo());
@@ -1027,10 +1023,10 @@ public class OrderServiceImpl implements OrderService {
                 k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
                 k3SendRecordDO.setRecordJson(orderDO.getOrderNo());
-                logger.info("【推送消息】" + orderDO.getOrderNo());
                 k3SendRecordDO.setSendTime(new Date());
                 k3SendRecordDO.setRecordReferId(orderDO.getId());
                 k3SendRecordMapper.save(k3SendRecordDO);
+                logger.info("【推送消息】" + orderDO.getOrderNo());
             }
             service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
             com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = service.cancelOrder(orderDO.getOrderNo());
