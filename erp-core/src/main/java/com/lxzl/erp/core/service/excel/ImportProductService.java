@@ -12,4 +12,7 @@ public interface ImportProductService {
     String importAIOProduct(String filePath) throws Exception;
     String importTVProduct(String filePath) throws Exception;
     String importMonitorProduct(String filePath) throws Exception;
+    String importPhoneProduct(String filePath) throws Exception;
+    String importPrinterProduct(String filePath) throws Exception;
+    String importProjectorProduct(String filePath) throws Exception;
 }
