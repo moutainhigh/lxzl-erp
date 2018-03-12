@@ -85,6 +85,13 @@ public class ExcelController extends BaseController {
     }
 
 
+    @RequestMapping(value = "importPadProduct", method = RequestMethod.POST)
+    public Result importPadProduct() throws Exception {
+        String serviceResult = importProductService.importPadProduct("E:\\数据20180312-22.xlsx");
+        return resultGenerator.generate(serviceResult, serviceResult);
+    }
+
+
     @RequestMapping(value = "importCopierProduct", method = RequestMethod.POST)
     public Result importCopierProduct() throws Exception {
         String serviceResult = importProductService.importCopierProduct("E:\\数据20180312-22.xlsx");
@@ -102,6 +109,13 @@ public class ExcelController extends BaseController {
     @RequestMapping(value = "importRouterProduct", method = RequestMethod.POST)
     public Result importRouterProduct() throws Exception {
         String serviceResult = importProductService.importRouterProduct("E:\\数据20180312-22.xlsx");
+        return resultGenerator.generate(serviceResult, serviceResult);
+    }
+
+
+    @RequestMapping(value = "importServerProduct", method = RequestMethod.POST)
+    public Result importServerProduct() throws Exception {
+        String serviceResult = importProductService.importServerProduct("E:\\数据20180312-22.xlsx");
         return resultGenerator.generate(serviceResult, serviceResult);
     }
 

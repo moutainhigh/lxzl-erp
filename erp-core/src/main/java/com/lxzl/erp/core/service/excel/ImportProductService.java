@@ -19,4 +19,5 @@ public interface ImportProductService {
     String importCopierProduct(String filePath) throws Exception;
     String importSwitchboardProduct(String filePath) throws Exception;
     String importRouterProduct(String filePath) throws Exception;
+    String importServerProduct(String filePath) throws Exception;
 }
