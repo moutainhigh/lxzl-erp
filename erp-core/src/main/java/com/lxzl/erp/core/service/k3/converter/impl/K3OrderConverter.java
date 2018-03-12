@@ -100,7 +100,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                 }
             }
         }
-        String remark = erpOrder.getRemark() == null ? "" : erpOrder.getRemark();
+        String remark = erpOrder.getBuyerRemark() == null ? "" : erpOrder.getBuyerRemark();
         formSEOrder.setExplanation(remark);// 摘要
         if (RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()) {
             formSEOrder.setOrderTypeNumber("L");
