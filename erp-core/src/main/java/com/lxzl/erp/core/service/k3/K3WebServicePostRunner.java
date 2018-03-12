@@ -54,6 +54,7 @@ public class K3WebServicePostRunner implements Runnable {
         ServiceResult response = null;
         try {
             k3SendRecordDO.setRecordJson(JSON.toJSONString(postData));
+            k3SendRecordDO.setSendTime(new Date());
             k3SendRecordMapper.update(k3SendRecordDO);
             logger.info("【推送消息】" + JSON.toJSONString(postData));
             IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();

@@ -34,14 +34,21 @@ public class K3ProductConverter implements ConvertK3DataService {
         String number = "";
         if(StringUtil.isNotEmpty(product.getK3ProductNo())){
             number = product.getK3ProductNo();
+            String[] ss = number.split("\\.");
+            formICItem.setNumber(number);//编号
+            formICItem.setNumbers(new ItemNumber[]{new ItemNumber(false, "整机", ss[0], "物料"),//配件
+                    new ItemNumber(false, k3MappingCategoryDO.getCategoryName(), ss[0]+"."+ss[1], "物料"),//分类
+                    new ItemNumber(false, k3MappingBrandDO.getBrandName(), ss[0]+"."+ss[1]+"."+ss[2], "物料"),//品牌
+                    new ItemNumber(true, product.getProductModel(), number, "物料")});//型号
         }else{
             number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+            formICItem.setNumbers(new ItemNumber[]{new ItemNumber(false, "整机", "10", "物料"),//整机
+                    new ItemNumber(false, k3MappingCategoryDO.getCategoryName(), "10." + k3MappingCategoryDO.getK3CategoryCode(), "物料"),//分类
+                    new ItemNumber(false, k3MappingBrandDO.getBrandName(), "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode(), "物料"),//品牌
+                    new ItemNumber(true, product.getProductModel(), number, "物料")});//型号
         }
         formICItem.setNumber(number);//编号
-        formICItem.setNumbers(new ItemNumber[]{new ItemNumber(false, "整机", "10", "物料"),//整机
-                new ItemNumber(false, k3MappingCategoryDO.getCategoryName(), "10." + k3MappingCategoryDO.getK3CategoryCode(), "物料"),//分类
-                new ItemNumber(false, k3MappingBrandDO.getBrandName(), "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode(), "物料"),//品牌
-                new ItemNumber(true, product.getProductModel(), number, "物料")});//型号
+
         return formICItem;
     }
 
