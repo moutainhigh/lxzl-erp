@@ -189,9 +189,9 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "rejectPassCustomer", method = RequestMethod.POST)
-    public Result rejectPassCustomer(@RequestBody CustomerRejectParam customerRejectParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = customerService.rejectPassCustomer(customerRejectParam);
+    @RequestMapping(value = "rejectCustomer", method = RequestMethod.POST)
+    public Result rejectCustomer(@RequestBody CustomerRejectParam customerRejectParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.rejectCustomer(customerRejectParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

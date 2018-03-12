@@ -1238,7 +1238,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> rejectPassCustomer(CustomerRejectParam customerRejectParam) {
+    public ServiceResult<String, String> rejectCustomer(CustomerRejectParam customerRejectParam) {
         ServiceResult<String, String> result = new ServiceResult<>();
         Date now = new Date();
         User loginUser = userSupport.getCurrentUser();

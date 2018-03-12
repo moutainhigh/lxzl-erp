@@ -575,11 +575,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     }
 
     @Test
-    public void rejectPassCustomer() throws Exception {
+    public void rejectCustomer() throws Exception {
         CustomerRejectParam param = new CustomerRejectParam();
         param.setCustomerNo("LXCC-2000-20180307-00307");
         param.setRemark("客户信息有错误，需更改数据");
 
-        TestResult testResult = getJsonTestResult("/customer/rejectPassCustomer",param);
+        TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);
     }
 }

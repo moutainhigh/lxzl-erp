@@ -11,7 +11,6 @@ public class CustomerCommitParam extends BaseCommitParam {
 
     @NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {CommitCustomerGroup.class})
     private String customerNo;   //客戶编号
-    private String remark;
 
     public String getCustomerNo() { return customerNo; }
 

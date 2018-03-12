@@ -130,5 +130,11 @@ public interface CustomerService extends VerifyReceiver {
      */
     ServiceResult<String,String> commitCustomerToWorkflow(CustomerCommitParam customerCommitParam);
 
-    ServiceResult<String,String> rejectPassCustomer(CustomerRejectParam customerRejectParam);
+    /**
+     * 驳回客户信息（已审批通过的）
+     *
+     * @param customerRejectParam
+     * @return
+     */
+    ServiceResult<String,String> rejectCustomer(CustomerRejectParam customerRejectParam);
 }
