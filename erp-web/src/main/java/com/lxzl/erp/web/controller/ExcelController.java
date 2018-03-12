@@ -41,4 +41,25 @@ public class ExcelController extends BaseController {
         String serviceResult = importProductService.importNodeProduct("E:\\数据20180312-22.xlsx");
         return resultGenerator.generate(serviceResult, serviceResult);
     }
+
+
+    @RequestMapping(value = "importAIOProduct", method = RequestMethod.POST)
+    public Result importAIOProduct() throws Exception {
+        String serviceResult = importProductService.importAIOProduct("E:\\数据20180312-22.xlsx");
+        return resultGenerator.generate(serviceResult, serviceResult);
+    }
+
+
+    @RequestMapping(value = "importTVProduct", method = RequestMethod.POST)
+    public Result importTVProduct() throws Exception {
+        String serviceResult = importProductService.importTVProduct("E:\\数据20180312-22.xlsx");
+        return resultGenerator.generate(serviceResult, serviceResult);
+    }
+
+
+    @RequestMapping(value = "importMonitorProduct", method = RequestMethod.POST)
+    public Result importMonitorProduct() throws Exception {
+        String serviceResult = importProductService.importMonitorProduct("E:\\数据20180312-22.xlsx");
+        return resultGenerator.generate(serviceResult, serviceResult);
+    }
 }
