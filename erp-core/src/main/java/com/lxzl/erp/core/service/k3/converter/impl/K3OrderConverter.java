@@ -102,6 +102,9 @@ public class K3OrderConverter implements ConvertK3DataService {
         }
         String remark = erpOrder.getBuyerRemark() == null ? "" : erpOrder.getBuyerRemark();
         formSEOrder.setExplanation(remark);// 摘要
+        Calendar willSendDate = Calendar.getInstance();
+        willSendDate.setTime(erpOrder.getExpectDeliveryTime());
+        formSEOrder.setWillSendDate(willSendDate);
         if (RentLengthType.RENT_LENGTH_TYPE_LONG == erpOrder.getRentLengthType()) {
             formSEOrder.setOrderTypeNumber("L");
         } else if (OrderRentType.RENT_TYPE_DAY.equals(erpOrder.getRentType())) {

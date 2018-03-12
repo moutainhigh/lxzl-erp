@@ -7,8 +7,6 @@
 
 package com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models;
 
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
-
 public class FormSEOrder  implements java.io.Serializable {
     private String acctDeptName;
 
@@ -68,6 +66,8 @@ public class FormSEOrder  implements java.io.Serializable {
 
     private String payMethodNumber;
 
+    private java.util.Calendar willSendDate;
+
     public FormSEOrder() {
     }
 
@@ -100,7 +100,8 @@ public class FormSEOrder  implements java.io.Serializable {
            String managerNumber,
            String orderFromNumber,
            String orderTypeNumber,
-           String payMethodNumber) {
+           String payMethodNumber,
+           java.util.Calendar willSendDate) {
            this.acctDeptName = acctDeptName;
            this.acctDeptNumber = acctDeptNumber;
            this.areaPS = areaPS;
@@ -130,6 +131,7 @@ public class FormSEOrder  implements java.io.Serializable {
            this.orderFromNumber = orderFromNumber;
            this.orderTypeNumber = orderTypeNumber;
            this.payMethodNumber = payMethodNumber;
+           this.willSendDate = willSendDate;
     }
 
 
@@ -712,6 +714,26 @@ public class FormSEOrder  implements java.io.Serializable {
         this.payMethodNumber = payMethodNumber;
     }
 
+
+    /**
+     * Gets the willSendDate value for this FormSEOrder.
+     * 
+     * @return willSendDate
+     */
+    public java.util.Calendar getWillSendDate() {
+        return willSendDate;
+    }
+
+
+    /**
+     * Sets the willSendDate value for this FormSEOrder.
+     * 
+     * @param willSendDate
+     */
+    public void setWillSendDate(java.util.Calendar willSendDate) {
+        this.willSendDate = willSendDate;
+    }
+
     private Object __equalsCalc = null;
     public synchronized boolean equals(Object obj) {
         if (!(obj instanceof FormSEOrder)) return false;
@@ -810,7 +832,10 @@ public class FormSEOrder  implements java.io.Serializable {
               this.orderTypeNumber.equals(other.getOrderTypeNumber()))) &&
             ((this.payMethodNumber==null && other.getPayMethodNumber()==null) || 
              (this.payMethodNumber!=null &&
-              this.payMethodNumber.equals(other.getPayMethodNumber())));
+              this.payMethodNumber.equals(other.getPayMethodNumber()))) &&
+            ((this.willSendDate==null && other.getWillSendDate()==null) || 
+             (this.willSendDate!=null &&
+              this.willSendDate.equals(other.getWillSendDate())));
         __equalsCalc = null;
         return _equals;
     }
@@ -916,6 +941,9 @@ public class FormSEOrder  implements java.io.Serializable {
         }
         if (getPayMethodNumber() != null) {
             _hashCode += getPayMethodNumber().hashCode();
+        }
+        if (getWillSendDate() != null) {
+            _hashCode += getWillSendDate().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -1131,6 +1159,13 @@ public class FormSEOrder  implements java.io.Serializable {
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("willSendDate");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "WillSendDate"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
     }
 
     /**
@@ -1144,8 +1179,8 @@ public class FormSEOrder  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           String mechType, 
-           Class _javaType,  
+           String mechType,
+           Class _javaType,
            javax.xml.namespace.QName _xmlType) {
         return 
           new  org.apache.axis.encoding.ser.BeanSerializer(
@@ -1156,8 +1191,8 @@ public class FormSEOrder  implements java.io.Serializable {
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           String mechType, 
-           Class _javaType,  
+           String mechType,
+           Class _javaType,
            javax.xml.namespace.QName _xmlType) {
         return 
           new  org.apache.axis.encoding.ser.BeanDeserializer(
