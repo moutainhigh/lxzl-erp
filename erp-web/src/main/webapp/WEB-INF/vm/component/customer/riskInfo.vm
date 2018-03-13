@@ -54,7 +54,7 @@
                                 <i class="fa fa-circle text-primary fs8 pr15"></i>
                                 <span>限制单台设备价值</span>
                             </td>
-                            <td>￥{{#price}}{{singleLimitPrice}}{{/price}}</td>
+                            <td>{{singleLimitPriceValue}}</td>
                         </tr>
                         <tr>
                             <td>
