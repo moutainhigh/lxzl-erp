@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.excel.ImportProductService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.dataaccess.dao.mysql.basic.BrandMapper;
@@ -14,6 +15,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.se.common.util.date.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -74,7 +76,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 
             String k3ProductNo = null, productName = xssfRow.getCell(4).toString(), cpu = xssfRow.getCell(5).toString(), memory = null, hdd = null, ssd = null, graphics = xssfRow.getCell(9).toString();
             if (xssfRow.getCell(0) != null) {
-                hdd = xssfRow.getCell(0).toString();
+                k3ProductNo = xssfRow.getCell(0).toString();
             }
             if (xssfRow.getCell(7) != null) {
                 hdd = xssfRow.getCell(7).toString();
@@ -296,12 +298,12 @@ public class ImportProductServiceImpl implements ImportProductService {
                 }
                 productSku.setProductSkuPropertyList(productSkuPropertyList);
 
-                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
-                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
-                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
-                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
-                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
-                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
 
 
                 productSkuList.add(productSku);
@@ -335,12 +337,12 @@ public class ImportProductServiceImpl implements ImportProductService {
 
                     productSku.setProductId(product.getProductId());
 
-                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
-                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
-                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
-                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
-                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
-                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
 
 
                     productSkuList.add(productSku);
@@ -351,6 +353,31 @@ public class ImportProductServiceImpl implements ImportProductService {
                     if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                         System.out.println("商品更新失败:" + productName);
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                } else {
+                    boolean needUpdate = false;
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    if (CollectionUtil.isNotEmpty(productSkuList)) {
+                        for (ProductSku productSku : productSkuList) {
+                            if (skuId.equals(productSku.getSkuId()) && productSku.getDayRentPrice().doubleValue() > productSku.getSkuPrice().doubleValue()) {
+                                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                                needUpdate = true;
+                            }
+                        }
+                    }
+                    product.setProductSkuList(productSkuList);
+                    if (needUpdate) {
+                        ServiceResult<String, Integer> result = productService.updateProduct(product);
+                        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                            System.out.println("商品更新失败:" + productName);
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        }
                     }
                 }
             }
@@ -424,12 +451,12 @@ public class ImportProductServiceImpl implements ImportProductService {
                 }
                 productSku.setProductSkuPropertyList(productSkuPropertyList);
 
-                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
-                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
-                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
-                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
-                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
-                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
 
 
                 productSkuList.add(productSku);
@@ -463,13 +490,12 @@ public class ImportProductServiceImpl implements ImportProductService {
 
                     productSku.setProductId(product.getProductId());
 
-                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(5).toString()));
-                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(6).toString()));
-                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(7).toString()));
-                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(8).toString()));
-                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
-                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(10).toString()));
-
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
 
                     productSkuList.add(productSku);
 
@@ -479,6 +505,31 @@ public class ImportProductServiceImpl implements ImportProductService {
                     if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                         System.out.println("商品更新失败:" + productName);
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                } else {
+                    boolean needUpdate = false;
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    if (CollectionUtil.isNotEmpty(productSkuList)) {
+                        for (ProductSku productSku : productSkuList) {
+                            if (skuId.equals(productSku.getSkuId()) && productSku.getDayRentPrice().doubleValue() > productSku.getSkuPrice().doubleValue()) {
+                                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(7).toString()));
+                                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(8).toString()));
+                                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(9).toString()));
+                                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(10).toString()));
+                                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(11).toString()));
+                                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                                needUpdate = true;
+                            }
+                        }
+                    }
+                    product.setProductSkuList(productSkuList);
+                    if (needUpdate) {
+                        ServiceResult<String, Integer> result = productService.updateProduct(product);
+                        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                            System.out.println("商品更新失败:" + productName);
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        }
                     }
                 }
             }
@@ -1726,12 +1777,12 @@ public class ImportProductServiceImpl implements ImportProductService {
                 }
                 productSku.setProductSkuPropertyList(productSkuPropertyList);
 
-                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(11).toString()));
-                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
-                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
-                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(14).toString()));
-                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(15).toString()));
-                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(16).toString()));
+                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
+                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(14).toString()));
+                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(15).toString()));
+                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(16).toString()));
+                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(17).toString()));
 
 
                 productSkuList.add(productSku);
@@ -1765,13 +1816,12 @@ public class ImportProductServiceImpl implements ImportProductService {
 
                     productSku.setProductId(product.getProductId());
 
-                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(11).toString()));
-                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(12).toString()));
-                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
-                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(14).toString()));
-                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(15).toString()));
-                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(16).toString()));
-
+                    productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                    productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
+                    productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(14).toString()));
+                    productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(15).toString()));
+                    productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(16).toString()));
+                    productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(17).toString()));
 
                     productSkuList.add(productSku);
 
@@ -1781,6 +1831,31 @@ public class ImportProductServiceImpl implements ImportProductService {
                     if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                         System.out.println("商品更新失败:" + productName);
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    }
+                } else {
+                    boolean needUpdate = false;
+                    Product product = productService.queryProductById(productDO.getId()).getResult();
+                    List<ProductSku> productSkuList = product.getProductSkuList();
+                    if (CollectionUtil.isNotEmpty(productSkuList)) {
+                        for (ProductSku productSku : productSkuList) {
+                            if (skuId.equals(productSku.getSkuId()) && productSku.getDayRentPrice().doubleValue() > productSku.getSkuPrice().doubleValue()) {
+                                productSku.setSkuPrice(new BigDecimal(xssfRow.getCell(12).toString()));
+                                productSku.setDayRentPrice(new BigDecimal(xssfRow.getCell(13).toString()));
+                                productSku.setMonthRentPrice(new BigDecimal(xssfRow.getCell(14).toString()));
+                                productSku.setNewSkuPrice(new BigDecimal(xssfRow.getCell(15).toString()));
+                                productSku.setNewDayRentPrice(new BigDecimal(xssfRow.getCell(16).toString()));
+                                productSku.setNewMonthRentPrice(new BigDecimal(xssfRow.getCell(17).toString()));
+                                needUpdate = true;
+                            }
+                        }
+                    }
+                    product.setProductSkuList(productSkuList);
+                    if (needUpdate) {
+                        ServiceResult<String, Integer> result = productService.updateProduct(product);
+                        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+                            System.out.println("商品更新失败:" + productName);
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        }
                     }
                 }
             }
