@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-订单管理-订单列表-编辑订单</title>
+    <title>凌雄ERP-订单管理-编辑订单</title>
     #parse("layout/header.vm")
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">

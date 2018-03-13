@@ -24,10 +24,12 @@ public interface CustomerService {
     ServiceResult<String,Customer> detailCustomerPerson(Customer customer);
     ServiceResult<String,String> updateRisk(CustomerRiskManagement customerRiskManagement);
 
+    ServiceResult<String,String> updateRiskCreditAmountUsed(CustomerRiskManagement customerRiskManagement);
+
     /**
      * 新增收货地址信息
      *
-     * @param customerConsignInfo 
+     * @param customerConsignInfo
      * @return 新增的收获地址信息ID
      */
     ServiceResult<String,Integer> addCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);

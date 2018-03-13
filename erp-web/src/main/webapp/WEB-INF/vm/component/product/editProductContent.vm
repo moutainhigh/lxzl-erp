@@ -77,6 +77,16 @@
             </div>
         </div>
         <div class="section row">
+            <div class="col-md-3">
+                <label for="k3ProductNo" class="field-label">K3商品编号</label>
+                <label for="k3ProductNo" class="field prepend-icon">
+                    <input type="text" name="k3ProductNo" id="k3ProductNo" class="gui-input required" />
+                    <label for="k3ProductNo" class="field-icon"><i class="fa fa-tag"></i>
+                    </label>
+                </label>
+            </div>
+        </div>
+        <div class="section row">
             <div class="col-md-12">
                 <div class="section">
                     <label for="productDesc" class="field-label">商品描述</label>

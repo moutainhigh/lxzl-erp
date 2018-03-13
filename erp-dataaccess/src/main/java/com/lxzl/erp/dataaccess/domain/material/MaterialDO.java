@@ -15,6 +15,7 @@ import java.util.List;
 public class MaterialDO extends BaseDO {
     private Integer id;
     private String materialNo;
+    private String k3MaterialNo;
     private String materialName;
     private String materialModel;
     private Integer materialType;
@@ -294,4 +295,8 @@ public class MaterialDO extends BaseDO {
     public Integer getIsReturnAnyTime() { return isReturnAnyTime; }
 
     public void setIsReturnAnyTime(Integer isReturnAnyTime) { this.isReturnAnyTime = isReturnAnyTime; }
+
+    public String getK3MaterialNo() { return k3MaterialNo; }
+
+    public void setK3MaterialNo(String k3MaterialNo) { this.k3MaterialNo = k3MaterialNo; }
 }

@@ -129,6 +129,15 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div class="section row">
+                                                <div class="col-md-4">
+                                                    <label for="k3MaterialNo" class="field-label">K3物料编号</label>
+                                                    <label for="k3MaterialNo" class="field prepend-icon">
+                                                        <input type="text" name="k3MaterialNo" id="k3MaterialNo" class="gui-input required" />
+                                                        <label for="k3MaterialNo" class="field-icon"><i class="fa fa-tag"></i></label>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="section">

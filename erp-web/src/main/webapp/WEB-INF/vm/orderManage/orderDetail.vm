@@ -48,8 +48,12 @@
                                     <dt><label  style="letter-spacing: 0.33em">创建人</label><span class="mr5">：</span></dt>
                                     <dd class="mb5" >{{createUserRealName}}</dd>
 
-                                    <dt><label>订单归属</label><span class="mr5">：</span></dt>
+                                    <dt><label>所属公司</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{orderSubCompanyName}}</dd>
+
+                                    <dt><label>发货公司</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{deliverySubCompanyName}}</dd>
+
 
                                     <dt><label>配送方式</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{deliveryModeValue}}&nbsp;</dd>
@@ -57,11 +61,8 @@
                                     <dt><label>配送日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
 
-                                    <dt><label>租赁类型</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
-
-                                    <dt><label>租赁时长</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
+                                    <dt><label>订单备注</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-4">
@@ -81,12 +82,26 @@
                                     <dt><label style="letter-spacing: 1em">地址</label><span class="mr5">：</span></dt>
                                     <dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}&nbsp;</dd>
 
-                                    <dt><label>订单备注</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
+                                    <dt><label>租赁类型</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
+
+                                    <dt><label>租赁时长</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
+
+
                                 </dl>
                             </div>
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label style="letter-spacing: 1em;">业务员</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderSellerName}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 1em;">创建人</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.5em;">创建时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}&nbsp;</dd>
+
                                     <dt><label style="letter-spacing: 0.5em;">起租日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
 
@@ -101,6 +116,9 @@
 
                                     <dt><label style="letter-spacing: 0.5em;">收货时间</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#time}}{{confirmDeliveryTime}}{{/time}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.5em;">结算日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5" id="statementDate"></dd>
                                 </dl>
                             </div>
                         </div>

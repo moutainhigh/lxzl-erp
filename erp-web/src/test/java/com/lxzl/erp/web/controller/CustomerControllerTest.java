@@ -109,18 +109,18 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void addCustomerPerson() throws Exception {
         Customer customer = new Customer();
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
-        customer.setOwner(500356);
-        customer.setOwner(500356);
+        customer.setOwner(500021);
+        customer.setOwner(500003);
         customer.setIsDefaultConsignAddress(1);
         customer.setFirstApplyAmount(new BigDecimal(0));
         customer.setLaterApplyAmount(new BigDecimal(0));
 
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("35052119870503651X");
-        customerPerson.setConnectRealName("cc");
+        customerPerson.setConnectRealName("cd");
         customerPerson.setConnectPhone("18171408870");
         customerPerson.setRealName("cc");
-        customerPerson.setPhone("18171408870");
+        customerPerson.setPhone("18171408871");
         customerPerson.setEmail("1234567@qq.com");
         customerPerson.setProvince(17);
         customerPerson.setCity(172);
@@ -407,6 +407,15 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
         customerRiskManagement.setRemark("这是一个备注");
         TestResult result = getJsonTestResult("/customer/updateRisk", customerRiskManagement);
+    }
+
+    @Test
+    public void updateRiskCreditAmountUsed() throws Exception {
+        CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
+        customerRiskManagement.setCustomerNo("CP201712060843154191841");
+        customerRiskManagement.setCreditAmountUsed(new BigDecimal(9000001));
+
+        TestResult result = getJsonTestResult("/customer/updateRiskCreditAmountUsed", customerRiskManagement);
     }
 
     @Test

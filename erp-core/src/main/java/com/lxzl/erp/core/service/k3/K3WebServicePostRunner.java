@@ -54,6 +54,7 @@ public class K3WebServicePostRunner implements Runnable {
         ServiceResult response = null;
         try {
             k3SendRecordDO.setRecordJson(JSON.toJSONString(postData));
+            k3SendRecordDO.setSendTime(new Date());
             k3SendRecordMapper.update(k3SendRecordDO);
             logger.info("【推送消息】" + JSON.toJSONString(postData));
             IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
@@ -70,7 +71,7 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addSEorder((FormSEOrder) postData);
             }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
                 response = service.addUser((FormUser) postData);
-            }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
+            }else if (PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(postK3Type)) {
                 response = service.addSEOutstock((FormSEOutStock) postData);
             }
             //修改推送记录
@@ -127,7 +128,7 @@ public class K3WebServicePostRunner implements Runnable {
             sb.append("向K3推送【订单-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
             sb.append("向K3推送【用户-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
-        }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
+        }else if (PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(postK3Type)) {
             sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }
         sb.append(JSON.toJSONString(response));

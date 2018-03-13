@@ -2,6 +2,7 @@ package com.lxzl.erp.web.service;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.common.constant.CustomerType;
+import com.lxzl.erp.common.constant.OrderStatus;
 import com.lxzl.erp.common.constant.PostK3OperatorType;
 import com.lxzl.erp.common.constant.PostK3Type;
 import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
@@ -57,9 +58,9 @@ public class PostTest extends ERPUnTransactionalTest {
     @Test
     public void postProduct() throws InterruptedException {
 
-        ProductDO productDO = productMapper.findByProductId(2000057);
+        ProductDO productDO = productMapper.findByProductId(2000002);
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class),true);
-        Thread.sleep(30000);
+        Thread.sleep(300000);
     }
     @Test
     public void postAllProduct() throws InterruptedException {
@@ -71,36 +72,36 @@ public class PostTest extends ERPUnTransactionalTest {
         List<ProductDO> productDOList = productMapper.findProductByParams(maps);
         for(ProductDO productDO : productDOList){
             Thread.sleep(500);
-            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class),true);
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class),false);
         }
         Thread.sleep(30000);
     }
 
     @Test
     public void postMaterial() throws InterruptedException {
-        MaterialDO materialDO = materialMapper.findByNo("LX-YWB-20180303-00001");
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class),true);
-        Thread.sleep(100000);
+        MaterialDO materialDO = materialMapper.findByNo("LX-BK-20180212-00466");
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class),false);
+        Thread.sleep(300000);
     }
     @Test
     public void postAllMaterial() throws InterruptedException {
         List<MaterialDO> materialDOList = materialMapper.findAllMaterial();
         for(MaterialDO materialDO : materialDOList){
             Thread.sleep(500);
-            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class),true);
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class),false);
         }
         Thread.sleep(30000);
     }
     @Test
     public void postCustomer() throws InterruptedException {
-        String customerNo  = "LXCC-1000-20180306-00314";
+        String customerNo  = "LXCC-028-20180308-00355";
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
         } else {
             customerDO = customerMapper.findCustomerPersonByNo(customerNo);
         }
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class),true);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class),false);
         Thread.sleep(30000);
      }
 
@@ -123,8 +124,8 @@ public class PostTest extends ERPUnTransactionalTest {
     @Test
     public void postOrder() throws InterruptedException {
 
-       Order order =  orderService.queryOrderByNo("LXO-20180306-2000-00069").getResult();
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order,true);
+       Order order =  orderService.queryOrderByNo("LXO-20180307-2000-00146").getResult();
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order,false);
         Thread.sleep(30000);
     }
     @Test
@@ -137,12 +138,14 @@ public class PostTest extends ERPUnTransactionalTest {
         List<OrderDO> orderList = orderMapper.findOrderByParams(maps) ;
         for(OrderDO orderDO : orderList){
             Order order =  orderService.queryOrderByNo(orderDO.getOrderNo()).getResult();
+            if(OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(order.getOrderStatus())){
+                Thread.sleep(500);
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order,true);
+            }
 //            order.setOrderNo("LXO-20180208-700032-00009");
-            Thread.sleep(500);
-            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,PostK3Type.POST_K3_TYPE_ORDER, order,true);
         }
 
-        Thread.sleep(300000);
+        Thread.sleep(100000);
     }
     @Test
     public void postAllCustomer() throws InterruptedException {
@@ -157,7 +160,7 @@ public class PostTest extends ERPUnTransactionalTest {
 
         for(CustomerDO customerDO : customerDOList){
 
-//            Thread.sleep(500);
+            Thread.sleep(50);
             Customer customer = customerService.detailCustomerTemp(customerDO.getCustomerNo());
             if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customer.getCustomerType())){
                 CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customer.getCustomerId());
@@ -217,7 +220,7 @@ public class PostTest extends ERPUnTransactionalTest {
     public void postReturnOrder() throws InterruptedException {
 
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo("53f0140d84834f4e8502619ca88bb4a4");
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER, ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class),true);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_RETURN_ORDER, ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class),true);
         Thread.sleep(100000);
     }
 

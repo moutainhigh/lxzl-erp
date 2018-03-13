@@ -7,8 +7,6 @@
 
 package com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models;
 
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ItemNumber;
-
 public class FormOrganization  implements java.io.Serializable {
     private String address;
 
@@ -17,6 +15,8 @@ public class FormOrganization  implements java.io.Serializable {
     private String empName;
 
     private String empNumber;
+
+    private String industryNumber;
 
     private String name;
 
@@ -36,6 +36,7 @@ public class FormOrganization  implements java.io.Serializable {
            String contact,
            String empName,
            String empNumber,
+           String industryNumber,
            String name,
            String number,
            ItemNumber[] numbers,
@@ -45,6 +46,7 @@ public class FormOrganization  implements java.io.Serializable {
            this.contact = contact;
            this.empName = empName;
            this.empNumber = empNumber;
+           this.industryNumber = industryNumber;
            this.name = name;
            this.number = number;
            this.numbers = numbers;
@@ -55,7 +57,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Gets the address value for this FormOrganization.
-     * 
+     *
      * @return address
      */
     public String getAddress() {
@@ -65,7 +67,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the address value for this FormOrganization.
-     * 
+     *
      * @param address
      */
     public void setAddress(String address) {
@@ -75,7 +77,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Gets the contact value for this FormOrganization.
-     * 
+     *
      * @return contact
      */
     public String getContact() {
@@ -85,7 +87,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the contact value for this FormOrganization.
-     * 
+     *
      * @param contact
      */
     public void setContact(String contact) {
@@ -95,7 +97,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Gets the empName value for this FormOrganization.
-     * 
+     *
      * @return empName
      */
     public String getEmpName() {
@@ -105,7 +107,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the empName value for this FormOrganization.
-     * 
+     *
      * @param empName
      */
     public void setEmpName(String empName) {
@@ -115,7 +117,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Gets the empNumber value for this FormOrganization.
-     * 
+     *
      * @return empNumber
      */
     public String getEmpNumber() {
@@ -125,7 +127,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the empNumber value for this FormOrganization.
-     * 
+     *
      * @param empNumber
      */
     public void setEmpNumber(String empNumber) {
@@ -134,8 +136,28 @@ public class FormOrganization  implements java.io.Serializable {
 
 
     /**
+     * Gets the industryNumber value for this FormOrganization.
+     *
+     * @return industryNumber
+     */
+    public String getIndustryNumber() {
+        return industryNumber;
+    }
+
+
+    /**
+     * Sets the industryNumber value for this FormOrganization.
+     *
+     * @param industryNumber
+     */
+    public void setIndustryNumber(String industryNumber) {
+        this.industryNumber = industryNumber;
+    }
+
+
+    /**
      * Gets the name value for this FormOrganization.
-     * 
+     *
      * @return name
      */
     public String getName() {
@@ -145,7 +167,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the name value for this FormOrganization.
-     * 
+     *
      * @param name
      */
     public void setName(String name) {
@@ -155,7 +177,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Gets the number value for this FormOrganization.
-     * 
+     *
      * @return number
      */
     public String getNumber() {
@@ -165,7 +187,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the number value for this FormOrganization.
-     * 
+     *
      * @param number
      */
     public void setNumber(String number) {
@@ -175,7 +197,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Gets the numbers value for this FormOrganization.
-     * 
+     *
      * @return numbers
      */
     public ItemNumber[] getNumbers() {
@@ -185,7 +207,7 @@ public class FormOrganization  implements java.io.Serializable {
 
     /**
      * Sets the numbers value for this FormOrganization.
-     * 
+     *
      * @param numbers
      */
     public void setNumbers(ItemNumber[] numbers) {
@@ -256,6 +278,9 @@ public class FormOrganization  implements java.io.Serializable {
             ((this.empNumber==null && other.getEmpNumber()==null) || 
              (this.empNumber!=null &&
               this.empNumber.equals(other.getEmpNumber()))) &&
+            ((this.industryNumber==null && other.getIndustryNumber()==null) || 
+             (this.industryNumber!=null &&
+              this.industryNumber.equals(other.getIndustryNumber()))) &&
             ((this.name==null && other.getName()==null) || 
              (this.name!=null &&
               this.name.equals(other.getName()))) &&
@@ -293,6 +318,9 @@ public class FormOrganization  implements java.io.Serializable {
         }
         if (getEmpNumber() != null) {
             _hashCode += getEmpNumber().hashCode();
+        }
+        if (getIndustryNumber() != null) {
+            _hashCode += getIndustryNumber().hashCode();
         }
         if (getName() != null) {
             _hashCode += getName().hashCode();
@@ -351,6 +379,13 @@ public class FormOrganization  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("empNumber");
         elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "EmpNumber"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("industryNumber");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "IndustryNumber"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);

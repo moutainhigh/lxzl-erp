@@ -328,6 +328,11 @@ public class PageController extends BaseController {
         return "/component/customer/setShortRentalUpperLimit";
     }
 
+    @RequestMapping("/customer/set-risk-credit-amount-used")
+    public String customerSetRiskCreditAmountUsed() {
+        return "/component/customer/updateRiskCreditAmountUsed";
+    }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {
@@ -745,6 +750,10 @@ public class PageController extends BaseController {
     public String k3DataManageList() {
         return "/k3Manage/sendTok3";
     }
+    @RequestMapping("/send-data-to-k3/modal")
+    public String sendDataToK3Modal() {
+        return "/k3Manage/bathSendTok3Modal";
+    }
 
     //分公司列表
     @RequestMapping("/company-manage/list")
@@ -756,6 +765,23 @@ public class PageController extends BaseController {
         return "/component/company/addShortReceivableAmountModal";
     }
 
+    //组合商品
+    @RequestMapping("/grouped-product/list")
+    public String groupedProductList() {
+        return "/groupedProductManage/groupedProductList";
+    }
+    @RequestMapping("/grouped-product/detail")
+    public String groupedProductDetail() {
+        return "/groupedProductManage/groupedProductDetail";
+    }
+    @RequestMapping("/grouped-product/add")
+    public String groupedProductAdd() {
+        return "/groupedProductManage/groupedProductAdd";
+    }
+    @RequestMapping("/grouped-product/edit")
+    public String groupedProductEdit() {
+        return "/groupedProductManage/groupedProductEdit";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")

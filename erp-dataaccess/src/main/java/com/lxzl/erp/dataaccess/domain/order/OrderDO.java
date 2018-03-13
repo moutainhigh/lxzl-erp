@@ -55,6 +55,7 @@ public class OrderDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private Integer owner;
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
 
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
@@ -69,6 +70,8 @@ public class OrderDO extends BaseDO {
     private String orderSellerName;
     @Transient
     private String orderSubCompanyName;
+    @Transient
+    private String deliverySubCompanyName;                         // 发货所属分公司名称
 
     public Integer getId() {
         return id;
@@ -485,4 +488,12 @@ public class OrderDO extends BaseDO {
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
     }
+
+    public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
+
+    public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
 }

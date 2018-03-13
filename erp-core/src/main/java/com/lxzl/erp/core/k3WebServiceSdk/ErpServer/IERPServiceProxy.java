@@ -82,5 +82,11 @@ public class IERPServiceProxy implements IERPService {
     return iERPService.addSEOutstock(user);
   }
   
+  public ServiceResult cancelOrder(String orderno) throws java.rmi.RemoteException{
+    if (iERPService == null)
+      _initIERPServiceProxy();
+    return iERPService.cancelOrder(orderno);
+  }
+  
   
 }
