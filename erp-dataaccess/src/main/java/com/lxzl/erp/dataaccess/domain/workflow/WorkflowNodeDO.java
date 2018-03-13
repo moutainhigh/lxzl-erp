@@ -20,6 +20,7 @@ public class WorkflowNodeDO  extends BaseDO {
 	private Integer workflowUser;
 	private Integer dataStatus;
 	private String remark;
+	private Integer workflowRoleType;   //本步骤可审批角色类型
 
 	@Transient
 	private String departmentName;
@@ -139,4 +140,8 @@ public class WorkflowNodeDO  extends BaseDO {
 	public String getDepartmentTypeName() { return departmentTypeName; }
 
 	public void setDepartmentTypeName(String departmentTypeName) { this.departmentTypeName = departmentTypeName; }
+
+	public Integer getWorkflowRoleType() { return workflowRoleType; }
+
+	public void setWorkflowRoleType(Integer workflowRoleType) { this.workflowRoleType = workflowRoleType; }
 }

@@ -1200,15 +1200,8 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(serviceResult.getErrorCode());
             return result;
         }
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(customerDO.getOwnerSubCompanyId());
-        if(subCompanyDO == null){
-            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-            return result;
-        }
-        //根据业务员所属公司判别哪个分公司审批流程
-        Integer workflowType = judgeCustomerSubCompanyToWorkflowType(subCompanyDO.getSubCompanyCode());
 
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(workflowType);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
@@ -1224,7 +1217,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
 
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(workflowType, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(),null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(),null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
@@ -1276,21 +1269,12 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(customerDO.getOwnerSubCompanyId());
-        if(subCompanyDO == null){
-            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-            return result;
-        }
-
-        //根据业务员所属公司判别哪个分公司审批流程
-        Integer workflowType = judgeCustomerSubCompanyToWorkflowType(subCompanyDO.getSubCompanyCode());
-
-        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType,customerRejectParam.getCustomerNo());
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER,customerRejectParam.getCustomerNo());
         if(workflowLinkDO == null){
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             return result;
         }
-        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER);
         if(workflowTemplateDO == null){
             result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_NOT_EXISTS);
             return result;
@@ -2590,29 +2574,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
-    }
-
-    private Integer judgeCustomerSubCompanyToWorkflowType (String subCompanyCode){
-
-        Integer workflowType = null;
-        if(SubCompanyCode.SZ_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_SZ_CUSTOMER;
-        }else if(SubCompanyCode.SH_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_SH_CUSTOMER;
-        }else if(SubCompanyCode.BJ_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_BJ_CUSTOMER;
-        }else if(SubCompanyCode.GZ_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_GZ_CUSTOMER;
-        }else if(SubCompanyCode.NG_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_NG_CUSTOMER;
-        }else if(SubCompanyCode.XM_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_XM_CUSTOMER;
-        }else if(SubCompanyCode.WH_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_WH_CUSTOMER;
-        }else if(SubCompanyCode.CD_COMPANY_CODE.equals(subCompanyCode)){
-            workflowType = WorkflowType.WORKFLOW_TYPE_CD_CUSTOMER;
-        }
-        return workflowType;
     }
 
     @Autowired

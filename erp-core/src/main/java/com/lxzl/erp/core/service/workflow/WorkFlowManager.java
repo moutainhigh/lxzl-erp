@@ -79,15 +79,7 @@ public class WorkFlowManager {
             return k3Service;
         }else if(WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)){
             return k3Service;
-        }else if(WorkflowType.WORKFLOW_TYPE_SZ_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_SH_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_BJ_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_GZ_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_NG_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_XM_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_WH_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_CD_CUSTOMER.equals(workflowType)||
-                WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER.equals(workflowType)){
+        }else if(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER.equals(workflowType)){
             return customerService;
         }
         return null;
