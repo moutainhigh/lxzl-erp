@@ -29,11 +29,17 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -1194,9 +1200,13 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(serviceResult.getErrorCode());
             return result;
         }
-
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(customerDO.getOwnerSubCompanyId());
+        if(subCompanyDO == null){
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
         //根据业务员所属公司判别哪个分公司审批流程
-        Integer workflowType = judgeCustomerSubCompanyToWorkflowType(customerDO.getOwnerSubCompanyId());
+        Integer workflowType = judgeCustomerSubCompanyToWorkflowType(subCompanyDO.getSubCompanyCode());
 
         ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(workflowType);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
@@ -1218,6 +1228,7 @@ public class CustomerServiceImpl implements CustomerService {
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
+                customerDO.setPassReason(customerCommitParam.getRemark());
                 customerDO.setUpdateUser(loginUser.getUserId().toString());
                 customerDO.setUpdateTime(now);
                 customerMapper.update(customerDO);
@@ -1260,21 +1271,52 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-        if (!CustomerStatus.STATUS_INIT.equals(customerDO.getCustomerStatus()) && !CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
+        if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
             return result;
         }
 
-        //根据业务员所属公司判别哪个分公司审批流程
-        Integer workflowType = judgeCustomerSubCompanyToWorkflowType(customerDO.getOwnerSubCompanyId());
-
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(workflowType, customerRejectParam.getCustomerNo(),customerRejectParam.getRemark());
-        if(!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())){
-            result.setErrorCode(rejectPassResult.getErrorCode());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(customerDO.getOwnerSubCompanyId());
+        if(subCompanyDO == null){
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
 
+        //根据业务员所属公司判别哪个分公司审批流程
+        Integer workflowType = judgeCustomerSubCompanyToWorkflowType(subCompanyDO.getSubCompanyCode());
+
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType,customerRejectParam.getCustomerNo());
+        if(workflowLinkDO == null){
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
+        if(workflowTemplateDO == null){
+            result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_NOT_EXISTS);
+            return result;
+        }
+        //工作流修改状态
+        workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_REJECT_PASS);
+        workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDO.setUpdateTime(now);
+        workflowLinkMapper.update(workflowLinkDO);
+        //工作流详情列表新增一行做区隔
+        WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
+        workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+        workflowLinkDetailDO.setWorkflowReferNo(customerRejectParam.getCustomerNo());
+        workflowLinkDetailDO.setWorkflowStep(workflowTemplateDO.getWorkflowNodeDOList().size() + 1);
+        workflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
+        workflowLinkDetailDO.setVerifyTime(now);
+        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_REJECT_PASS);
+        workflowLinkDetailDO.setVerifyOpinion(customerRejectParam.getRemark());
+        workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDetailDO.setCreateTime(now);
+        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDetailMapper.save(workflowLinkDetailDO);
+
         customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
+        customerDO.setFailReason(customerRejectParam.getRemark());
+        customerDO.setPassReason(null);
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(loginUser.getUserId().toString());
         customerMapper.update(customerDO);
@@ -2550,24 +2592,24 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
-    private Integer judgeCustomerSubCompanyToWorkflowType (Integer subCompanyId){
+    private Integer judgeCustomerSubCompanyToWorkflowType (String subCompanyCode){
 
         Integer workflowType = null;
-        if(SubCompanyId.SZ_COMPANY_ID.equals(subCompanyId)){
+        if(SubCompanyCode.SZ_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_SZ_CUSTOMER;
-        }else if(SubCompanyId.SH_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.SH_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_SH_CUSTOMER;
-        }else if(SubCompanyId.BJ_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.BJ_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_BJ_CUSTOMER;
-        }else if(SubCompanyId.GZ_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.GZ_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_GZ_CUSTOMER;
-        }else if(SubCompanyId.NG_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.NG_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_NG_CUSTOMER;
-        }else if(SubCompanyId.XM_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.XM_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_XM_CUSTOMER;
-        }else if(SubCompanyId.WH_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.WH_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_WH_CUSTOMER;
-        }else if(SubCompanyId.CD_COMPANY_ID.equals(subCompanyId)){
+        }else if(SubCompanyCode.CD_COMPANY_CODE.equals(subCompanyCode)){
             workflowType = WorkflowType.WORKFLOW_TYPE_CD_CUSTOMER;
         }
         return workflowType;
@@ -2624,5 +2666,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private WorkflowService workflowService;
 
+    @Autowired
+    private WorkflowTemplateMapper workflowTemplateMapper;
+
+    @Autowired
+    private WorkflowLinkMapper workflowLinkMapper;
+
+    @Autowired
+    private WorkflowLinkDetailMapper workflowLinkDetailMapper;
 
 }
