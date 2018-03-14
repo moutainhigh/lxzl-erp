@@ -1255,18 +1255,6 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-        //只有创建人和业务员和联合开发员才能用驳回功能
-        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())) {
-            if (!customerDO.getOwner().equals(loginUser.getUserId())) {
-                if (customerDO.getUnionUser() == null) {
-                    result.setErrorCode(ErrorCode.CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
-                    return result;
-                } else if (!customerDO.getUnionUser().equals(loginUser.getUserId())) {
-                    result.setErrorCode(ErrorCode.CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
-                    return result;
-                }
-            }
-        }
 
         if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
