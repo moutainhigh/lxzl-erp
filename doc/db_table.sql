@@ -53,7 +53,6 @@ CREATE TABLE `erp_role` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  `role_type` int(20) NOT NULL DEFAULT '0' COMMENT '角色类型',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=600001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='角色表';
 
@@ -551,7 +550,6 @@ CREATE TABLE `erp_workflow_node` (
   `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  `workflow_role_type` int(20) DEFAULT NULL COMMENT '本步骤可审批角色类型',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流节点表';
 
