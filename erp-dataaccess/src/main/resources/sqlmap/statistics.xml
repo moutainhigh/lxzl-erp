@@ -160,7 +160,7 @@
         LEFT JOIN erp_customer ec ON esod.customer_id = ec.id and ec.data_status =1
         LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status=1
         LEFT JOIN erp_user eu ON eu.id=eo.order_seller_id
-        WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1
+        WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1 AND NOW()>esod.statement_expect_pay_time
         <if test="maps.unReceivableQueryParam.rentLengthType!=null">
             AND  eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType}
         </if>
@@ -176,6 +176,62 @@
     </select>
 
     <select id="queryUnReceivable" resultMap="UnReceivableDetail" parameterType="map">
+        SELECT esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type,
+        SUM(esod.statement_detail_amount) un_receivable,
+        IFNULL(MIN(esod.statement_detail_overdue_phase_count),0)overdue_phase_count,
+        MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,
+        MIN(esc.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,
+        MIN(ec.customer_no) customer_no,MIN(ec.customer_name)customer_name,
+        MIN(esod.statement_detail_paid_time) pay_time,MIN(esod.create_time) esod_create_time
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND esod.order_item_type = 1
+        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND esod.order_item_type = 2
+        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id and ec.data_status =1
+        LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=eo.order_seller_id
+        LEFT JOIN erp_sub_company esc ON esc.id=eo.order_sub_company_id and esc.data_status = 1
+        WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1 AND NOW()>esod.statement_expect_pay_time
+        <if test="maps.unReceivableQueryParam.rentLengthType!=null">
+            AND eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType}
+        </if>
+        <if test="maps.unReceivableQueryParam.customerName!=null&amp;&amp; maps.unReceivableQueryParam.customerName != ''">
+            AND ec.customer_name LIKE CONCAT('%','${maps.unReceivableQueryParam.customerName}','%' )
+        </if>
+        <if test="maps.unReceivableQueryParam.subCompanyId!=null">
+            AND eo.order_sub_company_id = #{maps.unReceivableQueryParam.subCompanyId}
+        </if>
+        <if test="maps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
+        </if>
+        GROUP BY eo.rent_length_type,esod.order_item_refer_id,esod.order_item_type
+        ORDER BY esod_create_time ASC
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+
+
+    <select id="queryWaitReceivableCount" resultMap="UnReceivable" parameterType="map">
+        SELECT COUNT(DISTINCT (esod.order_item_refer_id)) total_count,
+        SUM(esod.statement_detail_amount) total_un_receivable
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_customer ec ON esod.customer_id = ec.id and ec.data_status =1
+        LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=eo.order_seller_id
+        WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1
+        <if test="maps.unReceivableQueryParam.rentLengthType!=null">
+            AND  eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType}
+        </if>
+        <if test="maps.unReceivableQueryParam.customerName!=null&amp;&amp; maps.unReceivableQueryParam.customerName != ''">
+            AND ec.customer_name LIKE CONCAT('%','${maps.unReceivableQueryParam.customerName}','%' )
+        </if>
+        <if test="maps.unReceivableQueryParam.subCompanyId!=null">
+            AND eo.order_sub_company_id = #{maps.unReceivableQueryParam.subCompanyId}
+        </if>
+        <if test="maps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
+        </if>
+    </select>
+
+    <select id="queryWaitReceivable" resultMap="UnReceivableDetail" parameterType="map">
         SELECT esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type,
         SUM(esod.statement_detail_amount) un_receivable,
         IFNULL(MIN(esod.statement_detail_overdue_phase_count),0)overdue_phase_count,
@@ -207,6 +263,9 @@
         ORDER BY esod_create_time ASC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
+
+
+
     <resultMap id="StatisticsUnReceivable" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsUnReceivable">
         <result column="total_count" jdbcType="INTEGER" property="totalCount" />
         <result column="total_last_month_rent" jdbcType="DECIMAL" property="totalLastMonthRent" />

@@ -117,8 +117,10 @@
                                     <dt><label style="letter-spacing: 0.5em;">收货时间</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#time}}{{confirmDeliveryTime}}{{/time}}&nbsp;</dd>
 
+                                    {{#rentTypeByMonth}}
                                     <dt><label style="letter-spacing: 0.5em;">结算日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5" id="statementDate"></dd>
+                                    {{/rentTypeByMonth}}
                                 </dl>
                             </div>
                         </div>
@@ -274,7 +276,9 @@
                                             </td>
                                             <td>
                                                 <p>{{payModeValue}}</p>
+                                                {{#isRentTypeByMonth}}
                                                 <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                {{/isRentTypeByMonth}}
                                             </td>
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}

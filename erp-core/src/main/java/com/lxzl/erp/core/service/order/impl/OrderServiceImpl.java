@@ -1750,7 +1750,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
                 BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
-                totalProductAmount = BigDecimalUtil.add(totalProductAmount, skuPrice);
+                totalProductAmount = BigDecimalUtil.add(totalProductAmount, BigDecimalUtil.mul(new BigDecimal(orderProductDO.getProductCount()), skuPrice));
                 totalProductCount += orderProductDO.getProductCount();
             }
         }
@@ -1765,7 +1765,7 @@ public class OrderServiceImpl implements OrderService {
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
                 Material material = materialResult.getResult();
                 BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
-                totalMaterialAmount = BigDecimalUtil.add(totalMaterialAmount, materialPrice);
+                totalMaterialAmount = BigDecimalUtil.add(totalMaterialAmount, BigDecimalUtil.mul(new BigDecimal(orderMaterialDO.getMaterialCount()), materialPrice));
             }
         }
         BigDecimal totalAmount = BigDecimalUtil.add(totalProductAmount, totalMaterialAmount);
