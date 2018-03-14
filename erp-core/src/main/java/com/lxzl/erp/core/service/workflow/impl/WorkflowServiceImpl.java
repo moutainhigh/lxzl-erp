@@ -218,7 +218,6 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())
-                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())
                 || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())) {
             result.setErrorCode(ErrorCode.VERIFY_STATUS_ERROR);
             return result;
@@ -323,7 +322,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
-            } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+            } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus()) || VerifyStatus.VERIFY_STATUS_REJECT_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 // 如果 最后是驳回状态，审核人就要从头来
                 WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
                 if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
