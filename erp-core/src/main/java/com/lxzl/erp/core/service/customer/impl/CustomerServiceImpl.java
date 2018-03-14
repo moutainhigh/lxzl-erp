@@ -2599,7 +2599,7 @@ public class CustomerServiceImpl implements CustomerService {
         //当前登录用户
         Integer currentUserId = userSupport.getCurrentUserId();
         if(!currentUserId.equals(owner) && !currentUserId.equals(unionUser) && !currentUserId.equals(createUserId) ){
-            serviceResult.setErrorCode(ErrorCode.CURRENT_USER_IS_NOT_AVAILABLE);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER);
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
