@@ -17,10 +17,11 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="role_type" jdbcType="INTEGER" property="roleType"/>
     </resultMap>
 
     <sql id="column_List">
-        er.id,er.role_name,er.role_desc,er.is_super_admin,er.data_status,er.remark,er.create_time,er.update_time
+        er.id,er.role_name,er.role_desc,er.is_super_admin,er.data_status,er.remark,er.create_time,er.update_time,er.role_type
     </sql>
     <select id="findById" resultMap="RoleDO" parameterType="java.lang.Integer">
         SELECT <include refid="column_List"/> FROM erp_role er
@@ -136,6 +137,9 @@
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="roleType != null">
+                role_type = #{roleType, jdbcType=INTEGER},
             </if>
         </set>
     </sql>

@@ -6,9 +6,7 @@ import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
@@ -25,12 +23,12 @@ import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -661,105 +659,12 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        StringBuilder errorCodeMsg = new StringBuilder();
-
-        //判断是否有收货地址
-        List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
-        if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
-            errorCodeMsg.append("收货地址，");
+        ServiceResult<String, String> serviceResult = verifyCommitCustomerData(customerDO);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            result.setErrorCode(serviceResult.getErrorCode());
+            return result;
         }
 
-        //如果客户是企业
-        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
-            CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
-            //判断客户资料中必填项是否填写
-
-            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyDO.getIsLegalPersonApple())) {
-                if (customerCompanyDO.getLegalPerson() == null || customerCompanyDO.getLegalPersonNo() == null || customerCompanyDO.getLegalPersonPhone() == null) {
-                    errorCodeMsg.append("法人身份证、姓名、电话，");
-                }
-            }
-
-            //对图片附件进行判断
-            List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
-            if (CollectionUtil.isEmpty(imageDOList)) {
-                errorCodeMsg.append("图片信息不能为空，");
-            }
-
-            List<ImageDO> businessLicensePicture = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
-            List<ImageDO> legalPersonNoPictureFront = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
-            List<ImageDO> legalPersonNoPictureBack = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
-
-            if (businessLicensePicture.size() == 0) {
-                errorCodeMsg.append("营业执照，");
-            }
-            if (legalPersonNoPictureFront.size() == 0) {
-                errorCodeMsg.append("法人身份证正面照，");
-            }
-            if (legalPersonNoPictureBack.size() == 0) {
-                errorCodeMsg.append("法人身份证反面照，");
-            }
-
-            //对注册资本判断
-            if (customerCompanyDO.getRegisteredCapital() == null) {
-                errorCodeMsg.append("注册资本，");
-            }
-            //对企业所属行业判断
-            if (StringUtil.isEmpty(customerCompanyDO.getIndustry())) {
-                errorCodeMsg.append("所属行业，");
-            }
-
-            //对设备用途判断
-            if (StringUtil.isEmpty(customerCompanyDO.getProductPurpose())) {
-                errorCodeMsg.append("设备用户，");
-            }
-
-            //对企业成立时间判断
-            if (customerCompanyDO.getCompanyFoundTime() == null) {
-                errorCodeMsg.append("成立时间，");
-            }
-
-            //对企业办公人数判断
-            if (customerCompanyDO.getOfficeNumber() == null) {
-                errorCodeMsg.append("办公人数，");
-            }
-            if (StringUtil.isBlank(customerCompanyDO.getConnectRealName())) {
-                errorCodeMsg.append("紧急联系人，");
-            }
-            if (StringUtil.isBlank(customerCompanyDO.getConnectPhone())) {
-                errorCodeMsg.append("紧急联系人手机号，");
-            }
-            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
-                errorCodeMsg.append("公司经营地址，");
-            }
-            if (customerCompanyDO.getIsLegalPersonApple() == null) {
-                errorCodeMsg.append("是否法人代表申请，");
-            }
-            if (customerCompanyDO.getProductPurpose() == null) {
-                errorCodeMsg.append("设备用途，");
-            }
-            if (customerCompanyDO.getUnifiedCreditCode() == null) {
-                errorCodeMsg.append("统一信用代码，");
-            }
-            if (StringUtil.isBlank(customerCompanyDO.getCustomerCompanyNeedFirstJson())) {
-                errorCodeMsg.append("首次所租设备不能为空，");
-            } else {
-                List<CustomerCompanyNeed> customerCompanyNeedFirstList = JSONObject.parseArray(customerCompanyDO.getCustomerCompanyNeedFirstJson(), CustomerCompanyNeed.class);
-                if (CollectionUtil.isEmpty(customerCompanyNeedFirstList)) {
-                    errorCodeMsg.append("首次所租设备不能为空，");
-                }
-            }
-
-            //对企业的经营面积判断
-            if (customerCompanyDO.getOperatingArea() == null) {
-                errorCodeMsg.append("经营面积,");
-            }
-            if (StringUtil.isNotBlank(errorCodeMsg.toString())) {
-                errorCodeMsg.append("以上信息为长租必填项，请完善！");
-                result.setErrorCode(errorCodeMsg.toString());
-                return result;
-            }
-        }
         customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         customerDO.setUpdateTime(currentTime);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
@@ -1249,6 +1154,158 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> commitCustomerToWorkflow(CustomerCommitParam customerCommitParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        CustomerDO customerDO = customerMapper.findByNo(customerCommitParam.getCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        //只有创建人和业务员和联合开发员才能提交功能
+        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())){
+            if(!customerDO.getOwner().equals(loginUser.getUserId())){
+                if(customerDO.getUnionUser() == null){
+                    result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
+                    return result;
+                }else if(!customerDO.getUnionUser().equals(loginUser.getUserId())){
+                    result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
+                    return result;
+                }
+            }
+        }
+
+        if (!CustomerStatus.STATUS_INIT.equals(customerDO.getCustomerStatus()) && !CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return result;
+        }
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerDO.getIsDisabled())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_IS_DISABLED);
+            return result;
+        }
+
+        ServiceResult<String, String> serviceResult = verifyCommitCustomerData(customerDO);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            result.setErrorCode(serviceResult.getErrorCode());
+            return result;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            result.setErrorCode(needVerifyResult.getErrorCode());
+            return result;
+        } else if (needVerifyResult.getResult()) {
+            if (customerCommitParam.getVerifyUserId() == null) {
+                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return result;
+            }
+            //调用提交审核服务
+            if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+                customerCommitParam.setVerifyMatters("公司客户审核事项：1.申请额度 2.客户相关信息图片核对 3.统一信用码需信用网查询公司是否存在");
+            }else{
+                customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
+            }
+
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(),null);
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
+                customerDO.setUpdateUser(loginUser.getUserId().toString());
+                customerDO.setUpdateTime(now);
+                customerMapper.update(customerDO);
+                return verifyResult;
+            } else {
+                result.setErrorCode(verifyResult.getErrorCode());
+                return result;
+            }
+        } else {
+            customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
+            customerDO.setUpdateUser(loginUser.getUserId().toString());
+            customerDO.setUpdateTime(now);
+            customerMapper.update(customerDO);
+            result.setErrorCode(ErrorCode.SUCCESS);
+            return result;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> rejectCustomer(CustomerRejectParam customerRejectParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date now = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        CustomerDO customerDO = customerMapper.findByNo(customerRejectParam.getCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        //只有创建人和业务员和联合开发员才能用驳回功能
+        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())){
+            if(!customerDO.getOwner().equals(loginUser.getUserId())){
+                if(customerDO.getUnionUser() == null){
+                    result.setErrorCode(ErrorCode.CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
+                    return result;
+                }else if(!customerDO.getUnionUser().equals(loginUser.getUserId())){
+                    result.setErrorCode(ErrorCode.CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
+                    return result;
+                }
+            }
+        }
+
+        if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            return result;
+        }
+
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(),customerRejectParam.getRemark());
+        if(!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())){
+            result.setErrorCode(rejectPassResult.getErrorCode());
+            return result;
+        }
+
+        customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(loginUser.getUserId().toString());
+        customerMapper.update(customerDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(customerDO.getCustomerNo());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(businessNo);
+        if(customerDO == null){
+            return ErrorCode.CUSTOMER_NOT_EXISTS;
+        }
+        try{
+            //不是审核中状态，拒绝处理
+            if (!CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
+                return ErrorCode.BUSINESS_EXCEPTION;
+            }
+            if (verifyResult) {
+                customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
+            } else {
+                customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
+            }
+            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            customerDO.setUpdateTime(now);
+            customerMapper.update(customerDO);
+            return ErrorCode.SUCCESS;
+        }catch (Exception e) {
+            logger.error("【客户审核后，业务处理异常】", e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            logger.error("【数据已回滚】");
+            return ErrorCode.BUSINESS_EXCEPTION;
+        }
     }
 
 
@@ -2383,11 +2440,108 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
-    @Autowired
-    private UserMapper userMapper;
+    private ServiceResult<String, String> verifyCommitCustomerData(CustomerDO customerDO){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        StringBuilder errorCodeMsg = new StringBuilder();
+
+        //判断是否有收货地址
+        List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+        if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
+            errorCodeMsg.append("收货地址，");
+        }
+        //如果客户是企业
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
+            //判断客户资料中必填项是否填写
+
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerCompanyDO.getIsLegalPersonApple())) {
+                if (customerCompanyDO.getLegalPerson() == null || customerCompanyDO.getLegalPersonNo() == null || customerCompanyDO.getLegalPersonPhone() == null) {
+                    errorCodeMsg.append("法人身份证、姓名、电话，");
+                }
+            }
+            //对图片附件进行判断
+            List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
+            if (CollectionUtil.isEmpty(imageDOList)) {
+                errorCodeMsg.append("图片信息不能为空，");
+            }
+
+            List<ImageDO> businessLicensePicture = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.BUSINESS_LICENSE_PICTURE_IMG_TYPE);
+            List<ImageDO> legalPersonNoPictureFront = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.LEGAL_PERSON_NO_PICTURE_FRONT_IMG_TYPE);
+            List<ImageDO> legalPersonNoPictureBack = imgMysqlMapper.findByRefIdAndType(customerCompanyDO.getCustomerId().toString(), ImgType.LEGAL_PERSON_NO_PICTURE_BACK_IMG_TYPE);
+
+            if (businessLicensePicture.size() == 0) {
+                errorCodeMsg.append("营业执照，");
+            }
+            if (legalPersonNoPictureFront.size() == 0) {
+                errorCodeMsg.append("法人身份证正面照，");
+            }
+            if (legalPersonNoPictureBack.size() == 0) {
+                errorCodeMsg.append("法人身份证反面照，");
+            }
+
+            //对注册资本判断
+            if (customerCompanyDO.getRegisteredCapital() == null) {
+                errorCodeMsg.append("注册资本，");
+            }
+            //对企业所属行业判断
+            if (StringUtil.isEmpty(customerCompanyDO.getIndustry())) {
+                errorCodeMsg.append("所属行业，");
+            }
+            //对设备用途判断
+            if (StringUtil.isEmpty(customerCompanyDO.getProductPurpose())) {
+                errorCodeMsg.append("设备用户，");
+            }
+            //对企业成立时间判断
+            if (customerCompanyDO.getCompanyFoundTime() == null) {
+                errorCodeMsg.append("成立时间，");
+            }
+            //对企业办公人数判断
+            if (customerCompanyDO.getOfficeNumber() == null) {
+                errorCodeMsg.append("办公人数，");
+            }
+            if (StringUtil.isBlank(customerCompanyDO.getConnectRealName())) {
+                errorCodeMsg.append("紧急联系人，");
+            }
+            if (StringUtil.isBlank(customerCompanyDO.getConnectPhone())) {
+                errorCodeMsg.append("紧急联系人手机号，");
+            }
+            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
+                errorCodeMsg.append("公司经营地址，");
+            }
+            if (customerCompanyDO.getIsLegalPersonApple() == null) {
+                errorCodeMsg.append("是否法人代表申请，");
+            }
+            if (customerCompanyDO.getProductPurpose() == null) {
+                errorCodeMsg.append("设备用途，");
+            }
+            if (customerCompanyDO.getUnifiedCreditCode() == null) {
+                errorCodeMsg.append("统一信用代码，");
+            }
+            if (StringUtil.isBlank(customerCompanyDO.getCustomerCompanyNeedFirstJson())) {
+                errorCodeMsg.append("首次所租设备不能为空，");
+            } else {
+                List<CustomerCompanyNeed> customerCompanyNeedFirstList = JSONObject.parseArray(customerCompanyDO.getCustomerCompanyNeedFirstJson(), CustomerCompanyNeed.class);
+                if (CollectionUtil.isEmpty(customerCompanyNeedFirstList)) {
+                    errorCodeMsg.append("首次所租设备不能为空，");
+                }
+            }
+
+            //对企业的经营面积判断
+            if (customerCompanyDO.getOperatingArea() == null) {
+                errorCodeMsg.append("经营面积,");
+            }
+            if (StringUtil.isNotBlank(errorCodeMsg.toString())) {
+                errorCodeMsg.append("以上信息为长租必填项，请完善！");
+                result.setErrorCode(errorCodeMsg.toString());
+                return result;
+            }
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 
     @Autowired
-    private UserRoleMapper userRoleMapper;
+    private UserMapper userMapper;
 
     @Autowired
     private CustomerUpdateLogMapper customerUpdateLogMapper;
@@ -2433,4 +2587,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private WebServiceHelper webServiceHelper;
+
+    @Autowired
+    private WorkflowService workflowService;
+
 }

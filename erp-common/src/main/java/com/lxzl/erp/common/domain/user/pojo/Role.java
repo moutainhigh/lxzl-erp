@@ -30,6 +30,7 @@ public class Role extends BasePO {
     private Integer isSuperAdmin;
     private Integer dataStatus;
     private String remark;
+    private Integer roleType;   //角色类型
 
     public Integer getRoleId() {
         return roleId;
@@ -118,4 +119,8 @@ public class Role extends BasePO {
     public void setSubCompanyType(Integer subCompanyType) {
         this.subCompanyType = subCompanyType;
     }
+
+    public Integer getRoleType() { return roleType; }
+
+    public void setRoleType(Integer roleType) { this.roleType = roleType; }
 }

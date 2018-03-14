@@ -19,10 +19,11 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="workflow_role_type" jdbcType="INTEGER" property="workflowRoleType" />
 	</resultMap>
 
 	<sql id="column_List">
-		ewn.id,ewn.workflow_node_name,ewn.workflow_template_id,ewn.workflow_step,ewn.workflow_previous_node_id,ewn.workflow_next_node_id,ewn.workflow_department_type,ewn.workflow_department,ewn.workflow_role,ewn.workflow_user,ewn.data_status,ewn.remark,ewn.create_time,ewn.create_user,ewn.update_time,ewn.update_user
+		ewn.id,ewn.workflow_node_name,ewn.workflow_template_id,ewn.workflow_step,ewn.workflow_previous_node_id,ewn.workflow_next_node_id,ewn.workflow_department_type,ewn.workflow_department,ewn.workflow_role,ewn.workflow_user,ewn.data_status,ewn.remark,ewn.create_time,ewn.create_user,ewn.update_time,ewn.update_user,ewn.workflow_role_type
 	</sql>
 
 	<select id="findById" resultMap="WorkflowNodeDO" parameterType="java.lang.Integer">
@@ -95,6 +96,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="workflowRoleType != null">
+				workflow_role_type = #{workflowRoleType,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>

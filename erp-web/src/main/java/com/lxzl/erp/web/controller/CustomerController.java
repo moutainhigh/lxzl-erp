@@ -2,10 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
+import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
@@ -186,5 +183,16 @@ public class CustomerController {
     }
 
 
+    @RequestMapping(value = "commitCustomerToWorkflow", method = RequestMethod.POST)
+    public Result commitCustomerToWorkflow(@RequestBody @Validated(CommitCustomerGroup.class)CustomerCommitParam customerCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.commitCustomerToWorkflow(customerCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "rejectCustomer", method = RequestMethod.POST)
+    public Result rejectCustomer(@RequestBody CustomerRejectParam customerRejectParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.rejectCustomer(customerRejectParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
 }

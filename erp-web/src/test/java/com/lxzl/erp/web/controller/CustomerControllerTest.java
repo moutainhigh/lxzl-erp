@@ -5,9 +5,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
 import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
@@ -565,5 +563,23 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerNo("LXCC10002018010800035");
         customer.setStatementDate(20);
         TestResult testResult = getJsonTestResult("/customer/addStatementDate",customer);
+    }
+
+    @Test
+    public void commitCustomerToWorkflow() throws Exception {
+        CustomerCommitParam param = new CustomerCommitParam();
+        param.setCustomerNo("LXCC-2000-20180307-00307");
+        param.setVerifyUserId(500207);
+
+        TestResult testResult = getJsonTestResult("/customer/commitCustomerToWorkflow",param);
+    }
+
+    @Test
+    public void rejectCustomer() throws Exception {
+        CustomerRejectParam param = new CustomerRejectParam();
+        param.setCustomerNo("LXCC-2000-20180307-00307");
+        param.setRemark("客户信息有错误，需更改数据");
+
+        TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);
     }
 }
