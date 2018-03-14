@@ -570,7 +570,6 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerCommitParam param = new CustomerCommitParam();
         param.setCustomerNo("LXCC-2000-20180307-00307");
         param.setVerifyUserId(500207);
-        param.setRemark("客户信息");
 
         TestResult testResult = getJsonTestResult("/customer/commitCustomerToWorkflow",param);
     }

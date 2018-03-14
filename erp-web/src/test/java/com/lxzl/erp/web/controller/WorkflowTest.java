@@ -28,7 +28,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
         workflowParam.setWorkflowLinkNo("LXWF-500349-20180312-00030");
         workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
 //        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
-//        workflowParam.setReturnType(1);
+        workflowParam.setReturnType(1);
 //        workflowParam.setNextVerifyUser(500016);
 
         TestResult testResult = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);

@@ -29,17 +29,11 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -1201,7 +1195,7 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
@@ -1217,11 +1211,10 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
 
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(),null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(),null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
-                customerDO.setPassReason(customerCommitParam.getRemark());
                 customerDO.setUpdateUser(loginUser.getUserId().toString());
                 customerDO.setUpdateTime(now);
                 customerMapper.update(customerDO);
@@ -1269,38 +1262,13 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER,customerRejectParam.getCustomerNo());
-        if(workflowLinkDO == null){
-            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(),customerRejectParam.getRemark());
+        if(!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())){
+            result.setErrorCode(rejectPassResult.getErrorCode());
             return result;
         }
-        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(WorkflowType.WORKFLOW_TYPE_BRANCH_COMPANY_CUSTOMER);
-        if(workflowTemplateDO == null){
-            result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_NOT_EXISTS);
-            return result;
-        }
-        //工作流修改状态
-        workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_REJECT_PASS);
-        workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
-        workflowLinkDO.setUpdateTime(now);
-        workflowLinkMapper.update(workflowLinkDO);
-        //工作流详情列表新增一行做区隔
-        WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
-        workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
-        workflowLinkDetailDO.setWorkflowReferNo(customerRejectParam.getCustomerNo());
-        workflowLinkDetailDO.setWorkflowStep(workflowTemplateDO.getWorkflowNodeDOList().size() + 1);
-        workflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
-        workflowLinkDetailDO.setVerifyTime(now);
-        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_REJECT_PASS);
-        workflowLinkDetailDO.setVerifyOpinion(customerRejectParam.getRemark());
-        workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        workflowLinkDetailDO.setCreateTime(now);
-        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
-        workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
         customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
-        customerDO.setFailReason(customerRejectParam.getRemark());
-        customerDO.setPassReason(null);
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(loginUser.getUserId().toString());
         customerMapper.update(customerDO);
@@ -1326,7 +1294,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (verifyResult) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
             } else {
-                customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
+                customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
             }
             customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerDO.setUpdateTime(now);
@@ -2622,14 +2590,5 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private WorkflowService workflowService;
-
-    @Autowired
-    private WorkflowTemplateMapper workflowTemplateMapper;
-
-    @Autowired
-    private WorkflowLinkMapper workflowLinkMapper;
-
-    @Autowired
-    private WorkflowLinkDetailMapper workflowLinkDetailMapper;
 
 }
