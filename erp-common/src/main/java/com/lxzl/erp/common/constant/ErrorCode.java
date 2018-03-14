@@ -57,7 +57,6 @@ public class ErrorCode {
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
-    public static final String CURRENT_USER_IS_NOT_AVAILABLE = "J100031";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -554,7 +553,7 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL = "J500143";
     public static final String CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500144";
     public static final String CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500145";
-
+    public static final String CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER = "J500146";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -781,7 +780,7 @@ public class ErrorCode {
         MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
         MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
-        MAP.put(CURRENT_USER_IS_NOT_AVAILABLE, "当前用户没有权限操作此用户");
+        MAP.put(CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER, "当前用户没有权限操作此客户");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
