@@ -552,6 +552,7 @@ public class ErrorCode {
     public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT = "J500142";
     public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL = "J500143";
     public static final String CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500144";
+    public static final String CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500145";
     public static final String CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER = "J500146";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -1074,7 +1075,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT , "已用授信额度大于授信额度，请仔细检查");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL , "已用授信额度不能为空");
         MAP.put(CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER , "只有创建人、业务员、联合开发人可以提交");
-
+        MAP.put(CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER , "只有创建人、业务员、联合开发人可以驳回");
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
         MAP.put(ORDER_CUSTOMER_CONSIGN_NOT_NULL, "订单没有选择地址");
