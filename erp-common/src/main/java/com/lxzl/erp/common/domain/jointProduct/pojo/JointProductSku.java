@@ -9,7 +9,6 @@ import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Date;
 
 
@@ -28,6 +27,7 @@ public class JointProductSku extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
+    private String productName;  //商品名称
 
     private Product product;  //商品信息
 
@@ -119,4 +119,11 @@ public class JointProductSku extends BasePO {
         this.updateUser = updateUser;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 }

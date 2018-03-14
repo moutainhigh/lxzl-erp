@@ -2260,10 +2260,6 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> result = new ServiceResult<>();
         if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsFullDeposit())){
             //限制单台设备价值
-            if(customerRiskManagement.getSingleLimitPrice() == null ){
-                result.setErrorCode(ErrorCode.SINGLE_LIMIT_PRICE_NOT_NULL);
-                return result;
-            }
             if(BigDecimalUtil.compare(customerRiskManagement.getSingleLimitPrice(),BigDecimal.ZERO)<0 ){
                 result.setErrorCode(ErrorCode.SINGLE_LIMIT_PRICE_ERROR);
                 return result;

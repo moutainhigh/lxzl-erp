@@ -29,7 +29,7 @@ public class JointMaterial extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
-
+    private String materialName;  //物料名称
     private Material material;  //物料信息
 
     public Material getMaterial() {
@@ -126,5 +126,13 @@ public class JointMaterial extends BasePO {
 
     public void setMaterialNo(String materialNo) {
         this.materialNo = materialNo;
+    }
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 }

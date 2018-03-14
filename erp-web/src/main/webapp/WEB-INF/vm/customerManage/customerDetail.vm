@@ -36,6 +36,8 @@
                                         <dl class="dl-horizontal">
                                             <dt class="mb10">首期申请额度</dt><dd class="text-danger">￥{{#price}}{{firstApplyAmount}}{{/price}}</dd>
                                             <dt class="mb10">后期申请额度</dt><dd class="text-danger">￥{{#price}}{{laterApplyAmount}}{{/price}}</dd>
+                                            <dt class="mb10">短租应收上限：</dt><dd class="text-danger">{{shortLimitReceivableAmountValue}}</dd>
+                                            <dt class="mb10">结算时间：</dt><dd>{{settlementDateValue}}</dd>
                                             <dt class="mb10">用户类型</dt><dd>{{cutomerTypeValue}}</dd>
                                             <dt class="mb10">是否禁用</dt><dd>{{isDisabledValue}}</dd>
                                             <dt class="mb10">客户状态</dt><dd>{{customerStatusValue}}</dd>

@@ -93,6 +93,15 @@
                             </div>
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
+                                    <dt><label style="letter-spacing: 1em;">业务员</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderSellerName}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 1em;">创建人</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.5em;">创建时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}&nbsp;</dd>
+
                                     <dt><label style="letter-spacing: 0.5em;">起租日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
 
@@ -107,6 +116,11 @@
 
                                     <dt><label style="letter-spacing: 0.5em;">收货时间</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#time}}{{confirmDeliveryTime}}{{/time}}&nbsp;</dd>
+
+                                    {{#rentTypeByMonth}}
+                                    <dt><label style="letter-spacing: 0.5em;">结算日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5" id="statementDate"></dd>
+                                    {{/rentTypeByMonth}}
                                 </dl>
                             </div>
                         </div>
@@ -262,7 +276,9 @@
                                             </td>
                                             <td>
                                                 <p>{{payModeValue}}</p>
+                                                {{#isRentTypeByMonth}}
                                                 <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                {{/isRentTypeByMonth}}
                                             </td>
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
