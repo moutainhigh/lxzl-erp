@@ -1,0 +1,201 @@
+<div class="panel panel-dafault panel-border top mb35">
+    <div class="panel-heading">
+        <span class="panel-title" id="panelTitle"><i class="fa fa-pencil"></i>添加组合商品</span>
+    </div>
+    <div class="form-horizontal panel-body bg-light dark">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">组合商品名称：</label>
+                    <div class="col-md-9">
+                        <div class="input-group" style="width:100%;">
+                            <input id="jointProductName" name="jointProductName" class="form-control required" type="text" placeholder="请输入组合商品名称" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">备注</label>
+                    <div class="col-md-9">
+                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-heading">
+        <div class="row">
+            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                <li class="active">
+                    <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                </li>
+                <li>
+                    <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body dark pn">
+        <div class="tab-content pn br-n">
+            <div id="purchaseOrderProductItems" class="tab-pane active">
+                <div class="panel-menu p12 br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddProduct" title="选择商品">
+                                    <i class="fa fa-plus"></i> 选择商品
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteProduct" title="删除商品">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="dataListTpl">
+                        <thead>
+                        <tr class="bg-light">
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>商品名称</th>
+                            <th>类别</th>
+                            <th>品牌</th>
+                            <th>商品参数（SKU）</th>
+                            <th>商品价值</th>
+                            <th>数量</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#listData}}
+                        <tr class="productRow skuRow" productRowKey="{{productId}}">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>
+                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                {{productName}}
+                            </td>
+                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                            <td>{{propertiesToStr}}</td>
+                            <td>#*￥{{#price}}{{skuPrice}}{{/price}}*# ￥{{currentSkuPrice}}</td>
+                            <td class="productUnitAmountTd">
+                                <div class="smart-widget sm-right">
+                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
+                                    <input type="hidden" name="productId" value="{{productId}}" class="productId" />
+                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                    <label class="field prepend-icon mw200">
+                                        <input type="text" name="skuCount-{{skuId}}-{{rowKey}}" value="{{skuCount}}" class="skuCount form-control required checkInteger pl10" placeholder="输入数量" />
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="8" class="text-center">没有选择商品</td>
+                        </tr>
+                        {{/listData}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                </div>
+            </div>
+            <div id="purchaseOrderMaterialItems" class="tab-pane">
+                <div class="panel-menu p12 br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddMaterial" title="选择配件">
+                                    <i class="fa fa-plus"></i> 选择配件
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteMaterial" title="删除配件">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="materialDataListTpl">
+                        <thead>
+                        <tr>
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>配件名称</th>
+                            <th>品牌</th>
+                            <th>类型</th>
+                            <th>配件价值</th>
+                            <th>数量</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr class="materialRow">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{materialNo}}"  data-isnew="{{isNewMaterial}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>
+                                {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                {{materialName}}
+                            </td>
+                            <td>{{brandName}}</td>
+                            <td>{{materialTypeStr}}</td>
+                            <td>￥{{currentMaterialPrice}}</td>
+                            <td>
+                                <div>
+                                    <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
+                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+                                    <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
+                                    <label class="field prepend-icon mw200">
+                                        <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="7" class="text-center">没有选择配件</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <button class="btn btn-default pull-right ml15 goback">返回</button>
+        <button type="submit" class="btn btn-primary pull-right">保存</button>
+    </div>
+</div>

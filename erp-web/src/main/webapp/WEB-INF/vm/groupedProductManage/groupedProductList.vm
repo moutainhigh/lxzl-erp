@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-商品管理-组合商品列表</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <script type="text/javascript">
+        common_load_css('${staticCommon}/rental/css','dropzone.css');
+    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <script type="text/html" id="actionCommonButtonsTpl">
+                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                    {{#acitonCommonButtons}}
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/acitonCommonButtons}}
+                                </script>
+
+                                <div class="btn-group" id="actionCommonButtons"></div>
+                            </div>
+                            <div class="col-md-8 text-right">
+                                <form id="searchForm" class="form-horizontal">
+                                    <div class="pull-right">
+                                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                        <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                        <div class="input-group">
+                                            <input type="text" name="jointProductName" id="jointProductName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入组合商品名称">
+                                        </div>
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <div class="input-group">
+                                            <input type="text" name="jointProductId" id="jointProductId" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入组合商品ID">
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 210px;">
+                                        <input type="hidden" name="startTime" id="startTime" />
+                                        <input type="hidden" name="endTime" id="endTime" />
+                                        <div class="input-group date" id="timePicker">
+                                            <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                    <tr>
+                                        {{#hasCommonActionButtons}}
+                                        <th>
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="checkAll" value="">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </th>
+                                        {{/hasCommonActionButtons}}
+                                        <th>组合商品ID</th>
+                                        <th>组合商品名称</th>
+                                        <th>状态</th>
+                                        <th>备注</th>
+                                        <th>商品项</th>
+                                        <th>配件项</th>
+                                        <th>创建人</th>
+                                        <th>修改人</th>
+                                        {{#hasRowActionButtons}}
+                                        <th class="text-right">操作</th>
+                                        {{/hasRowActionButtons}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            {{#hasCommonActionButtons}}
+                                            <td>
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="checkItem" value="{{productId}}">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            {{/hasCommonActionButtons}}
+                                            <td>{{jointProductId}}</td>
+                                            <td>{{jointProductName}}</td>
+                                            <td>{{dataStatusValue}}</td>
+                                            <td>{{remark}}</td>
+                                            <td>{{groupedProductTostr}}</td>
+                                            <td>{{groupedMaterialTostr}}</td>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn">{{updateUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</p>
+                                            </td>
+                                            {{#hasRowActionButtons}}
+                                            <td class="text-right">
+                                                <div class="btn-group text-right">
+                                                    {{#rowActionButtons}}
+                                                    <a href="${ctx}{{menuUrl}}?id={{jointProductId}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}">{{text}}</a>
+                                                    {{/rowActionButtons}}
+                                                </div>
+                                            </td>
+                                            {{/hasRowActionButtons}}
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">无数据</td>
+                                        </tr>
+                                        {{/listData}}
+                                    {{/dataSource}}
+                                </tbody>
+                            </script>
+                            <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+
+    <script type="text/javascript">
+        management_load_script('${staticManagement}js',
+                'api.data.js',
+                'manage.group.product.js',
+                'manage.product.util.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        GroupedProductManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+    </script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-商品管理-组合商品列表-组合商品详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="gallery-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="pn animated fadeIn">
+            <form id="groupedProductDetailForm">
+
+                <div class="pv30 ph40 bg-light dark br-b br-grey posr">
+                    <script type="text/html" id="groupedProductHeadTpl">
+                        {{#groupedProduct}}
+                        <div class="va-t m30">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">组合商品名称：</dt><dd>{{jointProductName}}</dd>
+                                        <dt class="mb10">组合商品ID：</dt><dd>{{jointProductId}}</dd>
+                                        <dt class="mb10">状态：</dt><dd>{{dataStatusValue}}</dd>
+                                        <dt class="mb10">备注：</dt><dd>{{remark}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建人：</dt><dd>{{createUserRealName}}</dd>
+                                        <dt class="mb10">创建时间：</dt><dd>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</dd>
+                                        <dt class="mb10">修改人：</dt><dd>{{updateUserRealName}}</dd>
+                                        <dt class="mb10">修改时间：</dt><dd>{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        {{/groupedProduct}}
+                    </script>
+                    <div class="table-layout" id="groupedProductHead"></div>
+                </div>
+
+                <div class="p25 pt35">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                        <li class="active">
+                                            <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                        </li>
+                                        <li>
+                                            <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="panel-body light pn">
+                                    <div class="tab-content pn br-n">
+                                        <div id="purchaseOrderProductItems" class="tab-pane active">
+                                            <div class="table-responsive">
+                                                <script type="text/html" id="dataListTpl">
+                                                    <thead>
+                                                    <tr class="bg-light">
+                                                        <th>商品名称</th>
+                                                        <th>类别</th>
+                                                        <th>品牌</th>
+                                                        <th>商品参数（SKU）</th>
+                                                        <th>商品价值</th>
+                                                        <th>数量</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{#dataSource}}
+                                                    {{#listData}}
+                                                    <tr class="productRow skuRow" productRowKey="{{productId}}">
+                                                        <td>
+                                                            {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                                            {{productName}}
+                                                        </td>
+                                                        <td>{{categoryName}}</td>
+                                                        <td>{{brandName}}</td>
+                                                        <td>{{propertiesToStr}}</td>
+                                                        <td>￥{{currentSkuPrice}}</td>
+                                                        <td>{{skuCount}} </td>
+                                                    </tr>
+                                                    {{/listData}}
+                                                    {{^listData}}
+                                                    <tr>
+                                                        <td valign="top" colspan="6" class="text-center">没有选择商品</td>
+                                                    </tr>
+                                                    {{/listData}}
+                                                    {{/dataSource}}
+                                                    </tbody>
+                                                </script>
+                                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                            </div>
+                                        </div>
+                                        <div id="purchaseOrderMaterialItems" class="tab-pane">
+                                            <div class="table-responsive">
+                                                <script type="text/html" id="materialDataListTpl">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>配件编号</th>
+                                                        <th>配件名称</th>
+                                                        <th>类别</th>
+                                                        <th>品牌</th>
+                                                        <th>配件价值</th>
+                                                        <th>数量</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{#dataSource}}
+                                                    {{#listData}}
+                                                    <tr class="materialRow">
+                                                        <td>{{materialNo}}</td>
+                                                        <td>
+                                                            {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                            {{materialName}}
+                                                        </td>
+                                                        <td>{{materialTypeName}}</td>
+                                                        <td>{{brandName}}</td>
+                                                        <td>￥{{materialPrice}}</td>
+                                                        <td>{{materialCount}}</td>
+                                                    </tr>
+                                                    {{/listData}}
+                                                    {{^listData}}
+                                                    <tr>
+                                                        <td valign="top" colspan="6" class="text-center">没有选择配件</td>
+                                                    </tr>
+                                                    {{/listData}}
+                                                    {{/dataSource}}
+                                                    </tbody>
+                                                </script>
+                                                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js','manage.group.product.detail.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    groupedProductDetail.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>
