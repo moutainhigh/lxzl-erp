@@ -1412,12 +1412,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         }
 
-        //跟新客户审核状态为成功
-        if (customerDO.getCustomerStatus() == 1) {
-            customerDO.setCustomerStatus(2);
-            customerMapper.update(customerDO);
-        }
-
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
