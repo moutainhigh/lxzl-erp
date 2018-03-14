@@ -530,7 +530,7 @@
                     <div class="col-md-4">
                         <label for="companyFoundTime" class="field-label">企业成立时间</label>
                         <label for="companyFoundTime" class="field prepend-picker-icon" id="companyFoundTimePicker">
-                            <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker">
+                            <input type="text" id="companyFoundTime" name="companyFoundTime" class="gui-input hasDatepicker" readonly />
                             <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
                         </label>
                     </div>
