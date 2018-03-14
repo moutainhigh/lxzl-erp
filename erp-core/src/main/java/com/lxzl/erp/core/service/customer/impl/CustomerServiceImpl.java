@@ -179,7 +179,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult1;
         }
 
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class),true);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
@@ -204,14 +204,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //判断紧急联系人和紧急联系人电话，不能和个人客户相同
-        if (customer.getCustomerPerson().getConnectRealName() != null){
-            if (customer.getCustomerPerson().getConnectRealName().equals(customer.getCustomerPerson().getRealName())){
+        if (customer.getCustomerPerson().getConnectRealName() != null) {
+            if (customer.getCustomerPerson().getConnectRealName().equals(customer.getCustomerPerson().getRealName())) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME);
                 return serviceResult;
             }
         }
-        if (customer.getCustomerPerson().getConnectPhone() != null){
-            if (customer.getCustomerPerson().getConnectPhone().equals(customer.getCustomerPerson().getPhone())){
+        if (customer.getCustomerPerson().getConnectPhone() != null) {
+            if (customer.getCustomerPerson().getConnectPhone().equals(customer.getCustomerPerson().getPhone())) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE);
                 return serviceResult;
             }
@@ -249,7 +249,7 @@ public class CustomerServiceImpl implements CustomerService {
 //        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
 //            saveCustomerPersonConsignInfo(customerDO,customerPersonDO,now,userSupport.getCurrentUserId());
 //        }
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class),true);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
@@ -262,6 +262,18 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+
+        //校验是否有公司和是否为公司客户
+        CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
+        if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        //校验当前是否是跟单员,联合开发人,创建人
+        serviceResult = verifyJurisdiction(customerDO);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            return serviceResult;
+        }
 
         //如果是否为法人代表申请，为是
         if (customerCompany.getIsLegalPersonApple() == 1) {
@@ -303,12 +315,6 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
-            return serviceResult;
-        }
-
-        CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
-        if (customerDO == null || !CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -566,6 +572,11 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        //校验当前是否是跟单员,联合开发人,创建人
+        serviceResult = verifyJurisdiction(customerDO);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            return serviceResult;
+        }
         CustomerPersonDO customerPersonDO = customerPersonMapper.findByCustomerId(customerDO.getId());
         CustomerPersonDO newCustomerPersonDO = ConverterUtil.convert(customer.getCustomerPerson(), CustomerPersonDO.class);
         newCustomerPersonDO.setDataStatus(null);
@@ -585,15 +596,15 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //判断紧急联系人和紧急联系人电话，不能和个人客户相同
-        if (customer.getCustomerPerson().getConnectRealName() != null){
-            if (customer.getCustomerPerson().getConnectRealName().equals(customer.getCustomerPerson().getRealName())){
+        if (customer.getCustomerPerson().getConnectRealName() != null) {
+            if (customer.getCustomerPerson().getConnectRealName().equals(customer.getCustomerPerson().getRealName())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_REAL_NAME_NOT_MATCH_REAL_NAME);
                 return serviceResult;
             }
         }
-        if (customer.getCustomerPerson().getConnectPhone() != null){
-            if (customer.getCustomerPerson().getConnectPhone().equals(customer.getCustomerPerson().getPhone())){
+        if (customer.getCustomerPerson().getConnectPhone() != null) {
+            if (customer.getCustomerPerson().getConnectPhone().equals(customer.getCustomerPerson().getPhone())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE);
                 return serviceResult;
@@ -660,7 +671,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         ServiceResult<String, String> serviceResult = verifyCommitCustomerData(customerDO);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             result.setErrorCode(serviceResult.getErrorCode());
             return result;
         }
@@ -998,7 +1009,7 @@ public class CustomerServiceImpl implements CustomerService {
     private void processCustomerPhone(CustomerDO customerDO) {
         if (!userSupport.getCurrentUserId().equals(customerDO.getOwner()) &&
                 !userSupport.getCurrentUserId().equals(customerDO.getUnionUser()) &&
-                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser()))&&
+                !userSupport.getCurrentUserId().equals(Integer.parseInt(customerDO.getCreateUser())) &&
                 !userSupport.isSuperUser()) {
             CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
             if (customerCompanyDO != null) {
@@ -1168,12 +1179,12 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
         //只有创建人和业务员和联合开发员才能提交功能
-        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())){
-            if(!customerDO.getOwner().equals(loginUser.getUserId())){
-                if(customerDO.getUnionUser() == null){
+        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            if (!customerDO.getOwner().equals(loginUser.getUserId())) {
+                if (customerDO.getUnionUser() == null) {
                     result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
                     return result;
-                }else if(!customerDO.getUnionUser().equals(loginUser.getUserId())){
+                } else if (!customerDO.getUnionUser().equals(loginUser.getUserId())) {
                     result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
                     return result;
                 }
@@ -1190,7 +1201,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         ServiceResult<String, String> serviceResult = verifyCommitCustomerData(customerDO);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             result.setErrorCode(serviceResult.getErrorCode());
             return result;
         }
@@ -1205,13 +1216,13 @@ public class CustomerServiceImpl implements CustomerService {
                 return result;
             }
             //调用提交审核服务
-            if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+            if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 customerCommitParam.setVerifyMatters("公司客户审核事项：1.申请额度 2.客户相关信息图片核对 3.统一信用码需信用网查询公司是否存在");
-            }else{
+            } else {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
 
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(),null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
@@ -1245,12 +1256,12 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
         //只有创建人和业务员和联合开发员才能用驳回功能
-        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())){
-            if(!customerDO.getOwner().equals(loginUser.getUserId())){
-                if(customerDO.getUnionUser() == null){
+        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())) {
+            if (!customerDO.getOwner().equals(loginUser.getUserId())) {
+                if (customerDO.getUnionUser() == null) {
                     result.setErrorCode(ErrorCode.CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
                     return result;
-                }else if(!customerDO.getUnionUser().equals(loginUser.getUserId())){
+                } else if (!customerDO.getUnionUser().equals(loginUser.getUserId())) {
                     result.setErrorCode(ErrorCode.CUSTOMER_REJECT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
                     return result;
                 }
@@ -1262,8 +1273,8 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(),customerRejectParam.getRemark());
-        if(!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())){
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
+        if (!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())) {
             result.setErrorCode(rejectPassResult.getErrorCode());
             return result;
         }
@@ -1283,10 +1294,10 @@ public class CustomerServiceImpl implements CustomerService {
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         Date now = new Date();
         CustomerDO customerDO = customerMapper.findByNo(businessNo);
-        if(customerDO == null){
+        if (customerDO == null) {
             return ErrorCode.CUSTOMER_NOT_EXISTS;
         }
-        try{
+        try {
             //不是审核中状态，拒绝处理
             if (!CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
                 return ErrorCode.BUSINESS_EXCEPTION;
@@ -1300,7 +1311,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDO.setUpdateTime(now);
             customerMapper.update(customerDO);
             return ErrorCode.SUCCESS;
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("【客户审核后，业务处理异常】", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             logger.error("【数据已回滚】");
@@ -1367,16 +1378,22 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, String> updateRisk(CustomerRiskManagement customerRiskManagement) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        //校验风控信息
-        ServiceResult<String, String> result = verifyRiskManagement(customerRiskManagement);
-        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
-            return result;
-        }
         CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+        //校验当前是否是跟单员,联合开发人,创建人
+        serviceResult = verifyJurisdiction(customerDO);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            return serviceResult;
+        }
+        //校验风控信息
+        ServiceResult<String, String> result = verifyRiskManagement(customerRiskManagement);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            return result;
+        }
+
         Date now = new Date();
         //判断客户审核状态(如果为驳回状态则不可修改创建分控信息)
         if (customerDO.getCustomerStatus() == 3) {
@@ -1429,21 +1446,21 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        if(customerRiskManagement.getCreditAmountUsed() == null || BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(), BigDecimal.ZERO) < 0){
+        if (customerRiskManagement.getCreditAmountUsed() == null || BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(), BigDecimal.ZERO) < 0) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL);
             return serviceResult;
         }
         CustomerDO customerDO = customerMapper.findByNo(customerRiskManagement.getCustomerNo());
-        if(customerDO == null){
+        if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        if(customerDO.getCustomerRiskManagementDO() == null){
+        if (customerDO.getCustomerRiskManagementDO() == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS);
             return serviceResult;
         }
         //判断已用授信额度大于授信额度
-        if(BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(),customerDO.getCustomerRiskManagementDO().getCreditAmount()) == CommonConstant.YES){
+        if (BigDecimalUtil.compare(customerRiskManagement.getCreditAmountUsed(), customerDO.getCustomerRiskManagementDO().getCreditAmount()) == CommonConstant.YES) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT);
             return serviceResult;
         }
@@ -1478,7 +1495,12 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
             return serviceResult;
         }
-
+        //校验当前是否是跟单员,联合开发人,创建人
+        ServiceResult<String, String> result = verifyJurisdiction(customerDO);
+        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+            serviceResult.setErrorCode(result.getErrorCode());
+            return serviceResult;
+        }
         //获取地址信息的内容，存入客户地址信息表
         CustomerConsignInfoDO customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo, CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
@@ -1523,6 +1545,22 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
+            return serviceResult;
+        }
+        //通过CustomerNo来获取客户ID
+        if (customerConsignInfoDO.getCustomerId() == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            return serviceResult;
+        }
+        CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            return serviceResult;
+        }
+        //校验当前是否是跟单员,联合开发人,创建人
+        ServiceResult<String, String> result = verifyJurisdiction(customerDO);
+        if(!(ErrorCode.SUCCESS.equals(result.getErrorCode()))){
+            serviceResult.setErrorCode(result.getErrorCode());
             return serviceResult;
         }
 
@@ -2098,11 +2136,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
         //判断个人客户与公司客户信息
         Customer customerResult = new Customer();
-        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             CustomerDO companyCustomerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
             //封装数据
             customerResult = ConverterUtil.convert(companyCustomerDO, Customer.class);
-        }else if(CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())){
+        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
             CustomerDO personCustomerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
             //封装数据
             customerResult = ConverterUtil.convert(personCustomerDO, Customer.class);
@@ -2308,85 +2346,86 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 校验风控信息
+     *
+     * @param : customerRiskManagement
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/6 20:46
-     * @param : customerRiskManagement
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    private ServiceResult<String, String> verifyRiskManagement(CustomerRiskManagement customerRiskManagement){
+    private ServiceResult<String, String> verifyRiskManagement(CustomerRiskManagement customerRiskManagement) {
         ServiceResult<String, String> result = new ServiceResult<>();
-        if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsFullDeposit())){
+        if (CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsFullDeposit())) {
             //限制单台设备价值
-            if(BigDecimalUtil.compare(customerRiskManagement.getSingleLimitPrice(),BigDecimal.ZERO)<0 ){
+            if (BigDecimalUtil.compare(customerRiskManagement.getSingleLimitPrice(), BigDecimal.ZERO) < 0) {
                 result.setErrorCode(ErrorCode.SINGLE_LIMIT_PRICE_ERROR);
                 return result;
             }
             //押金期数
-            if(customerRiskManagement.getDepositCycle() == null){
+            if (customerRiskManagement.getDepositCycle() == null) {
                 result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_NOT_NULL);
                 return result;
             }
             //押金期数范围
-            if(0>customerRiskManagement.getDepositCycle() || customerRiskManagement.getDepositCycle()>120){
+            if (0 > customerRiskManagement.getDepositCycle() || customerRiskManagement.getDepositCycle() > 120) {
                 result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR);
                 return result;
             }
 
             //付款期数
-            if(customerRiskManagement.getPaymentCycle() == null){
+            if (customerRiskManagement.getPaymentCycle() == null) {
                 result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_NOT_NULL);
                 return result;
             }
             //付款期数范围
-            if(1>customerRiskManagement.getPaymentCycle() || customerRiskManagement.getPaymentCycle()>120){
+            if (1 > customerRiskManagement.getPaymentCycle() || customerRiskManagement.getPaymentCycle() > 120) {
                 result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR);
                 return result;
             }
             //支付方式
-            if(customerRiskManagement.getPayMode() == null){
+            if (customerRiskManagement.getPayMode() == null) {
                 result.setErrorCode(ErrorCode.PAY_MODE_NOT_NULL);
                 return result;
             }
-            if(!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getPayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getPayMode())){
+            if (!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getPayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getPayMode())) {
                 result.setErrorCode(ErrorCode.PAY_MODE_ERROR);
                 return result;
             }
             //是否限制苹果
-            if(customerRiskManagement.getIsLimitApple() == null){
+            if (customerRiskManagement.getIsLimitApple() == null) {
                 result.setErrorCode(ErrorCode.IS_LIMIT_APPLE_NOT_NULL);
                 return result;
-            }else {
-                if(!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagement.getIsLimitApple()) && !CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitApple())){
+            } else {
+                if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagement.getIsLimitApple()) && !CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitApple())) {
                     result.setErrorCode(ErrorCode.IS_LIMIT_APPLE_ERROR);
                     return result;
                 }
-                if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitApple())){
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitApple())) {
                     //苹果押金期数
-                    if(customerRiskManagement.getAppleDepositCycle() == null){
+                    if (customerRiskManagement.getAppleDepositCycle() == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_NOT_NULL);
                         return result;
                     }
                     //苹果押金期数范围
-                    if(0>customerRiskManagement.getAppleDepositCycle() || customerRiskManagement.getAppleDepositCycle()>120){
+                    if (0 > customerRiskManagement.getAppleDepositCycle() || customerRiskManagement.getAppleDepositCycle() > 120) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_DEPOSIT_CYCLE_ERROR);
                         return result;
                     }
                     //苹果付款期数
-                    if(customerRiskManagement.getApplePaymentCycle() == null){
+                    if (customerRiskManagement.getApplePaymentCycle() == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_NOT_NULL);
                         return result;
                     }
                     //苹果付款期数范围
-                    if(1>customerRiskManagement.getApplePaymentCycle() || customerRiskManagement.getApplePaymentCycle()>120){
+                    if (1 > customerRiskManagement.getApplePaymentCycle() || customerRiskManagement.getApplePaymentCycle() > 120) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_APPLE_PAYMENT_CYCLE_ERROR);
                         return result;
                     }
                     //苹果支付方式
-                    if(customerRiskManagement.getApplePayMode() == null){
+                    if (customerRiskManagement.getApplePayMode() == null) {
                         result.setErrorCode(ErrorCode.APPLE_PAY_MODE_NOT_NULL);
                         return result;
                     }
-                    if(!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getApplePayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getApplePayMode())){
+                    if (!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getApplePayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getApplePayMode())) {
                         result.setErrorCode(ErrorCode.APPLE_PAY_MODE_ERROR);
                         return result;
                     }
@@ -2394,41 +2433,41 @@ public class CustomerServiceImpl implements CustomerService {
 
             }
             //是否限制全新
-            if(customerRiskManagement.getIsLimitNew() == null){
+            if (customerRiskManagement.getIsLimitNew() == null) {
                 result.setErrorCode(ErrorCode.IS_LIMIT_NEW_NOT_NULL);
                 return result;
-            }else {
-                if(!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagement.getIsLimitNew()) && !CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitNew())){
+            } else {
+                if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagement.getIsLimitNew()) && !CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitNew())) {
                     result.setErrorCode(ErrorCode.IS_LIMIT_NEW_ERROR);
                     return result;
                 }
-                if(CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitNew())){
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(customerRiskManagement.getIsLimitNew())) {
                     //全新押金期数
-                    if(customerRiskManagement.getNewDepositCycle() == null){
+                    if (customerRiskManagement.getNewDepositCycle() == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_NOT_NULL);
                         return result;
                     }
                     //全新押金期数范围
-                    if(0>customerRiskManagement.getNewDepositCycle() || customerRiskManagement.getNewDepositCycle()>120){
+                    if (0 > customerRiskManagement.getNewDepositCycle() || customerRiskManagement.getNewDepositCycle() > 120) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_DEPOSIT_CYCLE_ERROR);
                         return result;
                     }
                     //全新付款期数
-                    if(customerRiskManagement.getNewPaymentCycle() == null){
+                    if (customerRiskManagement.getNewPaymentCycle() == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_NOT_NULL);
                         return result;
                     }
                     //全新付款期数范围
-                    if(1>customerRiskManagement.getNewPaymentCycle() || customerRiskManagement.getNewPaymentCycle()>120){
+                    if (1 > customerRiskManagement.getNewPaymentCycle() || customerRiskManagement.getNewPaymentCycle() > 120) {
                         result.setErrorCode(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NEW_PAYMENT_CYCLE_ERROR);
                         return result;
                     }
                     //全新支付方式
-                    if(customerRiskManagement.getNewPayMode() == null){
+                    if (customerRiskManagement.getNewPayMode() == null) {
                         result.setErrorCode(ErrorCode.NEW_PAY_MODE_NOT_NULL);
                         return result;
                     }
-                    if(!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getNewPayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getNewPayMode())){
+                    if (!OrderPayMode.PAY_MODE_PAY_BEFORE.equals(customerRiskManagement.getNewPayMode()) && !OrderPayMode.PAY_MODE_PAY_AFTER.equals(customerRiskManagement.getNewPayMode())) {
                         result.setErrorCode(ErrorCode.APPLE_PAY_MODE_ERROR);
                         return result;
                     }
@@ -2440,7 +2479,7 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
-    private ServiceResult<String, String> verifyCommitCustomerData(CustomerDO customerDO){
+    private ServiceResult<String, String> verifyCommitCustomerData(CustomerDO customerDO) {
         ServiceResult<String, String> result = new ServiceResult<>();
         StringBuilder errorCodeMsg = new StringBuilder();
 
@@ -2538,6 +2577,33 @@ public class CustomerServiceImpl implements CustomerService {
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    /**
+     * 校验是否是跟单员,联合开发人,创建人
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/3/14 14:28
+     * @param : customerCompany
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    private ServiceResult<String, String> verifyJurisdiction(CustomerDO customerDO){
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        //开发人
+        Integer owner = customerDO.getOwner();
+        //联合开发人
+        Integer unionUser = customerDO.getUnionUser();
+        //创建人
+        String createUser = customerDO.getCreateUser();
+        Integer createUserId = Integer.parseInt(createUser);
+
+        //当前登录用户
+        Integer currentUserId = userSupport.getCurrentUserId();
+        if(!currentUserId.equals(owner) && !currentUserId.equals(unionUser) && !currentUserId.equals(createUserId) ){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER);
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     @Autowired

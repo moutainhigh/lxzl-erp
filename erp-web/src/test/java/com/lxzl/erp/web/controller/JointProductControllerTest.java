@@ -10,21 +10,28 @@ import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class JointProductControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageJointProduct() throws Exception {
         JointProductQueryParam jointProductQueryParam = new JointProductQueryParam();
-//        jointProductQueryParam.setJointProductName("26");
-        jointProductQueryParam.setPageNo(1);
-        jointProductQueryParam.setPageSize(2);
+        jointProductQueryParam.setJointProductName("组合007");
+//        jointProductQueryParam.setJointProductId(48);
+//        jointProductQueryParam.setPageNo(1);
+//        jointProductQueryParam.setPageSize(2);
 //        Calendar instance = Calendar.getInstance();
 //        instance.set(2015, 10, 12,11,32,52);
 //        Date time = instance.getTime();
-//        jointProductQueryParam.setStartDate(time);
-//        jointProductQueryParam.setEndDate(new Date());
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date d1 = sdf.parse("2018-03-10");
+//        Date d2 = sdf.parse("2018-03-14");
+
+//        jointProductQueryParam.setStartDate(d1);
+//        jointProductQueryParam.setEndDate(d2);
         TestResult jsonTestResult = getJsonTestResult("/jointProduct/page", jointProductQueryParam);
     }
 

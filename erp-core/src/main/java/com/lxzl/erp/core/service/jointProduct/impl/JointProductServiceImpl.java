@@ -405,7 +405,6 @@ public class JointProductServiceImpl implements JointProductService {
 
     @Autowired
     private MaterialMapper materialMapper;
-    
     @Autowired
     private ProductService productService;
 
