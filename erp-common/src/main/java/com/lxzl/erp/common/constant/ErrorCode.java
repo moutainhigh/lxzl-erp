@@ -1154,7 +1154,7 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
         MAP.put(ORDER_PRODUCT_NOT_EXISTS, "商品订单项不存在");
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
-        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为商品价值的倍数");
+        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为租赁台数的倍数");
         MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价值的倍数");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请联系管理员");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");
