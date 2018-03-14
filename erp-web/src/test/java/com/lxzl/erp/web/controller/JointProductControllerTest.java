@@ -2,13 +2,16 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
+import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class JointProductControllerTest extends ERPUnTransactionalTest {
     @Test
@@ -67,34 +70,64 @@ public class JointProductControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void updateJointProduct() throws Exception {
+//        String str ="{\"jointProductName\":\"测试跟新！！\",\n" +
+//                "\"jointProductId\":\"46\",\n" +
+//                "\"jointProductSkuList\":[{\"productId\":2000080,\n" +
+//                "\"skuId\":223,\n" +
+//                "\"skuCount\":\"1\",\n" +
+//                "\"isNewProduct\":null}],\n" +
+//                "\"jointMaterialList\":[{\"materialNo\":\"M201712250956366751399\",\n" +
+//                "\"materialId\":40,\n" +
+//                "\"materialCount\":\"5\",\n" +
+//                "\"isNewMaterial\":null},\n" +
+//                "{\"materialNo\":\"M201711201356145971009\",\n" +
+//                "\"materialId\":5,\n" +
+//                "\"materialCount\":\"3\",\n" +
+//                "\"isNewMaterial\":null}]}";
+//        Object object = JSONUtil.convertJSONToBean(str, Object.class);
+//        JointProduct jointProduct = (JointProduct) object;
+//        TestResult result = getJsonTestResult("/jointProduct/update",jointProduct );
+
         JointProduct jointProduct = new JointProduct();
-        jointProduct.setJointProductId(38);
-        jointProduct.setJointProductName("测试跟新！！");
-        ArrayList<JointProductSku> jointProductSkuList = new ArrayList<>();
+        jointProduct.setJointProductId(46);
+        jointProduct.setJointProductName("十点整测试！");
+        List<JointProductSku> jointProductSkuList = new ArrayList<>();
         JointProductSku jointProductSku = new JointProductSku();
-        jointProductSku.setJointProductId(38);
-        jointProductSku.setJointProductSkuId(38);
-        jointProductSku.setSkuId(10);
-        jointProductSku.setSkuCount(10);
+        jointProductSku.setJointProductId(46);
+        jointProductSku.setJointProductSkuId(80);
+        jointProductSku.setSkuId(222);
+        jointProductSku.setSkuCount(1);
         jointProductSkuList.add(jointProductSku);
+        JointProductSku jointProductSku1 = new JointProductSku();
+//        jointProductSku.setJointProductId(46);
+//        jointProductSku.setJointProductSkuId(61);
+        jointProductSku1.setSkuId(333);
+        jointProductSku1.setSkuCount(1);
+        jointProductSkuList.add(jointProductSku1);
         jointProduct.setJointProductSkuList(jointProductSkuList);
-
         ArrayList<JointMaterial> jointMaterial = new ArrayList<>();
-
+//
         JointMaterial jointMaterial1 = new JointMaterial();
-        jointMaterial1.setJointProductId(38);
-        jointMaterial1.setJointMaterialId(36);
-        jointMaterial1.setMaterialId(4);
-        jointMaterial1.setMaterialNo("M201711171838059981293");
-        jointMaterial1.setMaterialCount(1);
+        jointMaterial1.setJointMaterialId(63);
+        jointMaterial1.setJointProductId(46);
+//        jointMaterial1.setJointMaterialId(40);
+        jointMaterial1.setMaterialCount(10);
+        jointMaterial1.setMaterialId(40);
+        jointMaterial1.setMaterialNo("M201712250956366751399");
+        jointMaterial1.setMaterialCount(5);
         JointMaterial jointMaterial2 = new JointMaterial();
-        jointMaterial2.setJointProductId(38);
-        jointMaterial2.setJointMaterialId(37);
-        jointMaterial2.setMaterialId(11);
-        jointMaterial2.setMaterialNo("M201711171838059981293");
-        jointMaterial2.setMaterialCount(27);
+//        jointMaterial2.setJointProductId(46);
+//        jointMaterial2.setJointMaterialId(52);
+        jointMaterial2.setMaterialCount(3);
+        jointMaterial2.setMaterialId(5);
+        jointMaterial2.setMaterialNo("M201711201356145971009");
+        JointMaterial jointMaterial3 = new JointMaterial();
+        jointMaterial3.setMaterialNo("M201712250956366751399");
+        jointMaterial3.setMaterialId(5);
+        jointMaterial3.setMaterialCount(5);
         jointMaterial.add(jointMaterial1);
         jointMaterial.add(jointMaterial2);
+        jointMaterial.add(jointMaterial3);
         jointProduct.setJointMaterialList(jointMaterial);
 
         TestResult testResult = getJsonTestResult("/jointProduct/update", jointProduct);
