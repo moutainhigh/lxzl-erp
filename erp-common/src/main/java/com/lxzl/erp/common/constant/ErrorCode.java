@@ -57,6 +57,7 @@ public class ErrorCode {
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
+    public static final String CURRENT_USER_IS_NOT_AVAILABLE = "J100031";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -780,6 +781,7 @@ public class ErrorCode {
         MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
         MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
+        MAP.put(CURRENT_USER_IS_NOT_AVAILABLE, "当前用户没有权限操作此用户");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
