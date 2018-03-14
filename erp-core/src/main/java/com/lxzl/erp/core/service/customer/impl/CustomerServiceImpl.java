@@ -1371,11 +1371,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        //校验当前是否是跟单员,联合开发人,创建人
-        serviceResult = verifyJurisdiction(customerDO);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            return serviceResult;
-        }
         //校验风控信息
         ServiceResult<String, String> result = verifyRiskManagement(customerRiskManagement);
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
@@ -1483,12 +1478,7 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
             return serviceResult;
         }
-        //校验当前是否是跟单员,联合开发人,创建人
-        ServiceResult<String, String> result = verifyJurisdiction(customerDO);
-        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
-            serviceResult.setErrorCode(result.getErrorCode());
-            return serviceResult;
-        }
+
         //获取地址信息的内容，存入客户地址信息表
         CustomerConsignInfoDO customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo, CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
@@ -1543,12 +1533,6 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
-            return serviceResult;
-        }
-        //校验当前是否是跟单员,联合开发人,创建人
-        ServiceResult<String, String> result = verifyJurisdiction(customerDO);
-        if(!(ErrorCode.SUCCESS.equals(result.getErrorCode()))){
-            serviceResult.setErrorCode(result.getErrorCode());
             return serviceResult;
         }
 
