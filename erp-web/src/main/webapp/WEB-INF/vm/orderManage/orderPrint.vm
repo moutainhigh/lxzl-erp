@@ -240,8 +240,8 @@
                             <p style="white-space: nowrap">{{rentTimeLength}}{{rentTypeUnit}}</p>
                         </td>
                         <td class="text-center">
-                            {{#isRentTypeByMonth}}
                             <p style="white-space: nowrap">{{payModeValue}}</p>
+                            {{#isRentTypeByMonth}}
                             <p style="white-space: nowrap">{{rentalWay}}</p>
                             {{/isRentTypeByMonth}}
                         </td>
