@@ -191,7 +191,8 @@
                 'manage.customer.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js',
-                'modal.input.js');
+                'modal.input.js',
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
