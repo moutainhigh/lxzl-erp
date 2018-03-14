@@ -268,7 +268,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
 
-        workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_REJECT_PASS);
+        workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
         workflowLinkDO.setUpdateTime(currentTime);
         workflowLinkMapper.update(workflowLinkDO);
@@ -279,7 +279,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDetailDO.setWorkflowStep(workflowTemplateDO.getWorkflowNodeDOList().size() + 1);
         workflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
         workflowLinkDetailDO.setVerifyTime(currentTime);
-        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_REJECT_PASS);
+        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowLinkDetailDO.setVerifyOpinion(commitRemark);
         workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowLinkDetailDO.setCreateTime(currentTime);
@@ -322,7 +322,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
-            } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus()) || VerifyStatus.VERIFY_STATUS_REJECT_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+            } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 // 如果 最后是驳回状态，审核人就要从头来
                 WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
                 if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
@@ -704,7 +704,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
 
         WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
-        if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus()) && !VerifyStatus.VERIFY_STATUS_REJECT_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+        if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
             return ErrorCode.WORKFLOW_LINK_STATUS_ERROR;
         }
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findById(workflowLinkDO.getWorkflowTemplateId());
