@@ -18,6 +18,7 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，0不可用；1可用
     private Integer ownerSubCompanyId; //业务员所在分公司
+    private String ownerName; //业务员姓名
 
     private String legalPerson;   //法人姓名
     private String legalPersonNo;   //法人身份证号
@@ -224,4 +225,8 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
         this.ownerSubCompanyId = ownerSubCompanyId;
     }
+
+    public String getOwnerName() { return ownerName; }
+
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 }
