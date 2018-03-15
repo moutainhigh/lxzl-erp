@@ -1008,7 +1008,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(phone.length()==11){
             //手机号码屏蔽中间四位
             hidePhone = phone.substring(0, 3) + "****"+phone.substring(7,11);
-        }else{
+        }else if(phone.length()>4){
             //非手机号码屏蔽最后四位
             hidePhone = phone.substring(0, phone.length() - 4) + "****";
         }
