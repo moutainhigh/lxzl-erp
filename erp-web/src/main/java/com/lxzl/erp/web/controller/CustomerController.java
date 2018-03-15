@@ -195,4 +195,10 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "updateOwnerAndUnionUser", method = RequestMethod.POST)
+    public Result updateOwnerAndUnionUser(@RequestBody @Validated({UpdateOwnerAndUnionUserGroup.class}) Customer customer, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updateOwnerAndUnionUser(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 }

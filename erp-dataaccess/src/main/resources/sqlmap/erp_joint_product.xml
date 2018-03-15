@@ -166,7 +166,7 @@
                 <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null">
-                <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>W
+                <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>
             </if>
             <if test="true">
                 and ejp.data_status = 1

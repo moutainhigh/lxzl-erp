@@ -137,4 +137,11 @@ public interface CustomerService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> rejectCustomer(CustomerRejectParam customerRejectParam);
+    /**
+     * 审核通过修改业务员和联合开发人
+     *
+     * @param customer
+     * @return
+     */
+    ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer);
 }
