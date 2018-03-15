@@ -12,27 +12,33 @@ import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class JointProductControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageJointProduct() throws Exception {
-        JointProductQueryParam jointProductQueryParam = new JointProductQueryParam();
-        jointProductQueryParam.setJointProductName("组合007");
-//        jointProductQueryParam.setJointProductId(48);
+//        JointProductQueryParam jointProductQueryParam = new JointProductQueryParam();
+//        jointProductQueryParam.setJointProductName("组合007");
+////        jointProductQueryParam.setJointProductId(48);
 //        jointProductQueryParam.setPageNo(1);
-//        jointProductQueryParam.setPageSize(2);
+//        jointProductQueryParam.setPageSize(15);
 //        Calendar instance = Calendar.getInstance();
-//        instance.set(2015, 10, 12,11,32,52);
+////        instance.set(2015, 10, 12,11,32,52);
 //        Date time = instance.getTime();
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //        Date d1 = sdf.parse("2018-03-10");
 //        Date d2 = sdf.parse("2018-03-14");
+//
+////        jointProductQueryParam.setStartDate(d1);
+////        jointProductQueryParam.setEndDate(d2);
+//        TestResult jsonTestResult = getJsonTestResult("/jointProduct/page", jointProductQueryParam);
 
-//        jointProductQueryParam.setStartDate(d1);
-//        jointProductQueryParam.setEndDate(d2);
-        TestResult jsonTestResult = getJsonTestResult("/jointProduct/page", jointProductQueryParam);
+        String str = "{\"pageNo\":1,\"pageSize\":15,\"jointProductName\":\"\",\"jointProductId\":\"\",\"startDate\":\"1520352000000\",\"endDate\":\"1521129599999\",\"timePicker\":\"2018-03-07 - 2018-03-15\"}";
+        JointProductQueryParam jointProductQueryParam = JSONUtil.convertJSONToBean(str, JointProductQueryParam.class);
+        TestResult result = getJsonTestResult("/jointProduct/page", jointProductQueryParam);
+
     }
 
     @Test
@@ -46,7 +52,7 @@ public class JointProductControllerTest extends ERPUnTransactionalTest {
     public void deleteJointProduct() throws Exception {
         JointProduct jointProduct = new JointProduct();
         jointProduct.setJointProductId(38);
-        TestResult testResult = getJsonTestResult("/jointProduct/delete",jointProduct);
+        TestResult testResult = getJsonTestResult("/jointProduct/delete", jointProduct);
     }
 
     @Test
