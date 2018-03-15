@@ -1420,6 +1420,12 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
 
         }
+        
+        //跟新客户审核状态为成功
+        if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
+            customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
+            customerMapper.update(customerDO);
+        }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
