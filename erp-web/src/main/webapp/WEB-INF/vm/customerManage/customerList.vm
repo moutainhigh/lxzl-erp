@@ -41,6 +41,11 @@
                                     </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <div class="input-group">
+                                            <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                        </div>
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <div class="input-group">
                                             <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
                                         </div>
                                     </div>
@@ -191,7 +196,8 @@
                 'manage.customer.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js',
-                'modal.input.js');
+                'modal.input.js',
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

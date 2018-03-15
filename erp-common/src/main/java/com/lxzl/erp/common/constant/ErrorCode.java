@@ -551,7 +551,8 @@ public class ErrorCode {
     public static final String CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE = "J500141";
     public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT = "J500142";
     public static final String CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL = "J500143";
-
+    public static final String CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500144";
+    public static final String CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER = "J500146";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -778,6 +779,7 @@ public class ErrorCode {
         MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
         MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
+        MAP.put(CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER, "当前用户没有权限操作此客户");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1071,6 +1073,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_CONNECT_PHONE_NOT_MATCH_PHONE , "紧急联系人电话不能与客户电话相同");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_GREATER_THAN_CREDIT_AMOUNT , "已用授信额度大于授信额度，请仔细检查");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_CREDIT_AMOUNT_USED_IS_NOT_NULL , "已用授信额度不能为空");
+        MAP.put(CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER , "只有创建人、业务员、联合开发人可以提交");
 
 
         MAP.put(ORDER_PRODUCT_LIST_NOT_NULL, "订单商品与配件不能同时为空");
@@ -1151,7 +1154,7 @@ public class ErrorCode {
         MAP.put(RETURN_ORDER_CAN_NOT_COMMIT, "只有待提交的退还单可以提交审核");
         MAP.put(ORDER_PRODUCT_NOT_EXISTS, "商品订单项不存在");
         MAP.put(ORDER_MATERIAL_NOT_EXISTS, "商品配件项不存在");
-        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为商品价值的倍数");
+        MAP.put(ORDER_PRODUCT_DEPOSIT_ERROR, "订单商品押金有误，需为租赁台数的倍数");
         MAP.put(ORDER_MATERIAL_DEPOSIT_ERROR, "订单配件押金有误，需为配件价值的倍数");
         MAP.put(ORDER_DELIVERY_MODE_ERROR, "订单送货方式有误，请联系管理员");
         MAP.put(ORDER_CAN_NOT_DELIVERY_TIME_REASON, "订单未到发货时间，不能发货");

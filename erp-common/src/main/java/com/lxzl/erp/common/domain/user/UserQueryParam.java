@@ -17,6 +17,7 @@ public class UserQueryParam extends BasePageParam {
     private List<Integer> subCompanyIdList;
     private Integer departmentType;
     private Integer isDisabled;
+    private Integer roleType;
 
     public Integer getUserId() {
         return userId;
@@ -93,4 +94,8 @@ public class UserQueryParam extends BasePageParam {
     public Integer getIsDisabled() { return isDisabled; }
 
     public void setIsDisabled(Integer isDisabled) { this.isDisabled = isDisabled; }
+
+    public Integer getRoleType() { return roleType; }
+
+    public void setRoleType(Integer roleType) { this.roleType = roleType; }
 }

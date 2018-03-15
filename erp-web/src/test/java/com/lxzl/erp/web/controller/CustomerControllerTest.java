@@ -5,9 +5,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
 import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
@@ -143,7 +141,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180306-00313");
+        customer.setCustomerNo("LXCC-1000-20180314-00333");
         customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
@@ -156,10 +154,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
         customerCompanyNeed1.setSkuId(70);
         customerCompanyNeed1.setRentCount(15);
+        customerCompanyNeed1.setIsNew(0);
+        customerCompanyNeed1.setRentTimeLength(3);
+        customerCompanyNeed1.setRentType(1);
 
         CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
         customerCompanyNeed2.setSkuId(57);
         customerCompanyNeed2.setRentCount(30);
+        customerCompanyNeed2.setIsNew(0);
+        customerCompanyNeed2.setRentTimeLength(3);
+        customerCompanyNeed2.setRentType(1);
 
         customerCompanyNeedFirstList.add(customerCompanyNeed1);
         customerCompanyNeedFirstList.add(customerCompanyNeed2);
@@ -287,16 +291,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD-1000-20180304-00032");
+        customer.setCustomerNo("LXCP-1000-20180308-00329");
         customer.setOwner(500025);
         customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(1000));
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setConnectRealName("赵二天");
+        customerPerson.setConnectRealName("赵二天111");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("武神么");
+        customerPerson.setRealName("武神么11");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("update个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
@@ -388,7 +392,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateRisk() throws Exception {
         CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
-        customerRiskManagement.setCustomerNo("LXCD-1000-20180306-00283");
+        customerRiskManagement.setCustomerNo("LXCC-1000-20180314-00333");
         customerRiskManagement.setPaymentCycle(12);
         customerRiskManagement.setPayMode(1);
         customerRiskManagement.setReturnVisitFrequency(12);
@@ -427,7 +431,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerNo("CP01711221151519901204");
+        customerConsignInfo.setCustomerNo("LXCC-1000-20180314-00333");
         customerConsignInfo.setConsigneeName("add测试联系人6677");
         customerConsignInfo.setConsigneePhone("13566253480");
         customerConsignInfo.setProvince(9);
@@ -443,7 +447,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(987);
+        customerConsignInfo.setCustomerConsignInfoId(994);
         customerConsignInfo.setConsigneeName("update联系人");
         customerConsignInfo.setConsigneePhone("13566253478");
         customerConsignInfo.setProvince(29);
@@ -565,5 +569,23 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setCustomerNo("LXCC10002018010800035");
         customer.setStatementDate(20);
         TestResult testResult = getJsonTestResult("/customer/addStatementDate",customer);
+    }
+
+    @Test
+    public void commitCustomerToWorkflow() throws Exception {
+        CustomerCommitParam param = new CustomerCommitParam();
+        param.setCustomerNo("LXCC-2000-20180307-00307");
+        param.setVerifyUserId(500207);
+
+        TestResult testResult = getJsonTestResult("/customer/commitCustomerToWorkflow",param);
+    }
+
+    @Test
+    public void rejectCustomer() throws Exception {
+        CustomerRejectParam param = new CustomerRejectParam();
+        param.setCustomerNo("LXCC-2000-20180307-00307");
+        param.setRemark("客户信息有错误，需更改数据");
+
+        TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);
     }
 }

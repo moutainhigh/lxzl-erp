@@ -154,7 +154,8 @@
                 'manage.customer.address.add.js',
                 'manage.customer.address.edit.js',
                 'manage.customer.orders.js',
-                'modal.input.js');
+                'modal.input.js',
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

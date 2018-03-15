@@ -137,10 +137,10 @@
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
                 and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
             </if>
-            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null &amp;&amp; maps.jointProductQueryParam.startDate != ''">
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null">
                 <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
             </if>
-            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null &amp;&amp; maps.jointProductQueryParam.endDate != ''">
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null">
                 <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>
             </if>
             <if test="true">
@@ -162,11 +162,11 @@
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
                 and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
             </if>
-            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null &amp;&amp; maps.jointProductQueryParam.startDate != ''">
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null">
                 <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
             </if>
-            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null &amp;&amp; maps.jointProductQueryParam.endDate != ''">
-                <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.endDate != null">
+                <![CDATA[ AND ejp.create_time <= #{maps.jointProductQueryParam.endDate} ]]>W
             </if>
             <if test="true">
                 and ejp.data_status = 1

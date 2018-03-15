@@ -22,6 +22,7 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
@@ -33,6 +34,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowNodeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
@@ -113,6 +115,9 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Autowired
     private ImgMysqlMapper imgMysqlMapper;
 
+    @Autowired
+    private CustomerMapper customerMapper;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters, String commitRemark, List<Integer> imgIdList,String orderRemark) {
@@ -188,7 +193,12 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (warehouseDO != null) {
                 subCompanyId = warehouseDO.getSubCompanyId();
             }
-        } else {
+        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+            CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+            if(customerDO != null){
+                subCompanyId = customerDO.getOwnerSubCompanyId();
+            }
+        }else {
             subCompanyId = userSupport.getCurrentUserCompanyId();
         }
 
@@ -208,7 +218,6 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowLinkDO.getCurrentVerifyStatus())
-                || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())
                 || VerifyStatus.VERIFY_STATUS_BACK.equals(workflowLinkDO.getCurrentVerifyStatus())) {
             result.setErrorCode(ErrorCode.VERIFY_STATUS_ERROR);
             return result;
@@ -238,6 +247,47 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
         result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> rejectPassWorkFlow(Integer workflowType, String workflowReferNo, String commitRemark) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+
+        WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType,workflowReferNo);
+        if(workflowLinkDO == null){
+            result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
+        if(workflowTemplateDO == null){
+            result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_NOT_EXISTS);
+            return result;
+        }
+
+        workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+        workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+        workflowLinkDO.setUpdateTime(currentTime);
+        workflowLinkMapper.update(workflowLinkDO);
+
+        WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
+        workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+        workflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
+        workflowLinkDetailDO.setWorkflowStep(workflowTemplateDO.getWorkflowNodeDOList().size() + 1);
+        workflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
+        workflowLinkDetailDO.setVerifyTime(currentTime);
+        workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+        workflowLinkDetailDO.setVerifyOpinion(commitRemark);
+        workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        workflowLinkDetailDO.setCreateTime(currentTime);
+        workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+        workflowLinkDetailMapper.save(workflowLinkDetailDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(workflowLinkDO.getWorkflowLinkNo());
         return result;
     }
 
@@ -741,6 +791,13 @@ public class WorkflowServiceImpl implements WorkflowService {
             ServiceResult<String, User> userResult = userService.getUserById(workflowNodeDO.getWorkflowUser());
             if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
                 userList.add(userResult.getResult());
+            }
+        }else if(workflowNodeDO.getWorkflowRoleType() != null){
+            userQueryParam.setRoleType(workflowNodeDO.getWorkflowRoleType());
+            userQueryParam.setSubCompanyId(subCompanyId);
+            ServiceResult<String, List<User>> userResult = userService.getUserListByParam(userQueryParam);
+            if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
+                userList = userResult.getResult();
             }
         } else if (workflowNodeDO.getWorkflowRole() != null) {
             userQueryParam.setRoleId(workflowNodeDO.getWorkflowRole());
