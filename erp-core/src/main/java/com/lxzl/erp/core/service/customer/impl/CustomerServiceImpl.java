@@ -999,8 +999,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private String hidePhone(String phone) {
-        String hidePhone = phone;
-        if (StringUtil.isNotEmpty(phone) && phone.length() >= 4) {
+
+        String hidePhone = "";
+        if(StringUtil.isBlank(phone)){
+            return hidePhone;
+        }
+        phone = phone.trim();
+        if(phone.length()==11){
+            //手机号码屏蔽中间四位
+            hidePhone = phone.substring(0, 3) + "****"+phone.substring(7,11);
+        }else{
+            //非手机号码屏蔽最后四位
             hidePhone = phone.substring(0, phone.length() - 4) + "****";
         }
         return hidePhone;
@@ -1013,21 +1022,21 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.isSuperUser()) {
             CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
             if (customerCompanyDO != null) {
-//                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
-//                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
-//                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
-//                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
-                customerCompanyDO.setConnectPhone(null);
-                customerCompanyDO.setAgentPersonPhone(null);
-                customerCompanyDO.setLegalPersonPhone(null);
-                customerCompanyDO.setLandline(null);
+                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
+                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
+                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
+                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
+//                customerCompanyDO.setConnectPhone(null);
+//                customerCompanyDO.setAgentPersonPhone(null);
+//                customerCompanyDO.setLegalPersonPhone(null);
+//                customerCompanyDO.setLandline(null);
             }
             CustomerPersonDO customerPersonDO = customerDO.getCustomerPersonDO();
             if (customerPersonDO != null) {
-//                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
-//                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
-                customerPersonDO.setPhone(null);
-                customerPersonDO.setConnectPhone(null);
+                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
+                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+//                customerPersonDO.setPhone(null);
+//                customerPersonDO.setConnectPhone(null);
             }
         }
     }
