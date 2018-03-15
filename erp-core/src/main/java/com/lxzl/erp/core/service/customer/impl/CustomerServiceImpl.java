@@ -1469,7 +1469,7 @@ public class CustomerServiceImpl implements CustomerService {
         //通过CustomerNo来获取客户ID
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfo.getCustomerNo());
         if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -1521,12 +1521,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         //通过CustomerNo来获取客户ID
         if (customerConsignInfoDO.getCustomerId() == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
         CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
         if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -1618,7 +1618,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfoQueryParam.getCustomerNo());
         if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
         //获取该用户ID下所有的地址信息
@@ -2575,84 +2575,23 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
-        //数据库联合开发员
-        Integer dbOwner = customerDO.getOwner();
-        Integer dbUnionUser = customerDO.getUnionUser();
         Date now = new Date();
-        Integer owner = customer.getOwner();
-        Integer unionUser = customer.getUnionUser();
-        Integer companyId = userSupport.getCompanyIdByUser(owner);
-        if(companyId == null){
-            serviceResult.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+        //校验开发人和联合开发人是否相同
+        ServiceResult<String, String> serviceResult = judgeUserOwnerAndUnion(customer);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
             return serviceResult;
         }
-        //业务员和联合开发人是否相同
-        if(owner != null && companyId != null){
-            if(owner.equals(unionUser)){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME);
-                return serviceResult;
-            }
+        //添加客户修改日志
+        serviceResult = updateCustomerOwnerAndUnionUser(customerDO, customer, now);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            return serviceResult;
         }
-
-        customerDO.setOwner(owner);
-        customerDO.setUnionUser(unionUser);
-        customerDO.setOwnerSubCompanyId(companyId);
-        customerDO.setUpdateTime(now);
+        customerDO.setOwnerSubCompanyId(userSupport.getCompanyIdByUser(customer.getOwner()));
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setUpdateTime(now);
         customerMapper.update(customerDO);
 
-
-        //这里要添加客户变更记录
-        if (unionUser != null) {
-            //判断是否更改了
-            if (!unionUser.equals(dbUnionUser)) {
-                CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
-                customerUpdateLogDO.setCustomerId(customerDO.getId());
-                customerUpdateLogDO.setOwner(owner);
-                customerUpdateLogDO.setUnionUser(unionUser);
-                customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                customerUpdateLogDO.setCreateTime(now);
-                customerUpdateLogMapper.save(customerUpdateLogDO);
-            } else {
-                if (!owner.equals(dbOwner)) {
-                    CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
-                    customerUpdateLogDO.setCustomerId(customerDO.getId());
-                    customerUpdateLogDO.setOwner(owner);
-                    customerUpdateLogDO.setUnionUser(unionUser);
-                    customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                    customerUpdateLogDO.setCreateTime(now);
-                    customerUpdateLogMapper.save(customerUpdateLogDO);
-                }
-            }
-        } else {
-            if (dbUnionUser == null) {
-                if (!owner.equals(dbOwner)) {
-                    CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
-                    customerUpdateLogDO.setCustomerId(customerDO.getId());
-                    customerUpdateLogDO.setOwner(owner);
-                    customerUpdateLogDO.setUnionUser(unionUser);
-                    customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                    customerUpdateLogDO.setCreateTime(now);
-                    customerUpdateLogMapper.save(customerUpdateLogDO);
-                }
-                //此时数据库内容为 dbUnionUser null
-            } else {
-                CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
-                customerUpdateLogDO.setCustomerId(customerDO.getId());
-                customerUpdateLogDO.setOwner(owner);
-                customerUpdateLogDO.setUnionUser(unionUser);
-                customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                customerUpdateLogDO.setCreateTime(now);
-                customerUpdateLogMapper.save(customerUpdateLogDO);
-            }
-
-        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
