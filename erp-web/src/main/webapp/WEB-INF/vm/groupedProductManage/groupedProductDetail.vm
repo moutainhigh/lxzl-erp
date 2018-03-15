@@ -66,6 +66,7 @@
                                                     <thead>
                                                     <tr class="bg-light">
                                                         <th>商品名称</th>
+                                                        <th>图片</th>
                                                         <th>类别</th>
                                                         <th>品牌</th>
                                                         <th>商品参数（SKU）</th>
@@ -78,9 +79,10 @@
                                                     {{#listData}}
                                                     <tr class="productRow skuRow" productRowKey="{{productId}}">
                                                         <td>
-                                                            {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                                            <!-- {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}} -->
                                                             {{productName}}
                                                         </td>
+                                                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                         <td>{{categoryName}}</td>
                                                         <td>{{brandName}}</td>
                                                         <td>{{propertiesToStr}}</td>
@@ -90,7 +92,7 @@
                                                     {{/listData}}
                                                     {{^listData}}
                                                     <tr>
-                                                        <td valign="top" colspan="6" class="text-center">没有选择商品</td>
+                                                        <td valign="top" colspan="7" class="text-center">没有选择商品</td>
                                                     </tr>
                                                     {{/listData}}
                                                     {{/dataSource}}
@@ -103,8 +105,9 @@
                                             <div class="table-responsive">
                                                 <script type="text/html" id="materialDataListTpl">
                                                     <thead>
-                                                    <tr>
+                                                    <tr class="bg-light">
                                                         <th>配件编号</th>
+                                                        <th>图片</th>
                                                         <th>配件名称</th>
                                                         <th>类别</th>
                                                         <th>品牌</th>
@@ -117,8 +120,9 @@
                                                     {{#listData}}
                                                     <tr class="materialRow">
                                                         <td>{{materialNo}}</td>
+                                                        <td><a class="productImg open-img-popup" data-imgs={{materialImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                         <td>
-                                                            {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                            <!-- {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}} -->
                                                             {{materialName}}
                                                         </td>
                                                         <td>{{materialTypeName}}</td>
@@ -129,7 +133,7 @@
                                                     {{/listData}}
                                                     {{^listData}}
                                                     <tr>
-                                                        <td valign="top" colspan="6" class="text-center">没有选择配件</td>
+                                                        <td valign="top" colspan="7" class="text-center">没有选择配件</td>
                                                     </tr>
                                                     {{/listData}}
                                                     {{/dataSource}}
