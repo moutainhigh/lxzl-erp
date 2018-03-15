@@ -2547,12 +2547,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 校验是否是跟单员,联合开发人,创建人
+     *
+     * @param : customerDO
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/14 14:28
-     * @param : customerCompany
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    private ServiceResult<String, String> verifyJurisdiction(CustomerDO customerDO){
+    private ServiceResult<String, String> verifyJurisdiction(CustomerDO customerDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //开发人
         Integer owner = customerDO.getOwner();
@@ -2564,9 +2565,93 @@ public class CustomerServiceImpl implements CustomerService {
 
         //当前登录用户
         Integer currentUserId = userSupport.getCurrentUserId();
-        if(!currentUserId.equals(owner) && !currentUserId.equals(unionUser) && !currentUserId.equals(createUserId) ){
+        if (!currentUserId.equals(owner) && !currentUserId.equals(unionUser) && !currentUserId.equals(createUserId)) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER);
             return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
+        //数据库联合开发员
+        Integer dbOwner = customerDO.getOwner();
+        Integer dbUnionUser = customerDO.getUnionUser();
+        Date now = new Date();
+        Integer owner = customer.getOwner();
+        Integer unionUser = customer.getUnionUser();
+        Integer companyId = userSupport.getCompanyIdByUser(owner);
+        if(companyId == null){
+            serviceResult.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+        //业务员和联合开发人是否相同
+        if(owner != null && companyId != null){
+            if(owner.equals(unionUser)){
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_USER_AND_UNION_USER_NOT_SAME);
+                return serviceResult;
+            }
+        }
+
+        customerDO.setOwner(owner);
+        customerDO.setUnionUser(unionUser);
+        customerDO.setOwnerSubCompanyId(companyId);
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+
+
+        //这里要添加客户变更记录
+        if (unionUser != null) {
+            //判断是否更改了
+            if (!unionUser.equals(dbUnionUser)) {
+                CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
+                customerUpdateLogDO.setCustomerId(customerDO.getId());
+                customerUpdateLogDO.setOwner(owner);
+                customerUpdateLogDO.setUnionUser(unionUser);
+                customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                customerUpdateLogDO.setCreateTime(now);
+                customerUpdateLogMapper.save(customerUpdateLogDO);
+            } else {
+                if (!owner.equals(dbOwner)) {
+                    CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
+                    customerUpdateLogDO.setCustomerId(customerDO.getId());
+                    customerUpdateLogDO.setOwner(owner);
+                    customerUpdateLogDO.setUnionUser(unionUser);
+                    customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    customerUpdateLogDO.setCreateTime(now);
+                    customerUpdateLogMapper.save(customerUpdateLogDO);
+                }
+            }
+        } else {
+            if (dbUnionUser == null) {
+                if (!owner.equals(dbOwner)) {
+                    CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
+                    customerUpdateLogDO.setCustomerId(customerDO.getId());
+                    customerUpdateLogDO.setOwner(owner);
+                    customerUpdateLogDO.setUnionUser(unionUser);
+                    customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    customerUpdateLogDO.setCreateTime(now);
+                    customerUpdateLogMapper.save(customerUpdateLogDO);
+                }
+                //此时数据库内容为 dbUnionUser null
+            } else {
+                CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
+                customerUpdateLogDO.setCustomerId(customerDO.getId());
+                customerUpdateLogDO.setOwner(owner);
+                customerUpdateLogDO.setUnionUser(unionUser);
+                customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                customerUpdateLogDO.setCreateTime(now);
+                customerUpdateLogMapper.save(customerUpdateLogDO);
+            }
+
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;

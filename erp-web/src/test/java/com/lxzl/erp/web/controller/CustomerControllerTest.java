@@ -20,6 +20,15 @@ import java.util.List;
 
 public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
+    public void updateOwnerAndUnionUser() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC-1000-20180314-00333");
+        customer.setOwner(500016);
+        customer.setUnionUser(500016);
+        TestResult result = getJsonTestResult("/customer/updateOwnerAndUnionUser", customer);
+    }
+
+    @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
         customer.setOwner(500021);
