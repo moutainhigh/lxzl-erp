@@ -2574,6 +2574,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer) {
         CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
         Date now = new Date();
