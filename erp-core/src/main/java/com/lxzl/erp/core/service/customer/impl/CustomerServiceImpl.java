@@ -1273,7 +1273,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
-            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_IS_PASS_CAN_REJECT);
             return result;
         }
 
