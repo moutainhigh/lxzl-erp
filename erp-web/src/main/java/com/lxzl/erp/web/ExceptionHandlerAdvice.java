@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * User : LiuKe
  * Date : 2016/12/30
@@ -23,7 +26,9 @@ public class ExceptionHandlerAdvice {
     private final Logger log = LoggerFactory.getLogger(getClass());
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> exception(BusinessException businessException , WebRequest request) {
-        log.error("ExceptionHandlerAdvice catch the BusinessException, ", businessException);
+        StringWriter exceptionFormat=new StringWriter();
+        businessException.printStackTrace(new PrintWriter(exceptionFormat,true));
+        log.error("ExceptionHandlerAdvice catch the BusinessException, ", exceptionFormat);
         if(StringUtil.isBlank(businessException.getMessage())){
             return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
         }else{
@@ -37,7 +42,9 @@ public class ExceptionHandlerAdvice {
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exception(Exception exception , WebRequest request) {
-        log.error("ExceptionHandlerAdvice catch the SystemException, ", exception);
+        StringWriter exceptionFormat=new StringWriter();
+        exception.printStackTrace(new PrintWriter(exceptionFormat,true));
+        log.error("ExceptionHandlerAdvice catch the SystemException, ", exceptionFormat);
         if(StringUtil.isEmpty(ErrorCode.getMessage(exception.getMessage()))){
             return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
         }else{
