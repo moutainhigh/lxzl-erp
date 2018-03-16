@@ -136,6 +136,9 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.save(orderDO);
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
@@ -144,7 +147,15 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(orderDO.getOrderNo());
         return result;
     }
-
+    private void setOrderProductSummary(OrderDO orderDO){
+        List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        if(CollectionUtil.isNotEmpty(orderProductDOList)){
+            orderDO.setProductSummary(orderProductDOList.get(0).getProductName());
+        }else if(CollectionUtil.isNotEmpty(orderMaterialDOList)){
+            orderDO.setProductSummary(orderMaterialDOList.get(0).getMaterialName());
+        }
+    }
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> updateOrder(Order order) {
@@ -209,6 +220,10 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
+
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         result.setErrorCode(ErrorCode.SUCCESS);
