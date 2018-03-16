@@ -41,9 +41,11 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
@@ -52,9 +54,11 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
@@ -342,7 +346,16 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (isNeedVerify) {
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, null, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
+            //如果要审核，判断审核注意事项
+            ServiceResult<String, String> verifyMattersResult = getVerifyMatters(orderDO);
+            if (!ErrorCode.SUCCESS.equals(verifyMattersResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(verifyMattersResult.getErrorCode());
+                return result;
+            }
+            String verifyMatters = verifyMattersResult.getResult();
+
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());
@@ -2407,6 +2420,112 @@ public class OrderServiceImpl implements OrderService {
         return ErrorCode.SUCCESS;
     }
 
+    /**
+     * 审核注意事项
+     *
+     * @param orderDO
+     * @return
+     */
+    private ServiceResult<String, String> getVerifyMatters(OrderDO orderDO){
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        String verifyProduct = null;
+        BigDecimal productPrice = null;
+        if (CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
+            Integer count = 1;
+            OrderProductDO orderProductDO;
+            for(int i=0;i<orderDO.getOrderProductDOList().size();i++){
+                orderProductDO = orderDO.getOrderProductDOList().get(i);
+                ProductSkuDO productSkuDO = productSkuMapper.findById(orderProductDO.getProductSkuId());
+                if(productSkuDO == null){
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+                //得到
+                if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+                    productPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSkuDO.getNewDayRentPrice() : productSkuDO.getDayRentPrice();
+                }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+                    productPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSkuDO.getNewMonthRentPrice() : productSkuDO.getMonthRentPrice();
+                }
+                // 订单价格低于商品租赁价
+                if (BigDecimalUtil.compare(orderProductDO.getProductUnitAmount(), productPrice) < 0) {
+                    if(verifyProduct == null){
+                        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
+                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
+                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                        }else{
+                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
+                                    "商品项：" + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
+                                    "商品项：" + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                        }
+                    }else{
+                        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
+                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
+                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                        }else{
+                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
+                                    verifyProduct + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
+                                    verifyProduct + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                        }
+                    }
+                    count++;
+                }
+            }
+        }
+
+        String verifyMaterial = null;
+        BigDecimal materialPrice = null;
+        if(CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())){
+            Integer count = 1;
+            OrderMaterialDO orderMaterialDO;
+            for(int i=0;i<orderDO.getOrderMaterialDOList().size();i++){
+                orderMaterialDO = orderDO.getOrderMaterialDOList().get(i);
+                MaterialDO materialDO = materialMapper.findById(orderMaterialDO.getMaterialId());
+                if(materialDO == null){
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+                    materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? materialDO.getNewDayRentPrice() : materialDO.getDayRentPrice();
+                }else if(OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())){
+                    materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? materialDO.getNewMonthRentPrice() : materialDO.getMonthRentPrice();
+                }
+                // 订单价格低于商品租赁价
+                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), productPrice) < 0) {
+                    if(verifyMaterial == null){
+                        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
+                                    "配件项：" + count + "；租赁方式：天租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
+                                    "配件项：" + count + "；租赁方式：天租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                        }else{
+                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
+                                    "配件项：" + count + "；租赁方式：月租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
+                                    "配件项：" + count + "；租赁方式：月租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                        }
+                    }else{
+                        if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
+                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
+                                    verifyMaterial + count + "；租赁方式：天租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
+                                    verifyMaterial + count + "；租赁方式：天租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                        }else{
+                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
+                                    verifyMaterial + count + "；租赁方式：月租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
+                                    verifyMaterial + count + "；租赁方式：月租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                        }
+                    }
+                    count++;
+                }
+            }
+        }
+        String verifyMatters = verifyProduct + verifyMaterial;
+
+        result.setResult(verifyMatters);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
     @Autowired
     private UserSupport userSupport;
 
@@ -2505,4 +2624,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialTypeMapper materialTypeMapper;
+
+    @Autowired
+    private ProductSkuMapper productSkuMapper;
+
+    @Autowired
+    private MaterialMapper materialMapper;
 }

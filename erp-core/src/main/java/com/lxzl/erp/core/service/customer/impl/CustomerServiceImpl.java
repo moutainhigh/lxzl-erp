@@ -999,8 +999,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private String hidePhone(String phone) {
-        String hidePhone = phone;
-        if (StringUtil.isNotEmpty(phone) && phone.length() >= 4) {
+
+        String hidePhone = "";
+        if(StringUtil.isBlank(phone)){
+            return hidePhone;
+        }
+        phone = phone.trim();
+        if(phone.length()==11){
+            //手机号码屏蔽中间四位
+            hidePhone = phone.substring(0, 3) + "****"+phone.substring(7,11);
+        }else if(phone.length()>4){
+            //非手机号码屏蔽最后四位
             hidePhone = phone.substring(0, phone.length() - 4) + "****";
         }
         return hidePhone;
@@ -1013,21 +1022,21 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.isSuperUser()) {
             CustomerCompanyDO customerCompanyDO = customerDO.getCustomerCompanyDO();
             if (customerCompanyDO != null) {
-//                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
-//                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
-//                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
-//                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
-                customerCompanyDO.setConnectPhone(null);
-                customerCompanyDO.setAgentPersonPhone(null);
-                customerCompanyDO.setLegalPersonPhone(null);
-                customerCompanyDO.setLandline(null);
+                customerCompanyDO.setConnectPhone(hidePhone(customerCompanyDO.getConnectPhone()));
+                customerCompanyDO.setAgentPersonPhone(hidePhone(customerCompanyDO.getAgentPersonPhone()));
+                customerCompanyDO.setLegalPersonPhone(hidePhone(customerCompanyDO.getLegalPersonPhone()));
+                customerCompanyDO.setLandline(hidePhone(customerCompanyDO.getLandline()));
+//                customerCompanyDO.setConnectPhone(null);
+//                customerCompanyDO.setAgentPersonPhone(null);
+//                customerCompanyDO.setLegalPersonPhone(null);
+//                customerCompanyDO.setLandline(null);
             }
             CustomerPersonDO customerPersonDO = customerDO.getCustomerPersonDO();
             if (customerPersonDO != null) {
-//                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
-//                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
-                customerPersonDO.setPhone(null);
-                customerPersonDO.setConnectPhone(null);
+                customerPersonDO.setPhone(hidePhone(customerPersonDO.getPhone()));
+                customerPersonDO.setConnectPhone(hidePhone(customerPersonDO.getConnectPhone()));
+//                customerPersonDO.setPhone(null);
+//                customerPersonDO.setConnectPhone(null);
             }
         }
     }
@@ -1206,7 +1215,14 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
+        Integer workflowType;
+        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
+            workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
+        }else{
+            workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(workflowType);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
@@ -1222,7 +1238,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
 
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(workflowType, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
@@ -1261,7 +1277,14 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
+        Integer workflowType;
+        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
+            workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
+        }else{
+            workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
+        }
+
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(workflowType, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
         if (!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())) {
             result.setErrorCode(rejectPassResult.getErrorCode());
             return result;
@@ -1371,11 +1394,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        //校验当前是否是跟单员,联合开发人,创建人
-        serviceResult = verifyJurisdiction(customerDO);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
-            return serviceResult;
-        }
         //校验风控信息
         ServiceResult<String, String> result = verifyRiskManagement(customerRiskManagement);
         if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
@@ -1474,15 +1492,10 @@ public class CustomerServiceImpl implements CustomerService {
         //通过CustomerNo来获取客户ID
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfo.getCustomerNo());
         if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        //校验当前是否是跟单员,联合开发人,创建人
-        ServiceResult<String, String> result = verifyJurisdiction(customerDO);
-        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
-            serviceResult.setErrorCode(result.getErrorCode());
-            return serviceResult;
-        }
+
         //获取地址信息的内容，存入客户地址信息表
         CustomerConsignInfoDO customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo, CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
@@ -1531,18 +1544,12 @@ public class CustomerServiceImpl implements CustomerService {
         }
         //通过CustomerNo来获取客户ID
         if (customerConsignInfoDO.getCustomerId() == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
         CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
         if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
-            return serviceResult;
-        }
-        //校验当前是否是跟单员,联合开发人,创建人
-        ServiceResult<String, String> result = verifyJurisdiction(customerDO);
-        if(!(ErrorCode.SUCCESS.equals(result.getErrorCode()))){
-            serviceResult.setErrorCode(result.getErrorCode());
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -1634,7 +1641,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfoQueryParam.getCustomerNo());
         if (customerDO == null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
         //获取该用户ID下所有的地址信息
@@ -2563,12 +2570,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 校验是否是跟单员,联合开发人,创建人
+     *
+     * @param : customerDO
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/14 14:28
-     * @param : customerCompany
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    private ServiceResult<String, String> verifyJurisdiction(CustomerDO customerDO){
+    private ServiceResult<String, String> verifyJurisdiction(CustomerDO customerDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //开发人
         Integer owner = customerDO.getOwner();
@@ -2580,10 +2588,34 @@ public class CustomerServiceImpl implements CustomerService {
 
         //当前登录用户
         Integer currentUserId = userSupport.getCurrentUserId();
-        if(!currentUserId.equals(owner) && !currentUserId.equals(unionUser) && !currentUserId.equals(createUserId) ){
+        if (!currentUserId.equals(owner) && !currentUserId.equals(unionUser) && !currentUserId.equals(createUserId)) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER);
             return serviceResult;
         }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer) {
+        CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
+        Date now = new Date();
+        //校验开发人和联合开发人是否相同
+        ServiceResult<String, String> serviceResult = judgeUserOwnerAndUnion(customer);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            return serviceResult;
+        }
+        //添加客户修改日志
+        serviceResult = updateCustomerOwnerAndUnionUser(customerDO, customer, now);
+        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+            return serviceResult;
+        }
+        customerDO.setOwnerSubCompanyId(userSupport.getCompanyIdByUser(customer.getOwner()));
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setUpdateTime(now);
+        customerMapper.update(customerDO);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

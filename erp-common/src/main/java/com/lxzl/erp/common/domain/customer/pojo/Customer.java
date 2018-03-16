@@ -22,7 +22,7 @@ public class Customer extends BasePO {
 
 	private Integer customerId;   //唯一标识
 	private Integer customerType;   //用户类型,1为企业用户，2为个人用户
-	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class})
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class,UpdateOwnerAndUnionUserGroup.class})
 	private String customerNo;   //客戶编号
 	private String customerName; //客户名称
 	private Integer isDisabled;   //是否禁用，1不可用；0可用
@@ -32,7 +32,7 @@ public class Customer extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
-	@NotNull(message = ErrorCode.CUSTOMER_OWNER_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class})
+	@NotNull(message = ErrorCode.CUSTOMER_OWNER_NOT_NULL , groups = {AddCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,UpdateOwnerAndUnionUserGroup.class})
 	private Integer owner;		//数据归属人，跟单员，业务员
 	private Integer unionUser;  //联合开发人
 	private Integer customerStatus;  //客户状态，0初始化，1资料提交，2审核通过，3资料驳回
