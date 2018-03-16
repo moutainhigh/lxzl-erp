@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class K3ProductConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) throws Exception{
         Product product = (Product) data;
         K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
         K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());

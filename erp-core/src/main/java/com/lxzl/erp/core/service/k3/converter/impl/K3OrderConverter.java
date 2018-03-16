@@ -12,6 +12,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -33,6 +34,8 @@ import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -42,12 +45,12 @@ import java.util.List;
 public class K3OrderConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType, Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType, Object data) throws Exception {
+        FormSEOrder formSEOrder = new FormSEOrder();
 
         Order erpOrder = (Order) data;
         ServiceResult<String, Order> orderResult = orderService.queryOrderByNo(erpOrder.getOrderNo());
         erpOrder = orderResult.getResult();
-        FormSEOrder formSEOrder = new FormSEOrder();
         if (PostK3OperatorType.POST_K3_OPERATOR_TYPE_UPDATE.equals(postK3OperatorType)) {
             formSEOrder.setIsReplace(true);// 是否覆盖
         } else if (PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD.equals(postK3OperatorType)) {
@@ -113,9 +116,9 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setOrderTypeNumber("D");
         }
         formSEOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
-        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())){
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())) {
             formSEOrder.setOrderFromNumber("XS");// 订单来源 XS	线上 XX 线下
-        }else{
+        } else {
             formSEOrder.setOrderFromNumber("XX");
         }
 
@@ -160,9 +163,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formICItem.setModel(productDO.getProductModel());//型号名称
                     formICItem.setName(productDO.getProductName());//商品名称
                     String number = "";
-                    if(StringUtil.isNotEmpty(productDO.getK3ProductNo())){
+                    if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
                         number = productDO.getK3ProductNo();
-                    }else{
+                    } else {
                         number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
                     }
                     FormSEOrderEntry formSEOrderEntry = new FormSEOrderEntry();
@@ -231,9 +234,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                     K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
                     K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
                     String number = "";
-                    if(StringUtil.isNotEmpty(materialDO.getK3MaterialNo())){
+                    if (StringUtil.isNotEmpty(materialDO.getK3MaterialNo())) {
                         number = materialDO.getK3MaterialNo();
-                    }else{
+                    } else {
                         number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
                     }
                     FormSEOrderEntry formSEOrderEntry = new FormSEOrderEntry();
@@ -307,6 +310,20 @@ public class K3OrderConverter implements ConvertK3DataService {
 
     }
 
+    public static void main(String[] args) {
+        test("ppppppppp");
+    }
+
+    private static void test(String s) {
+        Order order = null;
+        try {
+            order.getOrderStatus();
+        } catch (Throwable t) {
+            StringWriter errorInfo = new StringWriter();
+            t.printStackTrace(new PrintWriter(errorInfo, true));
+            System.out.println(errorInfo.toString());
+        }
+    }
 
     @Autowired
     private K3Support k3Support;
@@ -334,4 +351,6 @@ public class K3OrderConverter implements ConvertK3DataService {
     private ProductSkuMapper productSkuMapper;
     @Autowired
     private OrderTimeAxisMapper orderTimeAxisMapper;
+    @Autowired
+    private DingDingSupport dingDingSupport;
 }
