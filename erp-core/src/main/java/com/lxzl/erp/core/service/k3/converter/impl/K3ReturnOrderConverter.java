@@ -18,7 +18,7 @@ import java.util.List;
 public class K3ReturnOrderConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) throws Exception{
         K3ReturnOrder k3ReturnOrder = (K3ReturnOrder)data;
         FormSEOutStock formSEOutStock = new FormSEOutStock();
         formSEOutStock.setAddress(getString(k3ReturnOrder.getReturnAddress()));

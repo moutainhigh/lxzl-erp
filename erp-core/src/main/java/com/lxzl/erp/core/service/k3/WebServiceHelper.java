@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,8 +81,14 @@ public class WebServiceHelper {
                 return;
             }
             ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(postK3Type);
-            Object postData = convertK3DataService.getK3PostWebServiceData(postK3OperatorType, data);
-
+            Object postData = null;
+            try{
+                postData = convertK3DataService.getK3PostWebServiceData(postK3OperatorType, data);
+            }catch (Exception e){
+                StringWriter errorInfo = new StringWriter();
+                e.printStackTrace(new PrintWriter(errorInfo, true));
+                dingdingSupport.dingDingSendMessage(errorInfo.toString());
+            }
             threadPoolTaskExecutor.execute(new K3WebServicePostRunner(postK3Type, postData, k3SendRecordMapper, k3SendRecordDO, convertK3DataService,dingdingSupport));
         } catch (Exception e) {
             logger.error("=============【 PostWebServiceHelper ERROR 】=============");
