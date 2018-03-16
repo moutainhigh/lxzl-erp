@@ -92,6 +92,9 @@
         AND eo.buyer_customer_id = #{maps.customerId}
         ) epe
     </select>
+    <select id="selectAll" resultMap="ProductSkuDO" >
+        SELECT <include refid="column_List"/> FROM erp_product_sku eps where data_status =1 order by  eps.product_id
+    </select>
     <select id="findSkuRent" resultMap="ProductSkuDO" parameterType="map">
         SELECT epe.sku_id AS id,epe.rentCount AS rent_count,epe.rentCount-IFNULL(eco.returnYet,0)-IFNULL(ero.returnYet,0) AS can_process_count
         FROM (SELECT epe.sku_id,COUNT(1) rentCount
