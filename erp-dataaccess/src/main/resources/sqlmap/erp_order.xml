@@ -451,17 +451,9 @@
             <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
-            <!--<if test="maps.orderQueryParam.orderStatus != null">-->
-                <!--and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}-->
-            <!--</if>-->
-            <choose>
-                <when test="maps.orderQueryParam.orderStatus != null and maps.orderQueryParam.orderStatus != 1 ">
-                    and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-                </when>
-                <otherwise>
-                    and eo.order_status in (0,4,8,12,16,20,24,28,32,36,40)
-                </otherwise>
-            </choose>
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
             </if>
