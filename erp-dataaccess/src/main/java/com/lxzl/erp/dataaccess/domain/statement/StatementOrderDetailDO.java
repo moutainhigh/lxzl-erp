@@ -51,6 +51,9 @@ public class StatementOrderDetailDO extends BaseDO {
     @Transient
     private BigDecimal goodsUnitAmount;
 
+    private String itemName;
+    private Integer itemIsNew;
+
     public Integer getId() {
         return id;
     }
@@ -353,5 +356,21 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementDetailOverduePaidAmount(BigDecimal statementDetailOverduePaidAmount) {
         this.statementDetailOverduePaidAmount = statementDetailOverduePaidAmount;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public Integer getItemIsNew() {
+        return itemIsNew;
+    }
+
+    public void setItemIsNew(Integer itemIsNew) {
+        this.itemIsNew = itemIsNew;
     }
 }

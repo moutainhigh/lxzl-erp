@@ -78,10 +78,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import javax.xml.rpc.ServiceException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("orderService")
 public class OrderServiceImpl implements OrderService {
@@ -857,9 +854,50 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (orderDO.getFirstNeedPayAmount() == null || BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) == 0) {
-            ServiceResult<String, BigDecimal> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(order.getOrderNo());
+            ServiceResult<String, Map<String,BigDecimal>> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(order.getOrderNo());
+            Map<String,BigDecimal> map = firstNeedPayAmountResult.getResult();
             if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
-                order.setFirstNeedPayAmount(firstNeedPayAmountResult.getResult());
+                order.setFirstNeedPayAmount(map.get("thisNeedPayAmount,ALL"));
+
+                String orderProductAndSkuName;
+                String orderMaterialName;
+                String isNew;
+                for(int i=0;i<order.getOrderProductList().size();i++){
+                    String ItemName = order.getOrderProductList().get(i).getProductName() + order.getOrderProductList().get(i).getProductSkuName();
+                    Iterator it = map.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry entry = (Map.Entry) it.next();
+                        String key = (String) entry.getKey();
+                        String[] str = key.split(",");
+                        orderProductAndSkuName = str[0];
+                        isNew = str[1];
+                        if(ItemName.equals(orderProductAndSkuName) && String.valueOf(order.getOrderProductList().get(i).getIsNewProduct()).equals(isNew)){
+                            order.getOrderProductList().get(i).setFirstNeedPayAmount(map.get(key));
+                            order.getOrderProductList().get(i).setFirstNeedPayRentAmount(map.get(key));
+                        }
+                    }
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(order.getOrderProductList().get(i).getRentDepositAmount(),order.getOrderProductList().get(i).getDepositAmount());
+                    order.getOrderProductList().get(i).setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
+                }
+
+
+                for(int i=0;i<order.getOrderMaterialList().size();i++){
+                    String ItemName = order.getOrderMaterialList().get(i).getMaterialName();
+                    Iterator it = map.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry entry = (Map.Entry) it.next();
+                        String key = (String) entry.getKey();
+                        String[] str = key.split(",");
+                        orderMaterialName = str[0];
+                        isNew = str[1];
+                        if(ItemName.equals(orderMaterialName) && String.valueOf(order.getOrderMaterialList().get(i).getIsNewMaterial()).equals(isNew)){
+                            order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(key));
+                            order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(key));
+                        }
+                    }
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(order.getOrderMaterialList().get(i).getRentDepositAmount(),order.getOrderMaterialList().get(i).getDepositAmount());
+                    order.getOrderMaterialList().get(i).setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
+                }
             }
         }
 
@@ -889,6 +927,7 @@ public class OrderServiceImpl implements OrderService {
                         }
                         orderProduct.setFirstNeedPayAmount(orderProduct.getFirstNeedPayAmount() == null ? BigDecimal.ZERO : orderProduct.getFirstNeedPayAmount());
                         orderProduct.setFirstNeedPayRentAmount(orderProduct.getFirstNeedPayRentAmount() == null ? BigDecimal.ZERO : orderProduct.getFirstNeedPayRentAmount());
+                        orderProduct.setFirstNeedPayDepositAmount(BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount()));
                     }
                 }
 
@@ -917,6 +956,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     orderMaterial.setFirstNeedPayAmount(orderMaterial.getFirstNeedPayAmount() == null ? BigDecimal.ZERO : orderMaterial.getFirstNeedPayAmount());
                     orderMaterial.setFirstNeedPayRentAmount(orderMaterial.getFirstNeedPayRentAmount() == null ? BigDecimal.ZERO : orderMaterial.getFirstNeedPayRentAmount());
+                    orderMaterial.setFirstNeedPayDepositAmount(BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount()));
                 }
             }
         }

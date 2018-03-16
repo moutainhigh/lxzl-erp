@@ -15,6 +15,7 @@ import com.lxzl.se.core.service.BaseService;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -47,7 +48,7 @@ public interface StatementService extends BaseService {
      * @param orderNo 订单号
      * @return 发货前需要交多少钱
      */
-    ServiceResult<String, BigDecimal> calculateOrderFirstNeedPayAmount(String orderNo);
+    ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(String orderNo);
 
     /**
      * 支付结算单
