@@ -107,8 +107,8 @@
                                                     <thead>
                                                     <tr class="bg-light">
                                                         <th>配件编号</th>
-                                                        <th>图片</th>
                                                         <th>配件名称</th>
+                                                        <th>图片</th>
                                                         <th>类别</th>
                                                         <th>品牌</th>
                                                         <th>配件价值</th>
@@ -120,11 +120,11 @@
                                                     {{#listData}}
                                                     <tr class="materialRow">
                                                         <td>{{materialNo}}</td>
-                                                        <td><a class="productImg open-img-popup" data-imgs={{materialImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                         <td>
                                                             <!-- {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}} -->
                                                             {{materialName}}
                                                         </td>
+                                                        <td><a class="productImg open-img-popup" data-imgs={{materialImgJSON}}><img src="{{mainImg}}" /></a></td>
                                                         <td>{{materialTypeName}}</td>
                                                         <td>{{brandName}}</td>
                                                         <td>￥{{materialPrice}}</td>

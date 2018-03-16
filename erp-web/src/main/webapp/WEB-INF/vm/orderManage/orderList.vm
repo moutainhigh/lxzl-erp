@@ -102,19 +102,19 @@
                                             </label>
                                         </th>
                                         {{/hasCommonActionButtons}}
-                                        <th>订单编号</th>
-                                        <th>所属公司</th>
+                                        <th>编号</th>
+                                        <th>订单归属公司</th>
+                                        <th>客户名称</th>
+                                        <th>收货人信息</th>
+                                        <th>类型/期限</th>
+                                        <th>商品名称</th>
+                                        <th>订单金额</th>
                                         <th>发货公司</th>
                                         <th>送货日期</th>
-                                        <th>客户</th>
-                                        <th>商品名</th>
-                                        <th>订单总价</th>
-                                        <th>支付状态</th>
-                                        <th>订单状态</th>
-                                        <th>租期</th>
-                                        <th>收货人</th>
                                         <th>业务员</th>
                                         <th>创建人</th>
+                                        <th>支付状态</th>
+                                        <th>订单状态</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -134,13 +134,27 @@
                                             {{/hasCommonActionButtons}}
                                             <td>{{orderNo}}</td>
                                             <td>{{orderSubCompanyName}}</td>
-                                            <td>{{deliverySubCompanyName}}</td>
-                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                                             <td>{{buyerCustomerName}}</td>
+                                            <td>
+                                                <p class="mn">{{orderConsignInfo.consigneeName}}</p>
+                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
+                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn" style="white-space: nowrap;">{{rentTypeValue}}</p>
+                                                <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                            </td>
                                             <td>
                                                 {{orderItemName}}
                                             </td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td>{{deliverySubCompanyName}}</td>
+                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
+                                            <td>{{orderSellerName}}</td>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                            </td>
                                             <td>
                                                 <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
                                                 <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
@@ -148,23 +162,6 @@
                                             <td>
                                                 <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
-                                            </td>
-                                            <td>
-                                                <p class="mn" style="white-space: nowrap;">{{rentTypeValue}}</p>
-                                                <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
-                                            </td>
-##                                            <td>
-##
-##                                            </td>
-                                            <td>
-                                                <p class="mn">{{orderConsignInfo.consigneeName}}</p>
-                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
-                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
-                                            </td>
-                                            <td>{{orderSellerName}}</td>
-                                            <td>
-                                                <p class="mn">{{createUserRealName}}</p>
-                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                             </td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">

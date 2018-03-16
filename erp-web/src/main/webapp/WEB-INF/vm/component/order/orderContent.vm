@@ -165,13 +165,15 @@
                             <th>类别</th>
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
-                            <th>商品价值</th>
-                            <th>商品单价</th>
-                            <th>租赁数量</th>
-##                            <th>租赁类型</th>
-##                            <th>租赁时长</th>
-                            <th>设备押金</th>
+                            <th>商品保值价</th>
+                            <th>单价</th>
+                            <th>数量</th>
+##                            <th>类型</th>
+##                            <th>期限</th>
+                            <th>订单金额</th>
                             <th>支付方式</th>
+                            <th>首付金额</th>
+                            <th>首付押金</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -228,14 +230,14 @@
 ##                                    </label>
 ##                                </div>
 ##                            </td>
+
                             <td>
-                                {{#showDepositAmount}}
                                 <label class="field prepend-icon">
-                                    <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
+                                    <input type="text" name="" value="{{}}" class="form-control required moneyNumber gui-input" placeholder="输入订单金额" />
                                     <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                 </label>
-                                {{/showDepositAmount}}
                             </td>
+
                             <td>
                                 {{#showDepositAmount}}
                                 <label class="field select">
@@ -249,6 +251,23 @@
                                 </label>
                                 {{/showDepositAmount}}
                             </td>
+
+                            <td>
+                                <label class="field prepend-icon">
+                                    <input type="text" name="-{{skuId}}-{{rowKey}}" value="{{}}" class="form-control required moneyNumber gui-input" placeholder="首付金额" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                            </td>
+
+                            <td>
+                                {{#showDepositAmount}}
+                                <label class="field prepend-icon">
+                                    <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="首付押金" />
+                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                </label>
+                                {{/showDepositAmount}}
+                            </td>
+                            
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>

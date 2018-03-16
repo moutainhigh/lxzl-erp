@@ -80,9 +80,9 @@
                                         <th>组合商品ID</th>
                                         <th>组合商品名称</th>
                                         <th>状态</th>
-                                        <th>备注</th>
                                         <th>商品项</th>
                                         <th>配件项</th>
+                                        <th>备注</th>
                                         <th>创建人</th>
                                         <th>修改人</th>
                                         {{#hasRowActionButtons}}
@@ -105,9 +105,9 @@
                                             <td>{{jointProductId}}</td>
                                             <td>{{jointProductName}}</td>
                                             <td>{{dataStatusValue}}</td>
-                                            <td>{{remark}}</td>
                                             <td>{{groupedProductTostr}}</td>
                                             <td>{{groupedMaterialTostr}}</td>
+                                            <td>{{remark}}</td>
                                             <td>
                                                 <p class="mn">{{createUserRealName}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
@@ -120,7 +120,7 @@
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
-                                                    <a href="${ctx}{{menuUrl}}?id={{jointProductId}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{productId}}">{{text}}</a>
+                                                    <a href="${ctx}{{menuUrl}}?id={{jointProductId}}" type="button" class="btn btn-default btn-xs {{class}}" data-productId="{{jointProductId}}">{{text}}</a>
                                                     {{/rowActionButtons}}
                                                 </div>
                                             </td>
