@@ -254,8 +254,8 @@
                                 {{/showDepositAmount}}
                             </td>
 
-                            <td>{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
-                            <td>{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
+                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
+                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>
@@ -393,8 +393,8 @@
                                 </div>
                             </td>
 
-                            <td>{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
-                            <td>{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
+                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
+                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}

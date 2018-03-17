@@ -682,11 +682,11 @@
                                                 <th>类别</th>
                                                 <th>品牌</th>
                                                 <th>商品参数（SKU）</th>
-                                                <th>单台商品价值</th>
-                                                <th>租赁数量</th>
-                                                <th>租赁类型</th>
-                                                <th>租赁时长</th>
-                                                <th>商品总价值</th>
+                                                <th>商品保值价</th>
+                                                <th>数量</th>
+                                                <th>类型</th>
+                                                <th>期限</th>
+                                                <th>商品总保值价</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
                                             </thead>
@@ -789,11 +789,11 @@
                                                 <th>类别</th>
                                                 <th>品牌</th>
                                                 <th>商品参数（SKU）</th>
-                                                <th>单台商品价值</th>
-                                                <th>租赁数量</th>
-                                                <th>租赁类型</th>
-                                                <th>租赁时长</th>
-                                                <th>商品总价值</th>
+                                                <th>商品保值价</th>
+                                                <th>数量</th>
+                                                <th>类型</th>
+                                                <th>期限</th>
+                                                <th>商品总保值价</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
                                             </thead>
