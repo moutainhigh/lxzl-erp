@@ -19,19 +19,17 @@ import com.lxzl.erp.core.service.product.ProductCategoryService;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductCategoryPropertyValueMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuPropertyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
-import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
+import com.lxzl.erp.dataaccess.domain.product.*;
 import com.lxzl.erp.dataaccess.domain.warehouse.StockOrderDO;
 import com.lxzl.erp.web.init.ReadExcelUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProductTest extends ERPUnTransactionalTest {
 
@@ -762,6 +760,34 @@ public class ProductTest extends ERPUnTransactionalTest {
         return productCategoryPropertyValueDO;
     }
 
+    /**
+     * 找出重复的sku
+     */
+    @Test
+    public void sameSkuTest(){
+        List<ProductSkuDO> productSkuDOList = productSkuMapper.selectAll();
+        Map<String,ProductSkuDO> productSkuMap = new HashMap<>();
+        StringBuffer error = new StringBuffer();
+        for(ProductSkuDO productSkuDO :productSkuDOList){
+            String propertiesKey = getPropertiesKey(productSkuDO);
+            if(productSkuMap.containsKey(propertiesKey)){
+                error.append("重复SKU：原SKUID["+productSkuMap.get(propertiesKey).getId()+":"+productSkuMap.get(propertiesKey).getSkuPrice()+"元]，重复的SKUID["+productSkuDO.getId()+":"+productSkuDO.getSkuPrice()+"元]\n");
+            }else{
+                productSkuMap.put(propertiesKey,productSkuDO);
+            }
+        }
+        System.out.println("------------------------------------------------");
+        System.out.println(error.toString());
+    }
+
+    private String getPropertiesKey(ProductSkuDO productSkuDO){
+        StringBuffer sb = new StringBuffer(productSkuDO.getProductId()+":");
+        List<ProductSkuPropertyDO> productSkuPropertyDOList = productSkuPropertyMapper.findSkuProperties(productSkuDO.getId());
+        for(ProductSkuPropertyDO productSkuPropertyDO : productSkuPropertyDOList){
+            sb.append(productSkuPropertyDO.getPropertyId()).append("-").append(productSkuPropertyDO.getPropertyValueId()).append("/");
+        }
+        return sb.toString();
+    }
     @Autowired
     private ProductCategoryPropertyMapper productCategoryPropertyMapper;
 
@@ -770,4 +796,8 @@ public class ProductTest extends ERPUnTransactionalTest {
 
     @Autowired
     private MaterialService materialService;
+    @Autowired
+    private ProductSkuPropertyMapper productSkuPropertyMapper;
+    @Autowired
+    private ProductSkuMapper productSkuMapper;
 }

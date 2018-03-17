@@ -41,7 +41,7 @@ public class OrderMaterial extends BasePO {
 
 	private BigDecimal firstNeedPayAmount;
 	private BigDecimal firstNeedPayRentAmount;
-
+	private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
 	public Integer getOrderMaterialId(){
 		return orderMaterialId;
@@ -263,7 +263,9 @@ public class OrderMaterial extends BasePO {
 		return firstNeedPayRentAmount;
 	}
 
-	public void setFirstNeedPayRentAmount(BigDecimal firstNeedPayRentAmount) {
-		this.firstNeedPayRentAmount = firstNeedPayRentAmount;
-	}
+	public void setFirstNeedPayRentAmount(BigDecimal firstNeedPayRentAmount) { this.firstNeedPayRentAmount = firstNeedPayRentAmount; }
+
+	public BigDecimal getFirstNeedPayDepositAmount() { return firstNeedPayDepositAmount; }
+
+	public void setFirstNeedPayDepositAmount(BigDecimal firstNeedPayDepositAmount) { this.firstNeedPayDepositAmount = firstNeedPayDepositAmount; }
 }

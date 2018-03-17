@@ -333,6 +333,16 @@ public class PageController extends BaseController {
         return "/component/customer/updateRiskCreditAmountUsed";
     }
 
+    @RequestMapping("/customer-manage/edit-after-pass")
+    public String customerManageEditAfterPass() {
+        return "/customerManage/customerEditAfterPass";
+    }
+
+    @RequestMapping("/customer-business-manage/edit-after-pass")
+    public String customerBusinessManageEditAfterPass() {
+        return "/businessCustomerManage/businessCustomerEditAfterPass";
+    }
+
     //采购管理
     @RequestMapping("/purchase-manage/list")
     public String purchaseManageList() {

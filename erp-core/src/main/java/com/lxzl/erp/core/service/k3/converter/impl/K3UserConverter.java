@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class K3UserConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) throws Exception{
         User user = (User)data;
         FormUser formUser = new FormUser();
         Integer subCompanyId = userSupport.getCompanyIdByUser(user.getUserId());

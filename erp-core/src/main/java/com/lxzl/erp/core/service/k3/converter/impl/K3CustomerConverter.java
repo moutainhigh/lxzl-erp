@@ -49,7 +49,7 @@ public class K3CustomerConverter implements ConvertK3DataService{
     private AreaCityMapper areaCityMapper;
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType,Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType,Object data) throws Exception{
         Customer customer = (Customer)data;
 
         Integer subCompanyId = userSupport.getCompanyIdByUser(customer.getOwner());

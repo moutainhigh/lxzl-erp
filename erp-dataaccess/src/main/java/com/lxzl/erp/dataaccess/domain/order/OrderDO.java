@@ -52,6 +52,7 @@ public class OrderDO extends BaseDO {
     private Integer highTaxRate;
     private Integer lowTaxRate;
     private String buyerRemark;
+    private String productSummary;
     private Integer dataStatus;
     private String remark;
     private Integer owner;
@@ -175,6 +176,14 @@ public class OrderDO extends BaseDO {
 
     public void setBuyerRemark(String buyerRemark) {
         this.buyerRemark = buyerRemark;
+    }
+
+    public String getProductSummary() {
+        return productSummary;
+    }
+
+    public void setProductSummary(String productSummary) {
+        this.productSummary = productSummary;
     }
 
     public Integer getDataStatus() {

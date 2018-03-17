@@ -153,6 +153,7 @@
                                                        data-statementdate="{{statementDate}}"
                                                        data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
                                                        data-customertype="{{customerType}}"
+                                                       data-ownerSubCompanyId="{{ownerSubCompanyId}}"
                                                        class="{{class}}">{{text}}</a>
                                                 </li>
                                                 {{/rowActionButtons}}

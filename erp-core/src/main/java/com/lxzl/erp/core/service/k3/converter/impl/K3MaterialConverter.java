@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class K3MaterialConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) throws Exception{
         Material material = (Material) data;
         K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(material.getMaterialType().toString());
         K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(material.getBrandId().toString());
