@@ -244,7 +244,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180316-027-00003");
+        order.setOrderNo("LXO-20180316-1000-00005");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
@@ -263,6 +263,57 @@ public class OrderTest extends ERPUnTransactionalTest {
         map.put("returnEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
         map.put("changeEquipmentNo", "LX-EQUIPMENT-4000001-2017120110015");
         TestResult testResult = getJsonTestResult("/order/returnEquipment", map);
+    }
+
+    @Test
+    public void createOrderFirstPayAmount() throws Exception {
+        Order order = new Order();
+
+        order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
+        order.setLogisticsAmount(new BigDecimal(50));
+        order.setBuyerRemark("2018.3.17 17:19 测试");
+        order.setRentStartTime(new Date());
+        order.setExpectDeliveryTime(new Date());
+        order.setOrderSubCompanyId(8);
+//        order.setDeliverySubCompanyId(1);
+
+        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentTimeLength(6);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderProduct.setProductSkuId(1689);
+        orderProduct.setIsNewProduct(1);
+        orderProduct.setProductCount(5);
+        orderProduct.setInsuranceAmount(new BigDecimal(100.0));
+        orderProduct.setProductUnitAmount(new BigDecimal(100.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(100.0));
+        orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct.setDepositAmount(new BigDecimal(100.0));
+        orderProductList.add(orderProduct);
+        order.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial.setMaterialId(12);
+        orderMaterial.setIsNewMaterial(1);
+        orderMaterial.setMaterialCount(5);
+        orderMaterial.setInsuranceAmount(new BigDecimal(50));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(50.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(50.0));
+        orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial.setDepositAmount(new BigDecimal(50.0));
+        orderMaterialList.add(orderMaterial);
+        order.setOrderMaterialList(orderMaterialList);
+
+        order.setBuyerCustomerNo("LXCP-027-20180316-00783");
+        order.setBuyerCustomerId(704980);
+        order.setCustomerConsignId(5440);
+        order.setRentStartTime(new Date());
+        TestResult testResult = getJsonTestResult("/order/createOrderFirstPayAmount", order);
     }
 
 }

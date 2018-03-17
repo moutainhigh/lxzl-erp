@@ -81,6 +81,9 @@ public class Order extends BasePO {
 
     private StatementOrder statementOrder;
 
+    private BigDecimal totalProductFirstNeedPayAmount;  //首付商品总金额
+    private BigDecimal totalMaterialFirstNeedPayAmount; //首付配件总金额
+
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
     }
@@ -560,4 +563,12 @@ public class Order extends BasePO {
     public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
 
     public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
+
+    public BigDecimal getTotalProductFirstNeedPayAmount() { return totalProductFirstNeedPayAmount; }
+
+    public void setTotalProductFirstNeedPayAmount(BigDecimal totalProductFirstNeedPayAmount) { this.totalProductFirstNeedPayAmount = totalProductFirstNeedPayAmount; }
+
+    public BigDecimal getTotalMaterialFirstNeedPayAmount() { return totalMaterialFirstNeedPayAmount; }
+
+    public void setTotalMaterialFirstNeedPayAmount(BigDecimal totalMaterialFirstNeedPayAmount) { this.totalMaterialFirstNeedPayAmount = totalMaterialFirstNeedPayAmount; }
 }
