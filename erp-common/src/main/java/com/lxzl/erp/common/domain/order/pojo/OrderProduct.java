@@ -38,6 +38,7 @@ public class OrderProduct extends BasePO {
 
     private BigDecimal firstNeedPayAmount;      // 首付金额
     private BigDecimal firstNeedPayRentAmount;      // 首付租金金额
+    private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
     public Integer getOrderProductId() {
         return orderProductId;
@@ -251,7 +252,9 @@ public class OrderProduct extends BasePO {
         return firstNeedPayRentAmount;
     }
 
-    public void setFirstNeedPayRentAmount(BigDecimal firstNeedPayRentAmount) {
-        this.firstNeedPayRentAmount = firstNeedPayRentAmount;
-    }
+    public void setFirstNeedPayRentAmount(BigDecimal firstNeedPayRentAmount) { this.firstNeedPayRentAmount = firstNeedPayRentAmount; }
+
+    public BigDecimal getFirstNeedPayDepositAmount() { return firstNeedPayDepositAmount; }
+
+    public void setFirstNeedPayDepositAmount(BigDecimal firstNeedPayDepositAmount) { this.firstNeedPayDepositAmount = firstNeedPayDepositAmount; }
 }
