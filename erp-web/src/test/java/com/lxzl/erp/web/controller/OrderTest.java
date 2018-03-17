@@ -275,9 +275,8 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
         order.setOrderSubCompanyId(8);
-//        order.setDeliverySubCompanyId(1);
 
-        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentType(OrderRentType.RENT_TYPE_DAY);
         order.setRentTimeLength(6);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
@@ -310,8 +309,6 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setOrderMaterialList(orderMaterialList);
 
         order.setBuyerCustomerNo("LXCP-027-20180316-00783");
-        order.setBuyerCustomerId(704980);
-        order.setCustomerConsignId(5440);
         order.setRentStartTime(new Date());
         TestResult testResult = getJsonTestResult("/order/createOrderFirstPayAmount", order);
     }
