@@ -1096,12 +1096,85 @@ public class OrderServiceImpl implements OrderService {
 
         ServiceResult<String, Order> result = new ServiceResult<>();
         Date currentTime = new Date();
-        String verifyCreateOrderCode = verifyOperateOrder(order);
-        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
-            result.setErrorCode(verifyCreateOrderCode);
+
+        if ((order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) && (order.getOrderMaterialList() == null || order.getOrderMaterialList().isEmpty())) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
         }
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        order.setBuyerCustomerId(customerDO.getId());
+
+        if (order.getRentStartTime() == null) {
+            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_RENT_START_TIME);
+            return result;
+        }
+        if (order.getRentType() == null) {
+            result.setErrorCode(ErrorCode.ORDER_RENT_TYPE_IS_NULL);
+            return result;
+        }
+        if (order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
+            result.setErrorCode(ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL);
+            return result;
+        }
+
+        order.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && order.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            for (OrderProduct orderProduct : order.getOrderProductList()) {
+                orderProduct.setRentType(order.getRentType());
+                orderProduct.setRentTimeLength(order.getRentTimeLength());
+                orderProduct.setRentLengthType(order.getRentLengthType());
+                if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_COUNT_ERROR);
+                    return result;
+                }
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProduct.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null) {
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+                Product product = productServiceResult.getResult();
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NOT_RENT);
+                    return result;
+                }
+                if (CollectionUtil.isEmpty(product.getProductSkuList())) {
+                    result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                orderMaterial.setRentType(order.getRentType());
+                orderMaterial.setRentTimeLength(order.getRentTimeLength());
+                orderMaterial.setRentLengthType(order.getRentLengthType());
+                if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_COUNT_ERROR);
+                    return result;
+                }
+                if (orderMaterial.getMaterialId() == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterial.getMaterialId());
+
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode()) || materialServiceResult.getResult() == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                if (orderMaterial.getMaterialUnitAmount() == null || BigDecimalUtil.compare(orderMaterial.getMaterialUnitAmount(), BigDecimal.ZERO) < 0) {
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_AMOUNT_ERROR);
+                    return result;
+                }
+            }
+        }
+
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
 
         // 校验客户风控信息
