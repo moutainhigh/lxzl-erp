@@ -2991,6 +2991,7 @@ CREATE TABLE `erp_bank_slip` (
   `in_count` int(11) NOT NULL COMMENT '进款笔数',
   `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
   `claim_count` int(11) NOT NULL COMMENT '已认领笔数',
+  `confirm_count` int(11) NOT NULL COMMENT '已确认笔数',
   `slip_status` int(11) NOT NULL COMMENT '单据状态：0-初始化，1-已下推，2-部分认领，3-全部认领',
   `excel_url` varchar(200) NOT NULL DEFAULT '' COMMENT '表格URL',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
