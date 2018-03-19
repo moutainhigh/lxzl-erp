@@ -169,6 +169,9 @@
         (
             select <include refid="columnList"/> from erp_user u
             <where>
+                <if test="maps.userQueryParam.userName != null &amp;&amp; maps.userQueryParam.userName != ''">
+                    and u.user_name like '%${maps.userQueryParam.userName}%'
+                </if>
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
                 </if>
