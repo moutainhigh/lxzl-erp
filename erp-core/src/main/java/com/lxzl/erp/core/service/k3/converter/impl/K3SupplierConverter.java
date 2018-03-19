@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class K3SupplierConverter implements ConvertK3DataService {
 
     @Override
-    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) {
+    public Object getK3PostWebServiceData(Integer postK3OperatorType , Object data) throws Exception{
         Supplier supplier = (Supplier) data;
         FormSupply formSupply = new FormSupply();
         formSupply.setNumber(supplier.getSupplierNo());

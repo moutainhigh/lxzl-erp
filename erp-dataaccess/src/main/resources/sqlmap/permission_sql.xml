@@ -75,10 +75,24 @@
 
 	<sql id="customer_control">
 		<if test="maps.permissionParam != null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
-			AND ec.create_user in
-			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
-				#{item}
-			</foreach>
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ec.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.union_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ec.owner in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>)
+			</if>
 		</if>
 	</sql>
 

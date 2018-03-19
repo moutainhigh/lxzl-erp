@@ -56,6 +56,7 @@ public class Order extends BasePO {
     private Integer highTaxRate;                                // 17%税率占比
     private Integer lowTaxRate;                                 // 6%税率占比
     private String buyerRemark;                                 // 租户备注
+    private String productSummary;                                 // 商品摘要
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
@@ -182,6 +183,14 @@ public class Order extends BasePO {
 
     public void setBuyerRemark(String buyerRemark) {
         this.buyerRemark = buyerRemark;
+    }
+
+    public String getProductSummary() {
+        return productSummary;
+    }
+
+    public void setProductSummary(String productSummary) {
+        this.productSummary = productSummary;
     }
 
     public Integer getDataStatus() {

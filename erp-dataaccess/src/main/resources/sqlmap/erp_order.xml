@@ -52,6 +52,7 @@
         <result column="high_tax_rate" jdbcType="INTEGER" property="highTaxRate" />
         <result column="low_tax_rate" jdbcType="INTEGER" property="lowTaxRate" />
         <result column="buyer_remark" jdbcType="VARCHAR" property="buyerRemark" />
+        <result column="product_summary" jdbcType="VARCHAR" property="productSummary" />
         <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="owner" jdbcType="INTEGER" property="owner" />
@@ -160,7 +161,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.product_summary as product_summary,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id
 	</sql>
 
     <sql id="product_column_List">
@@ -301,92 +302,82 @@
     </select>
 
     <select id="findOrderByParams" resultMap="OrderDO" parameterType="map">
-        SELECT m_order.*
+
+        SELECT
+        <include refid="column_List"/>
         <trim prefix=",">
-            <include refid="product_column_List" />
+            <include refid="consign_column_List" />
         </trim>
         <trim prefix=",">
-            <include refid="material_column_List" />
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
         </trim>
-        FROM (
-            SELECT
-            <include refid="column_List"/>
-            <trim prefix=",">
-                <include refid="consign_column_List" />
-            </trim>
-            <trim prefix=",">
-                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
-            </trim>
-            FROM erp_order eo
-            LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
-            LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
-            LEFT JOIN erp_area_province eap ON eap.id = eoci.province
-            LEFT JOIN erp_area_city eac ON eac.id = eoci.city
-            LEFT JOIN erp_area_district ead ON ead.id = eoci.district
-            LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
-            LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
-            LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-            <where>
-                <if test="maps.orderQueryParam.buyerRealName != null &amp;&amp; maps.orderQueryParam.buyerRealName != ''">
-                    and eo.buyer_customer_name like CONCAT('%','${maps.orderQueryParam.buyerRealName}','%' )
-                </if>
-                <if test="maps.orderQueryParam.consigneeName != null &amp;&amp; maps.orderQueryParam.consigneeName != ''">
-                    and eoci.consignee_name like CONCAT('%','${maps.orderQueryParam.consigneeName}','%' )
-                </if>
-                <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
-                    and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
-                </if>
-                <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
-                    and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
-                    and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
-                    and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
-                    and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
-                    and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
-                </if>
-                <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
-                    and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
-                    and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
-                    and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
-                    and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
-                </if>
-                <if test="maps.orderQueryParam.orderStatus != null">
-                    and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-                </if>
-             
-                <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
-                    and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
-                </if>
-                <if test="maps.orderQueryParam.createStartTime != null">
-                    <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
-                </if>
-                <if test="maps.orderQueryParam.createEndTime != null ">
-                    <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
-                </if>
-                <if test="maps.isQueryAll == null">
-                    and eo.data_status = 1
-                </if>
-                <include refid="permission_sql.order_control"/>
-            </where>
-            ORDER BY eo.create_time DESC
-            LIMIT #{maps.start},#{maps.pageSize}
-        ) m_order
-        LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
-        LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
-        ORDER BY m_order.create_time DESC
+        FROM erp_order eo
+        LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
+        LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        <where>
+            <if test="maps.orderQueryParam.buyerRealName != null &amp;&amp; maps.orderQueryParam.buyerRealName != ''">
+                and eo.buyer_customer_name like CONCAT('%','${maps.orderQueryParam.buyerRealName}','%' )
+            </if>
+            <if test="maps.orderQueryParam.consigneeName != null &amp;&amp; maps.orderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.orderQueryParam.consigneeName}','%' )
+            </if>
+            <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
+                and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
+                and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
+                and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
+                and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
+                and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
+            </if>
+            <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
+                and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
+                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
+                and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
+                and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
+
+            <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
+                and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
+            </if>
+            <if test="maps.orderQueryParam.createStartTime != null">
+                <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.createEndTime != null ">
+                <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+            <include refid="permission_sql.order_control"/>
+        </where>
+        ORDER BY eo.create_time DESC
+        LIMIT #{maps.start},#{maps.pageSize}
+
     </select>
 
     <select id="querySubCompanyOrderAmount" resultType="java.util.HashMap" parameterType="java.util.Map">
@@ -451,17 +442,9 @@
             <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
-            <!--<if test="maps.orderQueryParam.orderStatus != null">-->
-                <!--and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}-->
-            <!--</if>-->
-            <choose>
-                <when test="maps.orderQueryParam.orderStatus != null and maps.orderQueryParam.orderStatus != 1 ">
-                    and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-                </when>
-                <otherwise>
-                    and eo.order_status in (0,4,8,12,16,20,24,28,32,36,40)
-                </otherwise>
-            </choose>
+            <if test="maps.orderQueryParam.orderStatus != null">-->
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
             </if>
@@ -602,6 +585,9 @@
             </if>
             <if test="buyerRemark != null">
                 buyer_remark = #{buyerRemark, jdbcType=VARCHAR},
+            </if>
+            <if test="productSummary != null">
+                product_summary = #{productSummary, jdbcType=VARCHAR},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus, jdbcType=INTEGER},

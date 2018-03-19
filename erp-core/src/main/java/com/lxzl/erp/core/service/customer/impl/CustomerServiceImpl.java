@@ -1215,7 +1215,14 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
+        Integer workflowType;
+        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
+            workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
+        }else{
+            workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
+        }
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(workflowType);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
@@ -1231,7 +1238,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
 
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(workflowType, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
@@ -1266,11 +1273,18 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if (!CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
-            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
+            result.setErrorCode(ErrorCode.CUSTOMER_STATUS_IS_PASS_CAN_REJECT);
             return result;
         }
 
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
+        Integer workflowType;
+        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
+            workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
+        }else{
+            workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
+        }
+
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(workflowType, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
         if (!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())) {
             result.setErrorCode(rejectPassResult.getErrorCode());
             return result;

@@ -1146,6 +1146,7 @@ CREATE TABLE `erp_order` (
   `low_tax_rate` int(11) NOT NULL DEFAULT 0 COMMENT '6%税率',
   `tax_rate` double NOT NULL DEFAULT 0 COMMENT '税率',
   `buyer_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
+  `product_summary` varchar(500)  CHARACTER SET utf8 DEFAULT NULL COMMENT '商品摘要',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
