@@ -108,13 +108,9 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    public ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(String orderNo) {
+    public ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(OrderDO orderDO) {
         ServiceResult<String, Map<String,BigDecimal>> result = new ServiceResult<>();
-        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (orderDO == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
+
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
