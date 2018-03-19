@@ -135,6 +135,29 @@
 		<result column="ecp_connect_phone" jdbcType="VARCHAR" property="connectPhone" />
 	</resultMap>
 
+	<resultMap id="CustomerConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
+		<id column="ecci_id" jdbcType="INTEGER" property="id" />
+		<result column="ecci_customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="ecci_consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+		<result column="ecci_consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
+		<result column="ecci_province" jdbcType="INTEGER" property="province" />
+		<result column="ecci_city" jdbcType="INTEGER" property="city" />
+		<result column="ecci_district" jdbcType="INTEGER" property="district" />
+		<result column="ecci_address" jdbcType="VARCHAR" property="address" />
+		<result column="ecci_is_main" jdbcType="INTEGER" property="isMain" />
+		<result column="ecci_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="ecci_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="ecci_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="ecci_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="ecci_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="ecci_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="ecci_last_use_time" jdbcType="TIMESTAMP" property="lastUseTime" />
+
+		<result column="ecci_provinceName" jdbcType="VARCHAR" property="provinceName" />
+		<result column="ecci_cityName" jdbcType="VARCHAR" property="cityName" />
+		<result column="ecci_districtName" jdbcType="VARCHAR" property="districtName" />
+	</resultMap>
+
 	<sql id="column_List">
 		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status,ec.first_apply_amount,ec.later_apply_amount,ec.localization_time,ec.short_limit_receivable_amount,ec.statement_date,ec.pass_reason,ec.fail_reason,ec.delivery_mode,ec.owner_sub_company_id
 	</sql>
@@ -149,6 +172,9 @@
 	</sql>
 	<sql id="risk_column_List">
 		ecrm.id AS ecrm_id,ecrm.customer_id AS ecrm_customer_id,ecrm.credit_amount AS ecrm_credit_amount,ecrm.credit_amount_used AS ecrm_credit_amount_used,ecrm.deposit_cycle AS ecrm_deposit_cycle,ecrm.payment_cycle AS ecrm_payment_cycle,ecrm.apple_deposit_cycle AS ecrm_apple_deposit_cycle,ecrm.apple_payment_cycle AS ecrm_apple_payment_cycle,ecrm.new_deposit_cycle AS ecrm_new_deposit_cycle,ecrm.new_payment_cycle AS ecrm_new_payment_cycle,ecrm.apple_pay_mode AS ecrm_apple_pay_mode,ecrm.new_pay_mode AS ecrm_new_pay_mode,ecrm.pay_mode AS ecrm_pay_mode,ecrm.is_limit_apple as ecrm_is_limit_apple,ecrm.is_limit_new as ecrm_is_limit_new,ecrm.single_limit_price as ecrm_single_limit_price,ecrm.return_visit_frequency as ecrm_return_visit_frequency,ecrm.data_status AS ecrm_data_status,ecrm.remark AS ecrm_remark,ecrm.create_time AS ecrm_create_time,ecrm.create_user AS ecrm_create_user,ecrm.update_time AS ecrm_update_time,ecrm.update_user AS ecrm_update_user,ecrm.is_full_deposit as ecrm_is_full_deposit
+	</sql>
+	<sql id="info_column_List">
+		ecci.id AS ecci_id,ecci.customer_id AS ecci_customer_id,ecci.consignee_name AS ecci_consignee_name,ecci.consignee_phone AS ecci_consignee_phone,ecci.province AS ecci_province,ecci.city AS ecci_city,ecci.district AS ecci_district,ecci.address AS ecci_address,ecci.is_main AS ecci_is_main,ecci.data_status AS ecci_data_status,ecci.remark AS ecci_remark,ecci.create_time AS ecci_create_time,ecci.create_user AS ecci_create_user,ecci.update_time AS ecci_update_time,ecci.update_user AS ecci_update_user,ecci.last_use_time AS ecci_last_use_time
 	</sql>
 	<select id="findById" resultMap="CustomerDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
@@ -181,7 +207,7 @@
 	</select>
 
 	<select id="findCustomerCompanyByNo" resultMap="CustomerDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,<include refid="company_column_List"/>,<include refid="risk_column_List"/>
+		SELECT <include refid="column_List"/>,<include refid="company_column_List"/>,<include refid="risk_column_List"/>,<include refid="info_column_List"/>
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
@@ -197,6 +223,7 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
+		LEFT JOIN erp_customer_consign_info ecci on ecc.customer_id = ecci.customer_id AND ecci.data_status = 1
 		WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} AND ec.data_status = 1
 	</select>
 
