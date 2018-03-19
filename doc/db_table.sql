@@ -2978,3 +2978,48 @@ CREATE TABLE `erp_k3_change_order_detail` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3订单换货明细表';
+
+
+DROP TABLE if exists `erp_bank_slip`;
+CREATE TABLE `erp_bank_slip` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
+  `slip_month` datetime NOT NULL COMMENT '月份',
+  `account_no` varchar(50) COMMENT '查询账号',
+  `in_count` int(11) NOT NULL COMMENT '进款笔数',
+  `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
+  `claim_count` int(11) NOT NULL COMMENT '已认领笔数',
+  `slip_status` int(11) NOT NULL COMMENT '单据状态：0-初始化，1-部分认领，2-全部认领',
+  `excel_url` varchar(200) NOT NULL DEFAULT '' COMMENT '表格URL',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水表';
+
+DROP TABLE if exists `erp_bank_slip_detail`;
+CREATE TABLE `erp_bank_slip_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `payer_name` varchar(100) COMMENT '付款人名称',
+  `trade_amount` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '交易金额',
+  `trade_serial_no` varchar(100) COMMENT '交易流水号',
+  `trade_time` datetime NOT NULL COMMENT '交易日期',
+  `trade_message` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '交易附言',
+  `other_side_account_no` varchar(50) NOT NULL COMMENT '对方账号',
+  `merchant_order_no` varchar(100) COMMENT '商户订单号',
+  `loan_sign` int(11) NOT NULL COMMENT '借贷标志,1-贷（收入），2-借（支出）',
+  `detail_status` int(11) NOT NULL COMMENT '明细状态，1-未认领，2-已认领，3-已确定，4-忽略',
+  `detail_json` text COMMENT '明细json数据',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水明细表';
+
+
