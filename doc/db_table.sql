@@ -503,6 +503,7 @@ CREATE TABLE `erp_customer_consign_info` (
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
   `address` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `is_main` int(11) NOT NULL DEFAULT '0' COMMENT '是否为默认地址，0否1是',
+  `is_business_address` int(11) NOT NULL DEFAULT '0' COMMENT '是否为经营地址，0否1是',
   `last_use_time` datetime DEFAULT NULL COMMENT '最后使用时间',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
