@@ -37,7 +37,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setDeliveryMode(0);
 //        customer.setFirstApplyAmount(new BigDecimal(84000));
 //        customer.setLaterApplyAmount(new BigDecimal(50000));
-        customer.setIsDefaultConsignAddress(0);
+        customer.setIsDefaultConsignAddress(1);
         List<CustomerConsignInfo> customerConsignInfoList = new ArrayList<>();
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
         customerConsignInfo.setConsigneeName("收货测试员工");
@@ -58,6 +58,17 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerConsignInfo2.setDistrict(19);
         customerConsignInfo2.setAddress("广安路9号");
         customerConsignInfoList.add(customerConsignInfo2);
+
+        CustomerConsignInfo customerConsignInfo3 = new CustomerConsignInfo();
+        customerConsignInfo3.setConsigneeName("火狐032007107");
+        customerConsignInfo3.setConsigneePhone("13866253151");
+        customerConsignInfo3.setIsMain(0);
+        customerConsignInfo3.setProvince(2);
+        customerConsignInfo3.setCity(3);
+        customerConsignInfo3.setDistrict(19);
+        customerConsignInfo3.setAddress("企业信息详细地址测试update");
+        customerConsignInfo3.setIsBusinessAddress(0);
+        customerConsignInfoList.add(customerConsignInfo3);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
@@ -82,7 +93,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("齐天文化032003");
+        customerCompany.setCompanyName("齐天文化032006");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
@@ -176,7 +187,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180320-00341");
+        customer.setCustomerNo("LXCC-1000-20180320-00344");
         customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
@@ -184,27 +195,40 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setShortLimitReceivableAmount(new BigDecimal(2000));
         CustomerCompany customerCompany = new CustomerCompany();
 
-        customer.setIsDefaultConsignAddress(1);
+        customer.setIsDefaultConsignAddress(0);
         List<CustomerConsignInfo> customerConsignInfoList = new ArrayList<>();
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setConsigneeName("收货测试员工1293");
+        customerConsignInfo.setConsigneeName("收货测试员工1305");
         customerConsignInfo.setConsigneePhone("18566324595");
         customerConsignInfo.setIsMain(1);
         customerConsignInfo.setProvince(19);
         customerConsignInfo.setCity(207);
         customerConsignInfo.setDistrict(1991);
         customerConsignInfo.setAddress("南京路24号");
+        customerConsignInfo.setIsBusinessAddress(0);
         customerConsignInfoList.add(customerConsignInfo);
 
         CustomerConsignInfo customerConsignInfo2 = new CustomerConsignInfo();
-        customerConsignInfo2.setConsigneeName("收货测试员工1403");
+        customerConsignInfo2.setConsigneeName("收货测试员工1405");
         customerConsignInfo2.setConsigneePhone("13555555555");
         customerConsignInfo2.setIsMain(0);
         customerConsignInfo2.setProvince(2);
         customerConsignInfo2.setCity(3);
         customerConsignInfo2.setDistrict(19);
         customerConsignInfo2.setAddress("广安路9号");
+        customerConsignInfo.setIsBusinessAddress(0);
         customerConsignInfoList.add(customerConsignInfo2);
+
+        CustomerConsignInfo customerConsignInfo3 = new CustomerConsignInfo();
+        customerConsignInfo3.setConsigneeName("火狐03200710810");
+        customerConsignInfo3.setConsigneePhone("13866253151");
+        customerConsignInfo3.setIsMain(0);
+        customerConsignInfo3.setProvince(2);
+        customerConsignInfo3.setCity(3);
+        customerConsignInfo3.setDistrict(19);
+        customerConsignInfo3.setAddress("企业信息详细地址测试update");
+        customerConsignInfo3.setIsBusinessAddress(0);
+        customerConsignInfoList.add(customerConsignInfo3);
 
         customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
 
@@ -242,7 +266,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customerCompany.setCustomerOrigin(1);
         customerCompany.setIndustry("3");
-        customerCompany.setCompanyName("upadate文化032001");
+        customerCompany.setCompanyName("upadate文化03200101");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
@@ -252,7 +276,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonPhone("13866253152");
         customerCompany.setLegalPersonNo("422827199009080023");
         customerCompany.setAgentPersonPhone("13866253151");
-        customerCompany.setAgentPersonName("火狐032007107");
+        customerCompany.setAgentPersonName("火狐0320071011");
         customerCompany.setProvince(2);
         customerCompany.setCity(3);
         customerCompany.setDistrict(19);
@@ -509,8 +533,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(994);
-        customerConsignInfo.setConsigneeName("update联系人");
+        customerConsignInfo.setCustomerConsignInfoId(1205);
+        customerConsignInfo.setConsigneeName("update联系人123");
         customerConsignInfo.setConsigneePhone("13566253478");
         customerConsignInfo.setProvince(29);
         customerConsignInfo.setCity(172); //武汉市

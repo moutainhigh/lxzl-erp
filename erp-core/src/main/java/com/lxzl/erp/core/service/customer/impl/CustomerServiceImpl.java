@@ -96,11 +96,9 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-        if(CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())){
-            if(CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
-                return serviceResult;
-            }
+        if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
+            return serviceResult;
         }
 
         //判断业务员和联合开发员
@@ -164,21 +162,18 @@ public class CustomerServiceImpl implements CustomerService {
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
 
-        //如果客户选择了将详细地址作为收货地址
-        saveCustomerCompanyConsignInfo(customerDO, customerCompanyDO, now, userSupport.getCurrentUserId(),CommonConstant.COMMON_CONSTANT_YES);
-        if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())) {
-            //保存收货地址
-            for(CustomerConsignInfoDO customerConsignInfoDO:customerCompanyDO.getCustomerConsignInfoList()){
-                //客户有多个地址时，如果新增地址设置为默认地址，那么其他地址就不能为默认地址
-                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())) {
-                    //修改该客户下所有的默认地址的状态为0
-                    customerConsignInfoMapper.clearIsMainByCustomerId(customerDO.getId());
-                }
-                customerConsignInfoDO.setCustomerId(customerDO.getId());
-                customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                customerConsignInfoDO.setCreateTime(now);
-                customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                customerConsignInfoMapper.save(customerConsignInfoDO);
+        for(CustomerConsignInfoDO customerConsignInfoDO:customerCompanyDO.getCustomerConsignInfoList()){
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())) {
+                //修改该客户下所有的默认地址的状态为0
+                customerConsignInfoMapper.clearIsMainByCustomerId(customerDO.getId());
+            }
+            customerConsignInfoDO.setCustomerId(customerDO.getId());
+            customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            customerConsignInfoDO.setCreateTime(now);
+            customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            customerConsignInfoMapper.save(customerConsignInfoDO);
+            if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+                customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
             }
         }
 
@@ -368,32 +363,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
 
-        //如果客户选择了将经营地址作为收货地址
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
-            customerConsignInfoMapper.clearIsMainByCustomerId(customerDO.getId());
-            if (customerCompanyDO.getDefaultAddressReferId() == null) {
-                //如果默认地址选项有值，并且客户的默认地址关联ID为null
-                saveCustomerCompanyConsignInfo(customerDO, newCustomerCompanyDO, now, userSupport.getCurrentUserId(),CommonConstant.COMMON_CONSTANT_YES);
-            } else {
-                CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerCompanyDO.getDefaultAddressReferId());
-                customerConsignInfoDO.setConsigneeName(newCustomerCompanyDO.getAgentPersonName());
-                customerConsignInfoDO.setConsigneePhone(newCustomerCompanyDO.getAgentPersonPhone());
-                customerConsignInfoDO.setProvince(newCustomerCompanyDO.getProvince());
-                customerConsignInfoDO.setCity(newCustomerCompanyDO.getCity());
-                customerConsignInfoDO.setDistrict(newCustomerCompanyDO.getDistrict());
-                customerConsignInfoDO.setAddress(newCustomerCompanyDO.getAddress());
-                customerConsignInfoDO.setIsMain(CommonConstant.COMMON_CONSTANT_YES);
-                customerConsignInfoDO.setUpdateTime(now);
-                customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                customerConsignInfoMapper.update(customerConsignInfoDO);
-
-                newCustomerCompanyDO.setDefaultAddressReferId(customerCompanyDO.getDefaultAddressReferId());
-            }
-        } else if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())) {
-            updateCustomerConsignInfoDOInfo(newCustomerCompanyDO.getCustomerConsignInfoList(),customerDO.getId(),now,newCustomerCompanyDO);
-
-            saveCustomerCompanyConsignInfo(customerDO, newCustomerCompanyDO, now, userSupport.getCurrentUserId(),CommonConstant.COMMON_CONSTANT_NO);
-        }
+        updateCustomerConsignInfoDOInfo(newCustomerCompanyDO.getCustomerConsignInfoList(),customerDO.getId(),now,newCustomerCompanyDO);
 
         //用于接收所需设备的方法结果
         ServiceResult<String, BigDecimal> setServiceResult = new ServiceResult<>();
@@ -1592,14 +1562,28 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //查看被修改的地址信息是否有企业的关联地址信息
-        CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByDefaultAddressReferId(customerConsignInfoDO.getId());
-        if (customerCompanyDO != null) {
-            customerConsignInfo.setCustomerNo(customerCompanyDO.getCustomerNo());
-            serviceResult = addCustomerConsignInfo(customerConsignInfo);
-
-            serviceResult.setErrorCode(ErrorCode.SUCCESS);
-            serviceResult.setResult(serviceResult.getResult());
-            return serviceResult;
+//        CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByDefaultAddressReferId(customerConsignInfoDO.getId());
+//        if (customerCompanyDO != null) {
+//            customerConsignInfo.setCustomerNo(customerCompanyDO.getCustomerNo());
+//            serviceResult = addCustomerConsignInfo(customerConsignInfo);
+//
+//            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+//            serviceResult.setResult(serviceResult.getResult());
+//            return serviceResult;
+//        }
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+            CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByDefaultAddressReferId(customerConsignInfoDO.getId());
+            if(customerCompanyDO != null){
+                customerCompanyDO.setAgentPersonName(customerConsignInfoDO.getConsigneeName());
+                customerCompanyDO.setAgentPersonPhone(customerConsignInfoDO.getConsigneePhone());
+                customerCompanyDO.setProvince(customerConsignInfoDO.getProvince());
+                customerCompanyDO.setCity(customerConsignInfoDO.getCity());
+                customerCompanyDO.setDistrict(customerConsignInfoDO.getDistrict());
+                customerCompanyDO.setAddress(customerConsignInfoDO.getAddress());
+                customerCompanyDO.setUpdateTime(now);
+                customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerCompanyMapper.update(customerCompanyDO);
+            }
         }
 
         //如果传送过来的isMain是1,将该客户其他收货地址改为不是默认收货地址
@@ -2302,7 +2286,7 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-    private void saveCustomerCompanyConsignInfo(CustomerDO customerDO, CustomerCompanyDO customerCompanyDO, Date now, Integer currentUserId , Integer isDefaultConsignAddress) {
+    private void saveCustomerCompanyConsignInfo(CustomerDO customerDO, CustomerCompanyDO customerCompanyDO, Date now, Integer currentUserId) {
         CustomerConsignInfoDO customerConsignInfoDO = new CustomerConsignInfoDO();
         customerConsignInfoDO.setCustomerId(customerDO.getId());
         customerConsignInfoDO.setConsigneeName(customerCompanyDO.getAgentPersonName());
@@ -2311,12 +2295,12 @@ public class CustomerServiceImpl implements CustomerService {
         customerConsignInfoDO.setCity(customerCompanyDO.getCity());
         customerConsignInfoDO.setDistrict(customerCompanyDO.getDistrict());
         customerConsignInfoDO.setAddress(customerCompanyDO.getAddress());
-        customerConsignInfoDO.setIsMain(isDefaultConsignAddress);
         customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerConsignInfoDO.setCreateTime(now);
         customerConsignInfoDO.setCreateUser(currentUserId.toString());
         customerConsignInfoDO.setUpdateUser(currentUserId.toString());
         customerConsignInfoDO.setUpdateTime(now);
+        customerConsignInfoDO.setIsBusinessAddress(CommonConstant.COMMON_CONSTANT_YES);
 
         customerConsignInfoMapper.save(customerConsignInfoDO);
 
@@ -2695,6 +2679,9 @@ public class CustomerServiceImpl implements CustomerService {
                     customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoMapper.save(customerConsignInfoDO);
                 }
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+                    customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
+                }
             }
         }
         if (updateCustomerConsignInfoDOMap.size() > 0) {
@@ -2712,6 +2699,9 @@ public class CustomerServiceImpl implements CustomerService {
                     customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoDO.setUpdateTime(now);
                     customerConsignInfoMapper.update(customerConsignInfoDO);
+                }
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+                    customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
                 }
             }
         }
