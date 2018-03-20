@@ -28,7 +28,7 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<Object> exception(BusinessException businessException , WebRequest request) {
         StringWriter exceptionFormat=new StringWriter();
         businessException.printStackTrace(new PrintWriter(exceptionFormat,true));
-        log.error("ExceptionHandlerAdvice catch the BusinessException, ", exceptionFormat);
+        log.error("ExceptionHandlerAdvice catch the BusinessException, ", businessException);
         if(StringUtil.isBlank(businessException.getMessage())){
             return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
         }else{
@@ -44,7 +44,7 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<Object> exception(Exception exception , WebRequest request) {
         StringWriter exceptionFormat=new StringWriter();
         exception.printStackTrace(new PrintWriter(exceptionFormat,true));
-        log.error("ExceptionHandlerAdvice catch the SystemException, ", exceptionFormat);
+        log.error("ExceptionHandlerAdvice catch the SystemException, ", exception);
         if(StringUtil.isEmpty(ErrorCode.getMessage(exception.getMessage()))){
             return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
         }else{
