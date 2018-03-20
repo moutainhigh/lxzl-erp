@@ -187,7 +187,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setIsDefaultConsignAddress(1);
         List<CustomerConsignInfo> customerConsignInfoList = new ArrayList<>();
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setConsigneeName("收货测试员工125");
+        customerConsignInfo.setConsigneeName("收货测试员工1293");
         customerConsignInfo.setConsigneePhone("18566324595");
         customerConsignInfo.setIsMain(1);
         customerConsignInfo.setProvince(19);
@@ -197,7 +197,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerConsignInfoList.add(customerConsignInfo);
 
         CustomerConsignInfo customerConsignInfo2 = new CustomerConsignInfo();
-        customerConsignInfo2.setConsigneeName("收货测试员工136");
+        customerConsignInfo2.setConsigneeName("收货测试员工1403");
         customerConsignInfo2.setConsigneePhone("13555555555");
         customerConsignInfo2.setIsMain(0);
         customerConsignInfo2.setProvince(2);
@@ -252,7 +252,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonPhone("13866253152");
         customerCompany.setLegalPersonNo("422827199009080023");
         customerCompany.setAgentPersonPhone("13866253151");
-        customerCompany.setAgentPersonName("火狐032007");
+        customerCompany.setAgentPersonName("火狐032007107");
         customerCompany.setProvince(2);
         customerCompany.setCity(3);
         customerCompany.setDistrict(19);
