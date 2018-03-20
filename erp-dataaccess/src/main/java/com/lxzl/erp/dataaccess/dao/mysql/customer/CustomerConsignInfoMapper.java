@@ -21,6 +21,8 @@ public interface CustomerConsignInfoMapper extends BaseMysqlDAO<CustomerConsignI
 
 	Integer countByCustomerId(@Param("customerId")Integer customerId);
 
+	CustomerConsignInfoDO findByCustomerIdAndIsBusinessAddress(@Param("customerId")Integer customerId,@Param("isBusinessAddress")Integer isBusinessAddress);
+
 	void clearIsMainByCustomerId(@Param("customerId")Integer customerId);
 
     List<CustomerConsignInfoDO> findByCustomerId(@Param("customerId")Integer customerId);
