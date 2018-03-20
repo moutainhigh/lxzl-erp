@@ -57,13 +57,13 @@ public class OrderTest extends ERPUnTransactionalTest {
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
-        orderProduct.setProductSkuId(1689);
+        orderProduct.setProductSkuId(1686);
         orderProduct.setProductCount(5);
-        orderProduct.setInsuranceAmount(new BigDecimal(15.0));
-        orderProduct.setProductUnitAmount(new BigDecimal(20.0));
-        orderProduct.setInsuranceAmount(new BigDecimal(15.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(600.0));
+        orderProduct.setProductUnitAmount(new BigDecimal(600.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(600.0));
         orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        orderProduct.setDepositAmount(new BigDecimal("120"));
+        orderProduct.setDepositAmount(new BigDecimal(600.0));
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 
@@ -73,16 +73,16 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderMaterial.setMaterialId(12);
         orderMaterial.setMaterialCount(3);
-        orderMaterial.setInsuranceAmount(new BigDecimal(20));
-        orderMaterial.setMaterialUnitAmount(new BigDecimal(18.0));
-        orderMaterial.setInsuranceAmount(new BigDecimal(15.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(600.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
         orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderMaterial.setDepositAmount(new BigDecimal("30"));
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCP-027-20180316-00783");
-        order.setCustomerConsignId(5440);
+        order.setBuyerCustomerNo("LXCP-010-20180308-00381");
+        order.setCustomerConsignId(4731);
         order.setRentStartTime(new Date());
         TestResult testResult = getJsonTestResult("/order/create", order);
     }
@@ -244,7 +244,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180316-1000-00005");
+        order.setOrderNo("LXO-20180319-1000-01227");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
@@ -285,11 +285,11 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setProductSkuId(1689);
         orderProduct.setIsNewProduct(1);
         orderProduct.setProductCount(5);
-        orderProduct.setInsuranceAmount(new BigDecimal(100.0));
-        orderProduct.setProductUnitAmount(new BigDecimal(100.0));
-        orderProduct.setInsuranceAmount(new BigDecimal(100.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(600.0));
+        orderProduct.setProductUnitAmount(new BigDecimal(600.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(600.0));
         orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        orderProduct.setDepositAmount(new BigDecimal(100.0));
+        orderProduct.setDepositAmount(new BigDecimal(600.0));
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 
@@ -300,15 +300,15 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial.setMaterialId(12);
         orderMaterial.setIsNewMaterial(1);
         orderMaterial.setMaterialCount(5);
-        orderMaterial.setInsuranceAmount(new BigDecimal(50));
-        orderMaterial.setMaterialUnitAmount(new BigDecimal(50.0));
-        orderMaterial.setInsuranceAmount(new BigDecimal(50.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(1200));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(1200.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(1200.0));
         orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        orderMaterial.setDepositAmount(new BigDecimal(50.0));
+        orderMaterial.setDepositAmount(new BigDecimal(1200.0));
         orderMaterialList.add(orderMaterial);
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCP-027-20180316-00783");
+        order.setBuyerCustomerNo("LXCC-010-20180315-00778");
         order.setRentStartTime(new Date());
         TestResult testResult = getJsonTestResult("/order/createOrderFirstPayAmount", order);
     }
