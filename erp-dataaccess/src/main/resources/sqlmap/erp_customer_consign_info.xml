@@ -220,7 +220,7 @@
 
 	<select id="findByCustomerIdAndIsMain" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
-		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.data_status = 1 AND ecci.is_main = 0;
+		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.data_status = 1 AND ecci.is_main = 1;
 	</select>
 
 	<select id="findByCustomerIdAndConsigneeNameAndConsigneePhoneAndAddress" resultMap="CustomerConsignInfoDO">

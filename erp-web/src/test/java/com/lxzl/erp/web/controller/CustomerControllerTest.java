@@ -34,7 +34,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setOwner(500021);
 //        customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
-        customer.setDeliveryMode(1);
+        customer.setDeliveryMode(0);
 //        customer.setFirstApplyAmount(new BigDecimal(84000));
 //        customer.setLaterApplyAmount(new BigDecimal(50000));
         customer.setIsDefaultConsignAddress(0);
@@ -82,8 +82,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("齐天文化031905");
+        customerCompany.setCompanyName("齐天文化032003");
         customerCompany.setIndustry("2");
+        customerCompany.setIsLegalPersonApple(1);
+        customerCompany.setProvince(2);
+        customerCompany.setCity(3);
+        customerCompany.setDistrict(19);
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324590");
@@ -172,7 +176,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180319-00338");
+        customer.setCustomerNo("LXCC-1000-20180320-00341");
         customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
@@ -183,7 +187,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setIsDefaultConsignAddress(1);
         List<CustomerConsignInfo> customerConsignInfoList = new ArrayList<>();
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setConsigneeName("收货测试员工9");
+        customerConsignInfo.setConsigneeName("收货测试员工125");
         customerConsignInfo.setConsigneePhone("18566324595");
         customerConsignInfo.setIsMain(1);
         customerConsignInfo.setProvince(19);
@@ -193,7 +197,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerConsignInfoList.add(customerConsignInfo);
 
         CustomerConsignInfo customerConsignInfo2 = new CustomerConsignInfo();
-        customerConsignInfo2.setConsigneeName("收货测试员工10");
+        customerConsignInfo2.setConsigneeName("收货测试员工136");
         customerConsignInfo2.setConsigneePhone("13555555555");
         customerConsignInfo2.setIsMain(0);
         customerConsignInfo2.setProvince(2);
@@ -238,7 +242,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customerCompany.setCustomerOrigin(1);
         customerCompany.setIndustry("3");
-        customerCompany.setCompanyName("upadate文化031901");
+        customerCompany.setCompanyName("upadate文化032001");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
@@ -248,7 +252,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonPhone("13866253152");
         customerCompany.setLegalPersonNo("422827199009080023");
         customerCompany.setAgentPersonPhone("13866253151");
-        customerCompany.setAgentPersonName("火狐12355");
+        customerCompany.setAgentPersonName("火狐032007");
         customerCompany.setProvince(2);
         customerCompany.setCity(3);
         customerCompany.setDistrict(19);
