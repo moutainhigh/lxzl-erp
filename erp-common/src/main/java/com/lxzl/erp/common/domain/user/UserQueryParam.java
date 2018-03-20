@@ -8,6 +8,7 @@ import java.util.List;
 public class UserQueryParam extends BasePageParam {
 
     private Integer userId;
+    private String userName;
     private String realName;
     private List<Integer> userIdList;
     private Integer roleId;
@@ -98,4 +99,12 @@ public class UserQueryParam extends BasePageParam {
     public Integer getRoleType() { return roleType; }
 
     public void setRoleType(Integer roleType) { this.roleType = roleType; }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
