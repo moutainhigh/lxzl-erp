@@ -36,6 +36,8 @@ public class CustomerConsignInfo extends BasePO {
 	private String address;   //详细地址
 	@In(value = {CommonConstant.YES,CommonConstant.NO}, message=ErrorCode.CUSTOMER_CONSIGN_INFO_IS_MAIN_ERROR,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer isMain;   //是否为默认地址，0否1是
+	@In(value = {CommonConstant.YES,CommonConstant.NO}, message=ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR,groups = {AddGroup.class,UpdateGroup.class})
+	private Integer isBusinessAddress;	//是否为经营地址，0否1是
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private Date lastUseTime;  //最后使用时间
 	private String remark;   //备注
@@ -44,12 +46,9 @@ public class CustomerConsignInfo extends BasePO {
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
 
-
 	private String provinceName; //省名称
 	private String cityName; //城市名
 	private String districtName; //地区名
-
-
 
 	public Integer getCustomerConsignInfoId(){
 		return customerConsignInfoId;
@@ -210,4 +209,8 @@ public class CustomerConsignInfo extends BasePO {
 	public void setLastUseTime(Date lastUseTme) {
 		this.lastUseTime = lastUseTme;
 	}
+
+	public Integer getIsBusinessAddress() { return isBusinessAddress; }
+
+	public void setIsBusinessAddress(Integer isBusinessAddress) { this.isBusinessAddress = isBusinessAddress; }
 }
