@@ -95,11 +95,11 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
         }
-
-        if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
-            return serviceResult;
-        }
+        //todo 前端做好恢复
+//        if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
+//            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
+//            return serviceResult;
+//        }
 
         //判断业务员和联合开发员
         serviceResult = judgeUserOwnerAndUnion(customer);
@@ -114,19 +114,20 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //如果前端页面 没复制过来 经营地址
-        Integer count = 0;
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
-            for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
-                    count++;
-                }
-            }
-            if(count != 1){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
-                return serviceResult;
-            }
-        }
+        //todo 前端做好恢复
+//        boolean flag = false;
+//        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
+//            for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
+//                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            if(!flag){
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
+//                return serviceResult;
+//            }
+//        }
 
 
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
@@ -340,12 +341,14 @@ public class CustomerServiceImpl implements CustomerService {
                     return serviceResult;
                 }
             }
-            if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
-                if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
-                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
-                    return serviceResult;
-                }
-            }
+
+            //todo 前端做好恢复
+//            if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
+//                if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
+//                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
+//                    return serviceResult;
+//                }
+//            }
         }
         if(CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())){
             if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
@@ -375,19 +378,20 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //如果前端页面 没复制过来 经营地址
-        Integer count = 0;
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
-            for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
-                    count++;
-                }
-            }
-            if(count != 1){
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
-                return serviceResult;
-            }
-        }
+        //todo 前端做好恢复
+//        boolean flag = false;
+//        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
+//            for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
+//                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            if(!flag){
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
+//                return serviceResult;
+//            }
+//        }
 
         CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByCustomerId(customerDO.getId());
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
