@@ -177,6 +177,16 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
+        //如果前端页面 没复制过来 经营地址
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
+            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findByCustomerIdAndIsBusinessAddress(customerDO.getId(),CommonConstant.COMMON_CONSTANT_YES);
+            if(customerConsignInfoDO == null){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
+                return serviceResult;
+            }
+        }
+
         customerCompanyDO.setCustomerId(customerDO.getId());
         customerCompanyDO.setCustomerNo(customerDO.getCustomerNo());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -364,6 +374,14 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
 
         updateCustomerConsignInfoDOInfo(newCustomerCompanyDO.getCustomerConsignInfoList(),customerDO.getId(),now,newCustomerCompanyDO);
+
+        //如果前端页面 复制过来 被人为删除收货？ 判断
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
+            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findByCustomerIdAndIsBusinessAddress(customerDO.getId(),customer.getIsDefaultConsignAddress());
+            if(customerConsignInfoDO == null){
+                saveCustomerCompanyConsignInfo(customerDO, newCustomerCompanyDO, now, userSupport.getCurrentUserId());
+            }
+        }
 
         //用于接收所需设备的方法结果
         ServiceResult<String, BigDecimal> setServiceResult = new ServiceResult<>();

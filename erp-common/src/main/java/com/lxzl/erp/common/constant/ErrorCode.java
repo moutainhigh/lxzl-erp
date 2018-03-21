@@ -555,6 +555,7 @@ public class ErrorCode {
     public static final String CUSTOMER_STATUS_IS_PASS_CAN_REJECT = "J500147";
     public static final String CUSTOMER_CONSIGN_INFO_IS_NOT_NULL = "J500148";
     public static final String CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR = "J500149";
+    public static final String CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS = "J500150";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -785,6 +786,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_STATUS_IS_PASS_CAN_REJECT, "客户需审核通过才能使用驳回功能");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_NOT_NULL, "客户收货信息不能为空");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
+        MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
