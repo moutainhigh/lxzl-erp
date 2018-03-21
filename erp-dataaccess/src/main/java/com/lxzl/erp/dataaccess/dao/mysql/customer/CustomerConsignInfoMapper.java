@@ -21,17 +21,12 @@ public interface CustomerConsignInfoMapper extends BaseMysqlDAO<CustomerConsignI
 
 	Integer countByCustomerId(@Param("customerId")Integer customerId);
 
+	CustomerConsignInfoDO findByCustomerIdAndIsBusinessAddress(@Param("customerId")Integer customerId,@Param("isBusinessAddress")Integer isBusinessAddress);
+
 	void clearIsMainByCustomerId(@Param("customerId")Integer customerId);
 
     List<CustomerConsignInfoDO> findByCustomerId(@Param("customerId")Integer customerId);
 
     List<CustomerConsignInfoDO> findByCustomerIdAndConsigneeNameAndConsigneePhoneAndAddress(@Param("customerId")Integer customerId,@Param("consigneeName")String consigneeName,
 																					  @Param("consigneePhone")String consigneePhone,@Param("address")String address);
-
-	List<CustomerConsignInfoDO> findByCustomerIdAndIsMain(@Param("customerId")Integer customerId);
-
-	CustomerConsignInfoDO findByCustomerCompanyInfo(@Param("customerId")Integer customerId,@Param("consigneeName")String consigneeName,
-														  @Param("consigneePhone")String consigneePhone,@Param("address")String address,
-														  @Param("province")Integer province,@Param("city")Integer city,
-														  @Param("district")Integer district);
 }
