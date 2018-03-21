@@ -129,11 +129,6 @@
 		customer_id = #{customerId} and data_status = 1
 	</select>
 
-	<select id="findByCustomerIdAndIsBusinessAddress" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
-		WHERE ecci.customer_id = #{customerId ,jdbcType=INTEGER} AND ecci.is_business_address = #{isBusinessAddress ,jdbcType=INTEGER} AND ecci.data_status = 1
-	</select>
-
 	<update id="clearIsMainByCustomerId" parameterType="Integer">
 		UPDATE erp_customer_consign_info SET is_main = 0 WHERE customer_id = #{customerId, jdbcType=INTEGER}
 	</update>
