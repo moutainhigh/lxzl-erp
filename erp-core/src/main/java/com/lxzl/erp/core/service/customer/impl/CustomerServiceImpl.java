@@ -177,11 +177,13 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-        //如果前端页面 复制过来 被人为删除收货？ 判断
+        //如果前端页面 没复制过来 经营地址
         if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
             CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findByCustomerIdAndIsBusinessAddress(customerDO.getId(),CommonConstant.COMMON_CONSTANT_YES);
             if(customerConsignInfoDO == null){
-                saveCustomerCompanyConsignInfo(customerDO, customerCompanyDO, now, userSupport.getCurrentUserId());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
+                return serviceResult;
             }
         }
 
