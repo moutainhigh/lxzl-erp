@@ -892,7 +892,6 @@ public class OrderServiceImpl implements OrderService {
                 totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, orderProduct.getFirstNeedPayDepositAmount());
                 totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
 
-                orderProduct.setProductUnitAmount(BigDecimalUtil.mul(orderProduct.getProductUnitAmount(),new BigDecimal(orderProduct.getRentTimeLength()),2));
             }
             order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit,totalProductRent));
         }
@@ -923,8 +922,7 @@ public class OrderServiceImpl implements OrderService {
                 }
                 totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, orderMaterial.getFirstNeedPayDepositAmount());
                 totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
-
-                orderMaterial.setMaterialUnitAmount(BigDecimalUtil.mul(orderMaterial.getMaterialUnitAmount(),new BigDecimal(orderMaterial.getRentTimeLength()),2));
+                
             }
             order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent));
         }
