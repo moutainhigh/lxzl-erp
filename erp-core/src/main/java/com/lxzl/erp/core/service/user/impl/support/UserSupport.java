@@ -159,6 +159,23 @@ public class UserSupport {
         }
         return false;
     }
+
+    /**
+     * 是否是财务人员
+     */
+    public boolean isFinancePerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_FINANCE.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * 是否是商务人员
      */
@@ -174,6 +191,25 @@ public class UserSupport {
         }
         return false;
     }
+
+    /**
+     * 是否是业务人员
+     */
+    public boolean isBusinessPerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
     /**
      * 是否是库房人员
      */
