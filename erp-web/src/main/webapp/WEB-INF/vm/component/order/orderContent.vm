@@ -254,8 +254,8 @@
                                 {{/showDepositAmount}}
                             </td>
 
-                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
-                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
+                            <td>{{#showFirstPayAmount}}￥{{#price}}{{firstNeedPayAmount}}{{/price}}{{/showFirstPayAmount}}</td>
+                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>
@@ -268,6 +268,14 @@
                             <td valign="top" colspan="13" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
+
+                        <tr id="totalProductFirstNeedPay" class="text-danger hide">
+                            <td colspan="10"></td>
+                            <td colspan="3">
+                                <span class="txt">首付总额：</span>
+                                <span class="num"></span>
+                            </td>
+                        </tr>
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
@@ -387,14 +395,13 @@
                                 </label>
                                 {{/showDepositAmount}}
                             </td>
+                            <td>{{#showFirstPayAmount}}￥{{#price}}{{firstNeedPayAmount}}{{/price}}{{/showFirstPayAmount}}</td>
+                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}">删除</a>
                                 </div>
                             </td>
-
-                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
-                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
@@ -403,6 +410,14 @@
                         </tr>
                         {{/listData}}
                         {{/dataSource}}
+                        
+                        <tr id="totalMaterialFirstNeedPay" class="text-danger hide">
+                            <td colspan="9"></td>
+                            <td colspan="3">
+                                <span class="txt">首付总额：</span>
+                                <span class="num"></span>
+                            </td>
+                        </tr>
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>

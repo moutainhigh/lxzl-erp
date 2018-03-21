@@ -10,6 +10,9 @@
             <li class="">
                 <a href="#top-tab-3" data-toggle="tab" aria-expanded="false">按月租必填，按天租选填</a>
             </li>
+            <li class="">
+                <a href="#top-tab-4" data-toggle="tab" aria-expanded="false">收货地址</a>
+            </li>
         </ul>
     </div>
     <div class="panel-body" style="padding-bottom: 0;">
@@ -153,47 +156,6 @@
                             </label>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
-                ##                    <div class="col-md-12">
-##                        <div class="section-divider mv40" id="spy2">
-##                            <span><em class="text-danger">*</em>收货地址</span>
-##                        </div>
-##                        <div class="section row">
-##                            <div class="col-md-4">
-##                                <div class="section">
-##                                    <label class="field select">
-##                                        <select id="province" name="province" class="required">
-##                                            <option value="">请选择</option>
-##                                        </select>
-##                                        <i class="arrow"></i>
-##                                    </label>
-##                                </div>
-##                                <div class="section">
-##                                    <label class="field select">
-##                                        <select id="city" name="city" class="required">
-##                                            <option value="">请选择</option>
-##                                        </select>
-##                                        <i class="arrow"></i>
-##                                    </label>
-##                                </div>
-##                                <div class="section">
-##                                    <label class="field select">
-##                                        <select id="district" name="district" class="required">
-##                                            <option value="">请选择</option>
-##                                        </select>
-##                                        <i class="arrow"></i>
-##                                    </label>
-##                                </div>
-##                            </div>
-##                            <div class="col-md-8">
-##                                <label for="address" class="field prepend-icon">
-##                                    <textarea class="gui-textarea required" id="address" name="address" style="height: 170px;" placeholder="输入详细地址(例如街道门号信息)"></textarea>
-##                                    <label for="address" class="field-icon"><i class="fa fa-map-marker"></i></label>
-##                                </label>
-##                            </div>
-##                        </div>
-##                    </div>
                 </div>
                 <div class="section row">
                     <div class="col-md-12">
@@ -888,6 +850,9 @@
                     </div>
                     {{/productImg}}
                 </script>
+            </div>
+            <div id="top-tab-4" class="tab-pane">
+                
             </div>
         </div>
     </div>
