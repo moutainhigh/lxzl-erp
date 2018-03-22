@@ -129,11 +129,6 @@
 		customer_id = #{customerId} and data_status = 1
 	</select>
 
-	<select id="findByCustomerIdAndIsBusinessAddress" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
-		WHERE ecci.customer_id = #{customerId ,jdbcType=INTEGER} AND ecci.is_business_address = #{isBusinessAddress ,jdbcType=INTEGER} AND ecci.data_status = 1
-	</select>
-
 	<update id="clearIsMainByCustomerId" parameterType="Integer">
 		UPDATE erp_customer_consign_info SET is_main = 0 WHERE customer_id = #{customerId, jdbcType=INTEGER}
 	</update>
@@ -223,13 +218,15 @@
 	</select>
 
 	<select id="findByCustomerId" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
+		SELECT <include refid="column_List"/>
+		,eap.province_name AS provinceName
+		,eac.city_name AS cityName
+		,ead.district_name AS districtName
+		FROM erp_customer_consign_info ecci
+		LEFT JOIN erp_area_province eap ON ecci.province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecci.city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecci.district=ead.id AND ead.data_status=1
 		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.data_status = 1
-	</select>
-
-	<select id="findByCustomerIdAndConsigneeNameAndConsigneePhoneAndAddress" resultMap="CustomerConsignInfoDO">
-		SELECT <include refid="column_List"/> FROM erp_customer_consign_info ecci
-		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.consignee_name = #{consigneeName,jdbcType=VARCHAR} AND ecci.consignee_phone = #{consigneePhone,jdbcType=VARCHAR} AND ecci.address = #{address,jdbcType=VARCHAR} AND ecci.data_status = 1
 	</select>
 
 </mapper>
