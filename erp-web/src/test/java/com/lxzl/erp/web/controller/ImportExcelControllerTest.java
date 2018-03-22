@@ -165,12 +165,12 @@ public class ImportExcelControllerTest extends ERPTransactionalTest {
 
        // 深圳总公司
 // 总公司(浦发银行)
-//        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("总公司");
-//        bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
-//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-//        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
-//        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+        BankSlip bankSlip = new BankSlip();
+        bankSlip.setSubCompanyName("总公司");
+        bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
+        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
+        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
 //
 // 总公司(招商银行)
 //        BankSlip bankSlip = new BankSlip();
@@ -181,12 +181,12 @@ public class ImportExcelControllerTest extends ERPTransactionalTest {
 //        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
 //
 // 总公司(支付宝)
-        BankSlip bankSlip = new BankSlip();
-        bankSlip.setSubCompanyName("总公司");
-        bankSlip.setBankType(100);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
-        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+//        BankSlip bankSlip = new BankSlip();
+//        bankSlip.setSubCompanyName("总公司");
+//        bankSlip.setBankType(1);
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
+//        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
+//        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
 
 
 
