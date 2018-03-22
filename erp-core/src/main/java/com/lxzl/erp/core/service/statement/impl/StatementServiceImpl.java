@@ -123,7 +123,7 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+            statementDays = StatementMode.STATEMENT_MONTH_END;
         } else {
             statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
@@ -181,7 +181,7 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+            statementDays = StatementMode.STATEMENT_MONTH_END;
         } else {
             statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
@@ -237,7 +237,7 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+            statementDays = StatementMode.STATEMENT_MONTH_END;
         } else {
             statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
@@ -1289,7 +1289,7 @@ public class StatementServiceImpl implements StatementService {
                             if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
                                 if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, productUnitAmount);
+                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductDO.getProductUnitAmount(),k3ReturnOrderDetailDO.getProductCount());
                                 }
                             } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProductDO.getPayMode())) {
                                 // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
@@ -1865,7 +1865,7 @@ public class StatementServiceImpl implements StatementService {
                             thisMonthDiff = BigDecimalUtil.mul(new BigDecimal(dayCount * k3ChangeOrderDetailDO.getProductCount()), k3ChangeOrderDetailDO.getProductDiffAmount());
                         } else if (OrderRentType.RENT_TYPE_MONTH.equals(k3ChangeOrderDetailDO.getRentType())) {
                             //按月算钱
-                            thisMonthDiff = amountSupport.calculateRentAmount(k3ChangeOrderDO.getChangeTime(), statementOrderDetailDO.getStatementEndTime(), totalProductDiffAmount);
+                            thisMonthDiff = amountSupport.calculateRentAmount(k3ChangeOrderDO.getChangeTime(), statementOrderDetailDO.getStatementEndTime(), productDiffAmount,k3ChangeOrderDetailDO.getProductCount());
                         }
                         if (i != statementOrderDetailDOList.size() - 1) {
                             nextStatement = statementOrderDetailDOList.get(i + 1);
@@ -2561,7 +2561,7 @@ public class StatementServiceImpl implements StatementService {
                 return statementMonthCount;
             }
             statementMonthCount = rentTimeLength / paymentCycle;
-            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (CommonConstant.SYSTEM_STATEMENT_DATE.equals(statementDay) && startDay <= 10)) {
+            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (StatementMode.STATEMENT_MONTH_END.equals(statementDay) && startDay <= 10)) {
                 statementMonthCount++;
             }
             return statementMonthCount;
@@ -2602,7 +2602,7 @@ public class StatementServiceImpl implements StatementService {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         // 如果结算日为31日，并且租期在10日前，交到前一个月的即可
-        if (CommonConstant.SYSTEM_STATEMENT_DATE.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
+        if (StatementMode.STATEMENT_MONTH_END.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
             paymentCycle--;
         }
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, paymentCycle);
@@ -2625,7 +2625,7 @@ public class StatementServiceImpl implements StatementService {
         BigDecimal firstPhaseAmount;
         if (OrderPayMode.PAY_MODE_PAY_BEFORE.equals(payMode)) {
             statementExpectPayTime = rentStartTime;
-            firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)));
+            firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, unitAmount,itemCount);
         } else if (OrderRentType.RENT_TYPE_DAY.equals(rentType) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(payMode)) {
             statementExpectPayTime = rentStartTime;
             firstPhaseAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(BigDecimalUtil.mul(unitAmount, new BigDecimal(rentLength),2), new BigDecimal(itemCount)), new BigDecimal(0.3));
@@ -2636,7 +2636,7 @@ public class StatementServiceImpl implements StatementService {
             } else if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
                 statementExpectPayTime = com.lxzl.se.common.util.date.DateUtil.dateInterval(statementEndTime, 1);
             }
-            firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)));
+            firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, unitAmount,itemCount);
         }
         // 先不考虑保险
         /*BigDecimal insuranceTotalAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(insuranceAmount, new BigDecimal(itemCount)));

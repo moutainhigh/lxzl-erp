@@ -2658,7 +2658,14 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-        String verifyMatters = verifyProduct + verifyMaterial;
+        String verifyMatters;
+        if(verifyProduct == null){
+            verifyMatters = verifyMaterial;
+        }else if(verifyMaterial == null){
+            verifyMatters = verifyProduct;
+        }else{
+            verifyMatters = verifyProduct + verifyMaterial;
+        }
 
         result.setResult(verifyMatters);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -2682,10 +2689,10 @@ public class OrderServiceImpl implements OrderService {
                     orderProduct.setFirstNeedPayAmount(map.get(ItemName));
                     orderProduct.setFirstNeedPayRentAmount(map.get(ItemName));
 
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount(),2);
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount());
                     orderProduct.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount,2);
-                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount(),2);
+                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount);
+                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
                 }
                 order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit,totalProductRent));
 
@@ -2699,12 +2706,12 @@ public class OrderServiceImpl implements OrderService {
                     order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(ItemName));
                     order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(ItemName));
 
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount(),2);
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount());
                     orderMaterial.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount,2);
-                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount(),2);
+                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount);
+                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
                 }
-                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent,2));
+                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent));
             }
         }
         return order;
