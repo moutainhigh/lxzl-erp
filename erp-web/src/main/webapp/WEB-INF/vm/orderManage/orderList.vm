@@ -145,7 +145,7 @@
                                                 <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
                                             </td>
                                             <td>
-                                                {{orderItemName}}
+                                                {{productSummary}}
                                             </td>
                                             <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                                             <td>{{deliverySubCompanyName}}</td>
