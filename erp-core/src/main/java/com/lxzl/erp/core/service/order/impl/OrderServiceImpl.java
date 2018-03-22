@@ -2591,22 +2591,22 @@ public class OrderServiceImpl implements OrderService {
                     if(verifyProduct == null){
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }else{
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    "商品项：" + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    "商品项：" + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    "商品项：" + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }
                     }else{
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }else{
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    verifyProduct + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    verifyProduct + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    verifyProduct + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    verifyProduct + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }
                     }
                     count++;
