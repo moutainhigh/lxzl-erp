@@ -3,15 +3,29 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Demo</title>
-	#parse("layout/include.vm")
-	<script type="text/javascript"></script>
+    #parse("layout/include.vm")
+    <script type="text/javascript"></script>
 </head>
 <body>
-	<div>
-	当前用户为：$!{user.nick}
-	</div>
-	My name is $!{environment} test!<br/>
-	<div class="wrapper"></div>
+Test fastdfs file:<br/>
+<form id="form1" method="post" enctype="multipart/form-data" action="$!{request.contextPath}/file/upload">
+    上传文件：<input id="t1" type="file" name="file" />
+##    分公司：<input type="text" name="subCompany">
+##    银行类型：<input type="text" name="bankType">
+##    流水创建时间：<input type="date" name="createRunningWaterTime">
+    <input type="submit" value="提交" />
+</form>
+<form id="form2" method="get" action="$!{request.contextPath}/example/testDownloadFile">
+    <input type="hidden" name="fileId" value="group1/M00/00/00/CgIyuFgbFkaABbWFAAC9yYIXfkE898.jpg" />
+    下载文件: <input id="t2" type="button" onclick="return download1()" value="下载" />
+</form>
+<div class="wrapper"></div>
 </body>
 <script type="text/javascript" src="http://${static.domain}/library/dist/js/website.js"></script>
+<script type="text/javascript">
+    function download1() {
+        $("#form2").submit();
+        return true;
+    }
+</script>
 </html>

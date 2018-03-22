@@ -149,6 +149,9 @@
         <mapper resource="sqlmap/erp_delivery_order_material.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_user.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_industry.xml" />
+
+        <mapper resource="sqlmap/erp_bank_slip.xml" />
+        <mapper resource="sqlmap/erp_bank_slip_detail.xml" />
     </mappers>
 
 </configuration>
