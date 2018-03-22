@@ -2658,7 +2658,14 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-        String verifyMatters = verifyProduct + verifyMaterial;
+        String verifyMatters;
+        if(verifyProduct == null){
+            verifyMatters = verifyMaterial;
+        }else if(verifyMaterial == null){
+            verifyMatters = verifyProduct;
+        }else{
+            verifyMatters = verifyProduct + verifyMaterial;
+        }
 
         result.setResult(verifyMatters);
         result.setErrorCode(ErrorCode.SUCCESS);
