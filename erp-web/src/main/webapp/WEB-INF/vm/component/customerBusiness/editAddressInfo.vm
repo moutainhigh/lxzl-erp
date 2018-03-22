@@ -1,0 +1,71 @@
+<script type="text/html" id="customerAddressTpl">
+    {{#dataSource}}
+    <div class="panel-heading pn ph8 c6">
+        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+        </span>
+        <span class="panel-title fs13">收货地址</span>
+        <span style="display:inline-block; margin-left:10px;" id="deliveryMode"></span>
+        <div class="widget-menu pull-right">
+            <button class="btn btn-xs btn-default addAddressButton">添加</button>
+        </div>
+    </div>
+    <div class="panel-body pb5 admin-form">
+
+        {{#listData}}
+        <div class="col-md-4">
+            <div class="well">
+                <div>
+                    {{#isDefault}}
+                    <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
+                    {{/isDefault}}
+
+                    {{#isBusiness}}
+                    <div class="pull-right">
+                        <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>与经营地址一致</span>
+                    </div>
+                    {{/isBusiness}}
+                </div>
+                <address class="mn">
+                    <strong>{{consigneeName}}</strong>
+                    <br>
+                    {{provinceName}}{{cityName}}{{districtName}}{{address}}
+                    <br>
+                    <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
+                </address>
+                <p class="pv10">
+                    <!-- <label class="block switch switch-primary pull-left">
+                        <input type="checkbox" name="isMain" id="isMain" value="1">
+                        <label for="isMain" data-on="默认地址" data-off=""></label>
+                        <span class="fs13">设为默认地址</span>
+                    </label> -->
+                    <button class="btn btn-xs btn-default pull-right deleteAddressButton" data-guid="{{guid}}" data-customerconsigninfoid="{{customerConsignInfoId}}">删除</button>
+                    <button class="btn btn-xs btn-default pull-right mr5 eidtAddressButton" data-guid="{{guid}}" data-customerconsigninfoid="{{customerConsignInfoId}}">编辑</button>
+                </p>
+            </div>
+        </div>
+        {{/listData}}
+        {{^listData}}
+        <div class="well">
+            <address>
+                还没有添加地址信息
+            </address>
+        </div>
+        {{/listData}}
+    </div>
+    {{/dataSource}}
+</script>
+
+<div class="panel" id="customerAddressPannel">
+    <div class="panel-heading">
+        <span class="panel-icon"><i class="glyphicon glyphicon-map-marker"></i>
+        </span>
+        <span class="panel-title">收货地址</span>
+    </div>
+    <div class="panel-body pb5 admin-form">
+        <div class="well">
+            <address>
+                还没有添加地址信息
+            </address>
+        </div>
+    </div>
+</div>
