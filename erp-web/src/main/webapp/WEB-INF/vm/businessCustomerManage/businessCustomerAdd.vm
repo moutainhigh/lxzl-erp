@@ -50,6 +50,7 @@
             'manage.order.util.js',
             'manage.customer.mixin.js',
             'manage.customer.business.add.js',
+            'modal.input.address.js',
             'modal.choose.user.js');
 </script>
 <script type="text/javascript">

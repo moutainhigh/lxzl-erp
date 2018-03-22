@@ -84,11 +84,11 @@
 ##                </div>
             </div>
             <div class="panel-footer text-right">
-##                <label class="block mt15 switch switch-primary pull-left">
-##                    <input type="checkbox" name="isMain" id="isMain" value="1">
-##                    <label for="isMain" data-on="默认地址" data-off=""></label>
-##                    <span>设为默认地址</span>
-##                </label>
+                <label class="block mt15 switch switch-primary pull-left hide" id="iaMainLabel">
+                    <input type="checkbox" name="isMain" id="isMain" value="1">
+                    <label for="isMain" data-on="默认地址" data-off=""></label>
+                    <span>设为默认地址</span>
+                </label>
                 <button type="submit" class="button btn-primary">确定</button>
                 <button type="button" class="button btn-default cancelButton"">取消</button>
             </div>
