@@ -60,15 +60,15 @@ public class ImportBankSlipServiceImpl implements ImportBankSlipService {
     public ServiceResult<String, String> saveBankSlip(BankSlip bankSlip) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Integer bankType = bankSlip.getBankType();
-        if(!BankType.BOC_BANK.equals(bankType) ||
-                !BankType.TRAFFIC_BANK.equals(bankType) ||
-                !BankType.NAN_JING_BANK.equals(bankType) ||
-                !BankType.AGRICULTURE_BANK.equals(bankType) ||
-                !BankType.ICBC_BANK.equals(bankType) ||
-                !BankType.CCB_BANK.equals(bankType) ||
-                !BankType.PING_AN_BANK.equals(bankType) ||
-                !BankType.CMBC_BANK.equals(bankType) ||
-                !BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK.equals(bankType) ||
+        if(!BankType.BOC_BANK.equals(bankType) &&
+                !BankType.TRAFFIC_BANK.equals(bankType) &&
+                !BankType.NAN_JING_BANK.equals(bankType) &&
+                !BankType.AGRICULTURE_BANK.equals(bankType) &&
+                !BankType.ICBC_BANK.equals(bankType) &&
+                !BankType.CCB_BANK.equals(bankType) &&
+                !BankType.PING_AN_BANK.equals(bankType) &&
+                !BankType.CMBC_BANK.equals(bankType) &&
+                !BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK.equals(bankType) &&
                 !BankType.ALIPAY.equals(bankType) ){
             serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
             return serviceResult;

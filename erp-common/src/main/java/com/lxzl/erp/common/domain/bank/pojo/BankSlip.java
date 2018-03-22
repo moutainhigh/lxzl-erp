@@ -30,6 +30,7 @@ public class BankSlip extends BasePO {
 	private Integer claimCount;   //已认领笔数
 	private Integer confirmCount;   //已确认笔数
 	private Integer slipStatus;   //单据状态：0-初始化，1-已下推，2-部分认领，3-全部认领
+	@NotNull(message = ErrorCode.EXCEL_URL_IS_NOT_NULL,groups = {AddGroup.class})
 	private String excelUrl;   //表格URL
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
