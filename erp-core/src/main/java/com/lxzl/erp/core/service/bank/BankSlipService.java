@@ -14,6 +14,13 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 public interface BankSlipService {
 
     ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam);
-
+    /**
+     * 保存对公流水
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/3/19 16:12
+     * @param : multipartFile
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    ServiceResult<String,String> saveBankSlip(BankSlip bankSlip) throws Exception;
 
 }

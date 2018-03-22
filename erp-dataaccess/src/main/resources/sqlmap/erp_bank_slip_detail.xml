@@ -114,7 +114,6 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO">
 		UPDATE erp_bank_slip_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-<<<<<<< HEAD
 
 	<select id="findBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
 		SELECT COUNT(ebsd.id)  FROM erp_bank_slip_detail ebsd
@@ -154,6 +153,4 @@
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
-=======
->>>>>>> d180a3774cc1e9abbaa90e6157361f477411e6b1
 </mapper>

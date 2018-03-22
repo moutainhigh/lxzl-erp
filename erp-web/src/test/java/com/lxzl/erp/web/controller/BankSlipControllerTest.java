@@ -1,14 +1,18 @@
 package com.lxzl.erp.web.controller;
 
-<<<<<<< HEAD
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.BankType;
+import com.lxzl.erp.common.domain.ConstantConfig;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
+
 /**
- * @Author: your name
+ * @Author: Pengbinjie
  * @Description：
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
@@ -41,33 +45,6 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
-}
-=======
-import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.ERPUnTransactionalTest;
-import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.constant.BankType;
-import com.lxzl.erp.common.domain.ConstantConfig;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
-import com.lxzl.erp.core.service.system.ImageService;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-
-/**
- * @Author : XiaoLuYu
- * @Date : Created in 2018/3/20
- * @Time : Created in 14:03
- */
-public class BankSlipControllerTest extends ERPTransactionalTest {
-
-    @Autowired
-    private ImageService imageService;
 
     @Test
     public void importBankSlip() throws Exception {
@@ -236,4 +213,3 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     }
 
 }
->>>>>>> d180a3774cc1e9abbaa90e6157361f477411e6b1
