@@ -4,15 +4,19 @@ import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.exclt.impl.bank.*;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +74,8 @@ public class BankSlipServiceImpl implements BankSlipService {
 
     @Autowired
     private UserSupport userSupport;
-
+    @Autowired
+    private BankSlipDetailMapper bankSlipDetailMapper;
     @Override
     public ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam) {
         ServiceResult<String, Page<BankSlip>> result = new ServiceResult<>();
@@ -159,5 +164,27 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult = importAlipay.saveAlipay(bankSlip, inputStream);
         }
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<BankSlipDetail>> pageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
+        ServiceResult<String, Page<BankSlipDetail>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("bankSlipQueryParam", bankSlipDetailQueryParam);
+
+        Integer totalCount = bankSlipDetailMapper.findBankSlipDetailDOCountByParams(maps);
+        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailDOByParams(maps);
+
+
+        List<BankSlipDetail> bankSlipDetailList = ConverterUtil.convertList(bankSlipDetailDOList, BankSlipDetail.class);
+        Page<BankSlipDetail> page = new Page<>(bankSlipDetailList, totalCount, bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 }

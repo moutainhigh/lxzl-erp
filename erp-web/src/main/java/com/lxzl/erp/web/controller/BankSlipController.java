@@ -37,9 +37,6 @@ public class BankSlipController {
     @Autowired
     private ResultGenerator resultGenerator;
 
-    @Autowired
-    private BankSlipDetailService bankSlipDetailService;
-
     @RequestMapping(value = "pageBankSlip", method = RequestMethod.POST)
     public Result pageBankSlip(@RequestBody BankSlipQueryParam bankSlipQueryParam, BindingResult validResult) {
         ServiceResult<String, Page<BankSlip>> serviceResult = bankSlipService.pageBankSlip(bankSlipQueryParam);
@@ -48,7 +45,7 @@ public class BankSlipController {
 
     @RequestMapping(value = "pageBankSlipDetail", method = RequestMethod.POST)
     public Result pageBankSlipDetail(@RequestBody BankSlipDetailQueryParam bankSlipDetailQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<BankSlipDetail>> serviceResult = bankSlipDetailService.pageBankSlipDetail(bankSlipDetailQueryParam);
+        ServiceResult<String, Page<BankSlipDetail>> serviceResult = bankSlipService.pageBankSlipDetail(bankSlipDetailQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

@@ -2,8 +2,10 @@ package com.lxzl.erp.core.service.bank;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 
 /**
  * @Author: your name
@@ -14,6 +16,8 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 public interface BankSlipService {
 
     ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam);
+
+    ServiceResult<String,Page<BankSlipDetail>> pageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam);
     /**
      * 保存对公流水
      * @Author : XiaoLuYu
