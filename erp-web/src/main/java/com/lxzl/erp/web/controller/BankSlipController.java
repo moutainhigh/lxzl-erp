@@ -9,7 +9,6 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.bank.BankSlipDetailService;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
