@@ -2180,19 +2180,8 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
             // 租赁押金总额
             BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
-            //商品租金
-            BigDecimal productUnitAmount ;
-            //商品为天的总租金单价
-            BigDecimal totalProductUnitAmount = new BigDecimal(0.0);
 
             for (OrderProductDO orderProductDO : orderProductDOList) {
-
-                if(OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())){
-                    totalProductUnitAmount = orderProductDO.getProductUnitAmount();
-                    //前端商品租金 除 租赁时长
-                    productUnitAmount = BigDecimalUtil.div(orderProductDO.getProductUnitAmount(),new BigDecimal(orderProductDO.getRentTimeLength()),2);
-                    orderProductDO.setProductUnitAmount(productUnitAmount);
-                }
 
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
@@ -2223,11 +2212,11 @@ public class OrderServiceImpl implements OrderService {
                 } else {
                     if ((BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) || CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
                         Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(depositCycle));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(depositCycle));
                         totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
                     } else {
                         Integer depositCycle = orderProductDO.getDepositCycle() <= orderProductDO.getRentTimeLength() ? orderProductDO.getDepositCycle() : orderProductDO.getRentTimeLength();
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(depositCycle));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(depositCycle));
                         totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
                     }
                     creditDepositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
@@ -2239,13 +2228,7 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setDepositAmount(depositAmount);
                 orderProductDO.setCreditDepositAmount(creditDepositAmount);
                 orderProductDO.setProductSkuName(productSku.getSkuName());
-
-                if(OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())){
-                    orderProductDO.setProductAmount(BigDecimalUtil.mul(totalProductUnitAmount,new BigDecimal(orderProductDO.getProductCount())));
-                }else{
-                    orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength())));
-                }
-
+                orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getRentTimeLength())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(orderProductDO.getProductCount()),2));
                 orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 BigDecimal thisOrderProductInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getInsuranceAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength()));
                 productCount += orderProductDO.getProductCount();
@@ -2280,18 +2263,7 @@ public class OrderServiceImpl implements OrderService {
             // 租赁押金总额
             BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
 
-            BigDecimal materialUnitAmount;
-            //商品为天的总租金单价
-            BigDecimal totalMaterialUnitAmount = new BigDecimal(0.0);
-
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-
-                if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())){
-                    totalMaterialUnitAmount = orderMaterialDO.getMaterialUnitAmount();
-                    //前端商品租金 除 租赁时长
-                    materialUnitAmount = BigDecimalUtil.div(orderMaterialDO.getMaterialUnitAmount(),new BigDecimal(orderMaterialDO.getRentTimeLength()),2);
-                    orderMaterialDO.setMaterialUnitAmount(materialUnitAmount);
-                }
 
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
@@ -2322,10 +2294,10 @@ public class OrderServiceImpl implements OrderService {
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(orderMaterialDO.getDepositCycle()));
                         totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
                     } else {
-                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getDepositCycle()));
+                        rentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(orderMaterialDO.getDepositCycle()));
                         totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
                     }
 
@@ -2339,14 +2311,9 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setDepositAmount(depositAmount);
                 orderMaterialDO.setCreditDepositAmount(creditDepositAmount);
                 orderMaterialDO.setMaterialName(material.getMaterialName());
-
-                if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())){
-                    orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(totalMaterialUnitAmount,new BigDecimal(orderMaterialDO.getMaterialCount())));
-                }else{
-                    orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength())));
-                }
+                orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(orderMaterialDO.getRentTimeLength())));
                 orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
-                BigDecimal thisOrderMaterialInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength()));
+                BigDecimal thisOrderMaterialInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())).setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP), new BigDecimal(orderMaterialDO.getRentTimeLength()));
                 materialCount += orderMaterialDO.getMaterialCount();
                 materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, orderMaterialDO.getMaterialAmount());
                 totalInsuranceAmount = BigDecimalUtil.add(totalInsuranceAmount, thisOrderMaterialInsuranceAmount);
@@ -2715,14 +2682,10 @@ public class OrderServiceImpl implements OrderService {
                     orderProduct.setFirstNeedPayAmount(map.get(ItemName));
                     orderProduct.setFirstNeedPayRentAmount(map.get(ItemName));
 
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount());
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount(),2);
                     orderProduct.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount);
-                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
-
-                    if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())){
-                        orderProduct.setProductUnitAmount(BigDecimalUtil.div(orderProduct.getProductAmount(),new BigDecimal(orderProduct.getProductCount()),2));
-                    }
+                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount,2);
+                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount(),2);
                 }
                 order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit,totalProductRent));
 
@@ -2736,16 +2699,12 @@ public class OrderServiceImpl implements OrderService {
                     order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(ItemName));
                     order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(ItemName));
 
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount());
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount(),2);
                     orderMaterial.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount);
-                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
-
-                    if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType())){
-                        orderMaterial.setMaterialUnitAmount(BigDecimalUtil.div(orderMaterial.getMaterialAmount(),new BigDecimal(orderMaterial.getMaterialCount()),2));
-                    }
+                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount,2);
+                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount(),2);
                 }
-                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent));
+                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent,2));
             }
         }
         return order;
