@@ -731,6 +731,19 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
     public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
 
+    public static final String FILE_IS_NULL = "J18000001";
+    public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
+    public static final String EXCEL_SHEET_IS_NULL = "J18000003";
+    public static final String INPUT_STREAM_READER_IS_FAIL = "J18000004";
+    public static final String APPLE_EQUIPMENT_WRITE_IS_FAIL = "J18000005";
+    public static final String NEW_EQUIPMENT_WRITE_IS_FAIL = "J18000006";
+    public static final String EXCEL_UPLOAD_ERROR = "J18000007";
+    public static final String MONEY_TRANSITION_IS_FAIL = "J18000008";
+    public static final String DATE_TRANSITION_IS_FAIL = "J18000009";
+    public static final String BANK_TYPE_IS_FAIL = "J18000010";
+    public static final String MONTH_IS_NOT_NULL = "J18000011";
+    public static final String EXCEL_URL_IS_NOT_NULL = "J18000012";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1453,6 +1466,19 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
+
+        MAP.put(FILE_IS_NULL, "文件为空");
+        MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
+        MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄为空");
+        MAP.put(INPUT_STREAM_READER_IS_FAIL, "导入excelIO流转换发生异常！");
+        MAP.put(APPLE_EQUIPMENT_WRITE_IS_FAIL, "风控苹果设备填写有误");
+        MAP.put(NEW_EQUIPMENT_WRITE_IS_FAIL, "全新设备填写有误");
+        MAP.put(EXCEL_UPLOAD_ERROR, "EXCEL表格上传失败");
+        MAP.put(MONEY_TRANSITION_IS_FAIL, "金额转换出错");
+        MAP.put(DATE_TRANSITION_IS_FAIL, "日期转换出错");
+        MAP.put(BANK_TYPE_IS_FAIL, "银行类型出错");
+        MAP.put(MONTH_IS_NOT_NULL, "月份不能为空");
+        MAP.put(EXCEL_URL_IS_NOT_NULL, "表格url不能为空");
 
     }
 
