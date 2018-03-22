@@ -166,7 +166,7 @@
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
                             <th>商品保值价</th>
-                            <th class="rentalPriceTh"><span class="text">单价</span><i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i></th>
+                            <th class="rentalPriceTh"><span class="text">单价</span>#*<i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i>*#</th>
                             <th>数量</th>
 ##                            <th>类型</th>
 ##                            <th>期限</th>
@@ -310,7 +310,7 @@
                             <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
-                            <th class="rentalPriceTh"><span class="text">单价</span><i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i></th>
+                            <th class="rentalPriceTh"><span class="text">单价</span>#*<i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i>*#</th>
                             <th>数量</th>
 ##                            <th>租赁类型</th>
 ##                            <th>租赁时长</th>
