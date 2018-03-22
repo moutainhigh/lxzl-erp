@@ -861,10 +861,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
-        if(CollectionUtil.isEmpty(customerConsignInfoDO)){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
-            return serviceResult;
-        }
         customerDO.getCustomerCompanyDO().setCustomerConsignInfoList(customerConsignInfoDO);
 
         //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
