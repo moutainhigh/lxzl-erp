@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.se.core.service.BaseService;
 
@@ -45,10 +46,10 @@ public interface StatementService extends BaseService {
     /**
      * 计算订单首次需要缴纳费用
      *
-     * @param orderNo 订单号
+     * @param orderDO 订单
      * @return 发货前需要交多少钱
      */
-    ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(String orderNo);
+    ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(OrderDO orderDO);
 
     /**
      * 支付结算单

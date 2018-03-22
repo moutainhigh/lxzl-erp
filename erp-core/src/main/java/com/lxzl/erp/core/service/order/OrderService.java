@@ -161,4 +161,14 @@ public interface OrderService extends VerifyReceiver {
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
     */
     ServiceResult<String, String> forceCancelOrder(String orderNo);
+
+    /**
+     * 订单计算首付金额
+     *
+     * @Author : kai
+     * @Date : Created in 2018/3/17 11:25
+     * @param order
+     * @return
+     */
+    ServiceResult<String, Order> createOrderFirstPayAmount(Order order);
 }

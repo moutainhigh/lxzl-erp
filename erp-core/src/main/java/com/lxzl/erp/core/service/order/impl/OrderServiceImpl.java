@@ -131,6 +131,7 @@ public class OrderServiceImpl implements OrderService {
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
+
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -215,6 +216,7 @@ public class OrderServiceImpl implements OrderService {
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
+
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -853,55 +855,11 @@ public class OrderServiceImpl implements OrderService {
             order.setStatementOrder(statementOrderResult.getResult());
         }
 
-        if (orderDO.getFirstNeedPayAmount() == null || BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) == 0) {
-            ServiceResult<String, Map<String,BigDecimal>> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(order.getOrderNo());
-            Map<String,BigDecimal> map = firstNeedPayAmountResult.getResult();
-            if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
-                order.setFirstNeedPayAmount(map.get("thisNeedPayAmount,ALL"));
-
-                String orderProductAndSkuName;
-                String orderMaterialName;
-                String isNew;
-                for(int i=0;i<order.getOrderProductList().size();i++){
-                    String ItemName = order.getOrderProductList().get(i).getProductName() + order.getOrderProductList().get(i).getProductSkuName();
-                    Iterator it = map.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Map.Entry entry = (Map.Entry) it.next();
-                        String key = (String) entry.getKey();
-                        String[] str = key.split(",");
-                        orderProductAndSkuName = str[0];
-                        isNew = str[1];
-                        if(ItemName.equals(orderProductAndSkuName) && String.valueOf(order.getOrderProductList().get(i).getIsNewProduct()).equals(isNew)){
-                            order.getOrderProductList().get(i).setFirstNeedPayAmount(map.get(key));
-                            order.getOrderProductList().get(i).setFirstNeedPayRentAmount(map.get(key));
-                        }
-                    }
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(order.getOrderProductList().get(i).getRentDepositAmount(),order.getOrderProductList().get(i).getDepositAmount());
-                    order.getOrderProductList().get(i).setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                }
-
-
-                for(int i=0;i<order.getOrderMaterialList().size();i++){
-                    String ItemName = order.getOrderMaterialList().get(i).getMaterialName();
-                    Iterator it = map.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Map.Entry entry = (Map.Entry) it.next();
-                        String key = (String) entry.getKey();
-                        String[] str = key.split(",");
-                        orderMaterialName = str[0];
-                        isNew = str[1];
-                        if(ItemName.equals(orderMaterialName) && String.valueOf(order.getOrderMaterialList().get(i).getIsNewMaterial()).equals(isNew)){
-                            order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(key));
-                            order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(key));
-                        }
-                    }
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(order.getOrderMaterialList().get(i).getRentDepositAmount(),order.getOrderMaterialList().get(i).getDepositAmount());
-                    order.getOrderMaterialList().get(i).setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                }
-            }
-        }
+        orderFirstNeedPayAmount(order,orderDO);
 
         if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            BigDecimal totalProductDeposit = BigDecimal.ZERO;
+            BigDecimal totalProductRent = BigDecimal.ZERO;
             for (OrderProduct orderProduct : order.getOrderProductList()) {
                 Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
                 if (product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())) {
@@ -933,9 +891,15 @@ public class OrderServiceImpl implements OrderService {
 
                 List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProduct.getOrderProductId());
                 orderProduct.setOrderProductEquipmentList(ConverterUtil.convertList(orderProductEquipmentDOList, OrderProductEquipment.class));
+                totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, orderProduct.getFirstNeedPayDepositAmount());
+                totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
+
             }
+            order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit,totalProductRent));
         }
         if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            BigDecimal totalMaterialDeposit = BigDecimal.ZERO;
+            BigDecimal totalMaterialRent = BigDecimal.ZERO;
             for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
                 List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterial.getOrderMaterialId());
                 orderMaterial.setOrderMaterialBulkList(ConverterUtil.convertList(orderMaterialBulkDOList, OrderMaterialBulk.class));
@@ -958,7 +922,11 @@ public class OrderServiceImpl implements OrderService {
                     orderMaterial.setFirstNeedPayRentAmount(orderMaterial.getFirstNeedPayRentAmount() == null ? BigDecimal.ZERO : orderMaterial.getFirstNeedPayRentAmount());
                     orderMaterial.setFirstNeedPayDepositAmount(BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount()));
                 }
+                totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, orderMaterial.getFirstNeedPayDepositAmount());
+                totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
+
             }
+            order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent));
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
@@ -1015,11 +983,13 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
-        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) &&
-                !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) &&
-                !OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
+        if(!userSupport.isSuperUser()){
+            if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) &&
+                    !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) &&
+                    !OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
+                result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+                return result;
+            }
         }
         //审核中的订单，处理工作流
         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
@@ -1124,6 +1094,114 @@ public class OrderServiceImpl implements OrderService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Order> createOrderFirstPayAmount(Order order) {
+
+        ServiceResult<String, Order> result = new ServiceResult<>();
+        Date currentTime = new Date();
+
+        if ((order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) && (order.getOrderMaterialList() == null || order.getOrderMaterialList().isEmpty())) {
+            result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
+            return result;
+        }
+        CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        order.setBuyerCustomerId(customerDO.getId());
+
+        if (order.getRentStartTime() == null) {
+            result.setErrorCode(ErrorCode.ORDER_HAVE_NO_RENT_START_TIME);
+            return result;
+        }
+        if (order.getRentType() == null) {
+            result.setErrorCode(ErrorCode.ORDER_RENT_TYPE_IS_NULL);
+            return result;
+        }
+        if (order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
+            result.setErrorCode(ErrorCode.ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL);
+            return result;
+        }
+
+        order.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && order.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
+
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            for (OrderProduct orderProduct : order.getOrderProductList()) {
+                orderProduct.setRentType(order.getRentType());
+                orderProduct.setRentTimeLength(order.getRentTimeLength());
+                orderProduct.setRentLengthType(order.getRentLengthType());
+                if (orderProduct.getProductCount() == null || orderProduct.getProductCount() <= 0) {
+                    result.setErrorCode(ErrorCode.ORDER_PRODUCT_COUNT_ERROR);
+                    return result;
+                }
+                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProduct.getProductSkuId());
+                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode()) || productServiceResult.getResult() == null) {
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+                Product product = productServiceResult.getResult();
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
+                    result.setErrorCode(ErrorCode.PRODUCT_IS_NOT_RENT);
+                    return result;
+                }
+                if (CollectionUtil.isEmpty(product.getProductSkuList())) {
+                    result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
+                    return result;
+                }
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                orderMaterial.setRentType(order.getRentType());
+                orderMaterial.setRentTimeLength(order.getRentTimeLength());
+                orderMaterial.setRentLengthType(order.getRentLengthType());
+                if (orderMaterial.getMaterialCount() == null || orderMaterial.getMaterialCount() <= 0) {
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_COUNT_ERROR);
+                    return result;
+                }
+                if (orderMaterial.getMaterialId() == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterial.getMaterialId());
+
+                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode()) || materialServiceResult.getResult() == null) {
+                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                    return result;
+                }
+                if (orderMaterial.getMaterialUnitAmount() == null || BigDecimalUtil.compare(orderMaterial.getMaterialUnitAmount(), BigDecimal.ZERO) < 0) {
+                    result.setErrorCode(ErrorCode.ORDER_MATERIAL_AMOUNT_ERROR);
+                    return result;
+                }
+            }
+        }
+
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, subCompanyDO != null ? subCompanyDO.getSubCompanyCode() : null));
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(customerDO.getCustomerName());
+        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        orderDO.setExpectReturnTime(expectReturnTime);
+
+        order = ConverterUtil.convert(orderDO, Order.class);
+
+        orderFirstNeedPayAmount(order,orderDO);
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(order);
         return result;
     }
 
@@ -1917,28 +1995,25 @@ public class OrderServiceImpl implements OrderService {
 
     private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
 
-        Map<String, OrderProductDO> saveOrderProductDOMap = new HashMap<>();
-        Map<String, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
+        List<OrderProductDO> saveOrderProductDOList = new ArrayList<>();
+        Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
         List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
-        Map<String, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "productSkuId", "rentType", "rentTimeLength", "isNewProduct");
+        Map<Integer,OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList,"id");
         if (CollectionUtil.isNotEmpty(orderProductDOList)) {
-            for (OrderProductDO orderProductDO : orderProductDOList) {
-                // "productSkuId", "rentType", "rentTimeLength", "isNewProduct"
-                String productRecordKey = orderProductDO.getProductSkuId() + "-" + orderProductDO.getRentType() + "-" + orderProductDO.getRentTimeLength() + "-" + orderProductDO.getIsNewProduct();
-                OrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(productRecordKey);
+            for(OrderProductDO orderProductDO: orderProductDOList){
+                OrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(orderProductDO.getId());
                 if (dbOrderProductDO != null) {
                     orderProductDO.setId(dbOrderProductDO.getId());
-                    updateOrderProductDOMap.put(productRecordKey, orderProductDO);
-                    dbOrderProductDOMap.remove(productRecordKey);
+                    updateOrderProductDOMap.put(orderProductDO.getId(), orderProductDO);
+                    dbOrderProductDOMap.remove(orderProductDO.getId());
                 } else {
-                    saveOrderProductDOMap.put(productRecordKey, orderProductDO);
+                    saveOrderProductDOList.add(orderProductDO);
                 }
             }
         }
 
-        if (saveOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : saveOrderProductDOMap.entrySet()) {
-                OrderProductDO orderProductDO = entry.getValue();
+        if (saveOrderProductDOList.size() > 0) {
+            for (OrderProductDO orderProductDO: saveOrderProductDOList) {
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductDO.setCreateUser(loginUser.getUserId().toString());
@@ -1950,7 +2025,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (updateOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : updateOrderProductDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderProductDO> entry : updateOrderProductDOMap.entrySet()) {
                 OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1961,7 +2036,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
                 OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -1974,27 +2049,25 @@ public class OrderServiceImpl implements OrderService {
 
     private void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
 
-        Map<String, OrderMaterialDO> saveOrderMaterialDOMap = new HashMap<>();
-        Map<String, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
+        List<OrderMaterialDO> saveOrderMaterialDOList = new ArrayList<>();
+        Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
-        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "materialId", "rentType", "rentTimeLength", "isNewMaterial");
+        Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id");
         if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-                String materialRecordKey = orderMaterialDO.getMaterialId() + "-" + orderMaterialDO.getRentType() + "-" + orderMaterialDO.getRentTimeLength() + "-" + orderMaterialDO.getIsNewMaterial();
-                OrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(materialRecordKey);
+                OrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(orderMaterialDO.getId());
                 if (dbOrderMaterialDO != null) {
                     orderMaterialDO.setId(dbOrderMaterialDO.getId());
-                    updateOrderMaterialDOMap.put(materialRecordKey, orderMaterialDO);
-                    dbOrderMaterialDOMap.remove(materialRecordKey);
+                    updateOrderMaterialDOMap.put(orderMaterialDO.getId(), orderMaterialDO);
+                    dbOrderMaterialDOMap.remove(orderMaterialDO.getId());
                 } else {
-                    saveOrderMaterialDOMap.put(materialRecordKey, orderMaterialDO);
+                    saveOrderMaterialDOList.add(orderMaterialDO);
                 }
             }
         }
 
-        if (saveOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : saveOrderMaterialDOMap.entrySet()) {
-                OrderMaterialDO orderMaterialDO = entry.getValue();
+        if (saveOrderMaterialDOList.size() > 0) {
+            for (OrderMaterialDO orderMaterialDO : saveOrderMaterialDOList) {
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialDO.setCreateUser(loginUser.getUserId().toString());
@@ -2006,7 +2079,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (updateOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : updateOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : updateOrderMaterialDOMap.entrySet()) {
                 OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -2017,7 +2090,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
                 OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -2100,7 +2173,20 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
             // 租赁押金总额
             BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
+            //商品租金
+            BigDecimal productUnitAmount ;
+            //商品为天的总租金单价
+            BigDecimal totalProductUnitAmount = new BigDecimal(0.0);
+
             for (OrderProductDO orderProductDO : orderProductDOList) {
+
+                if(OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())){
+                    totalProductUnitAmount = orderProductDO.getProductUnitAmount();
+                    //前端商品租金 除 租赁时长
+                    productUnitAmount = BigDecimalUtil.div(orderProductDO.getProductUnitAmount(),new BigDecimal(orderProductDO.getRentTimeLength()),2);
+                    orderProductDO.setProductUnitAmount(productUnitAmount);
+                }
+
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
                 if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
                     throw new BusinessException(productServiceResult.getErrorCode());
@@ -2146,7 +2232,13 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setDepositAmount(depositAmount);
                 orderProductDO.setCreditDepositAmount(creditDepositAmount);
                 orderProductDO.setProductSkuName(productSku.getSkuName());
-                orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength())));
+
+                if(OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())){
+                    orderProductDO.setProductAmount(BigDecimalUtil.mul(totalProductUnitAmount,new BigDecimal(orderProductDO.getProductCount())));
+                }else{
+                    orderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength())));
+                }
+
                 orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(product));
                 BigDecimal thisOrderProductInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderProductDO.getInsuranceAmount(), new BigDecimal(orderProductDO.getProductCount())), new BigDecimal(orderProductDO.getRentTimeLength()));
                 productCount += orderProductDO.getProductCount();
@@ -2180,7 +2272,20 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
             // 租赁押金总额
             BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
+
+            BigDecimal materialUnitAmount;
+            //商品为天的总租金单价
+            BigDecimal totalMaterialUnitAmount = new BigDecimal(0.0);
+
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+
+                if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())){
+                    totalMaterialUnitAmount = orderMaterialDO.getMaterialUnitAmount();
+                    //前端商品租金 除 租赁时长
+                    materialUnitAmount = BigDecimalUtil.div(orderMaterialDO.getMaterialUnitAmount(),new BigDecimal(orderMaterialDO.getRentTimeLength()),2);
+                    orderMaterialDO.setMaterialUnitAmount(materialUnitAmount);
+                }
+
                 ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
                 if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
                     throw new BusinessException(materialServiceResult.getErrorCode());
@@ -2227,7 +2332,12 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setDepositAmount(depositAmount);
                 orderMaterialDO.setCreditDepositAmount(creditDepositAmount);
                 orderMaterialDO.setMaterialName(material.getMaterialName());
-                orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength())));
+
+                if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())){
+                    orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(totalMaterialUnitAmount,new BigDecimal(orderMaterialDO.getMaterialCount())));
+                }else{
+                    orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength())));
+                }
                 orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 BigDecimal thisOrderMaterialInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getMaterialCount())), new BigDecimal(orderMaterialDO.getRentTimeLength()));
                 materialCount += orderMaterialDO.getMaterialCount();
@@ -2350,12 +2460,12 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }*/
 
-                String key = orderProduct.getProductSkuId() + "-" + orderProduct.getRentType() + "-" + orderProduct.getRentTimeLength() + "-" + orderProduct.getIsNewProduct();
-                if (orderProductMap.get(key) != null) {
-                    return ErrorCode.ORDER_PRODUCT_LIST_REPEAT;
-                } else {
-                    orderProductMap.put(key, orderProduct);
-                }
+//                String key = orderProduct.getProductSkuId() + "-" + orderProduct.getRentType() + "-" + orderProduct.getRentTimeLength() + "-" + orderProduct.getIsNewProduct();
+//                if (orderProductMap.get(key) != null) {
+//                    return ErrorCode.ORDER_PRODUCT_LIST_REPEAT;
+//                } else {
+//                    orderProductMap.put(key, orderProduct);
+//                }
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
                 Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType()) && orderProduct.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
@@ -2398,12 +2508,12 @@ public class OrderServiceImpl implements OrderService {
                         return ErrorCode.ORDER_MATERIAL_STOCK_OLD_INSUFFICIENT;
                     }
                 }*/
-                String key = orderMaterial.getMaterialId() + "-" + orderMaterial.getRentType() + "-" + orderMaterial.getRentTimeLength() + "-" + orderMaterial.getIsNewMaterial();
-                if (orderMaterialMap.get(key) != null) {
-                    return ErrorCode.ORDER_MATERIAL_LIST_REPEAT;
-                } else {
-                    orderMaterialMap.put(key, orderMaterial);
-                }
+//                String key = orderMaterial.getMaterialId() + "-" + orderMaterial.getRentType() + "-" + orderMaterial.getRentTimeLength() + "-" + orderMaterial.getIsNewMaterial();
+//                if (orderMaterialMap.get(key) != null) {
+//                    return ErrorCode.ORDER_MATERIAL_LIST_REPEAT;
+//                } else {
+//                    orderMaterialMap.put(key, orderMaterial);
+//                }
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(order.getRentLengthType())
@@ -2579,6 +2689,59 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(verifyMatters);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private Order orderFirstNeedPayAmount (Order order,OrderDO orderDO){
+        if (orderDO.getFirstNeedPayAmount() == null || BigDecimalUtil.compare(orderDO.getFirstNeedPayAmount(), BigDecimal.ZERO) == 0) {
+            ServiceResult<String, Map<String,BigDecimal>> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(orderDO);
+            Map<String,BigDecimal> map = firstNeedPayAmountResult.getResult();
+            if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
+                order.setFirstNeedPayAmount(map.get("thisNeedPayAmount,ALL"));
+
+                BigDecimal totalProductDeposit = BigDecimal.ZERO;
+                BigDecimal totalProductRent = BigDecimal.ZERO;
+                OrderProduct orderProduct;
+                for(int i=0;i<order.getOrderProductList().size();i++){
+                    orderProduct = order.getOrderProductList().get(i);
+                    String ItemName = orderProduct.getProductName() + orderProduct.getProductSkuName() +"-"+ orderProduct.getIsNewProduct() + "-" + orderProduct.getOrderProductId() + "-" + orderProduct.getOrderId();
+
+                    orderProduct.setFirstNeedPayAmount(map.get(ItemName));
+                    orderProduct.setFirstNeedPayRentAmount(map.get(ItemName));
+
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount());
+                    orderProduct.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
+                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount);
+                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
+
+                    if(OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())){
+                        orderProduct.setProductUnitAmount(BigDecimalUtil.div(orderProduct.getProductAmount(),new BigDecimal(orderProduct.getProductCount()),2));
+                    }
+                }
+                order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit,totalProductRent));
+
+                BigDecimal totalMaterialDeposit = BigDecimal.ZERO;
+                BigDecimal totalMaterialRent = BigDecimal.ZERO;
+                OrderMaterial orderMaterial;
+                for(int i=0;i<order.getOrderMaterialList().size();i++){
+                    orderMaterial = order.getOrderMaterialList().get(i);
+                    String ItemName = orderMaterial.getMaterialName()+"-"+ orderMaterial.getIsNewMaterial() + "-" + orderMaterial.getOrderMaterialId() + "-" + orderMaterial.getOrderId();
+
+                    order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(ItemName));
+                    order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(ItemName));
+
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount());
+                    orderMaterial.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
+                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount);
+                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
+
+                    if(OrderRentType.RENT_TYPE_DAY.equals(orderMaterial.getRentType())){
+                        orderMaterial.setMaterialUnitAmount(BigDecimalUtil.div(orderMaterial.getMaterialAmount(),new BigDecimal(orderMaterial.getMaterialCount()),2));
+                    }
+                }
+                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent));
+            }
+        }
+        return order;
     }
 
     @Autowired

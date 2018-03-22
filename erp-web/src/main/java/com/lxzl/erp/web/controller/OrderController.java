@@ -115,6 +115,12 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "createOrderFirstPayAmount", method = RequestMethod.POST)
+    public Result createOrderFirstPayAmount(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, Order> serviceResult = orderService.createOrderFirstPayAmount(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

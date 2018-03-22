@@ -20,6 +20,7 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private Date lastUseTime;
+	private Integer isBusinessAddress;	//是否为经营地址，0否1是
 
 	@Transient
 	private String provinceName;
@@ -144,7 +145,9 @@ public class CustomerConsignInfoDO  extends BaseDO {
 		return lastUseTime;
 	}
 
-	public void setLastUseTime(Date lastUseTme) {
-		this.lastUseTime = lastUseTme;
-	}
+	public void setLastUseTime(Date lastUseTme) { this.lastUseTime = lastUseTme; }
+
+	public Integer getIsBusinessAddress() { return isBusinessAddress; }
+
+	public void setIsBusinessAddress(Integer isBusinessAddress) { this.isBusinessAddress = isBusinessAddress; }
 }

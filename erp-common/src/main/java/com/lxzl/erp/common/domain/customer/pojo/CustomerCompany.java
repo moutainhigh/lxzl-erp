@@ -77,6 +77,9 @@ public class CustomerCompany extends BasePO {
     private String districtName; //地区名
 
     @Valid
+    private List<CustomerConsignInfo> customerConsignInfoList;
+
+    @Valid
     private Image agentPersonNoPictureFrontImage;//经办人身份证正面
     @Valid
     private Image agentPersonNoPictureBackImage;//经办人身份证反面
@@ -584,4 +587,8 @@ public class CustomerCompany extends BasePO {
     public void setAgentPersonNoPictureBackImage(Image agentPersonNoPictureBackImage) {
         this.agentPersonNoPictureBackImage = agentPersonNoPictureBackImage;
     }
+
+    public List<CustomerConsignInfo> getCustomerConsignInfoList() { return customerConsignInfoList; }
+
+    public void setCustomerConsignInfoList(List<CustomerConsignInfo> customerConsignInfoList) { this.customerConsignInfoList = customerConsignInfoList; }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 public class CustomerCompanyDO  extends BaseDO {
@@ -52,6 +53,8 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String districtName;
 	@Transient
 	private String provinceName;
+	@Transient
+	private List<CustomerConsignInfoDO> customerConsignInfoList;
 
 	public Integer getId(){
 		return id;
@@ -356,4 +359,8 @@ public class CustomerCompanyDO  extends BaseDO {
 	public void setDefaultAddressReferId(Integer defaultAddressReferId) {
 		this.defaultAddressReferId = defaultAddressReferId;
 	}
+
+	public List<CustomerConsignInfoDO> getCustomerConsignInfoList() { return customerConsignInfoList; }
+
+	public void setCustomerConsignInfoList(List<CustomerConsignInfoDO> customerConsignInfoList) { this.customerConsignInfoList = customerConsignInfoList; }
 }

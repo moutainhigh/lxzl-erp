@@ -108,13 +108,9 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    public ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(String orderNo) {
+    public ServiceResult<String, Map<String,BigDecimal>> calculateOrderFirstNeedPayAmount(OrderDO orderDO) {
         ServiceResult<String, Map<String,BigDecimal>> result = new ServiceResult<>();
-        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (orderDO == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
+
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
@@ -146,7 +142,8 @@ public class StatementServiceImpl implements StatementService {
                     thisNeedPayAmount = BigDecimalUtil.add(thisNeedPayAmount, statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
 
                     if(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())){
-                        map.put(statementOrderDetailDO.getItemName()+","+statementOrderDetailDO.getItemIsNew(),statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
+                        String key = statementOrderDetailDO.getItemName()+"-"+statementOrderDetailDO.getItemIsNew()+"-"+statementOrderDetailDO.getOrderItemReferId()+"-"+statementOrderDetailDO.getOrderId();
+                        map.put(key,statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
                     }
                 }
             }
@@ -897,7 +894,7 @@ public class StatementServiceImpl implements StatementService {
                         if (orderProductDO != null) {
                             Integer productId = orderProductDO.getProductId();
                             Integer isNewProduct = orderProductDO.getIsNewProduct();
-                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType() + "-" + statementOrderDetail.getOrderItemReferId();
                         }
                     }
                     //为订单物料时
@@ -906,12 +903,12 @@ public class StatementServiceImpl implements StatementService {
                         if (orderMaterialDO != null) {
                             Integer materialId = orderMaterialDO.getMaterialId();
                             Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                            key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                         }
                     }
                     //为订单其他时
                     if (OrderItemType.ORDER_ITEM_TYPE_OTHER.equals(statementOrderDetail.getOrderItemType())) {
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                         hashMap.put(key, statementOrderDetail);
                         continue;
                     }
@@ -927,7 +924,7 @@ public class StatementServiceImpl implements StatementService {
                             if (orderProductDO != null) {
                                 Integer productId = orderProductDO.getProductId();
                                 Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                             }
                         }
                     }
@@ -939,7 +936,7 @@ public class StatementServiceImpl implements StatementService {
                             if (orderMaterialDO != null) {
                                 Integer materialId = orderMaterialDO.getMaterialId();
                                 Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                             }
                         }
                     }
@@ -948,7 +945,7 @@ public class StatementServiceImpl implements StatementService {
                         if (k3ReturnOrderDO != null) {
                             statementOrderDetail.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
                         }
-                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                        key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                     }
                 }
                 if (OrderType.ORDER_TYPE_CHANGE.equals(statementOrderDetail.getOrderType())) {
@@ -967,7 +964,7 @@ public class StatementServiceImpl implements StatementService {
                                 if (orderProductDO != null) {
                                     Integer productId = orderProductDO.getProductId();
                                     Integer isNewProduct = orderProductDO.getIsNewProduct();
-                                    key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                    key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + productId + "-" + isNewProduct + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                                 }
                             }
                         }
@@ -983,7 +980,7 @@ public class StatementServiceImpl implements StatementService {
                                 if (orderMaterialDO != null) {
                                     Integer materialId = orderMaterialDO.getMaterialId();
                                     Integer isNewMaterial = orderMaterialDO.getIsNewMaterial();
-                                    key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType();
+                                    key = statementOrderDetail.getOrderItemType() + "-" + statementOrderDetail.getOrderType() + "-" + materialId + "-" + isNewMaterial + "-" + statementOrderDetail.getOrderNo() + "-" + statementOrderDetail.getItemRentType()+ "-" + statementOrderDetail.getOrderItemReferId();
                                 }
                             }
                         }
