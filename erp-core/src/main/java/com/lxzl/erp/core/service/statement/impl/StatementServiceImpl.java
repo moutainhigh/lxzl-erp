@@ -123,7 +123,7 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+            statementDays = StatementMode.STATEMENT_MONTH_END;
         } else {
             statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
@@ -181,7 +181,7 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+            statementDays = StatementMode.STATEMENT_MONTH_END;
         } else {
             statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
@@ -237,7 +237,7 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
         if (dataDictionaryDO == null) {
-            statementDays = CommonConstant.SYSTEM_STATEMENT_DATE;
+            statementDays = StatementMode.STATEMENT_MONTH_END;
         } else {
             statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
         }
@@ -2561,7 +2561,7 @@ public class StatementServiceImpl implements StatementService {
                 return statementMonthCount;
             }
             statementMonthCount = rentTimeLength / paymentCycle;
-            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (CommonConstant.SYSTEM_STATEMENT_DATE.equals(statementDay) && startDay <= 10)) {
+            if ((rentTimeLength % paymentCycle > 0) || (startDay > (statementDay + 1)) || (StatementMode.STATEMENT_MONTH_END.equals(statementDay) && startDay <= 10)) {
                 statementMonthCount++;
             }
             return statementMonthCount;
@@ -2602,7 +2602,7 @@ public class StatementServiceImpl implements StatementService {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         // 如果结算日为31日，并且租期在10日前，交到前一个月的即可
-        if (CommonConstant.SYSTEM_STATEMENT_DATE.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
+        if (StatementMode.STATEMENT_MONTH_END.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
             paymentCycle--;
         }
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, paymentCycle);
