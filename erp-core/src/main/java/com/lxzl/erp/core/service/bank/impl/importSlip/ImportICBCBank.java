@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.exclt.impl.bank;
+package com.lxzl.erp.core.service.bank.impl.importSlip;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;

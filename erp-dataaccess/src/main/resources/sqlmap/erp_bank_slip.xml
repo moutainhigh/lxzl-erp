@@ -124,7 +124,7 @@
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null &amp;&amp; maps.bankSlipQueryParam.bankType != ''">
 				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != ''">
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
 				and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
 			</if>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != ''">
@@ -154,7 +154,7 @@
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null &amp;&amp; maps.bankSlipQueryParam.bankType != ''">
 				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != ''">
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
 				and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
 			</if>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != ''">

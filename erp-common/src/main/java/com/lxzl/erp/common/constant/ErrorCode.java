@@ -743,6 +743,7 @@ public class ErrorCode {
     public static final String BANK_TYPE_IS_FAIL = "J18000010";
     public static final String MONTH_IS_NOT_NULL = "J18000011";
     public static final String EXCEL_URL_IS_NOT_NULL = "J18000012";
+    public static final String BANK_SLIP_EXISTS = "J18000013";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1479,6 +1480,7 @@ public class ErrorCode {
         MAP.put(BANK_TYPE_IS_FAIL, "银行类型出错");
         MAP.put(MONTH_IS_NOT_NULL, "月份不能为空");
         MAP.put(EXCEL_URL_IS_NOT_NULL, "表格url不能为空");
+        MAP.put(BANK_SLIP_EXISTS, "流水记录已经存在");
 
     }
 

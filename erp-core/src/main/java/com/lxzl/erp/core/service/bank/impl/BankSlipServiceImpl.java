@@ -8,9 +8,10 @@ import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.bank.BankSlipService;
-import com.lxzl.erp.core.service.exclt.impl.bank.*;
+import com.lxzl.erp.core.service.bank.impl.importSlip.*;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
@@ -39,7 +40,6 @@ import java.util.Map;
 @Service
 public class BankSlipServiceImpl implements BankSlipService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
-
     @Autowired
     ImportTrafficBank importTrafficBank;
 
@@ -62,7 +62,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     ImportPingAnBank importPingAnBank;
 
     @Autowired
-    ImportShanghaiPudongDevelopmentBank importShanghaiPudongDevelopmentBank;
+    ImportShangHaiPuDongDevelopmentBank importShanghaiPudongDevelopmentBank;
 
     @Autowired
     ImportAlipay importAlipay;
@@ -76,6 +76,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     private UserSupport userSupport;
     @Autowired
     private BankSlipDetailMapper bankSlipDetailMapper;
+
     @Override
     public ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam) {
         ServiceResult<String, Page<BankSlip>> result = new ServiceResult<>();
@@ -122,6 +123,21 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
             return serviceResult;
         }
+        //分公司一个月不通银行只能导入一次
+        Map<String, Object> maps = new HashMap<>();
+        BankSlipQueryParam bankSlipQueryParam = new BankSlipQueryParam();
+        bankSlipQueryParam.setBankType(bankSlip.getBankType());
+        bankSlipQueryParam.setSubCompanyName(bankSlip.getSubCompanyName());
+        bankSlipQueryParam.setSlipMonth(bankSlip.getSlipMonth());
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("bankSlipQueryParam", bankSlipQueryParam);
+        List<BankSlipDO> bankSlipDOList = bankSlipMapper.findBankSlipByParams(maps);
+        if(CollectionUtil.isNotEmpty(bankSlipDOList)){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_EXISTS);
+            return serviceResult;
+        }
+
         String excelUrl = bankSlip.getExcelUrl();
         URL url = new URL(excelUrl);
         URLConnection conn = url.openConnection();
