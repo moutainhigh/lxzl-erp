@@ -334,7 +334,7 @@
                                 <dt>可用余额（未操作前）：</dt><dd class="mb5">￥{{oldBalanceAmount}}</dd>
                                 <dt>总冻结金额（未操作前）：</dt><dd class="mb5">￥{{oldTotalFrozenAmount}}</dd>
                                 <dt>押金金额（未操作前）：</dt><dd class="mb5">￥{{oldDepositAmount}}</dd>
-                                <dt>租金存款（未操作前）：</dt><dd class="mb5">￥{{oldRentDepositAmount}}</dd>
+                                <dt>租金押金（未操作前）：</dt><dd class="mb5">￥{{oldRentDepositAmount}}</dd>
                             </dl>
                         </div>
                         <div class="col-md-4">
@@ -342,7 +342,7 @@
                                 <dt>可用余额（操作后）：</dt><dd class="mb5 text-primary">￥{{newBalanceAmount}}</dd>
                                 <dt>总冻结金额（操作后）：</dt><dd class="mb5 text-primary">￥{{newTotalFrozenAmount}}</dd>
                                 <dt>押金金额（操作后）：</dt><dd class="mb5 text-primary">￥{{newDepositAmount}}</dd>
-                                <dt>租金存款（操作后）：</dt><dd class="mb5 text-primary">￥{{newRentDepositAmount}}</dd>
+                                <dt>租金押金（操作后）：</dt><dd class="mb5 text-primary">￥{{newRentDepositAmount}}</dd>
                                 <dt>交易总额：</dt><dd class="mb5 text-danger">￥{{tradeAmount}}</dd>
                             </dl>
                         </div>
@@ -375,8 +375,8 @@
                                 <th>冻结金额（操作后）</th>
                                 <th>押金金额（未操作前）</th>
                                 <th>押金金额（操作后）</th>
-                                <th>租金存款（未操作前）</th>
-                                <th>租金存款（操作后）</th>
+                                <th>租金押金（未操作前）</th>
+                                <th>租金押金（操作后）</th>
                                 <th>备注</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
