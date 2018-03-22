@@ -53,7 +53,7 @@ public class StatementController extends BaseController {
     }
 
     @RequestMapping(value = "createK3StatementOrder", method = RequestMethod.POST)
-    public Result createNewOrderStatement(@RequestBody Order order, BindingResult validResult) {
+    public Result createK3StatementOrder(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, BigDecimal> serviceResult = statementService.createK3OrderStatement(order);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
