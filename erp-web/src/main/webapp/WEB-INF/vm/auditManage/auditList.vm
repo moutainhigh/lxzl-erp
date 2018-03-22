@@ -77,7 +77,8 @@
                                 <th>关联编号</th>
 ##                                <th>工作流说明</th>
                                 <th>类型</th>
-                                <th>模板名</th>
+##                                <th>模板名</th>
+                                <th>审核事项</th>
                                 <th>当前/最后(步骤)</th>
 
 ##                                <th>当前结点名</th>
@@ -109,7 +110,13 @@
                                 <td><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></td>
 ##                                <td>{{remark}}</td>
                                 <td>{{workflowTypeStr}}</td>
-                                <td>{{workflowTemplateName}}</td>
+##                                <td>{{workflowTemplateName}}</td>
+                                <td>
+
+                                    <div class="mw160 textOverflow verifyMatters" style="cursor:pointer"  role="button" data-toggle="popover" data-trigger="focus" data-content="{{verifyMatters}}">
+                                        {{verifyMatters}}
+                                    </div>
+                                </td>
                                 <td>{{workflowStep}}/{{workflowLastStep}}</td>
 
 ##                                <td>{{workflowCurrentNodeName}}</td>
