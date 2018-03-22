@@ -2628,7 +2628,7 @@ public class StatementServiceImpl implements StatementService {
             firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)));
         } else if (OrderRentType.RENT_TYPE_DAY.equals(rentType) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(payMode)) {
             statementExpectPayTime = rentStartTime;
-            firstPhaseAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(BigDecimalUtil.mul(unitAmount, new BigDecimal(itemCount)), new BigDecimal(rentLength)), new BigDecimal(0.3));
+            firstPhaseAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(BigDecimalUtil.mul(unitAmount, new BigDecimal(rentLength),2), new BigDecimal(itemCount)), new BigDecimal(0.3));
         } else {
             // 如果按天的，本期结束就要还款，如果是按月的，本期结束第二天还款
             if (OrderRentType.RENT_TYPE_DAY.equals(rentType)) {
