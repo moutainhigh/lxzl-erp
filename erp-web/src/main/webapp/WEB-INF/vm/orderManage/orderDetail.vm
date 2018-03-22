@@ -42,36 +42,44 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
-                                    <dt><label>创建时间</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{#time}}{{createTime}}{{/time}}</dd>
+                                    <dt><label>所属公司</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderSubCompanyName}}</dd>
 
                                     <dt><label  style="letter-spacing: 0.33em">创建人</label><span class="mr5">：</span></dt>
                                     <dd class="mb5" >{{createUserRealName}}</dd>
 
-                                    <dt><label>所属公司</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{orderSubCompanyName}}</dd>
+                                    <dt><label style="letter-spacing: 0.33em;">业务员</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{orderSellerName}}&nbsp;</dd>
 
                                     <dt><label>发货公司</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{deliverySubCompanyName}}</dd>
 
+                                    <dt><label style="letter-spacing: 1em;">类型</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
 
-                                    <dt><label>配送方式</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{deliveryModeValue}}&nbsp;</dd>
+                                    <dt><label style="letter-spacing: 1em;">期限</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
 
-                                    <dt><label>配送日期</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
+                                    {{#rentTypeByMonth}}
+                                    <dt><label style="letter-spacing: 0.33em;">结算日</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5" id="statementDate"></dd>
+                                    {{/rentTypeByMonth}}
 
-                                    <dt><label>订单备注</label><span class="mr5">：</span></dt>
+                                    <dt><label style="letter-spacing: 1em;">备注</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
+
+
+                                    <!-- <dt><label>创建时间</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#time}}{{createTime}}{{/time}}</dd> -->
                                 </dl>
                             </div>
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
-                                    <dt><label>客户名称</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{buyerCustomerName}}&nbsp;</dd>
-
                                     <dt><label>客户编号</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{buyerCustomerNo}}&nbsp;</dd>
+
+                                    <dt><label>客户名称</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{buyerCustomerName}}&nbsp;</dd>
 
                                     <dt><label style="letter-spacing: 0.33em">收货人</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{orderConsignInfo.consigneeName}}&nbsp;</dd>
@@ -79,30 +87,22 @@
                                     <dt><label>联系方式</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{orderConsignInfo.consigneePhone}}&nbsp;</dd>
 
-                                    <dt><label style="letter-spacing: 1em">地址</label><span class="mr5">：</span></dt>
+                                    <dt><label>收货地址</label><span class="mr5">：</span></dt>
                                     <dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}&nbsp;</dd>
 
-                                    <dt><label>租赁类型</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
-
-                                    <dt><label>租赁时长</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
-
-
+                                    <dt><label>配送方式</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{deliveryModeValue}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-4">
                                 <dl class="dl-horizontal dl-horizontal-rental">
-                                    <dt><label style="letter-spacing: 1em;">业务员</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{orderSellerName}}&nbsp;</dd>
-
-                                    <dt><label style="letter-spacing: 1em;">创建人</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{createUserRealName}}&nbsp;</dd>
-
                                     <dt><label style="letter-spacing: 0.5em;">创建时间</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}&nbsp;</dd>
 
-                                    <dt><label style="letter-spacing: 0.5em;">起租日期</label><span class="mr5">：</span></dt>
+                                    <dt><label style="letter-spacing: 0.5em;">配送日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
+
+                                    <dt><label style="letter-spacing: 0.5em;">起算日期</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
 
                                     <dt><label>预计归还日期</label><span class="mr5">：</span></dt>
@@ -114,13 +114,8 @@
                                     <dt><label style="letter-spacing: 0.5em;">发货时间</label><span class="mr5">：</span></dt>
                                     <dd class="mb5">{{#time}}{{deliveryTime}}{{/time}}&nbsp;</dd>
 
-                                    <dt><label style="letter-spacing: 0.5em;">收货时间</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5">{{#time}}{{confirmDeliveryTime}}{{/time}}&nbsp;</dd>
-
-                                    {{#rentTypeByMonth}}
-                                    <dt><label style="letter-spacing: 0.5em;">结算日期</label><span class="mr5">：</span></dt>
-                                    <dd class="mb5" id="statementDate"></dd>
-                                    {{/rentTypeByMonth}}
+                                    <dt><label style="letter-spacing: 0.5em;">收货日期</label><span class="mr5">：</span></dt>
+                                    <dd class="mb5">{{#shortTime}}{{confirmDeliveryTime}}{{/shortTime}}&nbsp;</dd>
                                 </dl>
                             </div>
                         </div>
@@ -136,17 +131,17 @@
                                 <div class="col-md-4">
                                     <h4>免押额度</h4>
                                     <dl class="dl-horizontal dl-horizontal-rental">
-                                        <dt><label style="letter-spacing: 0.75em;">授信额度</label><span class="mr5">：</span></dt>
+                                        <dt><label style="letter-spacing: 0.4em;">授信总额度</label><span class="mr5">：</span></dt>
                                         <dd class="mb5" id="creditAmount"></dd>
 
-                                        <dt><label style="letter-spacing: 0.75em;">已用额度</label><span class="mr5">：</span></dt>
+                                        <dt><label style="letter-spacing: 0.4em;">已使用额度</label><span class="mr5">：</span></dt>
                                         <dd class="mb5" id="creditAmountUsed"></dd>
-
-                                        <dt><label>本期免押金额度</label><span class="mr5">：</span></dt>
-                                        <dd class="mb5">￥{{#price}}{{totalCreditDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）*#</dd>
 
                                         <dt><label>剩余免押金额度</label><span class="mr5">：</span></dt>
                                         <dd class="mb5" id="surplusCreditAmount"></dd>
+
+                                        <dt><label>本期免押金额度</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{totalCreditDepositAmount}}{{/price}}#*（商品：￥{{#price}}{{totalProductCreditDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialCreditDepositAmount}}{{/price}}）*#</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -158,6 +153,9 @@
                                             <em style="font-style: normal;" class="text-info mr5">6%:</em><em style="font-style: normal;">{{lowTaxRate}}%</em>
                                         </dd>
 
+                                        <dt><label style="letter-spacing: 1em">运费</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
+
                                         <dt><label>设备押金</label><span class="mr5">：</span></dt>
                                         <dd class="mb5">￥{{#price}}{{totalDepositAmount}}{{/price}}#*（商品：{{#price}}{{totalProductDepositAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialDepositAmount}}{{/price}}）*#</dd>
 
@@ -167,16 +165,13 @@
                                         <dt><label>租金总额</label><span class="mr5">：</span></dt>
                                         <dd class="mb5">￥{{#price}}{{totalRentalAmoutFont}}{{/price}}#*（商品：￥{{#price}}{{totalProductAmount}}{{/price}}, 配件：￥{{#price}}{{totalMaterialAmount}}{{/price}}）*#</dd>
 
-                                        <dt><label style="letter-spacing: 1em">运费</label><span class="mr5">：</span></dt>
-                                        <dd class="mb5">￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
-
                                         <dt><label>订单总价</label><span class="mr5">：</span></dt>
                                         <dd class="mb5 text-danger">￥{{#price}}{{totalOrderAmount}}{{/price}}</dd>
 
-                                        <dt><label style="letter-spacing: 1em">首付</label><span class="mr5">：</span></dt>
+                                        <dt><label4>首付总额</label><span class="mr5">：</span></dt>
                                         <dd class="mb5 text-danger">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</dd>
 
-                                        <dt><label style="letter-spacing: 0.33em">已付租金</label><span class="mr5">：</span></dt>
+                                        <dt><label4>已付租金</label><span class="mr5">：</span></dt>
                                         <dd class="mb5 text-danger">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</dd>
                                     </dl>
                                 </div>
@@ -219,6 +214,8 @@
                     </div>
                     <div class="panel-body light pn">
                         <div class="tab-content pn br-n">
+
+                            <!-- 商品项 -->
                             <div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
                                 <script type="text/html" id="pickingProductButtonsTpl">
                                     {{#hasActionButtons}}
@@ -242,38 +239,37 @@
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
-                                            <th>商品名称</th>
                                             <th>类别</th>
                                             <th>品牌</th>
+                                            <th>商品名称</th>
                                             <th>商品参数（SKU）</th>
-                                            <th>商品价值</th>
-                                            <th>商品单价</th>
+                                            <th>商品保值价</th>
+                                            <th>单价</th>
                                             <th>数量</th>
-                                            <th>租期</th>
+                                            <th>类型/期限</th>
+                                            <th>商品总价</th>
                                             <th>支付方式</th>
                                             <th>设备押金</th>
-                                            <th>商品总价</th>
+                                            <th>首付金额</th>
+                                            <th>首付押金</th>
                                             <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {{#listData}}
                                         <tr class="productRow" productRowKey="{{productId}}">
-                                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>
                                             <td>￥{{currentSkuPrice}}</td>
-                                            <td>
-                                                ￥{{#price}}{{productUnitAmount}}{{/price}}
-                                            </td>
-                                            <td>
-                                                {{productCount}}
-                                            </td>
+                                            <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                                            <td>{{productCount}}</td>
                                             <td>
                                                 <p>{{rentTypeValue}}</p>
                                                 <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
                                             </td>
+                                            <td>￥{{#price}}{{productAmount}}{{/price}}</td>
                                             <td>
                                                 <p>{{payModeValue}}</p>
                                                 {{#isRentTypeByMonth}}
@@ -283,9 +279,9 @@
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
-                                            <td>
-                                                ￥{{#price}}{{productAmount}}{{/price}}
-                                            </td>
+
+                                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
@@ -293,7 +289,7 @@
                                             </td>
                                         </tr>
                                         <tr class="bg-light affixTr" style="height: 0;">
-                                            <td colspan="12" class="pn br-n" style="height:0;">
+                                            <td colspan="14" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
                                                     <div class="panel-heading pn ph10">
                                                         <span>已配设备：共配 {{orderProductEquipmentListCount}} 件</span>
@@ -337,12 +333,20 @@
                                             <td valign="top" colspan="14" class="text-center">没有选择商品</td>
                                         </tr>
                                         {{/listData}}
+                                        <tr id="totalProductFirstNeedPay" class="text-danger hide">
+                                            <td colspan="11"></td>
+                                            <td colspan="3">
+                                                <span class="txt">首付总额：</span>
+                                                <span class="num"></span>
+                                            </td>
+                                        </tr>
                                         </tbody>
                                     </script>
                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                 </div>
-
                             </div>
+
+                            <!-- 配件项 -->
                             <div id="purchaseOrderMaterialItems" class="tab-pane tab-pane-order">
                                 <div class="table-responsive">
                                     <script type="text/html" id="materialDataListTpl">
@@ -350,16 +354,18 @@
                                         <tr class="bg-light">
 ##                                            <th>编号</th>
 ##                                            <th>图片</th>
-                                            <th>配件名称</th>
+                                            <th>类别</th>
                                             <th>品牌</th>
-                                            <th>类型</th>
-                                            <th>配件价值</th>
-                                            <th>配件单价</th>
+                                            <th>配件名称</th>
+                                            <th>配件保值价</th>
+                                            <th>单价</th>
                                             <th>数量</th>
-                                            <th>租期</th>
+                                            <th>类型/期限</th>
+                                            <th>配件总价</th>
                                             <th>支付方式</th>
                                             <th>设备押金</th>
-                                            <th>配件总价</th>
+                                            <th>首付金额</th>
+                                            <th>首付押金</th>
                                             <th class="text-right">操作</th>
                                         </tr>
                                         </thead>
@@ -369,20 +375,18 @@
                                         <tr class="materialRow">
 ##                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialNo}}</td>
 ##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
-                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialName}}</td>
-                                            <td>{{brandName}}</td>
+                                            
                                             <td>{{materialTypeStr}}</td>
+                                            <td>{{brandName}}</td>
+                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialName}}</td>
                                             <td>￥{{currentMaterialPrice}}</td>
-                                            <td>
-                                                ￥{{#price}}{{materialUnitAmount}}{{/price}}
-                                            </td>
-                                            <td>
-                                                {{materialCount}}
-                                            </td>
+                                            <td>￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                                            <td>{{materialCount}}</td>
                                             <td>
                                                 <p>{{rentTypeValue}}</p>
                                                 <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
                                             </td>
+                                            <td>￥{{#price}}{{materialAmount}}{{/price}}</td>
                                             <td>
                                                 <p>{{payModeValue}}</p>
                                                 <p>押{{depositCycle}}付{{paymentCycle}}</p>
@@ -390,9 +394,8 @@
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
-                                            <td>
-                                                ￥{{#price}}{{materialAmount}}{{/price}}
-                                            </td>
+                                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
@@ -409,7 +412,7 @@
                                             </td>
                                         </tr>
                                         <tr class="bg-light affixTr" style="height: 0;">
-                                            <td colspan="14" class="pn br-n" style="height:0;">
+                                            <td colspan="13" class="pn br-n" style="height:0;">
                                                 <div class="panel m15 affixPanel"  style="display: none;">
                                                     {{#orderMaterialBulkListData}}
                                                     <div class="panel-heading pn ph8">
@@ -441,10 +444,17 @@
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有配件</td>
+                                            <td valign="top" colspan="13" class="text-center">没有配件</td>
                                         </tr>
                                         {{/listData}}
                                         {{/dataSource}}
+                                        <tr id="totalMaterialFirstNeedPay" class="text-danger hide">
+                                            <td colspan="10"></td>
+                                            <td colspan="3">
+                                                <span class="txt">首付总额：</span>
+                                                <span class="num"></span>
+                                            </td>
+                                        </tr>
                                         </tbody>
                                     </script>
                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13 br-t" id="materialDataListTable"></table>

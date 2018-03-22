@@ -15,40 +15,10 @@
         #parse("layout/topbar.vm")
         <section id="content" class="pn animated fadeIn">
             <form id="customerDetailForm">
-
                 <div class="pv30 ph40 bg-light dark br-b br-grey posr">
                     <script type="text/html" id="customerHeadTpl">
                         {{#customer}}
                         <div class="va-t m30">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">客户编号：</dt><dd>{{customerNo}}</dd>
-                                        <dt class="mb10">公司名：</dt><dd>{{customerCompany.companyName}}</dd>
-                                        <dt class="mb10">公司简称：</dt><dd>{{customerCompany.companyAbb}}</dd>
-                                        <dt class="mb10">短租应收上限：</dt><dd class="text-danger">{{shortLimitReceivableAmountValue}}</dd>
-                                        <dt class="mb10">结算时间：</dt><dd>{{settlementDateValue}}</dd>
-                                        <dt class="mb10">备注：</dt><dd>{{customerCompany.remark}}</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">用户类型：</dt><dd>{{cutomerTypeValue}}</dd>
-                                        <dt class="mb10">客户来源：</dt><dd>{{customerOriginValue}}</dd>
-                                        <dt class="mb10">是否禁用：</dt><dd>{{isDisabledValue}}</dd>
-                                        <dt class="mb10">客户状态：</dt><dd>{{customerStatusValue}}</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">创建人：</dt><dd>{{createUserRealName}}</dd>
-                                        <dt class="mb10">创建时间：</dt><dd>{{#time}}{{createTime}}{{/time}}</dd>
-                                        <dt class="mb10">联合开发人：</dt><dd>{{unionUserName}}</dd>
-                                        <dt class="mb10">业务员：</dt><dd>{{ownerName}}</dd>
-                                    </dl>
-                                </div>
-                            </div>
-                            <hr />
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="panel panel-tile text-center">
@@ -90,6 +60,63 @@
                                             <h6 class="text-primary">设备押金</h6>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">客户编号：</dt>
+                                        <dd>{{customerNo}}</dd>
+
+                                        <dt class="mb10">公司名：</dt>
+                                        <dd>{{customerCompany.companyName}}</dd>
+
+                                        <dt class="mb10">公司简称：</dt>
+                                        <dd>{{customerCompany.companyAbb}}</dd>
+
+                                        <dt class="mb10">结算时间：</dt>
+                                        <dd>{{settlementDateValue}}</dd>
+
+                                        <dt class="mb10">短租应收上限：</dt>
+                                        <dd class="text-danger">{{shortLimitReceivableAmountValue}}</dd>
+
+                                        <dt class="mb10">备注：</dt>
+                                        <dd>{{customerCompany.remark}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">用户类型：</dt>
+                                        <dd>{{cutomerTypeValue}}</dd>
+
+                                        <dt class="mb10">客户来源：</dt>
+                                        <dd>{{customerOriginValue}}</dd>
+
+                                        <dt class="mb10">客户状态：</dt>
+                                        <dd>{{customerStatusValue}}</dd>
+
+                                        <dt class="mb10">是否禁用：</dt>
+                                        <dd>{{isDisabledValue}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-4">
+                                    <dl class="dl-horizontal">
+                                        <dt class="mb10">创建时间：</dt>
+                                        <dd>{{#time}}{{createTime}}{{/time}}</dd>
+
+                                        <dt class="mb10">创建人：</dt>
+                                        <dd>{{createUserRealName}}</dd>
+
+                                        <dt class="mb10">所属公司：</dt>
+                                        <dd>{{customerArea}}</dd>
+
+                                        <dt class="mb10">业务员：</dt>
+                                        <dd>{{ownerName}}</dd>
+
+                                        <dt class="mb10">联合开发人：</dt>
+                                        <dd>{{unionUserName}}</dd>
+                                    </dl>
                                 </div>
                             </div>
                         </div>
@@ -181,10 +208,6 @@
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>所属行业</td>
                                                     <td class="fs15 fw700 text-right">{{#customerIndustryValue}}{{customerCompany.industry}}{{/customerIndustryValue}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="va-m fw600 text-muted"></i>所属区域</td>
-                                                    <td class="fs15 fw700 text-right">{{customerArea}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="va-m fw600 text-muted"></i>关联企业</td>

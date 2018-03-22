@@ -117,10 +117,10 @@
                                             <td>{{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}{{productName}}</td>
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                            <td>{{propertiesToStr}}</td>
                                             <td>
                                                 ￥{{currentSkuPrice}}
                                             </td>
-                                            <td>{{propertiesToStr}}</td>
                                             <td class="productUnitAmountTd">
                                                ￥{{#price}}{{productUnitAmount}}{{/price}}
                                             </td>
