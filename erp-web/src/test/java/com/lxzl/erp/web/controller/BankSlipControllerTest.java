@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  * @Date : Created in 2018/3/20
  * @Time : Created in 14:03
  */
-public class ImportExcelControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPTransactionalTest {
 
     @Autowired
     private ImageService imageService;
@@ -170,7 +170,7 @@ public class ImportExcelControllerTest extends ERPTransactionalTest {
         bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
         bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
         bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
-        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 //
 // 总公司(招商银行)
 //        BankSlip bankSlip = new BankSlip();
