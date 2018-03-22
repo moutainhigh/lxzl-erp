@@ -1,30 +1,50 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.domain.ConstantConfig;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
+import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
-import com.lxzl.erp.core.service.system.ImageService;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
- * @Author : XiaoLuYu
- * @Date : Created in 2018/3/20
- * @Time : Created in 14:03
+ * @Author: Pengbinjie
+ * @Description：
+ * @Date: Created in 16:04 2018/3/21
+ * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
 
-    @Autowired
-    private ImageService imageService;
+    @Test
+    public void pageBankSlip() throws Exception {
+        BankSlipQueryParam bankSlipQueryParam = new BankSlipQueryParam();
+        bankSlipQueryParam.setPageNo(1);
+        bankSlipQueryParam.setPageSize(10);
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+        bankSlipQueryParam.setSubCompanyName("南京分公司");
+
+        TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
+    }
+
+    @Test
+    public void pageBankSlipDetail() throws Exception {
+        BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
+        bankSlipDetailQueryParam.setPageNo(1);
+        bankSlipDetailQueryParam.setPageSize(20);
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipQueryParam.setSubCompanyName();
+
+        TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
+    }
+
 
     @Test
     public void importBankSlip() throws Exception {

@@ -114,4 +114,67 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDO">
 		UPDATE erp_bank_slip <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findBankSlipCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ebs.id) from erp_bank_slip ebs
+		<where>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
+				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null &amp;&amp; maps.bankSlipQueryParam.bankType != ''">
+				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
+				and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != ''">
+				and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebs.data_status = 1
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+				and 1=2
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+				and 1=1
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
+				and ebs.slip_status !=0
+			</if>
+		</where>
+	</select>
+
+	<select id="findBankSlipByParams" resultMap="BankSlipDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip ebs
+		<where>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
+				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null &amp;&amp; maps.bankSlipQueryParam.bankType != ''">
+				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
+				and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != ''">
+				and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebs.data_status = 1
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+				and 1=2
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+				and 1=1
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
+				and ebs.slip_status !=0
+			</if>
+		</where>
+		ORDER BY ebs.slip_month DESC ,ebs.sub_company_id ASC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
 </mapper>

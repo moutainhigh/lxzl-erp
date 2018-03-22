@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.exclt.impl.bank;
+package com.lxzl.erp.core.service.bank.impl.importSlip;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -36,21 +36,20 @@ import java.util.List;
 
 /**
  * @Author : XiaoLuYu
- * @Date : Created in 2018/3/20
- * @Time : Created in 19:24
+ * @Date : Created in 2018/3/21
+ * @Time : Created in 10:18
  */
 @Repository
-public class ImportChinaBank {
-
+public class ImportPingAnBank {
     /**
-     * 保存中国银行
+     * 保存平安银行
      *
      * @param : runningWater
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, String> saveChinaBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+    public ServiceResult<String, String> savePingAnBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         String excelUrl = bankSlip.getExcelUrl();
@@ -92,8 +91,8 @@ public class ImportChinaBank {
 
             BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
-            //存储
-            ServiceResult<String, List<BankSlipDetailDO>> data = getChinaBankData(sheet, row, cell, bankSlipDO, now);
+            //todo 存储
+            ServiceResult<String, List<BankSlipDetailDO>> data = getPingAnBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
@@ -143,9 +142,9 @@ public class ImportChinaBank {
 
     }
 
-    //存中国银行数据
+    //存平安银行数据
 
-    public ServiceResult<String, List<BankSlipDetailDO>> getChinaBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
+    public ServiceResult<String, List<BankSlipDetailDO>> getPingAnBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
 
         ServiceResult<String, List<BankSlipDetailDO>> serviceResult = new ServiceResult<>();
 
@@ -160,6 +159,7 @@ public class ImportChinaBank {
         int paySerialNumberNo = 0; //交易流水号
         int payPostscriptNo = 0; //交易附言
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
+        int creditSumNo = 0; //借
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
 
 
@@ -172,7 +172,6 @@ public class ImportChinaBank {
                     continue bbb;
                 }
             }
-
             boolean tradeAmountFlag = false;
             if (row != null) {
                 //遍历所有的列
@@ -185,9 +184,10 @@ public class ImportChinaBank {
                     String value = getValue(cell);
 
                     if (("交易金额".equals(value)) ||
+                            ("借".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("交易流水号".equals(value)) ||
-                            ("付款人账号[ Debit Account No. ]".equals(value)) ||
+                            ("对方账号".equals(value)) ||
                             ("交易附言".equals(value)) ||
                             ("交易日期".equals(value)) ||
                             ("付款人名称".equals(value))) {
@@ -207,6 +207,10 @@ public class ImportChinaBank {
                             payerNameNo = y;
                             continue ccc;
                         }
+                        if ("借".equals(value)) {
+                            creditSumNo = y;
+                            continue ccc;
+                        }
                         if ("交易日期".equals(value)) {
                             payTimeNo = y;
                             continue ccc;
@@ -219,7 +223,7 @@ public class ImportChinaBank {
                             paySerialNumberNo = y;
                             continue ccc;
                         }
-                        if ("付款人账号[ Debit Account No. ]".equals(value)) {
+                        if ("对方账号".equals(value)) {
                             payAccountNo = y;
                             continue ccc;
                         }
@@ -237,6 +241,7 @@ public class ImportChinaBank {
                 String tradeSerialNo = null;  //交易流水号
                 String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
                 String tradeMessage = null;  //交易附言
+                String tradeAmount1 = null;  //借
 
                 if (j > next) {
 
@@ -247,27 +252,33 @@ public class ImportChinaBank {
                     payerName = (row.getCell(payerNameNo) == null?"":getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
                     tradeTime = (row.getCell(payTimeNo) == null?"":getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
                     tradeAmount = (row.getCell(payMoneyNo) == null?"":getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    tradeAmount1 = (row.getCell(creditSumNo) == null?"":getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
                     tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
-                    otherSideAccountNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
+                    otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
 
-                    if("".equals(payerName)&&
-                            "".equals(tradeTime)&&
-                            "".equals(tradeAmount)&&
-                            "".equals(tradeSerialNo)&&
+                    if("".equals(payerName) &&
+                            "".equals(tradeTime) &&
+                            "".equals(tradeAmount) &&
+                            "".equals(tradeAmount1) &&
+                            "".equals(tradeSerialNo) &&
                             "".equals(otherSideAccountNo)){
                         continue bbb;
                     }
-
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
                         if(tradeAmount.contains(",")){
                             tradeAmount = tradeAmount.replaceAll(",","");
                         }
-                        if(tradeAmount.contains("-")){
-                            tradeAmount = tradeAmount.replaceAll("-","");
-                            tradeAmountFlag = true;
+                        if(tradeAmount1.contains(",")){
+                            tradeAmount1 = tradeAmount1.replaceAll(",","");
                         }
-                        bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
+                        if(tradeAmount1 != null && !("".equals(tradeAmount1))){
+                            bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount1));
+                            tradeAmountFlag = true;
+                        }else {
+                            bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
+                        }
+
                     } catch (Exception e) {
                         logger.error("-----------------金额转换出错------------------------", e);
                         serviceResult.setErrorCode(ErrorCode.MONEY_TRANSITION_IS_FAIL);

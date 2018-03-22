@@ -27,25 +27,36 @@
                     <div class="form-horizontal panel-body bg-light dark">
                         <script type="text/html" id="baserInfoTpl">
                             {{#dataSource}}
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">工作流类型</dt><dd>{{workflowTypeStr}}</dd>
-                                        <dt class="mb10">关联编号</dt><dd><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></dd>
-##                                        <dt class="mb10">工作流说明</dt><dd>{{remark}}</dd>
-                                    </dl>
+                                <div class="row section">
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">工作流类型</dt><dd>{{workflowTypeStr}}</dd>
+                                            <dt class="mb10">关联编号</dt><dd><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></dd>
+                                            <dt class="mb10">工作流说明</dt><dd>{{remark}}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">提交人</dt><dd>{{commitUserName}}</dd>
+                                            <dt class="mb10">当前审核人</dt><dd>{{currentVerifyUserName}}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">审核状态</dt><dd><span class="label {{labelClass}}">{{workflowVerifyStatusStr}}</span></dd>
+                                            <dt class="mb10">是否最后一步</dt><dd>{{lastStepStr}}</dd>
+                                        </dl>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">提交人</dt><dd>{{commitUserName}}</dd>
-                                        <dt class="mb10">当前审核人</dt><dd>{{currentVerifyUserName}}</dd>
-                                    </dl>
+                                <div class="row section pt15" style="border-top: 1px solid #e5e5e5;">
+                                    <div class="col-md-12">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">审核事项</dt><dd>{{verifyMatters}}</dd>
+                                        </dl>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">审核状态</dt><dd><span class="label {{labelClass}}">{{workflowVerifyStatusStr}}</span></dd>
-                                        <dt class="mb10">是否最后一步</dt><dd>{{lastStepStr}}</dd>
-                                    </dl>
-                                </div>
+
+
                             {{/dataSource}}
                         </script>
                         <div class="row" id="baseInfo">

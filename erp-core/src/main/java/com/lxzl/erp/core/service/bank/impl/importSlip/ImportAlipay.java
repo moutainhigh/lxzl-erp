@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.exclt.impl.bank;
+package com.lxzl.erp.core.service.bank.impl.importSlip;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -37,10 +37,10 @@ import java.util.List;
 /**
  * @Author : XiaoLuYu
  * @Date : Created in 2018/3/21
- * @Time : Created in 10:24
+ * @Time : Created in 10:46
  */
 @Repository
-public class ImportCMBCBank {
+public class ImportAlipay {
     /**
      * 保存工商银行
      *
@@ -49,7 +49,7 @@ public class ImportCMBCBank {
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, String> saveCMBCBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+    public ServiceResult<String, String> saveAlipay(BankSlip bankSlip, InputStream inputStream) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         String excelUrl = bankSlip.getExcelUrl();
@@ -91,8 +91,8 @@ public class ImportCMBCBank {
 
             BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
-            //todo 存储
-            ServiceResult<String, List<BankSlipDetailDO>> data = getCMBCBankData(sheet, row, cell, bankSlipDO, now);
+            //存储
+            ServiceResult<String, List<BankSlipDetailDO>> data = getAlipayData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
@@ -144,13 +144,13 @@ public class ImportCMBCBank {
 
     //存中国银行数据
 
-    public ServiceResult<String, List<BankSlipDetailDO>> getCMBCBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
+    public ServiceResult<String, List<BankSlipDetailDO>> getAlipayData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
 
         ServiceResult<String, List<BankSlipDetailDO>> serviceResult = new ServiceResult<>();
 
         BankSlipDetailDO bankSlipDetailDO = null;
 
-        String selectAccount = null; //银行帐号
+        String selectAccount = null; //查询账号[ Inquirer account number ]
         int inCount = 0; //进款笔数
 
         int payerNameNo = 0; //付款人名称
@@ -158,8 +158,9 @@ public class ImportCMBCBank {
         int payMoneyNo = 0; //交易金额
         int paySerialNumberNo = 0; //交易流水号
         int payPostscriptNo = 0; //交易附言
-        int payAccountNo = 0; //付款人账号[ Debit Account No. ]
-        int creditSumNo = 0; //借方金额
+        int payAccountNo = 0; //对方账户
+        int creditSumNo = 0; //支出（-元）
+        int merchantOrderNo = 0; //商户订单号
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
 
 
@@ -172,6 +173,15 @@ public class ImportCMBCBank {
                     continue bbb;
                 }
             }
+            if((row.getCell(0)== null ? "":getValue(row.getCell(0))).contains("#导出时间")){
+                break bbb;
+            }
+            if((row.getCell(0)== null ? "":getValue(row.getCell(0))).contains("#账号：")){
+                String value = getValue(row.getCell(0));
+                int indexOf = value.indexOf("#账号：");
+                selectAccount = value.substring(indexOf+"#账号：".length(), value.length());
+            }
+
             boolean tradeAmountFlag = false;
             if (row != null) {
                 //遍历所有的列
@@ -184,32 +194,26 @@ public class ImportCMBCBank {
                     String value = getValue(cell);
 
                     if (("交易金额".equals(value)) ||
-                            ("借方金额".equals(value)) ||
+                            ("支出（-元）".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("交易流水号".equals(value)) ||
-                            ("对方账号".equals(value)) ||
+                            ("对方账户".equals(value)) ||
+                            ("商户订单号".equals(value)) ||
                             ("交易附言".equals(value)) ||
                             ("交易日期".equals(value)) ||
-                            ("付款人名称".equals(value))||
-                    ("银行帐号".equals(value))) {
-                        if ("银行帐号".equals(value)) {
+                            ("付款人名称".equals(value))) {
 
-                            Cell accountCell = (row.getCell(y + 1));
-                            if(accountCell == null){
-                                continue ccc;
-                            }
-                            value = getValue(accountCell);
-
-                            selectAccount = value;
-                            continue ccc;
-                        }
                         if ("付款人名称".equals(value)) {
                             next = j;
                             payerNameNo = y;
                             continue ccc;
                         }
-                        if ("借方金额".equals(value)) {
+                        if ("支出（-元）".equals(value)) {
                             creditSumNo = y;
+                            continue ccc;
+                        }
+                        if ("商户订单号".equals(value)) {
+                            merchantOrderNo = y;
                             continue ccc;
                         }
                         if ("交易日期".equals(value)) {
@@ -224,7 +228,7 @@ public class ImportCMBCBank {
                             paySerialNumberNo = y;
                             continue ccc;
                         }
-                        if ("对方账号".equals(value)) {
+                        if ("对方账户".equals(value)) {
                             payAccountNo = y;
                             continue ccc;
                         }
@@ -240,9 +244,10 @@ public class ImportCMBCBank {
                 String tradeTime = null;  //交易日期
                 String tradeAmount = null;  //交易金额
                 String tradeSerialNo = null;  //交易流水号
-                String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
+                String otherSideAccountNo = null;  //对方账号
                 String tradeMessage = null;  //交易附言
-                String tradeAmount1 = null;  //贷方发生额
+                String tradeAmount1 = null;  //支出（-元）
+                String merchantOrder = null; //商户订单号
 
                 if (j > next) {
 
@@ -253,11 +258,10 @@ public class ImportCMBCBank {
                     payerName = (row.getCell(payerNameNo) == null?"":getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
                     tradeTime = (row.getCell(payTimeNo) == null?"":getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
                     tradeAmount = (row.getCell(payMoneyNo) == null?"":getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
-                    tradeAmount1 = (row.getCell(creditSumNo) == null?"":getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
+                    tradeAmount1 =(row.getCell(creditSumNo) == null?"": getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
                     tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
-                    otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
-
-
+                    otherSideAccountNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
+                    merchantOrder = (row.getCell(merchantOrderNo) == null?"": getValue(row.getCell(merchantOrderNo)).replaceAll("\\s+", ""));  //对方账号
 
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
@@ -280,11 +284,15 @@ public class ImportCMBCBank {
                         return serviceResult;
                     }
                     try {
-                        bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyyMMdd").parse(tradeTime));
+                        bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyy/MM/ddHH:mm:ss").parse(tradeTime));
                     } catch (Exception e) {
-                        logger.error("-----------------交易日期转换出错------------------------", e);
-                        serviceResult.setErrorCode(ErrorCode.DATE_TRANSITION_IS_FAIL);
-                        return serviceResult;
+                        try {
+                            bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyy-MM-ddHH:mm:ss").parse(tradeTime));
+                        } catch (Exception e1) {
+                            logger.error("-----------------交易日期转换出错------------------------", e1);
+                            serviceResult.setErrorCode(ErrorCode.DATE_TRANSITION_IS_FAIL);
+                            return serviceResult;
+                        }
                     }
                     bankSlipDetailDO.setOtherSideAccountNo(otherSideAccountNo);
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
@@ -295,6 +303,7 @@ public class ImportCMBCBank {
                     }else {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                     }
+                    bankSlipDetailDO.setMerchantOrderNo(merchantOrder);
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
                     bankSlipDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
                     bankSlipDetailDO.setCreateTime(now);
@@ -329,7 +338,7 @@ public class ImportCMBCBank {
         switch (cell.getCellType()) {
             case 0:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                    DateFormat sdf = new SimpleDateFormat("yyyy/MM/ddHH:mm:ss");
                     return sdf.format(cell.getDateCellValue());
                 }
                 double value = cell.getNumericCellValue();
@@ -370,4 +379,3 @@ public class ImportCMBCBank {
     @Autowired
     private BankSlipMapper bankSlipMapper;
 }
-
