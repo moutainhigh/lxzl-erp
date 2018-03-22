@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.exclt.impl.bank;
+package com.lxzl.erp.core.service.bank.impl.importSlip;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -37,19 +37,19 @@ import java.util.List;
 /**
  * @Author : XiaoLuYu
  * @Date : Created in 2018/3/21
- * @Time : Created in 10:18
+ * @Time : Created in 10:24
  */
 @Repository
-public class ImportPingAnBank {
+public class ImportCMBCBank {
     /**
-     * 保存平安银行
+     * 保存工商银行
      *
      * @param : runningWater
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, String> savePingAnBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+    public ServiceResult<String, String> saveCMBCBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         String excelUrl = bankSlip.getExcelUrl();
@@ -92,7 +92,7 @@ public class ImportPingAnBank {
             BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
             //todo 存储
-            ServiceResult<String, List<BankSlipDetailDO>> data = getPingAnBankData(sheet, row, cell, bankSlipDO, now);
+            ServiceResult<String, List<BankSlipDetailDO>> data = getCMBCBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
@@ -142,15 +142,15 @@ public class ImportPingAnBank {
 
     }
 
-    //存平安银行数据
+    //存中国银行数据
 
-    public ServiceResult<String, List<BankSlipDetailDO>> getPingAnBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
+    public ServiceResult<String, List<BankSlipDetailDO>> getCMBCBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
 
         ServiceResult<String, List<BankSlipDetailDO>> serviceResult = new ServiceResult<>();
 
         BankSlipDetailDO bankSlipDetailDO = null;
 
-        String selectAccount = null; //查询账号[ Inquirer account number ]
+        String selectAccount = null; //银行帐号
         int inCount = 0; //进款笔数
 
         int payerNameNo = 0; //付款人名称
@@ -159,7 +159,7 @@ public class ImportPingAnBank {
         int paySerialNumberNo = 0; //交易流水号
         int payPostscriptNo = 0; //交易附言
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
-        int creditSumNo = 0; //借
+        int creditSumNo = 0; //借方金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
 
 
@@ -184,14 +184,15 @@ public class ImportPingAnBank {
                     String value = getValue(cell);
 
                     if (("交易金额".equals(value)) ||
-                            ("借".equals(value)) ||
+                            ("借方金额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("交易流水号".equals(value)) ||
                             ("对方账号".equals(value)) ||
                             ("交易附言".equals(value)) ||
                             ("交易日期".equals(value)) ||
-                            ("付款人名称".equals(value))) {
-                        if ("查询账号[ Inquirer account number ]".equals(value)) {
+                            ("付款人名称".equals(value))||
+                    ("银行帐号".equals(value))) {
+                        if ("银行帐号".equals(value)) {
 
                             Cell accountCell = (row.getCell(y + 1));
                             if(accountCell == null){
@@ -207,7 +208,7 @@ public class ImportPingAnBank {
                             payerNameNo = y;
                             continue ccc;
                         }
-                        if ("借".equals(value)) {
+                        if ("借方金额".equals(value)) {
                             creditSumNo = y;
                             continue ccc;
                         }
@@ -241,7 +242,7 @@ public class ImportPingAnBank {
                 String tradeSerialNo = null;  //交易流水号
                 String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
                 String tradeMessage = null;  //交易附言
-                String tradeAmount1 = null;  //借
+                String tradeAmount1 = null;  //贷方发生额
 
                 if (j > next) {
 
@@ -256,14 +257,8 @@ public class ImportPingAnBank {
                     tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
                     otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
 
-                    if("".equals(payerName) &&
-                            "".equals(tradeTime) &&
-                            "".equals(tradeAmount) &&
-                            "".equals(tradeAmount1) &&
-                            "".equals(tradeSerialNo) &&
-                            "".equals(otherSideAccountNo)){
-                        continue bbb;
-                    }
+
+
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
                         if(tradeAmount.contains(",")){
@@ -375,3 +370,4 @@ public class ImportPingAnBank {
     @Autowired
     private BankSlipMapper bankSlipMapper;
 }
+
