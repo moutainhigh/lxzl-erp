@@ -131,6 +131,7 @@ public class OrderServiceImpl implements OrderService {
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.save(orderDO);
+
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -215,6 +216,7 @@ public class OrderServiceImpl implements OrderService {
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
+
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -1993,38 +1995,26 @@ public class OrderServiceImpl implements OrderService {
 
     private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
 
-        Map<String, OrderProductDO> saveOrderProductDOMap = new HashMap<>();
+        List<OrderProductDO> saveOrderProductDOList = new ArrayList<>();
         Map<String, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
         List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
-
-        Map<String, OrderProductDO> dbOrderProductDOMap = new HashMap<>();
-        for(int i=0;i<dbOrderProductDOList.size();i++){
-            OrderProductDO orderProductDO = dbOrderProductDOList.get(i);
-            String key = i +"-"+ orderProductDO.getProductSkuId() + "-" + orderProductDO.getRentType() + "-" + orderProductDO.getRentTimeLength() + "-" + orderProductDO.getIsNewProduct();
-            dbOrderProductDOMap.put(key,orderProductDO);
-        }
-
-//        Map<String, OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "productSkuId", "rentType", "rentTimeLength", "isNewProduct");
+        Map<String,OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList,"id","productSkuId");
         if (CollectionUtil.isNotEmpty(orderProductDOList)) {
-            Integer count = 0;
-            for (OrderProductDO orderProductDO : orderProductDOList) {
-                // "productSkuId", "rentType", "rentTimeLength", "isNewProduct"
-                String productRecordKey = count + "-" +orderProductDO.getProductSkuId() + "-" + orderProductDO.getRentType() + "-" + orderProductDO.getRentTimeLength() + "-" + orderProductDO.getIsNewProduct();
+            for(OrderProductDO orderProductDO: orderProductDOList){
+                String productRecordKey = orderProductDO.getId() + "-" +orderProductDO.getProductSkuId();
                 OrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(productRecordKey);
                 if (dbOrderProductDO != null) {
                     orderProductDO.setId(dbOrderProductDO.getId());
                     updateOrderProductDOMap.put(productRecordKey, orderProductDO);
                     dbOrderProductDOMap.remove(productRecordKey);
                 } else {
-                    saveOrderProductDOMap.put(productRecordKey, orderProductDO);
+                    saveOrderProductDOList.add(orderProductDO);
                 }
-                count++;
             }
         }
 
-        if (saveOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : saveOrderProductDOMap.entrySet()) {
-                OrderProductDO orderProductDO = entry.getValue();
+        if (saveOrderProductDOList.size() > 0) {
+            for (OrderProductDO orderProductDO: saveOrderProductDOList) {
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductDO.setCreateUser(loginUser.getUserId().toString());
@@ -2060,37 +2050,26 @@ public class OrderServiceImpl implements OrderService {
 
     private void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
 
-        Map<String, OrderMaterialDO> saveOrderMaterialDOMap = new HashMap<>();
+        List<OrderMaterialDO> saveOrderMaterialDOList = new ArrayList<>();
         Map<String, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
-
-        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = new HashMap<>();
-        for(int i=0;i<dbOrderMaterialDOList.size();i++){
-            OrderMaterialDO orderMaterialDO = dbOrderMaterialDOList.get(i);
-            String key = i +"-"+ orderMaterialDO.getMaterialId() + "-" + orderMaterialDO.getRentType() + "-" + orderMaterialDO.getRentTimeLength() + "-" + orderMaterialDO.getIsNewMaterial();
-            dbOrderMaterialDOMap.put(key,orderMaterialDO);
-        }
-
-//        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "materialId", "rentType", "rentTimeLength", "isNewMaterial");
+        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id","materialId");
         if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
-            Integer count = 0 ;
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-                String materialRecordKey = count + "-" + orderMaterialDO.getMaterialId() + "-" + orderMaterialDO.getRentType() + "-" + orderMaterialDO.getRentTimeLength() + "-" + orderMaterialDO.getIsNewMaterial();
+                String materialRecordKey = orderMaterialDO.getId() + "-" + orderMaterialDO.getMaterialId();
                 OrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(materialRecordKey);
                 if (dbOrderMaterialDO != null) {
                     orderMaterialDO.setId(dbOrderMaterialDO.getId());
                     updateOrderMaterialDOMap.put(materialRecordKey, orderMaterialDO);
                     dbOrderMaterialDOMap.remove(materialRecordKey);
                 } else {
-                    saveOrderMaterialDOMap.put(materialRecordKey, orderMaterialDO);
+                    saveOrderMaterialDOList.add(orderMaterialDO);
                 }
-                count++;
             }
         }
 
-        if (saveOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : saveOrderMaterialDOMap.entrySet()) {
-                OrderMaterialDO orderMaterialDO = entry.getValue();
+        if (saveOrderMaterialDOList.size() > 0) {
+            for (OrderMaterialDO orderMaterialDO : saveOrderMaterialDOList) {
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialDO.setCreateUser(loginUser.getUserId().toString());
