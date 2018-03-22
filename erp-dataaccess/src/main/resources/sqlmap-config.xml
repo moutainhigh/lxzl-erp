@@ -149,6 +149,10 @@
         <mapper resource="sqlmap/erp_delivery_order_material.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_user.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_industry.xml" />
+<<<<<<< HEAD
+=======
+
+>>>>>>> d180a3774cc1e9abbaa90e6157361f477411e6b1
         <mapper resource="sqlmap/erp_bank_slip.xml" />
         <mapper resource="sqlmap/erp_bank_slip_detail.xml" />
     </mappers>

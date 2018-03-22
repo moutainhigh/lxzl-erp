@@ -21,7 +21,10 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+<<<<<<< HEAD
 
+=======
+>>>>>>> d180a3774cc1e9abbaa90e6157361f477411e6b1
 	</resultMap>
 
 	<sql id="column_List">
@@ -115,6 +118,7 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDO">
 		UPDATE erp_bank_slip <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+<<<<<<< HEAD
 
 	<select id="findBankSlipCountByParams" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ebs.id) from erp_bank_slip ebs
@@ -172,4 +176,6 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
+=======
+>>>>>>> d180a3774cc1e9abbaa90e6157361f477411e6b1
 </mapper>

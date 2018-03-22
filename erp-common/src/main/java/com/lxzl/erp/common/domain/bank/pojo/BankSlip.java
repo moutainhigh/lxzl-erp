@@ -2,6 +2,16 @@ package com.lxzl.erp.common.domain.bank.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.constant.BankType;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNoGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -12,6 +22,10 @@ public class BankSlip extends BasePO {
 	private Integer subCompanyId;   //分公司ID
 	private String subCompanyName;   //分公司名称
 	private Integer bankType;   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
+	@NotNull(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL,groups = {AddGroup.class})
+	private String subCompanyName;   //分公司名称
+	private Integer bankType;   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
+	@NotNull(message = ErrorCode.MONTH_IS_NOT_NULL,groups = {AddGroup.class})
 	private Date slipMonth;   //月份
 	private String accountNo;   //查询账号
 	private Integer inCount;   //进款笔数
@@ -19,6 +33,7 @@ public class BankSlip extends BasePO {
 	private Integer claimCount;   //已认领笔数
 	private Integer confirmCount;   //已确认笔数
 	private Integer slipStatus;   //单据状态：0-初始化，1-已下推，2-部分认领，3-全部认领
+	@NotNull(message = ErrorCode.EXCEL_URL_IS_NOT_NULL,groups = {AddGroup.class})
 	private String excelUrl;   //表格URL
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

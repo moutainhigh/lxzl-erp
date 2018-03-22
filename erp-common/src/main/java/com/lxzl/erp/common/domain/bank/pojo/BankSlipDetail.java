@@ -25,7 +25,11 @@ public class BankSlipDetail extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+<<<<<<< HEAD
 	private Integer bankSlipId;   //
+=======
+	private Integer bankSlipId;   //银行对公流水表id
+>>>>>>> d180a3774cc1e9abbaa90e6157361f477411e6b1
 
 
 	public Integer getBankSlipDetailId(){
