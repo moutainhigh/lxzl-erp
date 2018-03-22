@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.exclt.impl.bank;
+package com.lxzl.erp.core.service.bank.impl.importSlip;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -40,7 +40,7 @@ import java.util.List;
  * @Time : Created in 10:37
  */
 @Repository
-public class ImportShanghaiPudongDevelopmentBank {
+public class ImportShangHaiPuDongDevelopmentBank {
     /**
      * 保存工商银行
      *
