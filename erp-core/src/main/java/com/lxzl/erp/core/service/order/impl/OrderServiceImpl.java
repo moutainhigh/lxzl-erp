@@ -1996,17 +1996,16 @@ public class OrderServiceImpl implements OrderService {
     private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
 
         List<OrderProductDO> saveOrderProductDOList = new ArrayList<>();
-        Map<String, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
+        Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
         List<OrderProductDO> dbOrderProductDOList = orderProductMapper.findByOrderId(orderId);
-        Map<String,OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList,"id","productSkuId");
+        Map<Integer,OrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList,"id");
         if (CollectionUtil.isNotEmpty(orderProductDOList)) {
             for(OrderProductDO orderProductDO: orderProductDOList){
-                String productRecordKey = orderProductDO.getId() + "-" +orderProductDO.getProductSkuId();
-                OrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(productRecordKey);
+                OrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(orderProductDO.getId());
                 if (dbOrderProductDO != null) {
                     orderProductDO.setId(dbOrderProductDO.getId());
-                    updateOrderProductDOMap.put(productRecordKey, orderProductDO);
-                    dbOrderProductDOMap.remove(productRecordKey);
+                    updateOrderProductDOMap.put(orderProductDO.getId(), orderProductDO);
+                    dbOrderProductDOMap.remove(orderProductDO.getId());
                 } else {
                     saveOrderProductDOList.add(orderProductDO);
                 }
@@ -2026,7 +2025,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (updateOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : updateOrderProductDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderProductDO> entry : updateOrderProductDOMap.entrySet()) {
                 OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -2037,7 +2036,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderProductDOMap.size() > 0) {
-            for (Map.Entry<String, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
                 OrderProductDO orderProductDO = entry.getValue();
                 orderProductDO.setOrderId(orderId);
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -2051,17 +2050,16 @@ public class OrderServiceImpl implements OrderService {
     private void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
 
         List<OrderMaterialDO> saveOrderMaterialDOList = new ArrayList<>();
-        Map<String, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
+        Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
         List<OrderMaterialDO> dbOrderMaterialDOList = orderMaterialMapper.findByOrderId(orderId);
-        Map<String, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id","materialId");
+        Map<Integer, OrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id");
         if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
             for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
-                String materialRecordKey = orderMaterialDO.getId() + "-" + orderMaterialDO.getMaterialId();
-                OrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(materialRecordKey);
+                OrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(orderMaterialDO.getId());
                 if (dbOrderMaterialDO != null) {
                     orderMaterialDO.setId(dbOrderMaterialDO.getId());
-                    updateOrderMaterialDOMap.put(materialRecordKey, orderMaterialDO);
-                    dbOrderMaterialDOMap.remove(materialRecordKey);
+                    updateOrderMaterialDOMap.put(orderMaterialDO.getId(), orderMaterialDO);
+                    dbOrderMaterialDOMap.remove(orderMaterialDO.getId());
                 } else {
                     saveOrderMaterialDOList.add(orderMaterialDO);
                 }
@@ -2081,7 +2079,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (updateOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : updateOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : updateOrderMaterialDOMap.entrySet()) {
                 OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -2092,7 +2090,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (dbOrderMaterialDOMap.size() > 0) {
-            for (Map.Entry<String, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
+            for (Map.Entry<Integer, OrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
                 OrderMaterialDO orderMaterialDO = entry.getValue();
                 orderMaterialDO.setOrderId(orderId);
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
