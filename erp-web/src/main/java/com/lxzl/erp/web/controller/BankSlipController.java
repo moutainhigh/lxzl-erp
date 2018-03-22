@@ -22,14 +22,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 @ControllerLog
-@RequestMapping("/import")
-public class ImportExcelController {
+@RequestMapping("/bankSlip")
+public class BankSlipController {
     @Autowired
     private ResultGenerator resultGenerator;
 
     @Autowired
     private ImportBankSlipService importToThePublicWaterService;
-    @RequestMapping(value = "bankSlip", method = RequestMethod.POST)
+    @RequestMapping(value = "importExcel", method = RequestMethod.POST)
     public Result importBankSlip(@RequestBody @Validated(AddGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
 
         ServiceResult<String, String> serviceResult = importToThePublicWaterService.saveBankSlip(bankSlip);
