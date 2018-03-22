@@ -114,4 +114,43 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO">
 		UPDATE erp_bank_slip_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
+		SELECT COUNT(ebsd.id)  FROM erp_bank_slip_detail ebsd
+		<where>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.payerName != null &amp;&amp; maps.bankSlipQueryParam.payerName != ''">
+				and ebsd.payer_name = #{maps.bankSlipQueryParam.payerName,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.loanSign != null &amp;&amp; maps.bankSlipQueryParam.loanSign != ''">
+				and ebsd.loan_sign = #{maps.bankSlipQueryParam.loanSign,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != ''">
+				and ebsd.detail_status = #{maps.bankSlipQueryParam.detailStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsd.data_status = 1
+			</if>
+
+		</where>
+	</select>
+
+	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
+		<where>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.payerName != null &amp;&amp; maps.bankSlipQueryParam.payerName != ''">
+				and ebsd.payer_name = #{maps.bankSlipQueryParam.payerName,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.loanSign != null &amp;&amp; maps.bankSlipQueryParam.loanSign != ''">
+				and ebsd.loan_sign = #{maps.bankSlipQueryParam.loanSign,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != ''">
+				and ebsd.detail_status = #{maps.bankSlipQueryParam.detailStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsd.data_status = 1
+			</if>
+		</where>
+		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
 </mapper>

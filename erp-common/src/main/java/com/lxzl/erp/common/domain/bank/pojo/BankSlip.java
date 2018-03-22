@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.bank.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
