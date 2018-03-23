@@ -2,6 +2,8 @@ package com.lxzl.erp.dataaccess.dao.mysql.bank;
 
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
@@ -16,4 +18,6 @@ public interface BankSlipMapper extends BaseMysqlDAO<BankSlipDO> {
 	Integer findBankSlipCountByParams(@Param("maps")Map<String, Object> maps);
 
 	List<BankSlipDO> findBankSlipByParams(@Param("maps")Map<String, Object> maps);
+
+	BankSlipDO findBySubCompanyIdAndMonthAndBankType(@Param("subCompanyName") String subCompanyName,@Param("slipMonth")  Date month,@Param("bankType") Integer bankType);
 }

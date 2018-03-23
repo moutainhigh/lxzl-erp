@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 
 /**
@@ -26,5 +27,31 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     ServiceResult<String,String> saveBankSlip(BankSlip bankSlip) throws Exception;
+    /**
+    * 下推流水
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/22 15:09
+    * @param : bankSlip
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String,Integer> pushDownBankSlip(BankSlip bankSlip);
+
+    /**
+    * 忽略流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/22 16:13
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String,Integer> ignoreBankSlipDetail(BankSlipDetail bankSlipDetail);
+
+    /**
+     * 认领流水项
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/3/22 15:09
+     * @param : bankSlipDetail
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    ServiceResult<String,Integer> claimBankSlipDetail(BankSlipClaim bankSlipClaim);
 
 }

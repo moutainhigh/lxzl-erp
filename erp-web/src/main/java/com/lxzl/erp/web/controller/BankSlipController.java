@@ -5,8 +5,10 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
@@ -52,7 +54,25 @@ public class BankSlipController {
     public Result importBankSlip(@RequestBody @Validated(AddGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
         ServiceResult<String, String> serviceResult = bankSlipService.saveBankSlip(bankSlip);
         return resultGenerator.generate(serviceResult.getErrorCode());
+    }
 
+    @RequestMapping(value = "pushDownBankSlip", method = RequestMethod.POST)
+    public Result pushDownBankSlip(@RequestBody @Validated(IdGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.pushDownBankSlip(bankSlip);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+
+    @RequestMapping(value = "ignoreBankSlipDetail", method = RequestMethod.POST)
+    public Result ignoreBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.ignoreBankSlipDetail(bankSlipDetail);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "claimBankSlipDetail", method = RequestMethod.POST)
+    public Result claimBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipClaim bankSlipClaim, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.claimBankSlipDetail(bankSlipClaim);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
 }
