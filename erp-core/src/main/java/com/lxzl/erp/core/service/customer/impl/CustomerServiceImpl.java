@@ -1447,9 +1447,7 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-
         if (customerDO.getCustomerRiskManagementDO() == null) {//没有风控信息则添加
-
             CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDO.setCreditAmountUsed(BigDecimal.ZERO);
             customerRiskManagementDO.setCustomerId(customerDO.getId());
@@ -1461,7 +1459,15 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.save(customerRiskManagementDO);
 
+            CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = ConverterUtil.convert(customerRiskManagementDO, CustomerRiskManagementHistoryDO.class);
+            customerRiskManagementHistoryDO.setCustomerNo(customerDO.getCustomerNo());
+            customerRiskManagementHistoryMapper.save(customerRiskManagementHistoryDO);
+
         } else {//有风控信息则修改
+            //在执行更改方法前，进行原数据和更改传入数据的不同判断
+            CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement,CustomerRiskManagementDO.class);
+            boolean judgeResult = customerDO.getCustomerRiskManagementDO().equals(customerRiskManagementDO);
+
             CustomerRiskManagementDO customerRiskManagementDOForUpdate = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
@@ -1469,6 +1475,13 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
 
+            //判断风控信息的原有信息是否发生更改
+            if(!judgeResult){
+                CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = ConverterUtil.convert(customerRiskManagementDOForUpdate, CustomerRiskManagementHistoryDO.class);
+                customerRiskManagementHistoryDO.setCustomerId(customerDO.getId());
+                customerRiskManagementHistoryDO.setCustomerNo(customerDO.getCustomerNo());
+                customerRiskManagementHistoryMapper.save(customerRiskManagementHistoryDO);
+            }
         }
         
         //跟新客户审核状态为成功
@@ -1481,6 +1494,7 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
     }
+
 
     @Override
     public ServiceResult<String, String> updateRiskCreditAmountUsed(CustomerRiskManagement customerRiskManagement) {
@@ -2803,5 +2817,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private CustomerRiskManagementHistoryMapper customerRiskManagementHistoryMapper;
 
 }
