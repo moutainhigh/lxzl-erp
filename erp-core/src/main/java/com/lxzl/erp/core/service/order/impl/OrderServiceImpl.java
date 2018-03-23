@@ -983,7 +983,15 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
-        if(!userSupport.isSuperUser()){
+        if(userSupport.isSuperUser()){
+            if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) &&
+                    !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) &&
+                    !OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())&&
+                    !OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
+                result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+                return result;
+            }
+        }else{
             if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus()) &&
                     !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) &&
                     !OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
@@ -1001,7 +1009,8 @@ public class OrderServiceImpl implements OrderService {
         }
         //审核中或者待发货订单，处理风控额度及结算单
         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())) {
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())||
+                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
             //恢复信用额度
             BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {

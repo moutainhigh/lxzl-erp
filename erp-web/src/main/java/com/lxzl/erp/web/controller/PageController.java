@@ -793,6 +793,25 @@ public class PageController extends BaseController {
         return "/groupedProductManage/groupedProductEdit";
     }
 
+
+    /**
+     * 资金流水附件信息列表
+     * @return
+     */
+    @RequestMapping("/jurnal-amount-attachment/list")
+    public String jurnalAmountAttachmentList() {
+        return "/financialManage/jurnalAmountAttachmentList";
+    }
+    /**
+     * 资金流水列表
+     * @return
+     */
+    @RequestMapping("/jurnal-amount/list")
+    public String jurnalAmountList() {
+        return "/financialManage/jurnalAmountList";
+    }
+
+
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
     public String warehouseChoose() {
