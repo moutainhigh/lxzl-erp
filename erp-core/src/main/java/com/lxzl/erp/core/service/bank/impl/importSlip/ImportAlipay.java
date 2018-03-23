@@ -302,6 +302,8 @@ public class ImportAlipay {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
                     }else {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
+                        //进款比数
+                        inCount = inCount + 1;
                     }
                     bankSlipDetailDO.setMerchantOrderNo(merchantOrder);
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
@@ -311,8 +313,7 @@ public class ImportAlipay {
                     bankSlipDetailDO.setUpdateTime(now);
                     bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
-                    //进款比数
-                    inCount = inCount + 1;
+
                 }
             }
 

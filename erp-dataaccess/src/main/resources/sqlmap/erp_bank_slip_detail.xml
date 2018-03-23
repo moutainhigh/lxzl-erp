@@ -118,14 +118,14 @@
 	<select id="findBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
 		SELECT COUNT(ebsd.id)  FROM erp_bank_slip_detail ebsd
 		<where>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.payerName != null &amp;&amp; maps.bankSlipQueryParam.payerName != ''">
-				and ebsd.payer_name = #{maps.bankSlipQueryParam.payerName,jdbcType=VARCHAR}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
+				and ebsd.payer_name = #{maps.bankSlipDetailQueryParam.payerName,jdbcType=VARCHAR}
 			</if>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.loanSign != null &amp;&amp; maps.bankSlipQueryParam.loanSign != ''">
-				and ebsd.loan_sign = #{maps.bankSlipQueryParam.loanSign,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.loanSign != null ">
+				and ebsd.loan_sign = #{maps.bankSlipDetailQueryParam.loanSign,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != ''">
-				and ebsd.detail_status = #{maps.bankSlipQueryParam.detailStatus,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null">
+				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -137,14 +137,17 @@
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
 		<where>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.payerName != null &amp;&amp; maps.bankSlipQueryParam.payerName != ''">
-				and ebsd.payer_name = #{maps.bankSlipQueryParam.payerName,jdbcType=VARCHAR}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
+				and ebsd.payer_name = #{maps.bankSlipDetailQueryParam.payerName,jdbcType=VARCHAR}
 			</if>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.loanSign != null &amp;&amp; maps.bankSlipQueryParam.loanSign != ''">
-				and ebsd.loan_sign = #{maps.bankSlipQueryParam.loanSign,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.loanSign != null">
+				and ebsd.loan_sign = #{maps.bankSlipDetailQueryParam.loanSign,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != null &amp;&amp; maps.bankSlipQueryParam.detailStatus != ''">
-				and ebsd.detail_status = #{maps.bankSlipQueryParam.detailStatus,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null ">
+				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
+				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
