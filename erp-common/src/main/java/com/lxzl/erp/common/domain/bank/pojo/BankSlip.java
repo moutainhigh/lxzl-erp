@@ -7,8 +7,10 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNoGroup;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
 import javax.validation.constraints.NotNull;
@@ -18,6 +20,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlip extends BasePO {
 
+	@NotNull(message = ErrorCode.BANK_SLIP_ID_NULL,groups = {IdGroup.class})
 	private Integer bankSlipId;   //唯一标识
 	private Integer subCompanyId;   //分公司ID
 	@NotNull(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL,groups = {AddGroup.class})
@@ -39,7 +42,6 @@ public class BankSlip extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
-
 
 	public Integer getBankSlipId(){
 		return bankSlipId;
