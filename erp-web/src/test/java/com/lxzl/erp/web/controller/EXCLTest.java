@@ -5,15 +5,14 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerCompany;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
-import com.lxzl.erp.web.util.NetworkUtil;
 import com.lxzl.se.common.util.StringUtil;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
@@ -22,7 +21,9 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User : XiaoLuYu

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipClaimMapper">
+
+	<resultMap id="BankSlipClaimDO" type="com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="bank_slip_detail_id" jdbcType="INTEGER" property="bankSlipDetailId" />
+		<result column="other_side_account_no" jdbcType="VARCHAR" property="otherSideAccountNo" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="claim_amount" jdbcType="DECIMAL" property="claimAmount" />
+		<result column="claim_serial_no" jdbcType="BIGINT" property="claimSerialNo" />
+		<result column="recharge_status" jdbcType="INTEGER" property="rechargeStatus" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ebsc.id,ebsc.bank_slip_detail_id,ebsc.other_side_account_no,ebsc.customer_no,ebsc.claim_amount,ebsc.claim_serial_no,ebsc.recharge_status,ebsc.data_status,ebsc.remark,ebsc.create_time,ebsc.create_user,ebsc.update_time,ebsc.update_user
+	</sql>
+
+	<select id="findById" resultMap="BankSlipClaimDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc 
+		WHERE ebsc.id = #{id, jdbcType=INTEGER} AND ebsc.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ebsc.id) FROM erp_bank_slip_claim ebsc 
+		<where>
+			<if test="true">
+				AND ebsc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="BankSlipClaimDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc 
+		<where>
+			<if test="true">
+				AND ebsc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="bankSlipDetailId != null">
+				bank_slip_detail_id = #{bankSlipDetailId,jdbcType=INTEGER},
+			</if>
+			<if test="otherSideAccountNo != null">
+				other_side_account_no = #{otherSideAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="claimAmount != null">
+				claim_amount = #{claimAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="claimSerialNo != null">
+				claim_serial_no = #{claimSerialNo,jdbcType=BIGINT},
+			</if>
+			<if test="rechargeStatus != null">
+				recharge_status = #{rechargeStatus,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO">
+		INSERT INTO erp_bank_slip_claim <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO">
+		UPDATE erp_bank_slip_claim <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findByBankSlipDetailId" resultMap="BankSlipClaimDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim  ebsc WHERE ebsc.bank_slip_detail_id = #{findByBankSlipDetailId,jdbcType=INTEGER} AND ebsc.data_status = 1
+	</select>
+
+</mapper>
