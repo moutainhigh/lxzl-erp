@@ -1,8 +1,6 @@
 package com.lxzl.erp.common.util;
 
 
-import com.lxzl.se.common.util.StringUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -12,14 +10,9 @@ import java.util.Map;
  */
 public class StrReplaceUtil {
 
-    /**定义存储全角和半角字符之间的对应关系*/
-    public static HashMap strMap() {
-        HashMap map = new HashMap();
-        map.put("(", "（");
-        map.put(")", "）");
-        return map;
-    }
     public final static Map<Character,Character> map = new HashMap<>();
+
+    /**初始化定义存储全角和半角字符之间的对应关系*/
     static{
         map.put('(', '（');
         map.put(')', '）');
@@ -33,17 +26,22 @@ public class StrReplaceUtil {
      *@修改人和其它信息
      */
     public static String replaceAll(String line) {
-        if(StringUtil.isNotEmpty(line)){
-            int length = line.length();
-            for (int i = 0; i < length; i++) {
-//                String charat = line.substring(i, i + 1);
-                  Character c = line.charAt(i);
-                if (map.containsKey(c)) {
-                    line = line.replace(c,map.get(c));
-                }
-            }
-            return line;
+        if(line==null){
+            return null;
         }
-        return null;
+        int length = line.length();
+        for (int i = 0; i < length; i++) {
+              Character c = line.charAt(i);
+            if (map.containsKey(c)) {
+                line = line.replace(c,map.get(c));
+            }
+        }
+        return line;
     }
+
+    public static void main(String[] args) {
+       String str1="(孙）齐天大圣(贵州)有限公司";
+       System.out.print(StrReplaceUtil.replaceAll(str1));
+    }
+
 }
