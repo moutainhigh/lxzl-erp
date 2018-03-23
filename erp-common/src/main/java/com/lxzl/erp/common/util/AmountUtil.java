@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.util;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /**
  * Created by IntelliJ IDEA.
@@ -194,5 +195,19 @@ public class AmountUtil {
         BigDecimal b1 = new BigDecimal(v1);
         BigDecimal b2 = new BigDecimal(v2);
         return b1.compareTo(b2);
+    }
+
+    public static String getCommaFormat(BigDecimal value){
+        if(value == null){
+            return "";
+        }
+        return getFormat(",###.##",value);
+    }
+
+    //自定义数字格式方法
+    public static String getFormat(String style,BigDecimal value){
+        DecimalFormat df = new DecimalFormat();
+        df.applyPattern(style);// 将格式应用于格式化器
+        return df.format(value.doubleValue());
     }
 }
