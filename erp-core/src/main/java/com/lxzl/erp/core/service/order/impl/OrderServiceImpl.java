@@ -2591,22 +2591,22 @@ public class OrderServiceImpl implements OrderService {
                     if(verifyProduct == null){
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    "商品项：" + count + "；租赁方式：天租，全新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    "商品项：" + count + "；租赁方式：天租，次新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }else{
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    "商品项：" + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    "商品项：" + count + "；租赁方式：月租，全新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    "商品项：" + count + "；租赁方式：月租，次新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }
                     }else{
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：天租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    "商品项：" + count + "；租赁方式：天租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    "商品项：" + count + "；租赁方式：天租，全新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    "商品项：" + count + "；租赁方式：天租，次新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }else{
                             verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ?
-                                    verifyProduct + count + "；租赁方式：月租，全新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。":
-                                    verifyProduct + count + "；租赁方式：月租，次新商品名称："+orderProductDO.getProductName() + "，订单租赁价格："+ orderProductDO.getProductUnitAmount() +"，预设租赁价格："+ productPrice +"。";
+                                    verifyProduct + count + "；租赁方式：月租，全新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。":
+                                    verifyProduct + count + "；租赁方式：月租，次新。商品名称：【"+orderProductDO.getProductName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderProductDO.getProductUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(productPrice) +"。";
                         }
                     }
                     count++;
@@ -2636,29 +2636,36 @@ public class OrderServiceImpl implements OrderService {
                     if(verifyMaterial == null){
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    "配件项：" + count + "；租赁方式：天租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    "配件项：" + count + "；租赁方式：天租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    "配件项：" + count + "；租赁方式：天租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    "配件项：" + count + "；租赁方式：天租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice)+"。";
                         }else{
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    "配件项：" + count + "；租赁方式：月租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    "配件项：" + count + "；租赁方式：月租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    "配件项：" + count + "；租赁方式：月租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    "配件项：" + count + "；租赁方式：月租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。";
                         }
                     }else{
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    verifyMaterial + count + "；租赁方式：天租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    verifyMaterial + count + "；租赁方式：天租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    verifyMaterial + count + "；租赁方式：天租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    verifyMaterial + count + "；租赁方式：天租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。";
                         }else{
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    verifyMaterial + count + "；租赁方式：月租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    verifyMaterial + count + "；租赁方式：月租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    verifyMaterial + count + "；租赁方式：月租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    verifyMaterial + count + "；租赁方式：月租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。";
                         }
                     }
                     count++;
                 }
             }
         }
-        String verifyMatters = verifyProduct + verifyMaterial;
+        String verifyMatters;
+        if(verifyProduct == null){
+            verifyMatters = verifyMaterial;
+        }else if(verifyMaterial == null){
+            verifyMatters = verifyProduct;
+        }else{
+            verifyMatters = verifyProduct + verifyMaterial;
+        }
 
         result.setResult(verifyMatters);
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -2682,10 +2689,10 @@ public class OrderServiceImpl implements OrderService {
                     orderProduct.setFirstNeedPayAmount(map.get(ItemName));
                     orderProduct.setFirstNeedPayRentAmount(map.get(ItemName));
 
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount(),2);
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderProduct.getRentDepositAmount(),orderProduct.getDepositAmount());
                     orderProduct.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount,2);
-                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount(),2);
+                    totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, firstNeedPayDepositAmount);
+                    totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
                 }
                 order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit,totalProductRent));
 
@@ -2699,12 +2706,12 @@ public class OrderServiceImpl implements OrderService {
                     order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(ItemName));
                     order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(ItemName));
 
-                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount(),2);
+                    BigDecimal firstNeedPayDepositAmount = BigDecimalUtil.add(orderMaterial.getRentDepositAmount(),orderMaterial.getDepositAmount());
                     orderMaterial.setFirstNeedPayDepositAmount(firstNeedPayDepositAmount);
-                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount,2);
-                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount(),2);
+                    totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, firstNeedPayDepositAmount);
+                    totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
                 }
-                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent,2));
+                order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit,totalMaterialRent));
             }
         }
         return order;

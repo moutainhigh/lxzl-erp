@@ -11,7 +11,7 @@
                 <a href="#top-tab-3" data-toggle="tab" aria-expanded="false">按月租必填，按天租选填</a>
             </li>
             <li class="">
-                <a href="#top-tab-4" data-toggle="tab" aria-expanded="false">收货地址</a>
+                <a href="#top-tab-4" data-toggle="tab" aria-expanded="false">收货地址(必填)</a>
             </li>
         </ul>
     </div>
