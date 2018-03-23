@@ -470,6 +470,39 @@ CREATE TABLE `erp_customer_risk_management` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户风控信息';
 
+DROP TABLE if exists `erp_customer_risk_management_history`;
+CREATE TABLE `erp_customer_risk_management_history` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `customer_id` int(20) NOT NULL COMMENT '客户ID',
+  `customer_no` varchar(100) NOT NULL COMMENT '客户编号',
+  `credit_amount` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '授信额度',
+  `credit_amount_used` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '已用授信额度',
+  `deposit_cycle` int(11) DEFAULT NULL COMMENT '押金期数',
+  `payment_cycle` int(11) DEFAULT NULL COMMENT '付款期数',
+  `apple_deposit_cycle` int(11) DEFAULT NULL COMMENT '苹果设备押金期数',
+  `apple_payment_cycle` int(11) DEFAULT NULL COMMENT '苹果设备付款期数',
+  `new_deposit_cycle` int(11) DEFAULT NULL COMMENT '全新押金期数',
+  `new_payment_cycle` int(11) DEFAULT NULL COMMENT '全新付款期数',
+  `pay_mode` int(11) DEFAULT NULL COMMENT '其他设备支付方式',
+  `apple_pay_mode` int(11) DEFAULT NULL COMMENT '苹果设备付款方式',
+  `new_pay_mode` int(11) DEFAULT NULL COMMENT '全新付款方式',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` text CHARACTER SET utf8 COMMENT '备注',
+  `is_limit_apple` int(11) DEFAULT NULL COMMENT '是否限制苹果，1是，0否',
+  `is_limit_new` int(11) DEFAULT NULL COMMENT '是否限制全新，1是，0否',
+  `single_limit_price` decimal(15,5) DEFAULT NULL COMMENT '单台限制价值',
+  `return_visit_frequency` int(11) NOT NULL DEFAULT '0' COMMENT '回访频率（单位，月）',
+  `is_full_deposit` int(11) NOT NULL DEFAULT '0' COMMENT '是否是全额押金客户',
+  `import_credit_amount_used` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '导入已用授信额度',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_customer_no ( `customer_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户风控信息历史记录';
+
+
 DROP TABLE if exists `erp_customer_risk_flow`;
 CREATE TABLE `erp_customer_risk_flow` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -3055,7 +3088,7 @@ CREATE TABLE `erp_bank_slip_detail` (
 DROP TABLE if exists `erp_bank_slip_claim`;
 CREATE TABLE `erp_bank_slip_claim` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `erp_bank_slip_detail_id` int(20) NOT NULL COMMENT '银行对公流水明细ID',
+  `bank_slip_detail_id` int(20) NOT NULL COMMENT '银行对公流水明细ID',
   `other_side_account_no` varchar(50) NOT NULL COMMENT '对方账号',
   `customer_no` varchar(100) NOT NULL COMMENT '客戶编码',
   `claim_amount` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '认领金额',

@@ -1,13 +1,19 @@
 package com.lxzl.erp.common.domain.bank.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlipDetail extends BasePO {
 
+	@NotNull(message = ErrorCode.BANK_SLIP_DETAIL_ID_NULL,groups = {IdGroup.class})
 	private Integer bankSlipDetailId;   //唯一标识
 	private String payerName;   //付款人名称
 	private BigDecimal tradeAmount;   //交易金额
