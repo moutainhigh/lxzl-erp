@@ -2636,22 +2636,22 @@ public class OrderServiceImpl implements OrderService {
                     if(verifyMaterial == null){
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    "配件项：" + count + "；租赁方式：天租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    "配件项：" + count + "；租赁方式：天租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    "配件项：" + count + "；租赁方式：天租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    "配件项：" + count + "；租赁方式：天租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice)+"。";
                         }else{
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    "配件项：" + count + "；租赁方式：月租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    "配件项：" + count + "；租赁方式：月租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    "配件项：" + count + "；租赁方式：月租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    "配件项：" + count + "；租赁方式：月租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。";
                         }
                     }else{
                         if(OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())){
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    verifyMaterial + count + "；租赁方式：天租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    verifyMaterial + count + "；租赁方式：天租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    verifyMaterial + count + "；租赁方式：天租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    verifyMaterial + count + "；租赁方式：天租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。";
                         }else{
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
-                                    verifyMaterial + count + "；租赁方式：月租，全新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。":
-                                    verifyMaterial + count + "；租赁方式：月租，次新配件名称："+orderMaterialDO.getMaterialName() + "，订单租赁价格："+ orderMaterialDO.getMaterialUnitAmount() +"，预设租赁价格："+ materialPrice +"。";
+                                    verifyMaterial + count + "；租赁方式：月租，全新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。":
+                                    verifyMaterial + count + "；租赁方式：月租，次新。【配件名称："+orderMaterialDO.getMaterialName() + "】，订单租赁价格："+ AmountUtil.getCommaFormat(orderMaterialDO.getMaterialUnitAmount()) +"，预设租赁价格："+ AmountUtil.getCommaFormat(materialPrice) +"。";
                         }
                     }
                     count++;
