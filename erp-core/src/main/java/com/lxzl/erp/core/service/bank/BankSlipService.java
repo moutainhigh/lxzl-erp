@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 
 /**
@@ -42,7 +43,7 @@ public interface BankSlipService {
     * @param : bankSlipDetail
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
     */
-    ServiceResult<String,Integer> neglectBankSlipDetail(BankSlipDetail bankSlipDetail);
+    ServiceResult<String,Integer> ignoreBankSlipDetail(BankSlipDetail bankSlipDetail);
 
 
 

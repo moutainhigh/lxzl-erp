@@ -1,23 +1,19 @@
 package com.lxzl.erp.common.domain.bank.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.IdGroup;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlipClaim extends BasePO {
 
-	@NotNull(message = ErrorCode.BANK_SLIP_DETAIL_ID_NULL,groups = {IdGroup.class})
 	private Integer bankSlipClaimId;   //唯一标识
-	private Integer erpBankSlipDetailId;   //银行对公流水明细ID
+	private Integer bankSlipDetailId;   //银行对公流水明细ID
 	private String otherSideAccountNo;   //对方账号
 	private String customerNo;   //客戶编码
 	private BigDecimal claimAmount;   //认领金额
@@ -29,9 +25,8 @@ public class BankSlipClaim extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
-
 	@Valid
-	private List<ClaimParam> claimParam;
+	List<ClaimParam> claimParam;
 
 	public List<ClaimParam> getClaimParam() {
 		return claimParam;
@@ -49,12 +44,12 @@ public class BankSlipClaim extends BasePO {
 		this.bankSlipClaimId = bankSlipClaimId;
 	}
 
-	public Integer getErpBankSlipDetailId(){
-		return erpBankSlipDetailId;
+	public Integer getBankSlipDetailId(){
+		return bankSlipDetailId;
 	}
 
-	public void setErpBankSlipDetailId(Integer erpBankSlipDetailId){
-		this.erpBankSlipDetailId = erpBankSlipDetailId;
+	public void setBankSlipDetailId(Integer bankSlipDetailId){
+		this.bankSlipDetailId = bankSlipDetailId;
 	}
 
 	public String getOtherSideAccountNo(){

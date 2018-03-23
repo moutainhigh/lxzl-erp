@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class BankSlipClaimDO  extends BaseDO {
 
 	private Integer id;
-	private Integer erpBankSlipDetailId;
+	private Integer bankSlipDetailId;
 	private String otherSideAccountNo;
 	private String customerNo;
 	private BigDecimal claimAmount;
@@ -24,12 +24,12 @@ public class BankSlipClaimDO  extends BaseDO {
 		this.id = id;
 	}
 
-	public Integer getErpBankSlipDetailId(){
-		return erpBankSlipDetailId;
+	public Integer getBankSlipDetailId(){
+		return bankSlipDetailId;
 	}
 
-	public void setErpBankSlipDetailId(Integer erpBankSlipDetailId){
-		this.erpBankSlipDetailId = erpBankSlipDetailId;
+	public void setBankSlipDetailId(Integer bankSlipDetailId){
+		this.bankSlipDetailId = bankSlipDetailId;
 	}
 
 	public String getOtherSideAccountNo(){

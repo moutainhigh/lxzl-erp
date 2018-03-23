@@ -62,9 +62,9 @@ public class BankSlipController {
     }
 
 
-    @RequestMapping(value = "neglectBankSlipDetail", method = RequestMethod.POST)
+    @RequestMapping(value = "ignoreBankSlipDetail", method = RequestMethod.POST)
     public Result neglectBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
-        ServiceResult<String, Integer> serviceResult = bankSlipService.neglectBankSlipDetail(bankSlipDetail);
+        ServiceResult<String, Integer> serviceResult = bankSlipService.ignoreBankSlipDetail(bankSlipDetail);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
