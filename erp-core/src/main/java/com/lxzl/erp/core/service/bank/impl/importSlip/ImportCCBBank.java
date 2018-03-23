@@ -307,6 +307,8 @@ public class ImportCCBBank {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
                     }else {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
+                        //进款比数
+                        inCount = inCount + 1;
                     }
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
                     bankSlipDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
@@ -315,8 +317,7 @@ public class ImportCCBBank {
                     bankSlipDetailDO.setUpdateTime(now);
                     bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
-                    //进款比数
-                    inCount = inCount + 1;
+
                 }
             }
 
