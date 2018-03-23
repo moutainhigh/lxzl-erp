@@ -12,10 +12,7 @@ import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -36,6 +33,7 @@ import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.erp.common.util.StrReplaceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +56,6 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
-
         //如果是否为法人代表申请，为是
         if (customerCompany.getIsLegalPersonApple() == 1) {
             customerCompany.setLegalPerson(customerCompany.getAgentPersonName());
@@ -136,7 +133,9 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
-        customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerDO.setCustomerName(StrReplaceUtil.replaceAll(customer.getCustomerCompany().getCompanyName()));
+        //customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
@@ -292,6 +291,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+
 
         //校验是否有公司和是否为公司客户
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
@@ -569,7 +569,9 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
-        customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
+        //customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerDO.setCustomerName(StrReplaceUtil.replaceAll(newCustomerCompanyDO.getCompanyName()));
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setRemark(customer.getRemark());
@@ -795,7 +797,6 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-
     @Override
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
@@ -804,9 +805,10 @@ public class CustomerServiceImpl implements CustomerService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerCompanyQueryParam.setCompanyName(StrReplaceUtil.replaceAll(customerCompanyQueryParam.getCompanyName()));
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
-
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
         if (CollectionUtil.isNotEmpty(customerDOList)) {
