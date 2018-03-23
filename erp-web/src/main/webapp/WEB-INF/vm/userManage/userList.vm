@@ -83,6 +83,7 @@
                                             <th>手机号</th>
                                             <th>激活</th>
                                             <th>禁用</th>
+                                            <th>最后登录时间</th>
                                             {{#hasRowActionButtons}}
                                             <th width="16%" class="text-right">操作</th>
                                             {{/hasRowActionButtons}}
@@ -106,12 +107,13 @@
                                                     <br />
                                                     {{/roleListData}}
                                                 </td>
-                                                <td class="">{{realName}}</td>
-                                                <td class="">{{userName}}</td>
-                                                <td class="">{{email}}</td>
-                                                <td class="">{{phone}}</td>
-                                                <td class="">{{isActivatedStr}}</td>
-                                                <td class="">{{isDisabledStr}}</td>
+                                                <td>{{realName}}</td>
+                                                <td>{{userName}}</td>
+                                                <td>{{email}}</td>
+                                                <td>{{phone}}</td>
+                                                <td>{{#boolText}}{{isActivated}}{{/boolText}}</td>
+                                                <td>{{#boolText}}{{isDisabled}}{{/boolText}}</td>
+                                                <td>{{#time}}{{lastLoginTime}}{{/time}}</td>
                                                 {{#hasRowActionButtons}}
                                                     <td class="text-right">
                                                         <div class="btn-group text-right">

@@ -30,8 +30,8 @@
                         <th>用户名</th>
                         <th>邮箱</th>
                         <th>手机号</th>
-                        <th>激活</th>
-                        <th>禁用</th>
+##                        <th>激活</th>
+##                        <th>禁用</th>
                         <th width="16%" class="text-right">操作</th>
                     </tr>
                     </thead>
@@ -49,8 +49,8 @@
                         <td class="">{{userName}}</td>
                         <td class="">{{email}}</td>
                         <td class="">{{phone}}</td>
-                        <td class="">{{isActivatedStr}}</td>
-                        <td class="">{{isDisabledStr}}</td>
+##                        <td>{{#boolText}}{{isActivated}}{{/boolText}}</td>
+##                        <td>{{#boolText}}{{isDisabled}}{{/boolText}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
                                 <a href="#" class="btn btn-default btn-xs chooseButton">选择</a>
