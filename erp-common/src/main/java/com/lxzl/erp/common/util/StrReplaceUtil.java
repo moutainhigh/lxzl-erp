@@ -38,10 +38,4 @@ public class StrReplaceUtil {
         }
         return line;
     }
-
-    public static void main(String[] args) {
-       String str1="(孙）齐天大圣(贵州)有限公司";
-       System.out.print(StrReplaceUtil.replaceAll(str1));
-    }
-
 }
