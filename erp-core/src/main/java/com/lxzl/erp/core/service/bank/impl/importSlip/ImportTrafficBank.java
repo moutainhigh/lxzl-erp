@@ -287,6 +287,8 @@ public class ImportTrafficBank {
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
                     if("贷".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))){
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
+                        //进款比数
+                        inCount = inCount + 1;
                     }else if("借".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))){
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
                     }
@@ -297,8 +299,6 @@ public class ImportTrafficBank {
                     bankSlipDetailDO.setUpdateTime(now);
                     bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
-                    //进款比数
-                    inCount = inCount + 1;
                 }
             }
 
