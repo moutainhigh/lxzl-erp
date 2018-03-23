@@ -56,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
-        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式）
         customerCompany.setCompanyName(StrReplaceUtil.replaceAll(customerCompany.getCompanyName()));
         //如果是否为法人代表申请，为是
         if (customerCompany.getIsLegalPersonApple() == 1) {
