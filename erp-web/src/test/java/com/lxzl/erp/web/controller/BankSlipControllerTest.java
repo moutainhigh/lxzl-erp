@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.ConstantConfig;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -18,6 +19,19 @@ import java.text.SimpleDateFormat;
  * @Modified By:
  */
 public class BankSlipControllerTest extends ERPUnTransactionalTest {
+    @Test
+    public void pushDownBankSlip() throws Exception {
+        BankSlip bankSlip = new BankSlip();
+        bankSlip.setBankSlipId(49);
+        TestResult result = getJsonTestResult("/bankSlip/pushDownBankSlip", bankSlip);
+    }
+
+    @Test
+    public void neglectBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(5857);
+        TestResult result = getJsonTestResult("/bankSlip/neglectBankSlipDetail", bankSlipDetail);
+    }
 
     @Test
     public void pageBankSlip() throws Exception {

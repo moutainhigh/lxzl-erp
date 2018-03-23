@@ -26,5 +26,24 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     ServiceResult<String,String> saveBankSlip(BankSlip bankSlip) throws Exception;
+    /**
+    * 下推流水
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/22 15:09
+    * @param : bankSlip
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String,Integer> pushDownBankSlip(BankSlip bankSlip);
+
+    /**
+    * 忽略流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/22 16:13
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String,Integer> neglectBankSlipDetail(BankSlipDetail bankSlipDetail);
+
+
 
 }

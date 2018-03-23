@@ -1,7 +1,9 @@
 package com.lxzl.erp.core.service.bank.impl;
 
+import com.lxzl.erp.common.constant.BankSlipDetailStatus;
 import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.SlipStatus;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
@@ -16,6 +18,7 @@ import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -23,6 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -69,13 +76,20 @@ public class BankSlipServiceImpl implements BankSlipService {
 
     @Autowired
     ImportCMBCBank importCMBCBank;
+
     @Autowired
     private BankSlipMapper bankSlipMapper;
 
     @Autowired
     private UserSupport userSupport;
+
     @Autowired
     private BankSlipDetailMapper bankSlipDetailMapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
+
 
     @Override
     public ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam) {
@@ -133,7 +147,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("bankSlipQueryParam", bankSlipQueryParam);
         List<BankSlipDO> bankSlipDOList = bankSlipMapper.findBankSlipByParams(maps);
-        if(CollectionUtil.isNotEmpty(bankSlipDOList)){
+        if (CollectionUtil.isNotEmpty(bankSlipDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_EXISTS);
             return serviceResult;
         }
@@ -190,7 +204,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        maps.put("bankSlipQueryParam", bankSlipDetailQueryParam);
+        maps.put("bankSlipDetailQueryParam", bankSlipDetailQueryParam);
 
         Integer totalCount = bankSlipDetailMapper.findBankSlipDetailDOCountByParams(maps);
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailDOByParams(maps);
@@ -203,4 +217,84 @@ public class BankSlipServiceImpl implements BankSlipService {
         result.setResult(page);
         return result;
     }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> pushDownBankSlip(BankSlip bankSlip) {
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        //是否有权下推
+        if (!userSupport.isFinancePerson()) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+        //银行对公流水是否存在
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlip.getBankSlipId());
+        if (bankSlipDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
+            return serviceResult;
+        }
+        //判断状态是否是初始化
+         if(SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus())){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_IS_PUSH_DOWN);
+            return serviceResult;
+        }else if (!SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_INITIALIZE);
+            return serviceResult;
+        }
+        bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+        bankSlipMapper.update(bankSlipDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlip.getBankSlipId());
+        return serviceResult;
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> neglectBankSlipDetail(BankSlipDetail bankSlipDetail) {
+
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        //银行对公流水项是否存在
+        BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
+        if (bankSlipDetailDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_ID_NULL);
+            return serviceResult;
+        }
+
+        //状态是否为未认领
+        if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
+            return serviceResult;
+        }
+        //明细状态改变为忽略
+        bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.IGNORE);
+        bankSlipDetailMapper.update(bankSlipDetailDO);
+
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //银行对公流水是否存在
+        if (bankSlipDO == null) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
+            return serviceResult;
+        }
+        //总表需认领数量-1
+        Integer needClaimCount = bankSlipDO.getNeedClaimCount();
+        int newNeedClaimCount = needClaimCount - 1;
+        if (newNeedClaimCount == 0) {
+            bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+        }else if(newNeedClaimCount < 0){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NEED_CLAIM_COUNT_SURPASS);
+            return serviceResult;
+        }
+
+        bankSlipDO.setNeedClaimCount(newNeedClaimCount);
+        bankSlipMapper.update(bankSlipDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlipDetail.getBankSlipDetailId());
+        return serviceResult;
+    }
+
+
 }
