@@ -56,6 +56,8 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerCompany.setCompanyName(StrReplaceUtil.replaceAll(customerCompany.getCompanyName()));
         //如果是否为法人代表申请，为是
         if (customerCompany.getIsLegalPersonApple() == 1) {
             customerCompany.setLegalPerson(customerCompany.getAgentPersonName());
@@ -125,7 +127,6 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         //保存业务员所属分公司
         Integer ownerSubCompanyId = userSupport.getCompanyIdByUser(customerDO.getOwner());
@@ -133,9 +134,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
-        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-        customerDO.setCustomerName(StrReplaceUtil.replaceAll(customer.getCustomerCompany().getCompanyName()));
-        //customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
+        customerDO.setCustomerName(customerCompany.getCompanyName());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
@@ -291,7 +290,8 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
-
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerCompany.setCompanyName(StrReplaceUtil.replaceAll(customerCompany.getCompanyName()));
 
         //校验是否有公司和是否为公司客户
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
@@ -357,7 +357,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
+        CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
@@ -569,9 +569,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
-        //customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
-        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-        customerDO.setCustomerName(StrReplaceUtil.replaceAll(newCustomerCompanyDO.getCompanyName()));
+        customerDO.setCustomerName(customerCompany.getCompanyName());
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setRemark(customer.getRemark());
