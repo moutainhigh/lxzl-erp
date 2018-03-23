@@ -202,7 +202,7 @@
                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                     <label class="field prepend-icon">
-                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required gui-input" placeholder="输入商品单价" />
+                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required gui-input" placeholder="支持四位小数" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
                                     <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
@@ -240,6 +240,11 @@
                                     <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                 </label>
                                 {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                    {{#isRentTypeByMonth}}
+                                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                    {{/isRentTypeByMonth}}
+                                {{/showDepositAmount}}
                             </td>
                             <td>
                                 {{#showDepositAmount}}
@@ -252,6 +257,9 @@
                                     </select>
                                     <i class="arrow"></i>
                                 </label>
+                                {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                    <p>{{payModeValue}}</p>
                                 {{/showDepositAmount}}
                             </td>
 
@@ -273,7 +281,7 @@
                         <tr id="totalProductFirstNeedPay" class="text-danger hide">
                             <td colspan="10"></td>
                             <td colspan="3" class="text-right">
-                                <span class="txt">首付商品总额：</span>
+                                <span class="txt">商品首付总额：</span>
                                 <span class="num"></span>
                             </td>
                         </tr>
@@ -346,7 +354,7 @@
                                         <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
                                         <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                         <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                        <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required gui-input" placeholder="输入配件单价" />
+                                        <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required gui-input" placeholder="支持四位小数" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
                                     <button type="button" class="button btn-primary bradiusN chooseMaterialUnitAmount" data-materialid="{{materialId}}"><i class="fa fa-search"></i></button>
@@ -382,6 +390,11 @@
                                     <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                 </label>
                                 {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                {{#isRentTypeByMonth}}
+                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                {{/isRentTypeByMonth}}
+                                {{/showDepositAmount}}
                             </td>
                             <td>
                                 {{#showDepositAmount}}
@@ -394,6 +407,10 @@
                                     </select>
                                     <i class="arrow"></i>
                                 </label>
+                                {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                    <p>{{payModeValue}}</p>
+
                                 {{/showDepositAmount}}
                             </td>
                             <td>{{#showFirstPayAmount}}￥{{#price}}{{firstNeedPayAmount}}{{/price}}{{/showFirstPayAmount}}</td>
@@ -415,7 +432,7 @@
                         <tr id="totalMaterialFirstNeedPay" class="text-danger hide">
                             <td colspan="9"></td>
                             <td colspan="3" class="text-right">
-                                <span class="txt">首付配件总额：</span>
+                                <span class="txt">配件首付总额：</span>
                                 <span class="num"></span>
                             </td>
                         </tr>
@@ -426,9 +443,9 @@
             </div>
         </div>
     </div>
-    <div class="panel-body dark">
-        <div class="section row">
-            <div class="col-md-12 text-danger text-right" id="totalNeedPrice">
+    <div class="panel-body dark pn" style="border: none;">
+        <div class="section row mn">
+            <div class="col-md-12 text-danger text-right hide br-b br-l br-r" id="totalNeedPrice" style="padding:15px;">
                 <span class="txt">订单首付总额：</span>
                 <span class="num"></span>
             </div>
