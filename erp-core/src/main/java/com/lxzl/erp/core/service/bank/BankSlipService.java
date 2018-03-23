@@ -45,6 +45,13 @@ public interface BankSlipService {
     */
     ServiceResult<String,Integer> ignoreBankSlipDetail(BankSlipDetail bankSlipDetail);
 
-
+    /**
+     * 认领流水项
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/3/22 15:09
+     * @param : bankSlipDetail
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    ServiceResult<String,Integer> claimBankSlipDetail(BankSlipClaim bankSlipClaim);
 
 }
