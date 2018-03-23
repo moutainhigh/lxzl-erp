@@ -3088,7 +3088,7 @@ CREATE TABLE `erp_bank_slip_detail` (
 DROP TABLE if exists `erp_bank_slip_claim`;
 CREATE TABLE `erp_bank_slip_claim` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `erp_bank_slip_detail_id` int(20) NOT NULL COMMENT '银行对公流水明细ID',
+  `bank_slip_detail_id` int(20) NOT NULL COMMENT '银行对公流水明细ID',
   `other_side_account_no` varchar(50) NOT NULL COMMENT '对方账号',
   `customer_no` varchar(100) NOT NULL COMMENT '客戶编码',
   `claim_amount` decimal(15,5) NOT NULL DEFAULT '0.00000' COMMENT '认领金额',

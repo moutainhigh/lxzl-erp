@@ -234,7 +234,7 @@ public class ImportPingAnBank {
                         }
                     }
                 }
-                // todo 以下可以直接存数据
+                // 以下可以直接存数据
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期
                 String tradeAmount = null;  //交易金额
@@ -299,6 +299,8 @@ public class ImportPingAnBank {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
                     }else {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
+                        //进款比数
+                        inCount = inCount + 1;
                     }
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
                     bankSlipDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
@@ -307,8 +309,7 @@ public class ImportPingAnBank {
                     bankSlipDetailDO.setUpdateTime(now);
                     bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
-                    //进款比数
-                    inCount = inCount + 1;
+
                 }
             }
 
