@@ -57,6 +57,7 @@ public class ErrorCode {
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
+    public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -756,6 +757,9 @@ public class ErrorCode {
     public static final String IS_NOT_BUSINESS_AFFAIRS_PERSON = "J18000024";
     public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM = "J18000025";
     public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
+    public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
+    public static final String BANK_IS_NOT_ALIPAY = "J18000028";
+    public static final String BANK_IS_NOT_AGRICULTURE_BANK = "J18000029";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -813,6 +817,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_NOT_NULL, "客户收货信息不能为空");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
+        MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1501,10 +1506,13 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
         MAP.put(BANK_SLIP_DETAIL_IS_NULL, "银行对公流水记录项为空");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
-        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已认领状态");
+        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已确认状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
-        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "单据状态不是已下推和部分认领");
+        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "银行对公流水状态不是已下推和部分认领");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
+        MAP.put(BANK_IS_NOT_ALIPAY, "不是支付宝的数据");
+        MAP.put(BANK_IS_NOT_AGRICULTURE_BANK, "不是农业银行的数据");
 
     }
 
