@@ -280,7 +280,7 @@
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
 
-                                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}</td>
                                             <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
@@ -394,7 +394,7 @@
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
-                                            <td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
+                                            <td>￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}</td>
                                             <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
