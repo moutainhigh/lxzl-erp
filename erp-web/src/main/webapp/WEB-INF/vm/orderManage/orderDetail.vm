@@ -280,8 +280,8 @@
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
 
-                                            <td>￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}</td>
-                                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
+                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
@@ -394,8 +394,8 @@
                                             <td>
                                                 ￥{{#price}}{{depositAmount}}{{/price}}
                                             </td>
-                                            <td>￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}</td>
-                                            <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
+                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
