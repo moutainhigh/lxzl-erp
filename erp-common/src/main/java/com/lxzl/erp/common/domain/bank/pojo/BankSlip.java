@@ -16,8 +16,8 @@ public class BankSlip extends BasePO {
 
 	@NotNull(message = ErrorCode.BANK_SLIP_ID_NULL,groups = {IdGroup.class})
 	private Integer bankSlipId;   //唯一标识
+	@NotNull(message = ErrorCode.SUB_COMPANY_ID_NOT_NULL,groups = {AddGroup.class})
 	private Integer subCompanyId;   //分公司ID
-	@NotNull(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL,groups = {AddGroup.class})
 	private String subCompanyName;   //分公司名称
 	private Integer bankType;   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
 	@NotNull(message = ErrorCode.MONTH_IS_NOT_NULL,groups = {AddGroup.class})

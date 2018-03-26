@@ -57,6 +57,7 @@ public class ErrorCode {
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
+    public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -814,6 +815,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_NOT_NULL, "客户收货信息不能为空");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
+        MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");

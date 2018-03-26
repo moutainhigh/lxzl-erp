@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.bank.impl;
 
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ConstantConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
@@ -148,7 +149,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //分公司一个月不通银行只能导入一次
 
-        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndMonthAndBankType(bankSlip.getSubCompanyName(), bankSlip.getSlipMonth(), bankType);
+        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndMonthAndBankType(bankSlip.getSubCompanyId(), bankSlip.getSlipMonth(), bankType);
         if (bankSlipDO != null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_EXISTS);
             return serviceResult;
@@ -156,6 +157,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
 
         String excelUrl = bankSlip.getExcelUrl();
+        excelUrl = ConstantConfig.imageDomain + excelUrl;
         InputStream inputStream = FileUtil.getFileInputStream(excelUrl);
 
         if (inputStream == null) {

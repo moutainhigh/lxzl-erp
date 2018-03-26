@@ -225,7 +225,7 @@
 	</select>
 
 <select id="findBySubCompanyIdAndMonthAndBankType" resultMap="BankSlipDO" parameterType="map">
-	SELECT <include refid="column_List"/> FROM erp_bank_slip ebs WHERE  ebs.sub_company_name = #{subCompanyName,jdbcType=VARCHAR} AND ebs.slip_month = #{slipMonth,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
+	SELECT <include refid="column_List"/> FROM erp_bank_slip ebs WHERE  ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_month = #{slipMonth,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
 </select>
 
 <select id="findBankSlipAndBankSlipDetailByParams" resultMap="BankSlipDO" parameterType="map">
