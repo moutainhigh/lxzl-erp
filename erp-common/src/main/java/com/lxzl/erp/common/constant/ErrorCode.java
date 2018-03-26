@@ -756,6 +756,7 @@ public class ErrorCode {
     public static final String IS_NOT_BUSINESS_AFFAIRS_PERSON = "J18000024";
     public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM = "J18000025";
     public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
+    public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1501,10 +1502,11 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
         MAP.put(BANK_SLIP_DETAIL_IS_NULL, "银行对公流水记录项为空");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
-        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已认领状态");
+        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已确认状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
-        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "单据状态不是已下推和部分认领");
+        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "银行对公流水状态不是已下推和部分认领");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
 
     }
 

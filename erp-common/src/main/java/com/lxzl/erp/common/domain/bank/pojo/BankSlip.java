@@ -1,20 +1,14 @@
 package com.lxzl.erp.common.domain.bank.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.constant.BankType;
-import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNoGroup;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.validate.constraints.In;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -42,6 +36,16 @@ public class BankSlip extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+
+	private List<BankSlipDetail> bankSlipDetailList;
+
+	public List<BankSlipDetail> getBankSlipDetailList() {
+		return bankSlipDetailList;
+	}
+
+	public void setBankSlipDetailList(List<BankSlipDetail> bankSlipDetailList) {
+		this.bankSlipDetailList = bankSlipDetailList;
+	}
 
 	public Integer getBankSlipId(){
 		return bankSlipId;

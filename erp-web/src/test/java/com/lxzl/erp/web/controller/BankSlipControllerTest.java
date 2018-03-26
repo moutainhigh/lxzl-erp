@@ -6,11 +6,15 @@ import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.domain.ConstantConfig;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
+import com.lxzl.erp.common.domain.bank.ClaimParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * @Author: Pengbinjie
@@ -20,9 +24,36 @@ import java.text.SimpleDateFormat;
  */
 public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
-    public void pushDownBankSlip() throws Exception {
+    public void verifyBankSlipDetail() throws Exception {
+
+
         BankSlip bankSlip = new BankSlip();
         bankSlip.setBankSlipId(49);
+        TestResult result = getJsonTestResult("/bankSlip/verifyBankSlipDetail", bankSlip);
+    }
+
+    @Test
+    public void claimBankSlipDetail() throws Exception {
+
+        BankSlipClaim bankSlipClaim = new BankSlipClaim();
+        bankSlipClaim.setBankSlipDetailId(5859);
+        ArrayList<ClaimParam> list = new ArrayList<>();
+        ClaimParam claimParam =  new ClaimParam();
+        claimParam.setClaimAmount(new BigDecimal(100));
+        claimParam.setCustomerNo("LXCC-1000-20180326-00359");
+        ClaimParam claimParam1 =  new ClaimParam();
+        claimParam1.setClaimAmount(new BigDecimal(200));
+        claimParam1.setCustomerNo("LXCC-1000-20180326-00359");
+        list.add(claimParam);
+        list.add(claimParam1);
+        bankSlipClaim.setClaimParam(list);
+        TestResult result = getJsonTestResult("/bankSlip/claimBankSlipDetail", bankSlipClaim);
+    }
+
+    @Test
+    public void pushDownBankSlip() throws Exception {
+        BankSlip bankSlip = new BankSlip();
+        bankSlip.setBankSlipId(45);
         TestResult result = getJsonTestResult("/bankSlip/pushDownBankSlip", bankSlip);
     }
 

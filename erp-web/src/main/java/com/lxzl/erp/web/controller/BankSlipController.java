@@ -75,4 +75,11 @@ public class BankSlipController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
+    @RequestMapping(value = "verifyBankSlipDetail", method = RequestMethod.POST)
+    public Result verifyBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.verifyBankSlipDetail(bankSlip);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+
 }
