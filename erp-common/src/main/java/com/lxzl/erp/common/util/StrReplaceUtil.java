@@ -2,6 +2,7 @@ package com.lxzl.erp.common.util;
 
 
 import java.util.HashMap;
+import java.util.Map;
 /**
  * @创建人 liuzy
  * @创建日期 2018/3/23
@@ -9,14 +10,13 @@ import java.util.HashMap;
  */
 public class StrReplaceUtil {
 
-    /**定义存储全角和半角字符之间的对应关系*/
-    public static HashMap strMap() {
-        HashMap map = new HashMap();
-        map.put("(", "（");
-        map.put(")", "）");
-        return map;
-    }
+    public final static Map<Character,Character> map = new HashMap<>();
 
+    /**初始化定义存储全角和半角字符之间的对应关系*/
+    static{
+        map.put('(', '（');
+        map.put(')', '）');
+    }
     /**
      *@描述 替换方法
      *@参数  [line]
@@ -26,11 +26,14 @@ public class StrReplaceUtil {
      *@修改人和其它信息
      */
     public static String replaceAll(String line) {
+        if(line==null){
+            return null;
+        }
         int length = line.length();
         for (int i = 0; i < length; i++) {
-            String charat = line.substring(i, i + 1);
-            if (StrReplaceUtil.strMap().get(charat) != null) {
-                line = line.replace(charat, (String) StrReplaceUtil.strMap().get(charat));
+              Character c = line.charAt(i);
+            if (map.containsKey(c)) {
+                line = line.replace(c,map.get(c));
             }
         }
         return line;
