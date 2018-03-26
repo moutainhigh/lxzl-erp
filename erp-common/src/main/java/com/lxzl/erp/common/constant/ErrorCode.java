@@ -1125,7 +1125,7 @@ public class ErrorCode {
         MAP.put(ORDER_PAY_STATUS_ERROR, "付款单状态异常，请检查");
         MAP.put(ORDER_REFUND_STATUS_ERROR, "退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS, "支付记录不存在");
-        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单的起租日期不能空，请选择起租日期时间");
+        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单的起租日期不能空，并且不能在3月5日之前，请选择起租日期时间");
         MAP.put(ORDER_RENT_START_TIME_ERROR, "订单起租日期不能小于送货日期，并且不能大于超过2天");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房的商品库存不足，请联系相关工作人员。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房的配件库存不足，请联系相关工作人员。");
