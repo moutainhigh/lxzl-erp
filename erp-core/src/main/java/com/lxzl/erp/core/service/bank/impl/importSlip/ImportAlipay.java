@@ -173,6 +173,7 @@ public class ImportAlipay {
             }
 
             boolean tradeAmountFlag = false;
+            boolean isRightBankType = false;
             if (row != null) {
                 //遍历所有的列
                 ccc:
@@ -199,6 +200,7 @@ public class ImportAlipay {
                             continue ccc;
                         }
                         if ("支出（-元）".equals(value)) {
+                            isRightBankType = true;
                             creditSumNo = y;
                             continue ccc;
                         }
@@ -229,6 +231,11 @@ public class ImportAlipay {
                         }
                     }
                 }
+                if(!isRightBankType){
+                    serviceResult.setErrorCode(ErrorCode.BANK_IS_NOT_ALIPAY);
+                    return serviceResult;
+                }
+
                 // todo 以下可以直接存数据
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期

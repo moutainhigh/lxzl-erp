@@ -152,7 +152,7 @@ public class ImportAgricultureBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int debtorAccountNo = 0; //支出金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean isPeerArea = false;
 
         int next = Integer.MAX_VALUE;
         bbb:
@@ -178,6 +178,7 @@ public class ImportAgricultureBank {
                     String value = getValue(cell);
 
                     if (("交易金额".equals(value)) ||
+                            ("对方省市".equals(value)) ||
                             ("支出金额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("交易流水号".equals(value)) ||
@@ -199,6 +200,10 @@ public class ImportAgricultureBank {
                         if ("付款人名称".equals(value)) {
                             next = j;
                             payerNameNo = y;
+                            continue ccc;
+                        }
+                        if ("对方省市".equals(value)) {
+                            isPeerArea = true;
                             continue ccc;
                         }
                         if ("交易日期".equals(value)) {
@@ -228,6 +233,11 @@ public class ImportAgricultureBank {
                         }
                     }
                 }
+                if(!isPeerArea){
+                    serviceResult.setErrorCode(ErrorCode.BANK_IS_NOT_AGRICULTURE_BANK);
+                    return serviceResult;
+                }
+
                 // todo 以下可以直接存数据
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期

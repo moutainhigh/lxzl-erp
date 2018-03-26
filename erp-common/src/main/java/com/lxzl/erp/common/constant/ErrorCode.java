@@ -758,6 +758,8 @@ public class ErrorCode {
     public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM = "J18000025";
     public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
     public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
+    public static final String BANK_IS_NOT_ALIPAY = "J18000028";
+    public static final String BANK_IS_NOT_AGRICULTURE_BANK = "J18000029";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1509,6 +1511,8 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "银行对公流水状态不是已下推和部分认领");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
+        MAP.put(BANK_IS_NOT_ALIPAY, "不是支付宝的数据");
+        MAP.put(BANK_IS_NOT_AGRICULTURE_BANK, "不是农业银行的数据");
 
     }
 

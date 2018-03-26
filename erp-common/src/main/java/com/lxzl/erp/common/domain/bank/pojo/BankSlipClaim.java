@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.bank.ClaimBankSlipDetailGroup;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import java.util.List;
 public class BankSlipClaim extends BasePO {
 
 	private Integer bankSlipClaimId;   //唯一标识
-	@NotNull(message = ErrorCode.BANK_SLIP_DETAIL_ID_NULL,groups = {IdGroup.class})
+	@NotNull(message = ErrorCode.BANK_SLIP_DETAIL_ID_NULL,groups = {ClaimBankSlipDetailGroup.class})
 	private Integer bankSlipDetailId;   //银行对公流水明细ID
 	private String otherSideAccountNo;   //对方账号
 	private String customerNo;   //客戶编码
