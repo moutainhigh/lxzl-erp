@@ -311,6 +311,21 @@ CREATE TABLE `erp_area_district` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区行政区表';
 
+DROP TABLE if exists `erp_sub_company_city_cover`;
+CREATE TABLE `erp_sub_company_city_cover` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `province_id` int(20) NOT NULL COMMENT '省份ID',
+  `city_id` int(20) NOT NULL COMMENT '城市ID',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='分公司城市覆盖表';
+
 DROP TABLE IF EXISTS `erp_business_system_config`;
 CREATE TABLE `erp_business_system_config` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
