@@ -1,20 +1,14 @@
 package com.lxzl.erp.common.domain.bank.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.constant.BankType;
-import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.QueryCustomerNoGroup;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.validate.constraints.In;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -22,8 +16,8 @@ public class BankSlip extends BasePO {
 
 	@NotNull(message = ErrorCode.BANK_SLIP_ID_NULL,groups = {IdGroup.class})
 	private Integer bankSlipId;   //唯一标识
+	@NotNull(message = ErrorCode.SUB_COMPANY_ID_NOT_NULL,groups = {AddGroup.class})
 	private Integer subCompanyId;   //分公司ID
-	@NotNull(message = ErrorCode.SUB_COMPANY_NAME_NOT_NULL,groups = {AddGroup.class})
 	private String subCompanyName;   //分公司名称
 	private Integer bankType;   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
 	@NotNull(message = ErrorCode.MONTH_IS_NOT_NULL,groups = {AddGroup.class})
@@ -42,6 +36,16 @@ public class BankSlip extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+
+	private List<BankSlipDetail> bankSlipDetailList;
+
+	public List<BankSlipDetail> getBankSlipDetailList() {
+		return bankSlipDetailList;
+	}
+
+	public void setBankSlipDetailList(List<BankSlipDetail> bankSlipDetailList) {
+		this.bankSlipDetailList = bankSlipDetailList;
+	}
 
 	public Integer getBankSlipId(){
 		return bankSlipId;

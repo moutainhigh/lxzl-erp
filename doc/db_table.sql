@@ -599,6 +599,7 @@ CREATE TABLE `erp_workflow_link` (
   `workflow_current_node_id` int(20) DEFAULT NULL COMMENT '当前结点ID',
   `commit_user` int(20) COMMENT '提交人',
   `current_verify_user` int(20) COMMENT '审核人',
+  `verify_user_group_id` int(20) COMMENT '审核人组ID，审核人为空时，该字段有值',
   `current_verify_status` int(20) COMMENT '审核状态',
   `verify_matters` varchar(500) COMMENT '审核事项',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -610,6 +611,25 @@ CREATE TABLE `erp_workflow_link` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_workflow_type_refer` (`workflow_type`,`workflow_refer_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流线表';
+
+DROP TABLE if exists `erp_workflow_verify_user_group`;
+CREATE TABLE `erp_workflow_verify_user_group` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `verify_user_group_id` int(20) NOT NULL COMMENT '审核组ID',
+  `verify_type` int(11) NOT NULL COMMENT '审核类型，1-本条审核通过则直接通过，2-相同审核组的所有2状态的审核通过才算通过',
+  `verify_user` int(20) COMMENT '审核人',
+  `verify_time` datetime COMMENT '审核时间',
+  `verify_status` int(20) COMMENT '审核状态',
+  `verify_opinion` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '审核意见',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流审核用户组表';
+
 
 DROP TABLE if exists `erp_workflow_link_detail`;
 CREATE TABLE `erp_workflow_link_detail` (
