@@ -48,6 +48,8 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void queryUnReceivable() throws Exception {
         UnReceivablePageParam unReceivablePageParam = new UnReceivablePageParam();
+        unReceivablePageParam.setPageNo(1);
+        unReceivablePageParam.setPageSize(15);
         TestResult testResult = getJsonTestResult("/statistics/queryUnReceivable", unReceivablePageParam);
     }
 

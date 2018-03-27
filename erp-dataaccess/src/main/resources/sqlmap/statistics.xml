@@ -177,7 +177,7 @@
     </select>
 
     <select id="queryUnReceivable" resultMap="UnReceivableDetail" parameterType="map">
-        SELECT eo.order_no,esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type,
+        SELECT eo.order_no,eo.rent_length_type,
         SUM(esod.statement_detail_amount) un_receivable,
         IFNULL(MAX(esod.statement_detail_overdue_phase_count),0)overdue_phase_count,
         MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,
@@ -204,7 +204,7 @@
         <if test="maps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
         </if>
-        GROUP BY eo.order_no,esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type
+        GROUP BY eo.order_no,eo.rent_length_type
         ORDER BY esod_create_time ASC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
