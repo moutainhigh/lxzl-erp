@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.bank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
  * @Date: Created in 20:03 2018/3/20
  * @Modified By:
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlipQueryParam extends BasePageParam {
 
     private String subCompanyName;   //分公司名称
