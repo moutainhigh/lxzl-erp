@@ -44,11 +44,11 @@
                                         <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
                                     </div>
                                 </div>
-##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-##                                    <div class="input-group">
-##                                        <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
-##                                    </div>
-##                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                    </div>
+                                </div>
 ##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
 ##                                    <div class="input-group">
 ##                                        <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="输入手机号">
@@ -140,7 +140,7 @@
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?id={{bankSlipDetailId}}" type="button" class="btn btn-default btn-xs {{class}}" data-slipid="{{bankSlipDetailId}}">{{text}}</a>
+                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?id={{bankSlipDetailId}}" type="button" class="btn btn-default btn-xs {{class}}" data-bankslipdetailid="{{bankSlipDetailId}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>
@@ -176,6 +176,7 @@
     #parse("layout/footer.vm")
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
+            'manage.jurnal.handle.mixin.js',
             'manage.jurnal.amount.detail.list.js',);
 </script>
 <script type="text/javascript">
