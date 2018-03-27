@@ -415,6 +415,7 @@ CREATE TABLE `erp_customer_company` (
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `customer_no` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '客户编码',
   `company_name` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '公司名称',
+  `simple_company_name` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '简单公司名称',
   `company_abb` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '公司简称',
   `is_legal_person_apple` int(10) DEFAULT '0' COMMENT '是否法人代表申请， 0否，1是',
   `legal_person` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '法人姓名',
