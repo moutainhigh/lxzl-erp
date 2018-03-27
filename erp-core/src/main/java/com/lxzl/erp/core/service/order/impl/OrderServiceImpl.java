@@ -1083,13 +1083,21 @@ public class OrderServiceImpl implements OrderService {
             service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
             com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = service.cancelOrder(orderDO.getOrderNo());
             //修改推送记录
-            if (response == null || response.getStatus() != 0) {
+            if (response == null) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
                 logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
                 dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
                 //失败要回滚
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            } else {
+                result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+                return result;
+            } else if(response.getStatus() != 0){
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                //失败要回滚
+                throw new BusinessException("k3取消订单失败:"+response.getResult());
+            }else {
                 logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
             }
