@@ -4,6 +4,7 @@
             <span class="panel-title"><i class="fa fa-pencil"></i>选择流水账单表格</span>
         </div>
         <form method="post" id="UploadExcelForm" description="选择流水账单表格">
+            <input type="hidden" name="excelUrl" />
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
@@ -25,25 +26,12 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-6 form-group mn mr10">
-##                        <label for="slipMonth" class="field-label">请选择月份</label>
+                    <div class="col-md-12 form-group mn mr10">
+                        <label class="field-label">月份</label>
                         <label for="slipMonth" class="input-group date">
-                            <input type="text" name="slipMonth" id="slipMonth" class="form-control hasMonthpicker" autocomplete="off" placeholder="选择月份">
-                            <span class="input-group-addon cursor input-sm"><i class="fa fa-calendar"></i></span>
+                            <input type="text" name="slipMonth" id="slipMonth" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间">
+                            <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
                         </label>
-                    </div>
-                    <div class="form-group pull-right mn mr10" style="width: 210px;">
-                        <label for="monthTime" class="input-group date">
-                            <input type="text" name="monthTime" id="monthTime" data-type="date" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
-                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                        </label>
-                    </div>
-                    <div class="col-md-6" style="display: none;">
-                        <div class="col-md-12">
-                            <div class="input-group date" id="createTimePicker">
-                                <input type="text" name="excelUrl" id="excelUrl" class="form-control input-sm bradiusL" autocomplete="off">
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="section row">
