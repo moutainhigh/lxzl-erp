@@ -305,9 +305,10 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping("/customer-consign-info/add")
-    public String customerConsignInfoAdd() {
-        return "/component/customerConsignInfo/add";
-    }
+    public String customerConsignInfoAdd() { return "/component/customerConsignInfo/add";}
+
+    @RequestMapping("/jurnal-attachment-list/file/upload")
+    public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
 
     @RequestMapping("/customer-consign-info/edit")
     public String customerConsignInfoEdit() {
