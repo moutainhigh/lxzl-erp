@@ -48,8 +48,36 @@ public class StrReplaceUtil {
      *@修改人和其它信息
      */
     public static String nameToSimple(String str){
-        String reg = "[^\u4e00-\u9fa5a-zA-Z]";
+        String reg = "[^\u4e00-\u9fa5a-zA-Zａ-ｚＡ-Ｚ]";
         str = str.replaceAll(reg, "");
+        str=half2Full(str);
         return str;
     }
+    /**
+     * 这是一个半角专全角的方法
+     * @Title: half2Full
+     * @param value input value
+     * @return converted value
+     */
+    public static String half2Full(String value) {
+        if (value.isEmpty()) {
+            return "";
+        }
+        char[] cha = value.toCharArray();
+        /**
+         * full blank space is 12288, half blank space is 32
+         * others :full is 65281-65374,and half is 33-126.
+         */
+        for (int i = 0; i < cha.length; i++) {
+            if (cha[i] == 32) {
+                cha[i] = (char) 12288;
+            } else if (cha[i] < 127) {
+                cha[i] = (char) (cha[i] + 65248);
+            }
+        }
+        return new String(cha);
+    }
+
+
+
 }
