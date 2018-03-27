@@ -38,4 +38,18 @@ public class StrReplaceUtil {
         }
         return line;
     }
+
+    /**
+     *@描述 替换方法,将字符串中除汉字和英文字母大小写之外的符号全部剔除
+     *@参数  [str]
+     *@返回值  java.lang.String
+     *@创建人  sunzp
+     *@创建时间  2018/3/27
+     *@修改人和其它信息
+     */
+    public static String nameToSimple(String str){
+        String reg = "[^\u4e00-\u9fa5a-zA-Z]";
+        str = str.replaceAll(reg, "");
+        return str;
+    }
 }
