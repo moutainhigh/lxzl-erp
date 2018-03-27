@@ -83,11 +83,19 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
         bankSlipDetailQueryParam.setPageNo(1);
         bankSlipDetailQueryParam.setPageSize(20);
+        bankSlipDetailQueryParam.setBankSlipId(1);
 //        bankSlipQueryParam.setBankType();
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
 //        bankSlipQueryParam.setSubCompanyName();
 
+        TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
+    }
+
+    @Test
+    public void pageBankSlipDetailJson() throws Exception {
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"payerName\":\"\"}";
+        BankSlipDetailQueryParam bankSlipDetailQueryParam = JSON.parseObject(json,BankSlipDetailQueryParam.class);
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
