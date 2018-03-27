@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.bank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
 /**
@@ -8,6 +9,7 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
  * @Date: Created in 21:08 2018/3/20
  * @Modified By:
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlipDetailQueryParam extends BasePageParam {
     private Integer bankSlipId;   //对公流水单ID
     private String payerName;   //付款人名称
