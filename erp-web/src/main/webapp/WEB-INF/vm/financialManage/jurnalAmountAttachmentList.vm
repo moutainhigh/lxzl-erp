@@ -171,14 +171,13 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-##<script type="text/javascript" src="${staticCommon}assets/js/form.js"></script>
+<script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.customer.handle.mixin.js',
             'manage.customer.mixin.js',
             'manage.jurnal.amount.js',
-            'manage.jurnal.upload.js',
-            'modal.input.js'
+            'manage.jurnal.upload.js'
     );
 </script>
 <script type="text/javascript">
