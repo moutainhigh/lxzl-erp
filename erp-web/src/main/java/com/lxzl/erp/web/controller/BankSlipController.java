@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.bank.ClaimBankSlipDetailGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
@@ -70,9 +71,17 @@ public class BankSlipController {
     }
 
     @RequestMapping(value = "claimBankSlipDetail", method = RequestMethod.POST)
-    public Result claimBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipClaim bankSlipClaim, BindingResult validated) throws Exception {
+    public Result claimBankSlipDetail(@RequestBody @Validated(ClaimBankSlipDetailGroup.class) BankSlipClaim bankSlipClaim, BindingResult validated) throws Exception {
         ServiceResult<String, Integer> serviceResult = bankSlipService.claimBankSlipDetail(bankSlipClaim);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
+
+    @RequestMapping(value = "verifyBankSlipDetail", method = RequestMethod.POST)
+    public Result verifyBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.verifyBankSlipDetail(bankSlip);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+
 
 }

@@ -1,7 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.bank;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
+
 import java.math.BigDecimal;
 
 public class BankSlipClaimDO  extends BaseDO {
