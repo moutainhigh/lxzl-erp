@@ -71,13 +71,7 @@
 		</where>
 
 	</select>
-
-	<select id="findByCustomerRiskHistoryId" resultMap="CustomerRiskManagementHistoryDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_risk_management_history ecrmh
-		WHERE ecrmh.id = #{customerRiskManagementHistoryId, jdbcType=INTEGER} AND ecrmh.data_status = 1
-	</select>
-
-
+	
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecrmh.id) FROM erp_customer_risk_management_history ecrmh 
 		<where>

@@ -221,6 +221,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addPerson(Customer customer) {
@@ -2738,7 +2739,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId) {
         ServiceResult<String, CustomerRiskManagementHistory> serviceResult = new ServiceResult<>();
-        CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = customerRiskManagementHistoryMapper.findByCustomerRiskHistoryId(customerRiskManagementHistoryId);
+        CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = customerRiskManagementHistoryMapper.findById(customerRiskManagementHistoryId);
         CustomerRiskManagementHistory customerRiskManagementHistoryResult = ConverterUtil.convert(customerRiskManagementHistoryDO, CustomerRiskManagementHistory.class);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerRiskManagementHistoryResult);

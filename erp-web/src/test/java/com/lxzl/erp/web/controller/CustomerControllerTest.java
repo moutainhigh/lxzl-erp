@@ -1,6 +1,5 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
@@ -686,9 +685,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     /**风控历史记录详情*/
     @Test
     public void detailCustomerRiskManagementHistory() throws Exception {
-        CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam = new CustomerRiskManageHistoryQueryParam();
-        customerRiskManageHistoryQueryParam.setCustomerRiskManagementHistoryId(3);
-        TestResult result = getJsonTestResult("/customer/detailCustomerRiskManagementHistory", customerRiskManageHistoryQueryParam);
+        CustomerRiskManagementHistory customerRiskManagementHistory = new CustomerRiskManagementHistory();
+        customerRiskManagementHistory.setCustomerRiskManagementHistoryId(3);
+        TestResult result = getJsonTestResult("/customer/detailCustomerRiskManagementHistory", customerRiskManagementHistory);
     }
 
 }

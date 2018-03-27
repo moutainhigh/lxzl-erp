@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.domain.customer;
 
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @创建人 liuzy
@@ -9,25 +11,8 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
  */
 public class CustomerRiskManageHistoryQueryParam extends BasePageParam {
 
-    private Integer customerRiskManagementHistoryId;//id
-    private Integer customerId;//客户id
+    @NotEmpty(message = ErrorCode.CUSTOMER_NO_NOT_NULL)
     private String customerNo; //客户编号
-
-    public Integer getCustomerRiskManagementHistoryId() {
-        return customerRiskManagementHistoryId;
-    }
-
-    public void setCustomerRiskManagementHistoryId(Integer customerRiskManagementHistoryId) {
-        this.customerRiskManagementHistoryId = customerRiskManagementHistoryId;
-    }
-
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
 
     public String getCustomerNo() {
         return customerNo;

@@ -19,6 +19,4 @@ public interface CustomerRiskManagementHistoryMapper extends BaseMysqlDAO<Custom
 
 	Integer findCustomerRiskHistoryCountByParams(@Param("maps") Map<String, Object> paramMap);
 
-	CustomerRiskManagementHistoryDO findByCustomerRiskHistoryId(@Param("customerRiskManagementHistoryId") Integer customerRiskManagementHistoryId);
-
 }

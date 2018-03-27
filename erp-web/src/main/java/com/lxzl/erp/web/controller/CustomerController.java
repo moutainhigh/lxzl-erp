@@ -210,8 +210,8 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "detailCustomerRiskManagementHistory", method = RequestMethod.POST)
-    public Result detailCustomerRiskManagementHistory(@RequestBody CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam, BindingResult validResult) {
-        ServiceResult<String, CustomerRiskManagementHistory> serviceResult = customerService.detailCustomerRiskManagementHistory(customerRiskManageHistoryQueryParam.getCustomerRiskManagementHistoryId());
+    public Result detailCustomerRiskManagementHistory(@RequestBody @Validated(IdGroup.class) CustomerRiskManagementHistory customerRiskManagementHistory, BindingResult validResult) {
+        ServiceResult<String, CustomerRiskManagementHistory> serviceResult = customerService.detailCustomerRiskManagementHistory(customerRiskManagementHistory.getCustomerRiskManagementHistoryId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

@@ -160,5 +160,4 @@ public interface CustomerService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId);
-
 }
