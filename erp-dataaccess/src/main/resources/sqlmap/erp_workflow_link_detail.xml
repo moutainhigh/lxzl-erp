@@ -11,6 +11,7 @@
 		<result column="workflow_previous_node_id" jdbcType="INTEGER" property="workflowPreviousNodeId" />
 		<result column="workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
 		<result column="verify_user" jdbcType="INTEGER" property="verifyUser" />
+		<result column="verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
 		<result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
 		<result column="verify_status" jdbcType="INTEGER" property="verifyStatus" />
 		<result column="verify_opinion" jdbcType="VARCHAR" property="verifyOpinion" />
@@ -23,7 +24,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ewld.id,ewld.workflow_link_id,ewld.workflow_refer_no,ewld.workflow_step,ewld.workflow_current_node_id,ewld.workflow_previous_node_id,ewld.workflow_next_node_id,ewld.verify_user,ewld.verify_time,ewld.verify_status,ewld.verify_opinion,ewld.data_status,ewld.remark,ewld.create_time,ewld.create_user,ewld.update_time,ewld.update_user
+		ewld.id,ewld.workflow_link_id,ewld.workflow_refer_no,ewld.workflow_step,ewld.workflow_current_node_id,ewld.workflow_previous_node_id,ewld.workflow_next_node_id,ewld.verify_user,ewld.verify_user_group_id,ewld.verify_time,ewld.verify_status,ewld.verify_opinion,ewld.data_status,ewld.remark,ewld.create_time,ewld.create_user,ewld.update_time,ewld.update_user
 	</sql>
 
 	<select id="findById" resultMap="WorkflowLinkDetailDO" parameterType="java.lang.Integer">
@@ -72,6 +73,9 @@
 			</if>
 			<if test="verifyUser != null">
 				verify_user = #{verifyUser,jdbcType=INTEGER},
+			</if>
+			<if test="verifyUserGroupId != null">
+				verify_user_group_id = #{verifyUserGroupId,jdbcType=INTEGER},
 			</if>
 			<if test="verifyTime != null">
 				verify_time = #{verifyTime,jdbcType=TIMESTAMP},

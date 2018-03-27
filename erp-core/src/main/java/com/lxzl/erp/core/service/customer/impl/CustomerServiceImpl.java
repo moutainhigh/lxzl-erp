@@ -1254,6 +1254,7 @@ public class CustomerServiceImpl implements CustomerService {
         Integer workflowType;
         if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
             workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
+            customerCommitParam.setVerifyUserId(null);
         }else{
             workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
         }
@@ -1263,10 +1264,10 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
         } else if (needVerifyResult.getResult()) {
-            if (customerCommitParam.getVerifyUserId() == null) {
-                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
-                return result;
-            }
+//            if (customerCommitParam.getVerifyUserId() == null) {
+//                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+//                return result;
+//            }
             //调用提交审核服务
             if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 customerCommitParam.setVerifyMatters("公司客户审核事项：1.申请额度 2.客户相关信息图片核对 3.统一信用码需信用网查询公司是否存在");
