@@ -51,6 +51,7 @@
 			<if test="true">
 				and ecrmh.data_status = 1
 			</if>
+			<include refid="permission_sql.customer_control"/>
 		</where>
 		ORDER BY ecrmh.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
@@ -64,7 +65,7 @@
 			<if test="maps.customerRiskManageHistoryQueryParam != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != ''">
 				and ecrmh.customer_no = #{maps.customerRiskManageHistoryQueryParam.customerNo, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.isQueryAll == null">
+			<if test="true">
 				and ecrmh.data_status = 1
 			</if>
 			<include refid="permission_sql.customer_control"/>
