@@ -23,27 +23,18 @@
                             <i class="arrow"></i>
                         </label>
                     </div>
-##                    <div class="section row col-md-6">
-##                            <div class="col-md-12">
-##                                <label for="month" class="field-label">请选择月份</label>
-##                                <div class="input-group date" id="createTimePicker">
-##                                    <input type="text" name="slipMonth" id="slipMonth" class="required form-control input-sm bradiusL" autocomplete="off" placeholder="选择日期">
-##                                    <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-##                                </div>
-##                            </div>
-##                    </div>
                 </div>
                 <div class="section row">
-##                    <div class="col-md-6">
-##                        <label for="companyFoundTime" class="field-label">请选择月份</label>
-##                        <label for="companyFoundTime" class="field prepend-picker-icon active" id="companyFoundTimePicker">
-##                            <input type="text" id="slipMonth" name="slipMonth" class="required gui-input hasDatepicker" readonly="" placeholder="请选择">
-##                            <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
-##                        </label>
-##                    </div>
-                    <div class="form-group mn mr10 col-md-6">
+                    <div class="col-md-6 form-group mn mr10">
+##                        <label for="slipMonth" class="field-label">请选择月份</label>
                         <label for="slipMonth" class="input-group date">
-                            <input type="text" name="slipMonth" id="slipMonth" data-type="date" class="form-control input-sm bradiusL hasMonthpicker" autocomplete="off" placeholder="选择时间">
+                            <input type="text" name="slipMonth" id="slipMonth" class="form-control hasMonthpicker" autocomplete="off" placeholder="选择月份">
+                            <span class="input-group-addon cursor input-sm"><i class="fa fa-calendar"></i></span>
+                        </label>
+                    </div>
+                    <div class="form-group pull-right mn mr10" style="width: 210px;">
+                        <label for="monthTime" class="input-group date">
+                            <input type="text" name="monthTime" id="monthTime" data-type="date" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
                             <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                         </label>
                     </div>
