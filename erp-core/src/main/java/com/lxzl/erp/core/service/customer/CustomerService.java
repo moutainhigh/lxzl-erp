@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagementHistory;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
 public interface CustomerService extends VerifyReceiver {
@@ -144,4 +145,20 @@ public interface CustomerService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer);
+
+
+    /**
+     *  客户风控信息历史记录分页查询
+     * @param customerRiskManageHistoryQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<CustomerRiskManagementHistory>> pageCustomerRiskManagementHistory(CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam);
+
+    /**
+     * 客户风控信息历史记录详情
+     * @param customerRiskManagementHistoryId
+     * @return
+     */
+    ServiceResult<String,CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId);
+
 }

@@ -674,4 +674,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);
     }
+
+    /**风控历史记录分页*/
+    @Test
+    public void pageCustomerRiskManagementHistory() throws Exception {
+        CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam = new CustomerRiskManageHistoryQueryParam();
+        customerRiskManageHistoryQueryParam.setCustomerNo("LXCC-027-20180326-00798");
+        TestResult result = getJsonTestResult("/customer/pageCustomerRiskManagementHistory", customerRiskManageHistoryQueryParam);
+    }
+
+    /**风控历史记录详情*/
+    @Test
+    public void detailCustomerRiskManagementHistory() throws Exception {
+        CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam = new CustomerRiskManageHistoryQueryParam();
+        customerRiskManageHistoryQueryParam.setCustomerRiskManagementHistoryId(3);
+        TestResult result = getJsonTestResult("/customer/detailCustomerRiskManagementHistory", customerRiskManageHistoryQueryParam);
+    }
+
 }
