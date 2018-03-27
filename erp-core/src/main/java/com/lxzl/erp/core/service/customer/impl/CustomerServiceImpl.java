@@ -1264,10 +1264,12 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
         } else if (needVerifyResult.getResult()) {
-//            if (customerCommitParam.getVerifyUserId() == null) {
-//                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
-//                return result;
-//            }
+            if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+                if (customerCommitParam.getVerifyUserId() == null) {
+                    result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                    return result;
+                }
+            }
             //调用提交审核服务
             if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 customerCommitParam.setVerifyMatters("公司客户审核事项：1.申请额度 2.客户相关信息图片核对 3.统一信用码需信用网查询公司是否存在");
