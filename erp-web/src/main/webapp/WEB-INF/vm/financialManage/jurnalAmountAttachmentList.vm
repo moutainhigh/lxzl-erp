@@ -41,32 +41,32 @@
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                        <input type="text" name="subCompanyName" id="subCompanyName" class="form-control input-sm bradius" autocomplete="off" placeholder="分公司名称">
                                     </div>
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
+                                        <input type="text" name="bankType" id="bankType" class="form-control input-sm bradius" autocomplete="off" placeholder="银行类型">
                                     </div>
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="输入手机号">
+                                        <input type="text" name="slipMonth" id="slipMonth" class="form-control input-sm bradius" autocomplete="off" placeholder="输入月份">
                                     </div>
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
+                                        <input type="text" name="slipStatus" id="slipStatus" class="form-control input-sm bradius" autocomplete="off" placeholder="输入单据状态">
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 140px;">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus"></select>
-                                    </div>
-                                </div>
+##                                <div class="form-group pull-right mn mr10" style="width: 140px;">
+##                                    <div class="input-group">
+##                                        <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus"></select>
+##                                    </div>
+##                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId"></select>
+                                        <select class="form-control input-sm bradius" id="ownerSubCompanyId"></select>
                                     </div>
                                 </div>
                             </form>
@@ -95,7 +95,12 @@
                                 <th>需认领笔数</th>
                                 <th>已认领笔数</th>
                                 <th>已确认笔数</th>
-                                <th>单据状态</th>
+##                                <th>单据状态</th>
+##                                <th>表格URL</th>
+                                <th>添加时间</th>
+                                <th>添加人</th>
+                                <th>修改时间</th>
+                                <th>修改人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -116,12 +121,18 @@
                                 <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{bankType}}</td>
-                                <td>{{slipMonth}}</td>
+                                <td>{{#clockShorTime}}{{slipMonth}}{{/clockShorTime}}</td>
                                 <td>{{accountNo}}</td>
                                 <td>{{inCount}}</td>
                                 <td>{{needClaimCount}}</td>
                                 <td>{{claimCount}}</td>
-                                <td>{{slipStatus}}</td>
+                                <td>{{confirmCount}}</td>
+##                                <td>{{slipStatus}}</td>
+##                                <td>{{excelUrl}}</td>
+                                <td>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</td>
+                                <td>{{createUser}}</td>
+                                <td>{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</td>
+                                <td>{{updateUser}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group">
