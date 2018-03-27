@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-客户管理-个人客户列表</title>
+    <title>凌雄ERP-财务管理-资金流水</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -39,11 +39,11 @@
                                     <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
-##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-##                                    <div class="input-group">
-##                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
-##                                    </div>
-##                                </div>
+                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
+                                    </div>
+                                </div>
 ##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
 ##                                    <div class="input-group">
 ##                                        <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
@@ -59,16 +59,16 @@
 ##                                        <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
 ##                                    </div>
 ##                                </div>
-##                                <div class="form-group pull-right mn mr10" style="width: 140px;">
-##                                    <div class="input-group">
-##                                        <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus"></select>
-##                                    </div>
-##                                </div>
-##                                <div class="form-group pull-right mn mr10">
-##                                    <div class="input-group">
-##                                        <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId"></select>
-##                                    </div>
-##                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="loanSign" id="loanSign"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -86,15 +86,18 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>客户编号</th>
-                                <th>真实姓名</th>
-                                <th>联系方式</th>
-                                <th>客户状态</th>
+                                <th>流水表ID</th>
+                                <th>付款人</th>
+                                <th>商户订单号</th>
+                                <th>对方账号</th>
+                                <th>交易流水号</th>
+                                <th>交易金额</th>
+                                <th>交易附言</th>
+                                <th>借贷标志</th>
+                                <th>明细状态</th>
+                                <th>备注</th>
                                 <th>创建人</th>
-                                <th>业务员</th>
-                                <th>所属公司</th>
-                                <th>是否禁用</th>
-                                <th>审核备注</th>
+                                <th>修改人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -112,43 +115,33 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{customerNo}}</td>
-                                <td>{{customerPerson.realName}}</td>
+                                <td>{{bankSlipId}}</td>
+                                <td>{{payerName}}</td>
+                                <td>{{merchantOrderNo}}</td>
+                                <td>{{otherSideAccountNo}}</td>
+                                <td>{{tradeSerialNo}}</td>
                                 <td>
-                                    <p class="mn">{{customerPerson.email}}</p>
-                                    <p class="mn mt5"><i class="fa fa-mobile mr5"></i>{{customerPerson.phone}}</p>
-                                    <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</p>
+                                    <p class="mn">{{tradeAmount}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
+                                <td>{{tradeMessage}}</td>
+                                <td>{{loanSignValue}}</td>
+                                <td>{{detailStatusValue}}</td>
+                                <td>{{remark}}</td>
                                 <td>
-                                    {{customerStatusValue}}
-                                </td>
-                                <td>
-                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn">{{createUser}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                 </td>
-                                <td>{{ownerName}}</td>
-                                <td>{{ownerSubCompanyName}}</td>
-                                <td>{{isDisabledStr}}</td>
                                 <td>
-                                    <div class="mw200">{{auditReason}}</div>
+                                    <p class="mn">{{updateUser}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</p>
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
-                                        <ul class="dropdown-menu pull-right" role="menu">
-                                            {{#rowActionButtons}}
-                                            <li>
-                                                <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
-                                                   data-customerno="{{customerNo}}"
-                                                   data-statementdate="{{statementDate}}"
-                                                   data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
-                                                   data-ownerSubCompanyId="{{ownerSubCompanyId}}"
-                                                   data-customertype="{{customerType}}"
-                                                   class="{{class}}">{{text}}</a>
-                                            </li>
-                                            {{/rowActionButtons}}
-                                        </ul>
+                                    <div class="btn-group text-right">
+                                        {{#rowActionButtons}}
+                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?id={{bankSlipDetailId}}" type="button" class="btn btn-default btn-xs {{class}}" data-slipid="{{bankSlipDetailId}}">{{text}}</a>
+                                        {{/rowActionButtons}}
                                     </div>
                                 </td>
                                 {{/hasRowActionButtons}}
@@ -156,7 +149,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到客户信息</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到资金流水信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
@@ -183,18 +176,13 @@
     #parse("layout/footer.vm")
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
-            'manage.customer.handle.mixin.js',
-            'manage.jurnal.amount.water.js',
-            'manage.customer.risk.js',
-            'manage.customer.address.add.js',
-            'modal.input.js',
-            'modal.submit.audit.js');
+            'manage.jurnal.amount.detail.list.js',);
 </script>
 <script type="text/javascript">
     //功能事件初始化
     Rental.init();
     Layout.init();
-    JurnalAmountWaterManage.init();
+    JurnalDetailListManage.init();
 
     //UI效果初始化
     Core.init();
