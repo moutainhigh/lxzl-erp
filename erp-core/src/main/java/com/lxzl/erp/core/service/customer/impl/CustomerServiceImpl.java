@@ -221,6 +221,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addPerson(Customer customer) {
@@ -393,7 +394,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
-        
         boolean flag = false;
         if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
             for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
@@ -1503,7 +1503,6 @@ public class CustomerServiceImpl implements CustomerService {
                 customerRiskManagementHistoryMapper.save(customerRiskManagementHistoryDO);
             }
         }
-        
         //跟新客户审核状态为成功
         if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
             customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
@@ -2706,6 +2705,44 @@ public class CustomerServiceImpl implements CustomerService {
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    /**
+     * 风控历史记录分页查询
+     * @param customerRiskManageHistoryQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<CustomerRiskManagementHistory>> pageCustomerRiskManagementHistory(CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam) {
+        ServiceResult<String, Page<CustomerRiskManagementHistory>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerRiskManageHistoryQueryParam.getPageNo(), customerRiskManageHistoryQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("customerRiskManageHistoryQueryParam", customerRiskManageHistoryQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        Integer totalCount = customerRiskManagementHistoryMapper.findCustomerRiskHistoryCountByParams(maps);
+        List<CustomerRiskManagementHistoryDO> customerRiskHistoryDOList = customerRiskManagementHistoryMapper.findCustomerRiskHistoryByParams(maps);
+        List<CustomerRiskManagementHistory> customerRiskManagementHistoryList = ConverterUtil.convertList(customerRiskHistoryDOList,CustomerRiskManagementHistory.class);
+        Page<CustomerRiskManagementHistory> page = new Page<>(customerRiskManagementHistoryList,totalCount, customerRiskManageHistoryQueryParam.getPageNo(), customerRiskManageHistoryQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    /**
+     * 风控历史详情
+     * @param customerRiskManagementHistoryId
+     * @return
+     */
+    @Override
+    public ServiceResult<String, CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId) {
+        ServiceResult<String, CustomerRiskManagementHistory> serviceResult = new ServiceResult<>();
+        CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = customerRiskManagementHistoryMapper.findById(customerRiskManagementHistoryId);
+        CustomerRiskManagementHistory customerRiskManagementHistoryResult = ConverterUtil.convert(customerRiskManagementHistoryDO, CustomerRiskManagementHistory.class);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerRiskManagementHistoryResult);
         return serviceResult;
     }
 

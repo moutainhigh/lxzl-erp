@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagementHistory;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -200,5 +201,19 @@ public class CustomerController {
         ServiceResult<String, String> serviceResult = customerService.updateOwnerAndUnionUser(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+
+    @RequestMapping(value = "pageCustomerRiskManagementHistory", method = RequestMethod.POST)
+    public Result pageCustomerRiskManagementHistory(@RequestBody CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<CustomerRiskManagementHistory>> serviceResult = customerService.pageCustomerRiskManagementHistory(customerRiskManageHistoryQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "detailCustomerRiskManagementHistory", method = RequestMethod.POST)
+    public Result detailCustomerRiskManagementHistory(@RequestBody @Validated(IdGroup.class) CustomerRiskManagementHistory customerRiskManagementHistory, BindingResult validResult) {
+        ServiceResult<String, CustomerRiskManagementHistory> serviceResult = customerService.detailCustomerRiskManagementHistory(customerRiskManagementHistory.getCustomerRiskManagementHistoryId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
 }
