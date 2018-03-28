@@ -120,6 +120,10 @@ public class OrderController extends BaseController {
         ServiceResult<String, Order> serviceResult = orderService.createOrderFirstPayAmount(order);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    @RequestMapping(value = "processStatementOrderByCancel", method = RequestMethod.GET)
+    public Result processStatementOrderByCancel(@RequestBody Order order, BindingResult validResult) {
+        return resultGenerator.generate(orderService.processStatementOrderByCancel(order.getOrderNo()));
+    }
 
     @Autowired
     private ResultGenerator resultGenerator;
