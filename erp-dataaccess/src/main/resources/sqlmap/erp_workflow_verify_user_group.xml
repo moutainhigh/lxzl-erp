@@ -38,7 +38,7 @@
         WHERE ewvug.verify_user_group_id = #{verifyUserGroupId, jdbcType=INTEGER} AND ewvug.data_status = 1
     </select>
 
-    <select id="listALLCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    <select id="listAllCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         SELECT count(ewvug.id) FROM erp_workflow_verify_user_group ewvug
         <where>
             <if test="true">
