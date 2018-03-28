@@ -172,6 +172,7 @@ public class ErrorCode {
     public static final String WORKFLOW_LINK_STATUS_ERROR = "J800011";
     public static final String WORKFLOW_TEMPLATE_NOT_EXISTS = "J800012";
     public static final String WORKFLOW_HAVE_NO_CONFIG = "J800013";
+    public static final String WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS = "J800014";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -557,6 +558,8 @@ public class ErrorCode {
     public static final String CUSTOMER_CONSIGN_INFO_IS_NOT_NULL = "J500148";
     public static final String CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR = "J500149";
     public static final String CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS = "J500150";
+    public static final String CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL = "J500151";
+    public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -819,6 +822,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
         MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货信息的城市与省份为空");
+        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址的城市与省份为空");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -924,6 +929,7 @@ public class ErrorCode {
         MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
         MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用，请联系管理员");
         MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核管理的审核工作流没有配置信息");
+        MAP.put(WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS, "工作流审核用户组不存在");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "该客户风控信息，苹果设备被限制，不能下单，请联系风控及相关人员");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "该客户风控信息，全新设备被限制，不能下单，请联系风控及相关人员");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "该客户风控信息，商品价格被限制，不能下单，请联系风控及相关人员");
