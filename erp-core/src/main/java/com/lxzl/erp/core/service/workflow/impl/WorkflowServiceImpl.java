@@ -415,6 +415,12 @@ public class WorkflowServiceImpl implements WorkflowService {
                 if (CollectionUtil.isNotEmpty(imageDOList)) {
                     workflowLinkDetailDO.setImageDOList(imageDOList);
                 }
+                for(WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO :workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList()){
+                    List<ImageDO> groupImageDOList = imgMysqlMapper.findByRefIdAndType(workflowVerifyUserGroupDO.getId().toString(), ImgType.WORKFLOW_IMG_TYPE);
+                    if (CollectionUtil.isNotEmpty(groupImageDOList)) {
+                        workflowVerifyUserGroupDO.setImageDOList(groupImageDOList);
+                    }
+                }
             }
         }
         result.setResult(ConverterUtil.convert(workflowLinkDO, WorkflowLink.class));
@@ -737,7 +743,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         //生成审核组id
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
         workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
-        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
+        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(verifyUser);
         workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -853,7 +859,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         //生成审核组id
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
         workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
-        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
+        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(verifyUser);
         workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
