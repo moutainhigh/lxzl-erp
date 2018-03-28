@@ -98,6 +98,12 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "strongCancelReturnOrder", method = RequestMethod.POST)
+    public Result strongCancelReturnOrder(@RequestBody @Validated(IdGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.strongCancelReturnOrder(k3ReturnOrder.getReturnOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     /***
      * 创建K3换货单
      * @param k3ChangeOrder

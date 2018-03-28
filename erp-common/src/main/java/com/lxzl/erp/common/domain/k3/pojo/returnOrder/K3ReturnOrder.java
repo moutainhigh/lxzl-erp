@@ -1,8 +1,11 @@
 package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.List;
 public class K3ReturnOrder extends BasePO {
 
 	private Integer k3ReturnOrderId;   //唯一标识
+	@NotNull(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL,groups = {IdGroup.class})
 	private String returnOrderNo;   //退还编号
 	private String k3CustomerNo;   //K3客户编码
 	private String k3CustomerName;   //K3客户名称

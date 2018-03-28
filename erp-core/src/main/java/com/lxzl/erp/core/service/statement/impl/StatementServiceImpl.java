@@ -151,7 +151,7 @@ public class StatementServiceImpl implements StatementService {
 
                     if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())) {
                         String key = statementOrderDetailDO.getItemName() + "-" + statementOrderDetailDO.getItemIsNew() + "-" + statementOrderDetailDO.getOrderItemReferId() + "-" + statementOrderDetailDO.getOrderId();
-                        map.put(key, statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP));
+                        map.put(key, BigDecimalUtil.add(map.get(key),statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP)));
                     }
                 }
             }

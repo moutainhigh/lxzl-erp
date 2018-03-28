@@ -23,6 +23,7 @@ public class WorkflowLink extends BasePO {
 	private Integer commitUser;				//提交人
 	private String commitUserName;				//提交人姓名
 	private Integer currentVerifyUser;		// 当前审核人
+	private Integer verifyUserGroupId;		// 审核人组ID，审核人为空时，该字段有值
 	private String currentVerifyUserName;	// 当前审核人姓名
 	private Integer currentVerifyStatus;	// 当前审核状态
 	private String verifyMatters;
@@ -34,6 +35,7 @@ public class WorkflowLink extends BasePO {
 	private String updateUser;   //修改人
 
 	private List<WorkflowLinkDetail> workflowLinkDetailList;
+	private List<WorkflowVerifyUserGroup> workflowVerifyUserGroupList;
 
 	private String workflowCurrentNodeName;
 	private String workflowTemplateName;   //工作流模板名称
@@ -231,4 +233,12 @@ public class WorkflowLink extends BasePO {
 	public void setVerifyMatters(String verifyMatters) {
 		this.verifyMatters = verifyMatters;
 	}
+
+	public Integer getVerifyUserGroupId() { return verifyUserGroupId; }
+
+	public void setVerifyUserGroupId(Integer verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
+
+	public List<WorkflowVerifyUserGroup> getWorkflowVerifyUserGroupList() { return workflowVerifyUserGroupList; }
+
+	public void setWorkflowVerifyUserGroupList(List<WorkflowVerifyUserGroup> workflowVerifyUserGroupList) { this.workflowVerifyUserGroupList = workflowVerifyUserGroupList; }
 }

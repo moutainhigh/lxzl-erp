@@ -168,6 +168,9 @@
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
 				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
 			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyId != null">
+				and ebs.sub_company_id = #{maps.bankSlipQueryParam.subCompanyId,jdbcType=INTEGER}
+			</if>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
 				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
 			</if>
@@ -197,6 +200,9 @@
 		<where>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
 				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyId != null">
+				and ebs.sub_company_id = #{maps.bankSlipQueryParam.subCompanyId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
 				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
