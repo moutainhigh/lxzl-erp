@@ -150,7 +150,6 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
 
-
         String excelUrl = bankSlip.getExcelUrl();
         excelUrl = ConstantConfig.imageDomain + excelUrl;
         InputStream inputStream = FileUtil.getFileInputStream(excelUrl);
@@ -159,7 +158,6 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
             return serviceResult;
         }
-
 
         if (BankType.BOC_BANK.equals(bankType)) {
             serviceResult = importChinaBank.saveChinaBank(bankSlip, inputStream);
@@ -251,7 +249,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
+            if (!userSupport.isFinancePerson()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
@@ -296,7 +294,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
+            if (!userSupport.isFinancePerson()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
@@ -310,6 +308,10 @@ public class BankSlipServiceImpl implements BankSlipService {
         //判断客户是否存在
         BigDecimal allClaimAmount = new BigDecimal(0);
         List<ClaimParam> claimParamList = bankSlipClaim.getClaimParam();
+        if(CollectionUtil.isEmpty(claimParamList)){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_NEED_CLAIMED);
+            return serviceResult;
+        }
         for (ClaimParam claimParam : claimParamList) {
             CustomerDO customerDO = customerMapper.findByNo(claimParam.getCustomerNo());
             if (customerDO == null) {
@@ -374,7 +376,6 @@ public class BankSlipServiceImpl implements BankSlipService {
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailMapper.update(bankSlipDetailDO);
 
-
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDO.getId());
         return serviceResult;
@@ -396,7 +397,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
         //是否为已经下推 或者为 部分确认
-        if (!SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus()) && !SlipStatus.PORTION_CLAIM.equals(bankSlipDO.getSlipStatus())) {
+        if (!SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM);
             return serviceResult;
         }
