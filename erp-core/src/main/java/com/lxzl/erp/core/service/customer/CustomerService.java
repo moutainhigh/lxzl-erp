@@ -160,4 +160,13 @@ public interface CustomerService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId);
+
+    /**
+     *  此方法只用于处理历史数据中公司客户的新增字段simple_company_name字段为空的情况，新增数据不会出现此种情况
+     *
+     * @return
+     */
+    ServiceResult<String,String> customerCompanySimpleNameProcessing();
+
+
 }

@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
 import com.lxzl.erp.common.constant.CustomerType;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -11,6 +12,8 @@ import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
+import com.lxzl.erp.core.service.customer.impl.CustomerServiceImpl;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -92,7 +95,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("56齐天文化-A0320ｓｓｈｂｓ0678");
+        customerCompany.setCompanyName("56齐天文化-Ab0678");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
@@ -688,6 +691,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerRiskManagementHistory customerRiskManagementHistory = new CustomerRiskManagementHistory();
         customerRiskManagementHistory.setCustomerRiskManagementHistoryId(3);
         TestResult result = getJsonTestResult("/customer/detailCustomerRiskManagementHistory", customerRiskManagementHistory);
+    }
+    /**测试根据公司名称更新公司简单名称字段的测试用例*/
+    @Test
+    public void  customerCompanySimpleNameProcessingTest() throws Exception{
+        TestResult result = getJsonTestResult("/customer/customerCompanySimpleNameProcessing", null);
     }
 
 }
