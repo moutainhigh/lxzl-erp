@@ -146,6 +146,7 @@
         <result column="overdue_phase_count" jdbcType="INTEGER" property="overduePhaseCount" />
         <result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
         <result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
     </resultMap>
 
     <resultMap id="UnReceivable" type="com.lxzl.erp.common.domain.statistics.pojo.UnReceivable">
@@ -176,9 +177,9 @@
     </select>
 
     <select id="queryUnReceivable" resultMap="UnReceivableDetail" parameterType="map">
-        SELECT esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type,
+        SELECT eo.order_no,esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type,
         SUM(esod.statement_detail_amount) un_receivable,
-        IFNULL(MIN(esod.statement_detail_overdue_phase_count),0)overdue_phase_count,
+        IFNULL(MAX(esod.statement_detail_overdue_phase_count),0)overdue_phase_count,
         MIN(eu.id) order_seller_id,MIN(eu.real_name) order_seller_name,
         MIN(esc.id) sub_company_id,MIN(esc.sub_company_name) sub_company_name,
         MIN(ec.customer_no) customer_no,MIN(ec.customer_name)customer_name,
@@ -203,7 +204,7 @@
         <if test="maps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
         </if>
-        GROUP BY eo.rent_length_type,esod.order_item_refer_id,esod.order_item_type
+        GROUP BY eo.order_no,esod.order_item_refer_id , esod.order_item_type ,eo.rent_length_type
         ORDER BY esod_create_time ASC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
