@@ -27,7 +27,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 
 
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(49);
+//        bankSlip.setBankSlipId(61);
         TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
@@ -35,31 +35,31 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(5860);
-//        ArrayList<ClaimParam> list = new ArrayList<>();
-//        ClaimParam claimParam =  new ClaimParam();
-//        claimParam.setClaimAmount(new BigDecimal(100));
-//        claimParam.setCustomerNo("LXCC-1000-20180328-00825");
-//        ClaimParam claimParam1 =  new ClaimParam();
-//        claimParam1.setClaimAmount(new BigDecimal(200));
-//        claimParam1.setCustomerNo("LXCC-1000-20180328-00825");
-//        list.add(claimParam);
-//        list.add(claimParam1);
-//        bankSlipClaim.setClaimParam(list);
+        bankSlipClaim.setBankSlipDetailId(8903);
+        ArrayList<ClaimParam> list = new ArrayList<>();
+        ClaimParam claimParam =  new ClaimParam();
+        claimParam.setClaimAmount(new BigDecimal(1500));
+        claimParam.setCustomerNo("LXCC-1000-20180328-00825");
+        ClaimParam claimParam1 =  new ClaimParam();
+        claimParam1.setClaimAmount(new BigDecimal(6000));
+        claimParam1.setCustomerNo("LXCC-1000-20180328-00825");
+        list.add(claimParam);
+        list.add(claimParam1);
+        bankSlipClaim.setClaimParam(list);
         TestResult result = getJsonTestResult("/bankSlip/claimBankSlipDetail", bankSlipClaim);
     }
 
     @Test
     public void pushDownBankSlip() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(45);
+        bankSlip.setBankSlipId(61);
         TestResult result = getJsonTestResult("/bankSlip/pushDownBankSlip", bankSlip);
     }
 
     @Test
     public void ignoreBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(5857);
+        bankSlipDetail.setBankSlipDetailId(8903);
         TestResult result = getJsonTestResult("/bankSlip/ignoreBankSlipDetail", bankSlipDetail);
     }
 
