@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="subCompanyName"  id="subCompanyName"></select>
+                                        <select class="form-control input-sm bradius" name="subCompanyId"  id="subCompanyName"></select>
                                     </div>
                                 </div>
                             </form>
