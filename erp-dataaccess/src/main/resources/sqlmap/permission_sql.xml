@@ -177,6 +177,11 @@
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
 					#{item}
+				</foreach>
+				OR ewvug.verify_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
 				</foreach>)
 			</if>
 		</if>
