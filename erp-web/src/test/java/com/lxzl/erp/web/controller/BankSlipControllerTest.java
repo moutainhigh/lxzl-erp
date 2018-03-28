@@ -3,8 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.constant.BankType;
-import com.lxzl.erp.common.domain.ConstantConfig;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
@@ -14,7 +12,6 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -30,21 +27,21 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 
         BankSlip bankSlip = new BankSlip();
         bankSlip.setBankSlipId(49);
-        TestResult result = getJsonTestResult("/bankSlip/verifyBankSlipDetail", bankSlip);
+        TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
     @Test
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(5861);
+        bankSlipClaim.setBankSlipDetailId(5859);
         ArrayList<ClaimParam> list = new ArrayList<>();
         ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal(8000));
-        claimParam.setCustomerNo("LXCC-1000-20180326-00359");
+        claimParam.setClaimAmount(new BigDecimal(100));
+        claimParam.setCustomerNo("LXCC-1000-20180328-00825");
         ClaimParam claimParam1 =  new ClaimParam();
-        claimParam1.setClaimAmount(new BigDecimal(1900));
-        claimParam1.setCustomerNo("LXCC-1000-20180326-00359");
+        claimParam1.setClaimAmount(new BigDecimal(200));
+        claimParam1.setCustomerNo("LXCC-1000-20180328-00825");
         list.add(claimParam);
         list.add(claimParam1);
         bankSlipClaim.setClaimParam(list);
@@ -74,6 +71,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
         bankSlipQueryParam.setSubCompanyName("南京分公司");
+//        bankSlipQueryParam.setSubCompanyId(2);
 
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
     }
