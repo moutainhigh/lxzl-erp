@@ -388,23 +388,21 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
 
-        if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
-            if (workflowLinkDO.getVerifyUserGroupId() != null) {
-                List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
-                if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
-                    result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS);
-                    return result;
-                }
-                workflowLinkDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
-                for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
-                    if (workflowLinkDetailDO.getVerifyUserGroupId() != null) {
-                        workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDetailDO.getVerifyUserGroupId());
-                        if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
-                            result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS);
-                            return result;
-                        }
-                        workflowLinkDetailDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
+        if (workflowLinkDO.getVerifyUserGroupId() != null) {
+            List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
+            if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
+                result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS);
+                return result;
+            }
+            workflowLinkDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
+            for (WorkflowLinkDetailDO workflowLinkDetailDO : workflowLinkDO.getWorkflowLinkDetailDOList()) {
+                if (workflowLinkDetailDO.getVerifyUserGroupId() != null) {
+                    workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDetailDO.getVerifyUserGroupId());
+                    if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
+                        result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS);
+                        return result;
                     }
+                    workflowLinkDetailDO.setWorkflowVerifyUserGroupDOList(workflowVerifyUserGroupDOList);
                 }
             }
         }
