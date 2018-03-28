@@ -950,7 +950,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowNextNodeId(workflowNodeDOList.get(1).getId());
         }
         workflowLinkDetailDO.setVerifyUser(verifyUser);
-        workflowLinkDO.setVerifyUserGroupId(workflowVerifyUserGroupDO.getVerifyUserGroupId());
+        workflowLinkDetailDO.setVerifyUserGroupId(workflowVerifyUserGroupDO.getVerifyUserGroupId());
         workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
