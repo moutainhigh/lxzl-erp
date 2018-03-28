@@ -735,6 +735,7 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
     public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
     public static final String K3_SERVER_ERROR = "J17000015";
+    public static final String K3_RETURN_ORDER_FAIL = "J17000016";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1492,6 +1493,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
         MAP.put(K3_SERVER_ERROR, "K3服务异常");
+        MAP.put(K3_RETURN_ORDER_FAIL, "K3退货失败");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
