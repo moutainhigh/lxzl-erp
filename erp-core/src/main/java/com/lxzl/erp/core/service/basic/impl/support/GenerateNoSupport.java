@@ -52,8 +52,10 @@ import com.lxzl.erp.dataaccess.dao.mysql.transferOrder.TransferOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.StockOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.warehouse.WarehouseMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -540,6 +542,18 @@ public class GenerateNoSupport {
     }
 
     /**
+     * 生成审核组ID
+     */
+    public Integer generateVerifyUserGroupId(Date currentTime) {
+        synchronized (this) {
+            String count = String.format("%03d", workflowVerifyUserGroupMapper.listAllCount() + 1);
+            String date = new SimpleDateFormat("yyMMdd").format(currentTime);
+            Integer data = Integer.valueOf(date + count);
+            return data;
+        }
+    }
+
+    /**
      * 生成退还单编号
      */
     public String generateReturnOrderNo(Date currentTime, Integer customerId) {
@@ -939,4 +953,6 @@ public class GenerateNoSupport {
     private StatementPayOrderMapper statementPayOrderMapper;
     @Autowired
     private StatementOrderCorrectMapper statementOrderCorrectMapper;
+    @Autowired
+    private WorkflowVerifyUserGroupMapper workflowVerifyUserGroupMapper;
 }
