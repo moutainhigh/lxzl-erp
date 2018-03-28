@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.bank.impl.importSlip;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
-import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -31,7 +30,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -79,15 +77,7 @@ public class ImportAlipay {
                 return serviceResult;
             }
             //遍历当前sheet中的所有行
-
-            HashMap<String, Object> map = new HashMap<>();
-            SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
-            subCompanyQueryParam.setSubCompanyName(bankSlip.getSubCompanyName());
-            map.put("start", 0);
-            map.put("pageSize", Integer.MAX_VALUE);
-            map.put("subCompanyQueryParam", subCompanyQueryParam);
-            List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(map);
-            SubCompanyDO subCompanyDO = subCompanyDOList.get(0);
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
             BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
@@ -100,12 +90,12 @@ public class ImportAlipay {
             List<BankSlipDetailDO> bankSlipDetailDOList = data.getResult();
 
             //保存  银行对公流水表
-            bankSlipDO.setSubCompanyId(subCompanyDO.getId());
+            bankSlipDO.setSubCompanyName(subCompanyDO.getSubCompanyName());
 
             bankSlipDO.setSlipStatus(SlipStatus.INITIALIZE);
             bankSlipDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-            bankSlipDO.setClaimCount(0);
-            bankSlipDO.setConfirmCount(0);
+            bankSlipDO.setClaimCount(CommonConstant.COMMON_CONSTANT_NO);
+            bankSlipDO.setConfirmCount(CommonConstant.COMMON_CONSTANT_NO);
             bankSlipDO.setCreateTime(now);
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);
@@ -183,6 +173,7 @@ public class ImportAlipay {
             }
 
             boolean tradeAmountFlag = false;
+            boolean isRightBankType = false;
             if (row != null) {
                 //遍历所有的列
                 ccc:
@@ -209,6 +200,7 @@ public class ImportAlipay {
                             continue ccc;
                         }
                         if ("支出（-元）".equals(value)) {
+                            isRightBankType = true;
                             creditSumNo = y;
                             continue ccc;
                         }
@@ -239,6 +231,11 @@ public class ImportAlipay {
                         }
                     }
                 }
+                if(!isRightBankType){
+                    serviceResult.setErrorCode(ErrorCode.BANK_IS_NOT_ALIPAY);
+                    return serviceResult;
+                }
+
                 // todo 以下可以直接存数据
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期

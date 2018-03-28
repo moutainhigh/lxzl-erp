@@ -9,6 +9,7 @@ import java.math.BigDecimal;
  */
 public class UnReceivableDetail {
 
+    private String orderNo;  //订单编号
     private String customerNo;  //客户编号
     private String customerName;  //客户姓名
     private Integer rentLengthType;  //业务类型，1-短租，2-长租
@@ -20,6 +21,14 @@ public class UnReceivableDetail {
     private Integer overduePhaseCount;  //逾期期数
     private Integer orderItemReferId;  //订单项ID
     private Integer orderItemType;  //订单项类型，1为商品，2为配件
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
     public String getCustomerNo() {
         return customerNo;

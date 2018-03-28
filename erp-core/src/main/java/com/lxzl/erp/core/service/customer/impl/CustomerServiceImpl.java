@@ -12,10 +12,7 @@ import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -36,6 +33,7 @@ import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.erp.common.util.StrReplaceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +56,18 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式）
+        customerCompany.setCompanyName(StrReplaceUtil.replaceAll(customerCompany.getCompanyName()));
 
+        //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
+        String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
+        CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
+
+        //该公司简单名称已经存在，则返回错误代码信息
+        if(ccdo!=null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
         //如果是否为法人代表申请，为是
         if (customerCompany.getIsLegalPersonApple() == 1) {
             customerCompany.setLegalPerson(customerCompany.getAgentPersonName());
@@ -108,26 +117,19 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
-        if (dbCustomerDO != null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
-            return serviceResult;
-        }
-
         boolean flag = false;
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
-            for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
+            for (CustomerConsignInfo customerConsignInfo : customer.getCustomerCompany().getCustomerConsignInfoList()) {
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())) {
                     flag = true;
                     break;
                 }
             }
-            if(!flag){
+            if (!flag) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
                 return serviceResult;
             }
         }
-
 
         CustomerDO customerDO = ConverterUtil.convert(customer, CustomerDO.class);
         //保存业务员所属分公司
@@ -136,7 +138,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setCustomerNo(generateNoSupport.generateCustomerNo(now, CustomerType.CUSTOMER_TYPE_COMPANY));
         customerDO.setCustomerType(CustomerType.CUSTOMER_TYPE_COMPANY);
         customerDO.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
-        customerDO.setCustomerName(customer.getCustomerCompany().getCompanyName());
+        customerDO.setCustomerName(customerCompany.getCompanyName());
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
         customerDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerDO.setCreateTime(now);
@@ -151,6 +153,7 @@ public class CustomerServiceImpl implements CustomerService {
         //用于记录客户所需设备的计算结果
         ServiceResult<String, BigDecimal> setServiceResult = new ServiceResult<>();
         CustomerCompanyDO customerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
+
         //设置首次所需设备
         if (CollectionUtil.isNotEmpty(customer.getCustomerCompany().getCustomerCompanyNeedFirstList())) {
             List<CustomerCompanyNeed> customerCompanyNeedFirstList = customer.getCustomerCompany().getCustomerCompanyNeedFirstList();
@@ -177,7 +180,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerCompanyDO.setCustomerCompanyNeedLaterJson(JSON.toJSON(customerCompanyNeedLaterList).toString());
         }
 
-        for(CustomerConsignInfoDO customerConsignInfoDO:customerCompanyDO.getCustomerConsignInfoList()){
+        for (CustomerConsignInfoDO customerConsignInfoDO : customerCompanyDO.getCustomerConsignInfoList()) {
             if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())) {
                 //修改该客户下所有的默认地址的状态为0
                 customerConsignInfoMapper.clearIsMainByCustomerId(customerDO.getId());
@@ -187,7 +190,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerConsignInfoDO.setCreateTime(now);
             customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
             customerConsignInfoMapper.save(customerConsignInfoDO);
-            if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())) {
                 customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
             }
         }
@@ -197,6 +200,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerCompanyDO.setCreateTime(now);
         customerCompanyDO.setUpdateTime(now);
+        //将公司简单名称添加存入实体类
+        customerCompanyDO.setSimpleCompanyName(simpleCompanyName);
         customerCompanyDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerCompanyMapper.save(customerCompanyDO);
@@ -213,7 +218,9 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
         return serviceResult;
+
     }
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -292,6 +299,8 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         CustomerCompany customerCompany = customer.getCustomerCompany();
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerCompany.setCompanyName(StrReplaceUtil.replaceAll(customerCompany.getCompanyName()));
 
         //校验是否有公司和是否为公司客户
         CustomerDO customerDO = customerMapper.findCustomerCompanyByNo(customer.getCustomerNo());
@@ -299,6 +308,16 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
+
+        //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
+        String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
+        CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
+        //该公司简单名称已经存在，则返回错误代码信息
+        if(ccdo!=null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
+
         //校验当前是否是跟单员,联合开发人,创建人
         serviceResult = verifyJurisdiction(customerDO);
         if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
@@ -357,7 +376,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-        CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerCompany().getCompanyName());
+        CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
@@ -375,7 +394,6 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
-        
         boolean flag = false;
         if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
             for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
@@ -433,6 +451,8 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomerCompanyDO.setUpdateTime(now);
         newCustomerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         newCustomerCompanyDO.setId(customerCompanyDO.getId());
+        //将公司简单名称添加存入实体类
+        newCustomerCompanyDO.setSimpleCompanyName(simpleCompanyName);
         customerCompanyMapper.update(newCustomerCompanyDO);
 
         //对经办人身份证正面操作
@@ -569,7 +589,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
-        customerDO.setCustomerName(newCustomerCompanyDO.getCompanyName());
+        customerDO.setCustomerName(customerCompany.getCompanyName());
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setRemark(customer.getRemark());
@@ -795,7 +815,6 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-
     @Override
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
@@ -804,9 +823,10 @@ public class CustomerServiceImpl implements CustomerService {
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
+        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+        customerCompanyQueryParam.setCompanyName(StrReplaceUtil.replaceAll(customerCompanyQueryParam.getCompanyName()));
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
-
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
         List<CustomerDO> customerDOList = customerMapper.findCustomerCompanyByParams(maps);
         if (CollectionUtil.isNotEmpty(customerDOList)) {
@@ -1483,7 +1503,6 @@ public class CustomerServiceImpl implements CustomerService {
                 customerRiskManagementHistoryMapper.save(customerRiskManagementHistoryDO);
             }
         }
-        
         //跟新客户审核状态为成功
         if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
             customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
@@ -2686,6 +2705,44 @@ public class CustomerServiceImpl implements CustomerService {
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    /**
+     * 风控历史记录分页查询
+     * @param customerRiskManageHistoryQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<CustomerRiskManagementHistory>> pageCustomerRiskManagementHistory(CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam) {
+        ServiceResult<String, Page<CustomerRiskManagementHistory>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerRiskManageHistoryQueryParam.getPageNo(), customerRiskManageHistoryQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("customerRiskManageHistoryQueryParam", customerRiskManageHistoryQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        Integer totalCount = customerRiskManagementHistoryMapper.findCustomerRiskHistoryCountByParams(maps);
+        List<CustomerRiskManagementHistoryDO> customerRiskHistoryDOList = customerRiskManagementHistoryMapper.findCustomerRiskHistoryByParams(maps);
+        List<CustomerRiskManagementHistory> customerRiskManagementHistoryList = ConverterUtil.convertList(customerRiskHistoryDOList,CustomerRiskManagementHistory.class);
+        Page<CustomerRiskManagementHistory> page = new Page<>(customerRiskManagementHistoryList,totalCount, customerRiskManageHistoryQueryParam.getPageNo(), customerRiskManageHistoryQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    /**
+     * 风控历史详情
+     * @param customerRiskManagementHistoryId
+     * @return
+     */
+    @Override
+    public ServiceResult<String, CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId) {
+        ServiceResult<String, CustomerRiskManagementHistory> serviceResult = new ServiceResult<>();
+        CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = customerRiskManagementHistoryMapper.findById(customerRiskManagementHistoryId);
+        CustomerRiskManagementHistory customerRiskManagementHistoryResult = ConverterUtil.convert(customerRiskManagementHistoryDO, CustomerRiskManagementHistory.class);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerRiskManagementHistoryResult);
         return serviceResult;
     }
 
