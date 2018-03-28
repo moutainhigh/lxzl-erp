@@ -2824,6 +2824,39 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    /**
+     * 此方法只用于处理历史数据中公司客户的新增字段simple_company_name字段为空的情况，新增数据不会出现此种情况
+     * @return
+     */
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> customerCompanySimpleNameProcessing() {
+
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        if (!userSupport.isSuperUser()){
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+        List<CustomerCompanyDO> list = customerCompanyMapper.findBySimpleCompanyNameIsNull();
+
+        List<CustomerCompanyDO> newCustomerCompanyList = new ArrayList<>();
+        StrReplaceUtil sutil = new StrReplaceUtil();
+
+        for (CustomerCompanyDO customerCompany : list) {
+            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+            customerCompany.setCompanyName(sutil.replaceAll(customerCompany.getCompanyName()));
+            //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
+            String simpleCompanyName = sutil.nameToSimple(customerCompany.getCompanyName());
+            customerCompany.setSimpleCompanyName(simpleCompanyName);
+            newCustomerCompanyList.add(customerCompany);
+
+        }
+        customerCompanyMapper.batchAddSimpleCompanyName(newCustomerCompanyList);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+
+    }
+
     @Autowired
     private UserMapper userMapper;
 

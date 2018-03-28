@@ -285,4 +285,26 @@
 		SELECT <include refid="column_List"/> FROM erp_customer_company ecc WHERE
 		ecc.simple_company_name = #{simpleCompanyName, jdbcType=VARCHAR} AND ecc.data_status = 1
 	</select>
+	<select id="findBySimpleCompanyNameIsNull" resultType="CustomerCompanyDO" >
+		SELECT ecc.id,ecc.company_name as companyName,ecc.simple_company_name as simpleCompanyName FROM erp_customer_company ecc WHERE
+		ecc.simple_company_name is NULL
+	</select>
+
+	<update id="batchAddSimpleCompanyName" parameterType="java.util.ArrayList">
+		update erp_customer_company
+		SET
+		<trim>
+			simple_company_name =
+			<foreach item="customerCompanyDO" collection="customerCompanyList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.simpleCompanyName}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="customerCompanyList" index="index" item="customerCompanyDO"
+				 separator="," open="(" close=")">
+			#{customerCompanyDO.id,jdbcType=INTEGER}
+		</foreach>
+
+	</update>
+
 </mapper>
