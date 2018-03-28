@@ -39,34 +39,20 @@
                                     <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                <div class="field form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                        <select name="bankType" id="bankType" class="form-control input-sm bradius"></select>
                                     </div>
                                 </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                <input type="hidden" name="slipMonth">
+                                <div class="field form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
-                                    </div>
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <div class="input-group">
-                                        <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="输入手机号">
-                                    </div>
-                                </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <div class="input-group">
-                                        <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
-                                    </div>
-                                </div>
-                                <div class="form-group pull-right mn mr10" style="width: 140px;">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="customerStatus" id="customerStatus"></select>
+                                        <select name="slipStatus" id="slipStatus" class="form-control input-sm bradius"></select>
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId"></select>
+                                        <select class="form-control input-sm bradius" name="subCompanyId"  id="subCompanyName"></select>
                                     </div>
                                 </div>
                             </form>
@@ -86,7 +72,6 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>分公司ID</th>
                                 <th>分公司名称</th>
                                 <th>银行类型</th>
                                 <th>月份</th>
@@ -95,6 +80,7 @@
                                 <th>需认领笔数</th>
                                 <th>已认领笔数</th>
                                 <th>已确认笔数</th>
+                                <th>创建人</th>
                                 <th>单据状态</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -113,15 +99,19 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
-                                <td>{{bankType}}</td>
-                                <td>{{slipMonth}}</td>
+                                <td>{{bankTypeValue}}</td>
+                                <td>{{#clockMonthTime}}{{slipMonth}}{{/clockMonthTime}}</td>
                                 <td>{{accountNo}}</td>
                                 <td>{{inCount}}</td>
                                 <td>{{needClaimCount}}</td>
                                 <td>{{claimCount}}</td>
-                                <td>{{slipStatus}}</td>
+                                <td>{{confirmCount}}</td>
+                                <td>
+                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                </td>
+                                <td>{{slipStatusValue}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group">
@@ -129,13 +119,7 @@
                                         <ul class="dropdown-menu pull-right" role="menu">
                                             {{#rowActionButtons}}
                                             <li>
-                                                <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
-                                                   data-customerno="{{customerNo}}"
-                                                   data-statementdate="{{statementDate}}"
-                                                   data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
-                                                   data-ownerSubCompanyId="{{ownerSubCompanyId}}"
-                                                   data-customertype="{{customerType}}"
-                                                   class="{{class}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}?bankSlipId={{bankSlipId}}" class="{{class}}" data-bankSlipId="{{bankSlipId}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
                                         </ul>
@@ -146,7 +130,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到客户信息</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到资金流水附件信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
@@ -174,8 +158,6 @@
 <script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
-            'manage.customer.handle.mixin.js',
-            'manage.customer.mixin.js',
             'manage.jurnal.amount.js',
             'manage.jurnal.upload.js'
     );
@@ -185,7 +167,6 @@
     Rental.init();
     Layout.init();
     JurnalAmountManage.init();
-//    UploadExcelMsg.init();
 
     //UI效果初始化
     Core.init();
