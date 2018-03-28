@@ -313,7 +313,7 @@ public class CustomerServiceImpl implements CustomerService {
         String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
         //该公司简单名称已经存在，则返回错误代码信息
-        if(ccdo!=null){
+        if(ccdo == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
