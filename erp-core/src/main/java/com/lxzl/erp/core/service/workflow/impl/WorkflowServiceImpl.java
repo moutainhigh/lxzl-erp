@@ -629,7 +629,9 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
                 noticeBusinessModule = true;
             }
-            workflowLinkDO.setCurrentVerifyUser(nextVerifyUser);
+            if(nextVerifyUser != null){
+                workflowLinkDO.setCurrentVerifyUser(nextVerifyUser);
+            }
         } else {
             workflowLinkDO.setCurrentVerifyUser(null);
             workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
