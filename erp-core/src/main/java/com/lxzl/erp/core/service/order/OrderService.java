@@ -171,4 +171,13 @@ public interface OrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String, Order> createOrderFirstPayAmount(Order order);
+    /**
+     * 处理取消订单的结算单（临时使用该接口）
+     *
+     * @Author : liuke
+     * @Date : Created in 2018/3/28 17:25
+     * @param orderNo
+     * @return
+     */
+    ServiceResult<String, String> processStatementOrderByCancel(String orderNo);
 }

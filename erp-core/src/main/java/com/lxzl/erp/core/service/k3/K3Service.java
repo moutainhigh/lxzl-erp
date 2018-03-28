@@ -78,4 +78,6 @@ public interface K3Service extends VerifyReceiver {
     ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord);
 
     ServiceResult<String, Map<String, String>> batchSendDataToK3(K3SendRecordBatchParam k3SendRecordBatchParam);
+
+    ServiceResult<String,String> strongCancelReturnOrder(String returnOrderNo);
 }
