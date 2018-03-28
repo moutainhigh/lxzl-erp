@@ -198,6 +198,26 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
     }
 
+    private void saveWorkflowGroupImage(Integer workflowDetailId, List<Integer> imgIdList, Date currentTime) {
+        //对营业执照图片操作
+        if (CollectionUtil.isNotEmpty(imgIdList)) {
+            for (Integer imageId : imgIdList) {
+                ImageDO workflowImage = imgMysqlMapper.findById(imageId);
+                if (workflowImage == null) {
+                    return;
+                }
+                if (StringUtil.isNotEmpty(workflowImage.getRefId())) {
+                    return;
+                }
+                workflowImage.setImgType(ImgType.WORKFLOW_IMG_GROUP_TYPE);
+                workflowImage.setRefId(workflowDetailId.toString());
+                workflowImage.setUpdateUser(userSupport.getCurrentUserId().toString());
+                workflowImage.setUpdateTime(currentTime);
+                imgMysqlMapper.update(workflowImage);
+            }
+        }
+    }
+
     private Integer getSubCompanyId(Integer workflowType, String workflowReferNo) {
         Integer subCompanyId = -1;
         if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)) {
@@ -388,6 +408,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
 
+        //todo 等前端修改完 减少代码
         if (workflowLinkDO.getVerifyUserGroupId() != null) {
             List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(workflowLinkDO.getVerifyUserGroupId());
             if (CollectionUtil.isEmpty(workflowVerifyUserGroupDOList)) {
@@ -413,10 +434,12 @@ public class WorkflowServiceImpl implements WorkflowService {
                 if (CollectionUtil.isNotEmpty(imageDOList)) {
                     workflowLinkDetailDO.setImageDOList(imageDOList);
                 }
-                for(WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO :workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList()){
-                    List<ImageDO> groupImageDOList = imgMysqlMapper.findByRefIdAndType(workflowVerifyUserGroupDO.getId().toString(), ImgType.WORKFLOW_IMG_TYPE);
-                    if (CollectionUtil.isNotEmpty(groupImageDOList)) {
-                        workflowVerifyUserGroupDO.setImageDOList(groupImageDOList);
+                if(CollectionUtil.isNotEmpty(workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList())){
+                    for(WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO :workflowLinkDetailDO.getWorkflowVerifyUserGroupDOList()){
+                        List<ImageDO> groupImageDOList = imgMysqlMapper.findByRefIdAndType(workflowVerifyUserGroupDO.getId().toString(), ImgType.WORKFLOW_IMG_GROUP_TYPE);
+                        if (CollectionUtil.isNotEmpty(groupImageDOList)) {
+                            workflowVerifyUserGroupDO.setImageDOList(groupImageDOList);
+                        }
                     }
                 }
             }
@@ -560,7 +583,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowVerifyUserGroupDO.setUpdateTime(currentTime);
                 workflowVerifyUserGroupDO.setUpdateUser(loginUser.getUserId().toString());
                 workflowVerifyUserGroupMapper.update(workflowVerifyUserGroupDO);
-                saveWorkflowImage(workflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
+                saveWorkflowGroupImage(workflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
             }
             if (VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS.equals(workflowVerifyUserGroupDO.getVerifyType()) && VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())) {
                 passCount++;
@@ -771,7 +794,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkMapper.save(workflowLinkDO);
 
         // 生成提交人工作流
-
+        //todo 前端修改完部分代码要取消掉
         WorkflowVerifyUserGroupDO commitWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
         commitWorkflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
         commitWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
@@ -784,7 +807,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
         workflowVerifyUserGroupMapper.save(commitWorkflowVerifyUserGroupDO);
 
-        saveWorkflowImage(commitWorkflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
+        saveWorkflowGroupImage(commitWorkflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
 
         WorkflowLinkDetailDO commitWorkflowLinkDetailDO = new WorkflowLinkDetailDO();
         commitWorkflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
@@ -896,7 +919,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
         workflowVerifyUserGroupMapper.save(commitWorkflowVerifyUserGroupDO);
 
-        saveWorkflowImage(commitWorkflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
+        saveWorkflowGroupImage(commitWorkflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
 
         WorkflowLinkDetailDO commitWorkflowLinkDetailDO = new WorkflowLinkDetailDO();
         commitWorkflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
@@ -1261,7 +1284,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowVerifyUserGroupDO.setCreateTime(currentTime);
         workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
 
-        saveWorkflowImage(workflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
+        saveWorkflowGroupImage(workflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
 
         WorkflowLinkDetailDO commitWorkflowLinkDetailDO = new WorkflowLinkDetailDO();
         commitWorkflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
