@@ -63,7 +63,6 @@ public class BankSlipController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
-
     @RequestMapping(value = "ignoreBankSlipDetail", method = RequestMethod.POST)
     public Result ignoreBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
         ServiceResult<String, Integer> serviceResult = bankSlipService.ignoreBankSlipDetail(bankSlipDetail);
@@ -76,12 +75,10 @@ public class BankSlipController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
-    @RequestMapping(value = "verifyBankSlipDetail", method = RequestMethod.POST)
+    @RequestMapping(value = "confirmBankSlip", method = RequestMethod.POST)
     public Result verifyBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
-        ServiceResult<String, Integer> serviceResult = bankSlipService.verifyBankSlipDetail(bankSlip);
+        ServiceResult<String, Integer> serviceResult = bankSlipService.confirmBankSlip(bankSlip);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
-
-
 
 }

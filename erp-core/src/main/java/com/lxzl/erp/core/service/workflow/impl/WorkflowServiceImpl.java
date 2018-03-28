@@ -198,7 +198,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
     }
 
-    private void saveWorkflowGroupImage(Integer workflowDetailId, List<Integer> imgIdList, Date currentTime) {
+    private void saveWorkflowGroupImage(Integer workflowVerifyUserGroupId, List<Integer> imgIdList, Date currentTime) {
         //对营业执照图片操作
         if (CollectionUtil.isNotEmpty(imgIdList)) {
             for (Integer imageId : imgIdList) {
@@ -210,7 +210,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     return;
                 }
                 workflowImage.setImgType(ImgType.WORKFLOW_IMG_GROUP_TYPE);
-                workflowImage.setRefId(workflowDetailId.toString());
+                workflowImage.setRefId(workflowVerifyUserGroupId.toString());
                 workflowImage.setUpdateUser(userSupport.getCurrentUserId().toString());
                 workflowImage.setUpdateTime(currentTime);
                 imgMysqlMapper.update(workflowImage);
@@ -950,7 +950,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowNextNodeId(workflowNodeDOList.get(1).getId());
         }
         workflowLinkDetailDO.setVerifyUser(verifyUser);
-        workflowLinkDO.setVerifyUserGroupId(workflowVerifyUserGroupDO.getVerifyUserGroupId());
+        workflowLinkDetailDO.setVerifyUserGroupId(workflowVerifyUserGroupDO.getVerifyUserGroupId());
         workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
         workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
