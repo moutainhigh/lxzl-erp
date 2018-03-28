@@ -2,7 +2,10 @@ package com.lxzl.erp.common.domain.workflow.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.system.pojo.Image;
+
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,6 +26,8 @@ public class WorkflowVerifyUserGroup extends BasePO {
 	private String updateUser;   //修改人
 
 	private String verifyUserName;
+
+	private List<Image> imageList;
 
 	public Integer getWorkflowVerifyUserGroupId(){
 		return workflowVerifyUserGroupId;
@@ -129,4 +134,8 @@ public class WorkflowVerifyUserGroup extends BasePO {
 	public String getVerifyUserName() { return verifyUserName; }
 
 	public void setVerifyUserName(String verifyUserName) { this.verifyUserName = verifyUserName; }
+
+	public List<Image> getImageList() { return imageList; }
+
+	public void setImageList(List<Image> imageList) { this.imageList = imageList; }
 }

@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.domain.workflow;
 
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class WorkflowVerifyUserGroupDO  extends BaseDO {
@@ -20,6 +22,8 @@ public class WorkflowVerifyUserGroupDO  extends BaseDO {
 
 	@Transient
 	private String verifyUserName;
+
+	private List<ImageDO> imageDOList;
 
 	public Integer getId(){
 		return id;
@@ -96,4 +100,8 @@ public class WorkflowVerifyUserGroupDO  extends BaseDO {
 	public String getVerifyUserName() { return verifyUserName; }
 
 	public void setVerifyUserName(String verifyUserName) { this.verifyUserName = verifyUserName; }
+
+	public List<ImageDO> getImageDOList() { return imageDOList; }
+
+	public void setImageDOList(List<ImageDO> imageDOList) { this.imageDOList = imageDOList; }
 }
