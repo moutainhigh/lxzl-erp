@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper">
+
+	<resultMap id="SubCompanyCityCoverDO" type="com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="province_id" jdbcType="INTEGER" property="provinceId" />
+		<result column="city_id" jdbcType="INTEGER" property="cityId" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		esccc.id,esccc.province_id,esccc.city_id,esccc.sub_company_id,esccc.data_status,esccc.remark,esccc.create_time,esccc.update_time,esccc.create_user,esccc.update_user
+	</sql>
+
+	<select id="findById" resultMap="SubCompanyCityCoverDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_sub_company_city_cover esccc 
+		WHERE esccc.id = #{id, jdbcType=INTEGER} AND esccc.data_status = 1 
+	</select>
+
+	<select id="findByCityId" resultMap="SubCompanyCityCoverDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_sub_company_city_cover esccc
+		WHERE esccc.city_id = #{cityId, jdbcType=INTEGER} AND esccc.data_status = 1
+	</select>
+
+	<select id="findByProvinceId" resultMap="SubCompanyCityCoverDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_sub_company_city_cover esccc
+		WHERE esccc.province_id = #{provinceId, jdbcType=INTEGER} AND esccc.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(esccc.id) FROM erp_sub_company_city_cover esccc 
+		<where>
+			<if test="true">
+				AND esccc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="SubCompanyCityCoverDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_sub_company_city_cover esccc 
+		<where>
+			<if test="true">
+				AND esccc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="provinceId != null">
+				province_id = #{provinceId,jdbcType=INTEGER},
+			</if>
+			<if test="cityId != null">
+				city_id = #{cityId,jdbcType=INTEGER},
+			</if>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO">
+		INSERT INTO erp_sub_company_city_cover <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO">
+		UPDATE erp_sub_company_city_cover <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

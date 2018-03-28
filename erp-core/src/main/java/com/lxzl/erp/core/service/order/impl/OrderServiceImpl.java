@@ -2659,7 +2659,7 @@ public class OrderServiceImpl implements OrderService {
                     materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? materialDO.getNewMonthRentPrice() : materialDO.getMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价
-                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), productPrice) < 0) {
+                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialPrice) < 0) {
                     if (verifyMaterial == null) {
                         if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?
