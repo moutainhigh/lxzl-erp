@@ -1,13 +1,18 @@
 package com.lxzl.erp.common.domain.customer.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerRiskManagementHistory extends BasePO {
 
+	@NotNull(message = ErrorCode.ID_NOT_NULL , groups = {IdGroup.class})
 	private Integer customerRiskManagementHistoryId;   //唯一标识
 	private Integer customerId;   //客户ID
 	private String customerNo;   //客户编号

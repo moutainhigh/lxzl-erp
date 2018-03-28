@@ -1,6 +1,5 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
@@ -31,7 +30,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setOwner(500021);
+        customer.setOwner(500022);
 //        customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
         customer.setDeliveryMode(0);
@@ -67,7 +66,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerConsignInfo3.setCity(3);
         customerConsignInfo3.setDistrict(19);
         customerConsignInfo3.setAddress("企业信息详细地址测试update");
-        customerConsignInfo3.setIsBusinessAddress(0);
+        customerConsignInfo3.setIsBusinessAddress(1);
         customerConsignInfoList.add(customerConsignInfo3);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
@@ -93,7 +92,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("齐天文化032006");
+        customerCompany.setCompanyName("56齐天文化-A0320ｓｓｈｂｓ0678");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
@@ -187,7 +186,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180320-00344");
+        customer.setCustomerNo("LXCC-1000-20180327-00820");
         customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
@@ -266,7 +265,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customerCompany.setCustomerOrigin(1);
         customerCompany.setIndustry("3");
-        customerCompany.setCompanyName("upadate文化03200101");
+        customerCompany.setCompanyName("a文_文化-A0320ｓｓｈｂｓ0ａＡＳ＠＃");
         customerCompany.setConnectRealName("测试紧急联系人");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
@@ -674,4 +673,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);
     }
+
+    /**风控历史记录分页*/
+    @Test
+    public void pageCustomerRiskManagementHistory() throws Exception {
+        CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam = new CustomerRiskManageHistoryQueryParam();
+        customerRiskManageHistoryQueryParam.setCustomerNo("LXCC-027-20180326-00798");
+        TestResult result = getJsonTestResult("/customer/pageCustomerRiskManagementHistory", customerRiskManageHistoryQueryParam);
+    }
+
+    /**风控历史记录详情*/
+    @Test
+    public void detailCustomerRiskManagementHistory() throws Exception {
+        CustomerRiskManagementHistory customerRiskManagementHistory = new CustomerRiskManagementHistory();
+        customerRiskManagementHistory.setCustomerRiskManagementHistoryId(3);
+        TestResult result = getJsonTestResult("/customer/detailCustomerRiskManagementHistory", customerRiskManagementHistory);
+    }
+
 }

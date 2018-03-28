@@ -46,6 +46,7 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Double operatingArea; //经营面积
 	private Integer unitInsuredNumber; //单位参保人数
 	private String affiliatedEnterprise; //关联企业
+	private String simpleCompanyName;//公司简单名称字段（新增）
 
 	@Transient
 	private String cityName;
@@ -363,4 +364,12 @@ public class CustomerCompanyDO  extends BaseDO {
 	public List<CustomerConsignInfoDO> getCustomerConsignInfoList() { return customerConsignInfoList; }
 
 	public void setCustomerConsignInfoList(List<CustomerConsignInfoDO> customerConsignInfoList) { this.customerConsignInfoList = customerConsignInfoList; }
+
+	public String getSimpleCompanyName() {
+		return simpleCompanyName;
+	}
+
+	public void setSimpleCompanyName(String simpleCompanyName) {
+		this.simpleCompanyName = simpleCompanyName;
+	}
 }
