@@ -825,8 +825,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
         MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
-        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货信息的城市与省份为空");
-        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址的城市与省份为空");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址信息，公司业务未覆盖范围");
+        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址信息，公司业务未覆盖范围");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");

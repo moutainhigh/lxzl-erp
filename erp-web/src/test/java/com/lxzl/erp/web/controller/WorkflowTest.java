@@ -3,16 +3,24 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.VerifyStatus;
+import com.lxzl.erp.common.constant.VerifyType;
 import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.workflow.VerifyWorkflowParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowNode;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -25,11 +33,14 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF-500349-20180312-00030");
-        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
-//        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+        workflowParam.setWorkflowLinkNo("LXWF-500355-20180329-00784");
+//        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowParam.setReturnType(1);
 //        workflowParam.setNextVerifyUser(500016);
+//        List<Integer> list = new ArrayList<>();
+//        list.add(1819);
+//        workflowParam.setImgIdList(list);
 
         TestResult testResult = getJsonTestResult("/workflow/verifyWorkFlow", workflowParam);
     }
@@ -37,8 +48,8 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
-        workflowLinkQueryParam.setWorkflowReferNo("PO201712291657381525000021440");
+        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
+        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180328-00818");
         TestResult testResult = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
@@ -53,7 +64,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void queryWorkflowLinkDetail() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setWorkflowLinkNo("WL201711282117102791529");
+        workflowLinkQueryParam.setWorkflowLinkNo("LXWF-500324-20180328-00762");
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkDetail", workflowLinkQueryParam);
     }
 
@@ -110,4 +121,49 @@ public class WorkflowTest extends ERPUnTransactionalTest {
         workflowTemplateQueryParam.setWorkflowTemplateId(6);
         TestResult testResult = getJsonTestResult("/workflow/pageWorkflowTemplate", workflowTemplateQueryParam);
     }
+
+    @Test
+    public void workflowImportData() throws Exception {
+        Date now = new Date();
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start", 0);
+        paramMap.put("pageSize", Integer.MAX_VALUE);
+        paramMap.put("workflowLinkQueryParam", workflowLinkQueryParam);
+        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.listPage(paramMap);
+
+        for(WorkflowLinkDO workflowLinkDO:workflowLinkDOList){
+            if(workflowLinkDO.getVerifyUserGroupId() == null){
+                for(WorkflowLinkDetailDO workflowLinkDetailDO:workflowLinkDO.getWorkflowLinkDetailDOList()){
+                    if(workflowLinkDetailDO.getVerifyUserGroupId() == null){
+                        Integer groupId = generateNoSupport.generateVerifyUserGroupId(workflowLinkDetailDO.getCreateTime());
+                        WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+                        workflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
+                        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
+                        workflowVerifyUserGroupDO.setVerifyUser(workflowLinkDetailDO.getVerifyUser());
+                        workflowVerifyUserGroupDO.setVerifyTime(workflowLinkDetailDO.getVerifyTime());
+                        workflowVerifyUserGroupDO.setVerifyStatus(workflowLinkDetailDO.getVerifyStatus());
+                        workflowVerifyUserGroupDO.setVerifyOpinion(workflowLinkDetailDO.getVerifyOpinion());
+                        workflowVerifyUserGroupDO.setDataStatus(workflowLinkDetailDO.getDataStatus());
+                        workflowVerifyUserGroupDO.setCreateTime(now);
+                        workflowVerifyUserGroupDO.setUpdateTime(now);
+                        workflowVerifyUserGroupDO.setCreateUser(workflowLinkDetailDO.getCreateUser());
+                        workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
+                        System.out.println(workflowVerifyUserGroupDO.getId());
+                        workflowLinkDetailDO.setVerifyUserGroupId(groupId);
+                        workflowLinkDetailMapper.update(workflowLinkDetailDO);
+                        System.out.println(workflowLinkDetailDO.getId());
+                    }
+                }
+            }
+        }
+    }
+    @Autowired
+    private WorkflowLinkMapper workflowLinkMapper;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private WorkflowVerifyUserGroupMapper workflowVerifyUserGroupMapper;
+    @Autowired
+    private WorkflowLinkDetailMapper workflowLinkDetailMapper;
 }

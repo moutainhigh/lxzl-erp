@@ -156,14 +156,17 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
                     String measureList = obj.get("MeasureList").toString();
-                    List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
-                    convertOrderMaterial(orderMaterialList);
-                    order.setOrderMaterialList(orderMaterialList);
+                    if (measureList != null && !"[]".equals(measureList)) {
+                        List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
+                        convertOrderMaterial(orderMaterialList);
+                        order.setOrderMaterialList(orderMaterialList);
+                    }
                     String productList = obj.get("ProductList").toString();
-                    List<OrderProduct> orderProductList = JSON.parseArray(productList, OrderProduct.class);
-                    convertOrderProduct(orderProductList);
-                    order.setOrderProductList(orderProductList);
-
+                    if (productList != null && !"[]".equals(productList)) {
+                        List<OrderProduct> orderProductList = JSON.parseArray(productList, OrderProduct.class);
+                        convertOrderProduct(orderProductList);
+                        order.setOrderProductList(orderProductList);
+                    }
                     orderList.add(order);
                 }
             }
@@ -259,7 +262,7 @@ public class K3ServiceImpl implements K3Service {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("orderNo", orderNo);
             String requestJson = jsonObject.toJSONString();
-            String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(k3OrderDetailUrl, requestJson, headerBuilder, "UTF-8");
 
             logger.info("query k3 order page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
