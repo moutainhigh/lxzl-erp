@@ -1157,10 +1157,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         Map<Integer, Integer> map = new HashMap<>();
         List<Integer> verifyUserList = new ArrayList<>();
-        Integer verifyUserGroupId = null;
-        if (verifyUser == null) {
-            verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId(currentTime);
-        }
+        Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId(currentTime);
         //判断经营地址
         SubCompanyCityCoverDO subCompanyCityCoverDO;
         if (customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null) {
