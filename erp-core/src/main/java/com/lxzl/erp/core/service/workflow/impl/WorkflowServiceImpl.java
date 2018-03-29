@@ -282,7 +282,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
 
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(loginUser.getUserId());
         workflowVerifyUserGroupDO.setVerifyTime(currentTime);
@@ -658,7 +658,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (nextWorkflowNodeDO != null) {
 
                 WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-                workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+                workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
                 workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
                 workflowVerifyUserGroupDO.setVerifyUser(nextVerifyUser);
                 workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
@@ -709,7 +709,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 if (workflowLinkDetailDOList.size() > 1) {
                     WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
                     List<WorkflowVerifyUserGroupDO> newWorkflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(previousWorkflowLinkDetailDO.getVerifyUserGroupId());
-                    Integer groupId = generateNoSupport.generateVerifyUserGroupId(currentTime);
+                    Integer groupId = generateNoSupport.generateVerifyUserGroupId();
                     for(WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO:newWorkflowVerifyUserGroupDOList){
                         WorkflowVerifyUserGroupDO newWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                         newWorkflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
@@ -816,7 +816,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         //生成审核组id
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(verifyUser);
         workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
@@ -846,7 +846,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         // 生成提交人工作流
         WorkflowVerifyUserGroupDO commitWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-        commitWorkflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+        commitWorkflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         commitWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         commitWorkflowVerifyUserGroupDO.setVerifyUser(loginUser.getUserId());
         commitWorkflowVerifyUserGroupDO.setVerifyTime(currentTime);
@@ -923,7 +923,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         //生成审核组id
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(verifyUser);
         workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
@@ -950,7 +950,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 生成提交人工作流
 
         WorkflowVerifyUserGroupDO commitWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-        commitWorkflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+        commitWorkflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         commitWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         commitWorkflowVerifyUserGroupDO.setVerifyUser(loginUser.getUserId());
         commitWorkflowVerifyUserGroupDO.setVerifyTime(currentTime);
@@ -1199,7 +1199,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         Map<Integer, Integer> map = new HashMap<>();
         List<Integer> verifyUserList = new ArrayList<>();
-        Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId(currentTime);
+        Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
 
         SubCompanyCityCoverDO subCompanyCityCoverDO;
         if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
@@ -1315,7 +1315,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     private void saveWorkflowLink(WorkflowLinkDO workflowLinkDO, String workflowReferNo, WorkflowNodeDO thisWorkflowNodeDO, Integer loginUserId, String commitRemark, Date currentTime, List<Integer> imgIdList, Integer verifyUser, List<Integer> verifyUserList, List<WorkflowNodeDO> workflowNodeDOList, Integer verifyUserGroupId) {
         // 生成提交人工作流
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId(currentTime));
+        workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(loginUserId);
         workflowVerifyUserGroupDO.setVerifyTime(currentTime);
