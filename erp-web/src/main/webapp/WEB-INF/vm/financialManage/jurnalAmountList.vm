@@ -97,7 +97,6 @@
                                 <th>明细状态</th>
                                 <th>备注</th>
                                 <th>创建人</th>
-                                <th>修改人</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
                                 {{/hasRowActionButtons}}
@@ -121,7 +120,7 @@
                                 <td>{{otherSideAccountNo}}</td>
                                 <td>{{tradeSerialNo}}</td>
                                 <td>
-                                    <p class="mn">{{tradeAmount}}</p>
+                                    <p class="mn">￥{{#price}}{{tradeAmount}}{{/price}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
                                 <td>{{tradeMessage}}</td>
@@ -129,12 +128,8 @@
                                 <td>{{detailStatusValue}}</td>
                                 <td>{{remark}}</td>
                                 <td>
-                                    <p class="mn">{{createUser}}</p>
+                                    <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
-                                </td>
-                                <td>
-                                    <p class="mn">{{updateUser}}</p>
-                                    <p class="mn mt5">{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</p>
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
