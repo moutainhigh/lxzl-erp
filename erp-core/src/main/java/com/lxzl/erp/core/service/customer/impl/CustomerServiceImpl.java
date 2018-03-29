@@ -12,6 +12,9 @@ import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLinkDetail;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowVerifyUserGroup;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.customer.CustomerService;
@@ -313,7 +316,7 @@ public class CustomerServiceImpl implements CustomerService {
         String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
         //该公司简单名称已经存在，则返回错误代码信息
-        if(ccdo!=null){
+        if(ccdo == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -883,11 +886,11 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
         customerDO.getCustomerCompanyDO().setCustomerConsignInfoList(customerConsignInfoDO);
 
-        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
-        if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
+        if(!authorityControl(customerDO)){
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
+
         //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
         processCustomerPhone(customerDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
@@ -1107,16 +1110,20 @@ public class CustomerServiceImpl implements CustomerService {
         }
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+            List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+            customerDO.getCustomerCompanyDO().setCustomerConsignInfoList(customerConsignInfoDO);
         } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
-            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+            customerDO = customerMapper.findCustomerPersonByNo(customerNo);
+            List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+            customerDO.getCustomerPersonDO().setCustomerConsignInfoDOList(customerConsignInfoDO);
         }
-
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
-        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
-        if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
+
+        if(!authorityControl(customerDO)){
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
+
         //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
         processCustomerPhone(customerDO);
         Customer customerResult = ConverterUtil.convert(customerDO, Customer.class);
@@ -1243,25 +1250,23 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+
+        List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+        if(CollectionUtil.isEmpty(customerConsignInfoDOList)){
+            result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
+            return result;
+        }
+        
         //只有创建人和业务员和联合开发员才能提交功能
-        if (!customerDO.getCreateUser().equals(loginUser.getUserId().toString())) {
-            if (!customerDO.getOwner().equals(loginUser.getUserId())) {
-                if (customerDO.getUnionUser() == null) {
-                    result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
-                    return result;
-                } else if (!customerDO.getUnionUser().equals(loginUser.getUserId())) {
-                    result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
-                    return result;
-                }
-            }
+        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
+                !loginUser.getUserId().equals(customerDO.getOwner()) &&
+                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
+            return result;
         }
 
         if (!CustomerStatus.STATUS_INIT.equals(customerDO.getCustomerStatus()) && !CustomerStatus.STATUS_REJECT.equals(customerDO.getCustomerStatus())) {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_ERROR);
-            return result;
-        }
-        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerDO.getIsDisabled())) {
-            result.setErrorCode(ErrorCode.CUSTOMER_IS_DISABLED);
             return result;
         }
 
@@ -1271,22 +1276,11 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        Integer workflowType;
-        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
-            workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
-        }else{
-            workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
-        }
-
-        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(workflowType);
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
             return result;
         } else if (needVerifyResult.getResult()) {
-            if (customerCommitParam.getVerifyUserId() == null) {
-                result.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
-                return result;
-            }
             //调用提交审核服务
             if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                 customerCommitParam.setVerifyMatters("公司客户审核事项：1.申请额度 2.客户相关信息图片核对 3.统一信用码需信用网查询公司是否存在");
@@ -1294,7 +1288,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
 
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(workflowType, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
@@ -1333,14 +1327,7 @@ public class CustomerServiceImpl implements CustomerService {
             return result;
         }
 
-        Integer workflowType;
-        if(CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())){
-            workflowType = WorkflowType.WORKFLOW_TYPE_DX_CUSTOMER;
-        }else{
-            workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
-        }
-
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(workflowType, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
         if (!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())) {
             result.setErrorCode(rejectPassResult.getErrorCode());
             return result;
@@ -1372,7 +1359,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (verifyResult) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
             } else {
-                customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
+                customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
             }
             customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerDO.setUpdateTime(now);
@@ -1389,13 +1376,42 @@ public class CustomerServiceImpl implements CustomerService {
 
     boolean haveAuthority(Integer owner, Integer unionUser, Integer createUser) {
         List<Integer> dataAccessPassiveUserList = permissionSupport.getCanAccessPassiveUserList(userSupport.getCurrentUserId());
-        return !(!userSupport.getCurrentUserId().equals(owner) &&
+        return (!userSupport.getCurrentUserId().equals(owner) &&
                 !userSupport.getCurrentUserId().equals(unionUser) &&
                 !userSupport.getCurrentUserId().equals(createUser) &&
                 !dataAccessPassiveUserList.contains(createUser) &&
                 !dataAccessPassiveUserList.contains(owner) &&
                 !dataAccessPassiveUserList.contains(unionUser) &&
                 !userSupport.isSuperUser());
+    }
+
+    private boolean authorityControl(CustomerDO customerDO){
+        //判断审核人员给予权限观看
+        boolean flag = false;
+        ServiceResult<String, WorkflowLink> workflowLinkServiceResult = workflowService.getWorkflowLink(WorkflowType.WORKFLOW_TYPE_CUSTOMER,customerDO.getCustomerNo());
+        if(ErrorCode.SUCCESS.equals(workflowLinkServiceResult.getErrorCode())){
+            List<WorkflowLinkDetail> workflowLinkDetailList = workflowLinkServiceResult.getResult().getWorkflowLinkDetailList();
+            for(WorkflowLinkDetail workflowLinkDetail : workflowLinkDetailList){
+                for(WorkflowVerifyUserGroup workflowVerifyUserGroup:workflowLinkDetail.getWorkflowVerifyUserGroupList()){
+                    if(userSupport.getCurrentUserId().equals(workflowVerifyUserGroup.getVerifyUser())){
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            if(!flag){
+                //如果当前用户是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
+                if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
+                    flag = true;
+                }
+            }
+        }else{
+            //如果当前用户是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
+            if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
+                flag = true;
+            }
+        }
+        return flag;
     }
 
 
@@ -1407,11 +1423,14 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
         }
-        //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
-        if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
+        List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+        customerDO.getCustomerPersonDO().setCustomerConsignInfoDOList(customerConsignInfoDO);
+
+        if(!authorityControl(customerDO)){
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
+
         //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
         processCustomerPhone(customerDO);
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
@@ -2824,6 +2843,39 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    /**
+     * 此方法只用于处理历史数据中公司客户的新增字段simple_company_name字段为空的情况，新增数据不会出现此种情况
+     * @return
+     */
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> customerCompanySimpleNameProcessing() {
+
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        if (!userSupport.isSuperUser()){
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+        List<CustomerCompanyDO> list = customerCompanyMapper.findBySimpleCompanyNameIsNull();
+
+        List<CustomerCompanyDO> newCustomerCompanyList = new ArrayList<>();
+        StrReplaceUtil sutil = new StrReplaceUtil();
+
+        for (CustomerCompanyDO customerCompany : list) {
+            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+            customerCompany.setCompanyName(sutil.replaceAll(customerCompany.getCompanyName()));
+            //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
+            String simpleCompanyName = sutil.nameToSimple(customerCompany.getCompanyName());
+            customerCompany.setSimpleCompanyName(simpleCompanyName);
+            newCustomerCompanyList.add(customerCompany);
+
+        }
+        customerCompanyMapper.batchAddSimpleCompanyName(newCustomerCompanyList);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+
+    }
+
     @Autowired
     private UserMapper userMapper;
 
@@ -2877,5 +2929,4 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRiskManagementHistoryMapper customerRiskManagementHistoryMapper;
-
 }

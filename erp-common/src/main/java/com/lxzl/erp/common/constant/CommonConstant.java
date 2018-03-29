@@ -54,4 +54,6 @@ public class CommonConstant {
     public static final Integer ORDER_NEED_VERIFY_MONTHS = 3;
     public static final Integer ORDER_NEED_VERIFY_PRODUCT_COUNT = 100;
     public static final BigDecimal ORDER_NEED_VERIFY_PRODUCT_AMOUNT = new BigDecimal(200000);
+
+    public static final Integer COMMON_ZERO = 0;
 }

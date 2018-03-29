@@ -1,0 +1,53 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="tradeDetail">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title" id="tradeAmountNum"></span>
+        </div>
+        <form method="post" id="tradeDetailForm">
+            <div class="panel-body pn">
+                <div class="table-responsive">
+                    <script type="text/html" id="tradeDetailTpl">
+                        <thead>
+                        <tr>
+                            <th>客户编号</th>
+                            <th>公司名称（个人姓名）</th>
+                            <th>交易金额</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr data-rowdata="{{rowData}}" class="tradeRow">
+                            <td>{{customerNo}}</td>
+                            <td>{{customerName}}</td>
+                            <td>
+                                <input type="hidden" name="customerNo" value="{{customerNo}}" class="customerNo" />
+                                <input type="hidden" name="customerId" value="{{customerId}}" class="customerId" />
+                                <label class="field prepend-icon">
+                                    <input type="text" name="claimAmount-{{customerId}}" value="{{claimAmount}}" class="claimAmount form-control required pl10" placeholder="输入交易金额" aria-required="true" aria-invalid="false"/>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs delButton" data-customerno="{{customerNo}}" data-customerid="{{customerId}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="tradeDetailTable"></table>
+                </div>
+            </div>
+            <div class="panel-footer clearfix">
+                <button class="btn btn-default pull-right ml15 cancelBtn">取消</button>
+                <button class="btn btn-primary pull-right sureBtn">确定</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
