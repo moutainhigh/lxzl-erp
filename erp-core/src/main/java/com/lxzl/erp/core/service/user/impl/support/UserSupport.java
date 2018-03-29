@@ -1,14 +1,11 @@
 package com.lxzl.erp.core.service.user.impl.support;
 
-import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DepartmentType;
 import com.lxzl.erp.common.constant.SubCompanyType;
-import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.user.pojo.UserRole;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ListUtil;
