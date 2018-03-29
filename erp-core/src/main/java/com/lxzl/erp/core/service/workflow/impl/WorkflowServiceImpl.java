@@ -615,8 +615,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
                 return result;
             }
-        } else {
-            lastWorkflowLinkDetailDO.setWorkflowCurrentNodeId(0);
         }
         lastWorkflowLinkDetailDO.setVerifyStatus(verifyStatus);
         lastWorkflowLinkDetailDO.setVerifyTime(currentTime);
