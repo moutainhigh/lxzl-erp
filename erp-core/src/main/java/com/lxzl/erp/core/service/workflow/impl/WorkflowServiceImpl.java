@@ -615,8 +615,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
                 return result;
             }
-        } else {
-            lastWorkflowLinkDetailDO.setWorkflowCurrentNodeId(0);
         }
         lastWorkflowLinkDetailDO.setVerifyStatus(verifyStatus);
         lastWorkflowLinkDetailDO.setVerifyTime(currentTime);
@@ -1159,10 +1157,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         Map<Integer, Integer> map = new HashMap<>();
         List<Integer> verifyUserList = new ArrayList<>();
-        Integer verifyUserGroupId = null;
-        if (verifyUser == null) {
-            verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId(currentTime);
-        }
+        Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId(currentTime);
         //判断经营地址
         SubCompanyCityCoverDO subCompanyCityCoverDO;
         if (customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null) {
