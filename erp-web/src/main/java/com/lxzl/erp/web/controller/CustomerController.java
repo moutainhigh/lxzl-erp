@@ -214,6 +214,12 @@ public class CustomerController {
         ServiceResult<String, CustomerRiskManagementHistory> serviceResult = customerService.detailCustomerRiskManagementHistory(customerRiskManagementHistory.getCustomerRiskManagementHistoryId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-
-
+    /**
+        此方法只用于处理历史数据中公司客户的新增字段simple_company_name字段为空的情况，新增数据不会出现此种情况
+     */
+    @RequestMapping(value = "customerCompanySimpleNameProcessing", method = RequestMethod.GET)
+    public Result customerCompanySimpleNameProcessing() {
+        ServiceResult<String, String> serviceResult = customerService.customerCompanySimpleNameProcessing();
+        return resultGenerator.generate(serviceResult);
+    }
 }

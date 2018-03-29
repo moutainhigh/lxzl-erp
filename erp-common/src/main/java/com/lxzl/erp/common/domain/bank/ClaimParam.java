@@ -18,7 +18,7 @@ public class ClaimParam extends BasePO {
 
     @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {ClaimBankSlipDetailGroup.class})
     private String customerNo;
-    @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {ClaimBankSlipDetailGroup.class})
+    @NotNull(message = ErrorCode.BANK_SLIP_CLAIM_AMOUNT,groups = {ClaimBankSlipDetailGroup.class})
     private BigDecimal claimAmount;
 
     public String getCustomerNo() {
