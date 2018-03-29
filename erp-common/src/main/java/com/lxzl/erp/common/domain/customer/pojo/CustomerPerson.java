@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -42,6 +43,7 @@ public class CustomerPerson extends BasePO {
 	private String cityName;
 	private String districtName;
 
+	private List<CustomerConsignInfo> customerConsignInfoList;
 
 	public Integer getCustomerPersonId() {
 		return customerPersonId;
@@ -210,4 +212,8 @@ public class CustomerPerson extends BasePO {
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
 	}
+
+	public List<CustomerConsignInfo> getCustomerConsignInfoList() { return customerConsignInfoList; }
+
+	public void setCustomerConsignInfoList(List<CustomerConsignInfo> customerConsignInfoList) { this.customerConsignInfoList = customerConsignInfoList; }
 }
