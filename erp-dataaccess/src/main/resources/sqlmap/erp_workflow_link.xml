@@ -136,9 +136,9 @@
 	</select>
 
 	<select id="findByWorkflowTypeAndReferNo" resultMap="WorkflowLinkDO" parameterType="map">
-		select link.*,<include refid="detail_column_List"/>
+		select link.*,<include refid="detail_column_List"/>,<include refid="group_column_List"/>
         <trim prefix=",">
-            eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name
+            eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name,eug.real_name as group_verify_user_name
         </trim>
         from
 		(
@@ -148,11 +148,14 @@
 			</trim>
             from erp_workflow_link ewl
 			INNER JOIN erp_workflow_template ewt ON ewt.id = ewl.workflow_template_id
+			LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
 			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
 			LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
 			where ewl.workflow_type = #{workflowType, jdbcType=INTEGER} and ewl.workflow_refer_no = #{workflowReferNo, jdbcType=INTEGER} and ewl.data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id
+		LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
         LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
