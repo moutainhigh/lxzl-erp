@@ -1113,7 +1113,7 @@ public class CustomerServiceImpl implements CustomerService {
             List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
             customerDO.getCustomerCompanyDO().setCustomerConsignInfoList(customerConsignInfoDO);
         } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
-            customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
+            customerDO = customerMapper.findCustomerPersonByNo(customerNo);
             List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
             customerDO.getCustomerPersonDO().setCustomerConsignInfoDOList(customerConsignInfoDO);
         }
@@ -1250,6 +1250,13 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
+
+        List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+        if(CollectionUtil.isEmpty(customerConsignInfoDOList)){
+            result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
+            return result;
+        }
+        
         //只有创建人和业务员和联合开发员才能提交功能
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
@@ -1352,7 +1359,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (verifyResult) {
                 customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
             } else {
-                customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
+                customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
             }
             customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerDO.setUpdateTime(now);
