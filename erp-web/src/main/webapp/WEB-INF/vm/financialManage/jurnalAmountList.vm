@@ -86,7 +86,7 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-##                                <th>流水表ID</th>
+                                <th>银行流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
                                 <th>对方账号</th>
@@ -115,7 +115,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-##                                <td>{{bankSlipId}}</td>
+                                <td>{{bankSlipId}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>
                                 <td>{{otherSideAccountNo}}</td>
