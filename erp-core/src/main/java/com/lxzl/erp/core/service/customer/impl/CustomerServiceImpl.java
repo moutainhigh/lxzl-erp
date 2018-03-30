@@ -190,6 +190,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             customerConsignInfoDO.setCustomerId(customerDO.getId());
             customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
             customerConsignInfoDO.setCreateTime(now);
             customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
             customerConsignInfoMapper.save(customerConsignInfoDO);
@@ -397,6 +398,7 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
+
         boolean flag = false;
         if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
             for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
@@ -1594,6 +1596,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfoDO customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo, CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
         customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
         customerConsignInfoDO.setCreateTime(now);
         customerConsignInfoDO.setUpdateTime(now);
         customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -1636,6 +1639,13 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
             return serviceResult;
         }
+
+        if(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) &&
+                CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfoDO.getVerifyStatus())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
+            return serviceResult;
+        }
+
         //通过CustomerNo来获取客户ID
         if (customerConsignInfoDO.getCustomerId() == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -1700,6 +1710,11 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfo.getVerifyStatus()) &&
+                CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfo.getVerifyStatus())){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
             return serviceResult;
         }
 
@@ -2793,12 +2808,14 @@ public class CustomerServiceImpl implements CustomerService {
                     customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
                     customerConsignInfoDO.setCustomerId(customerId);
                     customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
                     customerConsignInfoDO.setCreateTime(now);
                     customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoMapper.save(customerConsignInfoDO);
                 }else{
                     customerConsignInfoDO.setCustomerId(customerId);
                     customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
                     customerConsignInfoDO.setCreateTime(now);
                     customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoMapper.save(customerConsignInfoDO);
