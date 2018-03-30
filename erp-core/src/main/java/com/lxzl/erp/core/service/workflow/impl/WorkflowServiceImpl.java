@@ -326,7 +326,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
 //        超级管理员权限控制
-        if (!userRoleService.isSuperAdmin(loginUser.getUserId())) {
+        if (!userSupport.isSuperUser()) {
             result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return result;
         }
