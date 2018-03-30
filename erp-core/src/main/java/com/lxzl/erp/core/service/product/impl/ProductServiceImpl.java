@@ -870,10 +870,6 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        // 目前不支持商品SKU删除
-        if (dbSkuRecordMap != null && dbSkuRecordMap.size() > 0) {
-            return ErrorCode.PRODUCT_SKU_CAN_NOT_DELETE;
-        }
         if (!saveProductSkuList.isEmpty()) {
             for (ProductSku productSku : saveProductSkuList) {
                 ProductSkuDO productSkuDO = ConverterUtil.convert(productSku, ProductSkuDO.class);
@@ -953,7 +949,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // 先注释删除SKU代码
-        /*if (!dbSkuRecordMap.isEmpty()) {
+        if (!dbSkuRecordMap.isEmpty()) {
             for (Map.Entry<Integer, ProductSkuDO> entry : dbSkuRecordMap.entrySet()) {
                 ProductSkuDO productSkuDO = entry.getValue();
                 productSkuDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -961,9 +957,10 @@ public class ProductServiceImpl implements ProductService {
                 productSkuDO.setUpdateTime(currentTime);
                 productSkuMapper.update(productSkuDO);
                 List<ProductSkuPropertyDO> dbPropertiesRecord = productSkuPropertyMapper.findSkuProperties(productSkuDO.getId());
-                saveSkuProperties(ProductConverter.convertProductSkuPropertyDOList(dbPropertiesRecord), productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
+                List<ProductSkuProperty> productSkuPropertyList = ConverterUtil.convertList(dbPropertiesRecord, ProductSkuProperty.class);
+                saveSkuProperties(productSkuPropertyList, productId, productSkuDO.getId(), CommonConstant.COMMON_DATA_OPERATION_TYPE_DELETE, loginUser, currentTime);
             }
-        }*/
+        }
         return ErrorCode.SUCCESS;
     }
 

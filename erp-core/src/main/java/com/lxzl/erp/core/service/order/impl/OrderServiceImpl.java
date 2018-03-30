@@ -483,7 +483,7 @@ public class OrderServiceImpl implements OrderService {
                     materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMonthRentPrice() : material.getMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价，需要商务审批
-                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialUnitAmount) < 0) {
+                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialUnitAmount) < 0 && CommonConstant.COMMON_CONSTANT_YES.equals(material.getIsMainMaterial())) {
                     isNeedVerify = true;
                     break;
                 }

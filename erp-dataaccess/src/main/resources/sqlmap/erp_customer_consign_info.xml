@@ -14,6 +14,7 @@
 		<result column="is_main" jdbcType="INTEGER" property="isMain" />
 		<result column="is_business_address" jdbcType="INTEGER" property="isBusinessAddress" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="verify_status" jdbcType="INTEGER" property="verifyStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -27,7 +28,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.is_business_address,ecci.data_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user,ecci.last_use_time
+		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.is_business_address,ecci.data_status,ecci.verify_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user,ecci.last_use_time
 	</sql>
 
 	<select id="findById" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
@@ -92,6 +93,9 @@
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="verifyStatus != null">
+				verify_status = #{verifyStatus,jdbcType=INTEGER},
 			</if>
 			<if test="remark != null">
 				remark = #{remark,jdbcType=VARCHAR},
@@ -227,6 +231,18 @@
 		LEFT JOIN erp_area_city eac ON ecci.city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecci.district=ead.id AND ead.data_status=1
 		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.data_status = 1
+	</select>
+
+	<select id="findVerifyStatusByCustomerId" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>
+		,eap.province_name AS provinceName
+		,eac.city_name AS cityName
+		,ead.district_name AS districtName
+		FROM erp_customer_consign_info ecci
+		LEFT JOIN erp_area_province eap ON ecci.province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecci.city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecci.district=ead.id AND ead.data_status=1
+		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.verify_status = 0 AND ecci.data_status = 1
 	</select>
 
 </mapper>

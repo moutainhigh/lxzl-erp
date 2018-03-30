@@ -208,10 +208,9 @@
 		(
 		select <include refid="column_List"/>
 		<trim prefix=",">
-			eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewl.workflow_step = ewl.workflow_last_step THEN true ELSE false END AS is_last_step, ewt.workflow_name AS workflow_template_name
+			eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewl.workflow_step = ewl.workflow_last_step THEN true ELSE false END AS is_last_step
 		</trim>
 		from erp_workflow_link ewl
-		INNER JOIN erp_workflow_template ewt ON ewt.id = ewl.workflow_template_id
         LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
 		LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
 		LEFT JOIN erp_user euc ON euc.id = ewl.commit_user

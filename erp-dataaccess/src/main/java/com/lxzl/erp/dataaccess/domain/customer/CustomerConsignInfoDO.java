@@ -18,6 +18,7 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private String address;
 	private Integer isMain;
 	private Integer dataStatus;
+	private Integer verifyStatus;   //审核状态：0未提交；1.已提交 2.初审通过；3.终审通过
 	private String remark;
 	private Date lastUseTime;
 	private Integer isBusinessAddress;	//是否为经营地址，0否1是
@@ -150,4 +151,8 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	public Integer getIsBusinessAddress() { return isBusinessAddress; }
 
 	public void setIsBusinessAddress(Integer isBusinessAddress) { this.isBusinessAddress = isBusinessAddress; }
+
+	public Integer getVerifyStatus() { return verifyStatus; }
+
+	public void setVerifyStatus(Integer verifyStatus) { this.verifyStatus = verifyStatus; }
 }
