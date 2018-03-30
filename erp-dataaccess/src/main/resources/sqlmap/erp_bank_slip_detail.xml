@@ -49,8 +49,9 @@
 	</sql>
 
 	<select id="findById" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd 
-		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1 
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/> FROM erp_bank_slip_detail ebsd
+		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id AND ebsc.data_status = 1
+		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -187,7 +188,7 @@
 		WHERE ebsd.detail_status = 2 AND ebsd.data_status = 1 AND ebsd.bank_slip_id = #{bankSlipId,jdbcType=INTEGER}
 	</select>
 
-	<update id="updateConfirmBankDetailDO" parameterType="java.util.List">
+	<update id="updateConfirmBankDetailDO" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
 		update erp_bank_slip_detail
 		SET
 		<trim>
@@ -213,6 +214,31 @@
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
-
+	<insert id="saveBankSlipDetailDOList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List" >
+		INSERT INTO erp_bank_slip_detail
+		(payer_name,trade_amount,trade_serial_no,trade_time,trade_message,other_side_account_no,merchant_order_no,loan_sign,detail_status,detail_json,data_status,remark,create_time,create_user,update_time,update_user,bank_slip_id)
+		VALUES
+		<foreach collection="list" item="bankSlipDetailDO" index="index" separator =",">
+			(
+			#{bankSlipDetailDO.payerName,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.tradeAmount,jdbcType=DECIMAL},
+			#{bankSlipDetailDO.tradeSerialNo,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.tradeTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailDO.tradeMessage,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.otherSideAccountNo,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.merchantOrderNo,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.loanSign,jdbcType=INTEGER},
+			#{bankSlipDetailDO.detailStatus,jdbcType=INTEGER},
+			#{bankSlipDetailDO.detailJson,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.dataStatus,jdbcType=INTEGER},
+			#{bankSlipDetailDO.remark,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.createTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailDO.createUser,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.updateTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailDO.updateUser,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.bankSlipId,jdbcType=INTEGER}
+			)
+		</foreach>
+	</insert>
 
 </mapper>

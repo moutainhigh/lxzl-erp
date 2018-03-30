@@ -41,16 +41,17 @@ import java.util.List;
 public class ImportTrafficBank {
     /**
      * 成都交通银行数据导入
+     *
+     * @param : bankSlip
+     * @param : inputStream
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/20 19:21
-     * @param : bankSlip
-    * @param : inputStream
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.util.Map<java.lang.String,java.lang.String>>
      */
 
-    public ServiceResult<String, String> saveTrafficBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
+    public ServiceResult<String, BankSlipDO> saveTrafficBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+        ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
+        BankSlipDO bankSlipDO = null;
         String excelUrl = bankSlip.getExcelUrl();
         try {
             Workbook work = null;
@@ -81,7 +82,7 @@ public class ImportTrafficBank {
 
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
-            BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
+            bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
             //todo 存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getTrafficBankData(sheet, row, cell, bankSlipDO, now);
@@ -112,9 +113,9 @@ public class ImportTrafficBank {
             //保存  银行对公流水明细表
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                bankSlipDetailMapper.save(bankSlipDetailDO);
             }
-
+            bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
+            bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
         } catch (IOException e) {
             logger.error("导入excel的IO流转换发生异常", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -130,6 +131,7 @@ public class ImportTrafficBank {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlipDO);
         return serviceResult;
 
     }
@@ -151,7 +153,7 @@ public class ImportTrafficBank {
         int payMoneyNo = 0; //交易金额
         int paySerialNumberNo = 0; //交易流水号
         int payPostscriptNo = 0; //交易附言
-        int payAccountNo = 0; //付款人账号[ Debit Account No. ]
+        int payAccountNo = 0; //对方账号
         int borrowingMarksNo = 0; //借贷标志
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
 
@@ -165,7 +167,7 @@ public class ImportTrafficBank {
                     continue bbb;
                 }
             }
-            if((row.getCell(0)== null ? "":getValue(row.getCell(0))).contains("借方交易笔数:")){
+            if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("借方交易笔数:")) {
                 break bbb;
             }
 
@@ -182,7 +184,7 @@ public class ImportTrafficBank {
                     if (("交易金额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("交易流水号".equals(value)) ||
-                            ("付款人账号[ Debit Account No. ]".equals(value)) ||
+                            ("对方账号".equals(value)) ||
                             ("交易附言".equals(value)) ||
                             ("交易日期".equals(value)) ||
                             ("付款人名称".equals(value)) ||
@@ -190,7 +192,7 @@ public class ImportTrafficBank {
                         if ("查询账号".equals(value)) {
 
                             Cell accountCell = (row.getCell(y + 1));
-                            if(accountCell == null){
+                            if (accountCell == null) {
                                 continue ccc;
                             }
                             value = getValue(accountCell);
@@ -241,21 +243,21 @@ public class ImportTrafficBank {
                 if (j > next) {
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null?"":getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
                     }
-                    payerName = (row.getCell(payerNameNo) == null?"":getValue(row.getCell(payerNameNo)).replaceAll("\\s+", "")); //付款人名称
-                    tradeTime = (row.getCell(payTimeNo) == null?"":getValue(row.getCell(payTimeNo)).replaceAll("\\s+", "")); //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null?"":getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", "")); //交易金额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", "")); //交易流水号
-                    otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", "")); //付款人账号[ Debit Account No. ]
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", "")); //付款人名称
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", "")); //交易日期
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", "")); //交易金额
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", "")); //交易流水号
+                    otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", "")); //付款人账号[ Debit Account No. ]
 
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
-                        if(tradeAmount.contains(",")){
-                            tradeAmount = tradeAmount.replaceAll(",","");
+                        if (tradeAmount.contains(",")) {
+                            tradeAmount = tradeAmount.replaceAll(",", "");
                         }
-                        if(tradeAmount.contains("-")){
-                            tradeAmount = tradeAmount.replaceAll("-","");
+                        if (tradeAmount.contains("-")) {
+                            tradeAmount = tradeAmount.replaceAll("-", "");
                         }
 
                         bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
@@ -276,11 +278,11 @@ public class ImportTrafficBank {
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
-                    if("贷".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))){
+                    if ("贷".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                         //进款比数
                         inCount = inCount + 1;
-                    }else if("借".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))){
+                    } else if ("借".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
                     }
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
@@ -341,6 +343,7 @@ public class ImportTrafficBank {
                 return "Unknown Cell Type: " + cell.getCellType();
         }
     }
+
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired

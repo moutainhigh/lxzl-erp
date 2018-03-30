@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.bank;
 
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -19,5 +21,8 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
 
     List<BankSlipDetailDO> findClaimedByBankSlipId(@Param("bankSlipId") Integer bankSlipId);
 
-    void updateConfirmBankDetailDO(List<BankSlipDetailDO> bankSlipDetailDOList);
+    void updateConfirmBankDetailDO(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
+
+    void saveBankSlipDetailDOList(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
+
 }
