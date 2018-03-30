@@ -1272,7 +1272,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
                 !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
-                !userRoleService.isSuperAdmin(loginUser.getUserId())) {
+                !userSupport.isSuperUser()) {
             result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return result;
         }
