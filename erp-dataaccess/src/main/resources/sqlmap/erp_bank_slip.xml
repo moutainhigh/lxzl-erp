@@ -21,19 +21,66 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <collection property="bankSlipDetailDOList" resultMap="BankSlipDetailDO" />
 	</resultMap>
+
+	<resultMap id="BankSlipDetailDO" type="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO">
+		<id column="detail_id" jdbcType="INTEGER" property="id" />
+		<result column="detail_payer_name" jdbcType="VARCHAR" property="payerName" />
+		<result column="detail_trade_amount" jdbcType="DECIMAL" property="tradeAmount" />
+		<result column="detail_trade_serial_no" jdbcType="VARCHAR" property="tradeSerialNo" />
+		<result column="detail_trade_time" jdbcType="TIMESTAMP" property="tradeTime" />
+		<result column="detail_trade_message" jdbcType="VARCHAR" property="tradeMessage" />
+		<result column="detail_other_side_account_no" jdbcType="VARCHAR" property="otherSideAccountNo" />
+		<result column="detail_merchant_order_no" jdbcType="VARCHAR" property="merchantOrderNo" />
+		<result column="detail_loan_sign" jdbcType="INTEGER" property="loanSign" />
+		<result column="detail_detail_status" jdbcType="INTEGER" property="detailStatus" />
+		<result column="detail_detail_json" jdbcType="VARCHAR" property="detailJson" />
+		<result column="detail_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="detail_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="detail_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="detail_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="detail_bank_slip_id" jdbcType="INTEGER" property="bankSlipId" />
+        <collection property="bankSlipClaimDOList" resultMap="BankSlipClaimDO" />
+	</resultMap>
+
+    <resultMap id="BankSlipClaimDO" type="com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO">
+        <id column="claim_id" jdbcType="INTEGER" property="id" />
+        <result column="claim_bank_slip_detail_id" jdbcType="INTEGER" property="bankSlipDetailId" />
+        <result column="claim_other_side_account_no" jdbcType="VARCHAR" property="otherSideAccountNo" />
+        <result column="claim_customer_no" jdbcType="VARCHAR" property="customerNo" />
+        <result column="claim_claim_amount" jdbcType="DECIMAL" property="claimAmount" />
+        <result column="claim_claim_serial_no" jdbcType="BIGINT" property="claimSerialNo" />
+        <result column="claim_recharge_status" jdbcType="INTEGER" property="rechargeStatus" />
+        <result column="claim_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="claim_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="claim_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="claim_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="claim_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="claim_update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
 
 	<sql id="column_List">
 		ebs.id,ebs.sub_company_id,ebs.sub_company_name,ebs.bank_type,ebs.slip_month,ebs.account_no,ebs.in_count,ebs.need_claim_count,ebs.claim_count,ebs.confirm_count,ebs.slip_status,ebs.excel_url,ebs.data_status,ebs.remark,ebs.create_time,ebs.create_user,ebs.update_time,ebs.update_user
 	</sql>
 
+	<sql id="detail_column_List">
+		ebsd.id AS detail_id,ebsd.payer_name AS detail_payer_name,ebsd.trade_amount AS detail_trade_amount,ebsd.trade_serial_no AS detail_trade_serial_no,ebsd.trade_time AS detail_trade_time,ebsd.trade_message AS detail_trade_message,ebsd.other_side_account_no AS detail_other_side_account_no,ebsd.merchant_order_no AS detail_merchant_order_no,ebsd.loan_sign AS detail_loan_sign,ebsd.detail_status AS detail_detail_status,ebsd.detail_json AS detail_detail_json,ebsd.data_status AS detail_data_status,ebsd.remark AS detail_remark,ebsd.create_time AS detail_create_time,ebsd.create_user AS detail_create_user,ebsd.update_time AS detail_update_time,ebsd.update_user AS detail_update_user,ebsd.bank_slip_id AS detail_bank_slip_id
+	</sql>
+
+    <sql id="claim_column_List">
+        ebsc.id AS claim_id,ebsc.bank_slip_detail_id AS claim_bank_slip_detail_id,ebsc.other_side_account_no AS claim_other_side_account_no,ebsc.customer_no AS claim_customer_no,ebsc.claim_amount AS claim_claim_amount,ebsc.claim_serial_no AS claim_claim_serial_no,ebsc.recharge_status AS claim_recharge_status,ebsc.data_status AS claim_data_status,ebsc.remark AS claim_remark,ebsc.create_time AS claim_create_time,ebsc.create_user AS claim_create_user,ebsc.update_time AS claim_update_time,ebsc.update_user AS claim_update_user
+    </sql>
+
 	<select id="findById" resultMap="BankSlipDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip ebs 
-		WHERE ebs.id = #{id, jdbcType=INTEGER} AND ebs.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_bank_slip ebs
+		WHERE ebs.id = #{id, jdbcType=INTEGER} AND ebs.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ebs.id) FROM erp_bank_slip ebs 
+		SELECT count(ebs.id) FROM erp_bank_slip ebs
 		<where>
 			<if test="true">
 				AND ebs.data_status = 1
@@ -42,7 +89,7 @@
 	</select>
 
 	<select id="listPage" resultMap="BankSlipDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip ebs 
+		SELECT <include refid="column_List"/> FROM erp_bank_slip ebs
 		<where>
 			<if test="true">
 				AND ebs.data_status = 1
@@ -121,6 +168,9 @@
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
 				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
 			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyId != null">
+				and ebs.sub_company_id = #{maps.bankSlipQueryParam.subCompanyId,jdbcType=INTEGER}
+			</if>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
 				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
 			</if>
@@ -151,6 +201,9 @@
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
 				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
 			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyId != null">
+				and ebs.sub_company_id = #{maps.bankSlipQueryParam.subCompanyId,jdbcType=INTEGER}
+			</if>
 			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
 				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
 			</if>
@@ -178,7 +231,43 @@
 	</select>
 
 <select id="findBySubCompanyIdAndMonthAndBankType" resultMap="BankSlipDO" parameterType="map">
-	SELECT <include refid="column_List"/> FROM erp_bank_slip ebs WHERE  ebs.sub_company_name = #{subCompanyName,jdbcType=VARCHAR} AND ebs.slip_month = #{slipMonth,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
+	SELECT <include refid="column_List"/> FROM erp_bank_slip ebs WHERE  ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_month = #{slipMonth,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
 </select>
+
+<select id="findBankSlipAndBankSlipDetailByParams" resultMap="BankSlipDO" parameterType="map">
+		SELECT <include refid="column_List"/> ,<include refid="detail_column_List"/>,<include refid="claim_column_List"/>
+			FROM erp_bank_slip ebs
+		  	LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.data_status = 1 AND ebsd.bank_slip_id = ebs.id
+		  	LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.data_status = 1 AND ebsc.bank_slip_detail_id = ebsd.id
+		<where>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != null &amp;&amp; maps.bankSlipQueryParam.subCompanyName != ''">
+				and ebs.sub_company_name like CONCAT('%','${maps.bankSlipQueryParam.subCompanyName}','%' )
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
+				and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
+				and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null">
+				and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankSlipId != null">
+				and ebs.id = #{maps.bankSlipQueryParam.bankSlipId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebs.data_status = 1
+			</if>
+			<if  test="maps.alreadyPushDownOrPortionClaim != null &amp;&amp;maps.alreadyPushDownOrPortionClaim == 1">
+				and (ebs.slip_status = 1 OR ebs.slip_status = 2)
+			</if>
+			<if  test="maps.isClaimed != null &amp;&amp; maps.isClaimed == 1">
+				and ebsd.detail_status = 2
+			</if>
+		</where>
+		ORDER BY ebs.slip_month DESC ,ebs.sub_company_id ASC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
 
 </mapper>

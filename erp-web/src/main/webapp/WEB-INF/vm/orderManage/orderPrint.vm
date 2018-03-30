@@ -12,7 +12,8 @@
         .page {
             width:100%;
             width: 21cm;
-            min-height: 29.7cm;
+            /*min-height: 29.7cm;*/
+            min-height: 27.9cm;
             padding: 1cm 0.5cm;
             margin: 1cm auto;
             border: 1px #D3D3D3 solid;
@@ -90,7 +91,7 @@
 <body style="height: auto;">
     <div class="panel">
     <div class="panel-heading">
-        <span class="panel-title"><span class="glyphicon glyphicon-print"></span>打印订单（暂不兼容谷歌浏览器）</span>
+        <span class="panel-title"><span class="glyphicon glyphicon-print"></span>打印订单（请使用IE浏览器打印）</span>
         <div class="panel-header-menu pull-right mr10">
             <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>

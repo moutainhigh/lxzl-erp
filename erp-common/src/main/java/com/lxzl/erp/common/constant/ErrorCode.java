@@ -57,6 +57,7 @@ public class ErrorCode {
     public static final String BUSINESS_SYSTEM_ERROR = "J100028";
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
+    public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -171,6 +172,7 @@ public class ErrorCode {
     public static final String WORKFLOW_LINK_STATUS_ERROR = "J800011";
     public static final String WORKFLOW_TEMPLATE_NOT_EXISTS = "J800012";
     public static final String WORKFLOW_HAVE_NO_CONFIG = "J800013";
+    public static final String WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS = "J800014";
 
     public static final String REMARK_PATTERN = "J900001";
     public static final String ID_NOT_NULL = "J900002";
@@ -556,6 +558,9 @@ public class ErrorCode {
     public static final String CUSTOMER_CONSIGN_INFO_IS_NOT_NULL = "J500148";
     public static final String CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR = "J500149";
     public static final String CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS = "J500150";
+    public static final String CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL = "J500151";
+    public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
+    public static final String CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE = "J500153";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -730,6 +735,8 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL = "J17000012";
     public static final String K3_RETURN_ORDER_IS_NOT_EXISTS = "J17000013";
     public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
+    public static final String K3_SERVER_ERROR = "J17000015";
+    public static final String K3_RETURN_ORDER_FAIL = "J17000016";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -756,6 +763,11 @@ public class ErrorCode {
     public static final String IS_NOT_BUSINESS_AFFAIRS_PERSON = "J18000024";
     public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM = "J18000025";
     public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
+    public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
+    public static final String BANK_IS_NOT_ALIPAY = "J18000028";
+    public static final String BANK_IS_NOT_AGRICULTURE_BANK = "J18000029";
+    public static final String CURRENT_ROLES_NOT_PERMISSION = "J18000030";
+    public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000031";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -813,6 +825,10 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_NOT_NULL, "客户收货信息不能为空");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
+        MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址信息，公司业务未覆盖范围");
+        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址信息，公司业务未覆盖范围");
+        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不给修改与删除地址");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -918,6 +934,7 @@ public class ErrorCode {
         MAP.put(WORKFLOW_LINK_STATUS_ERROR, "此工作流状态有误");
         MAP.put(WORKFLOW_TEMPLATE_NOT_EXISTS, "工作流模板不存在或者已经禁用，请联系管理员");
         MAP.put(WORKFLOW_HAVE_NO_CONFIG, "审核管理的审核工作流没有配置信息");
+        MAP.put(WORKFLOW_VERIFY_USER_GROUP_NOT_EXISTS, "工作流审核用户组不存在");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_APPLE_LIMIT, "该客户风控信息，苹果设备被限制，不能下单，请联系风控及相关人员");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NEW_LIMIT, "该客户风控信息，全新设备被限制，不能下单，请联系风控及相关人员");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PRICE_LIMIT, "该客户风控信息，商品价格被限制，不能下单，请联系风控及相关人员");
@@ -1125,7 +1142,7 @@ public class ErrorCode {
         MAP.put(ORDER_PAY_STATUS_ERROR, "付款单状态异常，请检查");
         MAP.put(ORDER_REFUND_STATUS_ERROR, "退款单状态异常，请检查");
         MAP.put(ORDER_PAY_RECORD_NOT_EXISTS, "支付记录不存在");
-        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单的起租日期不能空，请选择起租日期时间");
+        MAP.put(ORDER_HAVE_NO_RENT_START_TIME, "订单的起租日期不能空，并且不能在3月5日之前，请选择起租日期时间");
         MAP.put(ORDER_RENT_START_TIME_ERROR, "订单起租日期不能小于送货日期，并且不能大于超过2天");
         MAP.put(DEPLOYMENT_ORDER_PRODUCT_EQUIPMENT_STOCK_NOT_ENOUGH, "货物调拨该库房的商品库存不足，请联系相关工作人员。");
         MAP.put(DEPLOYMENT_ORDER_BULK_MATERIAL_STOCK_NOT_ENOUGH, "货物调拨该库房的配件库存不足，请联系相关工作人员。");
@@ -1479,6 +1496,8 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
+        MAP.put(K3_SERVER_ERROR, "K3服务异常");
+        MAP.put(K3_RETURN_ORDER_FAIL, "K3退货失败");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1501,10 +1520,15 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
         MAP.put(BANK_SLIP_DETAIL_IS_NULL, "银行对公流水记录项为空");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
-        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已认领状态");
+        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已确认状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
-        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "单据状态不是已下推和部分认领");
+        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "银行对公流水状态不是已下推和部分认领");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
+        MAP.put(BANK_IS_NOT_ALIPAY, "不是支付宝的数据");
+        MAP.put(BANK_IS_NOT_AGRICULTURE_BANK, "不是农业银行的数据");
+        MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
+        MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
 
     }
 

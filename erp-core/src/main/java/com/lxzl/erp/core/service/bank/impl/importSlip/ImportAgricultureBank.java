@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.bank.impl.importSlip;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
-import com.lxzl.erp.common.domain.company.SubCompanyQueryParam;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -31,7 +30,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,18 +78,11 @@ public class ImportAgricultureBank {
             }
             //遍历当前sheet中的所有行
 
-            HashMap<String, Object> map = new HashMap<>();
-            SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
-            subCompanyQueryParam.setSubCompanyName(bankSlip.getSubCompanyName());
-            map.put("start", 0);
-            map.put("pageSize", Integer.MAX_VALUE);
-            map.put("subCompanyQueryParam", subCompanyQueryParam);
-            List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(map);
-            SubCompanyDO subCompanyDO = subCompanyDOList.get(0);
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
             BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
-            //todo 存储
+            //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getAgricultureBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
                 serviceResult.setErrorCode(data.getErrorCode());
@@ -100,12 +91,12 @@ public class ImportAgricultureBank {
             List<BankSlipDetailDO> bankSlipDetailDOList = data.getResult();
 
             //保存  银行对公流水表
-            bankSlipDO.setSubCompanyId(subCompanyDO.getId());
+            bankSlipDO.setSubCompanyName(subCompanyDO.getSubCompanyName());
 
             bankSlipDO.setSlipStatus(SlipStatus.INITIALIZE);
             bankSlipDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-            bankSlipDO.setClaimCount(0);
-            bankSlipDO.setConfirmCount(0);
+            bankSlipDO.setClaimCount(CommonConstant.COMMON_ZERO);
+            bankSlipDO.setConfirmCount(CommonConstant.COMMON_ZERO);
             bankSlipDO.setCreateTime(now);
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);
@@ -161,7 +152,7 @@ public class ImportAgricultureBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int debtorAccountNo = 0; //支出金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean isPeerArea = false;
 
         int next = Integer.MAX_VALUE;
         bbb:
@@ -187,6 +178,7 @@ public class ImportAgricultureBank {
                     String value = getValue(cell);
 
                     if (("交易金额".equals(value)) ||
+                            ("对方省市".equals(value)) ||
                             ("支出金额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
                             ("交易流水号".equals(value)) ||
@@ -208,6 +200,10 @@ public class ImportAgricultureBank {
                         if ("付款人名称".equals(value)) {
                             next = j;
                             payerNameNo = y;
+                            continue ccc;
+                        }
+                        if ("对方省市".equals(value)) {
+                            isPeerArea = true;
                             continue ccc;
                         }
                         if ("交易日期".equals(value)) {
@@ -237,6 +233,11 @@ public class ImportAgricultureBank {
                         }
                     }
                 }
+                if(!isPeerArea){
+                    serviceResult.setErrorCode(ErrorCode.BANK_IS_NOT_AGRICULTURE_BANK);
+                    return serviceResult;
+                }
+
                 // todo 以下可以直接存数据
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期

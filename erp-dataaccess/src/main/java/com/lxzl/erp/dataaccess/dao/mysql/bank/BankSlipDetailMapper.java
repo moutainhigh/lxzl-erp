@@ -16,4 +16,8 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
     Integer findBankSlipDetailDOCountByParams(@Param("maps")Map<String, Object> maps);
 
 	List<BankSlipDetailDO> findBankSlipDetailDOByParams(@Param("maps")Map<String, Object> maps);
+
+    List<BankSlipDetailDO> findClaimedByBankSlipId(@Param("bankSlipId") Integer bankSlipId);
+
+    void updateConfirmBankDetailDO(List<BankSlipDetailDO> bankSlipDetailDOList);
 }

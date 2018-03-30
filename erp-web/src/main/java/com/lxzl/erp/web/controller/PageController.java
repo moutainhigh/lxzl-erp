@@ -305,9 +305,7 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping("/customer-consign-info/add")
-    public String customerConsignInfoAdd() {
-        return "/component/customerConsignInfo/add";
-    }
+    public String customerConsignInfoAdd() { return "/component/customerConsignInfo/add";}
 
     @RequestMapping("/customer-consign-info/edit")
     public String customerConsignInfoEdit() {
@@ -811,6 +809,21 @@ public class PageController extends BaseController {
         return "/financialManage/jurnalAmountList";
     }
 
+    //上传附件
+    @RequestMapping("/jurnal-attachment-list/file/upload")
+    public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
+
+    //选择所有客户(公司、个人)
+    @RequestMapping("/all-customer-modal/choose")
+    public String jurnalAmountCustomerList() {
+        return "/component/customer/chooseCustomerByAll";
+    }
+
+    //交易明细
+    @RequestMapping("/jurnal-amount/tradeDetail")
+    public String jurnalAmountTradeDetail() {
+        return "/component/jurnalAmount/tradeDetail";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")

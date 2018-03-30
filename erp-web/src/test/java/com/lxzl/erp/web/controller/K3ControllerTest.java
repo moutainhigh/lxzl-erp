@@ -61,8 +61,8 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setK3CustomerNo("10.10201608030004");
-        k3ReturnOrder.setK3CustomerName("上海紫盛网络科技有限公司");
+        k3ReturnOrder.setK3CustomerNo("01.SZ201612310042");
+        k3ReturnOrder.setK3CustomerName("深圳前海有一科技有限公司");
         k3ReturnOrder.setReturnTime(new Date());
         k3ReturnOrder.setReturnAddress("北京京西蓝靛厂");
         k3ReturnOrder.setReturnContacts("宋老三");
@@ -72,18 +72,20 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
 
         K3ReturnOrderDetail k3ReturnOrderDetail1 = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail1.setOrderNo("LXSE2018020716");
+        k3ReturnOrderDetail1.setOrderNo("LXO-20180328-1000-01286");
+        k3ReturnOrderDetail1.setOrderItemId("1953");
         k3ReturnOrderDetail1.setOrderEntry("1");
-        k3ReturnOrderDetail1.setProductNo("10.LPC.AP.PROH133");
+        k3ReturnOrderDetail1.setProductNo("10.LPC.TH.P50S");
+        k3ReturnOrderDetail1.setProductName("ThinkPad P50S");
         k3ReturnOrderDetail1.setProductCount(1);
         k3ReturnOrderDetailList.add(k3ReturnOrderDetail1);
 
-        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail2.setOrderNo("LXSE2018020716");
-        k3ReturnOrderDetail2.setOrderEntry("4");
-        k3ReturnOrderDetail2.setProductNo("20.MOU.XX.PCMOU");
-        k3ReturnOrderDetail2.setProductCount(2);
-        k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
+//        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
+//        k3ReturnOrderDetail2.setOrderNo("LXSE2018020716");
+//        k3ReturnOrderDetail2.setOrderEntry("4");
+//        k3ReturnOrderDetail2.setProductNo("20.MOU.XX.PCMOU");
+//        k3ReturnOrderDetail2.setProductCount(2);
+//        k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         TestResult testResult = getJsonTestResult("/k3/createReturnOrder", k3ReturnOrder);
@@ -92,18 +94,18 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createReturnOrderJSON() throws Exception {
         String str = "{\n" +
-                "\t\"k3CustomerNo\": \"04.731812\",\n" +
-                "\t\"k3CustomerName\": \"测试K3同步客户\",\n" +
+                "\t\"k3CustomerNo\": \"01.SZ201612310042\",\n" +
+                "\t\"k3CustomerName\": \"深圳前海有一科技有限公司\",\n" +
                 "\t\"returnTime\": 1519603200000,\n" +
                 "\t\"returnAddress\": \"北京东区东直门小酒馆\",\n" +
                 "\t\"returnContacts\": \"黎明\",\n" +
                 "\t\"returnPhone\": \"18033402832\",\n" +
                 "\t\"returnMode\": \"1\",\n" +
                 "\t\"k3ReturnOrderDetailList\": [{\n" +
-                "\t\t\"orderNo\": \"LXO-20180214-731812-00080\",\n" +
+                "\t\t\"orderNo\": \"LXO-20180328-1000-01286\",\n" +
                 "\t\t\"orderEntry\": 1,\n" +
-                "\t\t\"productNo\": \"10.DPC.LE.viewpaker-M2\",\n" +
-                "\t\t\"productName\": \"优威派克一体机M2\",\n" +
+                "\t\t\"productNo\": \"10.LPC.TH.P50S\",\n" +
+                "\t\t\"productName\": \"ThinkPad P50S\",\n" +
                 "\t\t\"remark\": \"\"\n" +
                 "\t}]\n" +
                 "}";
@@ -160,7 +162,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void sendToK3() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setReturnOrderNo("6f52d4caa5a643109d7ccca400218d0c");
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180328035118307");
         TestResult testResult = getJsonTestResult("/k3/sendToK3", k3ReturnOrder);
     }
 
@@ -335,7 +337,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitK3ReturnOrder() throws Exception {
         K3ReturnOrderCommitParam k3ReturnOrderCommitParam = new K3ReturnOrderCommitParam();
-        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180301211219301");
+        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180328035118307");
         k3ReturnOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/k3/commitK3ReturnOrder", k3ReturnOrderCommitParam);
     }

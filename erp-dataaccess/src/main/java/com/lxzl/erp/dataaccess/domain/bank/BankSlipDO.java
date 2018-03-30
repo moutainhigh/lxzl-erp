@@ -1,7 +1,9 @@
 package com.lxzl.erp.dataaccess.domain.bank;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+
 import java.util.Date;
+import java.util.List;
 
 
 public class BankSlipDO  extends BaseDO {
@@ -20,6 +22,16 @@ public class BankSlipDO  extends BaseDO {
 	private String excelUrl;
 	private Integer dataStatus;
 	private String remark;
+
+	private List<BankSlipDetailDO> bankSlipDetailDOList;
+
+	public List<BankSlipDetailDO> getBankSlipDetailDOList() {
+		return bankSlipDetailDOList;
+	}
+
+	public void setBankSlipDetailDOList(List<BankSlipDetailDO> bankSlipDetailDOList) {
+		this.bankSlipDetailDOList = bankSlipDetailDOList;
+	}
 
 	public Integer getId(){
 		return id;

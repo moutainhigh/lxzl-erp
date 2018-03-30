@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.*;
@@ -19,15 +20,20 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ResultData;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
+import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -66,6 +72,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -149,14 +156,17 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
                     String measureList = obj.get("MeasureList").toString();
-                    List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
-                    convertOrderMaterial(orderMaterialList);
-                    order.setOrderMaterialList(orderMaterialList);
+                    if (measureList != null && !"[]".equals(measureList)) {
+                        List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
+                        convertOrderMaterial(orderMaterialList);
+                        order.setOrderMaterialList(orderMaterialList);
+                    }
                     String productList = obj.get("ProductList").toString();
-                    List<OrderProduct> orderProductList = JSON.parseArray(productList, OrderProduct.class);
-                    convertOrderProduct(orderProductList);
-                    order.setOrderProductList(orderProductList);
-
+                    if (productList != null && !"[]".equals(productList)) {
+                        List<OrderProduct> orderProductList = JSON.parseArray(productList, OrderProduct.class);
+                        convertOrderProduct(orderProductList);
+                        order.setOrderProductList(orderProductList);
+                    }
                     orderList.add(order);
                 }
             }
@@ -252,7 +262,7 @@ public class K3ServiceImpl implements K3Service {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("orderNo", orderNo);
             String requestJson = jsonObject.toJSONString();
-            String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(k3OrderDetailUrl, requestJson, headerBuilder, "UTF-8");
 
             logger.info("query k3 order page response:{}", response);
             JSONObject postResult = JSON.parseObject(response);
@@ -549,7 +559,7 @@ public class K3ServiceImpl implements K3Service {
             }
             //调用提交审核服务
             k3ReturnOrderCommitParam.setVerifyMatters("K3退货单审核事项：1.服务费和运费 2.退还方式 3.商品与配件的退货数量");
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_RETURN, k3ReturnOrderCommitParam.getReturnOrderNo(), k3ReturnOrderCommitParam.getVerifyUserId(), k3ReturnOrderCommitParam.getVerifyMatters(), k3ReturnOrderCommitParam.getRemark(), k3ReturnOrderCommitParam.getImgIdList(),null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_RETURN, k3ReturnOrderCommitParam.getReturnOrderNo(), k3ReturnOrderCommitParam.getVerifyUserId(), k3ReturnOrderCommitParam.getVerifyMatters(), k3ReturnOrderCommitParam.getRemark(), k3ReturnOrderCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING);
@@ -572,6 +582,7 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> sendToK3(String returnOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -582,13 +593,94 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        IERPService service = null;
+        K3SendRecordDO k3SendRecordDO = null;
+        com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = null;
+        try {
+            k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(k3ReturnOrderDO.getId(), PostK3Type.POST_K3_TYPE_RETURN_ORDER);
+            ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(PostK3Type.POST_K3_TYPE_RETURN_ORDER);
+            K3ReturnOrder k3ReturnOrder = ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class);
+            Object postData = convertK3DataService.getK3PostWebServiceData(null, k3ReturnOrder);
+            if (k3SendRecordDO == null) {
+                //创建推送记录，此时发送状态失败，接收状态失败
+                k3SendRecordDO = new K3SendRecordDO();
+                k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+                k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setRecordJson(JSON.toJSONString(k3ReturnOrder));
+                k3SendRecordDO.setSendTime(new Date());
+                k3SendRecordDO.setRecordReferId(k3SendRecordDO.getId());
+                k3SendRecordMapper.save(k3SendRecordDO);
+                logger.info("【推送消息】" + JSON.toJSONString(k3ReturnOrder));
+            }
+            service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
+            response = service.addSEOutstock((FormSEOutStock) postData);
+            //修改推送记录
+            if (response == null) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+                return result;
+            } else if (response.getStatus() != 0) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                result.setErrorCode(ErrorCode.K3_RETURN_ORDER_FAIL);
+                return result;
+            } else {
 
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
+                if (response.getData() != null && response.getData().length > 0) {
+                    Map<String, String> map = new HashMap<>();
+                    for (ResultData resultData : response.getData()) {
+                        map.put(resultData.getKey(), resultData.getValue());
+                    }
+                    if (map.containsKey("EQAmount")) {
+                        //恢复信用额度
+                        BigDecimal b = new BigDecimal(Double.parseDouble(map.get("EQAmount")));
+                        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
+                            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+                            CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+                            customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+                        }
+                    }
+                }
+                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
+            }
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
+            k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
+            k3SendRecordMapper.update(k3SendRecordDO);
+            logger.info("【返回结果】" + response);
+
+        } catch (Exception e) {
+            dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+            result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return result;
+        }
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
         k3ReturnOrderDO.setUpdateTime(currentTime);
         k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
+        String type = null;
+        if ("erp-prod".equals(ApplicationConfig.application)) {
+            type = "【线上环境】";
+        } else if ("erp-dev".equals(ApplicationConfig.application)) {
+            type = "【开发环境】";
+        } else if ("erp-adv".equals(ApplicationConfig.application)) {
+            type = "【预发环境】";
+        } else if ("erp-test".equals(ApplicationConfig.application)) {
+            type = "【测试环境】";
+        }
+        StringBuffer sb = new StringBuffer(type);
+        sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
     }
 
     @Override
@@ -883,7 +975,7 @@ public class K3ServiceImpl implements K3Service {
             }
             //调用提交审核服务
             k3ChangeOrderCommitParam.setVerifyMatters("K3换货单审核事项：1.服务费和运费 2.换货方式 3.商品与配件的商品差价和换货数量");
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_CHANGE, k3ChangeOrderCommitParam.getChangeOrderNo(), k3ChangeOrderCommitParam.getVerifyUserId(), k3ChangeOrderCommitParam.getVerifyMatters(), k3ChangeOrderCommitParam.getRemark(), k3ChangeOrderCommitParam.getImgIdList(),null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_K3_CHANGE, k3ChangeOrderCommitParam.getChangeOrderNo(), k3ChangeOrderCommitParam.getVerifyUserId(), k3ChangeOrderCommitParam.getVerifyMatters(), k3ChangeOrderCommitParam.getRemark(), k3ChangeOrderCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 k3ChangeOrderDO.setChangeOrderStatus(ChangeOrderStatus.CHANGE_ORDER_STATUS_VERIFYING);
@@ -911,7 +1003,7 @@ public class K3ServiceImpl implements K3Service {
 
         User loginUser = userSupport.getCurrentUser();
         //超级管理员权限控制
-        if(!userRoleService.isSuperAdmin(loginUser.getUserId())){
+        if (!userRoleService.isSuperAdmin(loginUser.getUserId())) {
             result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return result;
         }
@@ -929,10 +1021,10 @@ public class K3ServiceImpl implements K3Service {
         Page<K3SendRecord> page = new Page<>(k3SendRecordList, totalCount, k3SendRecordParam.getPageNo(), k3SendRecordParam.getPageSize());
 
         List<K3SendRecord> newK3SendRecordList = page.getItemList();
-        for(int i=0;i<page.getItemList().size();i++){
+        for (int i = 0; i < page.getItemList().size(); i++) {
             Integer recordType = page.getItemList().get(i).getRecordType();
             Integer recordReferId = page.getItemList().get(i).getRecordReferId();
-            newK3SendRecordList.get(i).setRecordReferNo(recordTypeSupport.getNoByRecordType(recordType,recordReferId));
+            newK3SendRecordList.get(i).setRecordReferNo(recordTypeSupport.getNoByRecordType(recordType, recordReferId));
         }
         page.setItemList(newK3SendRecordList);
 
@@ -947,28 +1039,28 @@ public class K3ServiceImpl implements K3Service {
 
         User loginUser = userSupport.getCurrentUser();
         //超级管理员权限控制
-        if(!userRoleService.isSuperAdmin(loginUser.getUserId())){
+        if (!userRoleService.isSuperAdmin(loginUser.getUserId())) {
             result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return result;
         }
 
         K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findById(k3SendRecord.getK3SendRecordId());
-        if(k3SendRecordDO == null){
+        if (k3SendRecordDO == null) {
             result.setErrorCode(ErrorCode.K3_SEND_RECORD_ID_IS_NOT_EXISTS);
             return result;
         }
-        Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(),k3SendRecordDO.getRecordReferId());
+        Object data = recordTypeSupport.recordTypeAndRecordReferIdByClass(k3SendRecordDO.getRecordType(), k3SendRecordDO.getRecordReferId());
 
-        if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDO.getRecordType())){
-            com.lxzl.erp.common.domain.order.pojo.Order order = (com.lxzl.erp.common.domain.order.pojo.Order)data;
-            if(OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(order.getOrderStatus())){
-                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD,k3SendRecordDO.getRecordType(),data,false);
-            }else{
+        if (PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordDO.getRecordType())) {
+            com.lxzl.erp.common.domain.order.pojo.Order order = (com.lxzl.erp.common.domain.order.pojo.Order) data;
+            if (OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(order.getOrderStatus())) {
+                webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, k3SendRecordDO.getRecordType(), data, false);
+            } else {
                 result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
                 return result;
             }
-        }else{
-            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,k3SendRecordDO.getRecordType(),data,false);
+        } else {
+            webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, k3SendRecordDO.getRecordType(), data, false);
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -981,91 +1073,111 @@ public class K3ServiceImpl implements K3Service {
         ServiceResult<String, Map<String, String>> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         //超级管理员权限控制
-        if(!userRoleService.isSuperAdmin(loginUser.getUserId())){
+        if (!userRoleService.isSuperAdmin(loginUser.getUserId())) {
             result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
             return result;
         }
         K3SendRecordDO k3SendRecordDO = null;
-        Map<String,String> strMap = new HashMap<>();
-        if(PostK3Type.POST_K3_TYPE_CUSTOMER.equals(k3SendRecordBatchParam.getRecordType())){
-            List<CustomerDO> customerDOList = customerMapper.findByCustomerParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+        Map<String, String> strMap = new HashMap<>();
+        if (PostK3Type.POST_K3_TYPE_CUSTOMER.equals(k3SendRecordBatchParam.getRecordType())) {
+            List<CustomerDO> customerDOList = customerMapper.findByCustomerParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
             List<CustomerDO> successCustomerDOList = new ArrayList<>();
             List<CustomerDO> failCustomerDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_CUSTOMER);
-            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            for(int i=0;i<customerDOList.size();i++){
+            Map<String, K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            for (int i = 0; i < customerDOList.size(); i++) {
                 k3SendRecordDO = successK3SendRecordDOMap.get(customerDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                if (k3SendRecordDO != null) {
                     successCustomerDOList.add(customerDOList.get(i));
-                }else{
+                } else {
                     failCustomerDOList.add(customerDOList.get(i));
                 }
             }
 
-            strMap = recordTypeSupport.customerK3SendRecord(customerDOList,successCustomerDOList,failCustomerDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
-        }else if(PostK3Type.POST_K3_TYPE_PRODUCT.equals(k3SendRecordBatchParam.getRecordType())){
-            List<ProductDO> productDOList = productMapper.findByProductParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            strMap = recordTypeSupport.customerK3SendRecord(customerDOList, successCustomerDOList, failCustomerDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
+        } else if (PostK3Type.POST_K3_TYPE_PRODUCT.equals(k3SendRecordBatchParam.getRecordType())) {
+            List<ProductDO> productDOList = productMapper.findByProductParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
             List<ProductDO> successProductDOList = new ArrayList<>();
             List<ProductDO> failProductDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_PRODUCT);
-            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            for(int i=0;i<productDOList.size();i++){
+            Map<String, K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            for (int i = 0; i < productDOList.size(); i++) {
                 k3SendRecordDO = successK3SendRecordDOMap.get(productDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                if (k3SendRecordDO != null) {
                     successProductDOList.add(productDOList.get(i));
-                }else{
+                } else {
                     failProductDOList.add(productDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.productK3SendRecord(productDOList,successProductDOList,failProductDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
-        }else if(PostK3Type.POST_K3_TYPE_MATERIAL.equals(k3SendRecordBatchParam.getRecordType())){
-            List<MaterialDO> materialDOList = materialMapper.findByMaterialParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            strMap = recordTypeSupport.productK3SendRecord(productDOList, successProductDOList, failProductDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
+        } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(k3SendRecordBatchParam.getRecordType())) {
+            List<MaterialDO> materialDOList = materialMapper.findByMaterialParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
             List<MaterialDO> successMaterialDOList = new ArrayList<>();
             List<MaterialDO> failMaterialDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_MATERIAL);
-            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            for(int i=0;i<materialDOList.size();i++){
+            Map<String, K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            for (int i = 0; i < materialDOList.size(); i++) {
                 k3SendRecordDO = successK3SendRecordDOMap.get(materialDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                if (k3SendRecordDO != null) {
                     successMaterialDOList.add(materialDOList.get(i));
-                }else{
+                } else {
                     failMaterialDOList.add(materialDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.materialK3SendRecord(materialDOList,successMaterialDOList,failMaterialDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
-        }else if(PostK3Type.POST_K3_TYPE_USER.equals(k3SendRecordBatchParam.getRecordType())){
-            List<UserDO> userDOList = userMapper.findByUserParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            strMap = recordTypeSupport.materialK3SendRecord(materialDOList, successMaterialDOList, failMaterialDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
+        } else if (PostK3Type.POST_K3_TYPE_USER.equals(k3SendRecordBatchParam.getRecordType())) {
+            List<UserDO> userDOList = userMapper.findByUserParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
             List<UserDO> successUserDOList = new ArrayList<>();
             List<UserDO> failUserDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_USER);
-            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            for(int i=0;i<userDOList.size();i++){
+            Map<String, K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            for (int i = 0; i < userDOList.size(); i++) {
                 k3SendRecordDO = successK3SendRecordDOMap.get(userDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                if (k3SendRecordDO != null) {
                     successUserDOList.add(userDOList.get(i));
-                }else{
+                } else {
                     failUserDOList.add(userDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.userK3SendRecord(userDOList,successUserDOList,failUserDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
-        }else if(PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordBatchParam.getRecordType())){
-            List<OrderDO> orderDOList = orderMapper.findByOrderParam(k3SendRecordBatchParam.getStartTime(),k3SendRecordBatchParam.getEndTime());
+            strMap = recordTypeSupport.userK3SendRecord(userDOList, successUserDOList, failUserDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
+        } else if (PostK3Type.POST_K3_TYPE_ORDER.equals(k3SendRecordBatchParam.getRecordType())) {
+            List<OrderDO> orderDOList = orderMapper.findByOrderParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
             List<OrderDO> successOrderDOList = new ArrayList<>();
             List<OrderDO> failOrderDOList = new ArrayList<>();
             List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_ORDER);
-            Map<String,K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            for(int i=0;i<orderDOList.size();i++){
+            Map<String, K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
+            for (int i = 0; i < orderDOList.size(); i++) {
                 k3SendRecordDO = successK3SendRecordDOMap.get(orderDOList.get(i).getId());
-                if(k3SendRecordDO != null){
+                if (k3SendRecordDO != null) {
                     successOrderDOList.add(orderDOList.get(i));
-                }else{
+                } else {
                     failOrderDOList.add(orderDOList.get(i));
                 }
             }
-            strMap = recordTypeSupport.orderK3SendRecord(orderDOList,successOrderDOList,failOrderDOList,k3SendRecordBatchParam.getBatchType(),k3SendRecordBatchParam.getIntervalTime());
+            strMap = recordTypeSupport.orderK3SendRecord(orderDOList, successOrderDOList, failOrderDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(strMap);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> strongCancelReturnOrder(String returnOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        //只有结束状态的K3退货单可以强制取消
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            result.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(returnOrderNo);
         return result;
     }
 
@@ -1208,4 +1320,11 @@ public class K3ServiceImpl implements K3Service {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PostK3ServiceManager postK3ServiceManager;
+    @Autowired
+    private DingDingSupport dingDingSupport;
+    @Autowired
+    private CustomerSupport customerSupport;
+
 }

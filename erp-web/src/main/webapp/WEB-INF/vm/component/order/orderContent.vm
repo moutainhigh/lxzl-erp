@@ -263,7 +263,7 @@
                                 {{/showDepositAmount}}
                             </td>
 
-                            <td>{{#showFirstPayAmount}}￥{{#price}}{{firstNeedPayAmount}}{{/price}}{{/showFirstPayAmount}}</td>
+                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
                             <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
@@ -413,7 +413,7 @@
 
                                 {{/showDepositAmount}}
                             </td>
-                            <td>{{#showFirstPayAmount}}￥{{#price}}{{firstNeedPayAmount}}{{/price}}{{/showFirstPayAmount}}</td>
+                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
                             <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">

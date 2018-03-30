@@ -95,8 +95,34 @@
 		UPDATE erp_bank_slip_claim <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<select id="findByBankSlipDetailId" resultMap="BankSlipClaimDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim  ebsc WHERE ebsc.bank_slip_detail_id = #{findByBankSlipDetailId,jdbcType=INTEGER} AND ebsc.data_status = 1
-	</select>
+	<update id="updateDataStatusByBankSlipDetailId">
+		UPDATE erp_bank_slip_claim ebsc SET ebsc.data_status = 0,ebsc.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsc.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsc.bank_slip_detail_id = #{bankSlipDetailId, jdbcType=INTEGER}
+	</update>
 
+	<update id="updateBankSlipClaimDO" parameterType="java.util.List">
+		update erp_bank_slip_claim
+		SET
+		<trim>
+			recharge_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.rechargeStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

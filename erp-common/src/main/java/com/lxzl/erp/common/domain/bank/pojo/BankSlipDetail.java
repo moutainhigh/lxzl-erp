@@ -3,12 +3,12 @@ package com.lxzl.erp.common.domain.bank.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlipDetail extends BasePO {
@@ -33,6 +33,15 @@ public class BankSlipDetail extends BasePO {
 	private String updateUser;   //修改人
 	private Integer bankSlipId;   //银行对公流水表id
 
+	private List<BankSlipClaim> bankSlipClaimList;
+
+	public List<BankSlipClaim> getBankSlipClaimList() {
+		return bankSlipClaimList;
+	}
+
+	public void setBankSlipClaimList(List<BankSlipClaim> bankSlipClaimList) {
+		this.bankSlipClaimList = bankSlipClaimList;
+	}
 
 	public Integer getBankSlipDetailId(){
 		return bankSlipDetailId;

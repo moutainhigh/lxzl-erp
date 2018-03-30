@@ -80,14 +80,7 @@ public class ImportICBCBank {
             }
             //遍历当前sheet中的所有行
 
-            HashMap<String, Object> map = new HashMap<>();
-            SubCompanyQueryParam subCompanyQueryParam = new SubCompanyQueryParam();
-            subCompanyQueryParam.setSubCompanyName(bankSlip.getSubCompanyName());
-            map.put("start", 0);
-            map.put("pageSize", Integer.MAX_VALUE);
-            map.put("subCompanyQueryParam", subCompanyQueryParam);
-            List<SubCompanyDO> subCompanyDOList = subCompanyMapper.listPage(map);
-            SubCompanyDO subCompanyDO = subCompanyDOList.get(0);
+            SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
             BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
@@ -100,12 +93,12 @@ public class ImportICBCBank {
             List<BankSlipDetailDO> bankSlipDetailDOList = data.getResult();
 
             //保存  银行对公流水表
-            bankSlipDO.setSubCompanyId(subCompanyDO.getId());
+            bankSlipDO.setSubCompanyName(subCompanyDO.getSubCompanyName());
 
             bankSlipDO.setSlipStatus(SlipStatus.INITIALIZE);
             bankSlipDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-            bankSlipDO.setClaimCount(0);
-            bankSlipDO.setConfirmCount(0);
+            bankSlipDO.setClaimCount(CommonConstant.COMMON_ZERO);
+            bankSlipDO.setConfirmCount(CommonConstant.COMMON_ZERO);
             bankSlipDO.setCreateTime(now);
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);

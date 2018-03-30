@@ -311,6 +311,21 @@ CREATE TABLE `erp_area_district` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='地区行政区表';
 
+DROP TABLE if exists `erp_sub_company_city_cover`;
+CREATE TABLE `erp_sub_company_city_cover` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `province_id` int(20) NOT NULL COMMENT '省份ID',
+  `city_id` int(20) NOT NULL COMMENT '城市ID',
+  `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `update_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='分公司城市覆盖表';
+
 DROP TABLE IF EXISTS `erp_business_system_config`;
 CREATE TABLE `erp_business_system_config` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -400,6 +415,7 @@ CREATE TABLE `erp_customer_company` (
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `customer_no` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '客户编码',
   `company_name` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '公司名称',
+  `simple_company_name` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '简单公司名称',
   `company_abb` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT '公司简称',
   `is_legal_person_apple` int(10) DEFAULT '0' COMMENT '是否法人代表申请， 0否，1是',
   `legal_person` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '法人姓名',
@@ -538,6 +554,7 @@ CREATE TABLE `erp_customer_consign_info` (
   `is_main` int(11) NOT NULL DEFAULT '0' COMMENT '是否为默认地址，0否1是',
   `is_business_address` int(11) NOT NULL DEFAULT '0' COMMENT '是否为经营地址，0否1是',
   `last_use_time` datetime DEFAULT NULL COMMENT '最后使用时间',
+  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态：0未提交；1初审通过；2终审通过',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -599,6 +616,7 @@ CREATE TABLE `erp_workflow_link` (
   `workflow_current_node_id` int(20) DEFAULT NULL COMMENT '当前结点ID',
   `commit_user` int(20) COMMENT '提交人',
   `current_verify_user` int(20) COMMENT '审核人',
+  `verify_user_group_id` int(20) COMMENT '审核人组ID，审核人为空时，该字段有值',
   `current_verify_status` int(20) COMMENT '审核状态',
   `verify_matters` varchar(500) COMMENT '审核事项',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -611,6 +629,25 @@ CREATE TABLE `erp_workflow_link` (
   UNIQUE KEY `index_workflow_type_refer` (`workflow_type`,`workflow_refer_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流线表';
 
+DROP TABLE if exists `erp_workflow_verify_user_group`;
+CREATE TABLE `erp_workflow_verify_user_group` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `verify_user_group_id` int(20) NOT NULL COMMENT '审核组ID',
+  `verify_type` int(11) NOT NULL COMMENT '审核类型，1-本条审核通过则直接通过，2-相同审核组的所有2状态的审核通过才算通过',
+  `verify_user` int(20) COMMENT '审核人',
+  `verify_time` datetime COMMENT '审核时间',
+  `verify_status` int(20) COMMENT '审核状态',
+  `verify_opinion` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '审核意见',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='工作流审核用户组表';
+
+
 DROP TABLE if exists `erp_workflow_link_detail`;
 CREATE TABLE `erp_workflow_link_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -621,6 +658,7 @@ CREATE TABLE `erp_workflow_link_detail` (
   `workflow_previous_node_id` int(20) COMMENT '上节点ID',
   `workflow_next_node_id` int(20) COMMENT '下节点ID',
   `verify_user` int(20) COMMENT '审核人',
+  `verify_user_group_id` int(20) DEFAULT NULL COMMENT '审核人组ID，审核人为空时，该字段有值',
   `verify_time` datetime COMMENT '审核时间',
   `verify_status` int(20) COMMENT '审核状态',
   `verify_opinion` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '审核意见',
@@ -3026,7 +3064,7 @@ CREATE TABLE `erp_bank_slip` (
   `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
   `claim_count` int(11) NOT NULL COMMENT '已认领笔数',
   `confirm_count` int(11) NOT NULL COMMENT '已确认笔数',
-  `slip_status` int(11) NOT NULL COMMENT '单据状态：0-初始化，1-已下推，2-部分认领，3-全部认领',
+  `slip_status` int(11) NOT NULL COMMENT '单据状态：0-初始化，1-已下推，2-全部认领',
   `excel_url` varchar(200) NOT NULL DEFAULT '' COMMENT '表格URL',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
