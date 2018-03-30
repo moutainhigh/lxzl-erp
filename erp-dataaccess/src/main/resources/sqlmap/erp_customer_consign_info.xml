@@ -233,4 +233,16 @@
 		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.data_status = 1
 	</select>
 
+	<select id="findVerifyStatusByCustomerId" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>
+		,eap.province_name AS provinceName
+		,eac.city_name AS cityName
+		,ead.district_name AS districtName
+		FROM erp_customer_consign_info ecci
+		LEFT JOIN erp_area_province eap ON ecci.province=eap.id AND eap.data_status=1
+		LEFT JOIN erp_area_city eac ON ecci.city=eac.id AND eac.data_status=1
+		LEFT JOIN erp_area_district ead ON ecci.district=ead.id AND ead.data_status=1
+		WHERE ecci.customer_id = #{customerId,jdbcType=INTEGER} AND ecci.verify_status = 0 AND ecci.data_status = 1
+	</select>
+
 </mapper>

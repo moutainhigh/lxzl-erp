@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -262,9 +263,12 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCommitOrder() throws Exception {
-        Order order = new Order();
-        order.setOrderNo("LXO-20180322-1000-00052");
-        order.setVerifyUser(500006);//采购审核人员
+        OrderCommitParam order = new OrderCommitParam();
+        order.setOrderNo("LXO-20180328-027-01290");
+        order.setVerifyUser(500228);//采购审核人
+        List<Integer> imageList = new ArrayList<>();
+        imageList.add(1818);
+        order.setImgIdList(imageList);
         TestResult testResult = getJsonTestResult("/order/commit", order);
     }
 
@@ -387,26 +391,26 @@ public class OrderTest extends ERPUnTransactionalTest {
         Order order = new Order();
 
         order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
-        order.setLogisticsAmount(new BigDecimal(50));
+        order.setLogisticsAmount(new BigDecimal(0.0));
         order.setBuyerRemark("2018.3.17 17:19 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
         order.setOrderSubCompanyId(8);
 
         order.setRentType(OrderRentType.RENT_TYPE_DAY);
-        order.setRentTimeLength(3);
+        order.setRentTimeLength(5);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT);
         orderProduct.setProductSkuId(40);
         orderProduct.setIsNewProduct(1);
-        orderProduct.setProductCount(2);
-        orderProduct.setInsuranceAmount(new BigDecimal(100.0));
-        orderProduct.setProductUnitAmount(new BigDecimal(33.33333));
-        orderProduct.setInsuranceAmount(new BigDecimal(100.0));
+        orderProduct.setProductCount(1);
+        orderProduct.setInsuranceAmount(new BigDecimal(0.0));
+        orderProduct.setProductUnitAmount(new BigDecimal(10.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(0.0));
         orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        orderProduct.setDepositAmount(new BigDecimal(100.0));
+        orderProduct.setDepositAmount(new BigDecimal(0.0));
         orderProductList.add(orderProduct);
         order.setOrderProductList(orderProductList);
 
@@ -425,7 +429,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterialList.add(orderMaterial);
 //        order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-1000-20180305-00299");
+        order.setBuyerCustomerNo("LXCC-2000-20180328-00823");
         order.setRentStartTime(new Date());
         TestResult testResult = getJsonTestResult("/order/createOrderFirstPayAmount", order);
     }

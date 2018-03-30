@@ -125,4 +125,43 @@
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+
+	<select id="findByOtherSideAccountNo" resultMap="BankSlipClaimDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc WHERE ebsc.other_side_account_no = #{otherSideAccountNo,jdbcType=VARCHAR} AND  ebsc.data_status = 1
+	</select>
+
+	<insert id="saveBankSlipClaimDO" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+		INSERT INTO erp_bank_slip_claim
+		(bank_slip_detail_id,other_side_account_no,customer_no,claim_amount,claim_serial_no,recharge_status,data_status,remark,create_time,create_user,update_time,update_user)
+		values
+		<foreach collection="list" item="bankSlipClaimDO" index="index" separator =",">
+			(
+			#{bankSlipClaimDO.bankSlipDetailId,jdbcType=INTEGER},
+			#{bankSlipClaimDO.otherSideAccountNo,jdbcType=VARCHAR},
+			#{bankSlipClaimDO.customerNo,jdbcType=VARCHAR},
+			#{bankSlipClaimDO.claimAmount,jdbcType=DECIMAL},
+			#{bankSlipClaimDO.claimSerialNo,jdbcType=BIGINT},
+			#{bankSlipClaimDO.rechargeStatus,jdbcType=INTEGER},
+			#{bankSlipClaimDO.dataStatus,jdbcType=INTEGER},
+			#{bankSlipClaimDO.remark,jdbcType=VARCHAR},
+			#{bankSlipClaimDO.createTime,jdbcType=TIMESTAMP},
+			#{bankSlipClaimDO.createUser,jdbcType=VARCHAR},
+			#{bankSlipClaimDO.updateTime,jdbcType=TIMESTAMP},
+			#{bankSlipClaimDO.updateUser,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+	<select id="findBankSlipClaimPaySuccess" resultMap="BankSlipClaimDO">
+		SELECT ebsc.* FROM erp_bank_slip_claim ebsc
+		INNER JOIN(
+			SELECT Cebsc.other_side_account_no,MAX(Cebsc.claim_serial_no) claim_serial_no FROM(
+				SELECT Bebsc.other_side_account_no,Bebsc.claim_serial_no FROM (
+					SELECT claim_serial_no,COUNT(1) line FROM erp_bank_slip_claim WHERE data_status = 1 AND recharge_status = 2 GROUP BY claim_serial_no
+				)Aebsc
+				INNER JOIN erp_bank_slip_claim Bebsc ON Bebsc.claim_serial_no = Aebsc.claim_serial_no AND Aebsc.line = 1 AND Bebsc.other_side_account_no != ''
+			)Cebsc GROUP BY Cebsc.other_side_account_no
+		)Debsc ON Debsc.claim_serial_no = ebsc.claim_serial_no
+	</select>
+
+
 </mapper>

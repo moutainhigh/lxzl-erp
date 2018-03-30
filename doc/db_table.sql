@@ -554,7 +554,7 @@ CREATE TABLE `erp_customer_consign_info` (
   `is_main` int(11) NOT NULL DEFAULT '0' COMMENT '是否为默认地址，0否1是',
   `is_business_address` int(11) NOT NULL DEFAULT '0' COMMENT '是否为经营地址，0否1是',
   `last_use_time` datetime DEFAULT NULL COMMENT '最后使用时间',
-  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态：0未提交；1初审通过；2终审通过',
+  `verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '审核状态：0未提交；1.已提交 2.初审通过；3.终审通过',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3139,6 +3139,91 @@ CREATE TABLE `erp_bank_slip_claim` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  INDEX index_erp_bank_slip_detail_id ( `erp_bank_slip_detail_id` ) ,
+  INDEX index_erp_bank_slip_detail_id ( `bank_slip_detail_id` ) ,
   INDEX index_other_side_account_no ( `other_side_account_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
+
+
+DROP TABLE if exists `erp_return_visit`;
+CREATE TABLE `erp_return_visit` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `return_visit_describe` varchar(1000) NOT NULL COMMENT '回访描述',
+  `customer_no` varchar(100) NOT NULL COMMENT '客戶编号',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_customer_no ( `customer_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='回访记录表';
+
+DROP TABLE if exists `erp_coupon_batch`;
+CREATE TABLE `erp_coupon_batch` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `coupon_batch_name` varchar(100) NOT NULL COMMENT '批次名称',
+  `coupon_batch_describe` varchar(1000) NOT NULL  DEFAULT '' COMMENT '批次描述',
+  `coupon_type` int(11) NOT NULL COMMENT '优惠券类型，1-设备优惠券',
+  `effective_start_time` datetime DEFAULT NULL COMMENT '有效期起始时间',
+  `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
+  `total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
+  `used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
+  `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
+  `total_deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣总金额',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='优惠券批次表';
+
+DROP TABLE if exists `erp_coupon_batch_detail`;
+CREATE TABLE `erp_coupon_batch_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
+  `total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
+  `used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券线上已领取总数',
+  `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
+  `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
+  `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
+  `total_deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣总金额',
+  `is_online` int(11) NOT NULL COMMENT '是否线上，0-否，1-是',
+  `effective_start_time` datetime DEFAULT NULL COMMENT '有效期起始时间',
+  `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='优惠券批次详情表';
+
+DROP TABLE if exists `erp_coupon`;
+CREATE TABLE `erp_coupon` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
+  `erp_batch_detail_id` int(20) NOT NULL COMMENT '批次详情ID',
+  `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
+  `deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣金额',
+  `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
+  `customer_no` varchar(100) NOT NULL COMMENT '客戶编号',
+  `is_online` int(11) NOT NULL COMMENT '是否线上，0-否，1-是',
+  `receive_time` datetime DEFAULT NULL COMMENT '领取时间',
+  `use_time` datetime DEFAULT NULL COMMENT '使用时间',
+  `effective_start_time` datetime DEFAULT NULL COMMENT '有效期起始时间',
+  `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_customer_no ( `customer_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='优惠券表';
+
+
+
