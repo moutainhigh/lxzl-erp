@@ -7,6 +7,7 @@
                 <th>授信额度</th>
                 <th>已用授信额度</th>
                 <th>导入已用授信额度</th>
+                <th>限制单台设备价值</th>
                 <th>状态</th>
                 <th>回访频率</th>
                 <th>是否全额押金客户</th>
@@ -34,6 +35,7 @@
                 <td>￥{{#price}}{{creditAmount}}{{/price}}</td>
                 <td>￥{{#price}}{{creditAmountUsed}}{{/price}}</td>
                 <td>￥{{#price}}{{importCreditAmountUsed}}{{/price}}</td>
+                <td>￥{{#price}}{{singleLimitPrice}}{{/price}}</td>
                 <td>{{dataStatusValue}}</td>
                 <td>{{returnVisitFrequency}}</td>
                 <td>{{isFullDepositValue}}</td>
@@ -51,11 +53,11 @@
                 <td>{{remark}}</td>
                 <td>
                     <p class="mn">{{createUserRealName}}</p>
-                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
                 </td>
                 <td>
                     <p class="mn">{{updateUserRealName}}</p>
-                    <p class="mn mt5">{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</p>
+                    <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
                 </td>
             </tr>
             {{/listData}}
