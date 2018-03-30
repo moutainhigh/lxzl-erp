@@ -41,10 +41,11 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF-500355-20180329-00784");
-//        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
-        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+        workflowParam.setWorkflowLinkNo("LXWF-500355-20180330-00806");
+        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+//        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowParam.setReturnType(1);
+        workflowParam.setVerifyOpinion("test9");
 //        workflowParam.setNextVerifyUser(500016);
 //        List<Integer> list = new ArrayList<>();
 //        list.add(1819);
@@ -57,7 +58,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
-        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180328-00818");
+        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180329-00846");
         TestResult testResult = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
