@@ -164,9 +164,8 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		select count(ewl.id) from erp_workflow_link ewl
-        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
-        LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
+		select count(distinct ewl.id) from erp_workflow_link ewl
+        INNER JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
 		<where>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
                 and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
@@ -181,7 +180,7 @@
 				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 			</if>
             <if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
-                and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
+                and ewvug.verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
             </if>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
@@ -211,7 +210,7 @@
 			eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewl.workflow_step = ewl.workflow_last_step THEN true ELSE false END AS is_last_step
 		</trim>
 		from erp_workflow_link ewl
-        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
+        INNER JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
 		LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
 		LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
 		LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
@@ -233,6 +232,12 @@
             </if>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null ">
+				<![CDATA[ AND ewl.create_time >= #{maps.workflowQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null ">
+				<![CDATA[ AND ewl.create_time <= #{maps.workflowQueryParam.createEndTime} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ewl.data_status = 1
