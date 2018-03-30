@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-商品管理-商品列表-添加商品</title>
+    <title>凌雄ERP-request url</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
     <script type="text/javascript">
