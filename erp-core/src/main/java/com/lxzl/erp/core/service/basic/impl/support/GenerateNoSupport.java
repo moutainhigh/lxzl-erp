@@ -544,11 +544,10 @@ public class GenerateNoSupport {
     /**
      * 生成审核组ID
      */
-    public Integer generateVerifyUserGroupId(Date currentTime) {
+    public Integer generateVerifyUserGroupId() {
         synchronized (this) {
             String count = String.format("%03d", workflowVerifyUserGroupMapper.listAllCount() + 1);
-            String date = new SimpleDateFormat("yyMMdd").format(currentTime);
-            Integer data = Integer.valueOf(date + count);
+            Integer data = Integer.valueOf(count);
             return data;
         }
     }
