@@ -398,17 +398,13 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(serviceResult.getErrorCode());
             return serviceResult;
         }
+
         boolean flag = false;
         if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
             for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
                     flag = true;
                     break;
-                }
-                if(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfo.getVerifyStatus()) &&
-                        CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfo.getVerifyStatus())){
-                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
-                    return serviceResult;
                 }
             }
             if(!flag){

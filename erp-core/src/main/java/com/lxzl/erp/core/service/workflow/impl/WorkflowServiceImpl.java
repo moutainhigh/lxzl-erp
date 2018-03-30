@@ -642,13 +642,15 @@ public class WorkflowServiceImpl implements WorkflowService {
                                 return result;
                             }
                         }
-                        if(companyId.equals(subCompanyCityCoverDO.getSubCompanyId())){
+                        if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus()) && companyId.equals(subCompanyCityCoverDO.getSubCompanyId())){
                             customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS);
                             customerConsignInfoDO.setUpdateTime(currentTime);
                             customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                             customerConsignInfoMapper.update(customerConsignInfoDO);
                         }
-                    }else if(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) && userSupport.isRiskManagementPerson()){
+                    }else if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())
+                            && CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus())
+                            && userSupport.isRiskManagementPerson()){
                         customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
                         customerConsignInfoDO.setUpdateTime(currentTime);
                         customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
@@ -1260,20 +1262,20 @@ public class WorkflowServiceImpl implements WorkflowService {
         Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
 
         SubCompanyCityCoverDO subCompanyCityCoverDO;
-        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
-            if(customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null){
-                //判断经营地址
-                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
-                if (subCompanyCityCoverDO == null) {
-                    subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerDO.getCustomerCompanyDO().getProvince());
-                    if (subCompanyCityCoverDO == null) {
-                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL);
-                        return result;
-                    }
-                }
-                map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
-            }
-        }
+//        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+//            if(customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null){
+//                //判断经营地址
+//                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
+//                if (subCompanyCityCoverDO == null) {
+//                    subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerDO.getCustomerCompanyDO().getProvince());
+//                    if (subCompanyCityCoverDO == null) {
+//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL);
+//                        return result;
+//                    }
+//                }
+//                map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
+//            }
+//        }
 
         //判断收货地址
         for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
@@ -1439,7 +1441,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
             workflowLinkDetailDO.setWorkflowReferNo(workflowLinkDO.getWorkflowReferNo());
             workflowLinkDetailDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
-            workflowLinkDetailDO.setWorkflowPreviousNodeId(workflowNodeDOList.get(0).getId());
+            workflowLinkDetailDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+            workflowLinkDetailDO.setWorkflowPreviousNodeId(0);
             workflowLinkDetailDO.setVerifyUser(verifyUser);
             workflowLinkDetailDO.setVerifyUserGroupId(verifyUserGroupId);
             workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
