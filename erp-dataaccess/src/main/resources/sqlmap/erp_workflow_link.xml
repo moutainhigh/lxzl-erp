@@ -248,7 +248,7 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 		) link
 		LEFT JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
-        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewld.verify_user_group_id
+        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id
         LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
 		LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
