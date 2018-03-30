@@ -14,6 +14,7 @@
 		<result column="is_main" jdbcType="INTEGER" property="isMain" />
 		<result column="is_business_address" jdbcType="INTEGER" property="isBusinessAddress" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="verify_status" jdbcType="INTEGER" property="verifyStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -27,7 +28,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.is_business_address,ecci.data_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user,ecci.last_use_time
+		ecci.id,ecci.customer_id,ecci.consignee_name,ecci.consignee_phone,ecci.province,ecci.city,ecci.district,ecci.address,ecci.is_main,ecci.is_business_address,ecci.data_status,ecci.verify_status,ecci.remark,ecci.create_time,ecci.create_user,ecci.update_time,ecci.update_user,ecci.last_use_time
 	</sql>
 
 	<select id="findById" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
@@ -92,6 +93,9 @@
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="verifyStatus != null">
+				verify_status = #{verifyStatus,jdbcType=INTEGER},
 			</if>
 			<if test="remark != null">
 				remark = #{remark,jdbcType=VARCHAR},
