@@ -561,6 +561,7 @@ public class ErrorCode {
     public static final String CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL = "J500151";
     public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
     public static final String CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE = "J500153";
+    public static final String CUSTOMER_NAME_REPETITION = "J500153";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -764,10 +765,9 @@ public class ErrorCode {
     public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM = "J18000025";
     public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
     public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
-    public static final String BANK_IS_NOT_ALIPAY = "J18000028";
-    public static final String BANK_IS_NOT_AGRICULTURE_BANK = "J18000029";
-    public static final String CURRENT_ROLES_NOT_PERMISSION = "J18000030";
-    public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000031";
+    public static final String CURRENT_ROLES_NOT_PERMISSION = "J18000028";
+    public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000029";
+    public static final String BANK_SLIP_CLAIM_NEED_PAY_SUCCESS = "J18000030";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -829,6 +829,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址信息，公司业务未覆盖范围");
         MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址信息，公司业务未覆盖范围");
         MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不给修改与删除地址");
+        MAP.put(CUSTOMER_NAME_REPETITION, "填写客户名称重复");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1525,11 +1526,9 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "银行对公流水状态不是已下推和部分认领");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
-        MAP.put(BANK_IS_NOT_ALIPAY, "不是支付宝的数据");
-        MAP.put(BANK_IS_NOT_AGRICULTURE_BANK, "不是农业银行的数据");
         MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
-
+        MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
     }
 
     public static String getMessage(String code) {
