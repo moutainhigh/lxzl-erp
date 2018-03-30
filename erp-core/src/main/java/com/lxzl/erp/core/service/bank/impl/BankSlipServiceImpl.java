@@ -236,7 +236,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
                 bankSlipClaimMapper.saveBankSlipClaimDO(bankSlipClaimDOList);
             }
-            if(CollectionUtil.isNotEmpty(newBankSlipDetailDOList)){
+            if (CollectionUtil.isNotEmpty(newBankSlipDetailDOList)) {
                 bankSlipDetailMapper.updateConfirmBankDetailDO(newBankSlipDetailDOList);
                 bankSlipMapper.update(bankSlipDO);
             }
@@ -544,17 +544,21 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipDetailDO.setUpdateTime(now);
         }
-        //以下是批量跟新操作 跟新对公流水项  和  认领表
-        bankSlipDetailMapper.updateConfirmBankDetailDO(bankSlipDetailDOList);
+        if (CollectionUtil.isEmpty(newDankSlipClaimDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED);
+            return serviceResult;
+        }
         bankSlipClaimMapper.updateBankSlipClaimDO(newDankSlipClaimDOList);
-
-        //改变已经确认个数  再判断认领个数
-        bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - amount);
-        bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + amount);
-        bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        bankSlipDO.setUpdateTime(now);
-        bankSlipMapper.update(bankSlipDO);
-
+        //以下是批量跟新操作 跟新对公流水项  和  认领表
+        if (CollectionUtil.isNotEmpty(bankSlipDetailDOList)) {
+            bankSlipDetailMapper.updateConfirmBankDetailDO(bankSlipDetailDOList);
+            //改变已经确认个数  再判断认领个数
+            bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - amount);
+            bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + amount);
+            bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            bankSlipDO.setUpdateTime(now);
+            bankSlipMapper.update(bankSlipDO);
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDO.getId());
         return serviceResult;
