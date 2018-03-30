@@ -138,9 +138,9 @@
                                         {{customerStatusValue}}
                                     </td>
                                     <td>{{isDisabledStr}}</td>
-                                    <td>
-                                        <div class="mw200">{{auditReason}}</div>
-                                    </td>
+##                                    <td>
+##                                        <div class="mw200">{{auditReason}}</div>
+##                                    </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group">
