@@ -376,7 +376,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //判断客户是否相等
         if (claimParamList.size() > 1) {
-            if (ListUtil.listToMap(claimParamList, "customerNo").size() == 1) {
+            if (ListUtil.listToMap(claimParamList, "customerNo").size() != claimParamList.size()) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_NAME_REPETITION);
                 return serviceResult;
             }
