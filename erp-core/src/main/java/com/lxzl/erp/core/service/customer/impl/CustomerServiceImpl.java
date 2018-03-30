@@ -1649,7 +1649,8 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        if(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) &&
+        if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus()) &&
+                CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) &&
                 CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfoDO.getVerifyStatus())){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
             return serviceResult;
@@ -1719,11 +1720,6 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
-            return serviceResult;
-        }
-        if(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfo.getVerifyStatus()) &&
-                CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfo.getVerifyStatus())){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
             return serviceResult;
         }
 
@@ -2865,16 +2861,10 @@ public class CustomerServiceImpl implements CustomerService {
         if (dbCustomerConsignInfoDOMap.size() > 0) {
             for (Map.Entry<Integer, CustomerConsignInfoDO> entry : dbCustomerConsignInfoDOMap.entrySet()) {
                 CustomerConsignInfoDO customerConsignInfoDO = entry.getValue();
-                if(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())){
                     customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                     customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoDO.setUpdateTime(now);
                     customerConsignInfoMapper.update(customerConsignInfoDO);
-                }else{
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
-                    return result;
-                }
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
