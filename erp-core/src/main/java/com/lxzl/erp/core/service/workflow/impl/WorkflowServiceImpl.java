@@ -208,7 +208,15 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
         } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
-            if (customerDO != null) {
+            List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+            if(customerConsignInfoDOList.size() > 0){
+                SubCompanyCityCoverDO subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDOList.get(0).getCity());
+                if(subCompanyCityCoverDO != null){
+                    subCompanyId = subCompanyCityCoverDO.getSubCompanyId();
+                }else{
+                    subCompanyId = customerDO.getOwnerSubCompanyId();
+                }
+            }else if(customerDO != null){
                 subCompanyId = customerDO.getOwnerSubCompanyId();
             }
         } else {
@@ -285,8 +293,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
         workflowVerifyUserGroupDO.setVerifyUser(loginUser.getUserId());
+        workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowVerifyUserGroupDO.setVerifyTime(currentTime);
         workflowVerifyUserGroupDO.setVerifyOpinion(commitRemark);
+        workflowVerifyUserGroupDO.setRemark(commitRemark);
         workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowVerifyUserGroupDO.setCreateTime(currentTime);
         workflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
@@ -326,8 +336,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         WorkflowNodeDO workflowNodeDO = null;
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
         if (workflowLinkDO == null) {
-            WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
             if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
                 return result;
@@ -349,14 +359,23 @@ public class WorkflowServiceImpl implements WorkflowService {
                 return result;
             } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 // 如果 最后是驳回状态，审核人就要从头来
-                WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
                 if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
                     result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
                     return result;
                 }
                 if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())){
-                    if(lastWorkflowLinkDetailDO.getWorkflowStep() == 2 || lastWorkflowLinkDetailDO.getWorkflowStep() == 3){
-                        workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(1);
+                    CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+                    if(customerDO == null){
+                        result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                        return result;
+                    }
+                    List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
+                    if(customerConsignInfoDOList.size() == 0){
+                        if(lastWorkflowLinkDetailDO.getWorkflowStep() == 2 || lastWorkflowLinkDetailDO.getWorkflowStep() == 3){
+                            workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(1);
+                        }else{
+                            workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
+                        }
                     }else{
                         workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
                     }
@@ -610,6 +629,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowVerifyUserGroupDO.setVerifyTime(currentTime);
                 workflowVerifyUserGroupDO.setVerifyStatus(verifyStatus);
                 workflowVerifyUserGroupDO.setVerifyOpinion(verifyOpinion);
+                workflowVerifyUserGroupDO.setRemark(verifyOpinion);
                 workflowVerifyUserGroupDO.setUpdateTime(currentTime);
                 workflowVerifyUserGroupDO.setUpdateUser(loginUser.getUserId().toString());
                 workflowVerifyUserGroupMapper.update(workflowVerifyUserGroupDO);
@@ -699,6 +719,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         lastWorkflowLinkDetailDO.setVerifyStatus(verifyStatus);
         lastWorkflowLinkDetailDO.setVerifyTime(currentTime);
         lastWorkflowLinkDetailDO.setVerifyOpinion(verifyOpinion);
+        lastWorkflowLinkDetailDO.setRemark(verifyOpinion);
         lastWorkflowLinkDetailDO.setUpdateUser(loginUser.getUserId().toString());
         lastWorkflowLinkDetailDO.setUpdateTime(currentTime);
         workflowLinkDetailMapper.update(lastWorkflowLinkDetailDO);
@@ -912,6 +933,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowVerifyUserGroupDO.setVerifyTime(currentTime);
         commitWorkflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         commitWorkflowVerifyUserGroupDO.setVerifyOpinion(commitRemark);
+        commitWorkflowVerifyUserGroupDO.setRemark(commitRemark);
         commitWorkflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
         commitWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
@@ -929,6 +951,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setVerifyUserGroupId(commitWorkflowVerifyUserGroupDO.getVerifyUserGroupId());
         commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         commitWorkflowLinkDetailDO.setVerifyOpinion(commitRemark);
+        commitWorkflowLinkDetailDO.setRemark(commitRemark);
         commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
         commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
@@ -1016,6 +1039,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowVerifyUserGroupDO.setVerifyTime(currentTime);
         commitWorkflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         commitWorkflowVerifyUserGroupDO.setVerifyOpinion(commitRemark);
+        commitWorkflowVerifyUserGroupDO.setRemark(commitRemark);
         commitWorkflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
         commitWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
@@ -1033,6 +1057,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setVerifyUserGroupId(commitWorkflowVerifyUserGroupDO.getVerifyUserGroupId());
         commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         commitWorkflowLinkDetailDO.setVerifyOpinion(commitRemark);
+        commitWorkflowLinkDetailDO.setRemark(commitRemark);
         commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
         commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
@@ -1414,6 +1439,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             commitWorkflowVerifyUserGroupDO.setVerifyTime(currentTime);
             commitWorkflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
             commitWorkflowVerifyUserGroupDO.setVerifyOpinion(commitRemark);
+            commitWorkflowVerifyUserGroupDO.setRemark(commitRemark);
             commitWorkflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             commitWorkflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
             commitWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
@@ -1431,6 +1457,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             commitWorkflowLinkDetailDO.setVerifyUserGroupId(commitWorkflowVerifyUserGroupDO.getVerifyUserGroupId());
             commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
             commitWorkflowLinkDetailDO.setVerifyOpinion(commitRemark);
+            commitWorkflowLinkDetailDO.setRemark(commitRemark);
             commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
             commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             commitWorkflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
@@ -1470,6 +1497,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowVerifyUserGroupDO.setVerifyTime(currentTime);
         workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         workflowVerifyUserGroupDO.setVerifyOpinion(commitRemark);
+        workflowVerifyUserGroupDO.setRemark(commitRemark);
         workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         workflowVerifyUserGroupDO.setCreateUser(loginUserId.toString());
         workflowVerifyUserGroupDO.setCreateTime(currentTime);
@@ -1487,6 +1515,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         commitWorkflowLinkDetailDO.setVerifyUserGroupId(workflowVerifyUserGroupDO.getVerifyUserGroupId());
         commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
         commitWorkflowLinkDetailDO.setVerifyOpinion(commitRemark);
+        commitWorkflowLinkDetailDO.setRemark(commitRemark);
         commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
         commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         commitWorkflowLinkDetailDO.setCreateUser(loginUserId.toString());

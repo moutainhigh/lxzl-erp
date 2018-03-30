@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-request url</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <script type="text/javascript">
+        common_load_css('${staticCommon}/rental/css','dropzone.css');
+    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12 center-block">
+                    <div class="admin-form theme-primary">
+                        <form method="post" id="addProductForm">
+                            #parse("component/product/editProductContent.vm")
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+
+<script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'api.data.js',
+            'manage.product.mixin.js',
+            'manage.product.util.js',
+            'manage.product.add.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    AddProduct.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+</body>
+</html>
+
