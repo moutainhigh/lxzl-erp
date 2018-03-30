@@ -17,6 +17,7 @@ import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
@@ -124,6 +125,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private SubCompanyCityCoverMapper subCompanyCityCoverMapper;
+
+    @Autowired
+    private UserRoleService userRoleService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -320,6 +324,13 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public ServiceResult<String, String> workflowImportData() {
         ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        //超级管理员权限控制
+        if (!userRoleService.isSuperAdmin(loginUser.getUserId())) {
+            result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
+            return result;
+        }
+
         Date now = new Date();
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         Map<String, Object> paramMap = new HashMap<>();
