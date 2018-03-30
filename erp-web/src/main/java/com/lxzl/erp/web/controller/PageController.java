@@ -1,9 +1,22 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.CustomerType;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +26,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("pageController")
 public class PageController extends BaseController {
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private ResultGenerator resultGenerator;
+
 //    @RequestMapping(value = "/uppwd")
 //    public String uppwd(HttpServletRequest request, HttpServletResponse response, Model model) {
 //        return "/uppwd";
@@ -339,6 +357,21 @@ public class PageController extends BaseController {
     @RequestMapping("/customer-business-manage/edit-after-pass")
     public String customerBusinessManageEditAfterPass() {
         return "/businessCustomerManage/businessCustomerEditAfterPass";
+    }
+
+    @RequestMapping(value = "customer-common-manage/detail", method = RequestMethod.GET)
+    public String detailCustomer(String no) {
+        CustomerQueryParam customerQueryParam = new CustomerQueryParam();
+        customerQueryParam.setCustomerNo(no);
+        ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customerQueryParam.getCustomerNo());
+        if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+            if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
+                return "redirect:/customer-business-manage/detail?no="+no;
+            } else {
+                return "redirect:/customer-manage/detail?no="+no;
+            }
+        }
+        return "redirect:/customer-business-manage/detail?no="+no;
     }
 
     //采购管理
@@ -809,6 +842,11 @@ public class PageController extends BaseController {
         return "/financialManage/jurnalAmountList";
     }
 
+    @RequestMapping("/private-manage/request")
+    public String privateManageRequeset() {
+        return "/privateManage/request";
+    }
+
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")
     public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
@@ -839,7 +877,7 @@ public class PageController extends BaseController {
 
     //选择商品Modal
     @RequestMapping("/product/choose")
-    public String productChoose() {
+    public String manproductChoose() {
         return "/component/product/chooseModal";
     }
 
