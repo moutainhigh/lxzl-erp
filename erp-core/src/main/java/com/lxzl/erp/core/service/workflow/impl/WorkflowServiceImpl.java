@@ -632,51 +632,48 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowVerifyUserGroupMapper.update(workflowVerifyUserGroupDO);
                 saveWorkflowImage(workflowVerifyUserGroupDO.getId(), imgIdList, currentTime);
 
-                CustomerDO customerDO = customerMapper.findByNo(workflowLinkDO.getWorkflowReferNo());
-                if(customerDO == null){
-                    result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-                    return result;
-                }
-                if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
-                    customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
-                } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
-                    customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
-                }
-                List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
-                if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
-                    result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
-                    return result;
-                }
-                Integer companyId = userSupport.getCurrentUserCompanyId();
-                //判断收货地址
-                for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
-                    if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())){
-                        SubCompanyCityCoverDO subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
-                        if (subCompanyCityCoverDO == null) {
-                            subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
+                if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())){
+                    CustomerDO customerDO = customerMapper.findByNo(workflowLinkDO.getWorkflowReferNo());
+                    if(customerDO == null){
+                        result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                        return result;
+                    }
+                    if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+                        customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+                    } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+                        customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
+                    }
+                    List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+                    if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
+                        return result;
+                    }
+                    Integer companyId = userSupport.getCurrentUserCompanyId();
+                    //判断收货地址
+                    for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
+                        if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())){
+                            SubCompanyCityCoverDO subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
                             if (subCompanyCityCoverDO == null) {
-                                result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL);
-                                return result;
+                                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
+                                if (subCompanyCityCoverDO == null) {
+                                    result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL);
+                                    return result;
+                                }
                             }
-                        }
-                        if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus()) && companyId.equals(subCompanyCityCoverDO.getSubCompanyId())){
-                            customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS);
+                            if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus()) && companyId.equals(subCompanyCityCoverDO.getSubCompanyId())){
+                                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS);
+                                customerConsignInfoDO.setUpdateTime(currentTime);
+                                customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                                customerConsignInfoMapper.update(customerConsignInfoDO);
+                            }
+                        }else if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())
+                                && CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus())
+                                && userSupport.isRiskManagementPerson()){
+                            customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
                             customerConsignInfoDO.setUpdateTime(currentTime);
                             customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                             customerConsignInfoMapper.update(customerConsignInfoDO);
-                        }else if(VerifyStatus.VERIFY_STATUS_BACK.equals(workflowVerifyUserGroupDO.getVerifyStatus()) && companyId.equals(subCompanyCityCoverDO.getSubCompanyId())){
-                            customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
-                            customerConsignInfoDO.setUpdateTime(currentTime);
-                            customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
-                            customerConsignInfoMapper.update(customerConsignInfoDO);
                         }
-                    }else if(VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())
-                            && CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus())
-                            && userSupport.isRiskManagementPerson()){
-                        customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
-                        customerConsignInfoDO.setUpdateTime(currentTime);
-                        customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
-                        customerConsignInfoMapper.update(customerConsignInfoDO);
                     }
                 }
             }
@@ -691,6 +688,31 @@ public class WorkflowServiceImpl implements WorkflowService {
                         workflowVerifyUserGroupDOIng.setUpdateTime(currentTime);
                         workflowVerifyUserGroupDOIng.setUpdateUser(loginUser.getUserId().toString());
                         workflowVerifyUserGroupMapper.update(workflowVerifyUserGroupDOIng);
+                    }
+                    if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())){
+                        CustomerDO customerDO = customerMapper.findByNo(workflowLinkDO.getWorkflowReferNo());
+                        if(customerDO == null){
+                            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                            return result;
+                        }
+                        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+                            customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+                        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+                            customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
+                        }
+                        List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+                        if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
+                            result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
+                            return result;
+                        }
+                        for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
+                            if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())){
+                                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+                                customerConsignInfoDO.setUpdateTime(currentTime);
+                                customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                                customerConsignInfoMapper.update(customerConsignInfoDO);
+                            }
+                        }
                     }
                 }
                 flagBoolean = true;
