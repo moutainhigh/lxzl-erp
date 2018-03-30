@@ -3,11 +3,10 @@ package com.lxzl.erp.common.domain.bank;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.bank.ClaimBankSlipDetailGroup;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Map;
 
 /**
  * @Author : XiaoLuYu
@@ -17,9 +16,9 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ClaimParam extends BasePO {
 
-    @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {IdGroup.class})
+    @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {ClaimBankSlipDetailGroup.class})
     private String customerNo;
-    @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {IdGroup.class})
+    @NotNull(message = ErrorCode.BANK_SLIP_CLAIM_AMOUNT,groups = {ClaimBankSlipDetailGroup.class})
     private BigDecimal claimAmount;
 
     public String getCustomerNo() {

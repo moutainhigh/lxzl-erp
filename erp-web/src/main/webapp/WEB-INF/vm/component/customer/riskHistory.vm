@@ -1,0 +1,79 @@
+<div  class="row section" style="margin:0;">
+    <div class="table-responsive" style="overflow-x: scroll; max-height: 500px;">
+        <script type="text/html" id="riskHistoryTpl">
+            <thead>
+            <tr class="bg-light">
+                <th>客户编号</th>
+                <th>授信额度</th>
+                <th>已用授信额度</th>
+                <th>导入已用授信额度</th>
+                <th>限制单台设备价值</th>
+                <th>状态</th>
+                <th>回访频率</th>
+                <th>是否全额押金客户</th>
+                <th>押金期数</th>
+                <th>付款期数</th>
+                <th>支付方式</th>
+                <th>是否限制苹果</th>
+                <th>苹果押金期数</th>
+                <th>苹果付款期数</th>
+                <th>苹果支付方式</th>
+                <th>是否限制全新</th>
+                <th>全新押金期数</th>
+                <th>全新付款期数</th>
+                <th>全新支付方式</th>
+                <th>备注</th>
+                <th>创建人</th>
+                <th>修改人</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#dataSource}}
+            {{#listData}}
+            <tr>
+                <td>{{customerNo}}</td>
+                <td>￥{{#price}}{{creditAmount}}{{/price}}</td>
+                <td>￥{{#price}}{{creditAmountUsed}}{{/price}}</td>
+                <td>￥{{#price}}{{importCreditAmountUsed}}{{/price}}</td>
+                <td>￥{{#price}}{{singleLimitPrice}}{{/price}}</td>
+                <td>{{dataStatusValue}}</td>
+                <td>{{returnVisitFrequency}}</td>
+                <td>{{isFullDepositValue}}</td>
+                <td>{{depositCycle}}</td>
+                <td>{{paymentCycle}}</td>
+                <td>{{payMode}}</td>
+                <td>{{isLimitAppleValue}}</td>
+                <td>{{appleDepositCycle}}</td>
+                <td>{{applePaymentCycle}}</td>
+                <td>{{applePayMode}}</td>
+                <td>{{isLimitNewValue}}</td>
+                <td>{{newDepositCycle}}</td>
+                <td>{{newPaymentCycle}}</td>
+                <td>{{newPayMode}}</td>
+                <td>{{remark}}</td>
+                <td>
+                    <p class="mn">{{createUserRealName}}</p>
+                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                </td>
+                <td>
+                    <p class="mn">{{updateUserRealName}}</p>
+                    <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
+                </td>
+            </tr>
+            {{/listData}}
+            {{^listData}}
+            <tr>
+                <td valign="top" colspan="20" class="text-center">没有查询到风控历史记录</td>
+            </tr>
+            {{/listData}}
+            {{/dataSource}}
+            </tbody>
+        </script>
+        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="riskHistoryTable"></table>
+    </div>
+</div>
+<div class="row br-t" style="margin:0;">
+    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+        #parse("component/pager.vm")
+    </div>
+</div>

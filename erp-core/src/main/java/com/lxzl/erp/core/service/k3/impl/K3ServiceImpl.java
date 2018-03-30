@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.*;
@@ -19,15 +20,20 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ResultData;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
+import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
+import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
+import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.product.ProductService;
@@ -66,6 +72,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -575,6 +582,7 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> sendToK3(String returnOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -585,13 +593,94 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        IERPService service = null;
+        K3SendRecordDO k3SendRecordDO = null;
+        com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = null;
+        try {
+            k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(k3ReturnOrderDO.getId(), PostK3Type.POST_K3_TYPE_RETURN_ORDER);
+            ConvertK3DataService convertK3DataService = postK3ServiceManager.getService(PostK3Type.POST_K3_TYPE_RETURN_ORDER);
+            K3ReturnOrder k3ReturnOrder = ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class);
+            Object postData = convertK3DataService.getK3PostWebServiceData(null, k3ReturnOrder);
+            if (k3SendRecordDO == null) {
+                //创建推送记录，此时发送状态失败，接收状态失败
+                k3SendRecordDO = new K3SendRecordDO();
+                k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+                k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                k3SendRecordDO.setRecordJson(JSON.toJSONString(k3ReturnOrder));
+                k3SendRecordDO.setSendTime(new Date());
+                k3SendRecordDO.setRecordReferId(k3SendRecordDO.getId());
+                k3SendRecordMapper.save(k3SendRecordDO);
+                logger.info("【推送消息】" + JSON.toJSONString(k3ReturnOrder));
+            }
+            service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
+            response = service.addSEOutstock((FormSEOutStock) postData);
+            //修改推送记录
+            if (response == null) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+                return result;
+            } else if (response.getStatus() != 0) {
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                result.setErrorCode(ErrorCode.K3_RETURN_ORDER_FAIL);
+                return result;
+            } else {
 
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
+                if (response.getData() != null && response.getData().length > 0) {
+                    Map<String, String> map = new HashMap<>();
+                    for (ResultData resultData : response.getData()) {
+                        map.put(resultData.getKey(), resultData.getValue());
+                    }
+                    if (map.containsKey("EQAmount")) {
+                        //恢复信用额度
+                        BigDecimal b = new BigDecimal(Double.parseDouble(map.get("EQAmount")));
+                        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
+                            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+                            CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+                            customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+                        }
+                    }
+                }
+                logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
+            }
+            k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_YES);
+            k3SendRecordDO.setResponseJson(JSON.toJSONString(response));
+            k3SendRecordMapper.update(k3SendRecordDO);
+            logger.info("【返回结果】" + response);
+
+        } catch (Exception e) {
+            dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+            result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return result;
+        }
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
         k3ReturnOrderDO.setUpdateTime(currentTime);
         k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
+        String type = null;
+        if ("erp-prod".equals(ApplicationConfig.application)) {
+            type = "【线上环境】";
+        } else if ("erp-dev".equals(ApplicationConfig.application)) {
+            type = "【开发环境】";
+        } else if ("erp-adv".equals(ApplicationConfig.application)) {
+            type = "【预发环境】";
+        } else if ("erp-test".equals(ApplicationConfig.application)) {
+            type = "【测试环境】";
+        }
+        StringBuffer sb = new StringBuffer(type);
+        sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
     }
 
     @Override
@@ -1073,6 +1162,26 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    public ServiceResult<String, String> strongCancelReturnOrder(String returnOrderNo) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(returnOrderNo);
+        if (k3ReturnOrderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        //只有结束状态的K3退货单可以强制取消
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            result.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(returnOrderNo);
+        return result;
+    }
+
+    @Override
     public ServiceResult<String, String> sendChangeOrderToK3(String changeOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -1211,4 +1320,11 @@ public class K3ServiceImpl implements K3Service {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PostK3ServiceManager postK3ServiceManager;
+    @Autowired
+    private DingDingSupport dingDingSupport;
+    @Autowired
+    private CustomerSupport customerSupport;
+
 }

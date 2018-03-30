@@ -21,15 +21,37 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="bank_slip_id" jdbcType="INTEGER" property="bankSlipId" />
+		<collection property="bankSlipClaimDOList" resultMap="BankSlipClaimDO" />
+	</resultMap>
+
+	<resultMap id="BankSlipClaimDO" type="com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO">
+		<id column="claim_id" jdbcType="INTEGER" property="id" />
+		<result column="claim_bank_slip_detail_id" jdbcType="INTEGER" property="bankSlipDetailId" />
+		<result column="claim_other_side_account_no" jdbcType="VARCHAR" property="otherSideAccountNo" />
+		<result column="claim_customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="claim_claim_amount" jdbcType="DECIMAL" property="claimAmount" />
+		<result column="claim_claim_serial_no" jdbcType="BIGINT" property="claimSerialNo" />
+		<result column="claim_recharge_status" jdbcType="INTEGER" property="rechargeStatus" />
+		<result column="claim_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="claim_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="claim_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="claim_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="claim_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="claim_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
 	<sql id="column_List">
 		ebsd.id,ebsd.payer_name,ebsd.trade_amount,ebsd.trade_serial_no,ebsd.trade_time,ebsd.trade_message,ebsd.other_side_account_no,ebsd.merchant_order_no,ebsd.loan_sign,ebsd.detail_status,ebsd.detail_json,ebsd.data_status,ebsd.remark,ebsd.create_time,ebsd.create_user,ebsd.update_time,ebsd.update_user,ebsd.bank_slip_id
 	</sql>
 
+	<sql id="claim_column_List">
+		ebsc.id AS claim_id,ebsc.bank_slip_detail_id AS claim_bank_slip_detail_id,ebsc.other_side_account_no AS claim_other_side_account_no,ebsc.customer_no AS claim_customer_no,ebsc.claim_amount AS claim_claim_amount,ebsc.claim_serial_no AS claim_claim_serial_no,ebsc.recharge_status AS claim_recharge_status,ebsc.data_status AS claim_data_status,ebsc.remark AS claim_remark,ebsc.create_time AS claim_create_time,ebsc.create_user AS claim_create_user,ebsc.update_time AS claim_update_time,ebsc.update_user AS claim_update_user
+	</sql>
+
 	<select id="findById" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd 
-		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1 
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/> FROM erp_bank_slip_detail ebsd
+		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id AND ebsc.data_status = 1
+		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -119,13 +141,16 @@
 		SELECT COUNT(ebsd.id)  FROM erp_bank_slip_detail ebsd
 		<where>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
-				and ebsd.payer_name = #{maps.bankSlipDetailQueryParam.payerName,jdbcType=VARCHAR}
+				and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.loanSign != null ">
 				and ebsd.loan_sign = #{maps.bankSlipDetailQueryParam.loanSign,jdbcType=INTEGER}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null">
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
+				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -138,7 +163,7 @@
 		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
 		<where>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
-				and ebsd.payer_name = #{maps.bankSlipDetailQueryParam.payerName,jdbcType=VARCHAR}
+				and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.loanSign != null">
 				and ebsd.loan_sign = #{maps.bankSlipDetailQueryParam.loanSign,jdbcType=INTEGER}
@@ -147,7 +172,7 @@
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
-				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -156,4 +181,64 @@
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
+	<select id="findClaimedByBankSlipId" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>
+		FROM erp_bank_slip_detail ebsd
+		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.data_status = 1 AND ebsd.id = ebsc.bank_slip_detail_id
+		WHERE ebsd.detail_status = 2 AND ebsd.data_status = 1 AND ebsd.bank_slip_id = #{bankSlipId,jdbcType=INTEGER}
+	</select>
+
+	<update id="updateConfirmBankDetailDO" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+		update erp_bank_slip_detail
+		SET
+		<trim>
+			detail_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.detailStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	<insert id="saveBankSlipDetailDOList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List" >
+		INSERT INTO erp_bank_slip_detail
+		(payer_name,trade_amount,trade_serial_no,trade_time,trade_message,other_side_account_no,merchant_order_no,loan_sign,detail_status,detail_json,data_status,remark,create_time,create_user,update_time,update_user,bank_slip_id)
+		VALUES
+		<foreach collection="list" item="bankSlipDetailDO" index="index" separator =",">
+			(
+			#{bankSlipDetailDO.payerName,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.tradeAmount,jdbcType=DECIMAL},
+			#{bankSlipDetailDO.tradeSerialNo,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.tradeTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailDO.tradeMessage,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.otherSideAccountNo,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.merchantOrderNo,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.loanSign,jdbcType=INTEGER},
+			#{bankSlipDetailDO.detailStatus,jdbcType=INTEGER},
+			#{bankSlipDetailDO.detailJson,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.dataStatus,jdbcType=INTEGER},
+			#{bankSlipDetailDO.remark,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.createTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailDO.createUser,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.updateTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailDO.updateUser,jdbcType=VARCHAR},
+			#{bankSlipDetailDO.bankSlipId,jdbcType=INTEGER}
+			)
+		</foreach>
+	</insert>
+
 </mapper>

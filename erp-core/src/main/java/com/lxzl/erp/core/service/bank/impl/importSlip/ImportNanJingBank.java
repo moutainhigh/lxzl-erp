@@ -48,9 +48,9 @@ public class ImportNanJingBank {
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, String> saveNanJingBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
+    public ServiceResult<String, BankSlipDO> saveNanJingBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+        ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
+        BankSlipDO bankSlipDO = null;
         String excelUrl = bankSlip.getExcelUrl();
         try {
             Workbook work = null;
@@ -81,7 +81,7 @@ public class ImportNanJingBank {
 
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
-            BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
+            bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
             //todo 存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getNanJingBankData(sheet, row, cell, bankSlipDO, now);
@@ -96,8 +96,8 @@ public class ImportNanJingBank {
 
             bankSlipDO.setSlipStatus(SlipStatus.INITIALIZE);
             bankSlipDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-            bankSlipDO.setClaimCount(CommonConstant.COMMON_CONSTANT_NO);
-            bankSlipDO.setConfirmCount(CommonConstant.COMMON_CONSTANT_NO);
+            bankSlipDO.setClaimCount(CommonConstant.COMMON_ZERO);
+            bankSlipDO.setConfirmCount(CommonConstant.COMMON_ZERO);
             bankSlipDO.setCreateTime(now);
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);
@@ -112,9 +112,9 @@ public class ImportNanJingBank {
             //保存  银行对公流水明细表
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                bankSlipDetailMapper.save(bankSlipDetailDO);
             }
-
+            bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
+            bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
         } catch (IOException e) {
             logger.error("导入excel的IO流转换发生异常", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -130,6 +130,7 @@ public class ImportNanJingBank {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlipDO);
         return serviceResult;
 
     }
@@ -167,64 +168,64 @@ public class ImportNanJingBank {
 
             if (row != null) {
                 //遍历所有的列
-                    ccc:
-                    for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
-                        cell = row.getCell(y);
-                        if (cell == null) {
+                ccc:
+                for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                    cell = row.getCell(y);
+                    if (cell == null) {
+                        continue ccc;
+                    }
+                    String value = getValue(cell);
+
+                    if (("交易金额".equals(value)) ||
+                            ("查询账号[ Inquirer account number ]".equals(value)) ||
+                            ("借方发生额".equals(value)) ||
+                            ("交易流水号".equals(value)) ||
+                            ("对方账号".equals(value)) ||
+                            ("交易附言".equals(value)) ||
+                            ("交易日期".equals(value)) ||
+                            ("付款人名称".equals(value))) {
+                        if ("查询账号[ Inquirer account number ]".equals(value)) {
+
+                            Cell accountCell = (row.getCell(y + 1));
+                            if (accountCell == null) {
+                                continue ccc;
+                            }
+                            value = getValue(accountCell);
+
+                            selectAccount = value;
                             continue ccc;
                         }
-                        String value = getValue(cell);
-
-                        if (("交易金额".equals(value)) ||
-                                ("查询账号[ Inquirer account number ]".equals(value)) ||
-                                ("借方发生额".equals(value)) ||
-                                ("交易流水号".equals(value)) ||
-                                ("付款人账号[ Debit Account No. ]".equals(value)) ||
-                                ("交易附言".equals(value)) ||
-                                ("交易日期".equals(value)) ||
-                                ("付款人名称".equals(value))) {
-                            if ("查询账号[ Inquirer account number ]".equals(value)) {
-
-                                Cell accountCell = (row.getCell(y + 1));
-                                if(accountCell == null){
-                                    continue ccc;
-                                }
-                                value = getValue(accountCell);
-
-                                selectAccount = value;
-                                continue ccc;
-                            }
-                            if ("付款人名称".equals(value)) {
-                                next = j;
-                                payerNameNo = y;
-                                continue ccc;
-                            }
-                            if ("交易日期".equals(value)) {
-                                payTimeNo = y;
-                                continue ccc;
-                            }
-                            if ("交易金额".equals(value)) {
-                                payMoneyNo = y;
-                                continue ccc;
-                            }
-                            if ("借方发生额".equals(value)) {
-                                debtorAccountNo = y;
-                                continue ccc;
-                            }
-                            if ("交易流水号".equals(value)) {
-                                paySerialNumberNo = y;
-                                continue ccc;
-                            }
-                            if ("付款人账号[ Debit Account No. ]".equals(value)) {
-                                payAccountNo = y;
-                                continue ccc;
-                            }
-                            if ("交易附言".equals(value)) {
-                                payPostscriptNo = y;
-                                //下一行开始存数据
-                                continue ccc;
-                            }
+                        if ("付款人名称".equals(value)) {
+                            next = j;
+                            payerNameNo = y;
+                            continue ccc;
                         }
+                        if ("交易日期".equals(value)) {
+                            payTimeNo = y;
+                            continue ccc;
+                        }
+                        if ("交易金额".equals(value)) {
+                            payMoneyNo = y;
+                            continue ccc;
+                        }
+                        if ("借方发生额".equals(value)) {
+                            debtorAccountNo = y;
+                            continue ccc;
+                        }
+                        if ("交易流水号".equals(value)) {
+                            paySerialNumberNo = y;
+                            continue ccc;
+                        }
+                        if ("对方账号".equals(value)) {
+                            payAccountNo = y;
+                            continue ccc;
+                        }
+                        if ("交易附言".equals(value)) {
+                            payPostscriptNo = y;
+                            //下一行开始存数据
+                            continue ccc;
+                        }
+                    }
                 }
 
                 // todo 以下可以直接存数据
@@ -240,21 +241,21 @@ public class ImportNanJingBank {
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null?"":getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
                     }
-                    payerName = (row.getCell(payerNameNo) == null?"":getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
-                    tradeTime = (row.getCell(payTimeNo) == null?"":getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null?"":getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
-                    otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
-                    debtorAccount = (row.getCell(debtorAccountNo) == null?"":getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //借方金额
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
+                    otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
+                    debtorAccount = (row.getCell(debtorAccountNo) == null ? "" : getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //借方金额
 
 
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
-                        if(!"".equals(debtorAccount)){
+                        if (!"".equals(debtorAccount)) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(debtorAccount));
-                        }else if(!"".equals(tradeAmount)){
+                        } else if (!"".equals(tradeAmount)) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
                         }
 
@@ -274,9 +275,9 @@ public class ImportNanJingBank {
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
-                    if(!("".equals(debtorAccount))){
+                    if (!("".equals(debtorAccount))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
-                    }else if(!("".equals(tradeAmount))){
+                    } else if (!("".equals(tradeAmount))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                         //进款比数
                         inCount = inCount + 1;

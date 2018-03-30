@@ -17,6 +17,7 @@
 		<result column="commit_user" jdbcType="INTEGER" property="commitUser" />
 		<result column="commit_user_name" jdbcType="VARCHAR" property="commitUserName" />
 		<result column="current_verify_user" jdbcType="INTEGER" property="currentVerifyUser" />
+		<result column="verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
 		<result column="current_verify_user_name" jdbcType="VARCHAR" property="currentVerifyUserName" />
 		<result column="current_verify_status" jdbcType="INTEGER" property="currentVerifyStatus" />
 		<result column="verify_matters" jdbcType="VARCHAR" property="verifyMatters" />
@@ -27,6 +28,7 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<collection property="workflowLinkDetailDOList" resultMap="WorkflowLinkDetailDO"/>
+		<collection property="workflowVerifyUserGroupDOList" resultMap="WorkflowVerifyUserGroupDO"/>
 	</resultMap>
 
 	<resultMap id="WorkflowLinkDetailDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO">
@@ -41,6 +43,7 @@
 		<result column="detail_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
 		<result column="detail_workflow_next_node_name" jdbcType="VARCHAR" property="workflowNextNodeName" />
 		<result column="detail_verify_user" jdbcType="INTEGER" property="verifyUser" />
+		<result column="detail_verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
 		<result column="detail_verify_user_name" jdbcType="VARCHAR" property="verifyUserName" />
 		<result column="detail_verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
 		<result column="detail_verify_status" jdbcType="INTEGER" property="verifyStatus" />
@@ -53,12 +56,33 @@
 		<result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
 	</resultMap>
 
+	<resultMap id="WorkflowVerifyUserGroupDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO">
+		<id column="group_id" jdbcType="INTEGER" property="id" />
+		<result column="group_verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
+		<result column="group_verify_type" jdbcType="INTEGER" property="verifyType" />
+		<result column="group_verify_user" jdbcType="INTEGER" property="verifyUser" />
+		<result column="group_verify_user_name" jdbcType="VARCHAR" property="verifyUserName" />
+		<result column="group_verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
+		<result column="group_verify_status" jdbcType="INTEGER" property="verifyStatus" />
+		<result column="group_verify_opinion" jdbcType="VARCHAR" property="verifyOpinion" />
+		<result column="group_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="group_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="group_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="group_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="group_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="group_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
 	<sql id="column_List">
-		ewl.id,ewl.workflow_link_no,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_no,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.commit_user,ewl.current_verify_user,ewl.verify_matters,ewl.current_verify_status,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user
+		ewl.id,ewl.workflow_link_no,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_no,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.commit_user,ewl.current_verify_user,ewl.verify_user_group_id,ewl.verify_matters,ewl.current_verify_status,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user
 	</sql>
 
 	<sql id="detail_column_List">
-		ewld.id as detail_id,ewld.workflow_link_id as detail_workflow_link_id,ewld.workflow_refer_no as detail_workflow_refer_no,ewld.workflow_step as detail_workflow_step,ewld.workflow_current_node_id as detail_workflow_current_node_id,ewld.workflow_previous_node_id as detail_workflow_previous_node_id,ewld.workflow_next_node_id as detail_workflow_next_node_id,ewld.verify_user as detail_verify_user,ewld.verify_time as detail_verify_time,ewld.verify_status as detail_verify_status,ewld.verify_opinion as detail_verify_opinion,ewld.data_status as detail_data_status,ewld.remark as detail_remark,ewld.create_time as detail_create_time,ewld.create_user as detail_create_user,ewld.update_time as detail_update_time,ewld.update_user as detail_update_user
+		ewld.id as detail_id,ewld.workflow_link_id as detail_workflow_link_id,ewld.workflow_refer_no as detail_workflow_refer_no,ewld.workflow_step as detail_workflow_step,ewld.workflow_current_node_id as detail_workflow_current_node_id,ewld.workflow_previous_node_id as detail_workflow_previous_node_id,ewld.workflow_next_node_id as detail_workflow_next_node_id,ewld.verify_user as detail_verify_user,ewld.verify_user_group_id as detail_verify_user_group_id,ewld.verify_time as detail_verify_time,ewld.verify_status as detail_verify_status,ewld.verify_opinion as detail_verify_opinion,ewld.data_status as detail_data_status,ewld.remark as detail_remark,ewld.create_time as detail_create_time,ewld.create_user as detail_create_user,ewld.update_time as detail_update_time,ewld.update_user as detail_update_user
+	</sql>
+
+	<sql id="group_column_List">
+		ewvug.id as group_id,ewvug.verify_user_group_id as group_verify_user_group_id,ewvug.verify_type as group_verify_type,ewvug.verify_user as group_verify_user,ewvug.verify_time as group_verify_time,ewvug.verify_status as group_verify_status ,ewvug.verify_opinion as group_verify_opinion,ewvug.data_status as group_data_status,ewvug.remark as group_remark,ewvug.create_time as group_create_time,ewvug.create_user as group_create_user,ewvug.update_time as group_update_time,ewvug.update_user as group_update_user
 	</sql>
 
 	<select id="findById" resultMap="WorkflowLinkDO" parameterType="java.lang.Integer">
@@ -112,9 +136,9 @@
 	</select>
 
 	<select id="findByWorkflowTypeAndReferNo" resultMap="WorkflowLinkDO" parameterType="map">
-		select link.*,<include refid="detail_column_List"/>
+		select link.*,<include refid="detail_column_List"/>,<include refid="group_column_List"/>
         <trim prefix=",">
-            eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name
+            eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name,eug.real_name as group_verify_user_name
         </trim>
         from
 		(
@@ -124,11 +148,14 @@
 			</trim>
             from erp_workflow_link ewl
 			INNER JOIN erp_workflow_template ewt ON ewt.id = ewl.workflow_template_id
+			LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
 			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
 			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
 			LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
 			where ewl.workflow_type = #{workflowType, jdbcType=INTEGER} and ewl.workflow_refer_no = #{workflowReferNo, jdbcType=INTEGER} and ewl.data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id
+		LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
         LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
         LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
@@ -137,7 +164,8 @@
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		select count(ewl.id) from erp_workflow_link ewl
+		select count(distinct ewl.id) from erp_workflow_link ewl
+        INNER JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
 		<where>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
                 and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
@@ -151,6 +179,9 @@
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
 				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 			</if>
+            <if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
+                and ewvug.verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
+            </if>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
 			</if>
@@ -168,49 +199,61 @@
 	</select>
 
 	<select id="listPage" resultMap="WorkflowLinkDO" parameterType="map">
-		select link.*,<include refid="detail_column_List"/>
-        <trim prefix=",">
-            eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name
-        </trim>
+		select link.*,<include refid="detail_column_List"/>,<include refid="group_column_List"/>
+		<trim prefix=",">
+			eu.real_name as detail_verify_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name,eug.real_name as group_verify_user_name
+		</trim>
 		from
 		(
-			select <include refid="column_List"/>
-			<trim prefix=",">
-				eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewl.workflow_step = ewl.workflow_last_step THEN true ELSE false END AS is_last_step, ewt.workflow_name AS workflow_template_name
-			</trim>
-            from erp_workflow_link ewl
-			INNER JOIN erp_workflow_template ewt ON ewt.id = ewl.workflow_template_id
-			LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
-			LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
-            LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
-			<where>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
-					and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
-				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != ''">
-					and ewl.workflow_refer_no like CONCAT('%','${maps.workflowQueryParam.workflowReferNo}','%' )
-				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null &amp;&amp; maps.workflowQueryParam.verifyStatus != ''">
-					and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
-				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
-					and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
-				</if>
-				<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
-					and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
-				</if>
-				<if test="maps.isQueryAll == null">
-					and ewl.data_status = 1
-				</if>
-				<include refid="permission_sql.workflow_control"/>
-			</where>
-			order by ewl.id DESC
-			LIMIT #{maps.start},#{maps.pageSize}
-		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+		select <include refid="column_List"/>
+		<trim prefix=",">
+			eu.real_name as current_verify_user_name, euc.real_name as commit_user_name, ewn.workflow_node_name as workflow_current_node_name, CASE WHEN ewl.workflow_step = ewl.workflow_last_step THEN true ELSE false END AS is_last_step
+		</trim>
+		from erp_workflow_link ewl
+        INNER JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = ewl.verify_user_group_id
+		LEFT JOIN erp_user eu ON eu.id = ewl.current_verify_user
+		LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
+		LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
+		<where>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
+				and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != ''">
+				and ewl.workflow_refer_no like CONCAT('%','${maps.workflowQueryParam.workflowReferNo}','%' )
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null &amp;&amp; maps.workflowQueryParam.verifyStatus != ''">
+				and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
+				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
+			</if>
+            <if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
+                and ewvug.verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
+            </if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
+				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null ">
+				<![CDATA[ AND ewl.create_time >= #{maps.workflowQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null ">
+				<![CDATA[ AND ewl.create_time <= #{maps.workflowQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ewl.data_status = 1
+			</if>
+			<include refid="permission_sql.workflow_control"/>
+		</where>
+		order by ewl.id DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+		) link
+		LEFT JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
+        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id
+        LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
-        LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
-        LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
-        LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
+		LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
+		LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id
+		LEFT JOIN erp_workflow_node ewnn on ewnn.id = ewld.workflow_next_node_id
 		order by link.id DESC,ewld.id DESC
 	</select>
 
@@ -240,8 +283,11 @@
 			<if test="commitUser != null">
 				commit_user = #{commitUser,jdbcType=INTEGER},
 			</if>
-			<if test="currentVerifyUser != null">
-				current_verify_user = #{currentVerifyUser,jdbcType=INTEGER},
+
+			current_verify_user = #{currentVerifyUser,jdbcType=INTEGER},
+
+			<if test="verifyUserGroupId != null">
+				verify_user_group_id = #{verifyUserGroupId,jdbcType=INTEGER},
 			</if>
 			<if test="currentVerifyStatus != null">
 				current_verify_status = #{currentVerifyStatus,jdbcType=INTEGER},

@@ -36,10 +36,43 @@
 	</sql>
 
 	<select id="findById" resultMap="CustomerRiskManagementHistoryDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_customer_risk_management_history ecrmh 
+		SELECT <include refid="column_List"/> FROM erp_customer_risk_management_history ecrmh
 		WHERE ecrmh.id = #{id, jdbcType=INTEGER} AND ecrmh.data_status = 1 
 	</select>
 
+	<select id="findCustomerRiskHistoryByParams" resultMap="CustomerRiskManagementHistoryDO" parameterType="map">
+		SELECT <include refid="column_List"/>,ec.customer_name AS customerName
+		FROM erp_customer_risk_management_history ecrmh
+		LEFT JOIN erp_customer ec ON ec.id = ecrmh.customer_id AND ec.data_status=1
+		<where>
+			<if test="maps.customerRiskManageHistoryQueryParam != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != ''">
+				and ecrmh.customer_no = #{maps.customerRiskManageHistoryQueryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="true">
+				and ecrmh.data_status = 1
+			</if>
+			<include refid="permission_sql.customer_control"/>
+		</where>
+		ORDER BY ecrmh.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findCustomerRiskHistoryCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(ecrmh.id)
+		FROM erp_customer_risk_management_history ecrmh
+		INNER JOIN erp_customer ec ON ec.id = ecrmh.customer_id AND ec.data_status = 1
+		<where>
+			<if test="maps.customerRiskManageHistoryQueryParam != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != ''">
+				and ecrmh.customer_no = #{maps.customerRiskManageHistoryQueryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="true">
+				and ecrmh.data_status = 1
+			</if>
+			<include refid="permission_sql.customer_control"/>
+		</where>
+
+	</select>
+	
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecrmh.id) FROM erp_customer_risk_management_history ecrmh 
 		<where>
@@ -56,7 +89,7 @@
 				AND ecrmh.data_status = 1
 			</if>
 		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
+		  LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
 	<sql id="set_column_sql">

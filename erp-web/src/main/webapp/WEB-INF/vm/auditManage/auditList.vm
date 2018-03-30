@@ -107,7 +107,7 @@
                                 </td>
                                 {{/hasCommonActionButtons}}
                                 <td>{{workflowLinkNo}}</td>
-                                <td><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></td>
+                                <td><a href="{{workflowReferUrl}}" target="_blank" class="{{#isCustomer}}workflowReferCustomer{{/isCustomer}}" data-no="{{workflowReferNo}}">{{workflowReferNo}}</a></td>
 ##                                <td>{{remark}}</td>
                                 <td>{{workflowTypeStr}}</td>
 ##                                <td>{{workflowTemplateName}}</td>
@@ -123,7 +123,7 @@
 ##                                <td>{{currentVerifyUserName}}</td>
 ##                                <td>{{workflowVerifyStatusStr}}</td>
 
-                                <td>{{workflowCurrentNodeName}}-{{currentVerifyUserName}}-<span class="text-{{workflowVerifyStatusClass}}">{{workflowVerifyStatusValue}}</span></td>
+                                <td>{{workflowCurrentNodeName}}-{{getCurrentVerifyUserName}}-<span class="text-{{workflowVerifyStatusClass}}">{{workflowVerifyStatusValue}}</span></td>
 
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>

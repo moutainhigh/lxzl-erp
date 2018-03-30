@@ -360,6 +360,9 @@
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
+            <if test="maps.orderQueryParam.payStatus != null">
+                and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
+            </if>
 
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
@@ -428,7 +431,7 @@
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
-                and eo.order_no = #{maps.orderQueryParam.orderNo, jdbcType=VARCHAR}
+                and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
             </if>
             <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
@@ -445,13 +448,17 @@
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
+            <if test="maps.orderQueryParam.payStatus != null">
+                and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
+            </if>
+
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
             </if>
             <if test="maps.orderQueryParam.createStartTime != null">
                 <![CDATA[ AND eo.create_time >= #{maps.orderQueryParam.createStartTime} ]]>
             </if>
-            <if test="maps.orderQueryParam.createEndTime != null">
+            <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
             <if test="maps.isQueryAll == null">

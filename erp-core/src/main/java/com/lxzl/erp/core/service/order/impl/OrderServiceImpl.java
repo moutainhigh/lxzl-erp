@@ -978,7 +978,7 @@ public class OrderServiceImpl implements OrderService {
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
         if (orderNo == null) {
-            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -1083,13 +1083,21 @@ public class OrderServiceImpl implements OrderService {
             service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
             com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response = service.cancelOrder(orderDO.getOrderNo());
             //修改推送记录
-            if (response == null || response.getStatus() != 0) {
+            if (response == null) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
                 logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
                 dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
                 //失败要回滚
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            } else {
+                result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+                return result;
+            } else if(response.getStatus() != 0){
+                k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
+                logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
+                dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
+                //失败要回滚
+                throw new BusinessException("k3取消订单失败:"+response.getResult());
+            }else {
                 logger.info("【PUSH DATA TO K3 RESPONSE SUCCESS】 ： " + JSON.toJSONString(response));
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_YES);
             }
@@ -1109,6 +1117,69 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> processStatementOrderByCancel(String orderNo) {
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if(!OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus())){
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!userSupport.isSuperUser()) {
+            result.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return result;
+        }
+
+        //处理结算单
+        //缓存查询到的结算单
+        Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
+                if (statementOrderDO == null) {
+                    statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                    statementCache.put(statementOrderDO.getId(), statementOrderDO);
+                }
+                //处理结算单总金额
+                statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                //处理结算租金押金金额
+                statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
+                //处理结算押金金额
+                statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
+                //处理结算租金金额
+                statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
+                //处理结算单逾期金额
+                statementOrderDO.setStatementOverdueAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDetailDO.getStatementDetailOverdueAmount()));
+                //处理其他费用
+                statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
+                statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                statementOrderDetailDO.setUpdateTime(currentTime);
+                statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                statementOrderDetailMapper.update(statementOrderDetailDO);
+            }
+            for (Integer key : statementCache.keySet()) {
+                StatementOrderDO statementOrderDO = statementCache.get(key);
+                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
+                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                }
+                statementOrderDO.setUpdateTime(currentTime);
+                statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                statementOrderMapper.update(statementOrderDO);
+            }
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
     @Override
     public ServiceResult<String, Order> createOrderFirstPayAmount(Order order) {
 
@@ -2651,7 +2722,7 @@ public class OrderServiceImpl implements OrderService {
                     materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? materialDO.getNewMonthRentPrice() : materialDO.getMonthRentPrice();
                 }
                 // 订单价格低于商品租赁价
-                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), productPrice) < 0) {
+                if (BigDecimalUtil.compare(orderMaterialDO.getMaterialUnitAmount(), materialPrice) < 0) {
                     if (verifyMaterial == null) {
                         if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
                             verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ?

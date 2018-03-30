@@ -43,10 +43,11 @@
 		<result column="operating_area" jdbcType="DOUBLE" property="operatingArea" />
 		<result column="unit_insured_number" jdbcType="INTEGER" property="unitInsuredNumber" />
 		<result column="affiliated_enterprise" jdbcType="VARCHAR" property="affiliatedEnterprise" />
+		<result column="simple_company_name" jdbcType="VARCHAR" property="simpleCompanyName"/>
 	</resultMap>
 
 	<sql id="column_List">
-		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.customer_origin,ecc.company_found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.customer_company_need_first_json,ecc.customer_company_need_later_json,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.unified_credit_code,ecc.customer_no,ecc.is_legal_person_apple,ecc.legal_person_phone,ecc.operating_area,ecc.unit_insured_number,ecc.affiliated_enterprise,ecc.default_address_refer_id
+		ecc.id,ecc.customer_id,ecc.landline,ecc.connect_real_name,ecc.connect_phone,ecc.company_name,ecc.company_abb,ecc.province,ecc.city,ecc.district,ecc.address,ecc.legal_person,ecc.legal_person_no,ecc.business_license_no,ecc.data_status,ecc.remark,ecc.create_time,ecc.create_user,ecc.update_time,ecc.update_user,ecc.customer_origin,ecc.company_found_time,ecc.industry,ecc.registered_capital,ecc.office_number,ecc.product_purpose,ecc.customer_company_need_first_json,ecc.customer_company_need_later_json,ecc.agent_person_name,ecc.agent_person_phone,ecc.agent_person_no,ecc.unified_credit_code,ecc.customer_no,ecc.is_legal_person_apple,ecc.legal_person_phone,ecc.operating_area,ecc.unit_insured_number,ecc.affiliated_enterprise,ecc.default_address_refer_id,ecc.simple_company_name
 	</sql>
 
 	<select id="findById" resultMap="CustomerCompanyDO" parameterType="java.lang.Integer">
@@ -192,6 +193,9 @@
 			<if test="affiliatedEnterprise != null">
 				affiliated_enterprise = #{affiliatedEnterprise,jdbcType=VARCHAR},
 			</if>
+			<if test="simpleCompanyName != null">
+				simple_company_name = #{simpleCompanyName, jdbcType=VARCHAR},
+			</if>
 				default_address_refer_id = #{defaultAddressReferId,jdbcType=INTEGER},
 		</set>
 	</sql>
@@ -277,4 +281,30 @@
 		SELECT <include refid="column_List"/> FROM erp_customer_company ecc WHERE
 		ecc.default_address_refer_id = #{defaultAddressReferId,javaType=INTEGER} AND ecc.data_status = 1
 	</select>
+	<select id="findBySimpleCompanyName" resultType="CustomerCompanyDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc WHERE
+		ecc.simple_company_name = #{simpleCompanyName, jdbcType=VARCHAR} AND ecc.data_status = 1
+	</select>
+	<select id="findBySimpleCompanyNameIsNull" resultType="CustomerCompanyDO" >
+		SELECT ecc.id,ecc.company_name as companyName,ecc.simple_company_name as simpleCompanyName FROM erp_customer_company ecc WHERE
+		ecc.simple_company_name is NULL
+	</select>
+
+	<update id="batchAddSimpleCompanyName" parameterType="java.util.ArrayList">
+		update erp_customer_company
+		SET
+		<trim>
+			simple_company_name =
+			<foreach item="customerCompanyDO" collection="customerCompanyList"  index="index" separator=" " open="case id" close="end">
+				when #{customerCompanyDO.id} then #{customerCompanyDO.simpleCompanyName}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="customerCompanyList" index="index" item="customerCompanyDO"
+				 separator="," open="(" close=")">
+			#{customerCompanyDO.id,jdbcType=INTEGER}
+		</foreach>
+
+	</update>
+
 </mapper>

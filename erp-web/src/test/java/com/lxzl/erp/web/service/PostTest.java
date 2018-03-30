@@ -19,6 +19,7 @@ import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
@@ -58,8 +59,8 @@ public class PostTest extends ERPUnTransactionalTest {
     @Test
     public void postProduct() throws InterruptedException {
 
-        ProductDO productDO = productMapper.findByProductId(2000002);
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class),true);
+        ProductDO productDO = productMapper.findByProductId(2000000);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_PRODUCT, ConverterUtil.convert(productDO, Product.class),false);
         Thread.sleep(300000);
     }
     @Test
@@ -94,7 +95,7 @@ public class PostTest extends ERPUnTransactionalTest {
     }
     @Test
     public void postCustomer() throws InterruptedException {
-        String customerNo  = "LXCC-028-20180308-00355";
+        String customerNo  = "LXCC-0755-20180112-00001";
         CustomerDO customerDO = customerMapper.findByNo(customerNo);
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
             customerDO = customerMapper.findCustomerCompanyByNo(customerNo);
@@ -224,6 +225,13 @@ public class PostTest extends ERPUnTransactionalTest {
         Thread.sleep(100000);
     }
 
+    @Test
+    public void postReturnOrder2() throws InterruptedException {
+
+        k3Service.sendToK3("53f0140d84834f4e8502619ca88bb4a4");
+        Thread.sleep(100000);
+    }
+
 
     @Autowired
     private ProductMapper productMapper;
@@ -249,4 +257,6 @@ public class PostTest extends ERPUnTransactionalTest {
     private K3ReturnOrderMapper k3ReturnOrderMapper;
     @Autowired
     private K3SendRecordMapper k3SendRecordMapper;
+    @Autowired
+    private K3Service k3Service;
 }

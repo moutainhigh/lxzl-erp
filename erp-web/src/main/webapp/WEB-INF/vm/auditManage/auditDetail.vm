@@ -116,10 +116,14 @@
                                         <div class="timeline-icon">
                                             <span class="{{timeLinkClass}} {{textClass}}"></span>
                                         </div>
-                                        <div class="panel">
-                                            <div class="panel-heading clearfix" style="min-height: 40px; height: auto;">
+                                        <div class="panel" style="border-top: 1px solid #e5e5e5">
+
+                                            {{#verifyUserGroup}}
+                                            {{#verifyUserGroupDataSource}}
+
+                                            <div class="panel-heading clearfix" style="min-height: 40px; height: auto; border-top: none;">
                                                 <span class="panel-title"><span class="glyphicons glyphicons-user"></span>{{workflowCurrentNodeName}} - {{verifyUserName}}</span>
-                                                <div class="panel-header-menu pull-right mr10 text-muted fs12">{{verifyTimeFormat}}</div>
+                                                <div class="panel-header-menu pull-right mr10 text-muted fs12">{{#time}}{{verifyTime}}{{/time}}</div>
                                             </div>
                                             <div class="panel-body clearfix">
                                                 {{#imageListSource}}
@@ -132,7 +136,7 @@
                                                 </div>
                                                 {{/imageListSource}}
                                                 <blockquote class="mbn ml10">
-                                                    <p>{{verifyOpinion}}</p>
+                                                    <p>{{verifyOpinionText}}</p>
                                                     <small class="{{textClass}}">{{verifyStatusValue}}</small>
                                                 </blockquote>
                                             </div>
@@ -147,6 +151,12 @@
                                             </div>
                                             {{/show}}
                                             {{/showAction}}
+
+                                            {{/verifyUserGroupDataSource}}
+                                            {{/verifyUserGroup}}
+
+
+
                                         </div>
                                     </div>
                                     {{/dataSource}}
