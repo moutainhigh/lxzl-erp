@@ -136,7 +136,7 @@
                                                 </div>
                                                 {{/imageListSource}}
                                                 <blockquote class="mbn ml10">
-                                                    <p>{{verifyOpinion}}</p>
+                                                    <p>{{verifyOpinionText}}</p>
                                                     <small class="{{textClass}}">{{verifyStatusValue}}</small>
                                                 </blockquote>
                                             </div>

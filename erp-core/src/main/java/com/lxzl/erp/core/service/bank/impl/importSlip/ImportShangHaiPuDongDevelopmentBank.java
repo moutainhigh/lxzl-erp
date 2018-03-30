@@ -47,9 +47,9 @@ public class ImportShangHaiPuDongDevelopmentBank {
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, String> saveShanghaiPudongDevelopmentBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
+    public ServiceResult<String, BankSlipDO> saveShanghaiPudongDevelopmentBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+        ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
+        BankSlipDO bankSlipDO = null;
         String excelUrl = bankSlip.getExcelUrl();
         try {
             Workbook work = null;
@@ -80,7 +80,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
 
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
-            BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
+            bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
             //todo 存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getShanghaiPudongDevelopmentBankData(sheet, row, cell, bankSlipDO, now);
@@ -111,9 +111,9 @@ public class ImportShangHaiPuDongDevelopmentBank {
             //保存  银行对公流水明细表
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                bankSlipDetailMapper.save(bankSlipDetailDO);
             }
-
+            bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
+            bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
         } catch (IOException e) {
             logger.error("导入excel的IO流转换发生异常", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -129,6 +129,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlipDO);
         return serviceResult;
 
     }
@@ -185,7 +186,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
                         if ("账号".equals(value)) {
 
                             Cell accountCell = (row.getCell(y + 1));
-                            if(accountCell == null){
+                            if (accountCell == null) {
                                 continue ccc;
                             }
                             value = getValue(accountCell);
@@ -238,35 +239,35 @@ public class ImportShangHaiPuDongDevelopmentBank {
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (row.getCell(payerNameNo) == null?"":getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (row.getCell(payerNameNo) == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
                     }
-                    payerName = (row.getCell(payerNameNo) == null?"":getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
-                    tradeTime = (row.getCell(payTimeNo) == null?"":getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null?"":getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
-                    tradeAmount1 = (row.getCell(creditSumNo) == null?"":getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
-                    otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    tradeAmount1 = (row.getCell(creditSumNo) == null ? "" : getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
+                    otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
 
-                    if("".equals(payerName) &&
+                    if ("".equals(payerName) &&
                             "".equals(tradeTime) &&
                             "".equals(tradeAmount) &&
                             "".equals(tradeAmount1) &&
                             "".equals(tradeSerialNo) &&
-                            "".equals(otherSideAccountNo)){
+                            "".equals(otherSideAccountNo)) {
                         continue bbb;
                     }
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
-                        if(tradeAmount.contains(",")){
-                            tradeAmount = tradeAmount.replaceAll(",","");
+                        if (tradeAmount.contains(",")) {
+                            tradeAmount = tradeAmount.replaceAll(",", "");
                         }
-                        if(tradeAmount1.contains(",")){
-                            tradeAmount1 = tradeAmount1.replaceAll(",","");
+                        if (tradeAmount1.contains(",")) {
+                            tradeAmount1 = tradeAmount1.replaceAll(",", "");
                         }
-                        if(tradeAmount1 != null && !("".equals(tradeAmount1))){
+                        if (tradeAmount1 != null && !("".equals(tradeAmount1))) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount1));
                             tradeAmountFlag = true;
-                        }else {
+                        } else {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
                         }
 
@@ -286,9 +287,9 @@ public class ImportShangHaiPuDongDevelopmentBank {
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
-                    if(tradeAmountFlag){
+                    if (tradeAmountFlag) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
-                    }else {
+                    } else {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                         //进款比数
                         inCount = inCount + 1;
@@ -320,7 +321,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
 
     //toString重写
     private String getValue(Cell cell) {
-        if(cell == null){
+        if (cell == null) {
 
         }
         switch (cell.getCellType()) {
