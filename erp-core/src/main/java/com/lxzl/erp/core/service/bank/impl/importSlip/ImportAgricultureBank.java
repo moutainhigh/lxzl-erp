@@ -47,9 +47,9 @@ public class ImportAgricultureBank {
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, String> saveAgricultureBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
+    public ServiceResult<String, BankSlipDO> saveAgricultureBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+        ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
+        BankSlipDO bankSlipDO = null;
         String excelUrl = bankSlip.getExcelUrl();
         try {
             Workbook work = null;
@@ -80,7 +80,7 @@ public class ImportAgricultureBank {
 
             SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
 
-            BankSlipDO bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
+            bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getAgricultureBankData(sheet, row, cell, bankSlipDO, now);
@@ -111,9 +111,9 @@ public class ImportAgricultureBank {
             //保存  银行对公流水明细表
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                bankSlipDetailMapper.save(bankSlipDetailDO);
             }
-
+            bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
+            bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
         } catch (IOException e) {
             logger.error("导入excel的IO流转换发生异常", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -129,6 +129,7 @@ public class ImportAgricultureBank {
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlipDO);
         return serviceResult;
 
     }
@@ -152,7 +153,6 @@ public class ImportAgricultureBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int debtorAccountNo = 0; //支出金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-        boolean isPeerArea = false;
 
         int next = Integer.MAX_VALUE;
         bbb:
@@ -163,7 +163,7 @@ public class ImportAgricultureBank {
                     continue bbb;
                 }
             }
-            if((row.getCell(0)== null ? "":getValue(row.getCell(0))).contains("汇总收入金额")){
+            if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("汇总收入金额")) {
                 break bbb;
             }
 
@@ -189,7 +189,7 @@ public class ImportAgricultureBank {
                         if ("查询账号[ Inquirer account number ]".equals(value)) {
 
                             Cell accountCell = (row.getCell(y + 1));
-                            if(accountCell == null){
+                            if (accountCell == null) {
                                 continue ccc;
                             }
                             value = getValue(accountCell);
@@ -203,7 +203,6 @@ public class ImportAgricultureBank {
                             continue ccc;
                         }
                         if ("对方省市".equals(value)) {
-                            isPeerArea = true;
                             continue ccc;
                         }
                         if ("交易日期".equals(value)) {
@@ -233,10 +232,6 @@ public class ImportAgricultureBank {
                         }
                     }
                 }
-                if(!isPeerArea){
-                    serviceResult.setErrorCode(ErrorCode.BANK_IS_NOT_AGRICULTURE_BANK);
-                    return serviceResult;
-                }
 
                 // todo 以下可以直接存数据
                 String payerName = null;  //付款人名称
@@ -250,33 +245,33 @@ public class ImportAgricultureBank {
                 if (j > next) {
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null?"":getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
                     }
-                    payerName = (row.getCell(payerNameNo) == null?"":getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
-                    tradeTime = (row.getCell(payTimeNo) == null?"":getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null?"":getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null?"":getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
-                    otherSideAccountNo = (row.getCell(payAccountNo) == null?"":getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
-                    debtorAccount = (row.getCell(debtorAccountNo) == null?"":getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //支出金额
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
+                    otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
+                    debtorAccount = (row.getCell(debtorAccountNo) == null ? "" : getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //支出金额
 
 
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
-                        if(tradeAmount.contains(",")){
-                            tradeAmount = tradeAmount.replaceAll(",","");
+                        if (tradeAmount.contains(",")) {
+                            tradeAmount = tradeAmount.replaceAll(",", "");
                         }
-                        if("0.0".equals(tradeAmount)){
+                        if ("0.0".equals(tradeAmount)) {
                             tradeAmount = "";
                         }
-                        if(debtorAccount.contains(",")){
-                            debtorAccount = debtorAccount.replaceAll(",","");
+                        if (debtorAccount.contains(",")) {
+                            debtorAccount = debtorAccount.replaceAll(",", "");
                         }
-                        if("0.0".equals(debtorAccount)){
+                        if ("0.0".equals(debtorAccount)) {
                             debtorAccount = "";
                         }
-                        if(!"".equals(debtorAccount)){
+                        if (!"".equals(debtorAccount)) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(debtorAccount));
-                        }else if(!"".equals(tradeAmount)){
+                        } else if (!"".equals(tradeAmount)) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
                         }
                     } catch (Exception e) {
@@ -295,9 +290,9 @@ public class ImportAgricultureBank {
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
-                    if(!("".equals(debtorAccount))){
+                    if (!("".equals(debtorAccount))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
-                    }else if(!("".equals(tradeAmount))){
+                    } else if (!("".equals(tradeAmount))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                         //进款比数
                         inCount = inCount + 1;
@@ -329,7 +324,7 @@ public class ImportAgricultureBank {
 
     //toString重写
     private String getValue(Cell cell) {
-        if(cell == null){
+        if (cell == null) {
 
         }
         switch (cell.getCellType()) {

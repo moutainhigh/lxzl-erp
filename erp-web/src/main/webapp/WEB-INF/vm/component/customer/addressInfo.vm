@@ -17,6 +17,7 @@
         <div class="col-md-4">
             <div class="well">
                 <p>
+                    <span class="fs11 text-muted mr5"><i class="fa fa-circle text-info fs12 pr5"></i>{{verifyStatusValue}}</span>
                     {{#isDefault}}
                     <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
                     {{/isDefault}}
@@ -34,6 +35,7 @@
                     <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
                 </address>
                 <p class="pv10">
+
                     {{#editButton}}
                     <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
                     {{/editButton}}
