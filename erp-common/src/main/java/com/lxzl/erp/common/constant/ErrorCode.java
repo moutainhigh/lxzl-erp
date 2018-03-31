@@ -561,7 +561,7 @@ public class ErrorCode {
     public static final String CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL = "J500151";
     public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
     public static final String CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE = "J500153";
-    public static final String CUSTOMER_NAME_REPETITION = "J500153";
+    public static final String CUSTOMER_NAME_REPETITION = "J500154";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -769,6 +769,9 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000029";
     public static final String BANK_SLIP_CLAIM_NEED_PAY_SUCCESS = "J18000030";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED = "J18000031";
+
+    public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
+    public static final String COUPON_TYPE_NOT_NULL = "J19000002";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1531,6 +1534,10 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
         MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
+
+        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
+        MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");
+
     }
 
     public static String getMessage(String code) {
