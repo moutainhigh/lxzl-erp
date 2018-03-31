@@ -1542,6 +1542,7 @@ public class ErrorCode {
         MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");
 
+        MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
     }
 
     public static String getMessage(String code) {
