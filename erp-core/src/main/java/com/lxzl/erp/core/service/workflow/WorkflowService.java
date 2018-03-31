@@ -133,5 +133,10 @@ public interface WorkflowService extends BaseService {
      */
     ServiceResult<String, String> rejectPassWorkFlow(Integer workflowType,String workflowReferNo,String commitRemark);
 
-
+    /**
+     * 导入工作流数据
+     *
+     * @return
+     */
+    ServiceResult<String, String> workflowImportData();
 }

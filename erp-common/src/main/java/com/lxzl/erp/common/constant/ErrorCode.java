@@ -768,9 +768,10 @@ public class ErrorCode {
     public static final String CURRENT_ROLES_NOT_PERMISSION = "J18000028";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000029";
     public static final String BANK_SLIP_CLAIM_NEED_PAY_SUCCESS = "J18000030";
+    public static final String BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED = "J18000031";
 
-    public static final String COUPON_BATCH_NAME_NOT_NALL = "J19000001";
-    public static final String COUPON_TYPE_NOT_NALL = "J19000002";
+    public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
+    public static final String COUPON_TYPE_NOT_NULL = "J19000002";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1532,9 +1533,11 @@ public class ErrorCode {
         MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
         MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
+        MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
 
-        MAP.put(COUPON_BATCH_NAME_NOT_NALL,"优惠卷批次名称不能为空");
-        MAP.put(COUPON_TYPE_NOT_NALL,"优惠卷类型不能为空");
+        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
+        MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");
+
     }
 
     public static String getMessage(String code) {

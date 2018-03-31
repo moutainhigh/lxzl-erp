@@ -18,15 +18,77 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <div class="row">
-                <div class="col-md-12 center-block">
+            <div class="section row">
+                <div class="col-md-8 center-block">
                     <div class="admin-form theme-primary">
-                        <form method="post" id="addProductForm">
-                            #parse("component/product/editProductContent.vm")
+                        <form method="post" id="requestForm">
+                            <div class="panel panel-default panel-border top">
+                                <div class="panel-heading">
+                                    <span class="panel-title" id="panelTitle"><i class="fa fa-pencil"></i>协议测试</span>
+                                </div>
+                                <div class="panel-body p25" id="pramContrls">
+                                    <div class="section row">
+                                        <div class="col-md-9">
+                                            <label class="field prepend-icon">
+                                                <input type="text" name="reqUrl" class="gui-input required" placeholder="输入请求地址" />
+                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <script type="text/html" id="pramTpl">
+                                        <div class="section row pramControl">
+                                            <div class="col-md-3">
+                                                <label class="field prepend-icon">
+                                                    <input type="text" name="reqPramName" class="gui-input" placeholder="输入参数名" />
+                                                    <label class="field-icon"><i class="fa fa-tag"></i></label>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="field prepend-icon">
+                                                    <input type="text" name="reqPramValue" class="gui-input" placeholder="输入值" />
+                                                    <label class="field-icon"><i class="fa fa-tag"></i></label>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="field prepend-icon">
+                                                    <button type="button" class="button btn-default delPramButton">删除</button>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </script>
+##                                    <div class="section row pramControl">
+##                                        <div class="col-md-3">
+##                                            <label class="field prepend-icon">
+##                                                <input type="text" name="reqPramName" class="gui-input required" placeholder="输入参数名" />
+##                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
+##                                            </label>
+##                                        </div>
+##                                        <div class="col-md-6">
+##                                            <label class="field prepend-icon">
+##                                                <input type="text" name="reqPramValue" class="gui-input required" placeholder="输入值" />
+##                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
+##                                            </label>
+##                                        </div>
+##                                    </div>
+                                </div>
+                                <div class="panel-footer text-right">
+                                    <button type="button" class="button btn-primary" id="addPramButton">添加</button>
+                                    <button type="submit" class="button btn-primary" id="sendRequest">发送</button>
+                                </div>
+                            </div>
+
                         </form>
                     </div>
                 </div>
             </div>
+            <div class="seciton row">
+                <div class="col-md-8 center-block">
+                    <pre id="resultContainer" class="hide">
+
+                    </pre>
+                </div>
+            </div>
+
         </section>
     </section>
 
@@ -36,17 +98,13 @@
 
 <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js',
-            'api.data.js',
-            'manage.product.mixin.js',
-            'manage.product.util.js',
-            'manage.product.add.js');
+    management_load_script('${staticManagement}/js', 'manage.private.request.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
     Rental.init();
     Layout.init();
-    AddProduct.init();
+    ManagePrivateRequest.init();
 
     //UI效果初始化
     Core.init();
