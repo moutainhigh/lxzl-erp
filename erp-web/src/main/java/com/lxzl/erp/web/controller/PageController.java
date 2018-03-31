@@ -841,6 +841,10 @@ public class PageController extends BaseController {
     public String jurnalAmountList() {
         return "/financialManage/jurnalAmountList";
     }
+    @RequestMapping("/jurnal-amount/detail")
+    public String jurnalAmountDetail() {
+        return "/financialManage/jurnalAmountDetail";
+    }
 
     @RequestMapping("/private-manage/request")
     public String privateManageRequeset() {
