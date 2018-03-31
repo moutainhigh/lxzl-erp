@@ -317,9 +317,8 @@ public class CustomerServiceImpl implements CustomerService {
         //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
         String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
-
-        //该公司简单名称不存在，则返回错误代码信息
-        if(ccdo == null&&!ccdo.getCustomerNo().equals(customer.getCustomerNo())){
+        //该公司简单名称已经存在，则返回错误代码信息
+        if(ccdo == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -382,7 +381,11 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-
+        CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
+        if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
 
         if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())
                 || CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
