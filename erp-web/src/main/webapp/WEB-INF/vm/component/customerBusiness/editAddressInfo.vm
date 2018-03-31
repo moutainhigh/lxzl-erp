@@ -15,6 +15,7 @@
         <div class="col-md-4 address-item">
             <div class="well">
                 <div>
+                    <span class="fs11 text-muted mr5"><i class="fa fa-circle text-info fs12 pr5"></i>{{verifyStatusValue}}</span>
                     {{#isDefault}}
                     <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
                     {{/isDefault}}
@@ -39,7 +40,9 @@
                         <span class="fs13">设为默认地址</span>
                     </label> -->
                     <button class="btn btn-xs btn-default pull-right deleteAddressButton" data-guid="{{guid}}" data-customerconsigninfoid="{{customerConsignInfoId}}">删除</button>
+                    {{#editButton}}
                     <button class="btn btn-xs btn-default pull-right mr5 eidtAddressButton" data-guid="{{guid}}" data-customerconsigninfoid="{{customerConsignInfoId}}">编辑</button>
+                    {{/editButton}}
                 </p>
             </div>
         </div>
