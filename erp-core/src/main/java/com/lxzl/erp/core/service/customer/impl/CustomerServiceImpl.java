@@ -22,6 +22,7 @@ import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
+import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -316,9 +317,8 @@ public class CustomerServiceImpl implements CustomerService {
         //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
         String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
-
-        //该公司简单名称不存在，则返回错误代码信息
-        if(ccdo == null&&!ccdo.getCustomerNo().equals(customer.getCustomerNo())){
+        //该公司简单名称已经存在，则返回错误代码信息
+        if(ccdo == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -381,7 +381,11 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-
+        CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
+        if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            return serviceResult;
+        }
 
         if (CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())
                 || CustomerStatus.STATUS_PASS.equals(customerDO.getCustomerStatus())) {
@@ -1264,11 +1268,11 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
             return result;
         }
-        
         //只有创建人和业务员和联合开发员才能提交功能
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             result.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return result;
         }
@@ -1518,7 +1522,10 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerRiskManagementDO customerRiskManagementDOForUpdate = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             customerRiskManagementDOForUpdate.setId(customerDO.getCustomerRiskManagementDO().getId());
             customerRiskManagementDOForUpdate.setRemark(customerRiskManagement.getRemark());
+            customerRiskManagementDOForUpdate.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            customerRiskManagementDOForUpdate.setCreateTime(now);
             customerRiskManagementDOForUpdate.setUpdateTime(now);
+            customerRiskManagementDOForUpdate.setCreateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementDOForUpdate.setUpdateUser(userSupport.getCurrentUserId().toString());
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
 
@@ -2954,4 +2961,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRiskManagementHistoryMapper customerRiskManagementHistoryMapper;
+
+    @Autowired
+    private UserRoleService userRoleService;
 }
