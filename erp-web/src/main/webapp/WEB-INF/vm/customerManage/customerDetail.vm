@@ -132,7 +132,7 @@
                     <div class="p25 ptn">
                         <div class="row">
                             <div class="col-md-12">
-                                #parse("component/customer/orders.vm")
+                                #parse("component/customer/personOrders.vm")
                             </div>
                         </div>
                     </div>

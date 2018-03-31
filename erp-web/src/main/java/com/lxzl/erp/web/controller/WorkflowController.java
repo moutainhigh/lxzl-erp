@@ -97,10 +97,10 @@ public class WorkflowController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "workflowImportData", method = RequestMethod.GET)
-    public Result workflowImportData(@RequestBody WorkflowTemplateQueryParam workflowTemplateQueryParam, BindingResult bindingResult) {
+    @RequestMapping(value = "workflowImportData", method = RequestMethod.POST)
+    public Result workflowImportData() {
         ServiceResult<String, String> serviceResult = workflowService.workflowImportData();
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
 
