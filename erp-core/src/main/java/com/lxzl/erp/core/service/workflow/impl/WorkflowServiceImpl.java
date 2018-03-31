@@ -17,7 +17,6 @@ import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
-import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkFlowManager;
@@ -125,9 +124,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private SubCompanyCityCoverMapper subCompanyCityCoverMapper;
-
-    @Autowired
-    private UserRoleService userRoleService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -318,96 +314,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkDO.getWorkflowLinkNo());
-        return result;
-    }
-
-    @Override
-    public ServiceResult<String, String> workflowImportData() {
-        ServiceResult<String, String> result = new ServiceResult<>();
-        User loginUser = userSupport.getCurrentUser();
-//        超级管理员权限控制
-        if (!userSupport.isSuperUser()) {
-            result.setErrorCode(ErrorCode.USER_ROLE_IS_NOT_SUPER_ADMIN);
-            return result;
-        }
-
-        Date now = new Date();
-        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("start", 0);
-        paramMap.put("pageSize", Integer.MAX_VALUE);
-        paramMap.put("workflowLinkQueryParam", workflowLinkQueryParam);
-        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.listPage(paramMap);
-
-        for(WorkflowLinkDO workflowLinkDO:workflowLinkDOList){
-
-            for(WorkflowLinkDetailDO workflowLinkDetailDO:workflowLinkDO.getWorkflowLinkDetailDOList()){
-                Integer data = 19;
-                if(data.equals(workflowLinkDetailDO.getWorkflowCurrentNodeId())){
-                    CustomerDO customerDO = customerMapper.findByNo(workflowLinkDetailDO.getWorkflowReferNo());
-
-                    List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
-                    Map<Integer, Integer> map = new HashMap<>();
-                    Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
-                    SubCompanyCityCoverDO subCompanyCityCoverDO;
-                    //判断收货地址
-                    for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
-                        subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
-                        if (subCompanyCityCoverDO == null) {
-                            subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
-                        }
-                        map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
-                    }
-
-                    for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-                        UserQueryParam userQueryParam = new UserQueryParam();
-                        userQueryParam.setRoleType(100004);
-                        userQueryParam.setSubCompanyId(entry.getValue());
-                        ServiceResult<String, List<User>> userResult = userService.getUserListByParam(userQueryParam);
-                        if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
-                            for (User user : userResult.getResult()) {
-                                WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-                                workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
-                                workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
-                                workflowVerifyUserGroupDO.setVerifyUser(user.getUserId());
-                                workflowVerifyUserGroupDO.setVerifyOpinion(workflowLinkDetailDO.getVerifyOpinion());
-                                workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-                                workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                                workflowVerifyUserGroupDO.setCreateUser(workflowLinkDetailDO.getCreateUser());
-                                workflowVerifyUserGroupDO.setCreateTime(now);
-                                workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
-                            }
-                        }
-                    }
-                    workflowLinkDetailDO.setVerifyUserGroupId(verifyUserGroupId);
-                    workflowLinkDetailMapper.update(workflowLinkDetailDO);
-                    System.out.println(workflowLinkDetailDO.getId());
-                }else{
-                    Integer groupId = generateNoSupport.generateVerifyUserGroupId();
-                    WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-                    workflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
-                    workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
-                    workflowVerifyUserGroupDO.setVerifyUser(workflowLinkDetailDO.getVerifyUser());
-                    workflowVerifyUserGroupDO.setVerifyTime(workflowLinkDetailDO.getVerifyTime());
-                    workflowVerifyUserGroupDO.setVerifyStatus(workflowLinkDetailDO.getVerifyStatus());
-                    workflowVerifyUserGroupDO.setVerifyOpinion(workflowLinkDetailDO.getVerifyOpinion());
-                    workflowVerifyUserGroupDO.setRemark(workflowLinkDetailDO.getRemark());
-                    workflowVerifyUserGroupDO.setDataStatus(workflowLinkDetailDO.getDataStatus());
-                    workflowVerifyUserGroupDO.setCreateTime(now);
-                    workflowVerifyUserGroupDO.setUpdateTime(now);
-                    workflowVerifyUserGroupDO.setCreateUser(workflowLinkDetailDO.getCreateUser());
-                    workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
-
-                    workflowLinkDetailDO.setVerifyUserGroupId(groupId);
-                    workflowLinkDetailMapper.update(workflowLinkDetailDO);
-                }
-            }
-            WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDO.getWorkflowLinkDetailDOList().get(0);
-            workflowLinkDO.setVerifyUserGroupId(lastWorkflowLinkDetailDO.getVerifyUserGroupId());
-            workflowLinkMapper.update(workflowLinkDO);
-
-        }
-        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

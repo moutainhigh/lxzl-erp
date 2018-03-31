@@ -30,7 +30,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
 
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(144);
+        bankSlip.setBankSlipId(15);
         TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
@@ -55,7 +55,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void pushDownBankSlip() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(149);
+        bankSlip.setBankSlipId(61);
         TestResult result = getJsonTestResult("/bankSlip/pushDownBankSlip", bankSlip);
     }
 

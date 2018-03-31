@@ -28,7 +28,7 @@
 
 <div class="row section" style="margin:0;">
     <div class="br-b ph8 account-title">客户账户流水信息</div>
-    <div class="table-responsive" style="overflow-x: scroll; max-height: 500px;">
+    <div class="table-responsive">
         <script type="text/html" id="accountListTpl">
             <thead>
             <tr class="bg-light">

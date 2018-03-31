@@ -95,7 +95,6 @@
                                     <th>所属公司</th>
                                     <th>是否禁用</th>
 ##                                    <th>审核备注</th>
-                                    <th>是否授信</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -133,9 +132,6 @@
                                    #* <td>
                                         <div class="mw200">{{auditReason}}</div>
                                     </td>*#
-                                    <td>
-                                        <span class="{{isRiskClass}}">{{isRisk}}</span>
-                                    </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group">

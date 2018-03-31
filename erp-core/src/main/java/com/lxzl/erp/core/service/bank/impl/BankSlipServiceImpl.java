@@ -101,7 +101,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         PageQuery pageQuery = new PageQuery(bankSlipQueryParam.getPageNo(), bankSlipQueryParam.getPageSize());
 
         Integer departmentType = 0;
-        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
+        if (userSupport.isFinancePerson()) {
             //财务人员类型设置为1
             departmentType = 1;
         } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
@@ -236,7 +236,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
                 bankSlipClaimMapper.saveBankSlipClaimDO(bankSlipClaimDOList);
             }
-            if (CollectionUtil.isNotEmpty(newBankSlipDetailDOList)) {
+            if(CollectionUtil.isNotEmpty(newBankSlipDetailDOList)){
                 bankSlipDetailMapper.updateConfirmBankDetailDO(newBankSlipDetailDOList);
                 bankSlipMapper.update(bankSlipDO);
             }
@@ -273,7 +273,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //是否有权下推
-        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+        if (!userSupport.isFinancePerson()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -311,7 +311,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+            if (!userSupport.isFinancePerson()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
@@ -356,7 +356,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+            if (!userSupport.isFinancePerson()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
@@ -481,7 +481,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
         //是否为商务
-        if (!userSupport.isBusinessAffairsPerson() && !userSupport.isSuperUser()) {
+        if (userSupport.isBusinessAffairsPerson()) {
             serviceResult.setErrorCode(ErrorCode.IS_NOT_BUSINESS_AFFAIRS_PERSON);
             return serviceResult;
         }
@@ -544,21 +544,17 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipDetailDO.setUpdateTime(now);
         }
-        if (CollectionUtil.isEmpty(newDankSlipClaimDOList)) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED);
-            return serviceResult;
-        }
-        bankSlipClaimMapper.updateBankSlipClaimDO(newDankSlipClaimDOList);
         //以下是批量跟新操作 跟新对公流水项  和  认领表
-        if (CollectionUtil.isNotEmpty(bankSlipDetailDOList)) {
-            bankSlipDetailMapper.updateConfirmBankDetailDO(bankSlipDetailDOList);
-            //改变已经确认个数  再判断认领个数
-            bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - amount);
-            bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + amount);
-            bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            bankSlipDO.setUpdateTime(now);
-            bankSlipMapper.update(bankSlipDO);
-        }
+        bankSlipDetailMapper.updateConfirmBankDetailDO(bankSlipDetailDOList);
+        bankSlipClaimMapper.updateBankSlipClaimDO(newDankSlipClaimDOList);
+
+        //改变已经确认个数  再判断认领个数
+        bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - amount);
+        bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + amount);
+        bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDO.setUpdateTime(now);
+        bankSlipMapper.update(bankSlipDO);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDO.getId());
         return serviceResult;

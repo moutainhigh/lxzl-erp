@@ -399,7 +399,7 @@
 
 	</select>
 	<select id="findCustomerCompanyByParams" resultMap="CustomerDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>,<include refid="risk_column_List"/>,eap.province_name AS provinceName
+		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
 		,union_user.real_name AS unionUserName
@@ -459,7 +459,6 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		ORDER BY ecc.ecc_create_time DESC
 	</select>
 
@@ -518,7 +517,7 @@
 	</select>
 
 	<select id="findCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>,<include refid="risk_column_List"/>
+		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
@@ -532,7 +531,6 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		<where>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
 				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )

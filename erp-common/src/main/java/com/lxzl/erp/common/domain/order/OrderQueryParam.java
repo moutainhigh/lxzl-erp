@@ -23,13 +23,11 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date createEndTime;
     private Integer orderSellerId;
 
-
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
     private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer deliveryMode;
     private Integer isPendingDelivery;
-    private Integer payStatus;
 
 
     public Integer getOrderId() {
@@ -163,12 +161,4 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
 
     public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
-
-    public Integer getPayStatus() {
-        return payStatus;
-    }
-
-    public void setPayStatus(Integer payStatus) {
-        this.payStatus = payStatus;
-    }
 }

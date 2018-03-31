@@ -97,12 +97,6 @@ public class WorkflowController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "workflowImportData", method = RequestMethod.POST)
-    public Result workflowImportData() {
-        ServiceResult<String, String> serviceResult = workflowService.workflowImportData();
-        return resultGenerator.generate(serviceResult);
-    }
-
 
     @Autowired
     private WorkflowService workflowService;
