@@ -12,7 +12,7 @@
     <div class="panel-body pb5 admin-form">
 
         {{#listData}}
-        <div class="col-md-4">
+        <div class="col-md-4 address-item">
             <div class="well">
                 <div>
                     {{#isDefault}}
