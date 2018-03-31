@@ -23,7 +23,7 @@
                 <th>全新付款期数</th>
                 <th>全新支付方式</th>
                 <th>备注</th>
-                <th>创建人</th>
+##                <th>创建人</th>
                 <th>修改人</th>
             </tr>
             </thead>
@@ -51,10 +51,10 @@
                 <td>{{newPaymentCycle}}</td>
                 <td>{{newPayMode}}</td>
                 <td>{{remark}}</td>
-                <td>
-                    <p class="mn">{{createUserRealName}}</p>
-                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
-                </td>
+##                <td>
+##                    <p class="mn">{{createUserRealName}}</p>
+##                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+##                </td>
                 <td>
                     <p class="mn">{{updateUserRealName}}</p>
                     <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
