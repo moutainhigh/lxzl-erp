@@ -210,8 +210,10 @@ public class CustomerRiskManagementDO extends BaseDO {
         if (newPayMode != null ? !newPayMode.equals(that.newPayMode) : that.newPayMode != null) return false;
         if (isLimitApple != null ? !isLimitApple.equals(that.isLimitApple) : that.isLimitApple != null) return false;
         if (isLimitNew != null ? !isLimitNew.equals(that.isLimitNew) : that.isLimitNew != null) return false;
-        if (singleLimitPrice != null ? singleLimitPrice.compareTo(that.singleLimitPrice) != 0 : that.singleLimitPrice != null)
-            return false;
+        if(that.singleLimitPrice==null&&singleLimitPrice!=null) return false;
+        if(that.singleLimitPrice!=null&&singleLimitPrice==null) return false;
+        if(that.singleLimitPrice!=null&&singleLimitPrice!=null&&singleLimitPrice.compareTo(that.singleLimitPrice) != 0) return false;
+
         if (!returnVisitFrequency.equals(that.returnVisitFrequency)) return false;
         return isFullDeposit.equals(that.isFullDeposit);
     }

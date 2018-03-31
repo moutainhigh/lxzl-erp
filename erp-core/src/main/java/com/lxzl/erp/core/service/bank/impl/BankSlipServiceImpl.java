@@ -234,9 +234,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             //改变总表的已认领数量和未认领数量
             bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - claimCount);
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + claimCount);
-            if (bankSlipDO.getNeedClaimCount() == 0) {
-                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
-            }
+
             //创建各个数据批量存储
             if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
                 bankSlipClaimMapper.saveBankSlipClaimDO(bankSlipClaimDOList);
@@ -255,10 +253,19 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, Page<BankSlipDetail>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
 
+        Integer departmentType = 0;
+        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
+            //财务人员类型设置为1
+            departmentType = 1;
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
+            //商务和业务员类型设置为2
+            departmentType = 2;
+        }
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("bankSlipDetailQueryParam", bankSlipDetailQueryParam);
+        maps.put("departmentType", departmentType);
 
         Integer totalCount = bankSlipDetailMapper.findBankSlipDetailDOCountByParams(maps);
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailDOByParams(maps);
@@ -341,9 +348,6 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //总表需认领数量-1
         int newNeedClaimCount = bankSlipDO.getNeedClaimCount() - 1;
-        if (newNeedClaimCount == 0) {
-            bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
-        }
 
         bankSlipDO.setNeedClaimCount(newNeedClaimCount);
         bankSlipMapper.update(bankSlipDO);
@@ -448,9 +452,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             //跟新银行对公流水已认领笔数
             bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - 1);
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + 1);
-            if (bankSlipDO.getNeedClaimCount() == 0) {
-                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
-            }
+
         } else if (BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
             //状态为已认领状态
             //以前的全部删除 添加新的
@@ -504,7 +506,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //是否为已经下推 或者为 部分确认
         if (!SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus())) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM);
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN);
             return serviceResult;
         }
         //查询 银行对公流水明细表对应银行对公流水认领表数据分别加款导客户账户
@@ -571,6 +573,9 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipDetailMapper.updateConfirmBankDetailDO(bankSlipDetailDOList);
             //改变已经确认个数  再判断认领个数
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - amount);
+            if(bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0){
+                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+            }
             bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + amount);
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);

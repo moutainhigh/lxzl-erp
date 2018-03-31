@@ -56,25 +56,20 @@
                                             </div>
                                         </div>
                                     </script>
-                                    <div class="section row pramControl">
-                                        <div class="col-md-3">
-                                            <label class="field prepend-icon">
-                                                <input type="text" name="reqPramName" class="gui-input required" placeholder="输入参数名" />
-                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="field prepend-icon">
-                                                <input type="text" name="reqPramValue" class="gui-input required" placeholder="输入值" />
-                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
-                                            </label>
-                                        </div>
+##                                    <div class="section row pramControl">
 ##                                        <div class="col-md-3">
 ##                                            <label class="field prepend-icon">
-##                                                <button type="button" class="button btn-default" id="delPramButton">删除</button>
+##                                                <input type="text" name="reqPramName" class="gui-input required" placeholder="输入参数名" />
+##                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
 ##                                            </label>
 ##                                        </div>
-                                    </div>
+##                                        <div class="col-md-6">
+##                                            <label class="field prepend-icon">
+##                                                <input type="text" name="reqPramValue" class="gui-input required" placeholder="输入值" />
+##                                                <label class="field-icon"><i class="fa fa-tag"></i></label>
+##                                            </label>
+##                                        </div>
+##                                    </div>
                                 </div>
                                 <div class="panel-footer text-right">
                                     <button type="button" class="button btn-primary" id="addPramButton">添加</button>

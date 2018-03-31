@@ -2,7 +2,6 @@ package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
@@ -28,7 +27,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void queryBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail= new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(11897);
+        bankSlipDetail.setBankSlipDetailId(12);
         TestResult result = getJsonTestResult("/bankSlip/queryBankSlipDetail", bankSlipDetail);
     }
 
