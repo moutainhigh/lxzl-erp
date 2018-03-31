@@ -130,7 +130,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //校验上传流水月份是否超过当月
-        if(DateUtil.getMonthByOffset(bankSlip.getSlipMonth(), CommonConstant.COMMON_ZERO).getTime() - DateUtil.getMonthByCurrentOffset(CommonConstant.COMMON_ZERO).getTime() > 0){
+        if(bankSlip.getSlipMonth().getTime() - DateUtil.getMonthByCurrentOffset(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD).getTime() > 0){
             serviceResult.setErrorCode(ErrorCode.OVERSTEP_CURRENT_MONTH);
             return serviceResult;
         }

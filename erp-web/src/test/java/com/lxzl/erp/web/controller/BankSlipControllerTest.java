@@ -263,7 +263,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        bankSlip.setSubCompanyName("深圳分公司");
         bankSlip.setBankType(BankType.CMBC_BANK);
         bankSlip.setSubCompanyId(2);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/04/20"));
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
         bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxw3SAFbc2AAN8APwuql8246.xls");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 //
