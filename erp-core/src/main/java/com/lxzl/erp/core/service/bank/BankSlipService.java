@@ -69,5 +69,12 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     ServiceResult<String, Integer> confirmBankSlip(BankSlip bankSlip);
-
+    /**
+    * 查询银行流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/31 10:55
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String, BankSlipDetail> queryBankSlipDetail(BankSlipDetail bankSlipDetail);
 }

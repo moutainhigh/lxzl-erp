@@ -758,7 +758,7 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_ID_NULL = "J18000017";
     public static final String BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED = "J18000018";
     public static final String BANK_SLIP_STATUS_IS_PUSH_DOWN = "J18000019";
-    public static final String BANK_SLIP_DETAIL_IS_NULL = "J18000021";
+    public static final String BANK_SLIP_DETAIL_NOT_EXISTS = "J18000021";
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT = "J18000022";
     public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000023";
     public static final String IS_NOT_BUSINESS_AFFAIRS_PERSON = "J18000024";
@@ -769,6 +769,8 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000029";
     public static final String BANK_SLIP_CLAIM_NEED_PAY_SUCCESS = "J18000030";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED = "J18000031";
+    public static final String BANK_SLIP_DETAIL_NOT_INCOME = "J18000032";
+    public static final String OVERSTEP_CURRENT_MONTH = "J18000033";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1520,7 +1522,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_ID_NULL, "银行对公流水记录id不能为空");
         MAP.put(BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED, "银行对公流水记录不是未认领状态");
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
-        MAP.put(BANK_SLIP_DETAIL_IS_NULL, "银行对公流水记录项为空");
+        MAP.put(BANK_SLIP_DETAIL_NOT_EXISTS, "银行对公流水记录项不存在");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已确认状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
@@ -1531,6 +1533,8 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
         MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
+        MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
+        MAP.put(OVERSTEP_CURRENT_MONTH, "上传流水记录选着月份超出现在月份");
     }
 
     public static String getMessage(String code) {

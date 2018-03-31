@@ -129,6 +129,11 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, String> saveBankSlip(BankSlip bankSlip) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        //校验上传流水月份是否超过当月
+        if(DateUtil.getMonthByOffset(bankSlip.getSlipMonth(), CommonConstant.COMMON_ZERO).getTime() - DateUtil.getMonthByCurrentOffset(CommonConstant.COMMON_ZERO).getTime() > 0){
+            serviceResult.setErrorCode(ErrorCode.OVERSTEP_CURRENT_MONTH);
+            return serviceResult;
+        }
         Integer bankType = bankSlip.getBankType();
         bankSlip.setSlipMonth(DateUtil.getMonthByOffset(bankSlip.getSlipMonth(), CommonConstant.COMMON_ZERO));
         if (!BankType.BOC_BANK.equals(bankType) &&
@@ -305,7 +310,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //银行对公流水项是否存在
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
         if (bankSlipDetailDO == null) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_IS_NULL);
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
@@ -315,6 +320,12 @@ public class BankSlipServiceImpl implements BankSlipService {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
+        }
+
+        //判断是否是收入状态
+        if(!LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_INCOME);
+            return serviceResult;
         }
 
         //状态是否为未认领
@@ -350,7 +361,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //判断是否有银行对公流水项
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipClaim.getBankSlipDetailId());
         if (bankSlipDetailDO == null) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_IS_NULL);
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
@@ -364,6 +375,12 @@ public class BankSlipServiceImpl implements BankSlipService {
         //判断银行对公流水项状态(已确认)
         if (BankSlipDetailStatus.CONFIRMED.equals(bankSlipDetailDO.getDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED);
+            return serviceResult;
+        }
+
+        //判断是否是收入状态
+        if(!LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_INCOME);
             return serviceResult;
         }
 
@@ -561,6 +578,19 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDO.getId());
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, BankSlipDetail> queryBankSlipDetail(BankSlipDetail bankSlipDetail) {
+        ServiceResult<String, BankSlipDetail> serviceResult = new ServiceResult<>();
+        BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
+        if(bankSlipDetailDO == null){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(ConverterUtil.convert(bankSlipDetailDO,BankSlipDetail.class));
         return serviceResult;
     }
 }
