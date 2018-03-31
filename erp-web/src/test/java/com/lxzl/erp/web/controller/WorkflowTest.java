@@ -41,11 +41,11 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void verifyWorkFlow() throws Exception {
         VerifyWorkflowParam workflowParam = new VerifyWorkflowParam();
-        workflowParam.setWorkflowLinkNo("LXWF-500355-20180330-00806");
-        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
-//        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
+        workflowParam.setWorkflowLinkNo("LXWF-500355-20180329-00784");
+//        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+        workflowParam.setVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
         workflowParam.setReturnType(1);
-        workflowParam.setVerifyOpinion("test9");
+        workflowParam.setVerifyOpinion("test10");
 //        workflowParam.setNextVerifyUser(500016);
 //        List<Integer> list = new ArrayList<>();
 //        list.add(1819);
@@ -65,6 +65,8 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void queryWorkflowLinkPage() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setPageNo(1);
+        workflowLinkQueryParam.setPageSize(15);
 //        workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_PURCHASE);
 //        workflowLinkQueryParam.setWorkflowReferNo("");
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkPage", workflowLinkQueryParam);
@@ -218,6 +220,13 @@ public class WorkflowTest extends ERPUnTransactionalTest {
 
         }
     }
+
+    @Test
+    public void test123() throws Exception {
+
+        TestResult testResult = getJsonTestResult("/workflow/workflowImportData", null);
+    }
+
     @Autowired
     private WorkflowLinkMapper workflowLinkMapper;
     @Autowired
