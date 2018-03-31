@@ -1534,7 +1534,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
         MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
-        MAP.put(OVERSTEP_CURRENT_MONTH, "上传流水记录选着月份超出现在月份");
+        MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
     }
 
     public static String getMessage(String code) {
