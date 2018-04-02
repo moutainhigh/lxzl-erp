@@ -75,6 +75,11 @@ public class WorkflowType {
      */
     public static final Integer WORKFLOW_TYPE_CUSTOMER = 16;
 
+    /**
+     * 客户地址审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_CUSTOMER_CONSIGN = 17;
+
     public static String getWorkflowTypeDesc(Integer workflowType) {
         if (WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
             return "采购订单";
@@ -106,6 +111,8 @@ public class WorkflowType {
             return "K3退货单";
         } else if (WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
             return "客户";
+        } else if (WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)) {
+            return "客户地址";
         } else {
             return "其他";
         }
