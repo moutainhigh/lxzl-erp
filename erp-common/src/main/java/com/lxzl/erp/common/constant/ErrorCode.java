@@ -772,6 +772,17 @@ public class ErrorCode {
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
+    public static final String COUPON_BATCH_NOT_EXISTS = "J19000003";
+    public static final String COUPON_BATCH_CAN_NOT_DELETE="J19000004";
+    public static final String COUPON_BATCH_ID_NOT_NULL="J19000005";
+    public static final String COUPON_BATCH_DETAIL_ID_NOT_NULL="J19000006";
+    public static final String COUPON_COUNT_NOT_NULL="J19000007";
+    public static final String COUPON_FACE_AMOUNT_NOT_NULL="J19000008";
+    public static final String IS_ONLINE_NOT_NULL="J19000009";
+    public static final String IS_ONLINE_ERROR="J19000010";
+    public static final String COUPON_COUNT_ERROR="J19000011";
+    public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
+    public static final String COUPON_USED="J19000013";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1535,10 +1546,24 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
 
-        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
-        MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");
+
+        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠券批次名称不能为空");
+        MAP.put(COUPON_TYPE_NOT_NULL,"优惠券类型不能为空");
+        MAP.put(COUPON_BATCH_NOT_EXISTS,"优惠券批次不存在");
+        MAP.put(COUPON_BATCH_CAN_NOT_DELETE,"优惠券已生成，不能删除该批次");
+        MAP.put(COUPON_BATCH_ID_NOT_NULL,"优惠券批次ID不能为空");
+        MAP.put(COUPON_BATCH_DETAIL_ID_NOT_NULL,"优惠券详情ID不能为空");
+        MAP.put(COUPON_COUNT_NOT_NULL,"优惠券总数不能为空");
+        MAP.put(COUPON_FACE_AMOUNT_NOT_NULL,"优惠面值不能为空");
+        MAP.put(IS_ONLINE_NOT_NULL,"增加优惠券是否线上状态不能为空");
+        MAP.put(IS_ONLINE_ERROR,"优惠券是否线上状态有误，请重重新输入");
+        MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
+        MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
+        MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
+
 
     }
+
 
     public static String getMessage(String code) {
         return MAP.get(code);
