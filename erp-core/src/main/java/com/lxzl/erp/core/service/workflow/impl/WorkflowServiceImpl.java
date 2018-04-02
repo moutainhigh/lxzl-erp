@@ -1352,6 +1352,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return userList;
         }
         UserQueryParam userQueryParam = new UserQueryParam();
+        userQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         if (workflowNodeDO.getWorkflowUser() != null) {
             ServiceResult<String, User> userResult = userService.getUserById(workflowNodeDO.getWorkflowUser());
             if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
@@ -1584,6 +1585,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 UserQueryParam userQueryParam = new UserQueryParam();
                 userQueryParam.setRoleType(workflowNodeDOList.get(0).getWorkflowRoleType());
                 userQueryParam.setSubCompanyId(entry.getValue());
+                userQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
                 ServiceResult<String, List<User>> userResult = userService.getUserListByParam(userQueryParam);
                 if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
                     if (CollectionUtil.isEmpty(userResult.getResult())) {
