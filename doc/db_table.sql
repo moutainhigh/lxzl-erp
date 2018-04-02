@@ -3144,8 +3144,8 @@ CREATE TABLE `erp_coupon_batch` (
   `coupon_type` int(11) NOT NULL COMMENT '优惠券类型，1-设备优惠券',
   `effective_start_time` datetime DEFAULT NULL COMMENT '有效期起始时间',
   `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
-  `total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
-  `used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `coupon_batch_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
+  `coupon_batch_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
   `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
   `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
   `total_deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣总金额',
@@ -3162,9 +3162,9 @@ DROP TABLE if exists `erp_coupon_batch_detail`;
 CREATE TABLE `erp_coupon_batch_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
-  `total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
-  `used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
-  `received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券线上已领取总数',
+  `coupon_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
+  `coupon_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `coupon_received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券线上已领取总数',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
   `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
   `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
@@ -3205,5 +3205,26 @@ CREATE TABLE `erp_coupon` (
   INDEX index_customer_no ( `customer_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='优惠券表';
 
+DROP TABLE if exists `erp_message_send_log`;
+CREATE TABLE `erp_message_send_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `out_id` varchar(50)  COMMENT '外部流水扩展字段',
+  `request_id` varchar(50) NOT NULL COMMENT '请求ID',
+  `template_code` varchar(50) NOT NULL COMMENT '短信模板ID',
+  `refer_id` int(20) NOT NULL COMMENT '发送目标（如客户，用户等）引用ID',
+  `refer_type` int(11) NOT NULL COMMENT '引用类型（如客户，用户等）',
+  `send_type` int(11) NOT NULL DEFAULT '0' COMMENT '发送类型：0-注册，1-登录，2-找回密码，3-交易支付，4-推广，5-其他',
+  `send_content` varchar(1000) NOT NULL COMMENT '发送内容',
+  `send_status` int(11) NOT NULL DEFAULT 0 COMMENT '发送状态：0-发送失败，1-发送成功',
+  `request_json` varchar(2000) COMMENT '请求JSON',
+  `response_json` varchar(2000) COMMENT '返回JSON',
 
-
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+   PRIMARY KEY (`id`),
+   INDEX index_customer_no ( `customer_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='短信发送日志表';
