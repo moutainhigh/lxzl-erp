@@ -37,7 +37,6 @@ import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import com.lxzl.erp.common.util.StrReplaceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
 
         //该公司简单名称已经存在，则返回错误代码信息
-        if(ccdo!=null){
+        if (ccdo != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
             return serviceResult;
         }
@@ -314,14 +313,6 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
-        String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
-        CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
-        //该公司简单名称已经存在，则返回错误代码信息
-        if(ccdo == null){
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
-            return serviceResult;
-        }
 
         //校验当前是否是跟单员,联合开发人,创建人
         serviceResult = verifyJurisdiction(customerDO);
@@ -372,7 +363,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
         }
-        if(CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())){
+        if (CommonConstant.COMMON_CONSTANT_NO.equals(customer.getIsDefaultConsignAddress())) {
             if (CollectionUtil.isEmpty(customerCompany.getCustomerConsignInfoList())) {
                 if (customerCompany.getAgentPersonPhone().equals(customerCompany.getConnectPhone())) {
                     serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_NOT_NULL);
@@ -401,14 +392,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         boolean flag = false;
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())){
-            for(CustomerConsignInfo customerConsignInfo: customer.getCustomerCompany().getCustomerConsignInfoList()){
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
+            for (CustomerConsignInfo customerConsignInfo : customer.getCustomerCompany().getCustomerConsignInfoList()) {
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfo.getIsBusinessAddress())) {
                     flag = true;
                     break;
                 }
             }
-            if(!flag){
+            if (!flag) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS);
                 return serviceResult;
             }
@@ -419,9 +410,9 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCompanyDO newCustomerCompanyDO = ConverterUtil.convert(customer.getCustomerCompany(), CustomerCompanyDO.class);
 
         List<CustomerConsignInfo> customerConsignInfoList = customer.getCustomerCompany().getCustomerConsignInfoList();
-        List<CustomerConsignInfoDO> customerConsignInfoDOList = ConverterUtil.convertList(customerConsignInfoList,CustomerConsignInfoDO.class);
-        ServiceResult<String, CustomerConsignInfoDO> customerConsignInfoDOServiceResult = updateCustomerConsignInfoDOInfo(customerConsignInfoDOList,customerDO.getId(),now,newCustomerCompanyDO);
-        if(!ErrorCode.SUCCESS.equals(customerConsignInfoDOServiceResult.getErrorCode())){
+        List<CustomerConsignInfoDO> customerConsignInfoDOList = ConverterUtil.convertList(customerConsignInfoList, CustomerConsignInfoDO.class);
+        ServiceResult<String, CustomerConsignInfoDO> customerConsignInfoDOServiceResult = updateCustomerConsignInfoDOInfo(customerConsignInfoDOList, customerDO.getId(), now, newCustomerCompanyDO);
+        if (!ErrorCode.SUCCESS.equals(customerConsignInfoDOServiceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(customerConsignInfoDOServiceResult.getErrorCode());
             return serviceResult;
@@ -459,15 +450,15 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             newCustomerCompanyDO.setCustomerCompanyNeedLaterJson("");
         }
-
+        newCustomerCompanyDO.setCompanyName(null);
+        newCustomerCompanyDO.setSimpleCompanyName(null);
         newCustomerCompanyDO.setDataStatus(null);
         newCustomerCompanyDO.setCreateTime(null);
         newCustomerCompanyDO.setCreateUser(null);
         newCustomerCompanyDO.setUpdateTime(now);
         newCustomerCompanyDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         newCustomerCompanyDO.setId(customerCompanyDO.getId());
-        //将公司简单名称添加存入实体类
-        newCustomerCompanyDO.setSimpleCompanyName(simpleCompanyName);
+
         customerCompanyMapper.update(newCustomerCompanyDO);
 
         //对经办人身份证正面操作
@@ -604,7 +595,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setOwnerSubCompanyId(ownerSubCompanyId);
         customerDO.setIsDisabled(null);
         customerDO.setCustomerStatus(CustomerStatus.STATUS_INIT);
-        customerDO.setCustomerName(customerCompany.getCompanyName());
+        customerDO.setCustomerName(null);
         customerDO.setFirstApplyAmount(customer.getFirstApplyAmount());
         customerDO.setLaterApplyAmount(customer.getLaterApplyAmount());
         customerDO.setRemark(customer.getRemark());
@@ -898,7 +889,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
         customerDO.getCustomerCompanyDO().setCustomerConsignInfoList(customerConsignInfoDO);
 
-        if(!authorityControl(customerDO)){
+        if (!authorityControl(customerDO)) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1072,14 +1063,14 @@ public class CustomerServiceImpl implements CustomerService {
     private String hidePhone(String phone) {
 
         String hidePhone = "";
-        if(StringUtil.isBlank(phone)){
+        if (StringUtil.isBlank(phone)) {
             return hidePhone;
         }
         phone = phone.trim();
-        if(phone.length()==11){
+        if (phone.length() == 11) {
             //手机号码屏蔽中间四位
-            hidePhone = phone.substring(0, 3) + "****"+phone.substring(7,11);
-        }else if(phone.length()>4){
+            hidePhone = phone.substring(0, 3) + "****" + phone.substring(7, 11);
+        } else if (phone.length() > 4) {
             //非手机号码屏蔽最后四位
             hidePhone = phone.substring(0, phone.length() - 4) + "****";
         }
@@ -1131,7 +1122,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         CustomerAccount customerAccount = paymentService.queryCustomerAccount(customerDO.getCustomerNo());
 
-        if(!authorityControl(customerDO)){
+        if (!authorityControl(customerDO)) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1264,7 +1255,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
-        if(CollectionUtil.isEmpty(customerConsignInfoDOList)){
+        if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
             result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
             return result;
         }
@@ -1397,27 +1388,27 @@ public class CustomerServiceImpl implements CustomerService {
                 !userSupport.isSuperUser());
     }
 
-    private boolean authorityControl(CustomerDO customerDO){
+    private boolean authorityControl(CustomerDO customerDO) {
         //判断审核人员给予权限观看
         boolean flag = false;
-        ServiceResult<String, WorkflowLink> workflowLinkServiceResult = workflowService.getWorkflowLink(WorkflowType.WORKFLOW_TYPE_CUSTOMER,customerDO.getCustomerNo());
-        if(ErrorCode.SUCCESS.equals(workflowLinkServiceResult.getErrorCode())){
+        ServiceResult<String, WorkflowLink> workflowLinkServiceResult = workflowService.getWorkflowLink(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerDO.getCustomerNo());
+        if (ErrorCode.SUCCESS.equals(workflowLinkServiceResult.getErrorCode())) {
             List<WorkflowLinkDetail> workflowLinkDetailList = workflowLinkServiceResult.getResult().getWorkflowLinkDetailList();
-            for(WorkflowLinkDetail workflowLinkDetail : workflowLinkDetailList){
-                for(WorkflowVerifyUserGroup workflowVerifyUserGroup:workflowLinkDetail.getWorkflowVerifyUserGroupList()){
-                    if(userSupport.getCurrentUserId().equals(workflowVerifyUserGroup.getVerifyUser())){
+            for (WorkflowLinkDetail workflowLinkDetail : workflowLinkDetailList) {
+                for (WorkflowVerifyUserGroup workflowVerifyUserGroup : workflowLinkDetail.getWorkflowVerifyUserGroupList()) {
+                    if (userSupport.getCurrentUserId().equals(workflowVerifyUserGroup.getVerifyUser())) {
                         flag = true;
                         break;
                     }
                 }
             }
-            if(!flag){
+            if (!flag) {
                 //如果当前用户是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
                 if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
                     flag = true;
                 }
             }
-        }else{
+        } else {
             //如果当前用户是跟单员  并且 用户不是联合开发人 并且用户不是创建人  并且当前用户的可观察列表中不包含当前数据的创建人，则不允许看此条数据
             if (!haveAuthority(customerDO.getOwner(), customerDO.getUnionUser(), Integer.parseInt(customerDO.getCreateUser()))) {
                 flag = true;
@@ -1438,7 +1429,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerConsignInfoDO> customerConsignInfoDO = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
         customerDO.getCustomerPersonDO().setCustomerConsignInfoDOList(customerConsignInfoDO);
 
-        if(!authorityControl(customerDO)){
+        if (!authorityControl(customerDO)) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1516,7 +1507,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         } else {//有风控信息则修改
             //在执行更改方法前，进行原数据和更改传入数据的不同判断
-            CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement,CustomerRiskManagementDO.class);
+            CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
             boolean judgeResult = customerDO.getCustomerRiskManagementDO().equals(customerRiskManagementDO);
 
             CustomerRiskManagementDO customerRiskManagementDOForUpdate = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
@@ -1530,7 +1521,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementMapper.update(customerRiskManagementDOForUpdate);
 
             //判断风控信息的原有信息是否发生更改
-            if(!judgeResult){
+            if (!judgeResult) {
                 CustomerRiskManagementHistoryDO customerRiskManagementHistoryDO = ConverterUtil.convert(customerRiskManagementDOForUpdate, CustomerRiskManagementHistoryDO.class);
                 customerRiskManagementHistoryDO.setCustomerId(customerDO.getId());
                 customerRiskManagementHistoryDO.setCustomerNo(customerDO.getCustomerNo());
@@ -1653,9 +1644,9 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus()) &&
+        if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus()) &&
                 CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) &&
-                CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfoDO.getVerifyStatus())){
+                CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfoDO.getVerifyStatus())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
             return serviceResult;
         }
@@ -1681,9 +1672,9 @@ public class CustomerServiceImpl implements CustomerService {
 //            serviceResult.setResult(serviceResult.getResult());
 //            return serviceResult;
 //        }
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+        if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())) {
             CustomerCompanyDO customerCompanyDO = customerCompanyMapper.findByDefaultAddressReferId(customerConsignInfoDO.getId());
-            if(customerCompanyDO != null){
+            if (customerCompanyDO != null) {
                 customerCompanyDO.setAgentPersonName(customerConsignInfoDO.getConsigneeName());
                 customerCompanyDO.setAgentPersonPhone(customerConsignInfoDO.getConsigneePhone());
                 customerCompanyDO.setProvince(customerConsignInfoDO.getProvince());
@@ -2734,12 +2725,12 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         //校验开发人和联合开发人是否相同
         ServiceResult<String, String> serviceResult = judgeUserOwnerAndUnion(customer);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             return serviceResult;
         }
         //添加客户修改日志
         serviceResult = updateCustomerOwnerAndUnionUser(customerDO, customer, now);
-        if(!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())){
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
             return serviceResult;
         }
         customerDO.setOwnerSubCompanyId(userSupport.getCompanyIdByUser(customer.getOwner()));
@@ -2753,6 +2744,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 风控历史记录分页查询
+     *
      * @param customerRiskManageHistoryQueryParam
      * @return
      */
@@ -2767,8 +2759,8 @@ public class CustomerServiceImpl implements CustomerService {
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerRiskManagementHistoryMapper.findCustomerRiskHistoryCountByParams(maps);
         List<CustomerRiskManagementHistoryDO> customerRiskHistoryDOList = customerRiskManagementHistoryMapper.findCustomerRiskHistoryByParams(maps);
-        List<CustomerRiskManagementHistory> customerRiskManagementHistoryList = ConverterUtil.convertList(customerRiskHistoryDOList,CustomerRiskManagementHistory.class);
-        Page<CustomerRiskManagementHistory> page = new Page<>(customerRiskManagementHistoryList,totalCount, customerRiskManageHistoryQueryParam.getPageNo(), customerRiskManageHistoryQueryParam.getPageSize());
+        List<CustomerRiskManagementHistory> customerRiskManagementHistoryList = ConverterUtil.convertList(customerRiskHistoryDOList, CustomerRiskManagementHistory.class);
+        Page<CustomerRiskManagementHistory> page = new Page<>(customerRiskManagementHistoryList, totalCount, customerRiskManageHistoryQueryParam.getPageNo(), customerRiskManageHistoryQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
@@ -2776,6 +2768,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 风控历史详情
+     *
      * @param customerRiskManagementHistoryId
      * @return
      */
@@ -2789,15 +2782,15 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
-    private ServiceResult<String, CustomerConsignInfoDO> updateCustomerConsignInfoDOInfo(List<CustomerConsignInfoDO> customerConsignInfoDOList , Integer customerId,Date now ,CustomerCompanyDO customerCompanyDO){
+    private ServiceResult<String, CustomerConsignInfoDO> updateCustomerConsignInfoDOInfo(List<CustomerConsignInfoDO> customerConsignInfoDOList, Integer customerId, Date now, CustomerCompanyDO customerCompanyDO) {
         ServiceResult<String, CustomerConsignInfoDO> result = new ServiceResult<>();
 
         List<CustomerConsignInfoDO> dbCustomerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerId);
         List<CustomerConsignInfoDO> saveCustomerConsignInfoDOList = new ArrayList<>();
         Map<Integer, CustomerConsignInfoDO> updateCustomerConsignInfoDOMap = new HashMap<>();
-        Map<Integer,CustomerConsignInfoDO> dbCustomerConsignInfoDOMap = ListUtil.listToMap(dbCustomerConsignInfoDOList, "id");
-        if(CollectionUtil.isNotEmpty(customerConsignInfoDOList)){
-            for(CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList){
+        Map<Integer, CustomerConsignInfoDO> dbCustomerConsignInfoDOMap = ListUtil.listToMap(dbCustomerConsignInfoDOList, "id");
+        if (CollectionUtil.isNotEmpty(customerConsignInfoDOList)) {
+            for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
                 CustomerConsignInfoDO dbCustomerConsignInfoDO = dbCustomerConsignInfoDOMap.get(customerConsignInfoDO.getId());
                 if (dbCustomerConsignInfoDO != null) {
                     customerConsignInfoDO.setId(dbCustomerConsignInfoDO.getId());
@@ -2811,7 +2804,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (saveCustomerConsignInfoDOList.size() > 0) {
             for (CustomerConsignInfoDO customerConsignInfoDO : saveCustomerConsignInfoDOList) {
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())){
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())) {
                     //如果传送过来的isMain是1,将该客户其他收货地址改为不是默认收货地址
                     customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
                     customerConsignInfoDO.setCustomerId(customerId);
@@ -2820,7 +2813,7 @@ public class CustomerServiceImpl implements CustomerService {
                     customerConsignInfoDO.setCreateTime(now);
                     customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoMapper.save(customerConsignInfoDO);
-                }else{
+                } else {
                     customerConsignInfoDO.setCustomerId(customerId);
                     customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
@@ -2828,7 +2821,7 @@ public class CustomerServiceImpl implements CustomerService {
                     customerConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     customerConsignInfoMapper.save(customerConsignInfoDO);
                 }
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())) {
                     customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
                 }
             }
@@ -2836,39 +2829,32 @@ public class CustomerServiceImpl implements CustomerService {
         if (updateCustomerConsignInfoDOMap.size() > 0) {
             for (Map.Entry<Integer, CustomerConsignInfoDO> entry : updateCustomerConsignInfoDOMap.entrySet()) {
                 CustomerConsignInfoDO customerConsignInfoDO = entry.getValue();
-                if(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())){
-                    if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())){
-                        //如果传送过来的isMain是1,将该客户其他收货地址改为不是默认收货地址
-                        customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
-                        customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                        customerConsignInfoDO.setUpdateTime(now);
-                        customerConsignInfoMapper.update(customerConsignInfoDO);
-                    }else{
-                        customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                        customerConsignInfoDO.setUpdateTime(now);
-                        customerConsignInfoMapper.update(customerConsignInfoDO);
-                    }
-                    if(CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())){
-                        customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
-                    }
-                }else{
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
-                    return result;
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsMain())) {
+                    //如果传送过来的isMain是1,将该客户其他收货地址改为不是默认收货地址
+                    customerConsignInfoMapper.clearIsMainByCustomerId(customerConsignInfoDO.getCustomerId());
+                    customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    customerConsignInfoDO.setUpdateTime(now);
+                    customerConsignInfoMapper.update(customerConsignInfoDO);
+                } else {
+                    customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    customerConsignInfoDO.setUpdateTime(now);
+                    customerConsignInfoMapper.update(customerConsignInfoDO);
                 }
-
+                if (CommonConstant.COMMON_CONSTANT_YES.equals(customerConsignInfoDO.getIsBusinessAddress())) {
+                    customerCompanyDO.setDefaultAddressReferId(customerConsignInfoDO.getId());
+                }
             }
         }
 
         if (dbCustomerConsignInfoDOMap.size() > 0) {
             for (Map.Entry<Integer, CustomerConsignInfoDO> entry : dbCustomerConsignInfoDOMap.entrySet()) {
                 CustomerConsignInfoDO customerConsignInfoDO = entry.getValue();
-                    customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                    customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    customerConsignInfoDO.setUpdateTime(now);
-                    customerConsignInfoMapper.update(customerConsignInfoDO);
+                customerConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoMapper.update(customerConsignInfoDO);
             }
         }
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -2877,6 +2863,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 此方法只用于处理历史数据中公司客户的新增字段simple_company_name字段为空的情况，新增数据不会出现此种情况
+     *
      * @return
      */
 
@@ -2884,7 +2871,7 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, String> customerCompanySimpleNameProcessing() {
 
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        if (!userSupport.isSuperUser()){
+        if (!userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }

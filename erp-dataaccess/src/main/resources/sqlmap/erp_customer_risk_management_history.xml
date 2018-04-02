@@ -106,48 +106,19 @@
 			<if test="creditAmountUsed != null">
 				credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
 			</if>
-			<if test="depositCycle != null">
-				deposit_cycle = #{depositCycle,jdbcType=INTEGER},
-			</if>
-			<if test="paymentCycle != null">
-				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
-			</if>
-			<if test="appleDepositCycle != null">
-				apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
-			</if>
-			<if test="applePaymentCycle != null">
-				apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
-			</if>
-			<if test="newDepositCycle != null">
-				new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
-			</if>
-			<if test="newPaymentCycle != null">
-				new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
-			</if>
-			<if test="payMode != null">
-				pay_mode = #{payMode,jdbcType=INTEGER},
-			</if>
-			<if test="applePayMode != null">
-				apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
-			</if>
-			<if test="newPayMode != null">
-				new_pay_mode = #{newPayMode,jdbcType=INTEGER},
-			</if>
-			<if test="dataStatus != null">
-				data_status = #{dataStatus,jdbcType=INTEGER},
-			</if>
-			<if test="remark != null">
-				remark = #{remark,jdbcType=VARCHAR},
-			</if>
-			<if test="isLimitApple != null">
-				is_limit_apple = #{isLimitApple,jdbcType=INTEGER},
-			</if>
-			<if test="isLimitNew != null">
-				is_limit_new = #{isLimitNew,jdbcType=INTEGER},
-			</if>
-			<if test="singleLimitPrice != null">
-				single_limit_price = #{singleLimitPrice,jdbcType=DECIMAL},
-			</if>
+			deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
+			apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
+			new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
+			new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
+			apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
+			pay_mode = #{payMode,jdbcType=INTEGER},
+			new_pay_mode = #{newPayMode,jdbcType=INTEGER},
+			is_limit_apple = #{isLimitApple, jdbcType=INTEGER},
+			is_limit_new = #{isLimitNew, jdbcType=INTEGER},
+			single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
+			remark = #{remark,jdbcType=VARCHAR},
 			<if test="returnVisitFrequency != null">
 				return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
 			</if>
@@ -156,6 +127,9 @@
 			</if>
 			<if test="importCreditAmountUsed != null">
 				import_credit_amount_used = #{importCreditAmountUsed,jdbcType=DECIMAL},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
 			</if>
 			<if test="createTime != null">
 				create_time = #{createTime,jdbcType=TIMESTAMP},

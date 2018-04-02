@@ -23,12 +23,12 @@
 	</sql>
 
 	<select id="findById" resultMap="BankSlipClaimDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc 
-		WHERE ebsc.id = #{id, jdbcType=INTEGER} AND ebsc.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc
+		WHERE ebsc.id = #{id, jdbcType=INTEGER} AND ebsc.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ebsc.id) FROM erp_bank_slip_claim ebsc 
+		SELECT count(ebsc.id) FROM erp_bank_slip_claim ebsc
 		<where>
 			<if test="true">
 				AND ebsc.data_status = 1
@@ -37,7 +37,7 @@
 	</select>
 
 	<select id="listPage" resultMap="BankSlipClaimDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc 
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_claim ebsc
 		<where>
 			<if test="true">
 				AND ebsc.data_status = 1
@@ -154,12 +154,12 @@
 	<select id="findBankSlipClaimPaySuccess" resultMap="BankSlipClaimDO">
 		SELECT ebsc.* FROM erp_bank_slip_claim ebsc
 		INNER JOIN(
-			SELECT Cebsc.other_side_account_no,MAX(Cebsc.claim_serial_no) claim_serial_no FROM(
-				SELECT Bebsc.other_side_account_no,Bebsc.claim_serial_no FROM (
-					SELECT claim_serial_no,COUNT(1) line FROM erp_bank_slip_claim WHERE data_status = 1 AND recharge_status = 2 GROUP BY claim_serial_no
-				)Aebsc
-				INNER JOIN erp_bank_slip_claim Bebsc ON Bebsc.claim_serial_no = Aebsc.claim_serial_no AND Aebsc.line = 1 AND Bebsc.other_side_account_no != ''
-			)Cebsc GROUP BY Cebsc.other_side_account_no
+		SELECT Cebsc.other_side_account_no,MAX(Cebsc.claim_serial_no) claim_serial_no FROM(
+		SELECT Bebsc.other_side_account_no,Bebsc.claim_serial_no FROM (
+		SELECT claim_serial_no,COUNT(1) line FROM erp_bank_slip_claim WHERE data_status = 1 AND recharge_status = 2 GROUP BY claim_serial_no
+		)Aebsc
+		INNER JOIN erp_bank_slip_claim Bebsc ON Bebsc.claim_serial_no = Aebsc.claim_serial_no AND Aebsc.line = 1 AND Bebsc.other_side_account_no != ''
+		)Cebsc GROUP BY Cebsc.other_side_account_no
 		)Debsc ON Debsc.claim_serial_no = ebsc.claim_serial_no
 	</select>
 
