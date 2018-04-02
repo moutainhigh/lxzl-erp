@@ -28,7 +28,7 @@
                     <div class="col-md-6">
                         <label for="email" class="field-label">邮箱</label>
                         <label for="email" class="field prepend-icon">
-                            <input type="text" name="email" id="email" class="gui-input required email" placeholder="请输入电子邮箱...">
+                            <input type="text" name="email" id="email" class="gui-input email" placeholder="请输入电子邮箱...">
                             <label for="email" class="field-icon"><i class="fa fa-envelope"></i>
                             </label>
                         </label>
