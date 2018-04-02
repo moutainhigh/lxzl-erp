@@ -6,9 +6,11 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
@@ -155,23 +157,24 @@ public class K3OrderConverter implements ConvertK3DataService {
             FormSEOrderEntry list[] = new FormSEOrderEntry[size];
             if (CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())) {
                 for (OrderProduct orderProduct : erpOrder.getOrderProductList()) {
-                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId());
-                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(productDO.getCategoryId().toString());
-                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(productDO.getBrandId().toString());
+                    Product product = ConverterUtil.convert(orderProduct.getProductSkuSnapshot(),Product.class);
+//                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId());
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
 
                     FormICItem formICItem = new FormICItem();
-                    formICItem.setModel(productDO.getProductModel());//型号名称
-                    formICItem.setName(productDO.getProductName());//商品名称
+                    formICItem.setModel(product.getProductModel());//型号名称
+                    formICItem.setName(product.getProductName());//商品名称
                     String number = "";
-                    if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
-                        number = productDO.getK3ProductNo();
+                    if (StringUtil.isNotEmpty(product.getK3ProductNo())) {
+                        number = product.getK3ProductNo();
                     } else {
-                        number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
+                        number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
                     }
                     FormSEOrderEntry formSEOrderEntry = new FormSEOrderEntry();
 
                     formSEOrderEntry.setNumber(number);//  设备代码
-                    formSEOrderEntry.setName(productDO.getProductName());//  设备名称
+                    formSEOrderEntry.setName(product.getProductName());//  设备名称
                     formSEOrderEntry.setQty(new BigDecimal(orderProduct.getProductCount()));// 数量
                     formSEOrderEntry.setLeaseMonthCount(new BigDecimal(orderProduct.getRentTimeLength()));//  租赁月数
                     formSEOrderEntry.setPrice(orderProduct.getProductUnitAmount());//  含税单价
