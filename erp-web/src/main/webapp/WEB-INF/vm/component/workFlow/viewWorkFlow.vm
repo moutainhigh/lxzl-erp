@@ -1,0 +1,111 @@
+<div id="submitAuditModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>工作流：<small class="workflowLinkNo fs20"></small></span>
+        </div>
+        <form method="post" id="workFlowDetail">
+##            <div class="panel-body pv5">
+##                <div class="row">
+##                    <div class="col-md-6">
+##                        <h5>工作流编号：<small class="workflowLinkNo"></small></h5>
+##                    </div>
+##                    <div class="col-md6"></div>
+##                </div>
+##            </div>
+            <div class="form-horizontal panel-body bg-light dark">
+                <script type="text/html" class="baserInfoTpl">
+                    {{#dataSource}}
+                    <div class="row section">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+##                                <dt class="mb10">工作流编号</dt><dd>{{workflowLinkNo}}</dd>
+                                <dt class="mb10">提交人</dt><dd>{{commitUserName}}</dd>
+                                <dt class="mb10">工作流类型</dt><dd>{{workflowTypeStr}}</dd>
+                                <dt class="mb10">关联编号</dt><dd>{{workflowReferNo}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt class="mb10">当前审核人</dt><dd>{{getCurrentVerifyUserName}}</dd>
+                                <dt class="mb10">审核状态</dt><dd><span class="label {{labelClass}}">{{workflowVerifyStatusStr}}</span></dd>
+                                <dt class="mb10">是否最后一步</dt><dd>{{lastStepStr}}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="row section pt15" style="border-top: 1px solid #e5e5e5;">
+                        <div class="col-md-12">
+                            <dl class="dl-horizontal">
+                                <dt class="mb10">审核事项</dt><dd>{{verifyMatters}}</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    {{/dataSource}}
+                </script>
+                <div class="row baseInfo">
+                </div>
+            </div>
+            <div class="panel-body">
+
+                <div class="mt30 timeline-single" id="timeline">
+
+                    <div class="timeline-divider mtn">
+                        <div class="divider-label" class="timelineEndLabel">当前</div>
+                    </div>
+
+                    <div class="row">
+
+                        <script type="text/html" class="workflowTimelineTpl">
+                            {{#dataSource}}
+                            <div class="timeline-item">
+                                <div class="timeline-icon">
+                                    <span class="{{timeLinkClass}} {{textClass}}"></span>
+                                </div>
+                                <div class="panel" style="border-top: 1px solid #e5e5e5">
+
+                                    {{#verifyUserGroup}}
+                                    {{#verifyUserGroupDataSource}}
+
+                                    <div class="panel-heading clearfix pn ph20" style="min-height: 40px; height: auto; border-top: none;">
+                                        <span class="panel-title fs13 "><span class="glyphicons glyphicons-user"></span>{{workflowCurrentNodeName}} - {{verifyUserName}}</span>
+                                        <div class="panel-header-menu pull-right mr10 text-muted fs12">{{#time}}{{verifyTime}}{{/time}}</div>
+                                    </div>
+                                    <div class="panel-body clearfix">
+                                        {{#imageListSource}}
+                                        <div class="row mb15">
+                                            {{#imageListData}}
+                                            <div class="col-xs-4" style="height: 200px" >
+                                                <a class="gallery-item open-img-popup" data-imgs="{{imgListToJSONStringify}}" href="{{imgurl}}"><img src="{{imgurl}}" class="img-responsive" alt=""></a>
+                                            </div>
+                                            {{/imageListData}}
+                                        </div>
+                                        {{/imageListSource}}
+                                        <blockquote class="mbn ml10">
+                                            <p>{{verifyOpinionText}}</p>
+                                            <small class="{{textClass}}">{{verifyStatusValue}}</small>
+                                        </blockquote>
+                                    </div>
+
+                                    {{/verifyUserGroupDataSource}}
+                                    {{/verifyUserGroup}}
+
+                                </div>
+                            </div>
+                            {{/dataSource}}
+                        </script>
+                        <div class="col-sm-6 left-column workflowTimeline"></div>
+                    </div>
+
+                    <div class="timeline-divider">
+                        <div class="divider-label" id="timelineStartLabel">开始</div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="panel-footer text-right">
+                <button type="button" class="button btn-default cancelButton">关闭</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -22,14 +22,15 @@ import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
-import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
@@ -202,6 +203,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerCompanyDO.setCustomerId(customerDO.getId());
         customerCompanyDO.setCustomerNo(customerDO.getCustomerNo());
         customerCompanyDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        customerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
         customerCompanyDO.setCreateTime(now);
         customerCompanyDO.setUpdateTime(now);
         //将公司简单名称添加存入实体类
@@ -417,7 +419,11 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(customerConsignInfoDOServiceResult.getErrorCode());
             return serviceResult;
         }
-
+        //如果经营地址改变了，状态改为未提交，需要重新审核！
+        if(!customerCompanyDO.getCity().equals(newCustomerCompanyDO.getCity())
+                || !customerCompanyDO.getAddress().equals(newCustomerCompanyDO.getAddress())){
+            newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+        }
 
         //用于接收所需设备的方法结果
         ServiceResult<String, BigDecimal> setServiceResult = new ServiceResult<>();
@@ -1350,24 +1356,49 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
         Date now = new Date();
-        CustomerDO customerDO = customerMapper.findByNo(businessNo);
-        if (customerDO == null) {
-            return ErrorCode.CUSTOMER_NOT_EXISTS;
+        String data = businessNo.substring(0,2);
+        CustomerDO customerDO = null;
+        CustomerConsignInfoDO customerConsignInfoDO = null;
+        if("LX".equals(data)){
+            customerDO = customerMapper.findByNo(businessNo);
+        }else{
+            customerConsignInfoDO = customerConsignInfoMapper.findById(Integer.valueOf(businessNo));
         }
         try {
-            //不是审核中状态，拒绝处理
-            if (!CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
+            if(customerDO != null){
+                //不是审核中状态，拒绝处理
+                if (!CustomerStatus.STATUS_COMMIT.equals(customerDO.getCustomerStatus())) {
+                    return ErrorCode.BUSINESS_EXCEPTION;
+                }
+                if (verifyResult) {
+                    customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
+                } else {
+                    customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
+                }
+                customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerDO.setUpdateTime(now);
+                customerMapper.update(customerDO);
+                return ErrorCode.SUCCESS;
+            }else if(customerConsignInfoDO != null){
+                //不是审核中和初审通过状态，拒绝处理
+                if (!CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())
+                        && !CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus())) {
+                    return ErrorCode.BUSINESS_EXCEPTION;
+                }
+                if (verifyResult) {
+                    customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
+                } else {
+                    if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())){
+                        customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+                    }
+                }
+                customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoMapper.update(customerConsignInfoDO);
+                return ErrorCode.SUCCESS;
+            }else{
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
-            if (verifyResult) {
-                customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
-            } else {
-                customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
-            }
-            customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            customerDO.setUpdateTime(now);
-            customerMapper.update(customerDO);
-            return ErrorCode.SUCCESS;
         } catch (Exception e) {
             logger.error("【客户审核后，业务处理异常】", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -1588,11 +1619,20 @@ public class CustomerServiceImpl implements CustomerService {
 
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        User loginUser = userSupport.getCurrentUser();
 
         //通过CustomerNo来获取客户ID
         CustomerDO customerDO = customerMapper.findByNo(customerConsignInfo.getCustomerNo());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //只有创建人和业务员和联合开发员才能功能
+        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
+                !loginUser.getUserId().equals(customerDO.getOwner()) &&
+                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
 
@@ -1638,6 +1678,8 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Integer> updateCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        User loginUser = userSupport.getCurrentUser();
+
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
@@ -1659,6 +1701,14 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //只有创建人和业务员和联合开发员才能功能
+        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
+                !loginUser.getUserId().equals(customerDO.getOwner()) &&
+                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
 
@@ -1712,9 +1762,25 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Integer> deleteCustomerConsignInfo(CustomerConsignInfo customerConsignInfo) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        User loginUser = userSupport.getCurrentUser();
+
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //只有创建人和业务员和联合开发员才能功能
+        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
+                !loginUser.getUserId().equals(customerDO.getOwner()) &&
+                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
 
@@ -2895,6 +2961,82 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> commitCustomerConsignInfo(CustomerConsignCommitParam customerConsignCommitParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        User loginUser = userSupport.getCurrentUser();
+
+        CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignCommitParam.getCustomerConsignId());
+        if(customerConsignInfoDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
+        if(customerDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //只有创建人和业务员和联合开发员才能提交功能
+        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
+                !loginUser.getUserId().equals(customerDO.getOwner()) &&
+                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
+            return serviceResult;
+        }
+
+        if(!CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())
+                && !CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) ){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_PENDING);
+            return serviceResult;
+        }
+
+        SubCompanyCityCoverDO subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
+        if (subCompanyCityCoverDO == null) {
+            subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
+            if (subCompanyCityCoverDO == null) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL);
+                return serviceResult;
+            }
+        }
+
+
+        ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN);
+        if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
+            serviceResult.setErrorCode(needVerifyResult.getErrorCode());
+            return serviceResult;
+        } else if (needVerifyResult.getResult()) {
+            if (customerConsignCommitParam.getVerifyUserId() == null) {
+                serviceResult.setErrorCode(ErrorCode.VERIFY_USER_NOT_NULL);
+                return serviceResult;
+            }
+            customerConsignCommitParam.setVerifyMatters("客户地址审核事项：1.地址需要核实 2.收货人姓名与收货人电话需要核实");
+
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN, String.valueOf(customerConsignCommitParam.getCustomerConsignId()), customerConsignCommitParam.getVerifyUserId(), customerConsignCommitParam.getVerifyMatters(), customerConsignCommitParam.getRemark(), customerConsignCommitParam.getImgIdList(), null);
+            //修改提交审核状态
+            if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
+                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
+                customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoMapper.update(customerConsignInfoDO);
+                return verifyResult;
+            } else {
+                serviceResult.setErrorCode(verifyResult.getErrorCode());
+                return serviceResult;
+            }
+        } else {
+            customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
+            customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            customerConsignInfoDO.setUpdateTime(now);
+            customerConsignInfoMapper.update(customerConsignInfoDO);
+            serviceResult.setErrorCode(ErrorCode.SUCCESS);
+            return serviceResult;
+        }
+    }
+
     @Autowired
     private UserMapper userMapper;
 
@@ -2950,5 +3092,5 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRiskManagementHistoryMapper customerRiskManagementHistoryMapper;
 
     @Autowired
-    private UserRoleService userRoleService;
+    private SubCompanyCityCoverMapper subCompanyCityCoverMapper;
 }
