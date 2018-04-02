@@ -58,6 +58,7 @@ public class ErrorCode {
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
+    public static final String WORKFLOW_CONFIG_ERROR = "J100032";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -562,6 +563,8 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
     public static final String CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE = "J500153";
     public static final String CUSTOMER_NAME_REPETITION = "J500154";
+    public static final String CUSTOMER_CONSIGN_INFO_NOT_PENDING = "J500155";
+    public static final String CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500156";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -832,10 +835,13 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
         MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
-        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址信息，公司业务未覆盖范围");
-        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址信息，公司业务未覆盖范围");
-        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不给修改与删除地址");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址未覆盖业务范围");
+        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址未覆盖业务范围");
+        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不允许修改");
         MAP.put(CUSTOMER_NAME_REPETITION, "填写客户名称重复");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_PENDING, "客户地址只有未提交状态，才能提交");
+        MAP.put(CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER, "只有创建人、业务员、联合开发人才可以使用此功能");
+        MAP.put(WORKFLOW_CONFIG_ERROR, "审核工作流未配置或配置错误");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");

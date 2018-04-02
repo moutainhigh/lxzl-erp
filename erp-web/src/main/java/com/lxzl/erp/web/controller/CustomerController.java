@@ -184,6 +184,12 @@ public class CustomerController {
     }
 
 
+    @RequestMapping(value = "commitCustomerConsignInfo", method = RequestMethod.POST)
+    public Result commitCustomerConsignInfo(@RequestBody @Validated(CommitCustomerGroup.class)CustomerConsignCommitParam customerConsignCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.commitCustomerConsignInfo(customerConsignCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @RequestMapping(value = "commitCustomerToWorkflow", method = RequestMethod.POST)
     public Result commitCustomerToWorkflow(@RequestBody @Validated(CommitCustomerGroup.class)CustomerCommitParam customerCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.commitCustomerToWorkflow(customerCommitParam);
