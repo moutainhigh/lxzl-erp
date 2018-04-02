@@ -171,7 +171,7 @@
                                                     <span class="{{orderStatusClass}}">{{orderStatusStr}}</span>
                                                     {{#showViewWorkFlowButton}}
                                                     <span class="ml5 mr5 {{orderStatusClass}}">/</span>
-                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton" data-orderno="{{orderNo}}">查看工作流</a>
+                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton" data-orderno="{{orderNo}}">查看审核流</a>
                                                     {{/showViewWorkFlowButton}}
                                                 </p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>

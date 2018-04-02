@@ -421,7 +421,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         //如果经营地址改变了，状态改为未提交，需要重新审核！
         if(!customerCompanyDO.getCity().equals(newCustomerCompanyDO.getCity())
-                && !customerCompanyDO.getAddress().equals(newCustomerCompanyDO.getAddress())){
+                || !customerCompanyDO.getAddress().equals(newCustomerCompanyDO.getAddress())){
             newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
         }
 
