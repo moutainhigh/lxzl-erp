@@ -29,7 +29,7 @@
                     <div class="col-md-12 form-group mn mr10">
                         <label class="field-label">月份</label>
                         <label for="slipMonth" class="input-group date">
-                            <input type="text" name="slipMonth" id="slipMonth" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间">
+                            <input type="text" readonly name="slipMonth" id="slipMonth" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间">
                             <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
                         </label>
                     </div>
