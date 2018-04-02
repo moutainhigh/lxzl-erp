@@ -2962,6 +2962,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitCustomerConsignInfo(CustomerConsignCommitParam customerConsignCommitParam) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
