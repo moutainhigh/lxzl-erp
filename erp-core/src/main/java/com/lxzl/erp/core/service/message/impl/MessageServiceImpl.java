@@ -139,6 +139,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public ServiceResult<String, Message> queryMessage(Message message) {
         ServiceResult<String, Message> result = new ServiceResult<>();
+        Date now = new Date();
 
         //通过前端用户的Id来查询数据
         MessageDO messageDO = messageMapper.findById(message.getMessageId());
@@ -146,12 +147,15 @@ public class MessageServiceImpl implements MessageService {
             result.setErrorCode(ErrorCode.MESSAGE_NOT_EXISTS);
             return result;
         }
+
         //如果当前用户与收件人是同一个人，那么就将站内信的读取时间设置为现在时间
         if (userSupport.getCurrentUserId().equals(messageDO.getReceiverUserId()) && messageDO.getReadTime() == null) {
             messageDO.setReadTime(new Date());
+            messageDO.setUpdateTime(now);
+            messageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             messageMapper.update(messageDO);
-
         }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(ConverterUtil.convert(messageDO, Message.class));
         return result;

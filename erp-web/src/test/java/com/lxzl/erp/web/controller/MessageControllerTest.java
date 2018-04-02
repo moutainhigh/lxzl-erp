@@ -41,7 +41,7 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
     @Test
     public void queryMessage() throws Exception {
         Message message =new Message();
-        message.setMessageId(5);
+        message.setMessageId(845);//817 839 840 841 845
 
         TestResult testResult = getJsonTestResult("/message/queryMessage",message);
     }
@@ -50,8 +50,10 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
     public void pageReceiveMessage() throws Exception{
 
         MessageQueryParam messageQueryParam = new MessageQueryParam();
+
         messageQueryParam.setPageNo(1);
         messageQueryParam.setPageSize(10);
+        messageQueryParam.setIsRead(0);
 
         TestResult testResult = getJsonTestResult("/message/pageReceiveMessage",messageQueryParam);
     }
