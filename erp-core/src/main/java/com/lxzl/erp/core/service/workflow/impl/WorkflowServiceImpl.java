@@ -236,7 +236,9 @@ public class WorkflowServiceImpl implements WorkflowService {
                 } else {
                     //针对香港澳门审核
                     SubCompanyCityCoverDO ProvinceSubCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
-                    subCompanyId = ProvinceSubCompanyCityCoverDO.getSubCompanyId();
+                    if(ProvinceSubCompanyCityCoverDO != null){
+                        subCompanyId = ProvinceSubCompanyCityCoverDO.getSubCompanyId();
+                    }
                 }
             }
         } else {
@@ -1201,6 +1203,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowVerifyUserGroupDO.setCreateTime(currentTime);
         workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
 
+        //如果是地址并且是风控审核
         if (WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowLinkDO.getWorkflowType()) && userSupport.isRiskManagementPerson(verifyUser)) {
             WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(1);
 
