@@ -163,7 +163,7 @@
     management_load_script('${staticManagement}/js',
             'modal.choose.customerByAll.js',
             'manage.jurnal.amount.trade.modal.js',
-            'manage.jurnal.amount.detail.list.js',);
+            'manage.jurnal.amount.detail.list.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化
