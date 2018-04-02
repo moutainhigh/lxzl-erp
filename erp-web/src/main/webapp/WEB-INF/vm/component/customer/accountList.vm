@@ -52,8 +52,7 @@
                 <th>租金押金（操作前）</th>
                 <th>租金押金（操作后）</th>
                 <th>备注</th>
-                <th>创建时间</th>
-                <th>更新时间</th>
+                <th>生成时间</th>
             </tr>
             </thead>
             <tbody>
@@ -81,7 +80,6 @@
                 <td>￥{{#price}}{{newRentDepositAmount}}{{/price}}</td>
                 <td>{{remark}}</td>
                 <td style="white-space: nowrap;">{{#clockTime}}{{createTime}}{{/clockTime}}</td>
-                <td style="white-space: nowrap;">{{#clockTime}}{{updateTime}}{{/clockTime}}</td>
             </tr>
             {{/listData}}
             {{^listData}}
