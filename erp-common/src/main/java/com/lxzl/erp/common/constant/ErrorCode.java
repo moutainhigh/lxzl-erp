@@ -58,6 +58,7 @@ public class ErrorCode {
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
+    public static final String WORKFLOW_CONFIG_ERROR = "J100032";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -562,6 +563,8 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
     public static final String CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE = "J500153";
     public static final String CUSTOMER_NAME_REPETITION = "J500154";
+    public static final String CUSTOMER_CONSIGN_INFO_NOT_PENDING = "J500155";
+    public static final String CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500156";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -758,17 +761,19 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_ID_NULL = "J18000017";
     public static final String BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED = "J18000018";
     public static final String BANK_SLIP_STATUS_IS_PUSH_DOWN = "J18000019";
-    public static final String BANK_SLIP_DETAIL_IS_NULL = "J18000021";
+    public static final String BANK_SLIP_DETAIL_NOT_EXISTS = "J18000021";
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT = "J18000022";
     public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000023";
     public static final String IS_NOT_BUSINESS_AFFAIRS_PERSON = "J18000024";
-    public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM = "J18000025";
+    public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN = "J18000025";
     public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
     public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
     public static final String CURRENT_ROLES_NOT_PERMISSION = "J18000028";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000029";
     public static final String BANK_SLIP_CLAIM_NEED_PAY_SUCCESS = "J18000030";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED = "J18000031";
+    public static final String BANK_SLIP_DETAIL_NOT_INCOME = "J18000032";
+    public static final String OVERSTEP_CURRENT_MONTH = "J18000033";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -841,10 +846,13 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
         MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
-        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址信息，公司业务未覆盖范围");
-        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址信息，公司业务未覆盖范围");
-        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不给修改与删除地址");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址未覆盖业务范围");
+        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址未覆盖业务范围");
+        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不允许修改");
         MAP.put(CUSTOMER_NAME_REPETITION, "填写客户名称重复");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_PENDING, "客户地址只有未提交状态，才能提交");
+        MAP.put(CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER, "只有创建人、业务员、联合开发人才可以使用此功能");
+        MAP.put(WORKFLOW_CONFIG_ERROR, "审核工作流未配置或配置错误");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1534,17 +1542,19 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_ID_NULL, "银行对公流水记录id不能为空");
         MAP.put(BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED, "银行对公流水记录不是未认领状态");
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
-        MAP.put(BANK_SLIP_DETAIL_IS_NULL, "银行对公流水记录项为空");
+        MAP.put(BANK_SLIP_DETAIL_NOT_EXISTS, "银行对公流水记录项不存在");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已确认状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
-        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN_OR_PORTION_CLAIM, "银行对公流水状态不是已下推和部分认领");
+        MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN, "银行对公流水状态不是已下推");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
         MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
         MAP.put(BANK_SLIP_CLAIM_NEED_PAY_SUCCESS, "不可修改,有一些充值失败记录,需完成充值");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
+        MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
+        MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
 
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠券批次名称不能为空");

@@ -81,7 +81,7 @@
                                                 <td>{{receiverName}}</td>
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
-                                                <td>{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
+                                                <td>{{#clockTime}}{{sendTime}}{{/clockTime}}</td>
                                                 <td class="text-right" style="width:50px;">
                                                     <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText="{{messageText}}">查看</a>
                                                 </td>
@@ -101,7 +101,7 @@
 
                                 <div id="messageContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
 
-                                <div class="panel-footer">
+                                <div class="panel-footer" style="border-top: none;">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                                             #parse("component/pager.vm")
