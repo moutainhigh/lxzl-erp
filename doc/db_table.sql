@@ -3206,26 +3206,25 @@ CREATE TABLE `erp_coupon` (
   INDEX index_customer_no ( `customer_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='优惠券表';
 
-DROP TABLE if exists `erp_message_send_log`;
-CREATE TABLE `erp_message_send_log` (
+DROP TABLE if exists `erp_sms_log`;
+CREATE TABLE `erp_sms_log` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `out_id` varchar(50)  COMMENT '外部流水扩展字段',
-  `request_id` varchar(50) NOT NULL COMMENT '请求ID',
+  `request_id` varchar(50) COMMENT '请求ID',
   `template_code` varchar(50) NOT NULL COMMENT '短信模板ID',
-  `refer_id` int(20) NOT NULL COMMENT '发送目标（如客户，用户等）引用ID',
-  `refer_type` int(11) NOT NULL COMMENT '引用类型（如客户，用户等）',
-  `send_type` int(11) NOT NULL DEFAULT '0' COMMENT '发送类型：0-注册，1-登录，2-找回密码，3-交易支付，4-推广，5-其他',
-  `send_content` varchar(1000) NOT NULL COMMENT '发送内容',
+  `phone` varchar(24) NOT NULL COMMENT '手机号',
+  `refer_type` int(11) COMMENT '引用类型（如客户，用户等）',
+  `refer_id` int(20) COMMENT '发送目标（如客户，用户等）引用ID',
+  `refer_name` int(200) COMMENT '发送目标（如客户，用户等）名称',
+  `send_type` int(11) NOT NULL DEFAULT 0 COMMENT '发送类型：0-注册，1-登录，2-找回密码，3-交易支付，4-推广，5-其他',
   `send_status` int(11) NOT NULL DEFAULT 0 COMMENT '发送状态：0-发送失败，1-发送成功',
   `request_json` varchar(2000) COMMENT '请求JSON',
   `response_json` varchar(2000) COMMENT '返回JSON',
-
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
   `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
-   PRIMARY KEY (`id`),
-   INDEX index_customer_no ( `customer_no` )
+   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='短信发送日志表';

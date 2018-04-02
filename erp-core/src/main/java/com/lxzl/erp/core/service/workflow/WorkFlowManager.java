@@ -79,7 +79,8 @@ public class WorkFlowManager {
             return k3Service;
         }else if(WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)){
             return k3Service;
-        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)
+                ||WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)){
             return customerService;
         }
         return null;

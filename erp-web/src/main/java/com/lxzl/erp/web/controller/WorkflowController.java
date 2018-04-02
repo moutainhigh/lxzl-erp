@@ -103,6 +103,11 @@ public class WorkflowController extends BaseController {
         return resultGenerator.generate(serviceResult);
     }
 
+    @RequestMapping(value = "queryWorkflowLinkDetailByType", method = RequestMethod.POST)
+    public Result queryWorkflowLinkDetailByType(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam) {
+        ServiceResult<String, WorkflowLink> serviceResult = workflowService.getWorkflowLink(workflowLinkQueryParam.getWorkflowType(),workflowLinkQueryParam.getWorkflowReferNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
     @Autowired
     private WorkflowService workflowService;
