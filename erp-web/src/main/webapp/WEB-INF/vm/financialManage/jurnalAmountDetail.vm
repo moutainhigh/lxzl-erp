@@ -23,7 +23,7 @@
                                 <div class="col-md-4">
                                     <div id="headerInfo"></div>
                                     <script type="text/html" id="headerInfoTpl">
-                                        <h5>付款人名称：<small>{{customerName}}</small></h5>
+                                        <h5>付款人名称：<small>{{payerName}}</small></h5>
                                     </script>
                                 </div>
                                 <div class="col-md-8 text-right">
@@ -48,23 +48,22 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <dl class="dl-horizontal">
-                                        <dt>商户订单号：</dt><dd class="mb5">￥{{#price}}{{statementRentDepositAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>对方账号：</dt><dd class="mb5">￥{{#price}}{{statementDepositAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>银行对公流水表ID：</dt><dd class="mb5">￥{{#price}}{{statementRentAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>状态：</dt><dd class="mb5">￥{{#price}}{{statementOverdueAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>借贷标志：</dt><dd class="mb5">￥{{#price}}{{statementOtherAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>明细状态：</dt><dd class="mb5">-￥{{#price}}{{statementDetailCorrectAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>备注：</dt><dd class="mb5">￥{{#price}}{{statementAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>商户订单号：</dt><dd class="mb5">{{merchantOrderNo}}&nbsp;</dd>
+                                        <dt>对方账号：</dt><dd class="mb5">{{otherSideAccountNo}}&nbsp;</dd>
+                                        <dt>状态：</dt><dd class="mb5">{{dataStatusValue}}&nbsp;</dd>
+                                        <dt>借贷标志：</dt><dd class="mb5">{{loanSignValue}}&nbsp;</dd>
+                                        <dt>明细状态：</dt><dd class="mb5">{{detailStatusValue}}&nbsp;</dd>
+                                        <dt>备注：</dt><dd class="mb5">{{remark}}&nbsp;</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-6">
                                     <dl class="dl-horizontal">
-                                        <dt>创建人：</dt><dd class="text-danger mb5">￥{{#price}}{{statementDetailRentDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>创建时间：</dt><dd class="text-danger mb5">￥{{#price}}{{statementDetailDepositPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>交易流水号：</dt><dd class="text-danger mb5">￥{{#price}}{{statementDetailRentPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>交易金额：</dt><dd class="text-danger mb5">￥{{#price}}{{statementOtherPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>交易日期：</dt><dd class="text-danger mb5">￥{{#price}}{{statementDetailPaidAmount}}{{/price}}&nbsp;</dd>
-                                        <dt>交易附言：</dt><dd class="text-danger mb5">￥{{#price}}{{statementDetailPaidAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+                                        <dt>创建时间：</dt><dd class="mb5">{{#clockTime}}{{createTime}}{{/clockTime}}&nbsp;</dd>
+                                        <dt>交易流水号：</dt><dd class="mb5">{{tradeSerialNo}}&nbsp;</dd>
+                                        <dt>交易金额：</dt><dd class="mb5">￥{{#price}}{{tradeAmount}}{{/price}}&nbsp;</dd>
+                                        <dt>交易日期：</dt><dd class="mb5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}&nbsp;</dd>
+                                        <dt>交易附言：</dt><dd class="mb5">{{tradeMessage}}&nbsp;</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -87,7 +86,7 @@
                                         <th>充值状态</th>
                                         <th>备注</th>
                                         <th>创建人</th>
-                                        <th>修改人</th>
+##                                        <th>修改人</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -97,24 +96,24 @@
                                         <td>{{bankSlipDetailId}}</td>
                                         <td>{{customerNo}}</td>
                                         <td>{{otherSideAccountNo}}</td>
-                                        <td>{{dataStatus}}</td>
+                                        <td>{{dataStatusValue}}</td>
                                         <td>{{claimSerialNo}}</td>
                                         <td>￥{{#price}}{{claimAmount}}{{/price}}</td>
-                                        <td>{{rechargeStatus}}</td>
+                                        <td>{{rechargeStatusValue}}</td>
                                         <td>{{remark}}</td>
                                         <td>
-                                            <p></p>
-                                            <p></p>
+                                            <p class="mn">{{createUserRealName}}</p>
+                                            <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
                                         </td>
-                                        <td>
-                                            <p></p>
-                                            <p></p>
-                                        </td>
+##                                        <td>
+##                                            <p class="mn">{{updateUserRealName}}</p>
+##                                            <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
+##                                        </td>
                                     </tr>
                                     {{/listData}}
                                     {{^listData}}
                                     <tr>
-                                        <td valign="top" colspan="14" class="text-center">无资金流水明细数据</td>
+                                        <td valign="top" colspan="10" class="text-center">无资金流水明细数据</td>
                                     </tr>
                                     {{/listData}}
                                     {{/dataSource}}

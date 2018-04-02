@@ -49,21 +49,11 @@
                                         <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
                                     </div>
                                 </div>
-##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+##                                <div class="form-group pull-right mn mr10">
 ##                                    <div class="input-group">
-##                                        <input type="text" name="phone" id="phone" class="form-control input-sm bradius" autocomplete="off" placeholder="输入手机号">
+##                                        <select class="form-control input-sm bradius" name="loanSign" id="loanSign"></select>
 ##                                    </div>
 ##                                </div>
-##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-##                                    <div class="input-group">
-##                                        <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
-##                                    </div>
-##                                </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="loanSign" id="loanSign"></select>
-                                    </div>
-                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
@@ -93,7 +83,7 @@
                                 <th>交易流水号</th>
                                 <th>交易金额</th>
                                 <th>交易附言</th>
-                                <th>借贷标志</th>
+##                                <th>借贷标志</th>
                                 <th>明细状态</th>
                                 <th>备注</th>
                                 <th>创建人</th>
@@ -124,7 +114,7 @@
                                     <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
                                 <td>{{tradeMessage}}</td>
-                                <td>{{loanSignValue}}</td>
+##                                <td>{{loanSignValue}}</td>
                                 <td>{{detailStatusValue}}</td>
                                 <td>{{remark}}</td>
                                 <td>
