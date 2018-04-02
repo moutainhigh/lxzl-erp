@@ -3226,6 +3226,5 @@ CREATE TABLE `erp_sms_log` (
   `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
-   PRIMARY KEY (`id`),
-   INDEX index_customer_no ( `customer_no` )
+   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='短信发送日志表';
