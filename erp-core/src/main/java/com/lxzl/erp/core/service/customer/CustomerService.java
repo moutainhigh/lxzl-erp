@@ -168,5 +168,11 @@ public interface CustomerService extends VerifyReceiver {
      */
     ServiceResult<String,String> customerCompanySimpleNameProcessing();
 
-
+    /**
+     * 提交客户地址审核
+     *
+     * @param customerConsignCommitParam
+     * @return
+     */
+    ServiceResult<String,String> commitCustomerConsignInfo(CustomerConsignCommitParam customerConsignCommitParam);
 }

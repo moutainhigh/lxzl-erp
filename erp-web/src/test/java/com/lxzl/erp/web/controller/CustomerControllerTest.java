@@ -13,8 +13,11 @@ import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import com.lxzl.erp.core.service.customer.impl.CustomerServiceImpl;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -577,7 +580,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerConsignInfo() throws Exception {
         CustomerConsignInfoQueryParam customerConsignInfoQueryParam = new CustomerConsignInfoQueryParam();
-        customerConsignInfoQueryParam.setCustomerNo("C201711152010206581143");
+        customerConsignInfoQueryParam.setCustomerNo("LXCC-027-20180329-00837");
 //        customerConsignInfoQueryParam.setPageNo(1);
 //        customerConsignInfoQueryParam.setPageSize(3);
 
@@ -670,7 +673,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitCustomerToWorkflow() throws Exception {
         CustomerCommitParam param = new CustomerCommitParam();
-        param.setCustomerNo("LXCC-027-20180329-00846");
+        param.setCustomerNo("LXCC-027-20180402-00002");
         param.setVerifyUserId(500016);
         param.setRemark("commit");
 
@@ -705,6 +708,18 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void  customerCompanySimpleNameProcessingTest() throws Exception{
         TestResult result = getJsonTestResult("/customer/customerCompanySimpleNameProcessing", null);
+    }
+
+    /**提交地址审批*/
+    @Test
+    public void commitCustomerConsignInfo() throws Exception {
+        CustomerConsignCommitParam param = new CustomerConsignCommitParam();
+        param.setCustomerConsignId(5657);
+        param.setVerifyUserId(500216);
+//        param.setVerifyUserId(500016);
+        param.setRemark("commit");
+
+        TestResult testResult = getJsonTestResult("/customer/commitCustomerConsignInfo",param);
     }
 
 }
