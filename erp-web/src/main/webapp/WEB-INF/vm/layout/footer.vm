@@ -29,7 +29,7 @@
 
 
 <script type="text/javascript">
-    management_load_script('${staticManagement}js','rental.common.js','layout.js','manage.user.password.js','api.data.js','modal.submit.audit.js');
+    management_load_script('${staticManagement}js','rental.common.js','layout.js','manage.user.password.js','api.data.js','modal.submit.audit.js','modal.view.work.flow.js');
 </script>
 
 <script type="text/javascript">
