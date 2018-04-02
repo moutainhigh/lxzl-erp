@@ -32,27 +32,27 @@
         <li class="dropdown dropdown-item-slide">
             <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
                 <span class="octicon octicon-radio-tower fs18"></span>
-##                <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>
+                <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>
             </a>
-##            <script type="text/html" id="navbarMessageListTpl">
-##                {{#messageData}}
-##                    <li class="bg-light p8">
-##                        <span class="fw600 pl5 lh30"> 消息提醒</span>
-####                        <span class="label label-warning label-sm pull-right lh20 h-20 mt5 mr5">{{messageCount}}</span>
-##                    </li>
-##                    {{#messageList}}
-##                    <li class="p10 br-t item-1">
-##                        <div class="media">
-##                            <a class="media-left" href="#"> <img src="${staticCommon}/assets/img/avatars/2.jpg" class="mw40" alt="holder-img"> </a>
-##                            <div class="media-body va-m">
-##                                <h5 class="media-heading mv5">{{senderName}} <small class="text-muted">- {{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</small> </h5> {{title}}
-##                            </div>
-##                        </div>
-##                    </li>
-##                    {{/messageList}}
-##                {{/messageData}}
-##            </script>
-##            <ul class="dropdown-menu dropdown-hover dropdown-persist pn w350 bg-white animated animated-shorter fadeIn" role="menu" id="navbarMessageList"></ul>
+            <script type="text/html" id="navbarMessageListTpl">
+                {{#messageData}}
+                    <li class="bg-light p8">
+                        <span class="fw600 pl5 lh30"> 消息提醒</span>
+##                        <span class="label label-warning label-sm pull-right lh20 h-20 mt5 mr5">{{messageCount}}</span>
+                    </li>
+                    {{#messageList}}
+                    <li class="p10 br-t item-1">
+                        <div class="media">
+                            <a class="media-left" href="#"> <img src="${staticCommon}/assets/img/avatars/2.jpg" class="mw40" alt="holder-img"> </a>
+                            <div class="media-body va-m">
+                                <h5 class="media-heading mv5">{{senderName}} <small class="text-muted">- {{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</small> </h5> {{title}}
+                            </div>
+                        </div>
+                    </li>
+                    {{/messageList}}
+                {{/messageData}}
+            </script>
+            <ul class="dropdown-menu dropdown-hover dropdown-persist pn w350 bg-white animated animated-shorter fadeIn" role="menu" id="navbarMessageList"></ul>
         </li>
         <li class="dropdown dropdown-item-slide" title="主题设置" id="navBarShowSkinToolbox">
             <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">

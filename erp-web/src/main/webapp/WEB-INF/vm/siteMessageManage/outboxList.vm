@@ -101,7 +101,7 @@
 
                                 <div id="messageContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
 
-                                <div class="panel-footer">
+                                <div class="panel-footer" style="border-top: none;">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                                             #parse("component/pager.vm")
