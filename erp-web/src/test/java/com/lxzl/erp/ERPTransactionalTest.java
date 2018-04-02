@@ -5,7 +5,6 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.unit.test.BaseTransactionalTest;
-import com.lxzl.se.unit.test.BaseUnTransactionalTest;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
