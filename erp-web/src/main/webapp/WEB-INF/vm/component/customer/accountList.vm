@@ -80,8 +80,8 @@
                 <td>￥{{#price}}{{oldRentDepositAmount}}{{/price}}</td>
                 <td>￥{{#price}}{{newRentDepositAmount}}{{/price}}</td>
                 <td>{{remark}}</td>
-                <td>{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</td>
-                <td>{{#clockShorTime}}{{updateTime}}{{/clockShorTime}}</td>
+                <td style="white-space: nowrap;">{{#clockTime}}{{createTime}}{{/clockTime}}</td>
+                <td style="white-space: nowrap;">{{#clockTime}}{{updateTime}}{{/clockTime}}</td>
             </tr>
             {{/listData}}
             {{^listData}}
