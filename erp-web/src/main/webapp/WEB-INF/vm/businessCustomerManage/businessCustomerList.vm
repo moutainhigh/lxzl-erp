@@ -113,7 +113,7 @@
                                 <tbody>
                                 {{#dataSource}}
                                 {{#listData}}
-                                <tr>
+                                <tr data-rowdata="{{rowData}}">
                                     {{#hasCommonActionButtons}}
                                     <td>
                                         <label class="option block mn">
@@ -136,7 +136,13 @@
                                         <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                     </td>
                                     <td>
-                                        {{customerStatusValue}}
+                                        <p class="{{customerStatusClass}}">
+                                            <span class="{{customerStatusClass}}">{{customerStatusValue}}</span>
+                                            {{#showViewWorkFlowButton}}
+                                            <span class="ml5 mr5 {{customerStatusClass}}">/</span>
+                                            <a href="javascript:void(0)" class="{{customerStatusClass}} viewWorkFlowButton">查看工作流</a>
+                                            {{/showViewWorkFlowButton}}
+                                        </p>
                                     </td>
                                     <td>{{isDisabledStr}}</td>
 ##                                    <td>

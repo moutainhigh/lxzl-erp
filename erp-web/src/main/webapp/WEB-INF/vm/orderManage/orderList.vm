@@ -167,7 +167,13 @@
                                                 <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
                                             </td>
                                             <td>
-                                                <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
+                                                <p class="mn nowrap {{orderStatusClass}}">
+                                                    <span class="{{orderStatusClass}}">{{orderStatusStr}}</span>
+                                                    {{#showViewWorkFlowButton}}
+                                                    <span class="ml5 mr5 {{orderStatusClass}}">/</span>
+                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton" data-orderno="{{orderNo}}">查看工作流</a>
+                                                    {{/showViewWorkFlowButton}}
+                                                </p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
                                             </td>
                                             {{#hasRowActionButtons}}
