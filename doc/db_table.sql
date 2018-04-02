@@ -3190,7 +3190,7 @@ CREATE TABLE `erp_coupon` (
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
   `deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣金额',
   `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
-  `customer_no` varchar(100) NOT NULL COMMENT '客戶编号',
+  `customer_no` varchar(100) COMMENT '客戶编号',
   `is_online` int(11) NOT NULL COMMENT '是否线上，0-否，1-是',
   `receive_time` datetime DEFAULT NULL COMMENT '领取时间',
   `use_time` datetime DEFAULT NULL COMMENT '使用时间',
