@@ -440,6 +440,7 @@ CREATE TABLE `erp_customer_company` (
   `city` int(20) DEFAULT NULL COMMENT '城市ID，对应城市ID',
   `district` int(20) DEFAULT NULL COMMENT '区ID，对应区ID',
   `address` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '公司经营地址',
+  `address_verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过',
   `default_address_refer_id` int(20) DEFAULT NULL COMMENT '默认地址关联ID',
   `office_number` int(20) DEFAULT NULL COMMENT '办公人数',
   `unified_credit_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '统一信用代码',
