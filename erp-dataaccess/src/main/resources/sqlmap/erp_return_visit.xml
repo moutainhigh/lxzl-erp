@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.ReturnVisitMapper">
+
+	<resultMap id="ReturnVisitDO" type="com.lxzl.erp.dataaccess.domain.customer.ReturnVisitDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="return_visit_describe" jdbcType="VARCHAR" property="returnVisitDescribe" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		erv.id,erv.return_visit_describe,erv.customer_no,erv.data_status,erv.remark,erv.create_time,erv.create_user,erv.update_time,erv.update_user
+	</sql>
+
+	<select id="findById" resultMap="ReturnVisitDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_return_visit erv 
+		WHERE erv.id = #{id, jdbcType=INTEGER} AND erv.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erv.id) FROM erp_return_visit erv 
+		<where>
+			<if test="true">
+				AND erv.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReturnVisitDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_return_visit erv 
+		<where>
+			<if test="true">
+				AND erv.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="returnVisitDescribe != null">
+				return_visit_describe = #{returnVisitDescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.ReturnVisitDO">
+		INSERT INTO erp_return_visit <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.ReturnVisitDO">
+		UPDATE erp_return_visit <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findReturnVisitCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erv.id) FROM erp_return_visit erv
+		<where>
+			<if test="maps.customerReturnVisitQueryParam != null &amp;&amp; maps.customerReturnVisitQueryParam.customerNo != null &amp;&amp; maps.customerReturnVisitQueryParam.customerNo != ''">
+				AND erv.customer_no LIKE CONCAT('%','${maps.customerReturnVisitQueryParam.customerNo}','%' )
+			</if>
+			<if test="maps.isQueryAll == null">
+				and erv.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findReturnVisitByParams" resultMap="ReturnVisitDO"  parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_return_visit erv
+		<where>
+			<if test="maps.customerReturnVisitQueryParam != null &amp;&amp; maps.customerReturnVisitQueryParam.customerNo != null &amp;&amp; maps.customerReturnVisitQueryParam.customerNo != ''">
+				AND erv.customer_no LIKE CONCAT('%','${maps.customerReturnVisitQueryParam.customerNo}','%' )
+			</if>
+			<if test="maps.isQueryAll == null">
+				and erv.data_status = 1
+			</if>
+		</where>
+		ORDER BY erv.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+</mapper>

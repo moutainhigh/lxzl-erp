@@ -565,6 +565,12 @@ public class ErrorCode {
     public static final String CUSTOMER_NAME_REPETITION = "J500154";
     public static final String CUSTOMER_CONSIGN_INFO_NOT_PENDING = "J500155";
     public static final String CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500156";
+    public static final String CUSTOMER_RETURN_VISIT_NOT_NULL = "J500157";
+    public static final String CUSTOMER_RETURN_VISIT_DESCRIBE_NOT_NULL = "J500158";
+    public static final String CUSTOMER_ORDER_DO_NOT_HAVE_ORDER = "J500159";
+    public static final String CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT = "J500160";
+    public static final String CUSTOMER_RETURN_ID_NOT_NULL = "J500161";
+    public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -621,6 +627,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
     public static final String AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100034";
     public static final String AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100035";
+    public static final String CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS = "J1100036";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -825,8 +832,8 @@ public class ErrorCode {
         MAP.put(USER_PASSWORD_TOO_SIMPLE, "密码包含大写字母、小写字母、数字、特殊符号中的至少三类，且长度在8到20之间");
         MAP.put(USER_OLD_PASSWORD_NOT_NULL, "旧密码不能为空");
         MAP.put(USER_NEW_PASSWORD_NOT_NULL, "新密码不能为空");
-        MAP.put(USER_OWNER_NOT_EXISTS, "填写的开发员不存在，请查询清楚");
-        MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
+        MAP.put(USER_OWNER_NOT_EXISTS, "填写的业务员不存在，请重新选择");
+        MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请重新选择");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
         MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
         MAP.put(CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER, "当前用户没有权限操作此客户");
@@ -842,6 +849,12 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_NOT_PENDING, "客户地址只有未提交状态，才能提交");
         MAP.put(CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER, "只有创建人、业务员、联合开发人才可以使用此功能");
         MAP.put(WORKFLOW_CONFIG_ERROR, "审核工作流未配置或配置错误");
+        MAP.put(CUSTOMER_RETURN_VISIT_NOT_NULL, "客户回访记录不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_DESCRIBE_NOT_NULL, "客户回访描述不能为空");
+        MAP.put(CUSTOMER_ORDER_DO_NOT_HAVE_ORDER, "只有有订单的客户才需要进行回访");
+        MAP.put(CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT, "该客户的订单到目前为止，已经全部归还物品，无需进行回访了");
+        MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1389,6 +1402,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
         MAP.put(AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "经办人身份证正面不能为空");
         MAP.put(AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "经办人身份证反面面不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS, "客户回访记录图片不能为空");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");

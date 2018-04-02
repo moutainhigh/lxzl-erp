@@ -722,4 +722,91 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/customer/commitCustomerConsignInfo",param);
     }
 
+
+    @Test
+    public void addCustomerReturnVisit() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC-1000-20180330-00827");
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitDescribe("第五次回访，不知道填什么好");
+        returnVisit.setRemark("回访是个什么感觉");
+
+        List<Image> customerReturnVisitImageList = new ArrayList<>();
+        Image customerReturnVisitImage1 = new Image();
+        Image customerReturnVisitImage2 = new Image();
+        customerReturnVisitImage1.setImgId(1838);
+        customerReturnVisitImage2.setImgId(1837);
+
+        customerReturnVisitImageList.add(customerReturnVisitImage1);
+        customerReturnVisitImageList.add(customerReturnVisitImage2);
+
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+        customer.setReturnVisit(returnVisit);
+
+        TestResult testResult = getJsonTestResult("/customer/addCustomerReturnVisit",customer);
+    }
+
+    @Test
+    public void updateCustomerReturnVisit() throws Exception {
+        Customer customer = new Customer();
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(13);
+        returnVisit.setReturnVisitDescribe("更改第四次回访，这次就看看有不有效果");
+        returnVisit.setRemark("更改回访是个什么感觉");
+
+        List<Image> customerReturnVisitImageList = new ArrayList<>();
+        Image customerReturnVisitImage1 = new Image();
+        Image customerReturnVisitImage2 = new Image();
+        Image customerReturnVisitImage3 = new Image();
+        customerReturnVisitImage1.setImgId(1026);
+        customerReturnVisitImage2.setImgId(107);
+        customerReturnVisitImage3.setImgId(3);
+
+        customerReturnVisitImageList.add(customerReturnVisitImage1);
+        customerReturnVisitImageList.add(customerReturnVisitImage2);
+//        customerReturnVisitImageList.add(customerReturnVisitImage3);
+
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+        customer.setReturnVisit(returnVisit);
+
+        TestResult testResult = getJsonTestResult("/customer/updateCustomerReturnVisit",customer);
+    }
+
+    @Test
+    public void cancelCustomerReturnVisit() throws Exception {
+        Customer customer = new Customer();
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(15);
+
+        customer.setReturnVisit(returnVisit);
+
+        TestResult testResult = getJsonTestResult("/customer/cancelCustomerReturnVisit",customer);
+    }
+
+    @Test
+    public void detailCustomerReturnVisit() throws Exception {
+        Customer customer = new Customer();
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(13);
+
+        customer.setReturnVisit(returnVisit);
+
+        TestResult testResult = getJsonTestResult("/customer/detailCustomerReturnVisit",customer);
+    }
+
+
+    @Test
+    public void pageCustomerReturnVisit() throws Exception {
+        CustomerReturnVisitQueryParam customerReturnVisitQueryParam = new CustomerReturnVisitQueryParam();
+        customerReturnVisitQueryParam.setPageNo(1);
+        customerReturnVisitQueryParam.setPageSize(10);
+        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
+
+        TestResult testResult = getJsonTestResult("/customer/pageCustomerReturnVisit",customerReturnVisitQueryParam);
+    }
+
 }

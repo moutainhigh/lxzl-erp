@@ -22,7 +22,7 @@ public class Customer extends BasePO {
 
 	private Integer customerId;   //唯一标识
 	private Integer customerType;   //用户类型,1为企业用户，2为个人用户
-	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class,UpdateOwnerAndUnionUserGroup.class})
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class,UpdateOwnerAndUnionUserGroup.class,AddCustomerReturnVisit.class})
 	private String customerNo;   //客戶编号
 	private String customerName; //客户名称
 	private Integer isDisabled;   //是否禁用，1不可用；0可用
@@ -70,6 +70,10 @@ public class Customer extends BasePO {
 	private CustomerRiskManagement customerRiskManagement;
 
 	private CustomerAccount customerAccount;
+
+	@Valid
+	@NotNull(message = ErrorCode.CUSTOMER_RETURN_VISIT_NOT_NULL ,groups = {AddCustomerReturnVisit.class, UpdateCustomerReturnVisit.class,IdCustomerReturnVisit.class})
+	private ReturnVisit returnVisit;
 
 	private User customerOwnerUser;
 	private User customerUnionUser;
@@ -379,5 +383,13 @@ public class Customer extends BasePO {
 
 	public void setOwnerSubCompanyName(String ownerSubCompanyName) {
 		this.ownerSubCompanyName = ownerSubCompanyName;
+	}
+
+	public ReturnVisit getReturnVisit() {
+		return returnVisit;
+	}
+
+	public void setReturnVisit(ReturnVisit returnVisit) {
+		this.returnVisit = returnVisit;
 	}
 }
