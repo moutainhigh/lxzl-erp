@@ -125,7 +125,7 @@
                                             <span class="{{customerStatusClass}}">{{customerStatusValue}}</span>
                                             {{#showViewWorkFlowButton}}
                                             <span class="ml5 mr5 {{customerStatusClass}}">/</span>
-                                            <a href="javascript:void(0)" class="{{customerStatusClass}} viewWorkFlowButton">查看工作流</a>
+                                            <a href="javascript:void(0)" class="{{customerStatusClass}} viewWorkFlowButton">查看审核流</a>
                                             {{/showViewWorkFlowButton}}
                                         </p>
                                     </td>
