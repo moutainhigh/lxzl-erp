@@ -533,6 +533,7 @@ public class BankSlipServiceImpl implements BankSlipService {
                     ManualChargeParam manualChargeParam = new ManualChargeParam();
                     manualChargeParam.setBusinessCustomerNo(bankSlipClaimDO.getCustomerNo());
                     manualChargeParam.setChargeAmount(bankSlipClaimDO.getClaimAmount());
+                    manualChargeParam.setChargeRemark(bankSlipClaimDO.getRemark());
                     try {
                         ServiceResult<String, Boolean> result = paymentService.manualCharge(manualChargeParam);
                         if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
