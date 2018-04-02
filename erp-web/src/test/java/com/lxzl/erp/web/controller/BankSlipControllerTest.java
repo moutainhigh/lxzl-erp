@@ -2,7 +2,6 @@ package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankType;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
@@ -26,11 +25,18 @@ import java.util.ArrayList;
  */
 public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
+    public void queryBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail= new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(12);
+        TestResult result = getJsonTestResult("/bankSlip/queryBankSlipDetail", bankSlipDetail);
+    }
+
+    @Test
     public void verifyBankSlipDetail() throws Exception {
 
 
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(144);
+        bankSlip.setBankSlipId(149);
         TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
@@ -38,16 +44,20 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(1323);
+        bankSlipClaim.setBankSlipDetailId(11897);
         ArrayList<ClaimParam> list = new ArrayList<>();
         ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal(100));
+        claimParam.setClaimAmount(new BigDecimal(10000));
         claimParam.setCustomerNo("LXCC-1000-20180328-00825");
-        ClaimParam claimParam1 =  new ClaimParam();
-        claimParam1.setClaimAmount(new BigDecimal(1700));
-        claimParam1.setCustomerNo("LXCC-027-20180323-00790");
+//        ClaimParam claimParam1 =  new ClaimParam();
+//        claimParam1.setClaimAmount(new BigDecimal(5000));
+//        claimParam1.setCustomerNo("LXCC-1000-20180328-00825");
+        ClaimParam claimParam2 =  new ClaimParam();
+        claimParam2.setClaimAmount(new BigDecimal(10000));
+        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
         list.add(claimParam);
 //        list.add(claimParam1);
+        list.add(claimParam2);
         bankSlipClaim.setClaimParam(list);
         TestResult result = getJsonTestResult("/bankSlip/claimBankSlipDetail", bankSlipClaim);
     }
@@ -92,7 +102,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
         bankSlipDetailQueryParam.setPageNo(1);
         bankSlipDetailQueryParam.setPageSize(20);
-        bankSlipDetailQueryParam.setBankSlipId(1);
+//        bankSlipDetailQueryParam.setBankSlipId(1);
 //        bankSlipQueryParam.setBankType();
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
