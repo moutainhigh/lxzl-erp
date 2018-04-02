@@ -3210,8 +3210,9 @@ DROP TABLE if exists `erp_sms_log`;
 CREATE TABLE `erp_sms_log` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `out_id` varchar(50)  COMMENT '外部流水扩展字段',
-  `request_id` varchar(50) NOT NULL COMMENT '请求ID',
+  `request_id` varchar(50) COMMENT '请求ID',
   `template_code` varchar(50) NOT NULL COMMENT '短信模板ID',
+  `phone` varchar(24) NOT NULL COMMENT '手机号',
   `refer_type` int(11) COMMENT '引用类型（如客户，用户等）',
   `refer_id` int(20) COMMENT '发送目标（如客户，用户等）引用ID',
   `refer_name` int(200) COMMENT '发送目标（如客户，用户等）名称',
