@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -14,7 +15,6 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
-import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -23,13 +23,11 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderTimeAxisMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -157,7 +155,7 @@ public class K3OrderConverter implements ConvertK3DataService {
             FormSEOrderEntry list[] = new FormSEOrderEntry[size];
             if (CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())) {
                 for (OrderProduct orderProduct : erpOrder.getOrderProductList()) {
-                    Product product = ConverterUtil.convert(orderProduct.getProductSkuSnapshot(),Product.class);
+                    Product product = JSON.parseObject(orderProduct.getProductSkuSnapshot(), Product.class);
 //                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId());
                     K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
                     K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
@@ -349,11 +347,7 @@ public class K3OrderConverter implements ConvertK3DataService {
     @Autowired
     private UserSupport userSupport;
     @Autowired
-    private ProductMapper productMapper;
-    @Autowired
     private ProductSkuMapper productSkuMapper;
     @Autowired
     private OrderTimeAxisMapper orderTimeAxisMapper;
-    @Autowired
-    private DingDingSupport dingDingSupport;
 }
