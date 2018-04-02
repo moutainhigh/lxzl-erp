@@ -64,14 +64,15 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <th>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="checkAll" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                {{/hasCommonActionButtons}}
+##                                {{#hasCommonActionButtons}}
+##                                <th>
+##                                    <label class="option block mn">
+##                                        <input type="checkbox" name="checkAll" value="">
+##                                        <span class="checkbox mn"></span>
+##                                    </label>
+##                                </th>
+##                                {{/hasCommonActionButtons}}
+                                <th>资金流水附件ID</th>
                                 <th>分公司名称</th>
                                 <th>银行类型</th>
                                 <th>月份</th>
@@ -81,6 +82,7 @@
                                 <th>已认领笔数</th>
                                 <th>已确认笔数</th>
                                 <th>创建人</th>
+                                <th>备注</th>
                                 <th>单据状态</th>
                                 {{#hasRowActionButtons}}
                                 <th class="text-right">操作</th>
@@ -91,14 +93,15 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <td>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="checkItem" value="{{productId}}">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </td>
-                                {{/hasCommonActionButtons}}
+##                                {{#hasCommonActionButtons}}
+##                                <td>
+##                                    <label class="option block mn">
+##                                        <input type="checkbox" name="checkItem" value="{{productId}}">
+##                                        <span class="checkbox mn"></span>
+##                                    </label>
+##                                </td>
+##                                {{/hasCommonActionButtons}}
+                                <td>{{bankSlipId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{bankTypeValue}}</td>
                                 <td>{{#clockMonthTime}}{{slipMonth}}{{/clockMonthTime}}</td>
@@ -111,6 +114,7 @@
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                 </td>
+                                <td>{{remark}}</td>
                                 <td>{{slipStatusValue}}</td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
