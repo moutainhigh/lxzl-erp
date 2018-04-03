@@ -160,15 +160,10 @@ public class WorkflowServiceImpl implements WorkflowService {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
             WorkflowNodeDO thisWorkflowNodeDO = null;
+            thisWorkflowNodeDO = workflowNodeDOList.get(0);
             if (WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)) {
-                if (workflowLinkDO != null) {
-                    if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowLinkDO.getWorkflowLinkDetailDOList().get(0).getWorkflowStep())) {
-                        thisWorkflowNodeDO = workflowNodeDOList.get(1);
-                    } else {
-                        thisWorkflowNodeDO = workflowNodeDOList.get(0);
-                    }
-                } else {
-                    thisWorkflowNodeDO = workflowNodeDOList.get(0);
+                if (workflowLinkDO != null && CommonConstant.WORKFLOW_STEP_TWO.equals(workflowLinkDO.getWorkflowLinkDetailDOList().get(0).getWorkflowStep())) {
+                    thisWorkflowNodeDO = workflowNodeDOList.get(1);
                 }
             }
             if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser, subCompanyId)) {
