@@ -1210,6 +1210,7 @@ CREATE TABLE `erp_order` (
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,24-全部归还,28-取消,32-结束',
   `first_need_pay_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '首次需要交金额',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款,3逾期中',
+  `is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是',
   `pay_time` datetime DEFAULT NULL COMMENT '支付时间',
   `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
   `confirm_delivery_time` datetime DEFAULT NULL COMMENT '确认收货时间',

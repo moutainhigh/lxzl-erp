@@ -146,13 +146,13 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
 
 //        北京(中国银行)
-        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("北京分公司");
-        bankSlip.setSubCompanyId(4);
-        bankSlip.setBankType(BankType.BOC_BANK);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/20"));
-        bankSlip.setExcelUrl("/group1/M00/00/1F/wKgKyFqwr7uAQdKMAAQ8AHewM0Y003.xls");
-        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+//        BankSlip bankSlip = new BankSlip();
+////        bankSlip.setSubCompanyName("北京分公司");
+//        bankSlip.setSubCompanyId(4);
+//        bankSlip.setBankType(BankType.ALIPAY);
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/20"));
+//        bankSlip.setExcelUrl("/group1/M00/00/29/wKgKyFrC_A6AetqkAARqAFz_m5k047.xls");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
 //        BankSlip bankSlip = new BankSlip();
@@ -173,11 +173,13 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
         //成都(交通银行)
 //        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("成都分公司");
+////        bankSlip.setSubCompanyName("成都分公司");
+//        bankSlip.setSubCompanyId(4);
 //        bankSlip.setBankType(BankType.TRAFFIC_BANK);
 //        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-//        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/1F/wKgKyFqw8o2AZ9bYAAEyALLhSg8377.xls");
-//        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+//        bankSlip.setExcelUrl("/group1/M00/00/29/wKgKyFrC_A6AetqkAARqAFz_m5k047.xls");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+
 
         //成都(支付宝)
 //        BankSlip bankSlip = new BankSlip();
@@ -210,8 +212,8 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 ////        bankSlip.setSubCompanyName("南京分公司");
 //        bankSlip.setSubCompanyId(6);
 //        bankSlip.setBankType(BankType.NAN_JING_BANK);
-//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/04/20"));
-//        bankSlip.setExcelUrl("/group1/M00/00/1F/wKgKyFqxCkKAGD1gAABNGc74JNo67.xlsx");
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/04/20"));
+//        bankSlip.setExcelUrl("/group1/M00/00/1F/wKgKyFqxAiGAMfJ_AAK-AFt5wrg351.xls");
 //        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //        //南京(支付宝)
@@ -232,11 +234,12 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
         //        //厦门(农业
 //        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("厦门分公司");
+////        bankSlip.setSubCompanyName("厦门分公司");
+//        bankSlip.setSubCompanyId(6);
 //        bankSlip.setBankType(BankType.AGRICULTURE_BANK);
 //        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-//        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/1F/wKgKyFqxFTiAeyRxAABXgStoR6w55.xlsx");
-//        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+//        bankSlip.setExcelUrl("/group1/M00/00/1F/wKgKyFqxFTiAeyRxAABXgStoR6w55.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
          //厦门(农业
 //        BankSlip bankSlip = new BankSlip();
 ////        bankSlip.setSubCompanyName("厦门分公司");
@@ -248,20 +251,22 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //
 // 上海分公司 工商银行
 //        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("上海分公司");
+////        bankSlip.setSubCompanyName("上海分公司");
+//        bankSlip.setSubCompanyId(1);
 //        bankSlip.setBankType(BankType.ICBC_BANK);
-//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-//        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxuq6ASfjoAAFNLCdPqtQ69.xlsx");
-//        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20"));
+//        bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxuq6ASfjoAAFNLCdPqtQ69.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
 
 // 上海分公司 中国建设银行
 //        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("上海分公司");
+////        bankSlip.setSubCompanyName("上海分公司");
+//        bankSlip.setSubCompanyId(1);
 //        bankSlip.setBankType(BankType.CCB_BANK);
 //        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-//        bankSlip.setExcelUrl(ConstantConfig.imageDomain+"/group1/M00/00/20/wKgKyFqxuq6ASfjoAAFNLCdPqtQ69.xlsx");
-//        TestResult result = getJsonTestResult("/import/bankSlip",bankSlip);
+//        bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxuq6ASfjoAAFNLCdPqtQ69.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
 
 //        // 上海分公司(支付宝)
@@ -304,12 +309,12 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
         // 深圳总公司
 // 总公司(浦发银行)
-//        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyId(1);
-//        bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
-//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-//        bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
-//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+        BankSlip bankSlip = new BankSlip();
+        bankSlip.setSubCompanyId(1);
+        bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
+        bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
+        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
 //        String json = "{\n" +
 //                "            \"bankType\": 2,\n" +
