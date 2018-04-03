@@ -658,7 +658,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
 
-        if(BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
+        if(!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_DISPLAY);
             return serviceResult;
         }
