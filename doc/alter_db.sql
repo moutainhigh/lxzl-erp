@@ -21,6 +21,7 @@ CREATE TABLE `erp_customer_risk_management_history` ;
 
 ALTER TABLE erp_customer_company add `address_verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过';
 ALTER TABLE erp_order add `is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是';
+ALTER TABLE erp_customer_consign_info add `workflow_type` int(11) NOT NULL DEFAULT '0' COMMENT '工作流类型';
 
 DROP TABLE if exists `erp_coupon_batch`;
 CREATE TABLE `erp_coupon_batch` (
