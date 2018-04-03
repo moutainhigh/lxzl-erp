@@ -243,7 +243,7 @@ public class ImportTrafficBank {
                 if (j > next) {
 
                     if( payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 13 || payPostscriptNo != 1 || payAccountNo != 8 || borrowingMarksNo != 11){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 

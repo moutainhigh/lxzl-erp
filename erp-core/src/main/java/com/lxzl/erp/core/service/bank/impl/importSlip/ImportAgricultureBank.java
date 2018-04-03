@@ -239,7 +239,7 @@ public class ImportAgricultureBank {
                 if (j > next) {
 
                     if( payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 1 || payPostscriptNo != 8 || payAccountNo != 6 || debtorAccountNo != 2){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 

@@ -239,7 +239,7 @@ public class ImportCMBCBank {
                 if (j > next) {
 
                     if( payerNameNo != 16 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 8 || payPostscriptNo != 7 || payAccountNo != 17 || creditSumNo != 4 ){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 
