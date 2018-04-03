@@ -1389,9 +1389,7 @@ public class CustomerServiceImpl implements CustomerService {
                 if (verifyResult) {
                     customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
                 } else {
-                    if(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())){
-                        customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
-                    }
+                    customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_BACK);
                 }
                 customerConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 customerConsignInfoDO.setUpdateTime(now);
@@ -2990,7 +2988,8 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         if(!CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())
-                && !CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) ){
+                && !CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus())
+                && !CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerConsignInfoDO.getVerifyStatus()) ){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_PENDING);
             return serviceResult;
         }
@@ -3022,6 +3021,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
                 customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                 customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoDO.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN);
                 customerConsignInfoMapper.update(customerConsignInfoDO);
                 return verifyResult;
             } else {

@@ -30,6 +30,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Integer deliveryMode;
     private Integer isPendingDelivery;
     private Integer payStatus;
+    private Integer isPeer;
 
 
     public Integer getOrderId() {
@@ -170,5 +171,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setPayStatus(Integer payStatus) {
         this.payStatus = payStatus;
+    }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
     }
 }

@@ -17,7 +17,7 @@
         <div class="col-md-4">
             <div class="well">
                 <p>
-                    <span class="fs11 text-muted mr5"><i class="fa fa-circle text-info fs12 pr5"></i>{{verifyStatusValue}}</span>
+                    <span class="fs11 text-muted mr5 {{verifyStatusClass}}"><i class="fa fa-circle {{verifyStatusClass}} fs12 pr5"></i>{{verifyStatusValue}}</span>
                     {{#isDefault}}
                     <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
                     {{/isDefault}}
@@ -35,13 +35,21 @@
                     <abbr title="手机号" class="fa fa-mobile-phone">：</abbr>{{consigneePhone}}
                 </address>
                 <p class="pv10">
+                    {{#deleteAuthor}}
+                    <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/deleteAuthor}}
 
                     {{#editButton}}
-                    <button class="btn btn-xs btn-default pull-right {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
-                    {{/editButton}}
-                    {{#deleteAuthor}}
                     <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
-                    {{/deleteAuthor}}
+                    {{/editButton}}
+
+                    {{#auditAuthor}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/auditAuthor}}
+
+                    {{#viewWorkFlowAuthor}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/viewWorkFlowAuthor}}
                 </p>
             </div>
         </div>

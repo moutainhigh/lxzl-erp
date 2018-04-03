@@ -88,4 +88,21 @@ public class BankSlipController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
+    @RequestMapping(value = "deleteBankSlip", method = RequestMethod.POST)
+    public Result deleteBankSlip(@RequestBody @Validated(IdGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.deleteBankSlip(bankSlip);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "hideBankSlipDetail", method = RequestMethod.POST)
+    public Result hideBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.hideBankSlipDetail(bankSlipDetail);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "displayBankSlipDetail", method = RequestMethod.POST)
+    public Result displayBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.displayBankSlipDetail(bankSlipDetail);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
 }

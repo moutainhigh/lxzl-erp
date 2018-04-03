@@ -39,13 +39,14 @@ public class CustomerConsignInfo extends BasePO {
 	@In(value = {CommonConstant.YES,CommonConstant.NO}, message=ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer isBusinessAddress;	//是否为经营地址，0否1是
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
-	private Integer verifyStatus;   //审核状态：0未提交；1.已提交 2.初审通过；3.终审通过
+	private Integer verifyStatus;   //审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 ；4.审批驳回
 	private Date lastUseTime;  //最后使用时间
 	private String remark;   //备注
 	private Date createTime;   //添加时间
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer workflowType;	//工作流类型
 
 	private String provinceName; //省名称
 	private String cityName; //城市名
@@ -218,4 +219,8 @@ public class CustomerConsignInfo extends BasePO {
 	public Integer getVerifyStatus() { return verifyStatus; }
 
 	public void setVerifyStatus(Integer verifyStatus) { this.verifyStatus = verifyStatus; }
+
+	public Integer getWorkflowType() { return workflowType; }
+
+	public void setWorkflowType(Integer workflowType) { this.workflowType = workflowType; }
 }
