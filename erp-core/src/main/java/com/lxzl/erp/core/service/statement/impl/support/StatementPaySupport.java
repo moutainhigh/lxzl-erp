@@ -1,7 +1,9 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.PayStatus;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
@@ -61,27 +63,39 @@ public class StatementPaySupport {
         return statementPayOrderDO;
     }
 
-    public boolean updateStatementPayOrderStatus(Integer statementPayOrderId, Integer payStatus, String paymentOrderNo, Integer loginUserId, Date currentTime) {
+    public ServiceResult<String, Boolean> updateStatementPayOrderStatus(Integer statementPayOrderId, Integer payStatus, String paymentOrderNo, Integer loginUserId, Date currentTime) {
+        ServiceResult<String, Boolean> serviceResult = new ServiceResult<>();
         StatementPayOrderDO statementPayOrderDO = statementPayOrderMapper.findById(statementPayOrderId);
         if (statementPayOrderDO == null) {
-            return false;
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_PAY_ORDER_NOT_EXISTS);
+            serviceResult.setResult(false);
+            return serviceResult;
         }
         if (PayStatus.PAY_STATUS_PAID.equals(statementPayOrderDO.getPayStatus())
                 || PayStatus.PAY_STATUS_FAILED.equals(statementPayOrderDO.getPayStatus())) {
-            return false;
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_PAY_ORDER_STATUS_IS_PAID_OR_FAILED);
+            serviceResult.setResult(false);
+            return serviceResult;
         }
         if (!PayStatus.PAY_STATUS_PAID.equals(payStatus)
                 && !PayStatus.PAY_STATUS_FAILED.equals(payStatus)
                 && !PayStatus.PAY_STATUS_TIME_OUT.equals(payStatus)) {
-            return false;
+
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_PAY_ORDER_STATUS_MUST_PAID_OR_FAILED_OR_TIME_OUT);
+            serviceResult.setResult(false);
+            return serviceResult;
         }
+
         statementPayOrderDO.setPayStatus(payStatus);
         statementPayOrderDO.setPaymentOrderNo(paymentOrderNo);
         statementPayOrderDO.setEndTime(currentTime);
         statementPayOrderDO.setUpdateTime(currentTime);
         statementPayOrderDO.setUpdateUser(loginUserId.toString());
         statementPayOrderMapper.update(statementPayOrderDO);
-        return true;
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(true);
+        return serviceResult;
     }
 
     public StatementPayOrderDO getLastRecord(Integer statementOrderId) {
