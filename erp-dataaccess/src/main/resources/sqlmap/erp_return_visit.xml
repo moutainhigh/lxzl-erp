@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.ReturnVisitMapper">
 
 	<resultMap id="ReturnVisitDO" type="com.lxzl.erp.dataaccess.domain.customer.ReturnVisitDO">
@@ -12,16 +13,51 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+
+		<collection property="customerReturnVisitImageDOList" resultMap="ImageDO" />
+	</resultMap>
+
+	<resultMap id="ImageDO" type="com.lxzl.erp.dataaccess.domain.system.ImageDO">
+		<result column="img_id"  property="id"/>
+		<result column="img_img_type" property="imgType"/>
+		<result column="img_original_name" jdbcType="VARCHAR" property="originalName"/>
+		<result column="img_ref_id" jdbcType="VARCHAR" property="refId"/>
+		<result column="img_img_url" jdbcType="VARCHAR" property="imgUrl"/>
+		<result column="img_img_order" jdbcType="INTEGER" property="imgOrder"/>
+		<result column="img_data_status" jdbcType="INTEGER" property="dataStatus"/>
+		<result column="img_remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="img_create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="img_create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="img_update_user" jdbcType="VARCHAR" property="updateUser"/>
+		<result column="img_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 	</resultMap>
 
 	<sql id="column_List">
 		erv.id,erv.return_visit_describe,erv.customer_no,erv.data_status,erv.remark,erv.create_time,erv.create_user,erv.update_time,erv.update_user
 	</sql>
 
+	<sql id="img_column_List">
+		ei.id as img_id,ei.img_type as img_img_type,ei.original_name as img_original_name,ei.ref_id as img_ref_id,ei.img_url as img_img_url,ei.img_order as img_img_order,ei.data_status as img_data_status,ei.remark as img_remark,ei.create_user as img_create_user,ei.create_time as img_create_time,ei.update_user as img_update_user,ei.update_time as img_update_time
+	</sql>
+
 	<select id="findById" resultMap="ReturnVisitDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_return_visit erv 
-		WHERE erv.id = #{id, jdbcType=INTEGER} AND erv.data_status = 1 
+	SELECT <include refid="column_List"/> FROM erp_return_visit erv
+	WHERE erv.id = #{id, jdbcType=INTEGER} AND erv.data_status = 1
+</select>
+
+	<select id="findDetailById" resultMap="ReturnVisitDO" parameterType="java.lang.Integer">
+	SELECT erv.*
+	<trim prefix=",">
+		<include refid="img_column_List" />
+	</trim>
+	FROM (
+		SELECT <include refid="column_List"/> FROM erp_return_visit erv
+		WHERE
+		erv.id = #{returnVisitId, jdbcType=INTEGER} AND erv.data_status = 1
+	) erv
+	LEFT JOIN erp_img ei ON ei.ref_id = erv.id AND ei.data_status = 1 AND ei.img_type = 17
 	</select>
+
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(erv.id) FROM erp_return_visit erv 

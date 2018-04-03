@@ -16,4 +16,6 @@ public interface ReturnVisitMapper extends BaseMysqlDAO<ReturnVisitDO> {
     Integer findReturnVisitCountByParams(@Param("maps")Map<String, Object> maps);
 
 	List<ReturnVisitDO> findReturnVisitByParams(@Param("maps")Map<String, Object> maps);
+
+	ReturnVisitDO findDetailById(@Param("returnVisitId")Integer returnVisitId);
 }

@@ -1,7 +1,10 @@
 package com.lxzl.erp.dataaccess.domain.customer;
 
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
+import org.springframework.data.annotation.Transient;
+
+import java.util.List;
 
 
 public class ReturnVisitDO  extends BaseDO {
@@ -11,6 +14,10 @@ public class ReturnVisitDO  extends BaseDO {
 	private String customerNo;
 	private Integer dataStatus;
 	private String remark;
+
+	@Transient
+	private List<ImageDO> customerReturnVisitImageDOList; //客户回访图片
+
 
 	public Integer getId(){
 		return id;
@@ -50,6 +57,14 @@ public class ReturnVisitDO  extends BaseDO {
 
 	public void setRemark(String remark){
 		this.remark = remark;
+	}
+
+	public List<ImageDO> getCustomerReturnVisitImageDOList() {
+		return customerReturnVisitImageDOList;
+	}
+
+	public void setCustomerReturnVisitImageDOList(List<ImageDO> customerReturnVisitImageDOList) {
+		this.customerReturnVisitImageDOList = customerReturnVisitImageDOList;
 	}
 
 }

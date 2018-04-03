@@ -3146,7 +3146,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
 
         ReturnVisit returnVisit = customer.getReturnVisit();
-        ReturnVisitDO returnVisitDO = returnVisitMapper.findById(returnVisit.getReturnVisitId());
+        ReturnVisitDO returnVisitDO = returnVisitMapper.findDetailById(returnVisit.getReturnVisitId());
         if (returnVisitDO == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
             return serviceResult;
@@ -3158,7 +3158,7 @@ public class CustomerServiceImpl implements CustomerService {
         returnVisitMapper.update(returnVisitDO);
 
         //处理相关联的回访图片
-        List<ImageDO> customerReturnVisitImageDOList = imgMysqlMapper.findByRefId(returnVisitDO.getId().toString());
+        List<ImageDO> customerReturnVisitImageDOList = returnVisitDO.getCustomerReturnVisitImageDOList();
         if (CollectionUtil.isNotEmpty(customerReturnVisitImageDOList)){
             for (ImageDO customerReturnVisitImageDO : customerReturnVisitImageDOList){
                 customerReturnVisitImageDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
@@ -3178,20 +3178,13 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult<String, ReturnVisit> serviceResult = new ServiceResult<>();
 
         ReturnVisit returnVisit = customer.getReturnVisit();
-        ReturnVisitDO returnVisitDO = returnVisitMapper.findById(returnVisit.getReturnVisitId());
+        ReturnVisitDO returnVisitDO = returnVisitMapper.findDetailById(returnVisit.getReturnVisitId());
         if (returnVisitDO == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
             return serviceResult;
         }
 
         returnVisit = ConverterUtil.convert(returnVisitDO,ReturnVisit.class);
-
-        //如果有回访图片需要添加图片
-        List<ImageDO> customerReturnVisitImageDOList = imgMysqlMapper.findByRefId(returnVisitDO.getId().toString());
-        if (CollectionUtil.isNotEmpty(customerReturnVisitImageDOList)){
-            List<Image> customerReturnVisitImageList = ConverterUtil.convertList(customerReturnVisitImageDOList,Image.class);
-            returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
-        }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(returnVisit);
