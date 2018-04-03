@@ -16,7 +16,6 @@ public class CouponBatchDetailQueryParam extends BasePageParam{
     private Date createStartTime;   //起始时间
     private Date createEndTime;   //结束时间
 
-    private Integer dataStatus;   //状态：0不可用；1可用；2删除
 
     public Integer getCouponBatchId() {
         return couponBatchId;
@@ -58,11 +57,4 @@ public class CouponBatchDetailQueryParam extends BasePageParam{
         this.createEndTime = createEndTime;
     }
 
-    public Integer getDataStatus() {
-        return dataStatus;
-    }
-
-    public void setDataStatus(Integer dataStatus) {
-        this.dataStatus = dataStatus;
-    }
 }

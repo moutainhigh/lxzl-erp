@@ -151,8 +151,8 @@
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null ">
 				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
-			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.dataStatus != null ">
-				and ec.data_status = #{maps.couponQueryParam.dataStatus, jdbcType=INTEGER}
+			<if test="true">
+				AND ec.data_status = 1
 			</if>
 		</where>
 		ORDER BY ec.update_time DESC
@@ -184,8 +184,8 @@
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null ">
 				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
-			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.dataStatus != null ">
-				and ec.data_status = #{maps.couponQueryParam.dataStatus, jdbcType=INTEGER}
+			<if test="true">
+				AND ec.data_status = 1
 			</if>
 		</where>
 	</select>

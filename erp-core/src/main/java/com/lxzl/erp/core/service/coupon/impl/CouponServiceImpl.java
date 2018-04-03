@@ -178,7 +178,7 @@ public class CouponServiceImpl implements CouponService{
         CouponBatchDetailDO couponBatchDetailDO = ConverterUtil.convert(couponBatchDetail, CouponBatchDetailDO.class);
         CouponBatchDO couponBatchDO = couponBatchMapper.findByIdIgnoreDataStatus(couponBatchDetailDO.getCouponBatchId());
         if (couponBatchDO.getDataStatus()!=1) {
-            serviceResult.setErrorCode(ErrorCode.COUPON_BATCH_DATA_STATUS_ERROR);
+            serviceResult.setErrorCode(ErrorCode.COUPON_BATCH_NOT_EXISTS);
             return serviceResult;
         }
 

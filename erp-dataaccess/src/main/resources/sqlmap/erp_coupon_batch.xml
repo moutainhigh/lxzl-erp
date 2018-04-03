@@ -126,8 +126,8 @@
 			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createEndTime != null ">
 				<![CDATA[ AND ecb.create_time <= #{maps.couponBatchQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.dataStatus != null ">
-				and ecb.data_status = #{maps.couponBatchQueryParam.dataStatus, jdbcType=INTEGER}
+			<if test="true">
+				AND ecb.data_status = 1
 			</if>
 		</where>
 		ORDER BY ecb.update_time DESC
@@ -150,8 +150,8 @@
 			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createEndTime != null ">
 				<![CDATA[ AND ecb.create_time <= #{maps.couponBatchQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.dataStatus != null ">
-				and ecb.data_status = #{maps.couponBatchQueryParam.dataStatus, jdbcType=INTEGER}
+			<if test="true">
+				AND ecb.data_status = 1
 			</if>
 		</where>
 

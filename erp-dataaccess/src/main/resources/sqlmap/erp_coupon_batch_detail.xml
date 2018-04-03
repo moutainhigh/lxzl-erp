@@ -133,8 +133,8 @@
 			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.createEndTime != null ">
 				<![CDATA[ AND ecbd.create_time <= #{maps.couponBatchDeatilQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.dataStatus != null ">
-				and ecbd.data_status = #{maps.couponBatchDeatilQueryParam.dataStatus, jdbcType=INTEGER}
+			<if test="true">
+				AND ecbd.data_status = 1
 			</if>
 		</where>
 		ORDER BY ecbd.update_time DESC
@@ -160,8 +160,8 @@
 			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.createEndTime != null ">
 				<![CDATA[ AND ecbd.create_time <= #{maps.couponBatchDeatilQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.dataStatus != null ">
-				and ecbd.data_status = #{maps.couponBatchDeatilQueryParam.dataStatus, jdbcType=INTEGER}
+			<if test="true">
+				AND ecbd.data_status = 1
 			</if>
 		</where>
 	</select>

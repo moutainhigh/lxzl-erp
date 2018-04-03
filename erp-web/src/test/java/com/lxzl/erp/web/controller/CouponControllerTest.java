@@ -54,7 +54,6 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         couponBatchQueryParam.setCouponBatchName("十");
-        couponBatchQueryParam.setDataStatus(2);
         TestResult testResult = getJsonTestResult("/coupon/pageCouponBatch", couponBatchQueryParam);
     }
     @Test
@@ -89,7 +88,6 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         couponQueryParam.setPageNo(1);
         couponQueryParam.setPageSize(1);
         couponQueryParam.setCouponBatchId(2);
-        couponQueryParam.setDataStatus(1);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         TestResult testResult = getJsonTestResult("/coupon/pageCoupon", couponQueryParam);
