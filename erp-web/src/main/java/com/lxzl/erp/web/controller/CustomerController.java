@@ -31,7 +31,7 @@ public class CustomerController {
     private ResultGenerator resultGenerator;
 
     @RequestMapping(value = "addCompany", method = RequestMethod.POST)
-    public Result addCompany(@RequestBody @Validated({AddCustomerCompanyGroup.class,IdGroup.class}) Customer customer, BindingResult validResult) {
+    public Result addCompany(@RequestBody @Validated({AddCustomerCompanyGroup.class}) Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.addCompany(customer);
         return resultGenerator.generate(serviceResult);
     }
@@ -43,7 +43,7 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "updateCompany", method = RequestMethod.POST)
-    public Result updateCompany(@RequestBody @Validated({UpdateCustomerCompanyGroup.class,IdGroup.class}) Customer customer, BindingResult validResult) {
+    public Result updateCompany(@RequestBody @Validated({UpdateCustomerCompanyGroup.class}) Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.updateCompany(customer);
         return resultGenerator.generate(serviceResult);
     }

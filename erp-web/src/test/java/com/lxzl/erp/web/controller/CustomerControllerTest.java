@@ -135,7 +135,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonNoPictureBackImage(image3);
 */
 
-        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
+//        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
 
         //加入经营场所租赁合同
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
@@ -243,7 +243,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerConsignInfo3.setVerifyStatus(2);
         customerConsignInfoList.add(customerConsignInfo3);
 
-        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
+//        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
 
         //首次所需设备
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();

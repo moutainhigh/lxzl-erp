@@ -467,7 +467,7 @@ public class ErrorCode {
     public static final String PRODUCT_PURPOSE_NOT_NULL = "J500054";
     public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500055";
     public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500056";
-    public static final String CUSTOMER_IS_EXISTS = "J500057";
+    public static final String CUSTOMER_PERSON_IS_EXISTS = "J500057";
     public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
     public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
@@ -518,7 +518,7 @@ public class ErrorCode {
     public static final String CITY_NOT_EXISTS = "J500105";
     public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
     public static final String CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL = "J500107";
-    public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
+    public static final String CUSTOMER_COMPANY_IS_EXISTS = "J500108";
     public static final String SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500109";
     public static final String SHORT_RECEIVABLE_CALCULATE_FAIL = "J500110";
     public static final String CUSTOMER_DELIVERY_MODE_NOT_NULL = "J500111";
@@ -1118,7 +1118,7 @@ public class ErrorCode {
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
-        MAP.put(CUSTOMER_IS_EXISTS, "客户名称已经存在，请重新填写名称");
+        MAP.put(CUSTOMER_PERSON_IS_EXISTS, "客户名称已经存在，请重新填写名称");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
         MAP.put(SUPPLIER_NAME_IS_NULL, "供应商名字有空格");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
@@ -1151,7 +1151,7 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人身份证与法人身份证不能相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人姓名与法人姓名不能相同");
-        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，紧急联系人姓名，紧急联系人手机号、客户的收货地址、是否是法人代表申请(如果选择为“是”，法人姓名、手机号、身份证号码也不能为空）、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
+        MAP.put(CUSTOMER_COMPANY_IS_EXISTS, "【%s 】在【%s 】的【%s 】名下，如有需要，请与其联系");
         MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
         MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
         MAP.put(CUSTOMER_DELIVERY_MODE_NOT_NULL , "客户的发货方式不能为空");

@@ -69,7 +69,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         //该公司简单名称已经存在，则返回错误代码信息
         if (ccdo != null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            CustomerDO dbCustomerDO = customerMapper.findCustomerCompanyByNo(ccdo.getCustomerNo());
+            String companyName =  customer.getCustomerCompany().getCompanyName();
+            String SubCompanyName = dbCustomerDO.getOwnerSubCompanyName();
+            String OwnerName = dbCustomerDO.getOwnerName();
+
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_IS_EXISTS,companyName,SubCompanyName,OwnerName);
             return serviceResult;
         }
         //如果是否为法人代表申请，为是
@@ -236,7 +241,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
         if (dbCustomerDO != null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
             return serviceResult;
         }
         //判断业务员和联合开发员
@@ -376,7 +381,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            String companyName =  customer.getCustomerCompany().getCompanyName();
+            String SubCompanyName = dbCustomerDO.getOwnerSubCompanyName();
+            String OwnerName = dbCustomerDO.getOwnerName();
+
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_IS_EXISTS,companyName,SubCompanyName,OwnerName);
             return serviceResult;
         }
 
@@ -621,7 +630,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
             return serviceResult;
         }
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
