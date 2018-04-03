@@ -22,6 +22,7 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private String remark;
 	private Date lastUseTime;
 	private Integer isBusinessAddress;	//是否为经营地址，0否1是
+	private Integer workflowType;	//工作流类型
 
 	@Transient
 	private String provinceName;
@@ -155,4 +156,8 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	public Integer getVerifyStatus() { return verifyStatus; }
 
 	public void setVerifyStatus(Integer verifyStatus) { this.verifyStatus = verifyStatus; }
+
+	public Integer getWorkflowType() { return workflowType; }
+
+	public void setWorkflowType(Integer workflowType) { this.workflowType = workflowType; }
 }
