@@ -46,6 +46,10 @@
                     {{#auditAuthor}}
                     <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
                     {{/auditAuthor}}
+
+                    {{#viewWorkFlowAuthor}}
+                    <button class="btn btn-xs btn-default pull-right mr5 {{class}}" data-customerconsigninfoid="{{customerConsignInfoId}}">{{text}}</button>
+                    {{/viewWorkFlowAuthor}}
                 </p>
             </div>
         </div>
