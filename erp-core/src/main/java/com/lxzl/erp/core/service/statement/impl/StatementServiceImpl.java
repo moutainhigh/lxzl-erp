@@ -70,7 +70,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -99,6 +98,7 @@ public class StatementServiceImpl implements StatementService {
         Date currentTime = new Date();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
+
             return;
         }
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
@@ -118,6 +118,7 @@ public class StatementServiceImpl implements StatementService {
 
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return null;
         }
         Integer statementDays;
@@ -172,6 +173,7 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
         if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
@@ -184,7 +186,8 @@ public class StatementServiceImpl implements StatementService {
 
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
-            return null;
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
         }
         Integer statementDays;
         DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
@@ -245,6 +248,7 @@ public class StatementServiceImpl implements StatementService {
         if (customerDO == null) {
             customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
             if (customerDO == null) {
+                result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                 return null;
             }
             orderDO.setBuyerCustomerId(customerDO.getId());
@@ -505,7 +509,7 @@ public class StatementServiceImpl implements StatementService {
 
         // 冲正后的结算单金额，必须要与现有的结算单金额相同
         if (BigDecimalUtil.compare(totalAmount, statementOrderDO.getStatementAmount()) != 0) {
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT);
             return result;
         }
 
@@ -515,12 +519,20 @@ public class StatementServiceImpl implements StatementService {
             // 如果本次支付和上一次支付价格不同
             if ((statementPayOrderLastRecord.getCreateTime().getTime() + (90 * 60 * 1000)) <= currentTime.getTime()) {
                 // 查询时间过去多久了，如果超过90分钟，即为失效，重新下单
-                boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderLastRecord.getId(), PayStatus.PAY_STATUS_TIME_OUT, null, loginUserId, currentTime);
-                if (!updatePayOrderResult) {
+//                boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderLastRecord.getId(), PayStatus.PAY_STATUS_TIME_OUT, null, loginUserId, currentTime);
+//                if (!updatePayOrderResult) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                    result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+//                    return result;
+//                }
+
+                ServiceResult<String, Boolean> updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderLastRecord.getId(), PayStatus.PAY_STATUS_TIME_OUT, null, loginUser.getUserId(), currentTime);
+                if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+                    result.setErrorCode(updatePayOrderResult.getErrorCode());
                     return result;
                 }
+
             } else if (BigDecimalUtil.compare(statementPayOrderLastRecord.getPayAmount(), totalAmount) != 0) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_DIFF_ERROR);
@@ -538,7 +550,7 @@ public class StatementServiceImpl implements StatementService {
 
         if (statementPayOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
 
@@ -575,10 +587,17 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), WeixinPayCallbackParam.NOTIFY_STATUS_SUCCESS.equals(param.getNotifyStatus()) ? PayStatus.PAY_STATUS_PAID : PayStatus.PAY_STATUS_FAILED, param.getOrderNo(), loginUserId, currentTime);
-        if (!updatePayOrderResult) {
+//        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), WeixinPayCallbackParam.NOTIFY_STATUS_SUCCESS.equals(param.getNotifyStatus()) ? PayStatus.PAY_STATUS_PAID : PayStatus.PAY_STATUS_FAILED, param.getOrderNo(), loginUserId, currentTime);
+//        if (!updatePayOrderResult) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+//            return result;
+//        }
+
+        ServiceResult<String, Boolean> updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), WeixinPayCallbackParam.NOTIFY_STATUS_SUCCESS.equals(param.getNotifyStatus()) ? PayStatus.PAY_STATUS_PAID : PayStatus.PAY_STATUS_FAILED, param.getOrderNo(), loginUserId, currentTime);
+        if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+            result.setErrorCode(updatePayOrderResult.getErrorCode());
             return result;
         }
 
@@ -608,6 +627,7 @@ public class StatementServiceImpl implements StatementService {
                 || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
             return ErrorCode.STATEMENT_ORDER_STATUS_ERROR;
         }
+
         List<StatementOrderDO> statementOrderDOList = statementOrderMapper.findByCustomerId(statementOrderDO.getCustomerId());
         for (StatementOrderDO dbStatementOrderDO : statementOrderDOList) {
             if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(dbStatementOrderDO.getStatementStatus())
@@ -618,6 +638,7 @@ public class StatementServiceImpl implements StatementService {
                 return ErrorCode.STATEMENT_ORDER_CAN_NOT_PAID_THIS;
             }
         }
+
         return ErrorCode.SUCCESS;
     }
 
@@ -633,11 +654,13 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
             return result;
         }
+
         String payVerifyResult = payVerify(statementOrderDO);
         if (!ErrorCode.SUCCESS.equals(payVerifyResult)) {
             result.setErrorCode(payVerifyResult);
             return result;
         }
+
         CustomerDO customerDO = customerMapper.findById(statementOrderDO.getCustomerId());
         BigDecimal payRentAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDO.getStatementRentPaidAmount());
         BigDecimal payRentDepositAmount = BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDO.getStatementRentDepositPaidAmount());
@@ -666,6 +689,7 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
             return result;
         }
+
         if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) <= 0
                 && BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) <= 0
                 && BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) <= 0
@@ -678,26 +702,35 @@ public class StatementServiceImpl implements StatementService {
 
         // 冲正后的结算单金额，必须要与现有的结算单金额相同
         if (BigDecimalUtil.compare(totalAmount, BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount())) != 0) {
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT);
             return result;
         }
 
         StatementPayOrderDO statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, StatementOrderPayType.PAY_TYPE_BALANCE, loginUser.getUserId(), currentTime);
         if (statementPayOrderDO == null) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
+            result.setErrorCode(ErrorCode.STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO);
             return result;
         }
+
         ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getRemark(), BigDecimalUtil.add(payRentAmount, payOverdueAmount), payRentDepositAmount, payDepositAmount, payOtherAmount);
         if (!ErrorCode.SUCCESS.equals(paymentResult.getErrorCode()) || !paymentResult.getResult()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(paymentResult.getErrorCode());
             return result;
         }
-        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
-        if (!updatePayOrderResult) {
+
+//        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
+//        if (!updatePayOrderResult) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+//            return result;
+//        }
+
+        ServiceResult<String, Boolean> updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
+        if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+            result.setErrorCode(updatePayOrderResult.getErrorCode());
             return result;
         }
 
@@ -1530,7 +1563,6 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         Map<String, StatementOrderDetailDO> addStatementOrderDetailDOMap = new HashMap<>();
@@ -1592,9 +1624,10 @@ public class StatementServiceImpl implements StatementService {
                         // 如果有押金还没交，不让退货
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
                             return result;
                         }
+
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
 
@@ -1711,7 +1744,7 @@ public class StatementServiceImpl implements StatementService {
                         // 如果有押金还没交，不让退货
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
                             return result;
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
@@ -2426,6 +2459,7 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isEmpty(statementOrderDOList)) {
             return;
         }
+
         for (StatementOrderDO statementOrderDO : statementOrderDOList) {
             if (statementOrderDO == null || StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())
                     || StatementOrderStatus.STATEMENT_ORDER_STATUS_NO.equals(statementOrderDO.getStatementStatus())) {
