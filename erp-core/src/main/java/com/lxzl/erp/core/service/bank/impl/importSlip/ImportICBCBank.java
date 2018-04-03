@@ -238,7 +238,7 @@ public class ImportICBCBank {
                 if (j > next) {
 
                     if( payerNameNo != 10 || payTimeNo != 3 || payMoneyNo != 5 || paySerialNumberNo != 13 || payPostscriptNo != 8 || payAccountNo != 2 || creditSumNo != 6 ){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 

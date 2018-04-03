@@ -244,7 +244,7 @@ public class ImportAlipay {
                 if (j > next) {
 
                     if( payerNameNo != 13 || payTimeNo != 1 || payMoneyNo != 6 || paySerialNumberNo != 3 || payPostscriptNo != 16 || payAccountNo != 12  || creditSumNo != 7 || merchantOrderNo != 4){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 

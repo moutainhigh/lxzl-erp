@@ -232,7 +232,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
                 if (j > next) {
 
                     if( payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 6 || payPostscriptNo != 11 || payAccountNo != 8 || creditSumNo != 5 ){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 

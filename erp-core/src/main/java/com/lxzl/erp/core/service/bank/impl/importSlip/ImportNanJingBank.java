@@ -240,7 +240,7 @@ public class ImportNanJingBank {
                 if (j > next) {
 
                     if( payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 3 || paySerialNumberNo != 9 || payPostscriptNo != 10 || payAccountNo != 8 || debtorAccountNo != 2){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 

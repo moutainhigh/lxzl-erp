@@ -233,7 +233,7 @@ public class ImportChinaBank {
                 if (j > next) {
 
                     if( payerNameNo != 5 || payTimeNo != 10 || payMoneyNo != 13 || paySerialNumberNo != 17 || payPostscriptNo != 25 || payAccountNo != 4 ){
-                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 
