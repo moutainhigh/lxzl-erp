@@ -114,11 +114,11 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.coupon.CouponDO">
 		UPDATE erp_coupon <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
-	<insert id="addList" parameterType="java.util.ArrayList" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO erp_coupon (id,coupon_batch_id,coupon_batch_detail_id,face_value,deduction_amount,coupon_status,customer_no,is_online,receive_time,use_time,effective_start_time,effective_end_time,remark,create_time,create_user,update_time,update_user,data_status)
+	<insert id="addList" parameterType="java.util.ArrayList" >
+		INSERT INTO erp_coupon (coupon_batch_id,coupon_batch_detail_id,face_value,deduction_amount,coupon_status,customer_no,is_online,receive_time,use_time,effective_start_time,effective_end_time,remark,create_time,create_user,update_time,update_user,data_status)
 		values
 		<foreach collection="list" item="couponDO" separator="," >
-			(#{couponDO.id},#{couponDO.couponBatchId}, #{couponDO.couponBatchDetailId},
+			(#{couponDO.couponBatchId}, #{couponDO.couponBatchDetailId},
 			#{couponDO.faceValue},#{couponDO.deductionAmount},#{couponDO.couponStatus},#{couponDO.customerNo},
 			#{couponDO.isOnline},#{couponDO.receiveTime},#{couponDO.useTime},
 			#{couponDO.effectiveStartTime},#{couponDO.effectiveEndTime},#{couponDO.remark},#{couponDO.createTime},
