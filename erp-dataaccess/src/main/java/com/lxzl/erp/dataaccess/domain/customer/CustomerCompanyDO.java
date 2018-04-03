@@ -47,7 +47,7 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Integer unitInsuredNumber; //单位参保人数
 	private String affiliatedEnterprise; //关联企业
 	private String simpleCompanyName;//公司简单名称字段（新增）
-	private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过
+	private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 4.审批驳回
 
 	@Transient
 	private String cityName;
