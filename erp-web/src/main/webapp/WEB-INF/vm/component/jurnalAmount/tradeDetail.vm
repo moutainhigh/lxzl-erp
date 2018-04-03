@@ -50,7 +50,7 @@
                             <td>
                                 <input type="hidden" name="customerNo" value="{{customerNo}}" class="customerNo" />
                                 <label class="field prepend-icon">
-                                    <input type="text" name="claimAmount-{{customerId}}" value="{{claimAmount}}" class="claimAmount moneyNumber form-control required pl10" placeholder="输入交易金额" aria-required="true" aria-invalid="false"/>
+                                    <input type="text" name="claimAmount-{{customerId}}" value="{{#price}}{{claimAmount}}{{/price}}" class="claimAmount moneyNumber form-control required pl10" placeholder="输入交易金额" aria-required="true" aria-invalid="false"/>
                                 </label>
                             </td>
                             <td class="text-right">
