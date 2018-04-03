@@ -48,6 +48,7 @@ public class Order extends BasePO {
     private Integer orderStatus;                            // 订单状态
     private BigDecimal firstNeedPayAmount;                      // 首付租金
     private Integer payStatus;                                  // 支付状态
+    private Integer isPeer;                                  // 是否同行调拨，0-否，1是
     private Date payTime;                                       // 支付时间
     private Date deliveryTime;                                  // 发货时间
     private Date confirmDeliveryTime;                           // 确认发货时间
@@ -571,4 +572,12 @@ public class Order extends BasePO {
     public BigDecimal getTotalMaterialFirstNeedPayAmount() { return totalMaterialFirstNeedPayAmount; }
 
     public void setTotalMaterialFirstNeedPayAmount(BigDecimal totalMaterialFirstNeedPayAmount) { this.totalMaterialFirstNeedPayAmount = totalMaterialFirstNeedPayAmount; }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
+    }
 }
