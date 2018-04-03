@@ -573,6 +573,7 @@ public class ErrorCode {
     public static final String CUSTOMER_RETURN_ID_NOT_NULL = "J500161";
     public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
 
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -732,6 +733,13 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_CORRECT_FAIL = "J16000012";
     public static final String CORRECT_AMOUNT_MORE_THEN_ZERO = "J16000013";
     public static final String STATEMENT_ORDER_ITEM_ID_NOT_NULL = "J16000014";
+    public static final String STATEMENT_PAY_ORDER_NOT_EXISTS = "J16000015";
+    public static final String STATEMENT_PAY_ORDER_STATUS_IS_PAID_OR_FAILED = "J16000016";
+    public static final String STATEMENT_PAY_ORDER_STATUS_MUST_PAID_OR_FAILED_OR_TIME_OUT = "J16000017";
+    public static final String STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT = "J16000018";
+    public static final String STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT = "J16000019";
+    public static final String STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO = "J16000020";
+
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
@@ -859,6 +867,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT, "该客户的订单到目前为止，已经全部归还物品，无需进行回访了");
         MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
+
+
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1308,7 +1318,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL, "企业客户详细地址不能为空");
         MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL, "个人客户联系电话不能为空");
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
-        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，请联系相关工作人员");
+        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，因为该订单没有相应的结算单明细，不能生成结算单");
         MAP.put(STATEMENT_ORDER_STATUS_ERROR, "结算单状态异常，仔细查看该订单，或联系相关工作人员");
         MAP.put(STATEMENT_ORDER_NO_NOT_NULL, "结算单编号不能为空");
         MAP.put(STATEMENT_PAY_NOT_NULL, "结算单支付方式不能为空");
@@ -1513,6 +1523,12 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID, "结算单ID不对应结算单项ID");
         MAP.put(STATEMENT_ORDER_CORRECT_EXISTS, "结算冲正单已存在");
         MAP.put(STATEMENT_ORDER_CORRECT_FAIL, "结算冲正单结算失败");
+        MAP.put(STATEMENT_PAY_ORDER_NOT_EXISTS, "结算单支付失败，因为该结算单对应的结算单支付记录不存在");
+        MAP.put(STATEMENT_PAY_ORDER_STATUS_IS_PAID_OR_FAILED, "结算单支付失败，因为该结算单支付记录状态已经为已支付或支付失败");
+        MAP.put(STATEMENT_PAY_ORDER_STATUS_MUST_PAID_OR_FAILED_OR_TIME_OUT, "结算单支付失败，只有传入的参数状态符合已支付、支付失败、支付超时的其中一个状态才能进行后续操作");
+        MAP.put(STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT, "结算单金额与结算冲正单的金额不相等，请检查清楚");
+        MAP.put(STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT, "结算单明细有未交纳的押金，不能进行退货操作，请先补交所需的押金");
+        MAP.put(STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO, "由结算单生成结算支付记录时，结算单的支付总金额必须大于0");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
