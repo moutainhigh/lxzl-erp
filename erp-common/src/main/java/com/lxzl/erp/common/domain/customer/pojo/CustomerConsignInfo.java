@@ -46,6 +46,7 @@ public class CustomerConsignInfo extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private Integer workflowType;	//工作流类型
 
 	private String provinceName; //省名称
 	private String cityName; //城市名
@@ -218,4 +219,8 @@ public class CustomerConsignInfo extends BasePO {
 	public Integer getVerifyStatus() { return verifyStatus; }
 
 	public void setVerifyStatus(Integer verifyStatus) { this.verifyStatus = verifyStatus; }
+
+	public Integer getWorkflowType() { return workflowType; }
+
+	public void setWorkflowType(Integer workflowType) { this.workflowType = workflowType; }
 }
