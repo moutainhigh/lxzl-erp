@@ -37,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author: pengbinjie
@@ -362,6 +364,22 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Integer> claimBankSlipDetail(BankSlipClaim bankSlipClaim) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        List<ClaimParam> claimParamList = bankSlipClaim.getClaimParam();
+        if (CollectionUtil.isEmpty(claimParamList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_NEED_CLAIMED);
+            return serviceResult;
+        }
+        for (ClaimParam claimParam : claimParamList) {
+            BigDecimal claimAmount = claimParam.getClaimAmount();
+            Pattern pattern= Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
+            Matcher match=pattern.matcher(claimAmount.toString());
+            if(!match.matches() || BigDecimalUtil.compare(claimAmount,BigDecimal.ZERO)<0){
+                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_AMOUNT_IS_FAIL);
+                return serviceResult;
+            }
+        }
+
+
         //判断是否有银行对公流水项
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipClaim.getBankSlipDetailId());
         if (bankSlipDetailDO == null) {
@@ -390,11 +408,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //判断客户是否存在
         BigDecimal allClaimAmount = new BigDecimal(0);
-        List<ClaimParam> claimParamList = bankSlipClaim.getClaimParam();
-        if (CollectionUtil.isEmpty(claimParamList)) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_NEED_CLAIMED);
-            return serviceResult;
-        }
+
         //判断客户是否相等
         if (claimParamList.size() > 1) {
             if (ListUtil.listToMap(claimParamList, "customerNo").size() != claimParamList.size()) {
