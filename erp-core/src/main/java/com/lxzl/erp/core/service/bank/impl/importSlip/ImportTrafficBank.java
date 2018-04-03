@@ -241,6 +241,12 @@ public class ImportTrafficBank {
                 String tradeMessage = null;  //交易附言
 
                 if (j > next) {
+
+                    if( payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 13 || payPostscriptNo != 1 || payAccountNo != 8 || borrowingMarksNo != 11){
+                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        return serviceResult;
+                    }
+
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言

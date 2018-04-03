@@ -75,7 +75,7 @@ public class CustomerCompany extends BasePO {
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
-    private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过
+    private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 4.审批驳回
 
     @Valid
     private List<CustomerConsignInfo> customerConsignInfoList;
