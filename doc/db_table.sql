@@ -3186,7 +3186,7 @@ DROP TABLE if exists `erp_coupon`;
 CREATE TABLE `erp_coupon` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
-  `erp_batch_detail_id` int(20) NOT NULL COMMENT '批次详情ID',
+  `coupon_batch_detail_id` int(20) NOT NULL COMMENT '批次详情ID',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
   `deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣金额',
   `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
@@ -3215,7 +3215,7 @@ CREATE TABLE `erp_sms_log` (
   `phone` varchar(24) NOT NULL COMMENT '手机号',
   `refer_type` int(11) COMMENT '引用类型（如客户，用户等）',
   `refer_id` int(20) COMMENT '发送目标（如客户，用户等）引用ID',
-  `refer_name` int(200) COMMENT '发送目标（如客户，用户等）名称',
+  `refer_name` varchar(200) COMMENT '发送目标（如客户，用户等）名称',
   `send_type` int(11) NOT NULL DEFAULT 0 COMMENT '发送类型：0-注册，1-登录，2-找回密码，3-交易支付，4-推广，5-其他',
   `send_status` int(11) NOT NULL DEFAULT 0 COMMENT '发送状态：0-发送失败，1-发送成功',
   `request_json` varchar(2000) COMMENT '请求JSON',

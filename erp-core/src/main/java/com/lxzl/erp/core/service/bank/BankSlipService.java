@@ -77,4 +77,28 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     ServiceResult<String, BankSlipDetail> queryBankSlipDetail(BankSlipDetail bankSlipDetail);
+    /**
+    * 删除银行流水
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/2 16:15
+    * @param : bankSlip
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String,Integer> deleteBankSlip(BankSlip bankSlip);
+    /**
+    * 隐藏银行流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/2 17:45
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String,Integer> hideBankSlipDetail(BankSlipDetail bankSlipDetail);
+    /**
+    * 显示银行流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/2 17:45
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String,Integer> displayBankSlipDetail(BankSlipDetail bankSlipDetail);
 }
