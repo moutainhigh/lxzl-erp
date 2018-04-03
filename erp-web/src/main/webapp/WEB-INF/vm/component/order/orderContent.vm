@@ -89,7 +89,7 @@
                             <div>
                                 <select class="form-control bradius required" name="isPeer" id="isPeer">
                                     <option value="0">否</option>
-                                    <option value="0">是</option>
+                                    <option value="1">是</option>
                                 </select>
                             </div>
                         </div>
@@ -165,7 +165,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive hasTooltip">
                     <script type="text/html" id="dataListTpl">
                         <thead>
                         <tr class="bg-light">
@@ -201,9 +201,10 @@
                                 </label>
                             </td>
                             <td>
-##                                <span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>
-                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
-                                {{productName}}
+                                <p>
+                                    {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                    {{productName}}
+                                </p>
                             </td>
                             <td style="max-width:260px;">{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
