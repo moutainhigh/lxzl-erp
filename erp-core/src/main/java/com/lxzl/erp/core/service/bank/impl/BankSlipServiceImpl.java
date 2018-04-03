@@ -110,11 +110,14 @@ public class BankSlipServiceImpl implements BankSlipService {
             //商务和业务员类型设置为2
             departmentType = 2;
         }
+        //当前用户所属分公司
+
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("bankSlipQueryParam", bankSlipQueryParam);
         maps.put("departmentType", departmentType);
+        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
         Integer totalCount = bankSlipMapper.findBankSlipCountByParams(maps);
         List<BankSlipDO> bankSlipDOList = bankSlipMapper.findBankSlipByParams(maps);
 
@@ -268,6 +271,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("bankSlipDetailQueryParam", bankSlipDetailQueryParam);
         maps.put("departmentType", departmentType);
+        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
 
         Integer totalCount = bankSlipDetailMapper.findBankSlipDetailDOCountByParams(maps);
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailDOByParams(maps);
@@ -297,6 +301,13 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
             return serviceResult;
         }
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
+
         //判断状态是否是初始化
         if (!SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_INITIALIZE);
@@ -329,6 +340,13 @@ public class BankSlipServiceImpl implements BankSlipService {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
+        }
+
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
         }
 
         //判断是否是收入状态
@@ -388,6 +406,14 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
+
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
             if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
@@ -513,6 +539,14 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
             return serviceResult;
         }
+
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
+
         //是否为商务
         if (!userSupport.isBusinessAffairsPerson() && !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.IS_NOT_BUSINESS_AFFAIRS_PERSON);
@@ -609,6 +643,13 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(ConverterUtil.convert(bankSlipDetailDO, BankSlipDetail.class));
         return serviceResult;
@@ -625,7 +666,12 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
             return serviceResult;
         }
-
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
         if (!SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_INITIALIZE);
             return serviceResult;
@@ -667,6 +713,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //加状态隐藏 跟新是否隐藏
         Integer bankSlipDetailId = bankSlipDetail.getBankSlipDetailId();
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetailId);
+
         if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
@@ -676,8 +723,13 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_DISPLAY);
             return serviceResult;
         }
-
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
 
         if(SlipStatus.ALL_CLAIM.equals(bankSlipDO.getSlipStatus())){
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IS_ALL_CLAIM);
@@ -718,6 +770,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         //加状态隐藏 跟新是否隐藏
         Integer bankSlipDetailId = bankSlipDetail.getBankSlipDetailId();
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetailId);
+
         if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
@@ -727,15 +780,18 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HIDE);
             return serviceResult;
         }
-
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
         //跟新为未认领
         bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
         bankSlipDetailDO.setUpdateTime(now);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailMapper.update(bankSlipDetailDO);
-
-        //跟新总表数据
-        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
 
         //如果是未认领状态总数需要 +1
         bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() + 1);
@@ -747,4 +803,16 @@ public class BankSlipServiceImpl implements BankSlipService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+
+    private String verifyPermission(BankSlipDO bankSlipDO){
+
+        //当前用户如不是总公司,看是否有权先操作
+        if(!userSupport.isHeadUser()){
+            if(!userSupport.getCurrentUserCompanyId().equals(bankSlipDO.getSubCompanyId())){
+                return ErrorCode.DATA_HAVE_NO_PERMISSION;
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
+
 }

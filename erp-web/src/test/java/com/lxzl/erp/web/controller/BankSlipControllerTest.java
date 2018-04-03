@@ -106,7 +106,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
 //        bankSlipQueryParam.setSubCompanyName("南京分公司");
-        bankSlipQueryParam.setSubCompanyId(5);
+//        bankSlipQueryParam.setSubCompanyId(5);
 //        bankSlipQueryParam.setBankSlipId(167);
 
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
@@ -124,7 +124,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
         bankSlipDetailQueryParam.setPageNo(1);
         bankSlipDetailQueryParam.setPageSize(20);
-        bankSlipDetailQueryParam.setBankSlipId(161);
+//        bankSlipDetailQueryParam.setBankSlipId(161);
 //        bankSlipQueryParam.setBankType();
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
