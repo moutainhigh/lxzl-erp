@@ -39,6 +39,7 @@
 		<result column="claim_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="claim_update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="customerName" jdbcType="VARCHAR" property="customerName" />
+		<result column="customerId" jdbcType="INTEGER" property="customerId" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -50,7 +51,7 @@
 	</sql>
 
 	<select id="findById" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName,ec.id as customerId FROM erp_bank_slip_detail ebsd
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id AND ebsc.data_status = 1
 		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
 		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1

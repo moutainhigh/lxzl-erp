@@ -82,7 +82,7 @@ public class ImportCMBCBank {
 
             bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
-            //todo 存储
+            //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getCMBCBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
                 serviceResult.setErrorCode(data.getErrorCode());
@@ -237,6 +237,11 @@ public class ImportCMBCBank {
                 String tradeAmount1 = null;  //贷方发生额
 
                 if (j > next) {
+
+                    if( payerNameNo != 16 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 8 || payPostscriptNo != 7 || payAccountNo != 17 || creditSumNo != 4 ){
+                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        return serviceResult;
+                    }
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {

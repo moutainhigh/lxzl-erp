@@ -232,6 +232,11 @@ public class ImportChinaBank {
 
                 if (j > next) {
 
+                    if( payerNameNo != 5 || payTimeNo != 10 || payMoneyNo != 13 || paySerialNumberNo != 17 || payPostscriptNo != 25 || payAccountNo != 4 ){
+                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        return serviceResult;
+                    }
+
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
