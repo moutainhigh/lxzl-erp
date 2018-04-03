@@ -237,6 +237,12 @@ public class ImportCCBBank {
                 String tradeAmount1 = null;  //贷方发生额
 
                 if (j > next) {
+
+                    if( payerNameNo != 8 || payTimeNo != 1 || payMoneyNo != 5 || paySerialNumberNo != 12 || payPostscriptNo != 11 || payAccountNo != 9 || creditSumNo != 4 ){
+                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        return serviceResult;
+                    }
+
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言

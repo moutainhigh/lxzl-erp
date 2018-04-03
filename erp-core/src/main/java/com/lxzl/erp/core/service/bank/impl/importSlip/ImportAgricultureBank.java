@@ -148,7 +148,6 @@ public class ImportAgricultureBank {
         int payerNameNo = 0; //付款人名称
         int payTimeNo = 0; //交易日期
         int payMoneyNo = 0; //交易金额
-        int paySerialNumberNo = 0; //交易流水号
         int payPostscriptNo = 0; //交易附言
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int debtorAccountNo = 0; //支出金额
@@ -217,10 +216,6 @@ public class ImportAgricultureBank {
                             debtorAccountNo = y;
                             continue ccc;
                         }
-                        if ("交易流水号".equals(value)) {
-                            paySerialNumberNo = y;
-                            continue ccc;
-                        }
                         if ("对方账号".equals(value)) {
                             payAccountNo = y;
                             continue ccc;
@@ -237,12 +232,17 @@ public class ImportAgricultureBank {
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期
                 String tradeAmount = null;  //交易金额
-                String tradeSerialNo = null;  //交易流水号
                 String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
                 String tradeMessage = null;  //交易附言
                 String debtorAccount = null;  //支出金额
 
                 if (j > next) {
+
+                    if( payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 1 || payPostscriptNo != 8 || payAccountNo != 6 || debtorAccountNo != 2){
+                        serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
+                        return serviceResult;
+                    }
+
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
@@ -250,7 +250,6 @@ public class ImportAgricultureBank {
                     payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
                     tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
                     tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
                     otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
                     debtorAccount = (row.getCell(debtorAccountNo) == null ? "" : getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //支出金额
 
@@ -287,7 +286,6 @@ public class ImportAgricultureBank {
                         return serviceResult;
                     }
                     bankSlipDetailDO.setOtherSideAccountNo(otherSideAccountNo);
-                    bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
                     if (!("".equals(debtorAccount))) {
