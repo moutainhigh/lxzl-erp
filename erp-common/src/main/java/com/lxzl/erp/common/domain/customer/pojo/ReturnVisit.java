@@ -22,6 +22,7 @@ public class ReturnVisit extends BasePO {
 	private Integer returnVisitId;   //唯一标识
 	@NotBlank(message = ErrorCode.CUSTOMER_RETURN_VISIT_DESCRIBE_NOT_NULL,groups={AddCustomerReturnVisit.class,UpdateCustomerReturnVisit.class})
 	private String returnVisitDescribe;   //回访描述
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups={AddCustomerReturnVisit.class})
 	private String customerNo;   //客戶编号
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注

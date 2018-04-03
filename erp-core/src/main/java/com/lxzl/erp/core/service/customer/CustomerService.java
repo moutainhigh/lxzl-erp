@@ -176,34 +176,34 @@ public interface CustomerService extends VerifyReceiver {
     /**
      * 新增客户回访记录
      *
-     * @param customer
+     * @param returnVisit
      * @return
      */
-    ServiceResult<String,Integer> addCustomerReturnVisit(Customer customer);
+    ServiceResult<String,Integer> addCustomerReturnVisit(ReturnVisit returnVisit);
 
     /**
      * 更改客户回访记录
      *
-     * @param customer
+     * @param returnVisit
      * @return
      */
-    ServiceResult<String,String> updateCustomerReturnVisit(Customer customer);
+    ServiceResult<String,String> updateCustomerReturnVisit(ReturnVisit returnVisit);
 
     /**
      * 取消客户回访记录
      *
-     * @param customer
+     * @param returnVisit
      * @return
      */
-    ServiceResult<String,String> cancelCustomerReturnVisit(Customer customer);
+    ServiceResult<String,String> cancelCustomerReturnVisit(ReturnVisit returnVisit);
 
     /**
      * 客户回访详情
      *
-     * @param customer
+     * @param returnVisit
      * @return
      */
-    ServiceResult<String,ReturnVisit> detailCustomerReturnVisit(Customer customer);
+    ServiceResult<String,ReturnVisit> detailCustomerReturnVisit(ReturnVisit returnVisit);
 
     /**
      * 客户回访列表

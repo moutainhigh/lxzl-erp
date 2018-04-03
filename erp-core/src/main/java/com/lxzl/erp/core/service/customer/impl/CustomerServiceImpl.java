@@ -3038,11 +3038,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> addCustomerReturnVisit(Customer customer) {
+    public ServiceResult<String, Integer> addCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        CustomerDO customerDO = customerMapper.findByNo(customer.getCustomerNo());
+        CustomerDO customerDO = customerMapper.findByNo(returnVisit.getCustomerNo());
         if (customerDO == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return serviceResult;
@@ -3067,8 +3067,6 @@ public class CustomerServiceImpl implements CustomerService {
 //            serviceResult.setErrorCode(ErrorCode.CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT);
 //            return serviceResult;
 //        }
-
-        ReturnVisit returnVisit = customer.getReturnVisit();
 
         ReturnVisitDO returnVisitDO = ConverterUtil.convert(returnVisit,ReturnVisitDO.class);
         returnVisitDO.setReturnVisitDescribe(returnVisit.getReturnVisitDescribe());
@@ -3110,11 +3108,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> updateCustomerReturnVisit(Customer customer) {
+    public ServiceResult<String, String> updateCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        ReturnVisit returnVisit = customer.getReturnVisit();
         ReturnVisitDO returnVisitDO = returnVisitMapper.findById(returnVisit.getReturnVisitId());
         if (returnVisitDO == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
@@ -3141,11 +3138,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> cancelCustomerReturnVisit(Customer customer) {
+    public ServiceResult<String, String> cancelCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 
-        ReturnVisit returnVisit = customer.getReturnVisit();
         ReturnVisitDO returnVisitDO = returnVisitMapper.findDetailById(returnVisit.getReturnVisitId());
         if (returnVisitDO == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
@@ -3174,10 +3170,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult<String, ReturnVisit> detailCustomerReturnVisit(Customer customer) {
+    public ServiceResult<String, ReturnVisit> detailCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, ReturnVisit> serviceResult = new ServiceResult<>();
 
-        ReturnVisit returnVisit = customer.getReturnVisit();
         ReturnVisitDO returnVisitDO = returnVisitMapper.findDetailById(returnVisit.getReturnVisitId());
         if (returnVisitDO == null){
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
@@ -3190,8 +3185,6 @@ public class CustomerServiceImpl implements CustomerService {
         serviceResult.setResult(returnVisit);
         return serviceResult;
     }
-
-
 
     @Override
     public ServiceResult<String, Page<ReturnVisit>> pageCustomerReturnVisit(CustomerReturnVisitQueryParam customerReturnVisitQueryParam) {
