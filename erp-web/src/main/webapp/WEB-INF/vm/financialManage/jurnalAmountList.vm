@@ -125,7 +125,7 @@
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
-                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?bankSlipDetailId={{bankSlipDetailId}}" type="button" class="btn btn-default btn-xs {{class}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankSlipDetailId}}">{{text}}</a>
+                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?bankSlipDetailId={{bankSlipDetailId}}" type="button" class="btn btn-default btn-xs {{class}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankSlipDetailId}}" data-status="{{detailStatus}}">{{text}}</a>
                                         {{/rowActionButtons}}
                                     </div>
                                 </td>

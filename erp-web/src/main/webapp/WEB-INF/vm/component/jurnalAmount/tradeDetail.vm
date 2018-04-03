@@ -5,30 +5,30 @@
         </div>
         <form method="post" id="tradeDetailForm">
             <div class="panel-body pn">
-##                <div class="panel-menu br-n br-b">
-##                    <div class="row">
-##                        <div class="pull-left ml10">
-##                            <div class="btn-group" id="actionCommonButtons">
-##                                <button type="button" class="btn btn-primary btn-sm" id="batchAddCustomer" title="选择客户">
-##                                    <i class="fa fa-plus"></i> 选择客户
-##                                </button>
-##                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteCustomer" title="删除">
-##                                    <i class="fa fa-trash-o"></i> 删除
-##                                </button>
-##                            </div>
-##                        </div>
-##                    </div>
-##                </div>
+                <div class="panel-menu br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddCustomer" title="选择客户">
+                                    <i class="fa fa-plus"></i> 选择客户
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteCustomer" title="删除">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <script type="text/html" id="tradeDetailTpl">
                         <thead>
                         <tr>
-##                            <th>
-##                                <label class="option block mn">
-##                                    <input type="checkbox" name="checkAll" value="">
-##                                    <span class="checkbox mn"></span>
-##                                </label>
-##                            </th>
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
                             <th>客户编号</th>
                             <th>公司名称（个人姓名）</th>
                             <th>交易金额</th>
@@ -39,12 +39,12 @@
                         {{#dataSource}}
                         {{#listData}}
                         <tr data-rowdata="{{rowData}}" class="tradeRow">
-##                            <td>
-##                                <label class="option block mn">
-##                                    <input type="checkbox" name="checkItem" value="{{customerNo}}" data-customerid="{{customerId}}">
-##                                    <span class="checkbox mn"></span>
-##                                </label>
-##                            </td>
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{customerNo}}" data-customerid="{{customerId}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
                             <td>{{customerNo}}</td>
                             <td>{{customerName}}</td>
                             <td>
