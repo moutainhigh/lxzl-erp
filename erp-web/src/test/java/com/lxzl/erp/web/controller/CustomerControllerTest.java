@@ -734,13 +734,13 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         List<Image> customerReturnVisitImageList = new ArrayList<>();
         Image customerReturnVisitImage1 = new Image();
         Image customerReturnVisitImage2 = new Image();
-        customerReturnVisitImage1.setImgId(1836);
-        customerReturnVisitImage2.setImgId(1835);
+        customerReturnVisitImage1.setImgId(1833);
+        customerReturnVisitImage2.setImgId(1832);
 
         customerReturnVisitImageList.add(customerReturnVisitImage1);
         customerReturnVisitImageList.add(customerReturnVisitImage2);
 
-//        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
 
         TestResult testResult = getJsonTestResult("/customer/addCustomerReturnVisit",returnVisit);
     }
@@ -748,26 +748,26 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerReturnVisit() throws Exception {
         ReturnVisit returnVisit = new ReturnVisit();
-        returnVisit.setReturnVisitId(16);
-        returnVisit.setReturnVisitDescribe("更改第五次回访，这次就看看有不有效果");
+        returnVisit.setReturnVisitId(18);
+        returnVisit.setReturnVisitDescribe("更改第6次回访，这次就看看有不有效果");
         returnVisit.setRemark("更改回访是个什么感觉");
 
         List<Image> customerReturnVisitImageList = new ArrayList<>();
         Image customerReturnVisitImage1 = new Image();
         Image customerReturnVisitImage2 = new Image();
         Image customerReturnVisitImage3 = new Image();
-        customerReturnVisitImage1.setImgId(1836);
-        customerReturnVisitImage2.setImgId(1835);
+        customerReturnVisitImage1.setImgId(1833);
+        customerReturnVisitImage2.setImgId(1832);
         customerReturnVisitImage3.setImgId(1834);
 
         customerReturnVisitImageList.add(customerReturnVisitImage1);
         customerReturnVisitImageList.add(customerReturnVisitImage2);
-        customerReturnVisitImageList.add(customerReturnVisitImage3);
+//        customerReturnVisitImageList.add(customerReturnVisitImage3);
 
         returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
 
         TestResult testResult = getJsonTestResult("/customer/updateCustomerReturnVisit",returnVisit);
-    }
+     }
 
     @Test
     public void cancelCustomerReturnVisit() throws Exception {
