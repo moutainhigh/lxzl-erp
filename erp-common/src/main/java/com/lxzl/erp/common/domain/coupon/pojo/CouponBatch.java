@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CouponBatch extends BasePO {
-
+	@NotNull(message = ErrorCode.ID_NOT_NULL , groups = {UpdateGroup.class, IdGroup.class})
 	private Integer couponBatchId;   //唯一标识
 	@NotEmpty(message = ErrorCode.COUPON_BATCH_NAME_NOT_NULL , groups = {AddGroup.class, UpdateGroup.class})
 	private String couponBatchName;   //批次名称

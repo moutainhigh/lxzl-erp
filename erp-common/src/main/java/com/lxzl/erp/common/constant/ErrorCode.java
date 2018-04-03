@@ -792,6 +792,7 @@ public class ErrorCode {
     public static final String COUPON_COUNT_ERROR="J19000011";
     public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
     public static final String COUPON_USED="J19000013";
+    public static final String COUPON_BATCH_DATA_STATUS_ERROR="J19000014";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1577,7 +1578,8 @@ public class ErrorCode {
         MAP.put(IS_ONLINE_ERROR,"优惠券是否线上状态有误，请重重新输入");
         MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
         MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
-        MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
+        MAP.put(COUPON_USED,"优惠卷已使用，不能作废");//COUPON_BATCH_DATA_STATUS_ERROR
+        MAP.put(COUPON_BATCH_DATA_STATUS_ERROR,"该优惠批次已失效，不能添加优惠券");
 
 
     }

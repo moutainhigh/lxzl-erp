@@ -6,8 +6,8 @@ import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Coupon extends BasePO {
@@ -15,7 +15,7 @@ public class Coupon extends BasePO {
 	@NotNull(message = ErrorCode.ID_NOT_NULL,groups = {IdGroup.class})
 	private Integer couponId;   //唯一标识
 	private Integer couponBatchId;   //批次ID
-	private Integer erpBatchDetailId;   //批次详情ID
+	private Integer couponBatchDetailId;   //批次详情ID
 	private BigDecimal faceValue;   //优惠券面值
 	private BigDecimal deductionAmount;   //抵扣金额
 	private Integer couponStatus;   //优惠券状态，0-未领取，4-可用，8-已用
@@ -49,12 +49,12 @@ public class Coupon extends BasePO {
 		this.couponBatchId = couponBatchId;
 	}
 
-	public Integer getErpBatchDetailId(){
-		return erpBatchDetailId;
+	public Integer getCouponBatchDetailId(){
+		return couponBatchDetailId;
 	}
 
-	public void setErpBatchDetailId(Integer erpBatchDetailId){
-		this.erpBatchDetailId = erpBatchDetailId;
+	public void setCouponBatchDetailId(Integer couponBatchDetailId){
+		this.couponBatchDetailId = couponBatchDetailId;
 	}
 
 	public BigDecimal getFaceValue(){

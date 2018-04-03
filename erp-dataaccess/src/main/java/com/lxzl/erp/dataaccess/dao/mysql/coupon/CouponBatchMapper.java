@@ -16,4 +16,6 @@ public interface CouponBatchMapper extends BaseMysqlDAO<CouponBatchDO> {
     Integer findCouponBatchCountByParams(@Param("maps") Map<String, Object> paramMap);
 
 	List<CouponBatchDO> findCouponBatchByParams(@Param("maps") Map<String, Object> paramMap);
+
+	CouponBatchDO findByIdIgnoreDataStatus(Integer couponBatchId);
 }

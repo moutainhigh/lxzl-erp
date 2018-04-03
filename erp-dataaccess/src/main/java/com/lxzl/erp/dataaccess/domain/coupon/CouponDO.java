@@ -8,7 +8,7 @@ public class CouponDO  extends BaseDO {
 
 	private Integer id;
 	private Integer couponBatchId;
-	private Integer erpBatchDetailId;
+	private Integer couponBatchDetailId;
 	private BigDecimal faceValue;
 	private BigDecimal deductionAmount;
 	private Integer couponStatus;
@@ -37,12 +37,12 @@ public class CouponDO  extends BaseDO {
 		this.couponBatchId = couponBatchId;
 	}
 
-	public Integer getErpBatchDetailId(){
-		return erpBatchDetailId;
+	public Integer getCouponBatchDetailId(){
+		return couponBatchDetailId;
 	}
 
-	public void setErpBatchDetailId(Integer erpBatchDetailId){
-		this.erpBatchDetailId = erpBatchDetailId;
+	public void setCouponBatchDetailId(Integer couponBatchDetailId){
+		this.couponBatchDetailId = couponBatchDetailId;
 	}
 
 	public BigDecimal getFaceValue(){

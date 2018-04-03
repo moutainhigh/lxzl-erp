@@ -10,21 +10,13 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CouponBatchDetailQueryParam extends BasePageParam{
 
-    private Integer couponBatchDetailId;   //唯一标识
     private Integer couponBatchId;   //批次ID
     private BigDecimal faceValue;   //优惠券面值
     private Integer isOnline;   //是否线上，0-否，1-是
-    private Date startTime;   //创建起始时间
-    private Date endTime;   //创建结束时间
+    private Date createStartTime;   //起始时间
+    private Date createEndTime;   //结束时间
 
-
-    public Integer getCouponBatchDetailId() {
-        return couponBatchDetailId;
-    }
-
-    public void setCouponBatchDetailId(Integer couponBatchDetailId) {
-        this.couponBatchDetailId = couponBatchDetailId;
-    }
+    private Integer dataStatus;   //状态：0不可用；1可用；2删除
 
     public Integer getCouponBatchId() {
         return couponBatchId;
@@ -50,19 +42,27 @@ public class CouponBatchDetailQueryParam extends BasePageParam{
         this.isOnline = isOnline;
     }
 
-    public Date getStartTime() {
-        return startTime;
+    public Date getCreateStartTime() {
+        return createStartTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setCreateStartTime(Date createStartTime) {
+        this.createStartTime = createStartTime;
     }
 
-    public Date getEndTime() {
-        return endTime;
+    public Date getCreateEndTime() {
+        return createEndTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setCreateEndTime(Date createEndTime) {
+        this.createEndTime = createEndTime;
+    }
+
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
     }
 }

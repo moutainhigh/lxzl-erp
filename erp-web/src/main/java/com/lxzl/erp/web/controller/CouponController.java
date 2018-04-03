@@ -72,7 +72,7 @@ public class CouponController {
      * @return
      */
     @RequestMapping(value = "deleteCouponBatch",method = RequestMethod.POST)
-    public Result deleteCouponBatch(@RequestBody @Validated(UpdateGroup.class)CouponBatch couponBatch , BindingResult validResult){
+    public Result deleteCouponBatch(@RequestBody @Validated(IdGroup.class)CouponBatch couponBatch , BindingResult validResult){
         ServiceResult<String, String> serviceResult = couponService.deleteCouponBatch(couponBatch);
         return resultGenerator.generate(serviceResult);
     }
@@ -126,7 +126,7 @@ public class CouponController {
     @RequestMapping(value = "deleteCoupon",method = RequestMethod.POST)
     public Result deleteCoupon(@RequestBody @Validated(IdGroup.class) CouponDeleteParam couponDeleteParam, BindingResult validResult){
         ServiceResult<String,String> serviceResult = couponService.deleteCoupon(couponDeleteParam.getCouponList());
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
 }

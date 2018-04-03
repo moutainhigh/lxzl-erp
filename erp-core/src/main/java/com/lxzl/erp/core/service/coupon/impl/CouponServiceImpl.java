@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.coupon.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.CouponStatus;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -60,6 +61,7 @@ public class CouponServiceImpl implements CouponService{
     public ServiceResult<String, String> addCouponBatch(CouponBatch couponBatch) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
+        //PO类转成DO类，自动将PO类中的参数进行封装
         CouponBatchDO couponBatchDo = ConverterUtil.convert(couponBatch, CouponBatchDO.class);
         couponBatchDo.setCouponBatchTotalCount(CommonConstant.COMMON_ZERO);
         couponBatchDo.setCouponBatchUsedCount(CommonConstant.COMMON_ZERO);
@@ -88,25 +90,22 @@ public class CouponServiceImpl implements CouponService{
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
         CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatch.getCouponBatchId());
-        if (couponBatch == null ) {
+        if (couponBatchDO == null ) {
             serviceResult.setErrorCode(ErrorCode.COUPON_BATCH_NOT_EXISTS);
             return serviceResult;
         }
-        //优惠券总数不为0，不允许修改批次名称，优惠券类型等字段
+        //优惠券总数为0，允许修改批次名称，优惠券类型等字段
         if (couponBatchDO.getCouponBatchTotalCount() == 0) {
-
             couponBatchDO.setEffectiveStartTime(couponBatch.getEffectiveStartTime());
             couponBatchDO.setEffectiveEndTime(couponBatch.getEffectiveEndTime());
             couponBatchDO.setCouponBatchName(couponBatch.getCouponBatchName());
             couponBatchDO.setCouponType(couponBatch.getCouponType());
         }
 
-
         couponBatchDO.setCouponBatchDescribe(couponBatch.getCouponBatchDescribe());
         couponBatchDO.setRemark(couponBatch.getRemark());
         couponBatchDO.setUpdateTime(date);
         couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        //todo 修改活动日期条件语句
         couponBatchMapper.update(couponBatchDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -124,10 +123,11 @@ public class CouponServiceImpl implements CouponService{
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
         CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatch.getCouponBatchId());
-        if (couponBatch == null) {
+        if (couponBatchDO == null) {
             serviceResult.setErrorCode(ErrorCode.COUPON_BATCH_NOT_EXISTS);
             return serviceResult;
         }
+        //如果优惠券总数不为0就不能进行删除优惠卷批次操作
         if (couponBatchDO.getCouponBatchTotalCount() != 0) {
             serviceResult.setErrorCode(ErrorCode.COUPON_BATCH_CAN_NOT_DELETE);
             return serviceResult;
@@ -150,13 +150,11 @@ public class CouponServiceImpl implements CouponService{
     @Override
     public ServiceResult<String, Page<CouponBatch>> pageCouponBatch(CouponBatchQueryParam couponBatchQueryParam) {
         ServiceResult<String, Page<CouponBatch>> serviceResult = new ServiceResult<>();
-
         PageQuery pageQuery = new PageQuery(couponBatchQueryParam.getPageNo(), couponBatchQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("couponBatchQueryParam", couponBatchQueryParam);
-//        todo 分页条件修改
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = couponBatchMapper.findCouponBatchCountByParams(maps);
         List<CouponBatchDO> couponBatchDOList = couponBatchMapper.findCouponBatchByParams(maps);
@@ -177,10 +175,14 @@ public class CouponServiceImpl implements CouponService{
     public ServiceResult<String, String> addCouponBatchDetail(CouponBatchDetail couponBatchDetail) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
-
         CouponBatchDetailDO couponBatchDetailDO = ConverterUtil.convert(couponBatchDetail, CouponBatchDetailDO.class);
+        CouponBatchDO couponBatchDO = couponBatchMapper.findByIdIgnoreDataStatus(couponBatchDetailDO.getCouponBatchId());
+        if (couponBatchDO.getDataStatus()!=1) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_BATCH_DATA_STATUS_ERROR);
+            return serviceResult;
+        }
 
-        //判断优惠卷总数是否是大于1张的
+        //获取优惠卷总数（大于0张的判断在PO类中已完成校验）
         Integer couponTotalCount = couponBatchDetailDO.getCouponTotalCount();
 
         //判断优惠面值金额不能小于或者等于零
@@ -190,11 +192,10 @@ public class CouponServiceImpl implements CouponService{
             return serviceResult;
         }
 
-
         couponBatchDetailDO.setCouponUsedCount(CommonConstant.COMMON_ZERO);
         couponBatchDetailDO.setCouponReceivedCount(CommonConstant.COMMON_ZERO);
 
-        //设置优惠券总面值
+        //设置优惠券总面值（乘）
         couponBatchDetailDO.setTotalFaceAmount(BigDecimalUtil.mul(new BigDecimal(couponTotalCount),faceValue));
         couponBatchDetailDO.setTotalUsedAmount(BigDecimal.ZERO);
         couponBatchDetailDO.setTotalDeductionAmount(BigDecimal.ZERO);
@@ -204,6 +205,17 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDetailDO.setUpdateTime(date);
         couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         couponBatchDetailMapper.save(couponBatchDetailDO);
+
+        //更新优惠卷批次数据
+
+        couponBatchDO.setTotalFaceAmount(couponBatchDetailDO.getTotalFaceAmount());
+        couponBatchDO.setEffectiveStartTime(couponBatchDetailDO.getEffectiveStartTime());
+        couponBatchDO.setEffectiveEndTime(couponBatchDetailDO.getEffectiveEndTime());
+        couponBatchDO.setCouponBatchTotalCount(couponBatchDetailDO.getCouponTotalCount());
+        couponBatchDO.setTotalFaceAmount(couponBatchDetailDO.getTotalFaceAmount());
+        couponBatchDO.setUpdateUser(couponBatchDetailDO.getUpdateUser());
+        couponBatchDO.setUpdateTime(couponBatchDetailDO.getUpdateTime());
+        couponBatchMapper.update(couponBatchDO);
         //增加优惠卷方法
         addCoupon(couponBatchDetailDO);
 
@@ -224,7 +236,6 @@ public class CouponServiceImpl implements CouponService{
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("couponBatchDetailQueryParam", couponBatchDetailQueryParam);
-        //todo
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = couponBatchDetailMapper.findCouponBatchDetailCountByParams(maps);
         List<CouponBatchDetailDO> couponBatchDetailDOList = couponBatchDetailMapper.findCouponBatchDetailByParams(maps);
@@ -247,7 +258,6 @@ public class CouponServiceImpl implements CouponService{
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("couponQueryParam", couponQueryParam);
-        //todo
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = couponMapper.findCouponCountByParams(maps);
         List<CouponDO> couponDOList = couponMapper.findCouponByParams(maps);
@@ -269,14 +279,12 @@ public class CouponServiceImpl implements CouponService{
         Date date = new Date();
         ArrayList<CouponDO> couponDOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-//            CouponDO couponDO = couponMapper.findByIdIgnoreDataStatus(list.get(i));
-            //todo
-//            if (couponDO.getDataStatus()==2) {
-//                serviceResult.setErrorCode(ErrorCode.COUPON_USED);
-//                return  serviceResult;
-//            }
-//            couponDOList.add(couponDO);
-
+            CouponDO couponDO = couponMapper.findByIdIgnoreDataStatus(list.get(i).getCouponId());
+            if (couponDO.getDataStatus()==2) {
+                serviceResult.setErrorCode(ErrorCode.COUPON_USED);
+                return  serviceResult;
+            }
+            couponDOList.add(couponDO);
         }
         couponMapper.deleteCouponList(couponDOList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -295,16 +303,17 @@ public class CouponServiceImpl implements CouponService{
         for (int i = 0; i <couponBatchDetailDO.getCouponTotalCount() ; i++) {
             CouponDO couponDO = new CouponDO();
             couponDO.setCouponBatchId(couponBatchDetailDO.getCouponBatchId());
-            couponDO.setErpBatchDetailId(couponBatchDetailDO.getId());
+            couponDO.setCouponBatchDetailId(couponBatchDetailDO.getId());
             couponDO.setFaceValue(couponBatchDetailDO.getFaceValue());
             couponDO.setDeductionAmount(BigDecimal.ZERO);
             couponDO.setIsOnline(couponBatchDetailDO.getIsOnline());
-            //如果是线上的设置初始状态是未领取（0），线下的设置状态为可用（4）
+            //线上（1），线下（0）
             if (CommonConstant.COMMON_CONSTANT_NO.equals(couponBatchDetailDO.getIsOnline())) {
-                //todo
-                couponDO.setCouponStatus(4);
+                //线下设置为可用（4）
+                couponDO.setCouponStatus(CouponStatus.COUPON_STATUS_USABLE);
             } else {
-                couponDO.setCouponStatus(0);
+                //线上设置为未领取（0）
+                couponDO.setCouponStatus(CouponStatus.COUPON_STATUS_UNCLAIMED);
             }
             couponDO.setEffectiveStartTime(couponBatchDetailDO.getEffectiveStartTime());
             couponDO.setEffectiveEndTime(couponBatchDetailDO.getEffectiveEndTime());

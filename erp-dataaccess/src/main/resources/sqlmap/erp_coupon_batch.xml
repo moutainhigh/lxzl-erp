@@ -30,7 +30,10 @@
 		SELECT <include refid="column_List"/> FROM erp_coupon_batch ecb 
 		WHERE ecb.id = #{id, jdbcType=INTEGER} AND ecb.data_status = 1 
 	</select>
-
+	<select id="findByIdIgnoreDataStatus" resultMap="CouponBatchDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon_batch ecb
+		WHERE ecb.id = #{id, jdbcType=INTEGER}
+	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ecb.id) FROM erp_coupon_batch ecb 
 		<where>
@@ -61,12 +64,9 @@
 			<if test="couponType != null">
 				coupon_type = #{couponType,jdbcType=INTEGER},
 			</if>
-			<if test="effectiveStartTime != null">
 				effective_start_time = #{effectiveStartTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="effectiveEndTime != null">
+
 				effective_end_time = #{effectiveEndTime,jdbcType=TIMESTAMP},
-			</if>
 			<if test="couponBatchTotalCount != null">
 				coupon_batch_total_count = #{couponBatchTotalCount,jdbcType=INTEGER},
 			</if>
@@ -120,14 +120,14 @@
 			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.couponType != null ">
 				and ecb.coupon_type = #{maps.couponBatchQueryParam.couponType, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.effectiveStartTime != null ">
-				and ecb.effective_start_time = #{maps.couponBatchQueryParam.effectiveStartTime, jdbcType=datetime}
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createStartTime != null ">
+				<![CDATA[ AND ecb.create_time >= #{maps.couponBatchQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.effectiveEndTime != null ">
-				and ecb.effective_end_time = #{maps.couponBatchQueryParam.effectiveEndTime, jdbcType=datetime}
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createEndTime != null ">
+				<![CDATA[ AND ecb.create_time <= #{maps.couponBatchQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.isQueryAll == null">
-				and ecb.data_status = 1
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.dataStatus != null ">
+				and ecb.data_status = #{maps.couponBatchQueryParam.dataStatus, jdbcType=INTEGER}
 			</if>
 		</where>
 		ORDER BY ecb.update_time DESC
@@ -144,14 +144,14 @@
 			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.couponType != null ">
 				and ecb.coupon_type = #{maps.couponBatchQueryParam.couponType, jdbcType=VARCHAR}
 			</if>
-			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.effectiveStartTime != null ">
-				and ecb.effective_start_time = #{maps.couponBatchQueryParam.effectiveStartTime, jdbcType=datetime}
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createStartTime != null ">
+				<![CDATA[ AND ecb.create_time >= #{maps.couponBatchQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.effectiveEndTime != null ">
-				and ecb.effective_end_time = #{maps.couponBatchQueryParam.effectiveEndTime, jdbcType=datetime}
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createEndTime != null ">
+				<![CDATA[ AND ecb.create_time <= #{maps.couponBatchQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.isQueryAll == null">
-				and ecb.data_status = 1
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.dataStatus != null ">
+				and ecb.data_status = #{maps.couponBatchQueryParam.dataStatus, jdbcType=INTEGER}
 			</if>
 		</where>
 
