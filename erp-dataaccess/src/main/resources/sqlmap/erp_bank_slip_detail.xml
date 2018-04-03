@@ -163,7 +163,7 @@
 				and 1=1
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
-				and ebs.slip_status !=0
+				and ebs.slip_status !=0 AND ebsd.data_status != 5
 			</if>
 		</where>
 	</select>
@@ -192,9 +192,9 @@
 			</if>
 			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
 				and 1=1
-			</if>
+ 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
-				and ebs.slip_status !=0
+				and ebs.slip_status !=0 AND ebsd.data_status != 5
 			</if>
 		</where>
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
@@ -260,4 +260,30 @@
 		</foreach>
 	</insert>
 
+	<insert id="deleteByBankSlipId" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List" >
+		update erp_bank_slip_detail
+		SET
+		<trim>
+			data_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</insert>
 </mapper>

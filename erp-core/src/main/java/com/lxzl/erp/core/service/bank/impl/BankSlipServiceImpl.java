@@ -130,7 +130,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //校验上传流水月份是否超过当月
-        if(bankSlip.getSlipMonth().getTime() - DateUtil.getMonthByCurrentOffset(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD).getTime() > 0){
+        if (bankSlip.getSlipMonth().getTime() - DateUtil.getMonthByCurrentOffset(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD).getTime() > 0) {
             serviceResult.setErrorCode(ErrorCode.OVERSTEP_CURRENT_MONTH);
             return serviceResult;
         }
@@ -330,7 +330,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
 
         //判断是否是收入状态
-        if(!LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())){
+        if (!LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_INCOME);
             return serviceResult;
         }
@@ -383,7 +383,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
 
         //判断是否是收入状态
-        if(!LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())){
+        if (!LoanSignType.INCOME.equals(bankSlipDetailDO.getLoanSign())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_INCOME);
             return serviceResult;
         }
@@ -574,7 +574,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipDetailMapper.updateConfirmBankDetailDO(bankSlipDetailDOList);
             //改变已经确认个数  再判断认领个数
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - amount);
-            if(bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0){
+            if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
                 bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
             }
             bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + amount);
@@ -591,12 +591,115 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, BankSlipDetail> queryBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, BankSlipDetail> serviceResult = new ServiceResult<>();
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
-        if(bankSlipDetailDO == null){
+        if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(ConverterUtil.convert(bankSlipDetailDO,BankSlipDetail.class));
+        serviceResult.setResult(ConverterUtil.convert(bankSlipDetailDO, BankSlipDetail.class));
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> deleteBankSlip(BankSlip bankSlip) {
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        Integer bankSlipId = bankSlip.getBankSlipId();
+        BankSlipDO bankSlipDO = bankSlipMapper.findDetailById(bankSlipId);
+
+        if (bankSlipDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if (!SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_INITIALIZE);
+            return serviceResult;
+        }
+        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
+        if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
+            return serviceResult;
+        }
+        for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
+            bankSlipDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            bankSlipDetailDO.setUpdateTime(now);
+            bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        }
+
+        //删除所有项
+        bankSlipDetailMapper.deleteByBankSlipId(bankSlipDetailDOList);
+        //删除总表
+        bankSlipDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        bankSlipDO.setUpdateTime(now);
+        bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipMapper.update(bankSlipDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> hideBankSlipDetail(BankSlipDetail bankSlipDetail) {
+        //校验权限可隐藏
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        //是否有权下推
+        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+
+        //加状态隐藏 跟新是否隐藏
+        Integer bankSlipDetailId = bankSlipDetail.getBankSlipDetailId();
+        BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetailId);
+        if (bankSlipDetailDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if(BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_DISPLAY);
+            return serviceResult;
+        }
+
+        bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.HIDE);
+        bankSlipDetailDO.setUpdateTime(now);
+        bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailMapper.update(bankSlipDetailDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> displayBankSlipDetail(BankSlipDetail bankSlipDetail) {
+        //校验权限可显示
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        //是否有权下推
+        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+
+        //加状态隐藏 跟新是否隐藏
+        Integer bankSlipDetailId = bankSlipDetail.getBankSlipDetailId();
+        BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetailId);
+        if (bankSlipDetailDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        if(!BankSlipDetailStatus.HIDE.equals(bankSlipDetailDO.getDetailStatus())){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HIDE);
+            return serviceResult;
+        }
+
+        bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+        bankSlipDetailDO.setUpdateTime(now);
+        bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailMapper.update(bankSlipDetailDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 }

@@ -160,15 +160,10 @@ public class WorkflowServiceImpl implements WorkflowService {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
             WorkflowNodeDO thisWorkflowNodeDO = null;
+            thisWorkflowNodeDO = workflowNodeDOList.get(0);
             if (WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)) {
-                if (workflowLinkDO != null) {
-                    if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowLinkDO.getWorkflowLinkDetailDOList().get(0).getWorkflowStep())) {
-                        thisWorkflowNodeDO = workflowNodeDOList.get(1);
-                    } else {
-                        thisWorkflowNodeDO = workflowNodeDOList.get(0);
-                    }
-                } else {
-                    thisWorkflowNodeDO = workflowNodeDOList.get(0);
+                if (workflowLinkDO != null && CommonConstant.WORKFLOW_STEP_TWO.equals(workflowLinkDO.getWorkflowLinkDetailDOList().get(0).getWorkflowStep())) {
+                    thisWorkflowNodeDO = workflowNodeDOList.get(1);
                 }
             }
             if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser, subCompanyId)) {
@@ -483,6 +478,13 @@ public class WorkflowServiceImpl implements WorkflowService {
                     if (customerDO == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                         return result;
+                    }
+                    if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+                        customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+                        if(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())){
+                            result.setErrorCode(ErrorCode.SUCCESS);
+                            return result;
+                        }
                     }
                     List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
                     if (customerConsignInfoDOList.size() == 0) {
