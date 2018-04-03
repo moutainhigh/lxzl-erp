@@ -838,7 +838,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                             customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
                             if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
-                                customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+                                customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_BACK);
                                 customerDO.getCustomerCompanyDO().setUpdateTime(currentTime);
                                 customerDO.getCustomerCompanyDO().setUpdateUser(loginUser.getUserId().toString());
                                 customerCompanyMapper.update(customerDO.getCustomerCompanyDO());
@@ -853,7 +853,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                         }
                         for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
                             if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())) {
-                                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+                                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_BACK);
                                 customerConsignInfoDO.setUpdateTime(currentTime);
                                 customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                                 customerConsignInfoMapper.update(customerConsignInfoDO);
@@ -1458,7 +1458,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         SubCompanyCityCoverDO subCompanyCityCoverDO;
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
-            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
+            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())
+                    || CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
                 //判断经营地址
                 subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
                 if (subCompanyCityCoverDO == null) {
@@ -1479,7 +1480,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         //判断收货地址
         for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
-            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())) {
+            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())
+                    || CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerConsignInfoDO.getVerifyStatus())) {
                 subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
                 if (subCompanyCityCoverDO == null) {
                     subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
