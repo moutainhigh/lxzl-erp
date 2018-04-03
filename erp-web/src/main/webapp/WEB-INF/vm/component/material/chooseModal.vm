@@ -38,8 +38,9 @@
                     <thead>
                     <tr>
                         <th>编号</th>
-                        <th>图片</th>
+##                        <th>图片</th>
                         <th>名称</th>
+                        <th>K3物料编号</th>
                         <th>型号</th>
                         <th>类型</th>
                         <th>配件值大小</th>
@@ -57,8 +58,9 @@
                     {{#listData}}
                     <tr class="materialRow">
                         <td>{{materialNo}}</td>
-                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+##                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{materialName}}</td>
+                        <td>{{k3MaterialNo}}</td>
                         <td>{{materialModelName}}</td>
                         <td>{{materialTypeStr}}</td>
                         <td>{{#memorysize}}{{materialCapacityValue}}{{/memorysize}}</td>
