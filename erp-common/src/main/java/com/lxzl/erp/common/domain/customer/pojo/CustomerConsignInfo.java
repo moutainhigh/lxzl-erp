@@ -39,7 +39,7 @@ public class CustomerConsignInfo extends BasePO {
 	@In(value = {CommonConstant.YES,CommonConstant.NO}, message=ErrorCode.CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer isBusinessAddress;	//是否为经营地址，0否1是
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
-	private Integer verifyStatus;   //审核状态：0未提交；1.已提交 2.初审通过；3.终审通过
+	private Integer verifyStatus;   //审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 ；4.审批驳回
 	private Date lastUseTime;  //最后使用时间
 	private String remark;   //备注
 	private Date createTime;   //添加时间
