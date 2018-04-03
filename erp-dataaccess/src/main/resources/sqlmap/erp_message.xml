@@ -165,4 +165,84 @@
         read_time IS NULL
     </select>
 
+    <update id="batchUpdate" parameterType="java.util.ArrayList">
+        update erp_message
+        SET
+        <trim>
+            sender_user_id =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.senderUserId,jdbcType=INTEGER}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            receiver_user_id =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.receiverUserId,jdbcType=INTEGER}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            send_time  =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.sendTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            read_time =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.readTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            title =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.title,jdbcType=VARCHAR}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            message_text =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.messageText,jdbcType=VARCHAR}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            data_status  =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.dataStatus,jdbcType=INTEGER}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            remark =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.remark,jdbcType=VARCHAR}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            create_time =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.createTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            create_user =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.createUser,jdbcType=VARCHAR}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_time  =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            update_user =
+            <foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=INTEGER}
+            </foreach>
+        </trim>
+        WHERE id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
 </mapper>
