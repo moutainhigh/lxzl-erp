@@ -412,6 +412,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS = "J400137";
     public static final String PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS = "J400138";
     public static final String ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME = "J400139";
+    public static final String ORDER_ISPEER_NOT_NULL = "J400140";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1246,6 +1247,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS, "采购申请单的商品项不存在");
         MAP.put(PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS, "采购申请单的配件项不存在");
         MAP.put(ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME, "订单的电销人员不能选择自己电销发货所属分公司");
+        MAP.put(ORDER_ISPEER_NOT_NULL, "是否是同行调拨不能为空");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
