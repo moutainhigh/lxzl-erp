@@ -67,6 +67,21 @@
                     <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="tradeDetailTable"></table>
                 </div>
             </div>
+            <div class="panel-body pn">
+                <div class="section row" style="margin:0;">
+                    <div class="col-md-12">
+                        <div class="section-divider mv40">
+                            <span>备注</span>
+                        </div>
+                        <div class="section">
+                            <label for="remark" class="field prepend-icon">
+                                <textarea class="gui-textarea" id="remark" name="remark" rows="3" placeholder="输入备注"></textarea>
+                                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="panel-footer clearfix">
                 <button class="btn btn-default pull-right ml15 cancelBtn">取消</button>
                 <button class="btn btn-primary pull-right sureBtn">确定</button>

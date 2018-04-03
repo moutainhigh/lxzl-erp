@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.k3.converter.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -7,14 +8,13 @@ import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.Product;
+import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormICItem;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderEntry;
-import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -23,14 +23,10 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderTimeAxisMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +153,7 @@ public class K3OrderConverter implements ConvertK3DataService {
             FormSEOrderEntry list[] = new FormSEOrderEntry[size];
             if (CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())) {
                 for (OrderProduct orderProduct : erpOrder.getOrderProductList()) {
-                    Product product = ConverterUtil.convert(orderProduct.getProductSkuSnapshot(),Product.class);
+                    Product product = JSON.parseObject(orderProduct.getProductSkuSnapshot(), Product.class);
 //                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId());
                     K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
                     K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
@@ -170,6 +166,10 @@ public class K3OrderConverter implements ConvertK3DataService {
                         number = product.getK3ProductNo();
                     } else {
                         number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+                    }
+
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(erpOrder.getIsPeer())){
+//                        number.substring()
                     }
                     FormSEOrderEntry formSEOrderEntry = new FormSEOrderEntry();
 
@@ -197,9 +197,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                     formSEOrderEntry.setYJAmount(orderProduct.getRentDepositAmount());//  租金押金金额
                     formSEOrderEntry.setEQYJAmount(orderProduct.getDepositAmount());//  设备押金金额
                     formSEOrderEntry.setPayAmountTotal(orderProduct.getFirstNeedPayAmount());//首付合计
-                    ProductSkuDO productSkuDO = productSkuMapper.findById(orderProduct.getProductSkuId());
-                    formSEOrderEntry.setEQPrice(productSkuDO.getSkuPrice());//  单台设备价值
-                    formSEOrderEntry.setEQAmount(BigDecimalUtil.mul(productSkuDO.getSkuPrice(), new BigDecimal(orderProduct.getProductCount())));//  设备价值
+                    ProductSku productSku = product.getProductSkuList().get(0);
+                    formSEOrderEntry.setEQPrice(productSku.getSkuPrice());//  单台设备价值
+                    formSEOrderEntry.setEQAmount(BigDecimalUtil.mul(productSku.getSkuPrice(), new BigDecimal(orderProduct.getProductCount())));//  设备价值
                     formSEOrderEntry.setSupplyNumber("");//  同行供应商
                     formSEOrderEntry.setOrderItemId(orderProduct.getOrderProductId());
                     if (OrderPayMode.PAY_MODE_PAY_AFTER.equals(orderProduct.getPayMode())) {
@@ -214,9 +214,9 @@ public class K3OrderConverter implements ConvertK3DataService {
                     }
 
                     if (OrderRentType.RENT_TYPE_DAY.equals(orderProduct.getRentType())) {
-                        formSEOrderEntry.setStdPrice(productSkuDO.getDayRentPrice());//  设备标准租金
+                        formSEOrderEntry.setStdPrice(productSku.getDayRentPrice());//  设备标准租金
                     } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderProduct.getRentType())) {
-                        formSEOrderEntry.setStdPrice(productSkuDO.getMonthRentPrice());//  设备标准租金
+                        formSEOrderEntry.setStdPrice(productSku.getMonthRentPrice());//  设备标准租金
                     }
                     if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProduct.getIsNewProduct())) {
                         formSEOrderEntry.setEQType("N");//  新旧属性 N	新   O 次新 （字母）
@@ -314,19 +314,11 @@ public class K3OrderConverter implements ConvertK3DataService {
     }
 
     public static void main(String[] args) {
-        test("ppppppppp");
+        String s = "10.sdsd.21323.aae";
+        s = "90"+s.substring(2,s.length());
+        System.out.println(s);
     }
 
-    private static void test(String s) {
-        Order order = null;
-        try {
-            order.getOrderStatus();
-        } catch (Throwable t) {
-            StringWriter errorInfo = new StringWriter();
-            t.printStackTrace(new PrintWriter(errorInfo, true));
-            System.out.println(errorInfo.toString());
-        }
-    }
 
     @Autowired
     private K3Support k3Support;
@@ -349,11 +341,5 @@ public class K3OrderConverter implements ConvertK3DataService {
     @Autowired
     private UserSupport userSupport;
     @Autowired
-    private ProductMapper productMapper;
-    @Autowired
-    private ProductSkuMapper productSkuMapper;
-    @Autowired
     private OrderTimeAxisMapper orderTimeAxisMapper;
-    @Autowired
-    private DingDingSupport dingDingSupport;
 }

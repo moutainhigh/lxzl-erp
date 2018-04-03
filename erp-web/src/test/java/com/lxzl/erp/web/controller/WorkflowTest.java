@@ -75,7 +75,8 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     @Test
     public void queryWorkflowLinkDetail() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
-        workflowLinkQueryParam.setWorkflowLinkNo("LXWF-500001-20180328-00754");
+
+        workflowLinkQueryParam.setWorkflowLinkNo("LXWF-500001-20180327-00747");
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkDetail", workflowLinkQueryParam);
     }
 
@@ -220,7 +221,13 @@ public class WorkflowTest extends ERPUnTransactionalTest {
 
         }
     }
-
+    @Test
+    public void queryWorkflowLinkDetailByType() throws Exception {
+        WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
+        workflowLinkQueryParam.setWorkflowType(16);
+        workflowLinkQueryParam.setWorkflowReferNo("LXCC-1000-20180327-00815");
+        TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkDetailByType", workflowLinkQueryParam);
+    }
     @Test
     public void test123() throws Exception {
 

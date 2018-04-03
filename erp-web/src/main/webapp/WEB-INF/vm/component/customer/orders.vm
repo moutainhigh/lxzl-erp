@@ -62,7 +62,7 @@
                             <td valign="top" colspan="9" class="text-center">没有查询到首次所需设备</td>
                         </tr>
                         {{/listData}}
-                        <tr>
+                        <tr class="totalPriceRow hide">
                             <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">首期所需设备总价值：</td>
                             <td class="text-danger">
                                 <div class="text-danger" id="firstListTotalPriceBox"></div>
@@ -110,7 +110,7 @@
                             <td valign="top" colspan="9" class="text-center">没有查询到后续所需设备</td>
                         </tr>
                         {{/listData}}
-                        <tr>
+                        <tr class="totalPriceRow hide">
                             <td colspan="8" class="text-right text-danger" style="padding-right:0; margin-right:-11px;">后续所需设备总价值：</td>
                             <td class="text-danger">
                                 <div class="text-danger" id="laterListTotalPriceBox"></div>

@@ -35,7 +35,7 @@
                 <td>￥{{#price}}{{creditAmount}}{{/price}}</td>
                 <td class="text-center">￥{{#price}}{{creditAmountUsed}}{{/price}}</td>
                 <td class="text-center">￥{{#price}}{{importCreditAmountUsed}}{{/price}}</td>
-                <td class="text-center">￥{{#price}}{{singleLimitPrice}}{{/price}}</td>
+                <td class="text-center">{{singleLimitPriceValue}}</td>
                 <td class="text-center">{{dataStatusValue}}</td>
                 <td class="text-center">{{returnVisitFrequency}}</td>
                 <td class="text-center">{{isFullDepositValue}}</td>

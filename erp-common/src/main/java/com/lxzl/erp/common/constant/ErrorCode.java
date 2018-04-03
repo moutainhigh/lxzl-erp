@@ -58,6 +58,7 @@ public class ErrorCode {
     public static final String OWNER_NOT_NULL = "J100029";
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
+    public static final String WORKFLOW_CONFIG_ERROR = "J100032";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -411,6 +412,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS = "J400137";
     public static final String PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS = "J400138";
     public static final String ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME = "J400139";
+    public static final String ORDER_ISPEER_NOT_NULL = "J400140";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -562,6 +564,8 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL = "J500152";
     public static final String CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE = "J500153";
     public static final String CUSTOMER_NAME_REPETITION = "J500154";
+    public static final String CUSTOMER_CONSIGN_INFO_NOT_PENDING = "J500155";
+    public static final String CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500156";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -771,6 +775,9 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED = "J18000031";
     public static final String BANK_SLIP_DETAIL_NOT_INCOME = "J18000032";
     public static final String OVERSTEP_CURRENT_MONTH = "J18000033";
+    public static final String BANK_SLIP_DETAIL_NOT_HIDE = "J18000034";
+    public static final String BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000035";
+    public static final String BANK_SLIP_IMPORT_FAIL = "J18000036";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -832,10 +839,13 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_ERROR, "客户收货信息的经营地址状态错误");
         MAP.put(CUSTOMER_CONSIGN_INFO_IS_BUSINESS_ADDRESS_NOT_EXISTS, "客户收货信息的经营地址不存在");
         MAP.put(SUB_COMPANY_ID_NOT_NULL, "分公司ID不能为空");
-        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址信息，公司业务未覆盖范围");
-        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址信息，公司业务未覆盖范围");
-        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不给修改与删除地址");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL, "客户收货地址未覆盖业务范围");
+        MAP.put(CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL, "客户的经营地址未覆盖业务范围");
+        MAP.put(CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE, "客户的收货地址已经审核通过，不允许修改");
         MAP.put(CUSTOMER_NAME_REPETITION, "填写客户名称重复");
+        MAP.put(CUSTOMER_CONSIGN_INFO_NOT_PENDING, "客户地址只有未提交状态，才能提交");
+        MAP.put(CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER, "只有创建人、业务员、联合开发人才可以使用此功能");
+        MAP.put(WORKFLOW_CONFIG_ERROR, "审核工作流未配置或配置错误");
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1238,6 +1248,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS, "采购申请单的商品项不存在");
         MAP.put(PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS, "采购申请单的配件项不存在");
         MAP.put(ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME, "订单的电销人员不能选择自己电销发货所属分公司");
+        MAP.put(ORDER_ISPEER_NOT_NULL, "是否是同行调拨不能为空");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1538,6 +1549,9 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
         MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
         MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HIDE, "当前不是隐藏状态");
+        MAP.put(BANK_SLIP_DETAIL_NOT_DISPLAY, "当前不是显示状态");
+        MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");

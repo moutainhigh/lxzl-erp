@@ -14,9 +14,12 @@ import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,6 +48,9 @@ public class UserSupport {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
 
     public User getCurrentUser() {
@@ -197,6 +203,22 @@ public class UserSupport {
         if (CollectionUtil.isNotEmpty(userRoleList)) {
             for (Role role : userRoleList) {
                 DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_RISK.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否是风控人员
+     */
+    public boolean isRiskManagementPerson(Integer userId) {
+        List<RoleDO> roleDOList = roleMapper.findByUserId(userId);
+        if (CollectionUtil.isNotEmpty(roleDOList)) {
+            for (RoleDO roleDO : roleDOList) {
+                DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
                 if (DepartmentType.DEPARTMENT_TYPE_RISK.equals(departmentDO.getDepartmentType())) {
                     return true;
                 }

@@ -44,6 +44,7 @@
         <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
         <result column="first_need_pay_amount" jdbcType="INTEGER" property="firstNeedPayAmount" />
         <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+        <result column="is_peer" jdbcType="INTEGER" property="isPeer" />
         <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
         <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
         <result column="confirm_delivery_time" jdbcType="TIMESTAMP" property="confirmDeliveryTime" />
@@ -161,7 +162,7 @@
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.product_summary as product_summary,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.is_peer as is_peer,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.product_summary as product_summary,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id
 	</sql>
 
     <sql id="product_column_List">
@@ -363,6 +364,9 @@
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
             </if>
+            <if test="maps.orderQueryParam.isPeer != null">
+                and eo.is_peer = #{maps.orderQueryParam.isPeer, jdbcType=INTEGER}
+            </if>
 
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
@@ -451,7 +455,9 @@
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
             </if>
-
+            <if test="maps.orderQueryParam.isPeer != null">
+                and eo.is_peer = #{maps.orderQueryParam.isPeer, jdbcType=INTEGER}
+            </if>
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
             </if>
@@ -568,6 +574,9 @@
             </if>
             <if test="payStatus != null">
                 pay_status = #{payStatus, jdbcType=INTEGER},
+            </if>
+            <if test="isPeer != null">
+                is_peer = #{isPeer, jdbcType=INTEGER},
             </if>
             <if test="payTime != null">
                 pay_time = #{payTime, jdbcType=TIMESTAMP},

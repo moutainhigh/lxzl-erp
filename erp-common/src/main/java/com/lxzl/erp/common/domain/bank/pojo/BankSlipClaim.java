@@ -29,8 +29,18 @@ public class BankSlipClaim extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private String customerName;   //客户名称
+
 	@Valid
 	List<ClaimParam> claimParam;
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
 	public List<ClaimParam> getClaimParam() {
 		return claimParam;

@@ -25,4 +25,5 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
 
     void saveBankSlipDetailDOList(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
 
+    void deleteByBankSlipId(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
 }
