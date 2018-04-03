@@ -969,4 +969,11 @@ public class PageController extends BaseController {
     }
 
 
+    //输入地址
+    @RequestMapping("/view-work-flow/modal")
+    public String viewWorkFlowModal() {
+        return "/component/workFlow/viewWorkFlow";
+    }
+
+
 }

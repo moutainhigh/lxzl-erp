@@ -38,7 +38,7 @@
                                     <div class="col-md-4">
                                         <dl class="dl-horizontal">
                                             <dt class="mb10">提交人</dt><dd>{{commitUserName}}</dd>
-                                            <dt class="mb10">当前审核人</dt><dd>{{currentVerifyUserName}}</dd>
+                                            <dt class="mb10">当前审核人</dt><dd>{{getCurrentVerifyUserName}}</dd>
                                         </dl>
                                     </div>
                                     <div class="col-md-4">

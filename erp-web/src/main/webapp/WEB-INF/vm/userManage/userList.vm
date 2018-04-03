@@ -79,11 +79,12 @@
                                             <th>公司部门角色</th>
                                             <th>姓名</th>
                                             <th>用户名</th>
-                                            <th>邮箱</th>
-                                            <th>手机号</th>
+##                                            <th>邮箱</th>
+##                                            <th>手机号</th>
                                             <th>激活</th>
                                             <th>禁用</th>
                                             <th>最后登录时间</th>
+                                            <th>创建人</th>
                                             {{#hasRowActionButtons}}
                                             <th width="16%" class="text-right">操作</th>
                                             {{/hasRowActionButtons}}
@@ -109,11 +110,15 @@
                                                 </td>
                                                 <td>{{realName}}</td>
                                                 <td>{{userName}}</td>
-                                                <td>{{email}}</td>
-                                                <td>{{phone}}</td>
+##                                                <td>{{email}}</td>
+##                                                <td>{{phone}}</td>
                                                 <td>{{#boolText}}{{isActivated}}{{/boolText}}</td>
                                                 <td>{{#boolText}}{{isDisabled}}{{/boolText}}</td>
                                                 <td>{{#time}}{{lastLoginTime}}{{/time}}</td>
+                                                <td>
+                                                    <p class="mn">{{createUserRealName}}</p>
+                                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                                </td>
                                                 {{#hasRowActionButtons}}
                                                     <td class="text-right">
                                                         <div class="btn-group text-right">

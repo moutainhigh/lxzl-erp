@@ -67,7 +67,8 @@
                                                 <th>发件人</th>
                                                 <th>主题</th>
                                                 <th>内容</th>
-                                                <th>时间</th>
+                                                <th>发送时间</th>
+                                                <th>读取时间</th>
                                                 <th class="text-right" style="width:50px;">操作</th>
                                             </tr>
                                             </thead>
@@ -79,9 +80,10 @@
                                                 <td>{{senderName}}</td>
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
-                                                <td>{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
+                                                <td>{{#clockTime}}{{sendTime}}{{/clockTime}}</td>
+                                                <td>{{#readed}}{{#clockTime}}{{readTime}}{{/clockTime}}{{/readed}}</td>
                                                 <td class="text-right" style="width:50px;">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText="{{messageText}}">查看</a>
+                                                    <a href="javascript:;" type="button" class="btn btn-default btn-xs viewContent" data-messageid="{{messageId}}">查看</a>
                                                 </td>
                                             </tr>
                                             {{/listData}}
@@ -99,7 +101,7 @@
 
                                 <div id="messageContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
 
-                                <div class="panel-footer">
+                                <div class="panel-footer" style="border-top: none;">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                                             #parse("component/pager.vm")
