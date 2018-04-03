@@ -2431,7 +2431,9 @@ public class OrderServiceImpl implements OrderService {
         if (!DeliveryMode.inThisScope(order.getDeliveryMode())) {
             return ErrorCode.ORDER_DELIVERY_MODE_ERROR;
         }
-
+        if(order.getIsPeer()==null){
+            return ErrorCode.ORDER_ISPEER_NOT_NULL;
+        }
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         if (customerDO == null) {
             return ErrorCode.CUSTOMER_NOT_EXISTS;
