@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.customer.*;
-import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -22,7 +21,7 @@ public class Customer extends BasePO {
 
 	private Integer customerId;   //唯一标识
 	private Integer customerType;   //用户类型,1为企业用户，2为个人用户
-	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,CommitCustomerGroup.class,UpdateOwnerAndUnionUserGroup.class})
+	@NotBlank(message = ErrorCode.CUSTOMER_NO_NOT_NULL , groups = {IdGroup.class,UpdateCustomerCompanyGroup.class,UpdateCustomerPersonGroup.class,UpdateOwnerAndUnionUserGroup.class})
 	private String customerNo;   //客戶编号
 	private String customerName; //客户名称
 	private Integer isDisabled;   //是否禁用，1不可用；0可用
@@ -380,4 +379,5 @@ public class Customer extends BasePO {
 	public void setOwnerSubCompanyName(String ownerSubCompanyName) {
 		this.ownerSubCompanyName = ownerSubCompanyName;
 	}
+
 }

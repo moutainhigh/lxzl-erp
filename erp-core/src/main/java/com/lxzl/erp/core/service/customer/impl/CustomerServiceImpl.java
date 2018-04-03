@@ -69,7 +69,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         //该公司简单名称已经存在，则返回错误代码信息
         if (ccdo != null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            CustomerDO dbCustomerDO = customerMapper.findCustomerCompanyByNo(ccdo.getCustomerNo());
+            String companyName =  customer.getCustomerCompany().getCompanyName();
+            String SubCompanyName = dbCustomerDO.getOwnerSubCompanyName();
+            String OwnerName = dbCustomerDO.getOwnerName();
+
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_IS_EXISTS,companyName,SubCompanyName,OwnerName);
             return serviceResult;
         }
         //如果是否为法人代表申请，为是
@@ -236,7 +241,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
         if (dbCustomerDO != null) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
             return serviceResult;
         }
         //判断业务员和联合开发员
@@ -376,7 +381,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDO dbCustomerDO = customerMapper.findByName(customerCompany.getCompanyName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            String companyName =  customer.getCustomerCompany().getCompanyName();
+            String SubCompanyName = dbCustomerDO.getOwnerSubCompanyName();
+            String OwnerName = dbCustomerDO.getOwnerName();
+
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_IS_EXISTS,companyName,SubCompanyName,OwnerName);
             return serviceResult;
         }
 
@@ -621,7 +630,7 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
         if (dbCustomerDO != null && !dbCustomerDO.getCustomerNo().equals(customer.getCustomerNo())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_IS_EXISTS);
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
             return serviceResult;
         }
         CustomerDO customerDO = customerMapper.findCustomerPersonByNo(customer.getCustomerNo());
@@ -1705,7 +1714,8 @@ public class CustomerServiceImpl implements CustomerService {
         //只有创建人和业务员和联合开发员才能功能
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
@@ -1777,7 +1787,8 @@ public class CustomerServiceImpl implements CustomerService {
         //只有创建人和业务员和联合开发员才能功能
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
@@ -2981,7 +2992,8 @@ public class CustomerServiceImpl implements CustomerService {
         //只有创建人和业务员和联合开发员才能提交功能
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMMIT_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
@@ -3001,7 +3013,6 @@ public class CustomerServiceImpl implements CustomerService {
                 return serviceResult;
             }
         }
-
 
         ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
@@ -3035,6 +3046,176 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(ErrorCode.SUCCESS);
             return serviceResult;
         }
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, Integer> addCustomerReturnVisit(ReturnVisit returnVisit) {
+        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        CustomerDO customerDO = customerMapper.findByNo(returnVisit.getCustomerNo());
+        if (customerDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //todo 暂时先不用对客户回访进行条件判断，后期再进行条件的添加和修改
+//        List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
+//        if (CollectionUtil.isEmpty(orderDOList)){
+//            serviceResult.setErrorCode(ErrorCode.CUSTOMER_ORDER_DO_NOT_HAVE_ORDER);
+//            return serviceResult;
+//        }
+//
+//        //如果该客户的所有订单都是已经归还完成了，也不用进行回访了
+//        Integer returnCounT = 0; //记录订单已经完成归还的次数
+//        for (OrderDO orderDO : orderDOList){
+//            if (orderDO.getActualReturnTime().compareTo(now) < 0){
+//                returnCounT++;
+//            }
+//        }
+//
+//        if (returnCounT.equals(orderDOList.size())){
+//            serviceResult.setErrorCode(ErrorCode.CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT);
+//            return serviceResult;
+//        }
+
+        ReturnVisitDO returnVisitDO = ConverterUtil.convert(returnVisit,ReturnVisitDO.class);
+        returnVisitDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        returnVisitDO.setCreateTime(now);
+        returnVisitDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        returnVisitDO.setUpdateTime(now);
+        returnVisitDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnVisitMapper.save(returnVisitDO);
+
+        //对客户回访记录的图片做判断
+        if (CollectionUtil.isNotEmpty(returnVisit.getCustomerReturnVisitImageList())){
+            for (Image customerReturnVisitImage : returnVisit.getCustomerReturnVisitImageList()){
+                ImageDO customerReturnVisitImageDO = imgMysqlMapper.findById(customerReturnVisitImage.getImgId());
+                if (customerReturnVisitImageDO == null) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if (StringUtil.isNotEmpty(customerReturnVisitImageDO.getRefId())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.IMG_REF_ID_HAD_VALUE, customerReturnVisitImageDO.getId());
+                    return serviceResult;
+                }
+
+                customerReturnVisitImageDO.setImgType(ImgType.CUSTOMER_RETURN_VISIT_IMG_TYPE);
+                customerReturnVisitImageDO.setRefId(returnVisitDO.getId().toString());
+                customerReturnVisitImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                customerReturnVisitImageDO.setUpdateTime(now);
+                imgMysqlMapper.update(customerReturnVisitImageDO);
+            }
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(returnVisitDO.getId());
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateCustomerReturnVisit(ReturnVisit returnVisit) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        ReturnVisitDO returnVisitDO = returnVisitMapper.findById(returnVisit.getReturnVisitId());
+        if (returnVisitDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        returnVisitDO.setReturnVisitDescribe(returnVisit.getReturnVisitDescribe());
+        returnVisitDO.setRemark(returnVisit.getRemark());
+        returnVisitDO.setUpdateTime(now);
+        returnVisitDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnVisitMapper.update(returnVisitDO);
+
+        //对客户回访记录的图片做判断
+        List<Image> customerReturnVisitImageList = returnVisit.getCustomerReturnVisitImageList();
+        serviceResult = updateImage(customerReturnVisitImageList, ImgType.CUSTOMER_RETURN_VISIT_IMG_TYPE, returnVisitDO.getId().toString(), userSupport.getCurrentUserId().toString(), now);
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResult.setErrorCode(serviceResult.getErrorCode(), serviceResult.getFormatArgs());
+            return serviceResult;
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(returnVisitDO.getId().toString());
+        return serviceResult;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> deleteCustomerReturnVisit(ReturnVisit returnVisit) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        ReturnVisitDO returnVisitDO = returnVisitMapper.findDetailById(returnVisit.getReturnVisitId());
+        if (returnVisitDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        returnVisitDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        returnVisitDO.setUpdateTime(now);
+        returnVisitDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnVisitMapper.update(returnVisitDO);
+
+        //处理相关联的回访图片
+        List<ImageDO> customerReturnVisitImageDOList = returnVisitDO.getCustomerReturnVisitImageDOList();
+        if (CollectionUtil.isNotEmpty(customerReturnVisitImageDOList)){
+            for (ImageDO customerReturnVisitImageDO : customerReturnVisitImageDOList){
+                customerReturnVisitImageDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                customerReturnVisitImageDO.setUpdateTime(now);
+                customerReturnVisitImageDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                imgMysqlMapper.update(customerReturnVisitImageDO);
+            }
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(returnVisitDO.getId().toString());
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, ReturnVisit> detailCustomerReturnVisit(ReturnVisit returnVisit) {
+        ServiceResult<String, ReturnVisit> serviceResult = new ServiceResult<>();
+
+        ReturnVisitDO returnVisitDO = returnVisitMapper.findDetailById(returnVisit.getReturnVisitId());
+        if (returnVisitDO == null){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_RETURN_VISIT_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        returnVisit = ConverterUtil.convert(returnVisitDO,ReturnVisit.class);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(returnVisit);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Page<ReturnVisit>> pageCustomerReturnVisit(CustomerReturnVisitQueryParam customerReturnVisitQueryParam) {
+        ServiceResult<String, Page<ReturnVisit>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerReturnVisitQueryParam.getPageNo(), customerReturnVisitQueryParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("customerReturnVisitQueryParam", customerReturnVisitQueryParam);
+
+        Integer totalCount = returnVisitMapper.findReturnVisitCountByParams(maps);
+        List<ReturnVisitDO> returnVisitDOList = returnVisitMapper.findReturnVisitByParams(maps);
+
+        List<ReturnVisit> returnVisitList = ConverterUtil.convertList(returnVisitDOList,ReturnVisit.class);
+        Page<ReturnVisit> page = new Page<>(returnVisitList, totalCount, customerReturnVisitQueryParam.getPageNo(), customerReturnVisitQueryParam.getPageSize());;
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     @Autowired
@@ -3093,4 +3274,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private SubCompanyCityCoverMapper subCompanyCityCoverMapper;
+
+    @Autowired
+    private ReturnVisitMapper returnVisitMapper;
 }

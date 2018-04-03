@@ -3,10 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.*;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagementHistory;
+import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -34,7 +31,7 @@ public class CustomerController {
     private ResultGenerator resultGenerator;
 
     @RequestMapping(value = "addCompany", method = RequestMethod.POST)
-    public Result addCompany(@RequestBody @Validated(AddCustomerCompanyGroup.class) Customer customer, BindingResult validResult) {
+    public Result addCompany(@RequestBody @Validated({AddCustomerCompanyGroup.class}) Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.addCompany(customer);
         return resultGenerator.generate(serviceResult);
     }
@@ -46,7 +43,7 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "updateCompany", method = RequestMethod.POST)
-    public Result updateCompany(@RequestBody @Validated(UpdateCustomerCompanyGroup.class) Customer customer, BindingResult validResult) {
+    public Result updateCompany(@RequestBody @Validated({UpdateCustomerCompanyGroup.class}) Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.updateCompany(customer);
         return resultGenerator.generate(serviceResult);
     }
@@ -58,7 +55,7 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "commitCustomer", method = RequestMethod.POST)
-    public Result commitCustomer(@RequestBody @Validated(CommitCustomerGroup.class)Customer customer, BindingResult validResult) {
+    public Result commitCustomer(@RequestBody @Validated(IdGroup.class)Customer customer, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = customerService.commitCustomer(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -227,5 +224,35 @@ public class CustomerController {
     public Result customerCompanySimpleNameProcessing() {
         ServiceResult<String, String> serviceResult = customerService.customerCompanySimpleNameProcessing();
         return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "addCustomerReturnVisit", method = RequestMethod.POST)
+    public Result addCustomerReturnVisit(@RequestBody @Validated({AddCustomerReturnVisit.class,IdGroup.class}) ReturnVisit returnVisit, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = customerService.addCustomerReturnVisit(returnVisit);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "updateCustomerReturnVisit", method = RequestMethod.POST)
+    public Result updateCustomerReturnVisit(@RequestBody @Validated({UpdateCustomerReturnVisit.class,IdGroup.class}) ReturnVisit returnVisit, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.updateCustomerReturnVisit(returnVisit);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "cancelCustomerReturnVisit", method = RequestMethod.POST)
+    public Result deleteCustomerReturnVisit(@RequestBody @Validated(IdCustomerReturnVisit.class) ReturnVisit returnVisit, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.deleteCustomerReturnVisit(returnVisit);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "detailCustomerReturnVisit", method = RequestMethod.POST)
+    public Result detailCustomerReturnVisit(@RequestBody @Validated(IdCustomerReturnVisit.class) ReturnVisit returnVisit, BindingResult validResult) {
+        ServiceResult<String, ReturnVisit> serviceResult = customerService.detailCustomerReturnVisit(returnVisit);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "pageCustomerReturnVisit", method = RequestMethod.POST)
+    public Result pageCustomerReturnVisit(@RequestBody CustomerReturnVisitQueryParam customerReturnVisitQueryParam, BindingResult validResult) {
+        ServiceResult<String, Page<ReturnVisit>> serviceResult = customerService.pageCustomerReturnVisit(customerReturnVisitQueryParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
