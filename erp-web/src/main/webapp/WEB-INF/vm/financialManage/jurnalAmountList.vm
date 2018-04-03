@@ -49,11 +49,6 @@
                                         <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
                                     </div>
                                 </div>
-##                                <div class="form-group pull-right mn mr10">
-##                                    <div class="input-group">
-##                                        <select class="form-control input-sm bradius" name="loanSign" id="loanSign"></select>
-##                                    </div>
-##                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
@@ -76,14 +71,13 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>银行流水ID</th>
+                                <th>资金流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
                                 <th>对方账号</th>
                                 <th>交易流水号</th>
                                 <th>交易金额</th>
                                 <th>交易附言</th>
-##                                <th>借贷标志</th>
                                 <th>明细状态</th>
                                 <th>备注</th>
                                 <th>创建人</th>
@@ -114,7 +108,6 @@
                                     <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
                                 <td>{{tradeMessage}}</td>
-##                                <td>{{loanSignValue}}</td>
                                 <td>{{detailStatusValue}}</td>
                                 <td>{{remark}}</td>
                                 <td>
@@ -123,10 +116,15 @@
                                 </td>
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
-                                    <div class="btn-group text-right">
-                                        {{#rowActionButtons}}
-                                        <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?bankSlipDetailId={{bankSlipDetailId}}" type="button" class="btn btn-default btn-xs {{class}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankSlipDetailId}}" data-status="{{detailStatus}}">{{text}}</a>
-                                        {{/rowActionButtons}}
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            {{#rowActionButtons}}
+                                            <li>
+                                                <a href="${ctx}{{menuUrl}}?bankSlipDetailId={{bankSlipDetailId}}" class="{{class}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankSlipDetailId}}" data-status="{{detailStatus}}">{{text}}</a>
+                                            </li>
+                                            {{/rowActionButtons}}
+                                        </ul>
                                     </div>
                                 </td>
                                 {{/hasRowActionButtons}}

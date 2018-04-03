@@ -13,7 +13,7 @@
 
     <section id="content_wrapper">
         #parse("layout/topbarDropmenu.vm")
-        #parse("layout/topbar.vm"
+        #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <form class="" id="statementOrderDetailForm">
                 <div class="panel panel-primary panel-border top mb15">
