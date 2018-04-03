@@ -777,6 +777,7 @@ public class ErrorCode {
     public static final String OVERSTEP_CURRENT_MONTH = "J18000033";
     public static final String BANK_SLIP_DETAIL_NOT_HIDE = "J18000034";
     public static final String BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000035";
+    public static final String BANK_SLIP_IMPORT_FAIL = "J18000036";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1550,6 +1551,7 @@ public class ErrorCode {
         MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
         MAP.put(BANK_SLIP_DETAIL_NOT_HIDE, "当前不是隐藏状态");
         MAP.put(BANK_SLIP_DETAIL_NOT_DISPLAY, "当前不是显示状态");
+        MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");

@@ -16,15 +16,6 @@ public class BankSlipClaimDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private String customerName;  //客户名称
-	private Integer customerId;  //客户id
-
-	public Integer getCustomerId() {
-		return customerId;
-	}
-
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
-	}
 
 	public String getCustomerName() {
 		return customerName;
