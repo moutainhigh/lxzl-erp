@@ -3018,10 +3018,12 @@ public class CustomerServiceImpl implements CustomerService {
             ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN, String.valueOf(customerConsignCommitParam.getCustomerConsignId()), customerConsignCommitParam.getVerifyUserId(), customerConsignCommitParam.getVerifyMatters(), customerConsignCommitParam.getRemark(), customerConsignCommitParam.getImgIdList(), null);
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
-                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
-                customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
-                customerConsignInfoDO.setUpdateTime(now);
-                customerConsignInfoMapper.update(customerConsignInfoDO);
+                if(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())){
+                    customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
+                    customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                    customerConsignInfoDO.setUpdateTime(now);
+                    customerConsignInfoMapper.update(customerConsignInfoDO);
+                }
                 return verifyResult;
             } else {
                 serviceResult.setErrorCode(verifyResult.getErrorCode());
