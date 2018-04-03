@@ -23,6 +23,7 @@ import com.lxzl.erp.core.service.workflow.WorkFlowManager;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
@@ -125,6 +126,9 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Autowired
     private SubCompanyCityCoverMapper subCompanyCityCoverMapper;
 
+    @Autowired
+    private CustomerCompanyMapper customerCompanyMapper;
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters, String commitRemark, List<Integer> imgIdList, String orderRemark) {
@@ -144,7 +148,6 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
             ServiceResult<String, String> customerCommitWorkFlow = customerCommitWorkFlow(workflowType, workflowReferNo, verifyUser, verifyMatters, commitRemark, imgIdList, orderRemark, currentTime, workflowNodeDOList, workflowTemplateDO);
             if (!ErrorCode.SUCCESS.equals(customerCommitWorkFlow.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                 result.setErrorCode(customerCommitWorkFlow.getErrorCode());
                 return result;
             }
@@ -210,6 +213,20 @@ public class WorkflowServiceImpl implements WorkflowService {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             if (customerDO != null) {
                 subCompanyId = customerDO.getOwnerSubCompanyId();
+            }
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)) {
+            CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(Integer.valueOf(workflowReferNo));
+            if (customerConsignInfoDO != null) {
+                SubCompanyCityCoverDO citySubCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
+                if (citySubCompanyCityCoverDO != null) {
+                    subCompanyId = citySubCompanyCityCoverDO.getSubCompanyId();
+                } else {
+                    //针对香港澳门审核
+                    SubCompanyCityCoverDO ProvinceSubCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
+                    if(ProvinceSubCompanyCityCoverDO != null){
+                        subCompanyId = ProvinceSubCompanyCityCoverDO.getSubCompanyId();
+                    }
+                }
             }
         } else {
             subCompanyId = userSupport.getCurrentUserCompanyId();
@@ -454,6 +471,13 @@ public class WorkflowServiceImpl implements WorkflowService {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                         return result;
                     }
+                    if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+                        customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+                        if(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())){
+                            result.setErrorCode(ErrorCode.SUCCESS);
+                            return result;
+                        }
+                    }
                     List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
                     if (customerConsignInfoDOList.size() == 0) {
                         if (lastWorkflowLinkDetailDO.getWorkflowStep() == 2 || lastWorkflowLinkDetailDO.getWorkflowStep() == 3) {
@@ -488,7 +512,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
             }
         }
-
         if (workflowNodeDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_NODE_NOT_EXISTS);
             return result;
@@ -728,8 +751,34 @@ public class WorkflowServiceImpl implements WorkflowService {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                         return result;
                     }
+                    Integer companyId = userSupport.getCurrentUserCompanyId();
+
                     if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                         customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+
+                        if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
+                            SubCompanyCityCoverDO subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
+                            if (subCompanyCityCoverDO == null) {
+                                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerDO.getCustomerCompanyDO().getProvince());
+                                if (subCompanyCityCoverDO == null) {
+                                    result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL);
+                                    return result;
+                                }
+                            }
+                            if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus()) && companyId.equals(subCompanyCityCoverDO.getSubCompanyId())) {
+                                customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS);
+                                customerDO.getCustomerCompanyDO().setUpdateTime(currentTime);
+                                customerDO.getCustomerCompanyDO().setUpdateUser(loginUser.getUserId().toString());
+                                customerCompanyMapper.update(customerDO.getCustomerCompanyDO());
+                            }
+                        } else if (VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())
+                                && CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())
+                                && userSupport.isRiskManagementPerson()) {
+                            customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS);
+                            customerDO.getCustomerCompanyDO().setUpdateTime(currentTime);
+                            customerDO.getCustomerCompanyDO().setUpdateUser(loginUser.getUserId().toString());
+                            customerCompanyMapper.update(customerDO.getCustomerCompanyDO());
+                        }
                     } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
                         customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
                     }
@@ -738,7 +787,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                         result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
                         return result;
                     }
-                    Integer companyId = userSupport.getCurrentUserCompanyId();
                     //判断收货地址
                     for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
                         if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())) {
@@ -765,6 +813,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                             customerConsignInfoMapper.update(customerConsignInfoDO);
                         }
                     }
+                } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowLinkDO.getWorkflowType()) && VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())) {
+                    updateCustomerConsignVerifyStatus(Integer.valueOf(workflowLinkDO.getWorkflowReferNo()), CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS, currentTime, loginUser.getUserId());
                 }
             }
             if (VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS.equals(workflowVerifyUserGroupDO.getVerifyType()) && VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())) {
@@ -787,6 +837,12 @@ public class WorkflowServiceImpl implements WorkflowService {
                         }
                         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                             customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
+                            if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
+                                customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_BACK);
+                                customerDO.getCustomerCompanyDO().setUpdateTime(currentTime);
+                                customerDO.getCustomerCompanyDO().setUpdateUser(loginUser.getUserId().toString());
+                                customerCompanyMapper.update(customerDO.getCustomerCompanyDO());
+                            }
                         } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
                             customerDO = customerMapper.findCustomerPersonByNo(customerDO.getCustomerNo());
                         }
@@ -797,7 +853,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                         }
                         for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
                             if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus())) {
-                                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+                                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_BACK);
                                 customerConsignInfoDO.setUpdateTime(currentTime);
                                 customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                                 customerConsignInfoMapper.update(customerConsignInfoDO);
@@ -890,8 +946,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDO.setWorkflowStep(0);
                 workflowLinkDO.setCurrentVerifyUser(CommonConstant.SUPER_USER_ID);
             } else if (previousWorkflowNodeDO != null) {
-                if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) && userSupport.isRiskManagementPerson()) {
-                    // 如果是客户并且是风控审核就驳回，那么就相当于驳回到根部
+                if ((WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) && userSupport.isRiskManagementPerson())) {
+                    // 如果是客户和地址并且是风控审核就驳回，那么就相当于驳回到根部
                     noticeBusinessModule = true;
                     workflowLinkDO.setWorkflowStep(0);
                     workflowLinkDO.setCurrentVerifyUser(CommonConstant.SUPER_USER_ID);
@@ -903,22 +959,21 @@ public class WorkflowServiceImpl implements WorkflowService {
                         List<WorkflowVerifyUserGroupDO> newWorkflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(previousWorkflowLinkDetailDO.getVerifyUserGroupId());
                         Integer groupId = generateNoSupport.generateVerifyUserGroupId();
                         for (WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : newWorkflowVerifyUserGroupDOList) {
-                            if (!VerifyStatus.VERIFY_STATUS_PASS.equals(workflowVerifyUserGroupDO.getVerifyStatus())) {
-                                WorkflowVerifyUserGroupDO newWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
-                                newWorkflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
-                                if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
-                                    newWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
-                                } else {
-                                    newWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
-                                }
-                                newWorkflowVerifyUserGroupDO.setVerifyUser(workflowVerifyUserGroupDO.getVerifyUser());
-                                newWorkflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-                                newWorkflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                                newWorkflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
-                                newWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
-                                workflowVerifyUserGroupMapper.save(newWorkflowVerifyUserGroupDO);
-                                userIdList.add(workflowVerifyUserGroupDO.getVerifyUser());
+                            WorkflowVerifyUserGroupDO newWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+                            newWorkflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
+                            if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
+                                newWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
+                            } else {
+                                newWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
                             }
+                            newWorkflowVerifyUserGroupDO.setVerifyUser(workflowVerifyUserGroupDO.getVerifyUser());
+                            newWorkflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+                            newWorkflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                            newWorkflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
+                            newWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
+                            workflowVerifyUserGroupMapper.save(newWorkflowVerifyUserGroupDO);
+                            userIdList.add(workflowVerifyUserGroupDO.getVerifyUser());
+
                         }
                         workflowLinkDetailDO.setVerifyUserGroupId(groupId);
 //                    workflowLinkDetailDO.setVerifyUser(previousWorkflowLinkDetailDO.getVerifyUser());
@@ -1214,6 +1269,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return userList;
         }
         UserQueryParam userQueryParam = new UserQueryParam();
+        userQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
         if (workflowNodeDO.getWorkflowUser() != null) {
             ServiceResult<String, User> userResult = userService.getUserById(workflowNodeDO.getWorkflowUser());
             if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
@@ -1401,24 +1457,31 @@ public class WorkflowServiceImpl implements WorkflowService {
         Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
 
         SubCompanyCityCoverDO subCompanyCityCoverDO;
-//        if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
-//            if(customerDO.getCustomerCompanyDO().getDefaultAddressReferId() != null){
-//                //判断经营地址
-//                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
-//                if (subCompanyCityCoverDO == null) {
-//                    subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerDO.getCustomerCompanyDO().getProvince());
-//                    if (subCompanyCityCoverDO == null) {
-//                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL);
-//                        return result;
-//                    }
-//                }
-//                map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
-//            }
-//        }
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())
+                    || CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
+                //判断经营地址
+                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
+                if (subCompanyCityCoverDO == null) {
+                    subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerDO.getCustomerCompanyDO().getProvince());
+                    if (subCompanyCityCoverDO == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL);
+                        return result;
+                    }
+                }
+                map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
+
+                customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
+                customerDO.getCustomerCompanyDO().setUpdateTime(currentTime);
+                customerDO.getCustomerCompanyDO().setUpdateUser(loginUser.getUserId().toString());
+                customerCompanyMapper.update(customerDO.getCustomerCompanyDO());
+            }
+        }
 
         //判断收货地址
         for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
-            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())) {
+            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())
+                    || CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerConsignInfoDO.getVerifyStatus())) {
                 subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
                 if (subCompanyCityCoverDO == null) {
                     subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
@@ -1432,6 +1495,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
                 customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                 customerConsignInfoDO.setUpdateTime(currentTime);
+                customerConsignInfoDO.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
                 customerConsignInfoMapper.update(customerConsignInfoDO);
             }
         }
@@ -1441,8 +1505,13 @@ public class WorkflowServiceImpl implements WorkflowService {
                 UserQueryParam userQueryParam = new UserQueryParam();
                 userQueryParam.setRoleType(workflowNodeDOList.get(0).getWorkflowRoleType());
                 userQueryParam.setSubCompanyId(entry.getValue());
+                userQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
                 ServiceResult<String, List<User>> userResult = userService.getUserListByParam(userQueryParam);
                 if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
+                    if (CollectionUtil.isEmpty(userResult.getResult())) {
+                        result.setErrorCode(ErrorCode.WORKFLOW_CONFIG_ERROR);
+                        return result;
+                    }
                     for (User user : userResult.getResult()) {
                         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                         workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
@@ -1664,5 +1733,19 @@ public class WorkflowServiceImpl implements WorkflowService {
                 messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), userId);
             }
         }
+    }
+
+    private String updateCustomerConsignVerifyStatus(Integer customerConsignId, Integer verifyStatus, Date currentTime, Integer loginUserId) {
+
+        CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignId);
+        if (customerConsignInfoDO == null) {
+            return ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS;
+        }
+        customerConsignInfoDO.setVerifyStatus(verifyStatus);
+        customerConsignInfoDO.setUpdateTime(currentTime);
+        customerConsignInfoDO.setUpdateUser(loginUserId.toString());
+        customerConsignInfoMapper.update(customerConsignInfoDO);
+
+        return ErrorCode.SUCCESS;
     }
 }

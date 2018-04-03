@@ -21,6 +21,10 @@
         <result column="last_login_time" property="lastLoginTime" />
         <result column="last_login_ip" property="lastLoginIp" />
         <result column="remark" property="remark" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
         <collection property="roleDOList" resultMap="RoleDO"/>
     </resultMap>
 
@@ -44,7 +48,8 @@
     </resultMap>
 
     <sql id="columnList">
-        u.id,u.user_type,u.user_name,u.real_name,u.password,u.email,u.email_verify_code,u.email_verify_time,u.phone,u.phone_verify_code,u.phone_verify_time,u.is_activated,u.is_disabled,u.register_time,u.last_login_time,u.last_login_ip,u.remark
+        u.id,u.user_type,u.user_name,u.real_name,u.password,u.email,u.email_verify_code,u.email_verify_time,u.phone,u.phone_verify_code,u.phone_verify_time,u.is_activated,u.is_disabled,u.register_time,u.last_login_time,u.last_login_ip,u.remark,
+        u.create_time,u.create_user,u.update_time,u.update_user
     </sql>
 
     <sql id="role_columnList">
@@ -164,7 +169,7 @@
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="java.util.Map">
-        select count(user_main.id)
+        select count( DISTINCT user_main.id)
         from
         (
             select <include refid="columnList"/> from erp_user u
@@ -175,7 +180,7 @@
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
                 </if>
-                <if test="maps.userQueryParam.isDisabled != null &amp;&amp; maps.userQueryParam.isDisabled != ''">
+                <if test="maps.userQueryParam.isDisabled != null">
                     and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
                 </if>
                 <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
@@ -226,7 +231,7 @@
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
                 </if>
-                <if test="maps.userQueryParam.isDisabled != null &amp;&amp; maps.userQueryParam.isDisabled != ''">
+                <if test="maps.userQueryParam.isDisabled != null">
                     and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
                 </if>
                 <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">

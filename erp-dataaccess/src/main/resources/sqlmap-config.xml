@@ -155,6 +155,7 @@
         <mapper resource="sqlmap/erp_bank_slip_claim.xml" />
         <mapper resource="sqlmap/erp_workflow_verify_user_group.xml" />
         <mapper resource="sqlmap/erp_sub_company_city_cover.xml" />
+        <mapper resource="sqlmap/erp_return_visit.xml" />
     </mappers>
 
 </configuration>
