@@ -3020,6 +3020,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
                 customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                 customerConsignInfoDO.setUpdateTime(now);
+                customerConsignInfoDO.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN);
                 customerConsignInfoMapper.update(customerConsignInfoDO);
                 return verifyResult;
             } else {
