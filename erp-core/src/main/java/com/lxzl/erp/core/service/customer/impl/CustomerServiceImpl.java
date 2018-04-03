@@ -3037,7 +3037,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> addCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -3069,8 +3069,6 @@ public class CustomerServiceImpl implements CustomerService {
 //        }
 
         ReturnVisitDO returnVisitDO = ConverterUtil.convert(returnVisit,ReturnVisitDO.class);
-        returnVisitDO.setReturnVisitDescribe(returnVisit.getReturnVisitDescribe());
-        returnVisitDO.setCustomerNo(customerDO.getCustomerNo());
         returnVisitDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         returnVisitDO.setCreateTime(now);
         returnVisitDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -3107,7 +3105,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> updateCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -3118,10 +3116,11 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        ReturnVisitDO newReturnVisitDO = ConverterUtil.convert(returnVisit,ReturnVisitDO.class);
-        newReturnVisitDO.setUpdateTime(now);
-        newReturnVisitDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        returnVisitMapper.update(newReturnVisitDO);
+        returnVisitDO.setReturnVisitDescribe(returnVisit.getReturnVisitDescribe());
+        returnVisitDO.setRemark(returnVisit.getRemark());
+        returnVisitDO.setUpdateTime(now);
+        returnVisitDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        returnVisitMapper.update(returnVisitDO);
 
         //对客户回访记录的图片做判断
         List<Image> customerReturnVisitImageList = returnVisit.getCustomerReturnVisitImageList();
@@ -3137,8 +3136,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, String> cancelCustomerReturnVisit(ReturnVisit returnVisit) {
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> deleteCustomerReturnVisit(ReturnVisit returnVisit) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
 

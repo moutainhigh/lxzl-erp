@@ -239,8 +239,8 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "cancelCustomerReturnVisit", method = RequestMethod.POST)
-    public Result cancelCustomerReturnVisit(@RequestBody @Validated(IdCustomerReturnVisit.class) ReturnVisit returnVisit, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = customerService.cancelCustomerReturnVisit(returnVisit);
+    public Result deleteCustomerReturnVisit(@RequestBody @Validated(IdCustomerReturnVisit.class) ReturnVisit returnVisit, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = customerService.deleteCustomerReturnVisit(returnVisit);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

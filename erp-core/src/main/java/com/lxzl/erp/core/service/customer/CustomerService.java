@@ -195,7 +195,7 @@ public interface CustomerService extends VerifyReceiver {
      * @param returnVisit
      * @return
      */
-    ServiceResult<String,String> cancelCustomerReturnVisit(ReturnVisit returnVisit);
+    ServiceResult<String,String> deleteCustomerReturnVisit(ReturnVisit returnVisit);
 
     /**
      * 客户回访详情

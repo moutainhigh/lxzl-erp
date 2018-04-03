@@ -5,10 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.AddCustomerReturnVisit;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerCompanyGroup;
-import com.lxzl.erp.common.domain.validGroup.customer.UpdateCustomerReturnVisit;
 
 import javax.validation.constraints.NotNull;
 
