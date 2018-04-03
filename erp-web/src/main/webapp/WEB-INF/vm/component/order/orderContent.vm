@@ -40,6 +40,22 @@
                     </div>
                 </div>
                 <div class="form-group field">
+                    <label class="col-md-3 control-label">配送日期</label>
+                    <div class="col-md-3">
+                        <div class="input-group date" id="createExpectDeliveryTimePicker">
+                            <input id="expectDeliveryTime" name="expectDeliveryTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择交货日期" readonly />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                    <label class="col-md-3 control-label">起租日期</label>
+                    <div class="col-md-3">
+                        <div class="input-group date" id="createTimePicker">
+                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" readonly />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
                     <div class="col-md-6">
                         <label class="col-md-6 control-label">租赁类型</label>
                         <div class="col-md-6">
@@ -54,23 +70,6 @@
                             <div>
                                 <input id="rentTimeLength" name="rentTimeLength" class="form-control number required" type="text" placeholder="输入租赁时长" />
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">配送日期</label>
-                    <div class="col-md-3">
-                        <div class="input-group date" id="createExpectDeliveryTimePicker">
-                            <input id="expectDeliveryTime" name="expectDeliveryTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择交货日期" readonly />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
-                    </div>
-                    <label class="col-md-3 control-label">起租日期</label>
-                    <div class="col-md-3">
-                        <div class="input-group date" id="createTimePicker">
-                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" readonly />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
                 </div>
