@@ -127,25 +127,10 @@ public class OrderServiceImpl implements OrderService {
         //todo 询问客户结算时间没有的处理
         //添加客户的结算时间（天）
         Date rentStartTime = order.getRentStartTime();
-        Integer statementDays;
-        if (customerDO.getStatementDate() == null){
-            DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-            if (dataDictionaryDO == null) {
-                statementDays = StatementMode.STATEMENT_MONTH_END;
-            } else {
-                statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
-            }
-        }else{
-            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(customerDO.getStatementDate())) {
-                // 如果结算日为按月结算，那么就要自然日来结算
-                Calendar rentStartTimeCalendar = Calendar.getInstance();
-                rentStartTimeCalendar.setTime(rentStartTime);
-                rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
-                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
-            } else {
-                statementDays = customerDO.getStatementDate();
-            }
-        }
+
+        //计算结算时间
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(customerDO,rentStartTime);
+
         //获取
         orderDO.setStatementDate(statementDays);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
