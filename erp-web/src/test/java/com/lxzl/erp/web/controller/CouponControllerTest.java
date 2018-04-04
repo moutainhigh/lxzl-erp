@@ -12,6 +12,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import org.junit.Test;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,13 +61,12 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void addCouponBatchDetail() throws Exception {
         Date date = new Date();
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchId(2);
+        couponBatchDetail.setCouponBatchId(5);
         couponBatchDetail.setCouponTotalCount(5);
-        BigDecimal faceValue = new BigDecimal(35.00);
+        BigDecimal faceValue = new BigDecimal(45.00);
         couponBatchDetail.setFaceValue(faceValue);
-        couponBatchDetail.setIsOnline(1);
-        couponBatchDetail.setEffectiveStartTime(date);
         couponBatchDetail.setEffectiveEndTime(date);
+        couponBatchDetail.setIsOnline(1);
         couponBatchDetail.setRemark("优惠券生成");
 
         TestResult testResult = getJsonTestResult("/coupon/addCouponBatchDetail", couponBatchDetail);
@@ -87,7 +87,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         CouponQueryParam couponQueryParam = new CouponQueryParam();
         couponQueryParam.setPageNo(1);
         couponQueryParam.setPageSize(1);
-        couponQueryParam.setCouponBatchId(2);
+        couponQueryParam.setCouponBatchId(4);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         TestResult testResult = getJsonTestResult("/coupon/pageCoupon", couponQueryParam);

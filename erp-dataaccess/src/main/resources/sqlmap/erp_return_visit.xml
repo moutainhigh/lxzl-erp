@@ -128,6 +128,11 @@
 	</select>
 
 	<select id="findReturnVisitByParams" resultMap="ReturnVisitDO"  parameterType="map">
+		SELECT erv.*
+		<trim prefix=",">
+			<include refid="img_column_List" />
+		</trim>
+		FROM(
 		SELECT <include refid="column_List"/> FROM erp_return_visit erv
 		<where>
 			<if test="maps.customerReturnVisitQueryParam != null &amp;&amp; maps.customerReturnVisitQueryParam.customerNo != null &amp;&amp; maps.customerReturnVisitQueryParam.customerNo != ''">
@@ -137,7 +142,10 @@
 				and erv.data_status = 1
 			</if>
 		</where>
-		ORDER BY erv.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
+		) erv
+		LEFT JOIN erp_img ei ON ei.ref_id = erv.id AND ei.data_status = 1 AND ei.img_type = 17
+		ORDER BY erv.create_time DESC
 	</select>
+
 </mapper>

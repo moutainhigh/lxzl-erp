@@ -13,6 +13,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.CouponService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
@@ -49,6 +50,8 @@ public class CouponServiceImpl implements CouponService{
     private CouponBatchMapper couponBatchMapper;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 
 
     /**
@@ -197,6 +200,8 @@ public class CouponServiceImpl implements CouponService{
 
         //设置优惠券总面值（乘）
         couponBatchDetailDO.setTotalFaceAmount(BigDecimalUtil.mul(new BigDecimal(couponTotalCount),faceValue));
+        couponBatchDetailDO.setEffectiveStartTime(couponBatchDO.getEffectiveStartTime());
+        couponBatchDetailDO.setEffectiveEndTime(couponBatchDO.getEffectiveEndTime());
         couponBatchDetailDO.setTotalUsedAmount(BigDecimal.ZERO);
         couponBatchDetailDO.setTotalDeductionAmount(BigDecimal.ZERO);
         couponBatchDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -209,8 +214,6 @@ public class CouponServiceImpl implements CouponService{
         //更新优惠卷批次数据
 
         couponBatchDO.setTotalFaceAmount(couponBatchDetailDO.getTotalFaceAmount());
-        couponBatchDO.setEffectiveStartTime(couponBatchDetailDO.getEffectiveStartTime());
-        couponBatchDO.setEffectiveEndTime(couponBatchDetailDO.getEffectiveEndTime());
         couponBatchDO.setCouponBatchTotalCount(couponBatchDetailDO.getCouponTotalCount());
         couponBatchDO.setTotalFaceAmount(couponBatchDetailDO.getTotalFaceAmount());
         couponBatchDO.setUpdateUser(couponBatchDetailDO.getUpdateUser());
@@ -303,6 +306,7 @@ public class CouponServiceImpl implements CouponService{
         for (int i = 0; i <couponBatchDetailDO.getCouponTotalCount() ; i++) {
             CouponDO couponDO = new CouponDO();
             couponDO.setCouponBatchId(couponBatchDetailDO.getCouponBatchId());
+            couponDO.setCouponCode(generateNoSupport.generateCouponCode());
             couponDO.setCouponBatchDetailId(couponBatchDetailDO.getId());
             couponDO.setFaceValue(couponBatchDetailDO.getFaceValue());
             couponDO.setDeductionAmount(BigDecimal.ZERO);
