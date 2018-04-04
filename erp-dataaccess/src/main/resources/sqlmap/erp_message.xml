@@ -62,12 +62,9 @@
          SELECT
             <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
             CASE
-            WHEN em.read_time IS NOT NULL THEN
-            1
             WHEN em.read_time IS NULL THEN
             0
-            ELSE
-            NULL
+            ELSE 1
             END AS isRead
           FROM erp_message em
             LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
@@ -91,12 +88,9 @@
         SELECT
         <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
         CASE
-        WHEN em.read_time IS NOT NULL THEN
-        1
         WHEN em.read_time IS NULL THEN
         0
-        ELSE
-        NULL
+        ELSE 1
         END AS isRead
         FROM erp_message em
         LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
@@ -125,12 +119,9 @@
         SELECT
         <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
         CASE
-        WHEN em.read_time IS NOT NULL THEN
-        1
         WHEN em.read_time IS NULL THEN
         0
-        ELSE
-        NULL
+        ELSE 1
         END AS isRead
         FROM erp_message em
         LEFT JOIN erp_user esu ON em.`sender_user_id` = esu.id
