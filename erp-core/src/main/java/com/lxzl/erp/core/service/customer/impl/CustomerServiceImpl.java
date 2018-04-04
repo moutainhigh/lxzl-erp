@@ -1639,7 +1639,8 @@ public class CustomerServiceImpl implements CustomerService {
         //只有创建人和业务员和联合开发员才能功能
         if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
                 !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser())) {
+                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
+                !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
