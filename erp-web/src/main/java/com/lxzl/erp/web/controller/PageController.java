@@ -390,12 +390,12 @@ public class PageController extends BaseController {
 
             if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
                 if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
-                    return "redirect:/customer-business-manage/detail?no="+customerNo+"consigninfoid="+id;
+                    return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
                 } else {
-                    return "redirect:/customer-manage/detail?no="+customerNo+"consigninfoid="+id;
+                    return "redirect:/customer-manage/detail?no="+customerNo+"&consigninfoid="+id;
                 }
             }
-            return "redirect:/customer-business-manage/detail?no="+customerNo+"consigninfoid="+id;
+            return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
         }
         return "redirect:/error";
     }

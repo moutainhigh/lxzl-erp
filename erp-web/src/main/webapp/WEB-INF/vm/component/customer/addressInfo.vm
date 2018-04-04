@@ -15,9 +15,9 @@
 
         {{#listData}}
         <div class="col-md-4">
-            <div class="well">
+            <div class="well" data-consigninfoid="{{customerConsignInfoId}}" id="consigninfoid{{customerConsignInfoId}}">
                 <p>
-                    <span class="fs11 text-muted mr5 {{verifyStatusClass}}"><i class="fa fa-circle {{verifyStatusClass}} fs12 pr5"></i>{{verifyStatusValue}}</span>
+                    <span class="fs11 mr5 {{verifyStatusClass}}"><i class="fa fa-circle {{verifyStatusClass}} fs12 pr5"></i>{{verifyStatusValue}}</span>
                     {{#isDefault}}
                     <span class="fs11 text-muted"><i class="fa fa-circle text-info fs12 pr5"></i>默认地址</span>
                     {{/isDefault}}
