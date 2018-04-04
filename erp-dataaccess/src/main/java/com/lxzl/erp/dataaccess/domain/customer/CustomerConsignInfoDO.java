@@ -10,6 +10,7 @@ public class CustomerConsignInfoDO  extends BaseDO {
 
 	private Integer id;
 	private Integer customerId;
+	private String customerNo;
 	private String consigneeName;
 	private String consigneePhone;
 	private Integer province;
@@ -160,4 +161,8 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	public Integer getWorkflowType() { return workflowType; }
 
 	public void setWorkflowType(Integer workflowType) { this.workflowType = workflowType; }
+
+	public String getCustomerNo() { return customerNo; }
+
+	public void setCustomerNo(String customerNo) { this.customerNo = customerNo; }
 }
