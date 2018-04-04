@@ -3190,6 +3190,7 @@ CREATE TABLE `erp_coupon` (
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
   `coupon_batch_detail_id` int(20) NOT NULL COMMENT '批次详情ID',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
+  `coupon_code` varchar(10) NOT NULL COMMENT '优惠券编号：规则LX+8位大写字母数字组合(不要O和0)',
   `deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣金额',
   `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
   `customer_no` varchar(100) COMMENT '客戶编号',
@@ -3230,3 +3231,17 @@ CREATE TABLE `erp_sms_log` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='短信发送日志表';
+
+DROP TABLE if exists `erp_switch`;
+CREATE TABLE `erp_switch` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `interface_url` varchar(100) NOT NULL COMMENT '接口URL',
+  `is_open` int(11) NOT NULL DEFAULT 1 COMMENT '是否开启，0-否，1-是',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';

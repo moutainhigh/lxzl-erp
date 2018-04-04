@@ -15,13 +15,13 @@ CREATE TABLE `erp_workflow_verify_user_group` ;
 DROP TABLE if exists `erp_customer_risk_management_history`;
 CREATE TABLE `erp_customer_risk_management_history` ;
 
-
-
----------------------- 未执行 ----------------------
-
 ALTER TABLE erp_customer_company add `address_verify_status` int(11) NOT NULL DEFAULT '0' COMMENT '公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过';
 ALTER TABLE erp_order add `is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是';
 ALTER TABLE erp_customer_consign_info add `workflow_type` int(11) NOT NULL DEFAULT '0' COMMENT '工作流类型';
+
+
+
+---------------------- 未执行 ----------------------
 
 DROP TABLE if exists `erp_coupon_batch`;
 CREATE TABLE `erp_coupon_batch` (
@@ -74,6 +74,7 @@ CREATE TABLE `erp_coupon` (
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
   `coupon_batch_detail_id` int(20) NOT NULL COMMENT '批次详情ID',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
+  `coupon_code` varchar(10) NOT NULL COMMENT '优惠券编号：规则LX+8位大写字母数字组合(不要O和0)',
   `deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣金额',
   `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
   `customer_no` varchar(100) COMMENT '客戶编号',
