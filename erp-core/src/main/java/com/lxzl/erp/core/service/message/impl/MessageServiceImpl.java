@@ -228,8 +228,11 @@ public class MessageServiceImpl implements MessageService {
             messageDO.setUpdateUser(userId.toString());
             messageDO.setUpdateTime(currentTime);
             needUpdateList.add(messageDO);
+
         }
-        messageMapper.batchUpdate(needUpdateList);
+        if (CollectionUtil.isNotEmpty(needUpdateList)) {
+            messageMapper.batchUpdate(needUpdateList);
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
