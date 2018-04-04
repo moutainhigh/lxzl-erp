@@ -61,9 +61,9 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void addCouponBatchDetail() throws Exception {
         Date date = new Date();
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchId(5);
+        couponBatchDetail.setCouponBatchId(7);
         couponBatchDetail.setCouponTotalCount(5);
-        BigDecimal faceValue = new BigDecimal(45.00);
+        BigDecimal faceValue = new BigDecimal(10.00);
         couponBatchDetail.setFaceValue(faceValue);
         couponBatchDetail.setEffectiveEndTime(date);
         couponBatchDetail.setIsOnline(1);
