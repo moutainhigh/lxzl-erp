@@ -1220,6 +1220,7 @@ CREATE TABLE `erp_order` (
   `high_tax_rate` int(11) NOT NULL DEFAULT 0 COMMENT '17%税率',
   `low_tax_rate` int(11) NOT NULL DEFAULT 0 COMMENT '6%税率',
   `tax_rate` double NOT NULL DEFAULT 0 COMMENT '税率',
+  `statement_date` int(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定',
   `buyer_remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
   `product_summary` varchar(500)  CHARACTER SET utf8 DEFAULT NULL COMMENT '商品摘要',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -3245,3 +3246,4 @@ CREATE TABLE `erp_switch` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
+
