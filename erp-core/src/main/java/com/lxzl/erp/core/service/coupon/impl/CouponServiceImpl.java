@@ -13,8 +13,8 @@ import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.CouponService;
-import com.lxzl.erp.core.service.coupon.impl.support.CouponNoSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper;
@@ -304,7 +304,7 @@ public class CouponServiceImpl implements CouponService{
         for (int i = 0; i <couponBatchDetailDO.getCouponTotalCount() ; i++) {
             CouponDO couponDO = new CouponDO();
             couponDO.setCouponBatchId(couponBatchDetailDO.getCouponBatchId());
-            couponDO.setCouponCode(CouponNoSupport.couponNoSupport());
+            couponDO.setCouponCode(GenerateNoSupport.generateCouponCode());
             couponDO.setCouponBatchDetailId(couponBatchDetailDO.getId());
             couponDO.setFaceValue(couponBatchDetailDO.getFaceValue());
             couponDO.setDeductionAmount(BigDecimal.ZERO);

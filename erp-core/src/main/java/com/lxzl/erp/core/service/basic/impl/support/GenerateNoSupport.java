@@ -897,6 +897,24 @@ public class GenerateNoSupport {
             return builder.toString();
         }
     }
+    /**
+     * 生成优惠卷编号:规则LX+8位大写字母数字组合(不要O和0)
+     */
+    public static String generateCouponCode(){
+        String[] beforeShuffle = new String[] { "1" ,"2", "3", "4", "5", "6", "7",
+                "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+                "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V",
+                "W", "X", "Y", "Z" };
+        List list = Arrays.asList(beforeShuffle);
+        Collections.shuffle(list);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            stringBuilder.append(list.get(i));
+        }
+        String afterShuffle = stringBuilder.toString();
+        String result = afterShuffle.substring(5, 13);
+        return "LX"+result;
+    }
 
     @Autowired
     private SupplierMapper supplierMapper;
