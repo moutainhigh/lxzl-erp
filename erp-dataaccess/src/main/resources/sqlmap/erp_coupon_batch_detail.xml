@@ -165,14 +165,5 @@
 			</if>
 		</where>
 	</select>
-	<select id="findCouponTotalCountSumByCouponBatchId" resultType="Integer" parameterType="Integer">
-		SELECT sum(coupon_total_count)
-		FROM erp_coupon_batch_detail ecbd
-		WHERE ecbd.coupon_batch_id = #{couponBatchId, jdbcType=INTEGER} AND ecbd.data_status = 1
-	</select>
-	<select id="findTotalFaceAmountSumByCouponBatchId" resultType="BigDecimal" parameterType="Integer">
-		SELECT sum(total_face_amount)
-		FROM erp_coupon_batch_detail ecbd
-		WHERE ecbd.coupon_batch_id = #{couponBatchId, jdbcType=INTEGER} AND ecbd.data_status = 1
-	</select>
+	
 </mapper>

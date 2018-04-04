@@ -212,10 +212,8 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDetailMapper.save(couponBatchDetailDO);
 
         //更新优惠卷批次数据
-        Integer couponToyalCountSum =  couponBatchDetailMapper.findCouponTotalCountSumByCouponBatchId(couponBatchDetailDO.getCouponBatchId());
-        BigDecimal totalFaceAmountSum =  couponBatchDetailMapper.findTotalFaceAmountSumByCouponBatchId(couponBatchDetailDO.getCouponBatchId());
-        couponBatchDO.setTotalFaceAmount(BigDecimalUtil.add(totalFaceAmountSum, couponBatchDetailDO.getTotalFaceAmount()));
-        couponBatchDO.setCouponBatchTotalCount(couponToyalCountSum);
+        couponBatchDO.setTotalFaceAmount(BigDecimalUtil.add(couponBatchDO.getTotalFaceAmount(), couponBatchDetailDO.getTotalFaceAmount()));
+        couponBatchDO.setCouponBatchTotalCount(couponBatchDO.getCouponBatchTotalCount()+couponBatchDetailDO.getCouponTotalCount());
         couponBatchDO.setUpdateUser(couponBatchDetailDO.getUpdateUser());
         couponBatchDO.setUpdateTime(couponBatchDetailDO.getUpdateTime());
         couponBatchMapper.update(couponBatchDO);

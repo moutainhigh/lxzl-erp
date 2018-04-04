@@ -19,7 +19,5 @@ public interface CouponBatchDetailMapper extends BaseMysqlDAO<CouponBatchDetailD
 
 	List<CouponBatchDetailDO> findCouponBatchDetailByParams(@Param("maps") Map<String, Object> maps);
 
-	Integer findCouponTotalCountSumByCouponBatchId(Integer couponBatchId);
 
-	BigDecimal findTotalFaceAmountSumByCouponBatchId(Integer couponBatchId);
 }
