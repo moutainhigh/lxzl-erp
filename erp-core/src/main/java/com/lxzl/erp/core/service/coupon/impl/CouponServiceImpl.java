@@ -50,6 +50,8 @@ public class CouponServiceImpl implements CouponService{
     private CouponBatchMapper couponBatchMapper;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private GenerateNoSupport generateNoSupport;
 
 
     /**
@@ -304,7 +306,7 @@ public class CouponServiceImpl implements CouponService{
         for (int i = 0; i <couponBatchDetailDO.getCouponTotalCount() ; i++) {
             CouponDO couponDO = new CouponDO();
             couponDO.setCouponBatchId(couponBatchDetailDO.getCouponBatchId());
-            couponDO.setCouponCode(GenerateNoSupport.generateCouponCode());
+            couponDO.setCouponCode(generateNoSupport.generateCouponCode());
             couponDO.setCouponBatchDetailId(couponBatchDetailDO.getId());
             couponDO.setFaceValue(couponBatchDetailDO.getFaceValue());
             couponDO.setDeductionAmount(BigDecimal.ZERO);

@@ -61,7 +61,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void addCouponBatchDetail() throws Exception {
         Date date = new Date();
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchId(4);
+        couponBatchDetail.setCouponBatchId(5);
         couponBatchDetail.setCouponTotalCount(5);
         BigDecimal faceValue = new BigDecimal(45.00);
         couponBatchDetail.setFaceValue(faceValue);
@@ -87,7 +87,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         CouponQueryParam couponQueryParam = new CouponQueryParam();
         couponQueryParam.setPageNo(1);
         couponQueryParam.setPageSize(1);
-        couponQueryParam.setCouponBatchId(2);
+        couponQueryParam.setCouponBatchId(4);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         TestResult testResult = getJsonTestResult("/coupon/pageCoupon", couponQueryParam);
