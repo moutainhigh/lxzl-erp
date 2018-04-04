@@ -907,13 +907,11 @@ public class GenerateNoSupport {
                     "W", "X", "Y", "Z" };
             List list = Arrays.asList(beforeShuffle);
             Collections.shuffle(list);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < list.size(); i++) {
+            StringBuilder stringBuilder = new StringBuilder("LX");
+            for (int i = 0; i < 8; i++) {
                 stringBuilder.append(list.get(i));
             }
-            String afterShuffle = stringBuilder.toString();
-            String result = afterShuffle.substring(5, 13);
-            return "LX"+result;
+            return stringBuilder.toString();
         }
     }
 
