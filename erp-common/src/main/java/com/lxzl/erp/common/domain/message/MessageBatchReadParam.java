@@ -14,7 +14,7 @@ import java.util.List;
 public class MessageBatchReadParam implements Serializable {
 
     @Valid
-    @CollectionNotNull(message = ErrorCode.MESSAGE_READ_NULL,groups = {IdGroup.class})
+    @CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {IdGroup.class})
     private List<Message> messageList;
 
     public List<Message> getMessageList() {

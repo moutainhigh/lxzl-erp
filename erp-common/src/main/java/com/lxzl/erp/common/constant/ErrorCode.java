@@ -580,8 +580,6 @@ public class ErrorCode {
     public static final String MESSAGE_ID_NOT_NULL = "J600004";
     public static final String MESSAGE_NOT_EXISTS = "J600005";
     public static final String MESSAGE_CAN_NOT_SEND_SELF = "J600006";
-    public static final String MESSAGE_CAN_NOT_READ = "J600007";
-    public static final String MESSAGE_READ_NULL = "J600008";
 
     public static final String EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL = "J700001";
     public static final String REPAIR_REASON_IS_NOT_NULL = "J700002";
@@ -1383,8 +1381,6 @@ public class ErrorCode {
         MAP.put(MESSAGE_ID_NOT_NULL, "站内信ID不能为空");
         MAP.put(MESSAGE_NOT_EXISTS, "站内信不存在");
         MAP.put(MESSAGE_CAN_NOT_SEND_SELF, "站内信不能发给自己");
-        MAP.put(MESSAGE_CAN_NOT_READ, "存在已读消息收件人不是自己");
-        MAP.put(MESSAGE_READ_NULL, "已读消息不能为空");
 
         MAP.put(EQUIPMENT_AND_BULK_MATERIAL_IS_NOT_NULL, "设备维修单明细表不能为空");
         MAP.put(REPAIR_REASON_IS_NOT_NULL, "设备维修单的维修原因不能为空");
