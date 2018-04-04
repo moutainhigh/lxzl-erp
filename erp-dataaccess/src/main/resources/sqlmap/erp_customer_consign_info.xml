@@ -5,7 +5,7 @@
 	<resultMap id="CustomerConsignInfoDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
-		<result column="customerNo" jdbcType="VARCHAR" property="customerNo" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
 		<result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
 		<result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
 		<result column="province" jdbcType="INTEGER" property="province" />
@@ -35,7 +35,7 @@
 
 	<select id="findById" resultMap="CustomerConsignInfoDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>
-		,ec.customer_no AS customerNo
+		,ec.customer_no AS customer_no
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
