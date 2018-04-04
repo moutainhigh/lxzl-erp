@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                        <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="资金流水附件ID">
                                     </div>
                                 </div>
 ##                                <div class="form-group pull-right mn mr10">
@@ -76,7 +76,7 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>银行流水ID</th>
+                                <th>资金流水附件ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
                                 <th>对方账号</th>
