@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponMapper">
+
+	<resultMap id="CouponDO" type="com.lxzl.erp.dataaccess.domain.coupon.CouponDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="coupon_batch_id" jdbcType="INTEGER" property="couponBatchId" />
+		<result column="batch_detail_id" jdbcType="INTEGER" property="couponBatchDetailId" />
+		<result column="face_value" jdbcType="DECIMAL" property="faceValue" />
+		<result column="deduction_amount" jdbcType="DECIMAL" property="deductionAmount" />
+		<result column="coupon_status" jdbcType="INTEGER" property="couponStatus" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="is_online" jdbcType="INTEGER" property="isOnline" />
+		<result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
+		<result column="use_time" jdbcType="TIMESTAMP" property="useTime" />
+		<result column="effective_start_time" jdbcType="TIMESTAMP" property="effectiveStartTime" />
+		<result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+	</resultMap>
+
+	<sql id="column_List">
+		ec.id,ec.coupon_batch_id,ec.coupon_batch_detail_id,ec.face_value,ec.deduction_amount,ec.coupon_status,ec.customer_no,ec.is_online,ec.receive_time,ec.use_time,ec.effective_start_time,ec.effective_end_time,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.data_status
+	</sql>
+
+	<select id="findById" resultMap="CouponDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon ec 
+		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ec.id) FROM erp_coupon ec 
+		<where>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CouponDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_coupon ec 
+		<where>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="couponBatchId != null">
+				coupon_batch_id = #{couponBatchId,jdbcType=INTEGER},
+			</if>
+			<if test="couponBatchDetailId != null">
+				coupon_batch_detail_id = #{couponBatchDetailId,jdbcType=INTEGER},
+			</if>
+			<if test="faceValue != null">
+				face_value = #{faceValue,jdbcType=DECIMAL},
+			</if>
+			<if test="deductionAmount != null">
+				deduction_amount = #{deductionAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="couponStatus != null">
+				coupon_status = #{couponStatus,jdbcType=INTEGER},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="isOnline != null">
+				is_online = #{isOnline,jdbcType=INTEGER},
+			</if>
+			<if test="receiveTime != null">
+				receive_time = #{receiveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="useTime != null">
+				use_time = #{useTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="effectiveStartTime != null">
+				effective_start_time = #{effectiveStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="effectiveEndTime != null">
+				effective_end_time = #{effectiveEndTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.coupon.CouponDO">
+		INSERT INTO erp_coupon <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.coupon.CouponDO">
+		UPDATE erp_coupon <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+	<insert id="addList" parameterType="java.util.ArrayList" >
+		INSERT INTO erp_coupon (coupon_batch_id,coupon_batch_detail_id,face_value,deduction_amount,coupon_status,customer_no,is_online,receive_time,use_time,effective_start_time,effective_end_time,remark,create_time,create_user,update_time,update_user,data_status)
+		values
+		<foreach collection="list" item="couponDO" separator="," >
+			(#{couponDO.couponBatchId}, #{couponDO.couponBatchDetailId},
+			#{couponDO.faceValue},#{couponDO.deductionAmount},#{couponDO.couponStatus},#{couponDO.customerNo},
+			#{couponDO.isOnline},#{couponDO.receiveTime},#{couponDO.useTime},
+			#{couponDO.effectiveStartTime},#{couponDO.effectiveEndTime},#{couponDO.remark},#{couponDO.createTime},
+			#{couponDO.createUser},#{couponDO.updateTime},#{couponDO.updateUser},
+			#{couponDO.dataStatus})
+		</foreach>
+	</insert>
+	<select id="findCouponByParams" resultMap="CouponDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		FROM erp_coupon ec
+		<where>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.couponBatchId != null ">
+				and ec.coupon_batch_id = #{maps.couponQueryParam.couponBatchId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.couponBatchDetailId != null ">
+				and ec.coupon_batch_detail_id = #{maps.couponQueryParam.couponBatchDetailId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.couponStatus != null ">
+				and ec.coupon_status = #{maps.couponQueryParam.couponStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.createStartTime != null ">
+				<![CDATA[ AND ec.create_time >= #{maps.couponQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.createEndTime != null ">
+				<![CDATA[ AND ec.create_time <= #{maps.couponQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.isOnline != null ">
+				and ec.is_online = #{maps.couponQueryParam.isOnline, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null ">
+				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+		ORDER BY ec.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findCouponCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(id)
+		FROM erp_coupon ec
+		<where>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.couponBatchId != null ">
+				and ec.coupon_batch_id = #{maps.couponQueryParam.couponBatchId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.couponBatchDetailId != null ">
+				and ec.coupon_batch_detail_id = #{maps.couponQueryParam.couponBatchDetailId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.couponStatus != null ">
+				and ec.coupon_status = #{maps.couponQueryParam.couponStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.createStartTime != null ">
+				<![CDATA[ AND ec.create_time >= #{maps.couponQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.createEndTime != null ">
+				<![CDATA[ AND ec.create_time <= #{maps.couponQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.isOnline != null ">
+				and ec.is_online = #{maps.couponQueryParam.isOnline, jdbcType=INTEGER}
+			</if>
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null ">
+				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+	</select>
+	<update id="deleteCouponList" parameterType="java.util.ArrayList">
+		update erp_coupon
+		SET data_status = 2
+		WHERE id in
+		<foreach collection="couponDOList" index="index" item="couponDO" separator="," open="(" close=")">
+			#{couponDO.id,jdbcType=INTEGER}
+		</foreach>
+
+	</update>
+	<select id="findByIdIgnoreDataStatus" resultMap="CouponDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon ec
+		WHERE ec.id = #{id, jdbcType=INTEGER}
+	</select>
+
+</mapper>
