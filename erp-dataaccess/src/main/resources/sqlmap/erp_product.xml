@@ -196,6 +196,9 @@
                 <if test="maps.productQueryParam.createEndTime != null">
                     <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
                 </if>
+                <if test="maps.productQueryParam.k3ProductNo != null &amp;&amp; maps.productQueryParam.k3ProductNo != ''">
+                    and UPPER (ep.k3_product_no) like (CONCAT('%','${maps.productQueryParam.k3ProductNo}','%'))
+                </if>
                 <if test="maps.isQueryAll == null">
                     and ep.data_status = 1
                 </if>
@@ -234,6 +237,9 @@
             </if>
             <if test="maps.productQueryParam.createEndTime != null">
                 <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.productQueryParam.k3ProductNo != null &amp;&amp; maps.productQueryParam.k3ProductNo != ''">
+                and UPPER (ep.k3_product_no) like (CONCAT('%','${maps.productQueryParam.k3ProductNo}','%'))
             </if>
             <if test="maps.isQueryAll == null">
                 and ep.data_status = 1
