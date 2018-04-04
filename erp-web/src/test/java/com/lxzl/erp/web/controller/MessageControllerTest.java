@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.domain.message.MessageBatchReadParam;
 import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
@@ -19,7 +20,8 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
         message.setTitle("123");
         List<Integer> receiverUserIdList = new ArrayList<>();
 //        receiverUserIdList.add(500004);
-        receiverUserIdList.add(500005);
+ //       receiverUserIdList.add(500005);
+        receiverUserIdList.add(500371);
  //       receiverUserIdList.add(500006);
 
         message.setReceiverUserIdList(receiverUserIdList);
@@ -89,6 +91,24 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
 
 
         TestResult testResult = getJsonTestResult("/message/noReadCount",null);
+    }
+    @Test
+    public void batchRead() throws Exception{
+
+        MessageBatchReadParam param=new MessageBatchReadParam();
+        Message mes=new Message();
+        mes.setMessageId(896);
+        List<Message> messList = new ArrayList<Message>();
+        messList.add(mes);
+        mes=new Message();
+        mes.setMessageId(900);
+        messList.add(mes);
+        mes=new Message();
+        mes.setMessageId(901);
+        messList.add(mes);
+        param.setMessageList(messList);
+
+        TestResult testResult = getJsonTestResult("/message/batchRead",param);
     }
 
 }

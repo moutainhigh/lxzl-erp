@@ -55,7 +55,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -895,6 +894,24 @@ public class GenerateNoSupport {
             builder.append("-");
             builder.append(String.format("%05d", count + 1));
             return builder.toString();
+        }
+    }
+    /**
+     * 生成优惠卷编号:规则LX+8位大写字母数字组合(不要O和0)
+     */
+    public String generateCouponCode(){
+        synchronized (this) {
+            String[] beforeShuffle = new String[] { "1" ,"2", "3", "4", "5", "6", "7",
+                    "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+                    "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V",
+                    "W", "X", "Y", "Z" };
+            List list = Arrays.asList(beforeShuffle);
+            Collections.shuffle(list);
+            StringBuffer stringBuffer = new StringBuffer("LX");
+            for (int i = 0; i < 8; i++) {
+                stringBuffer.append(list.get(i));
+            }
+            return stringBuffer.toString();
         }
     }
 

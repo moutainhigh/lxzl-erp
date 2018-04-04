@@ -782,7 +782,7 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000023";
     public static final String IS_NOT_BUSINESS_AFFAIRS_PERSON = "J18000024";
     public static final String BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN = "J18000025";
-    public static final String BANK_SLIP_CLAIM_AMOUNT = "J18000026";
+    public static final String BANK_SLIP_CLAIM_AMOUNT_NOT_NULL = "J18000026";
     public static final String BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED = "J18000027";
     public static final String CURRENT_ROLES_NOT_PERMISSION = "J18000028";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CLAIMED = "J18000029";
@@ -794,9 +794,21 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000035";
     public static final String BANK_SLIP_IMPORT_FAIL = "J18000036";
     public static final String BANK_SLIP_IS_ALL_CLAIM = "J18000037";
+    public static final String BANK_SLIP_CLAIM_AMOUNT_IS_FAIL = "J18000038";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
+    public static final String COUPON_BATCH_NOT_EXISTS = "J19000003";
+    public static final String COUPON_BATCH_CAN_NOT_DELETE="J19000004";
+    public static final String COUPON_BATCH_ID_NOT_NULL="J19000005";
+    public static final String COUPON_BATCH_DETAIL_ID_NOT_NULL="J19000006";
+    public static final String COUPON_COUNT_NOT_NULL="J19000007";
+    public static final String COUPON_FACE_AMOUNT_NOT_NULL="J19000008";
+    public static final String IS_ONLINE_NOT_NULL="J19000009";
+    public static final String IS_ONLINE_ERROR="J19000010";
+    public static final String COUPON_COUNT_ERROR="J19000011";
+    public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
+    public static final String COUPON_USED="J19000013";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1572,7 +1584,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是已确认状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
         MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN, "银行对公流水状态不是已下推");
-        MAP.put(BANK_SLIP_CLAIM_AMOUNT, "认领金额不能为空");
+        MAP.put(BANK_SLIP_CLAIM_AMOUNT_NOT_NULL, "认领金额不能为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
         MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
@@ -1584,11 +1596,26 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_DISPLAY, "当前不是显示状态");
         MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");
         MAP.put(BANK_SLIP_IS_ALL_CLAIM, "银行对公流水是全部确认状态,不能隐藏");
+        MAP.put(BANK_SLIP_CLAIM_AMOUNT_IS_FAIL, "认领金额填写有误");
 
-        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
-        MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");
+
+        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠券批次名称不能为空");
+        MAP.put(COUPON_TYPE_NOT_NULL,"优惠券类型不能为空");
+        MAP.put(COUPON_BATCH_NOT_EXISTS,"优惠券批次不存在");
+        MAP.put(COUPON_BATCH_CAN_NOT_DELETE,"优惠券已生成，不能删除该批次");
+        MAP.put(COUPON_BATCH_ID_NOT_NULL,"优惠券批次ID不能为空");
+        MAP.put(COUPON_BATCH_DETAIL_ID_NOT_NULL,"优惠券详情ID不能为空");
+        MAP.put(COUPON_COUNT_NOT_NULL,"优惠券总数不能为空");
+        MAP.put(COUPON_FACE_AMOUNT_NOT_NULL,"优惠面值不能为空");
+        MAP.put(IS_ONLINE_NOT_NULL,"增加优惠券是否线上状态不能为空");
+        MAP.put(IS_ONLINE_ERROR,"优惠券是否线上状态有误，请重重新输入");
+        MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
+        MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
+        MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
+
 
     }
+
 
     public static String getMessage(String code) {
         return MAP.get(code);

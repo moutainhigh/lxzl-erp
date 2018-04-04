@@ -32,13 +32,12 @@
         <li class="dropdown dropdown-item-slide">
             <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
                 <span class="octicon octicon-radio-tower fs18"></span>
-##                <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>
+                <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>
             </a>
             <script type="text/html" id="navbarMessageListTpl">
                 {{#messageData}}
                     <li class="bg-light p8">
                         <span class="fw600 pl5 lh30"> 消息提醒</span>
-##                        <span class="label label-warning label-sm pull-right lh20 h-20 mt5 mr5">{{messageCount}}</span>
                     </li>
                     {{#messageList}}
                     <li class="p10 br-t item-1">
@@ -48,6 +47,11 @@
                                 <p class="over-ellipsis fs13">{{title}}</p>
                             </a>
                         </div>
+                    </li>
+                    {{/messageList}}
+                    {{^messageList}}
+                    <li class="p10 br-t item-1">
+                        <div class="media text-center">无消息</div>
                     </li>
                     {{/messageList}}
                 {{/messageData}}
