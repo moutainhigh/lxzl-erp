@@ -430,8 +430,8 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         //如果经营地址改变了，状态改为未提交，需要重新审核！
-        if(!customerCompanyDO.getCity().equals(newCustomerCompanyDO.getCity())
-                || !customerCompanyDO.getAddress().equals(newCustomerCompanyDO.getAddress())){
+        if(!newCustomerCompanyDO.getCity().equals(customerCompanyDO.getCity())
+                || !newCustomerCompanyDO.getAddress().equals(customerCompanyDO.getAddress())){
             newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
         }
 
