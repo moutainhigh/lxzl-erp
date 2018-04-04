@@ -16,6 +16,7 @@ public class Coupon extends BasePO {
 	private Integer couponId;   //唯一标识
 	private Integer couponBatchId;   //批次ID
 	private Integer couponBatchDetailId;   //批次详情ID
+	private String couponCode;   //优惠券编号：规则LX+8位大写字母数字组合(不要O和0)
 	private BigDecimal faceValue;   //优惠券面值
 	private BigDecimal deductionAmount;   //抵扣金额
 	private Integer couponStatus;   //优惠券状态，0-未领取，4-可用，8-已用
@@ -177,4 +178,11 @@ public class Coupon extends BasePO {
 		this.dataStatus = dataStatus;
 	}
 
+	public String getCouponCode() {
+		return couponCode;
+	}
+
+	public void setCouponCode(String couponCode) {
+		this.couponCode = couponCode;
+	}
 }

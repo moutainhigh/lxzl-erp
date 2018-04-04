@@ -9,6 +9,7 @@ public class CouponDO  extends BaseDO {
 	private Integer id;
 	private Integer couponBatchId;
 	private Integer couponBatchDetailId;
+	private String couponCode;
 	private BigDecimal faceValue;
 	private BigDecimal deductionAmount;
 	private Integer couponStatus;
@@ -133,4 +134,11 @@ public class CouponDO  extends BaseDO {
 		this.dataStatus = dataStatus;
 	}
 
+	public String getCouponCode() {
+		return couponCode;
+	}
+
+	public void setCouponCode(String couponCode) {
+		this.couponCode = couponCode;
+	}
 }
