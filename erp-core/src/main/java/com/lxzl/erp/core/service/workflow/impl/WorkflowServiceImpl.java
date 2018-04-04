@@ -1603,6 +1603,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDO.setCurrentVerifyUser(verifyUser);
                 workflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
                 workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+                workflowLinkDO.setVerifyMatters(verifyMatters);
                 workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
                 workflowLinkDO.setUpdateTime(currentTime);
