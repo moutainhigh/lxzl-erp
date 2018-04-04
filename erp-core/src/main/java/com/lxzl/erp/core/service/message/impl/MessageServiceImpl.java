@@ -125,14 +125,6 @@ public class MessageServiceImpl implements MessageService {
         Integer totalCount = messageMapper.findSendMessageCountByParams(maps);
         List<MessageDO> messageDOList = messageMapper.findSendMessageByParams(maps);
 
-        for (MessageDO messageDO: messageDOList){
-            if (messageDO.getReadTime() == null){
-                messageDO.setIsRead(CommonConstant.COMMON_CONSTANT_NO);
-            }else{
-                messageDO.setIsRead(CommonConstant.COMMON_CONSTANT_YES);
-            }
-        }
-
         //将查询的数据转换为前端专用的数据
         List<Message> messageList = ConverterUtil.convertList(messageDOList, Message.class);
         Page<Message> page = new Page<>(messageList, totalCount, messageQueryParam.getPageNo(), messageQueryParam.getPageSize());
@@ -166,12 +158,6 @@ public class MessageServiceImpl implements MessageService {
 
         Message messagePojo = ConverterUtil.convert(messageDO, Message.class);
 
-        if (messageDO.getReadTime() != null){
-            messagePojo.setIsRead(CommonConstant.YES);
-        }else{
-            messagePojo.setIsRead(CommonConstant.NO);
-        }
-
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(messagePojo);
         return result;
@@ -193,14 +179,6 @@ public class MessageServiceImpl implements MessageService {
         //通过分页查询数据库，获取总的数据条数以及所有的数据
         Integer totalCount = messageMapper.findReceiveMessageCountByParams(maps);
         List<MessageDO> messageDOList = messageMapper.findReceiveMessageByParams(maps);
-
-        for (MessageDO messageDO: messageDOList){
-            if (messageDO.getReadTime() == null){
-                messageDO.setIsRead(CommonConstant.COMMON_CONSTANT_NO);
-            }else{
-                messageDO.setIsRead(CommonConstant.COMMON_CONSTANT_YES);
-            }
-        }
 
         //将查询的数据转换为前端专用的数据
         List<Message> messageList = ConverterUtil.convertList(messageDOList, Message.class);

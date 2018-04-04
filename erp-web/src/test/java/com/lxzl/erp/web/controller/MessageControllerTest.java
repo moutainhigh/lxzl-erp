@@ -58,7 +58,7 @@ public class MessageControllerTest extends ERPUnTransactionalTest{
     @Test
     public void queryMessage() throws Exception {
         Message message =new Message();
-        message.setMessageId(256);//817 839 840 841 845
+        message.setMessageId(917);//817 839 840 841 845
 
         TestResult testResult = getJsonTestResult("/message/queryMessage",message);
     }

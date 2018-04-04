@@ -60,7 +60,15 @@
 
     <select id="findSendMessageByParams" resultMap="MessageDO" parameterType="map">
          SELECT
-            <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+            <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
+            CASE
+            WHEN em.read_time IS NOT NULL THEN
+            1
+            WHEN em.read_time IS NULL THEN
+            0
+            ELSE
+            NULL
+            END AS isRead
           FROM erp_message em
             LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
             LEFT JOIN erp_user eru ON em.receiver_user_id = eru.id
@@ -81,7 +89,15 @@
     
     <select id="findById" parameterType="int" resultMap="MessageDO">
         SELECT
-        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
+        CASE
+        WHEN em.read_time IS NOT NULL THEN
+        1
+        WHEN em.read_time IS NULL THEN
+        0
+        ELSE
+        NULL
+        END AS isRead
         FROM erp_message em
         LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
         LEFT JOIN erp_user eru ON em.receiver_user_id = eru.id
@@ -107,7 +123,15 @@
 
     <select id="findReceiveMessageByParams" resultMap="MessageDO" parameterType="map">
         SELECT
-        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
+        CASE
+        WHEN em.read_time IS NOT NULL THEN
+        1
+        WHEN em.read_time IS NULL THEN
+        0
+        ELSE
+        NULL
+        END AS isRead
         FROM erp_message em
         LEFT JOIN erp_user esu ON em.`sender_user_id` = esu.id
         LEFT JOIN erp_user eru ON em.`receiver_user_id` = eru.id
