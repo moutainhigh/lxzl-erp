@@ -48,6 +48,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -61,6 +62,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -96,6 +98,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
+
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
 
@@ -120,6 +123,31 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, subCompanyDO != null ? subCompanyDO.getSubCompanyCode() : null));
         orderDO.setOrderSellerId(customerDO.getOwner());
+
+        //todo 询问客户结算时间没有的处理
+        //添加客户的结算时间（天）
+        Date rentStartTime = order.getRentStartTime();
+        Integer statementDays;
+        if (customerDO.getStatementDate() == null){
+            DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+            if (dataDictionaryDO == null) {
+                statementDays = StatementMode.STATEMENT_MONTH_END;
+            } else {
+                statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
+            }
+        }else{
+            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(customerDO.getStatementDate())) {
+                // 如果结算日为按月结算，那么就要自然日来结算
+                Calendar rentStartTimeCalendar = Calendar.getInstance();
+                rentStartTimeCalendar.setTime(rentStartTime);
+                rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
+                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
+            } else {
+                statementDays = customerDO.getStatementDate();
+            }
+        }
+        //获取
+        orderDO.setStatementDate(statementDays);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
@@ -215,6 +243,11 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateTime(currentTime);
         //添加当前客户名称
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
+
+        //添加客户当前的结算时间
+        if (customerDO.getStatementDate() != null){
+            orderDO.setStatementDate(customerDO.getStatementDate());
+        }
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
@@ -2913,4 +2946,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialMapper materialMapper;
+
+    @Autowired
+    private DataDictionaryMapper dataDictionaryMapper;
 }

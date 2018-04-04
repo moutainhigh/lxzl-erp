@@ -61,6 +61,7 @@ public class Order extends BasePO {
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
+    private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
 
     private Integer customerConsignId;
     private String buyerCustomerNo;                             // 客户编号
@@ -579,5 +580,13 @@ public class Order extends BasePO {
 
     public void setIsPeer(Integer isPeer) {
         this.isPeer = isPeer;
+    }
+
+    public Integer getStatementDate() {
+        return statementDate;
+    }
+
+    public void setStatementDate(Integer statementDate) {
+        this.statementDate = statementDate;
     }
 }
