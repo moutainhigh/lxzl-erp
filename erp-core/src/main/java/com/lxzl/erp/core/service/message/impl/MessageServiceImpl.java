@@ -4,9 +4,9 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.message.MessageBatchReadParam;
 import com.lxzl.erp.common.domain.message.MessageQueryParam;
 import com.lxzl.erp.common.domain.message.pojo.Message;
-import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.message.MessageService;
@@ -197,6 +197,38 @@ public class MessageServiceImpl implements MessageService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(noReadCount);
 
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Integer> batchRead(MessageBatchReadParam param) {
+        ServiceResult<String, Integer> result = new ServiceResult<>();
+        Date currentTime = new Date();
+        Integer userId = userSupport.getCurrentUserId();
+        List<MessageDO> needUpdateList = new ArrayList<MessageDO>();
+        List<Message> messageList = param.getMessageList();
+        for (Message mess : messageList) {
+            //通过前端用户的Id来查询数据
+            MessageDO messageDO = messageMapper.findById(mess.getMessageId());
+            if (messageDO == null) {
+                result.setErrorCode(ErrorCode.MESSAGE_NOT_EXISTS);
+                return result;
+            }
+            //当前消息已读，跳过
+            if (messageDO.getReadTime() != null) continue;
+            //不是自己的消息
+            if (!userId.equals(messageDO.getReceiverUserId()) && !userSupport.isSuperUser()) {
+                result.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+                return result;
+            }
+            //如果当前用户与收件人是同一个人，那么就将站内信的读取时间设置为现在时间
+            messageDO.setReadTime(currentTime);
+            messageDO.setUpdateUser(userId.toString());
+            messageDO.setUpdateTime(currentTime);
+            needUpdateList.add(messageDO);
+        }
+        messageMapper.batchUpdate(needUpdateList);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 }
