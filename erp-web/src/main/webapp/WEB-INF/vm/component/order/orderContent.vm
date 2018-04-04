@@ -40,25 +40,6 @@
                     </div>
                 </div>
                 <div class="form-group field">
-                    <div class="col-md-6">
-                        <label class="col-md-6 control-label">租赁类型</label>
-                        <div class="col-md-6">
-                            <div>
-                                <select class="form-control bradius required" name="rentType" id="rentType"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="col-md-6 control-label">租赁时长</label>
-                        <div class="col-md-6">
-                            <div>
-                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number required" type="text" placeholder="输入租赁时长" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group field">
                     <label class="col-md-3 control-label">配送日期</label>
                     <div class="col-md-3">
                         <div class="input-group date" id="createExpectDeliveryTimePicker">
@@ -76,6 +57,24 @@
                 </div>
                 <div class="form-group field">
                     <div class="col-md-6">
+                        <label class="col-md-6 control-label">租赁类型</label>
+                        <div class="col-md-6">
+                            <div>
+                                <select class="form-control bradius required" name="rentType" id="rentType"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">租赁时长</label>
+                        <div class="col-md-6">
+                            <div>
+                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number required" type="text" placeholder="输入租赁时长" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <div class="col-md-6">
                         <label class="col-md-6 control-label">配送方式</label>
                         <div class="col-md-6">
                             <div>
@@ -83,6 +82,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">是否同行调拨</label>
+                        <div class="col-md-6">
+                            <div>
+                                <select class="form-control bradius required" name="isPeer" id="isPeer">
+                                    <option value="0">否</option>
+                                    <option value="1">是</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+
                     <div class="col-md-6 hide" id="statementDateFormGroup">
                         <label class="col-lg-6 control-label">结算日期</label>
                         <div class="col-lg-6">
@@ -98,10 +111,6 @@
 ##                        </div>
 ##                    </div>
                 </div>
-
-
-
-
                 <div class="form-group field">
                     <label class="col-md-3 control-label">购买人备注</label>
                     <div class="col-md-9">
@@ -155,7 +164,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive hasTooltip">
                     <script type="text/html" id="dataListTpl">
                         <thead>
                         <tr class="bg-light">
@@ -191,9 +200,10 @@
                                 </label>
                             </td>
                             <td>
-##                                <span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>
-                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
-                                {{productName}}
+                                <p>
+                                    {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                    {{productName}}
+                                </p>
                             </td>
                             <td style="max-width:260px;">{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>

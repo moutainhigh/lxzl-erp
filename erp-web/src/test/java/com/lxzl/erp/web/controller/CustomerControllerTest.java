@@ -135,7 +135,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonNoPictureBackImage(image3);
 */
 
-        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
+//        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
 
         //加入经营场所租赁合同
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
@@ -243,7 +243,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerConsignInfo3.setVerifyStatus(2);
         customerConsignInfoList.add(customerConsignInfo3);
 
-        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
+//        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
 
         //首次所需设备
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
@@ -720,6 +720,82 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         param.setRemark("commit");
 
         TestResult testResult = getJsonTestResult("/customer/commitCustomerConsignInfo",param);
+    }
+
+
+    @Test
+    public void addCustomerReturnVisit() throws Exception {
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setCustomerNo("LXCC-1000-20180330-00827");
+        returnVisit.setReturnVisitDescribe("第6次回访，不知道填什么好");
+        returnVisit.setRemark("回访是个什么感觉");
+
+        List<Image> customerReturnVisitImageList = new ArrayList<>();
+        Image customerReturnVisitImage1 = new Image();
+        Image customerReturnVisitImage2 = new Image();
+        customerReturnVisitImage1.setImgId(1833);
+        customerReturnVisitImage2.setImgId(1832);
+
+        customerReturnVisitImageList.add(customerReturnVisitImage1);
+        customerReturnVisitImageList.add(customerReturnVisitImage2);
+
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+
+        TestResult testResult = getJsonTestResult("/customer/addCustomerReturnVisit",returnVisit);
+    }
+
+    @Test
+    public void updateCustomerReturnVisit() throws Exception {
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(18);
+        returnVisit.setReturnVisitDescribe("更改第6次回访，这次就看看有不有效果");
+        returnVisit.setRemark("更改回访是个什么感觉");
+
+        List<Image> customerReturnVisitImageList = new ArrayList<>();
+        Image customerReturnVisitImage1 = new Image();
+        Image customerReturnVisitImage2 = new Image();
+        Image customerReturnVisitImage3 = new Image();
+        customerReturnVisitImage1.setImgId(1833);
+        customerReturnVisitImage2.setImgId(1832);
+        customerReturnVisitImage3.setImgId(1834);
+
+        customerReturnVisitImageList.add(customerReturnVisitImage1);
+        customerReturnVisitImageList.add(customerReturnVisitImage2);
+//        customerReturnVisitImageList.add(customerReturnVisitImage3);
+
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+
+        TestResult testResult = getJsonTestResult("/customer/updateCustomerReturnVisit",returnVisit);
+     }
+
+    @Test
+    public void cancelCustomerReturnVisit() throws Exception {
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(17);
+
+        TestResult testResult = getJsonTestResult("/customer/cancelCustomerReturnVisit",returnVisit);
+    }
+
+    @Test
+    public void detailCustomerReturnVisit() throws Exception {
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(16);
+
+        TestResult testResult = getJsonTestResult("/customer/detailCustomerReturnVisit",returnVisit);
+    }
+
+
+    @Test
+    public void pageCustomerReturnVisit() throws Exception {
+        CustomerReturnVisitQueryParam customerReturnVisitQueryParam = new CustomerReturnVisitQueryParam();
+        customerReturnVisitQueryParam.setPageNo(1);
+        customerReturnVisitQueryParam.setPageSize(10);
+        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
+
+        TestResult testResult = getJsonTestResult("/customer/pageCustomerReturnVisit",customerReturnVisitQueryParam);
     }
 
 }

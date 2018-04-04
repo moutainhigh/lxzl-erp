@@ -226,7 +226,7 @@ public class ImportICBCBank {
                         }
                     }
                 }
-                // todo 以下可以直接存数据
+                //以下可以直接存数据
                 String payerName = null;  //付款人名称
                 String tradeTime = null;  //交易日期
                 String tradeAmount = null;  //交易金额
@@ -236,6 +236,11 @@ public class ImportICBCBank {
                 String tradeAmount1 = null;  //贷方发生额
 
                 if (j > next) {
+
+                    if( payerNameNo != 10 || payTimeNo != 3 || payMoneyNo != 5 || paySerialNumberNo != 13 || payPostscriptNo != 8 || payAccountNo != 2 || creditSumNo != 6 ){
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+                        return serviceResult;
+                    }
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {

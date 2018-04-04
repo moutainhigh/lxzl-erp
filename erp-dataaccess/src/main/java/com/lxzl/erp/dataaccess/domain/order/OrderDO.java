@@ -44,6 +44,7 @@ public class OrderDO extends BaseDO {
     private Integer orderStatus;
     private BigDecimal firstNeedPayAmount;
     private Integer payStatus;
+    private Integer isPeer;
     private Date payTime;
     private Date deliveryTime;
     private Date confirmDeliveryTime;
@@ -505,4 +506,12 @@ public class OrderDO extends BaseDO {
     public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
 
     public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
+    }
 }

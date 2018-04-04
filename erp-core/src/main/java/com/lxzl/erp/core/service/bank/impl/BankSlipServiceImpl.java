@@ -658,15 +658,34 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
 
-        if(BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
+        if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && !BankSlipDetailStatus.IGNORE.equals(bankSlipDetailDO.getDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_DISPLAY);
             return serviceResult;
+        }
+
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+
+        if(SlipStatus.ALL_CLAIM.equals(bankSlipDO.getSlipStatus())){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IS_ALL_CLAIM);
+            return serviceResult;
+        }
+
+        //如果是未认领状态总数需要 -1
+        if (BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
+            bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - 1);
+            if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
+                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+            }
         }
 
         bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.HIDE);
         bankSlipDetailDO.setUpdateTime(now);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailMapper.update(bankSlipDetailDO);
+
+        bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDO.setUpdateTime(now);
+        bankSlipMapper.update(bankSlipDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -690,15 +709,27 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
 
-        if(!BankSlipDetailStatus.HIDE.equals(bankSlipDetailDO.getDetailStatus())){
+        if (!BankSlipDetailStatus.HIDE.equals(bankSlipDetailDO.getDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HIDE);
             return serviceResult;
         }
 
+        //跟新为未认领
         bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
         bankSlipDetailDO.setUpdateTime(now);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailMapper.update(bankSlipDetailDO);
+
+        //跟新总表数据
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+
+        //如果是未认领状态总数需要 +1
+        bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() + 1);
+        bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+        bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDO.setUpdateTime(now);
+        bankSlipMapper.update(bankSlipDO);
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

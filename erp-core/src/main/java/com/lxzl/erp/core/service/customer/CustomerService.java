@@ -3,10 +3,7 @@ package com.lxzl.erp.core.service.customer;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.*;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagementHistory;
+import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.core.service.VerifyReceiver;
 
 public interface CustomerService extends VerifyReceiver {
@@ -175,4 +172,44 @@ public interface CustomerService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> commitCustomerConsignInfo(CustomerConsignCommitParam customerConsignCommitParam);
+
+    /**
+     * 新增客户回访记录
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,Integer> addCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 更改客户回访记录
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,String> updateCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 取消客户回访记录
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,String> deleteCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 客户回访详情
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,ReturnVisit> detailCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 客户回访列表
+     *
+     * @param customerReturnVisitQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<ReturnVisit>> pageCustomerReturnVisit(CustomerReturnVisitQueryParam customerReturnVisitQueryParam);
 }

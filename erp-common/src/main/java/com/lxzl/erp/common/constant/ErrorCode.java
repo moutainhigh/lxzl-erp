@@ -412,6 +412,7 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS = "J400137";
     public static final String PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS = "J400138";
     public static final String ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME = "J400139";
+    public static final String ORDER_ISPEER_NOT_NULL = "J400140";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -466,7 +467,7 @@ public class ErrorCode {
     public static final String PRODUCT_PURPOSE_NOT_NULL = "J500054";
     public static final String LIST_FIRST_NEED_PRODUCTS_NOT_NULL = "J500055";
     public static final String CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL = "J500056";
-    public static final String CUSTOMER_IS_EXISTS = "J500057";
+    public static final String CUSTOMER_PERSON_IS_EXISTS = "J500057";
     public static final String CUSTOMER_NOT_RENT_OR_ORDER_NOT_CONFIRM = "J500058";
     public static final String CUSTOMER_RENT_THIS_BULK_MATERIAL_NO_MORE = "J500059";
     public static final String CUSTOMER_OWNER_NOT_NULL = "J500060";
@@ -517,7 +518,7 @@ public class ErrorCode {
     public static final String CITY_NOT_EXISTS = "J500105";
     public static final String MATERIAL_TYPE_NOT_NULL = "J500106";
     public static final String CUSTOMER_FIRST_APPLY_AMOUNT_NOT_NULL = "J500107";
-    public static final String COMMIT_CUSTOMER_PARAM_IS_NOT_NULL = "J500108";
+    public static final String CUSTOMER_COMPANY_IS_EXISTS = "J500108";
     public static final String SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW = "J500109";
     public static final String SHORT_RECEIVABLE_CALCULATE_FAIL = "J500110";
     public static final String CUSTOMER_DELIVERY_MODE_NOT_NULL = "J500111";
@@ -565,6 +566,13 @@ public class ErrorCode {
     public static final String CUSTOMER_NAME_REPETITION = "J500154";
     public static final String CUSTOMER_CONSIGN_INFO_NOT_PENDING = "J500155";
     public static final String CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER = "J500156";
+    public static final String CUSTOMER_RETURN_VISIT_NOT_NULL = "J500157";
+    public static final String CUSTOMER_RETURN_VISIT_DESCRIBE_NOT_NULL = "J500158";
+    public static final String CUSTOMER_ORDER_DO_NOT_HAVE_ORDER = "J500159";
+    public static final String CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT = "J500160";
+    public static final String CUSTOMER_RETURN_ID_NOT_NULL = "J500161";
+    public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
+
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -621,6 +629,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_IMAGES_NOT_NULL = "J1100033";
     public static final String AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100034";
     public static final String AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100035";
+    public static final String CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS = "J1100036";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -724,6 +733,13 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_CORRECT_FAIL = "J16000012";
     public static final String CORRECT_AMOUNT_MORE_THEN_ZERO = "J16000013";
     public static final String STATEMENT_ORDER_ITEM_ID_NOT_NULL = "J16000014";
+    public static final String STATEMENT_PAY_ORDER_NOT_EXISTS = "J16000015";
+    public static final String STATEMENT_PAY_ORDER_STATUS_IS_PAID_OR_FAILED = "J16000016";
+    public static final String STATEMENT_PAY_ORDER_STATUS_MUST_PAID_OR_FAILED_OR_TIME_OUT = "J16000017";
+    public static final String STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT = "J16000018";
+    public static final String STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT = "J16000019";
+    public static final String STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO = "J16000020";
+
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
     public static final String K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE = "J17000002";
@@ -776,9 +792,22 @@ public class ErrorCode {
     public static final String OVERSTEP_CURRENT_MONTH = "J18000033";
     public static final String BANK_SLIP_DETAIL_NOT_HIDE = "J18000034";
     public static final String BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000035";
+    public static final String BANK_SLIP_IMPORT_FAIL = "J18000036";
+    public static final String BANK_SLIP_IS_ALL_CLAIM = "J18000037";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
+    public static final String COUPON_BATCH_NOT_EXISTS = "J19000003";
+    public static final String COUPON_BATCH_CAN_NOT_DELETE="J19000004";
+    public static final String COUPON_BATCH_ID_NOT_NULL="J19000005";
+    public static final String COUPON_BATCH_DETAIL_ID_NOT_NULL="J19000006";
+    public static final String COUPON_COUNT_NOT_NULL="J19000007";
+    public static final String COUPON_FACE_AMOUNT_NOT_NULL="J19000008";
+    public static final String IS_ONLINE_NOT_NULL="J19000009";
+    public static final String IS_ONLINE_ERROR="J19000010";
+    public static final String COUPON_COUNT_ERROR="J19000011";
+    public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
+    public static final String COUPON_USED="J19000013";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -827,8 +856,8 @@ public class ErrorCode {
         MAP.put(USER_PASSWORD_TOO_SIMPLE, "密码包含大写字母、小写字母、数字、特殊符号中的至少三类，且长度在8到20之间");
         MAP.put(USER_OLD_PASSWORD_NOT_NULL, "旧密码不能为空");
         MAP.put(USER_NEW_PASSWORD_NOT_NULL, "新密码不能为空");
-        MAP.put(USER_OWNER_NOT_EXISTS, "填写的开发员不存在，请查询清楚");
-        MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请查询清楚");
+        MAP.put(USER_OWNER_NOT_EXISTS, "填写的业务员不存在，请重新选择");
+        MAP.put(USER_UNION_NOT_EXISTS, "填写的联合开发员不存在，请重新选择");
         MAP.put(OWNER_NOT_NULL, "业务员不能为空");
         MAP.put(USER_ROLE_IS_NOT_SUPER_ADMIN, "非超级管理员无法使用此功能");
         MAP.put(CUSTOMER_CAN_NOT_UPDATE_BY_CURRENT_USER, "当前用户没有权限操作此客户");
@@ -844,6 +873,14 @@ public class ErrorCode {
         MAP.put(CUSTOMER_CONSIGN_INFO_NOT_PENDING, "客户地址只有未提交状态，才能提交");
         MAP.put(CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER, "只有创建人、业务员、联合开发人才可以使用此功能");
         MAP.put(WORKFLOW_CONFIG_ERROR, "审核工作流未配置或配置错误");
+        MAP.put(CUSTOMER_RETURN_VISIT_NOT_NULL, "客户回访记录不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_DESCRIBE_NOT_NULL, "客户回访描述不能为空");
+        MAP.put(CUSTOMER_ORDER_DO_NOT_HAVE_ORDER, "只有有订单的客户才需要进行回访");
+        MAP.put(CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT, "该客户的订单到目前为止，已经全部归还物品，无需进行回访了");
+        MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
+
+
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
         MAP.put(PRODUCT_NAME_NOT_NULL, "商品名称不能为空");
@@ -1093,7 +1130,7 @@ public class ErrorCode {
         MAP.put(SALES_MAN_NOT_NULL, "业务员不能为空");
         MAP.put(PURCHASE_TAX_RATE_ERROR, "采购单税率有误");
         MAP.put(CUSTOMER_COMPANY_NEED_FIRST_LIST_NOT_NULL, "首次所需设备不能为空");
-        MAP.put(CUSTOMER_IS_EXISTS, "客户名称已经存在，请重新填写名称");
+        MAP.put(CUSTOMER_PERSON_IS_EXISTS, "客户名称已经存在，请重新填写名称");
         MAP.put(SUPPLIER_IS_EXISTS, "供应商已经存在");
         MAP.put(SUPPLIER_NAME_IS_NULL, "供应商名字有空格");
         MAP.put(MUST_HAVE_MAIN, "含有小配件的整机四大件采购单必须有整机");
@@ -1126,7 +1163,7 @@ public class ErrorCode {
         MAP.put(STOCK_FINISH_THIS_ITEM, "该项已配货完毕，无需配货");
         MAP.put(LEGAL_PERSON_NO_EQUAL_TO_LEGAL_PERSON_NO, "经办人身份证与法人身份证不能相同");
         MAP.put(LEGAL_PERSON_NAME_EQUAL_TO_LEGAL_PERSON_NAME, "经办人姓名与法人姓名不能相同");
-        MAP.put(COMMIT_CUSTOMER_PARAM_IS_NOT_NULL, "提交客户时，紧急联系人姓名，紧急联系人手机号、客户的收货地址、是否是法人代表申请(如果选择为“是”，法人姓名、手机号、身份证号码也不能为空）、首次所需设备、发货方式、营业执照图片、法人/股东身份证正反面、注册资本、所属行业、设备用途、成立时间、办公人数、经营面积必须填写");
+        MAP.put(CUSTOMER_COMPANY_IS_EXISTS, "【%s 】在【%s 】的【%s 】名下，如有需要，请与其联系");
         MAP.put(SUB_COMPANY_SHORT_LIMIT_RECEIVABLE_OVERFLOW, "该分公司短租应收过高，不可下单。");
         MAP.put(SHORT_RECEIVABLE_CALCULATE_FAIL , "短租计算过程中有误");
         MAP.put(CUSTOMER_DELIVERY_MODE_NOT_NULL , "客户的发货方式不能为空");
@@ -1246,6 +1283,7 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_ORDER_PRODUCT_NOT_EXISTS, "采购申请单的商品项不存在");
         MAP.put(PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS, "采购申请单的配件项不存在");
         MAP.put(ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME, "订单的电销人员不能选择自己电销发货所属分公司");
+        MAP.put(ORDER_ISPEER_NOT_NULL, "是否是同行调拨不能为空");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1292,7 +1330,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_ADDRESS_NOT_NULL, "企业客户详细地址不能为空");
         MAP.put(CUSTOMER_PERSON_PHONE_NOT_NULL, "个人客户联系电话不能为空");
         MAP.put(CUSTOMER_PERSON_ADDRESS_NOT_NULL, "个人客户详细地址不能为空");
-        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，请联系相关工作人员");
+        MAP.put(STATEMENT_ORDER_CREATE_ERROR, "结算单生成失败，因为该订单没有相应的结算单明细，不能生成结算单");
         MAP.put(STATEMENT_ORDER_STATUS_ERROR, "结算单状态异常，仔细查看该订单，或联系相关工作人员");
         MAP.put(STATEMENT_ORDER_NO_NOT_NULL, "结算单编号不能为空");
         MAP.put(STATEMENT_PAY_NOT_NULL, "结算单支付方式不能为空");
@@ -1391,6 +1429,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_IMAGES_NOT_NULL, "企业客户的营业执照和法人/股东身份证正反面图片，在提交审核时不能为空");
         MAP.put(AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "经办人身份证正面不能为空");
         MAP.put(AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "经办人身份证反面面不能为空");
+        MAP.put(CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS, "客户回访记录图片不能为空");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
@@ -1496,6 +1535,12 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_ID_UNEQUAL_TO_STATEMENT_ORDER_DETAIL_ID, "结算单ID不对应结算单项ID");
         MAP.put(STATEMENT_ORDER_CORRECT_EXISTS, "结算冲正单已存在");
         MAP.put(STATEMENT_ORDER_CORRECT_FAIL, "结算冲正单结算失败");
+        MAP.put(STATEMENT_PAY_ORDER_NOT_EXISTS, "结算单支付失败，因为该结算单对应的结算单支付记录不存在");
+        MAP.put(STATEMENT_PAY_ORDER_STATUS_IS_PAID_OR_FAILED, "结算单支付失败，因为该结算单支付记录状态已经为已支付或支付失败");
+        MAP.put(STATEMENT_PAY_ORDER_STATUS_MUST_PAID_OR_FAILED_OR_TIME_OUT, "结算单支付失败，只有传入的参数状态符合已支付、支付失败、支付超时的其中一个状态才能进行后续操作");
+        MAP.put(STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT, "结算单金额与结算冲正单的金额不相等，请检查清楚");
+        MAP.put(STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT, "结算单明细有未交纳的押金，不能进行退货操作，请先补交所需的押金");
+        MAP.put(STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO, "由结算单生成结算支付记录时，结算单的支付总金额必须大于0");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -1548,11 +1593,27 @@ public class ErrorCode {
         MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
         MAP.put(BANK_SLIP_DETAIL_NOT_HIDE, "当前不是隐藏状态");
         MAP.put(BANK_SLIP_DETAIL_NOT_DISPLAY, "当前不是显示状态");
+        MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");
+        MAP.put(BANK_SLIP_IS_ALL_CLAIM, "银行对公流水是全部确认状态,不能隐藏");
 
-        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠卷批次名称不能为空");
-        MAP.put(COUPON_TYPE_NOT_NULL,"优惠卷类型不能为空");
+
+        MAP.put(COUPON_BATCH_NAME_NOT_NULL,"优惠券批次名称不能为空");
+        MAP.put(COUPON_TYPE_NOT_NULL,"优惠券类型不能为空");
+        MAP.put(COUPON_BATCH_NOT_EXISTS,"优惠券批次不存在");
+        MAP.put(COUPON_BATCH_CAN_NOT_DELETE,"优惠券已生成，不能删除该批次");
+        MAP.put(COUPON_BATCH_ID_NOT_NULL,"优惠券批次ID不能为空");
+        MAP.put(COUPON_BATCH_DETAIL_ID_NOT_NULL,"优惠券详情ID不能为空");
+        MAP.put(COUPON_COUNT_NOT_NULL,"优惠券总数不能为空");
+        MAP.put(COUPON_FACE_AMOUNT_NOT_NULL,"优惠面值不能为空");
+        MAP.put(IS_ONLINE_NOT_NULL,"增加优惠券是否线上状态不能为空");
+        MAP.put(IS_ONLINE_ERROR,"优惠券是否线上状态有误，请重重新输入");
+        MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
+        MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
+        MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
+
 
     }
+
 
     public static String getMessage(String code) {
         return MAP.get(code);
