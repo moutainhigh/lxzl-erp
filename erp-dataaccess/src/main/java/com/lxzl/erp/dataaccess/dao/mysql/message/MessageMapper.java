@@ -22,4 +22,6 @@ public interface MessageMapper extends BaseMysqlDAO<MessageDO> {
     List<MessageDO> findReceiveMessageByParams(@Param("maps")Map<String, Object> maps);
 
     Integer findNotReadCount(@Param("id")Integer id);
+
+    void batchUpdate(@Param("list") List<MessageDO> messageDOList);
 }

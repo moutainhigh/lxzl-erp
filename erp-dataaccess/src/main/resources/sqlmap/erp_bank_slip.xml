@@ -198,6 +198,9 @@
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
 				and ebs.slip_status !=0
 			</if>
+			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER}
+			</if>
 		</where>
 	</select>
 
@@ -230,6 +233,9 @@
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
 				and ebs.slip_status !=0
+			</if>
+			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER}
 			</if>
 		</where>
 		ORDER BY ebs.slip_month DESC ,ebs.sub_company_id ASC

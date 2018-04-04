@@ -825,6 +825,40 @@ public class PageController extends BaseController {
     }
 
 
+    //回访记录
+    @RequestMapping("/customer-return-visit-record/list")
+    public String customerReturnVisitRecordList() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordList";
+    }
+    @RequestMapping("/customer-return-visit-record/detail")
+    public String customerReturnVisitRecordDetail() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordDetail";
+    }
+    @RequestMapping("/customer-return-visit-record/add")
+    public String customerReturnVisitRecordAdd() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordAdd";
+    }
+    @RequestMapping("/customer-return-visit-record/edit")
+    public String customerReturnVisitRecordEdit() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordEdit";
+    }
+
+
+    //优惠券
+    @RequestMapping("/coupon-manage/group-list")
+    public String couponGroupManage() {
+        return "/couponManage/couponGroupList";
+    }
+    @RequestMapping("/coupon-manage/group-detail")
+    public String couponGroupDetailManage() {
+        return "/couponManage/couponGroupDetail";
+    }
+    @RequestMapping("/coupon-manage/card-list")
+    public String couponManage() {
+        return "/couponManage/couponCardList";
+    }
+
+
     /**
      * 资金流水附件信息列表
      * @return
