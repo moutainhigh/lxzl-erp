@@ -907,11 +907,11 @@ public class GenerateNoSupport {
                     "W", "X", "Y", "Z" };
             List list = Arrays.asList(beforeShuffle);
             Collections.shuffle(list);
-            StringBuilder stringBuilder = new StringBuilder("LX");
+            StringBuffer stringBuffer = new StringBuffer("LX");
             for (int i = 0; i < 8; i++) {
-                stringBuilder.append(list.get(i));
+                stringBuffer.append(list.get(i));
             }
-            return stringBuilder.toString();
+            return stringBuffer.toString();
         }
     }
 
