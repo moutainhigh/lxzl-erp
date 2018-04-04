@@ -3190,6 +3190,7 @@ CREATE TABLE `erp_coupon` (
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
   `coupon_batch_detail_id` int(20) NOT NULL COMMENT '批次详情ID',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
+  `coupon_code` varchar(10) NOT NULL COMMENT '优惠券编号：规则LX+8位大写字母数字组合(不要O和0)',
   `deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣金额',
   `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
   `customer_no` varchar(100) COMMENT '客戶编号',
