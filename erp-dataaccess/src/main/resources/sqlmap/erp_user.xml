@@ -169,7 +169,7 @@
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="java.util.Map">
-        select count(user_main.id)
+        select count( DISTINCT user_main.id)
         from
         (
             select <include refid="columnList"/> from erp_user u
@@ -180,7 +180,7 @@
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
                 </if>
-                <if test="maps.userQueryParam.isDisabled != null &amp;&amp; maps.userQueryParam.isDisabled != ''">
+                <if test="maps.userQueryParam.isDisabled != null">
                     and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
                 </if>
                 <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
@@ -231,7 +231,7 @@
                 <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                     and u.real_name like '%${maps.userQueryParam.realName}%'
                 </if>
-                <if test="maps.userQueryParam.isDisabled != null &amp;&amp; maps.userQueryParam.isDisabled != ''">
+                <if test="maps.userQueryParam.isDisabled != null">
                     and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
                 </if>
                 <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">

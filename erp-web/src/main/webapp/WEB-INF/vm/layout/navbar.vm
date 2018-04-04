@@ -32,7 +32,7 @@
         <li class="dropdown dropdown-item-slide">
             <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
                 <span class="octicon octicon-radio-tower fs18"></span>
-##                <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>
+                <span class="badge badge-hero badge-danger" id="unreadMessageNumber"></span>
             </a>
             <script type="text/html" id="navbarMessageListTpl">
                 {{#messageData}}

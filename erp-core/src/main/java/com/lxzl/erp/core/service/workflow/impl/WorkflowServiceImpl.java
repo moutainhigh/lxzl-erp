@@ -1495,6 +1495,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
                 customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
                 customerConsignInfoDO.setUpdateTime(currentTime);
+                customerConsignInfoDO.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
                 customerConsignInfoMapper.update(customerConsignInfoDO);
             }
         }
