@@ -15,13 +15,11 @@ import java.util.Date;
 public class K3ReturnOrderDetail extends BasePO {
 
     private Integer k3ReturnOrderDetailId;   //唯一标识
-    @NotNull(message = ErrorCode.ID_NOT_NULL, groups = {K3ReturnOrderCallback.class})
     private Integer returnOrderId;   //K3退货单ID
     @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL, groups = {K3ReturnOrderCallback.class})
     private String orderNo;   //订单号
-    @NotNull(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {K3ReturnOrderCallback.class})
+    @NotBlank(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {K3ReturnOrderCallback.class})
     private String orderItemId;    // 订单项ID
-    @NotNull(message = ErrorCode.ORDER_ROW_ID_NOT_NULL, groups = {K3ReturnOrderCallback.class})
     private String orderEntry;   //订单行号
     private String productNo;   //产品代码
     private String productName;   //产品名称

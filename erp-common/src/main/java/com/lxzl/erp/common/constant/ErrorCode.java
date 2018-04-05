@@ -415,6 +415,7 @@ public class ErrorCode {
     public static final String ORDER_ISPEER_NOT_NULL = "J400140";
     public static final String ORDER_ITEM_ID_NOT_NULL = "J400141";
     public static final String ORDER_ROW_ID_NOT_NULL = "J400142";
+    public static final String RETURN_DETAIL_LIST_NOT_NULL = "J400143";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1289,6 +1290,7 @@ public class ErrorCode {
         MAP.put(ORDER_ISPEER_NOT_NULL, "是否是同行调拨不能为空");
         MAP.put(ORDER_ITEM_ID_NOT_NULL, "订单项ID不能为空");
         MAP.put(ORDER_ROW_ID_NOT_NULL, "订单行号不能为空");
+        MAP.put(RETURN_DETAIL_LIST_NOT_NULL, "退货详情列表不能为空");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1315,7 +1317,7 @@ public class ErrorCode {
         MAP.put(CITY_ID_NOT_NULL, "城市ID不能为空");
         MAP.put(DISTRICT_ID_NOT_NULL, "街道ID不能为空");
         MAP.put(ADDRESS_NOT_NULL, "地址不能为空");
-        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于0");
+        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于等于0");
         MAP.put(RETURN_ORDER_NO_NOT_NULL, "退还单号不能为空");
         MAP.put(EQUIPMENT_NO_NOT_NULL, "设备编号不能为空");
         MAP.put(RETURN_ORDER_NOT_EXISTS, "退还单不存在");

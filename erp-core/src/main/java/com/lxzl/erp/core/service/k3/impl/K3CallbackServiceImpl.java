@@ -182,7 +182,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         }
         String userId = null;
         if(StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())){
-            UserDO userDO = userMapper.findByUsername(k3ReturnOrder.getUpdateUserRealName());
+            UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName());
             if(userDO==null){
                 serviceResult.setErrorCode(ErrorCode.USER_NOT_EXISTS);
                 return serviceResult;
@@ -196,11 +196,11 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         k3ReturnOrderDO.setUpdateUser(userId);
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-        Map<Integer,K3ReturnOrderDetailDO> map = ListUtil.listToMap(k3ReturnOrderDetailDOList,"orderItemId");
+        Map<String,K3ReturnOrderDetailDO> map = ListUtil.listToMap(k3ReturnOrderDetailDOList,"orderNo","orderItemId");
 
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
         for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
-            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = map.get(k3ReturnOrderDetail.getOrderItemId());
+            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = map.get(k3ReturnOrderDetail.getOrderNo()+"-"+k3ReturnOrderDetail.getOrderItemId());
             if(k3ReturnOrderDetailDO==null){
                 serviceResult.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM);
                 return serviceResult;

@@ -38,7 +38,7 @@ public class K3ReturnOrder extends BasePO {
 	private String updateUser;   //修改人
 
 	@Valid
-	@CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {K3ReturnOrderCallback.class})
+	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
 
 
