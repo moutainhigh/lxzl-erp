@@ -14,6 +14,7 @@ public class K3ReturnOrderDetailDO  extends BaseDO {
 	private String productNo;
 	private String productName;
 	private Integer productCount;
+	private Integer realProductCount;
 	private Integer dataStatus;
 	private String remark;
 
@@ -95,5 +96,13 @@ public class K3ReturnOrderDetailDO  extends BaseDO {
 
 	public void setOrderItemId(String orderItemId) {
 		this.orderItemId = orderItemId;
+	}
+
+	public Integer getRealProductCount() {
+		return realProductCount;
+	}
+
+	public void setRealProductCount(Integer realProductCount) {
+		this.realProductCount = realProductCount;
 	}
 }
