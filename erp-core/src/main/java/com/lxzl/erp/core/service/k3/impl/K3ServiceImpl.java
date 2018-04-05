@@ -1182,6 +1182,11 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    public ServiceResult<String, String> transferOrder(K3OrderQueryParam param) {
+        return null;
+    }
+
+    @Override
     public ServiceResult<String, String> sendChangeOrderToK3(String changeOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
