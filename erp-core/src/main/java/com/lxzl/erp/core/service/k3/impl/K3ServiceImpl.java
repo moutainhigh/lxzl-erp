@@ -1220,37 +1220,61 @@ public class K3ServiceImpl implements K3Service {
                     BeanUtils.copyProperties(k3Order, order);
 
                     OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+                    ServiceResult<String, Map<String, BigDecimal>> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(orderDO);
+                    Map<String, BigDecimal> map = firstNeedPayAmountResult.getResult();
+                    if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
+                        orderDO.setFirstNeedPayAmount(map.get("thisNeedPayAmount,ALL"));
+                    }
                     orderDO.setIsK3Order(CommonConstant.COMMON_CONSTANT_YES);
                     orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     orderDO.setCreateTime(currentTime);
                     orderDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     orderDO.setUpdateTime(currentTime);
                     orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    orderMapper.save(orderDO);
 
+                    List<OrderProductDO> orderProductDOList = new ArrayList<>();
                     for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
-                        com.lxzl.erp.common.domain.order.pojo.OrderProduct orderProduct = new com.lxzl.erp.common.domain.order.pojo.OrderProduct();
-                        BeanUtils.copyProperties(k3OrderProduct, orderProduct);
+                        OrderProductDO orderProductDO = new OrderProductDO();
+                        BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
 
-                        OrderProductDO orderProductDO = ConverterUtil.convert(orderProduct, OrderProductDO.class);
+                        // TODO 临时先写押0付款1
+                        orderProductDO.setDepositCycle(order.getDepositCycle());
+                        orderProductDO.setPaymentCycle(order.getPaymentCycle());
                         orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         orderProductDO.setCreateTime(currentTime);
                         orderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
                         orderProductDO.setUpdateTime(currentTime);
                         orderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                        orderProductMapper.save(orderProductDO);
+                        orderProductDOList.add(orderProductDO);
                     }
+                    orderDO.setOrderProductDOList(orderProductDOList);
 
+                    List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
                     for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
-                        com.lxzl.erp.common.domain.order.pojo.OrderMaterial orderMaterial = new com.lxzl.erp.common.domain.order.pojo.OrderMaterial();
-                        BeanUtils.copyProperties(k3OrderMaterial, orderMaterial);
+                        OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
+                        BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
 
-                        OrderMaterialDO orderMaterialDO = ConverterUtil.convert(orderMaterial, OrderMaterialDO.class);
+                        // TODO 临时先写押0付款1
+                        orderMaterialDO.setDepositCycle(order.getDepositCycle());
+                        orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
                         orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         orderMaterialDO.setCreateTime(currentTime);
                         orderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
                         orderMaterialDO.setUpdateTime(currentTime);
                         orderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                        orderMaterialDOList.add(orderMaterialDO);
+                    }
+                    orderDO.setOrderMaterialDOList(orderMaterialDOList);
+
+
+                    orderService.calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+                    orderService.calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+                    for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                        orderProductMapper.save(orderProductDO);
+                    }
+
+                    for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
                         orderMaterialMapper.save(orderMaterialDO);
                     }
 
@@ -1265,6 +1289,9 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfoDO.setUpdateTime(currentTime);
                     orderConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     orderConsignInfoMapper.save(orderConsignInfoDO);
+
+                    // 最后保存订单信息
+                    orderMapper.save(orderDO);
                 }
             }
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -1278,9 +1305,24 @@ public class K3ServiceImpl implements K3Service {
     boolean verifyK3Order(Order k3Order) {
 
         // 校验K3传过来的订单是否合规，如果合规才存
+        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
+        if (userDO == null) {
+            return Boolean.FALSE;
+        }
+        k3Order.setOrderSellerId(userDO.getId());
 
+        K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
+        if (k3MappingSubCompanyDO != null) {
+            k3Order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getK3SubCompanyCode()));
+        }
+        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName());
+        if (customerDO == null) {
+            return Boolean.FALSE;
+        }
+        k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
+        k3Order.setBuyerCustomerId(customerDO.getId());
 
-        return Boolean.FALSE;
+        return Boolean.TRUE;
     }
 
     @Override
@@ -1356,6 +1398,9 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;
+
+    @Autowired
+    private K3MappingSubCompanyMapper k3MappingSubCompanyMapper;
 
     @Autowired
     private K3MappingCategoryMapper k3MappingCategoryMapper;

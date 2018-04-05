@@ -48,6 +48,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -202,6 +203,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
             K3ReturnOrderDetailDO k3ReturnOrderDetailDO = map.get(k3ReturnOrderDetail.getOrderNo()+"-"+k3ReturnOrderDetail.getOrderItemId());
             if(k3ReturnOrderDetailDO==null){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM);
                 return serviceResult;
             }
