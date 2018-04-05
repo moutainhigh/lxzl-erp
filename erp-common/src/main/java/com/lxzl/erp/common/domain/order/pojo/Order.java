@@ -68,6 +68,7 @@ public class Order extends BasePO {
     private String orderSellerName;                             // 业务员姓名
     private String orderSubCompanyName;                         // 分公司名称
     private String deliverySubCompanyName;                         // 发货所属分公司名称
+    private Integer isK3Order;                                  // 是否是K3订单，1是0否
 
 
     private List<OrderProduct> orderProductList;                // 订单商品项
@@ -579,5 +580,13 @@ public class Order extends BasePO {
 
     public void setIsPeer(Integer isPeer) {
         this.isPeer = isPeer;
+    }
+
+    public Integer getIsK3Order() {
+        return isK3Order;
+    }
+
+    public void setIsK3Order(Integer isK3Order) {
+        this.isK3Order = isK3Order;
     }
 }

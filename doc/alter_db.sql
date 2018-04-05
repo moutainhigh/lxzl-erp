@@ -129,3 +129,5 @@ CREATE TABLE `erp_switch` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
+
+ALTER TABLE erp_order add `is_k3_order` int(20)  NOT NULL DEFAULT '0' COMMENT '是否为K3订单，1是0否';

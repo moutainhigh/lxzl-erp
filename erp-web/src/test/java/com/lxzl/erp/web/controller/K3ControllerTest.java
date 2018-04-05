@@ -393,5 +393,14 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         Thread.sleep(1000);
     }
 
+    @Test
+    public void transferOrder() throws Exception {
+        K3OrderQueryParam param = new K3OrderQueryParam();
+        param.setPageNo(1);
+        param.setPageSize(10);
+        TestResult testResult = getJsonTestResult("/k3/transferOrder", param);
+        Thread.sleep(1000);
+    }
+
 
 }
