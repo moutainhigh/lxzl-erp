@@ -182,7 +182,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         }
         String userId = null;
         if(StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())){
-            UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName());
+            UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
             if(userDO==null){
                 serviceResult.setErrorCode(ErrorCode.USER_NOT_EXISTS);
                 return serviceResult;

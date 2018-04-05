@@ -6,7 +6,9 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,4 +45,6 @@ public class K3CallbackControllerTest extends ERPTransactionalTest {
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         TestResult testResult = getJsonTestResult("/k3Callback/callbackReturnOrder",k3ReturnOrder);
     }
+
+
 }
