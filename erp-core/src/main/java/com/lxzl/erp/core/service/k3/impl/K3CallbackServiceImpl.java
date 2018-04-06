@@ -3,12 +3,18 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.OrderStatus;
+import com.lxzl.erp.common.constant.ReturnOrderStatus;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderProduct;
+import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
@@ -18,26 +24,37 @@ import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingSubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingUserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingSubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.user.UserDO;
+import com.lxzl.se.common.util.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -150,6 +167,58 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         return orderService.cancelOrder(orderNo);
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+
+        if(k3ReturnOrderDO==null){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        if(ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())){
+            serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
+            return serviceResult;
+        }
+        String userId = null;
+        if(StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())){
+            UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
+            if(userDO==null){
+                serviceResult.setErrorCode(ErrorCode.USER_NOT_EXISTS);
+                return serviceResult;
+            }
+            userId = userDO.getId().toString();
+
+        }
+        Date now = new Date();
+        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
+        k3ReturnOrderDO.setUpdateTime(now);
+        k3ReturnOrderDO.setUpdateUser(userId);
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        Map<String,K3ReturnOrderDetailDO> map = ListUtil.listToMap(k3ReturnOrderDetailDOList,"orderNo","orderItemId");
+
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
+        for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
+            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = map.get(k3ReturnOrderDetail.getOrderNo()+"-"+k3ReturnOrderDetail.getOrderItemId());
+            if(k3ReturnOrderDetailDO==null){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                serviceResult.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM);
+                return serviceResult;
+            }
+            k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetail.getRealProductCount());
+            k3ReturnOrderDetailDO.setRemark(k3ReturnOrderDetail.getRemark());
+            k3ReturnOrderDetailDO.setUpdateUser(userId);
+            k3ReturnOrderDetailDO.setUpdateTime(now);
+            k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+        }
+
+       serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+
     @Autowired
     private OrderMapper orderMapper;
 
@@ -169,9 +238,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private DeliveryOrderMapper deliveryOrderMapper;
 
     @Autowired
-    private K3MappingUserMapper k3MappingUserMapper;
-
-    @Autowired
     private DeliveryOrderProductMapper deliveryOrderProductMapper;
 
     @Autowired
@@ -182,4 +248,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+
+    @Autowired
+    private K3ReturnOrderMapper k3ReturnOrderMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 }

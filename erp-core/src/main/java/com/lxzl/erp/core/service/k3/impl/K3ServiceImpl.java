@@ -44,6 +44,7 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
@@ -54,6 +55,7 @@ import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -65,6 +67,7 @@ import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -86,8 +89,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:9090/api/OrderSearch";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/api/OrderDetailSearch";
+    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/list";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -121,6 +124,12 @@ public class K3ServiceImpl implements K3Service {
             if (param.getRentType() == null) {
                 jsonObject.remove("rentType");
             }
+            if (param.getSubCompanyNo() == null) {
+                jsonObject.remove("subCompanyNo");
+            }
+            if (param.getOrderSellerName() == null) {
+                jsonObject.remove("orderSellerName");
+            }
             if (userSupport.isSuperUser()) {
                 jsonObject.remove("orderSellerId");
             } else {
@@ -136,6 +145,7 @@ public class K3ServiceImpl implements K3Service {
             } else {
                 jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
+            jsonObject.put("pw", "5113f85e846056594bed8e2ece8b1cbd");
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
 
@@ -1182,6 +1192,156 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> transferOrder(K3OrderQueryParam param) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        Date currentTime = new Date();
+        ServiceResult<String, Page<Order>> queryOrderResult = queryAllOrder(param);
+        if (ErrorCode.SUCCESS.equals(queryOrderResult.getErrorCode())) {
+            Page<Order> orderPage = queryOrderResult.getResult();
+            List<Order> orderList = orderPage.getItemList();
+
+            if (CollectionUtil.isNotEmpty(orderList)) {
+                for (Order k3Order : orderList) {
+                    boolean verifyResult = verifyK3Order(k3Order);
+                    if (!verifyResult) {
+                        continue;
+                    }
+
+                    OrderDO dbOrderDO = orderMapper.findByOrderNo(k3Order.getOrderNo());
+                    if (dbOrderDO != null) {
+                        continue;
+                    }
+
+                    com.lxzl.erp.common.domain.order.pojo.Order order = new com.lxzl.erp.common.domain.order.pojo.Order();
+                    BeanUtils.copyProperties(k3Order, order);
+
+                    OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+                    ServiceResult<String, Map<String, BigDecimal>> firstNeedPayAmountResult = statementService.calculateOrderFirstNeedPayAmount(orderDO);
+                    Map<String, BigDecimal> map = firstNeedPayAmountResult.getResult();
+                    if (ErrorCode.SUCCESS.equals(firstNeedPayAmountResult.getErrorCode())) {
+                        orderDO.setFirstNeedPayAmount(map.get("thisNeedPayAmount,ALL"));
+                    }
+                    orderDO.setIsK3Order(CommonConstant.COMMON_CONSTANT_YES);
+                    orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    orderDO.setCreateTime(currentTime);
+                    orderDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    orderDO.setUpdateTime(currentTime);
+                    orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+
+                    List<OrderProductDO> orderProductDOList = new ArrayList<>();
+                    for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
+                        OrderProductDO orderProductDO = new OrderProductDO();
+                        BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
+
+                        orderProductDO.setDepositCycle(order.getDepositCycle());
+                        orderProductDO.setPaymentCycle(order.getPaymentCycle());
+                        orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        orderProductDO.setCreateTime(currentTime);
+                        orderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                        orderProductDO.setUpdateTime(currentTime);
+                        orderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                        orderProductDOList.add(orderProductDO);
+                    }
+                    orderDO.setOrderProductDOList(orderProductDOList);
+                    // K3老订单，插入-1
+                    orderDO.setDeliverySubCompanyId(-1);
+
+                    List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
+                    for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
+                        OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
+                        BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
+
+                        orderMaterialDO.setDepositCycle(order.getDepositCycle());
+                        orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
+                        orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        orderMaterialDO.setCreateTime(currentTime);
+                        orderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                        orderMaterialDO.setUpdateTime(currentTime);
+                        orderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                        orderMaterialDOList.add(orderMaterialDO);
+                    }
+                    orderDO.setOrderMaterialDOList(orderMaterialDOList);
+
+
+                    orderService.calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+                    orderService.calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+                    for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                        orderProductMapper.save(orderProductDO);
+                    }
+
+                    for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                        orderMaterialMapper.save(orderMaterialDO);
+                    }
+
+                    OrderConsignInfo k3OrderConsignInfo = k3Order.getOrderConsignInfo();
+                    com.lxzl.erp.common.domain.order.pojo.OrderConsignInfo orderConsignInfo = new com.lxzl.erp.common.domain.order.pojo.OrderConsignInfo();
+                    BeanUtils.copyProperties(k3OrderConsignInfo, orderConsignInfo);
+
+                    OrderConsignInfoDO orderConsignInfoDO = ConverterUtil.convert(orderConsignInfo, OrderConsignInfoDO.class);
+                    orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                    orderConsignInfoDO.setCreateTime(currentTime);
+                    orderConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    orderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    orderConsignInfoMapper.save(orderConsignInfoDO);
+
+                    // 最后保存订单信息
+                    orderMapper.save(orderDO);
+                }
+            }
+            result.setErrorCode(ErrorCode.SUCCESS);
+            return result;
+        } else {
+            result.setErrorCode(queryOrderResult.getErrorCode());
+            return result;
+        }
+    }
+
+    boolean verifyK3Order(Order k3Order) {
+
+        // 校验K3传过来的订单是否合规，如果合规才存
+        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
+        if (userDO == null) {
+            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
+            return Boolean.FALSE;
+        }
+        k3Order.setOrderSellerId(userDO.getId());
+
+        K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
+        if (k3MappingSubCompanyDO != null) {
+            k3Order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getK3SubCompanyCode()));
+        }
+        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName());
+        if (customerDO == null) {
+            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，客户不存在【%s】", k3Order.getOrderNo(), k3Order.getBuyerCustomerName()));
+            return Boolean.FALSE;
+        }
+        k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
+        k3Order.setBuyerCustomerId(customerDO.getId());
+
+        int rentingCount = 0;
+        // 订单没有在租数，要自动return false
+        if (CollectionUtil.isNotEmpty(k3Order.getOrderProductList())) {
+            for (OrderProduct orderProduct : k3Order.getOrderProductList()) {
+                rentingCount += orderProduct.getRentingProductCount();
+            }
+        }
+        if (CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : k3Order.getOrderMaterialList()) {
+                rentingCount += orderMaterial.getRentingMaterialCount();
+            }
+        }
+        if (rentingCount == 0) {
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
+    }
+
+    @Override
     public ServiceResult<String, String> sendChangeOrderToK3(String changeOrderNo) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -1256,6 +1416,9 @@ public class K3ServiceImpl implements K3Service {
     private K3MappingBrandMapper k3MappingBrandMapper;
 
     @Autowired
+    private K3MappingSubCompanyMapper k3MappingSubCompanyMapper;
+
+    @Autowired
     private K3MappingCategoryMapper k3MappingCategoryMapper;
 
     @Autowired
@@ -1296,6 +1459,9 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private OrderMaterialMapper orderMaterialMapper;
+
+    @Autowired
+    private OrderConsignInfoMapper orderConsignInfoMapper;
 
     @Autowired
     private StatementService statementService;

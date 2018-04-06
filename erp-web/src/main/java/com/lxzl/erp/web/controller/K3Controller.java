@@ -189,6 +189,12 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult);
     }
 
+    @RequestMapping(value = "transferOrder", method = RequestMethod.POST)
+    public Result transferOrder(@RequestBody K3OrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.transferOrder(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
 
     @Autowired
     private ResultGenerator resultGenerator;

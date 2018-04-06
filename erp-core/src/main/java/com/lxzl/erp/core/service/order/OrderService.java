@@ -7,8 +7,12 @@ import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 
 import java.util.Date;
+import java.util.List;
 
 public interface OrderService extends VerifyReceiver {
 
@@ -180,4 +184,8 @@ public interface OrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String, String> processStatementOrderByCancel(String orderNo);
+
+
+    void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO);
+    void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO);
 }

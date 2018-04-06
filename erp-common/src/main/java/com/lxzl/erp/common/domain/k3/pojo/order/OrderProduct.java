@@ -36,6 +36,8 @@ public class OrderProduct extends BasePO {
     private String categoryName;                // 类型
     private String brandName;                   // 品牌
 
+    private Integer rentingProductCount;        // 在租商品数
+
     private BigDecimal firstNeedPayAmount;      // 首付金额
 
     public Integer getOrderProductId() {
@@ -260,5 +262,13 @@ public class OrderProduct extends BasePO {
 
     public void setProductNumber(String productNumber) {
         this.productNumber = productNumber;
+    }
+
+    public Integer getRentingProductCount() {
+        return rentingProductCount;
+    }
+
+    public void setRentingProductCount(Integer rentingProductCount) {
+        this.rentingProductCount = rentingProductCount;
     }
 }
