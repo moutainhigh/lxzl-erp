@@ -15,6 +15,7 @@ import com.lxzl.erp.common.domain.k3.pojo.order.*;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
@@ -1244,10 +1245,11 @@ public class K3ServiceImpl implements K3Service {
 
                         if (productDO != null) {
                             orderProductDO.setProductId(productDO.getId());
+                            orderProductDO.setProductSkuId(0);
                             orderProductDO.setProductName(productDO.getProductName());
                             orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(productDO, Product.class)));
                         }
-                        orderProductDO.setOrderId(orderDO.getId());
+
                         orderProductDO.setDepositCycle(order.getDepositCycle());
                         orderProductDO.setPaymentCycle(order.getPaymentCycle());
                         orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1265,6 +1267,13 @@ public class K3ServiceImpl implements K3Service {
                     for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
                         OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
                         BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
+                        MaterialDO materialDO = materialMapper.findByK3MaterialNo(k3OrderMaterial.getFNumber());
+
+                        if (materialDO != null) {
+                            orderMaterialDO.setMaterialId(materialDO.getId());
+                            orderMaterialDO.setMaterialName(materialDO.getMaterialName());
+                            orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(materialDO, Material.class)));
+                        }
 
                         orderMaterialDO.setOrderId(orderDO.getId());
                         orderMaterialDO.setDepositCycle(order.getDepositCycle());
@@ -1290,10 +1299,12 @@ public class K3ServiceImpl implements K3Service {
                     orderMapper.save(orderDO);
 
                     for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
+                        orderProductDO.setOrderId(orderDO.getId());
                         orderProductMapper.save(orderProductDO);
                     }
 
                     for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
+                        orderMaterialDO.setOrderId(orderDO.getId());
                         orderMaterialMapper.save(orderMaterialDO);
                     }
 
