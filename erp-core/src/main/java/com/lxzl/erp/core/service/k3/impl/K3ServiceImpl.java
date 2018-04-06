@@ -89,8 +89,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/list";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -1204,13 +1204,11 @@ public class K3ServiceImpl implements K3Service {
 
             if (CollectionUtil.isNotEmpty(orderList)) {
                 for (Order k3Order : orderList) {
-                    // TODO 校验订单信息是否合格，如果不合格，要推钉钉
                     boolean verifyResult = verifyK3Order(k3Order);
                     if (!verifyResult) {
                         continue;
                     }
 
-                    // TODO 如果这个订单在ERP存在，则不存。推钉钉，continue
                     OrderDO dbOrderDO = orderMapper.findByOrderNo(k3Order.getOrderNo());
                     if (dbOrderDO != null) {
                         continue;
@@ -1237,7 +1235,6 @@ public class K3ServiceImpl implements K3Service {
                         OrderProductDO orderProductDO = new OrderProductDO();
                         BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
 
-                        // TODO 临时先写押0付款1
                         orderProductDO.setDepositCycle(order.getDepositCycle());
                         orderProductDO.setPaymentCycle(order.getPaymentCycle());
                         orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1248,13 +1245,14 @@ public class K3ServiceImpl implements K3Service {
                         orderProductDOList.add(orderProductDO);
                     }
                     orderDO.setOrderProductDOList(orderProductDOList);
+                    // K3老订单，插入-1
+                    orderDO.setDeliverySubCompanyId(-1);
 
                     List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
                     for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
                         OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
                         BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
 
-                        // TODO 临时先写押0付款1
                         orderMaterialDO.setDepositCycle(order.getDepositCycle());
                         orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
                         orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1307,6 +1305,7 @@ public class K3ServiceImpl implements K3Service {
         // 校验K3传过来的订单是否合规，如果合规才存
         UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
         if (userDO == null) {
+            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
             return Boolean.FALSE;
         }
         k3Order.setOrderSellerId(userDO.getId());
@@ -1317,10 +1316,27 @@ public class K3ServiceImpl implements K3Service {
         }
         CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName());
         if (customerDO == null) {
+            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，客户不存在【%s】", k3Order.getOrderNo(), k3Order.getBuyerCustomerName()));
             return Boolean.FALSE;
         }
         k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
         k3Order.setBuyerCustomerId(customerDO.getId());
+
+        int rentingCount = 0;
+        // 订单没有在租数，要自动return false
+        if (CollectionUtil.isNotEmpty(k3Order.getOrderProductList())) {
+            for (OrderProduct orderProduct : k3Order.getOrderProductList()) {
+                rentingCount += orderProduct.getRentingProductCount();
+            }
+        }
+        if (CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : k3Order.getOrderMaterialList()) {
+                rentingCount += orderMaterial.getRentingMaterialCount();
+            }
+        }
+        if (rentingCount == 0) {
+            return Boolean.FALSE;
+        }
 
         return Boolean.TRUE;
     }
