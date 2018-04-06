@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.k3.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.OrderStatus;
@@ -19,6 +20,7 @@ import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
+import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -45,6 +47,8 @@ import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -68,7 +72,7 @@ import java.util.Map;
 
 @Service("k3CallbackService")
 public class K3CallbackServiceImpl implements K3CallbackService {
-
+    private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> callbackDelivery(DeliveryOrder deliveryOrder) {
@@ -173,6 +177,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder) {
+        String json = JSON.toJSONString(k3ReturnOrder);
+        logger.info("return order call back : "+json);
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
 
@@ -194,7 +200,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             userId = userDO.getId().toString();
 
         }
-        BigDecimal b = k3ReturnOrder.getEQAmount();
+        BigDecimal b = k3ReturnOrder.getEqAmount();
         if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
             K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
             CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
@@ -207,18 +213,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         k3ReturnOrderDO.setUpdateUser(userId);
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-        Map<String,K3ReturnOrderDetailDO> map = ListUtil.listToMap(k3ReturnOrderDetailDOList,"orderNo","orderItemId");
-
-        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3ReturnOrder.getK3ReturnOrderDetailList();
-        for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
-            K3ReturnOrderDetailDO k3ReturnOrderDetailDO = map.get(k3ReturnOrderDetail.getOrderNo()+"-"+k3ReturnOrderDetail.getOrderItemId());
-            if(k3ReturnOrderDetailDO==null){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(ErrorCode.ORDER_HAVE_NO_THIS_ITEM);
-                return serviceResult;
-            }
-            k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetail.getRealProductCount());
-            k3ReturnOrderDetailDO.setRemark(k3ReturnOrderDetail.getRemark());
+        for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
+            k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
             k3ReturnOrderDetailDO.setUpdateUser(userId);
             k3ReturnOrderDetailDO.setUpdateTime(now);
             k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
