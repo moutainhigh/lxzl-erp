@@ -274,6 +274,7 @@ public class K3ServiceImpl implements K3Service {
             headerBuilder.contentType("application/json");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("orderNo", orderNo);
+            jsonObject.put("pw", "5113f85e846056594bed8e2ece8b1cbd");
             String requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderDetailUrl, requestJson, headerBuilder, "UTF-8");
 
