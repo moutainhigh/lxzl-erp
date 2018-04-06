@@ -575,6 +575,7 @@ public class ErrorCode {
     public static final String CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT = "J500160";
     public static final String CUSTOMER_RETURN_ID_NOT_NULL = "J500161";
     public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NOT_FULL = "J500163";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -1308,6 +1309,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR, "押金期数最小为0，最大为120");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR, "付款期数最小为1，最大为120");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "客户的风控信息不存在");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_FULL, "客户的风控信息不全，请联系风控部门完善");
         MAP.put(CUSTOMER_HAVE_NO_RETURN, "客户没有可归还商品");
         MAP.put(CUSTOMER_NOT_RENT_THIS, "客户没有租赁该商品");
         MAP.put(CUSTOMER_RETURN_TOO_MORE, "客户退换商品数超过限制");

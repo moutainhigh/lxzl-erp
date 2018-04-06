@@ -11,10 +11,7 @@ import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
-import com.lxzl.erp.common.domain.k3.pojo.order.Order;
-import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
-import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
-import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
+import com.lxzl.erp.common.domain.k3.pojo.order.*;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
@@ -42,6 +39,7 @@ import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
@@ -51,6 +49,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -89,8 +88,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/list";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -1198,7 +1197,7 @@ public class K3ServiceImpl implements K3Service {
 
         Date currentTime = new Date();
 
-        if(param.getSubCompanyId() != null){
+        if (param.getSubCompanyId() != null) {
             K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(param.getSubCompanyId().toString());
             param.setSubCompanyNo(k3MappingSubCompanyDO.getK3SubCompanyCode());
         }
@@ -1241,6 +1240,14 @@ public class K3ServiceImpl implements K3Service {
                         OrderProductDO orderProductDO = new OrderProductDO();
                         BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
 
+                        ProductDO productDO = productMapper.findByK3ProductNo(k3OrderProduct.getProductNumber());
+
+                        if (productDO != null) {
+                            orderProductDO.setProductId(productDO.getId());
+                            orderProductDO.setProductName(productDO.getProductName());
+                            orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(productDO, Product.class)));
+                        }
+                        orderProductDO.setOrderId(orderDO.getId());
                         orderProductDO.setDepositCycle(order.getDepositCycle());
                         orderProductDO.setPaymentCycle(order.getPaymentCycle());
                         orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1259,6 +1266,7 @@ public class K3ServiceImpl implements K3Service {
                         OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
                         BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
 
+                        orderMaterialDO.setOrderId(orderDO.getId());
                         orderMaterialDO.setDepositCycle(order.getDepositCycle());
                         orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
                         orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1270,9 +1278,16 @@ public class K3ServiceImpl implements K3Service {
                     }
                     orderDO.setOrderMaterialDOList(orderMaterialDOList);
 
-
+                    if (orderService.isCheckRiskManagement(orderDO)) {
+                        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
+                        if (customerRiskManagementDO == null) {
+                            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，风控信息不存在", k3Order.getOrderNo()));
+                            continue;
+                        }
+                    }
                     orderService.calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
                     orderService.calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+                    orderMapper.save(orderDO);
 
                     for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
                         orderProductMapper.save(orderProductDO);
@@ -1287,6 +1302,7 @@ public class K3ServiceImpl implements K3Service {
                     BeanUtils.copyProperties(k3OrderConsignInfo, orderConsignInfo);
 
                     OrderConsignInfoDO orderConsignInfoDO = ConverterUtil.convert(orderConsignInfo, OrderConsignInfoDO.class);
+                    orderConsignInfoDO.setOrderId(orderDO.getId());
                     orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     orderConsignInfoDO.setCreateTime(currentTime);
                     orderConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -1294,8 +1310,6 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     orderConsignInfoMapper.save(orderConsignInfoDO);
 
-                    // 最后保存订单信息
-                    orderMapper.save(orderDO);
                 }
             }
             result.setErrorCode(ErrorCode.SUCCESS);
@@ -1498,5 +1512,8 @@ public class K3ServiceImpl implements K3Service {
     private DingDingSupport dingDingSupport;
     @Autowired
     private CustomerSupport customerSupport;
+
+    @Autowired
+    private CustomerRiskManagementMapper customerRiskManagementMapper;
 
 }
