@@ -92,8 +92,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/list";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -1377,6 +1377,23 @@ public class K3ServiceImpl implements K3Service {
 
     boolean verifyK3Order(Order k3Order) {
 
+        int rentingCount = 0;
+        // 订单没有在租数，要自动return false
+        if (CollectionUtil.isNotEmpty(k3Order.getOrderProductList())) {
+            for (OrderProduct orderProduct : k3Order.getOrderProductList()) {
+                rentingCount += orderProduct.getRentingProductCount();
+            }
+        }
+        if (CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())) {
+            for (OrderMaterial orderMaterial : k3Order.getOrderMaterialList()) {
+                rentingCount += orderMaterial.getRentingMaterialCount();
+            }
+        }
+        if (rentingCount == 0) {
+            return Boolean.FALSE;
+        }
+
+
         // 校验K3传过来的订单是否合规，如果合规才存
         UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
         if (userDO == null) {
@@ -1396,23 +1413,6 @@ public class K3ServiceImpl implements K3Service {
         }
         k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
         k3Order.setBuyerCustomerId(customerDO.getId());
-
-        int rentingCount = 0;
-        // 订单没有在租数，要自动return false
-        if (CollectionUtil.isNotEmpty(k3Order.getOrderProductList())) {
-            for (OrderProduct orderProduct : k3Order.getOrderProductList()) {
-                rentingCount += orderProduct.getRentingProductCount();
-            }
-        }
-        if (CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())) {
-            for (OrderMaterial orderMaterial : k3Order.getOrderMaterialList()) {
-                rentingCount += orderMaterial.getRentingMaterialCount();
-            }
-        }
-        if (rentingCount == 0) {
-            return Boolean.FALSE;
-        }
-
         return Boolean.TRUE;
     }
 
