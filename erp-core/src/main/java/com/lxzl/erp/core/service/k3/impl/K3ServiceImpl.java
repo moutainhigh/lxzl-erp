@@ -92,8 +92,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -351,8 +351,9 @@ public class K3ServiceImpl implements K3Service {
                 return result;
             }
         }
-
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
+
+
         k3ReturnOrderDO.setReturnOrderNo("LXK3RO" + DateUtil.formatDate(currentTime, "yyyyMMddHHmmssSSS"));
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
         k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -363,6 +364,18 @@ public class K3ServiceImpl implements K3Service {
         k3ReturnOrderMapper.save(k3ReturnOrderDO);
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+                ServiceResult serviceResult = queryOrder(k3ReturnOrderDetail.getOrderNo());
+//                if(ErrorCode.SUCCESS.equals(serviceResult)){
+//                   if(serviceResult.getResult()==null){
+//                        serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+//                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                        return serviceResult;
+//                   }
+//                }else{
+//                    serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    return serviceResult;
+//                }
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1354,11 +1367,14 @@ public class K3ServiceImpl implements K3Service {
             return serviceResult;
         }
         try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
             String url = K3Config.k3Server + "/seoutstock/billcancel";
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("billno", returnOrderNo);
-            String response = HttpClientUtil.post(url, jsonObject.toJSONString(), "UTF-8");
-            logger.info("revoke return revoke response : ", response);
+            logger.info("revoke return revoke request : "+jsonObject.toJSONString() );
+            String response = HttpClientUtil.post(url, jsonObject.toJSONString(), headerBuilder,"UTF-8");
+            logger.info("revoke return revoke response : "+ response);
             com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult result = JSON.parseObject(response, com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult.class);
             if (result.getStatus() == 0) {
                 k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_CANCEL);
