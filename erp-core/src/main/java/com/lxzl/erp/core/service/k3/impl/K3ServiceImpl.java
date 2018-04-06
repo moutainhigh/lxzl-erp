@@ -1232,9 +1232,9 @@ public class K3ServiceImpl implements K3Service {
                     orderDO.setIsK3Order(CommonConstant.COMMON_CONSTANT_YES);
                     orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     orderDO.setCreateTime(currentTime);
-                    orderDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    orderDO.setCreateUser(orderDO.getOrderSellerId().toString());
                     orderDO.setUpdateTime(currentTime);
-                    orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    orderDO.setUpdateUser(orderDO.getOrderSellerId().toString());
 
                     List<OrderProductDO> orderProductDOList = new ArrayList<>();
                     for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
@@ -1250,13 +1250,14 @@ public class K3ServiceImpl implements K3Service {
                             orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(productDO, Product.class)));
                         }
 
+                        orderProductDO.setProductCount(k3OrderProduct.getRentingProductCount());
                         orderProductDO.setDepositCycle(order.getDepositCycle());
                         orderProductDO.setPaymentCycle(order.getPaymentCycle());
                         orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         orderProductDO.setCreateTime(currentTime);
-                        orderProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                        orderProductDO.setCreateUser(orderDO.getOrderSellerId().toString());
                         orderProductDO.setUpdateTime(currentTime);
-                        orderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                        orderProductDO.setUpdateUser(orderDO.getOrderSellerId().toString());
                         orderProductDOList.add(orderProductDO);
                     }
                     orderDO.setOrderProductDOList(orderProductDOList);
@@ -1275,14 +1276,15 @@ public class K3ServiceImpl implements K3Service {
                             orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(materialDO, Material.class)));
                         }
 
+                        orderMaterialDO.setMaterialCount(k3OrderMaterial.getRentingMaterialCount());
                         orderMaterialDO.setOrderId(orderDO.getId());
                         orderMaterialDO.setDepositCycle(order.getDepositCycle());
                         orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
                         orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                         orderMaterialDO.setCreateTime(currentTime);
-                        orderMaterialDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                        orderMaterialDO.setCreateUser(orderDO.getOrderSellerId().toString());
                         orderMaterialDO.setUpdateTime(currentTime);
-                        orderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                        orderMaterialDO.setUpdateUser(orderDO.getOrderSellerId().toString());
                         orderMaterialDOList.add(orderMaterialDO);
                     }
                     orderDO.setOrderMaterialDOList(orderMaterialDOList);
@@ -1316,9 +1318,9 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfoDO.setOrderId(orderDO.getId());
                     orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                     orderConsignInfoDO.setCreateTime(currentTime);
-                    orderConsignInfoDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                    orderConsignInfoDO.setCreateUser(orderDO.getOrderSellerId().toString());
                     orderConsignInfoDO.setUpdateTime(currentTime);
-                    orderConsignInfoDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                    orderConsignInfoDO.setUpdateUser(orderDO.getOrderSellerId().toString());
                     orderConsignInfoMapper.save(orderConsignInfoDO);
 
                 }
