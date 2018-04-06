@@ -95,6 +95,8 @@ public class K3ServiceImpl implements K3Service {
     private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
     private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
 
+    String pw = "5113f85e846056594bed8e2ece8b1cbd";
+
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
@@ -148,7 +150,7 @@ public class K3ServiceImpl implements K3Service {
             } else {
                 jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
-            jsonObject.put("pw", "5113f85e846056594bed8e2ece8b1cbd");
+            jsonObject.put("pw", pw);
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
 
@@ -274,7 +276,7 @@ public class K3ServiceImpl implements K3Service {
             headerBuilder.contentType("application/json");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("orderNo", orderNo);
-            jsonObject.put("pw", "5113f85e846056594bed8e2ece8b1cbd");
+            jsonObject.put("pw", pw);
             String requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderDetailUrl, requestJson, headerBuilder, "UTF-8");
 
