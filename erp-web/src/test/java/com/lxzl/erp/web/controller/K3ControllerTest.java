@@ -77,8 +77,8 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void createReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setK3CustomerNo("01.SZ201703080006");
-        k3ReturnOrder.setK3CustomerName("深圳TCL教育科技有限责任公司");
+        k3ReturnOrder.setK3CustomerNo("01.SZ201604160012");
+        k3ReturnOrder.setK3CustomerName("深圳宜达互联科技有限公司");
         k3ReturnOrder.setReturnTime(new Date());
         k3ReturnOrder.setReturnAddress("北京京西蓝靛厂");
         k3ReturnOrder.setReturnContacts("宋老三");
@@ -88,11 +88,11 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
 
         K3ReturnOrderDetail k3ReturnOrderDetail1 = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail1.setOrderNo("LXO-20180305-0755-00012");
-        k3ReturnOrderDetail1.setOrderItemId("15");
+        k3ReturnOrderDetail1.setOrderNo("LXO-20180325-0755-02126");
+        k3ReturnOrderDetail1.setOrderItemId("3362");
         k3ReturnOrderDetail1.setOrderEntry("1");
 
-        ProductDO product = productMapper.findById(2000003);
+        ProductDO product = productMapper.findById(2000064);
         K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
         K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
         String number = "";
@@ -104,7 +104,31 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         k3ReturnOrderDetail1.setProductNo(number);
         k3ReturnOrderDetail1.setProductName(product.getProductName());
         k3ReturnOrderDetail1.setProductCount(1);
+
+
+
+
+        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
+        k3ReturnOrderDetail2.setOrderNo("LXO-20180326-0755-02225");
+        k3ReturnOrderDetail2.setOrderItemId("3561");
+        k3ReturnOrderDetail2.setOrderEntry("1");
+
+        ProductDO product2 = productMapper.findById(2000064);
+        K3MappingCategoryDO k3MappingCategoryDO2 = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+        K3MappingBrandDO k3MappingBrandDO2 = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+        String number2 = "";
+        if(StringUtil.isNotEmpty(product2.getK3ProductNo())){
+            number2 = product2.getK3ProductNo();
+        }else {
+            number2 = "10." + k3MappingCategoryDO2.getK3CategoryCode() + "." + k3MappingBrandDO2.getK3BrandCode() + "." + product2.getProductModel();
+        }
+        k3ReturnOrderDetail2.setProductNo(number2);
+        k3ReturnOrderDetail2.setProductName(product2.getProductName());
+        k3ReturnOrderDetail2.setProductCount(1);
+
+
         k3ReturnOrderDetailList.add(k3ReturnOrderDetail1);
+        k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXSE2018020716");
@@ -363,11 +387,16 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitK3ReturnOrder() throws Exception {
         K3ReturnOrderCommitParam k3ReturnOrderCommitParam = new K3ReturnOrderCommitParam();
-        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180406161423866");
+        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180406185029623");
         k3ReturnOrderCommitParam.setVerifyUserId(500006);
         TestResult testResult = getJsonTestResult("/k3/commitK3ReturnOrder", k3ReturnOrderCommitParam);
     }
-
+    @Test
+    public void revokeReturnOrder() throws Exception {
+        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180406180514926");
+        TestResult testResult = getJsonTestResult("/k3/revokeReturnOrder", k3ReturnOrder);
+    }
     @Test
     public void cancelK3ChangeOrder() throws Exception {
         K3ChangeOrder k3ChangeOrder = new K3ChangeOrder();
