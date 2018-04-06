@@ -89,8 +89,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -1197,6 +1197,12 @@ public class K3ServiceImpl implements K3Service {
         ServiceResult<String, String> result = new ServiceResult<>();
 
         Date currentTime = new Date();
+
+        if(param.getSubCompanyId() != null){
+            K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(param.getSubCompanyId().toString());
+            param.setSubCompanyNo(k3MappingSubCompanyDO.getK3SubCompanyCode());
+        }
+
         ServiceResult<String, Page<Order>> queryOrderResult = queryAllOrder(param);
         if (ErrorCode.SUCCESS.equals(queryOrderResult.getErrorCode())) {
             Page<Order> orderPage = queryOrderResult.getResult();
