@@ -4,20 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.PostK3Type;
 import com.lxzl.erp.common.domain.ApplicationConfig;
-import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
-import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.xml.rpc.ServiceException;
 import java.util.Date;
 
 public class K3WebServicePostRunner implements Runnable {

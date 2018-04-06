@@ -12,28 +12,30 @@ import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingSubCompanyMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingUserMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.delivery.DeliveryOrderProductDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingSubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -50,6 +52,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -177,7 +180,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_NOT_EXISTS);
             return serviceResult;
         }
-        if(ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())){
+        if(!ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(k3ReturnOrderDO.getReturnOrderStatus())){
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
@@ -191,6 +194,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             userId = userDO.getId().toString();
 
         }
+        BigDecimal b = k3ReturnOrder.getEQAmount();
+        if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
+            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+            CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+            customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+        }
+
         Date now = new Date();
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
         k3ReturnOrderDO.setUpdateTime(now);
@@ -257,4 +267,10 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
     @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
+    @Autowired
+    private K3MappingCustomerMapper k3MappingCustomerMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private CustomerSupport customerSupport;
 }

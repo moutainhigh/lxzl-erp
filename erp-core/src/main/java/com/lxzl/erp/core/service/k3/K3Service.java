@@ -82,4 +82,6 @@ public interface K3Service extends VerifyReceiver {
     ServiceResult<String,String> strongCancelReturnOrder(String returnOrderNo);
 
     ServiceResult<String,String> transferOrder(K3OrderQueryParam param);
+
+    ServiceResult<String,String> revokeReturnOrder(String returnOrderNo);
 }
