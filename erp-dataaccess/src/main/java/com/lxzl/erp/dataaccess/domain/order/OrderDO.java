@@ -58,6 +58,7 @@ public class OrderDO extends BaseDO {
     private String remark;
     private Integer owner;
     private Integer deliverySubCompanyId;                       // 发货所属分公司
+    private Integer isK3Order;                                  // 是否是K3订单，1是0否
 
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
@@ -513,5 +514,13 @@ public class OrderDO extends BaseDO {
 
     public void setIsPeer(Integer isPeer) {
         this.isPeer = isPeer;
+    }
+
+    public Integer getIsK3Order() {
+        return isK3Order;
+    }
+
+    public void setIsK3Order(Integer isK3Order) {
+        this.isK3Order = isK3Order;
     }
 }

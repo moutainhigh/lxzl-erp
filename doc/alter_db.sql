@@ -19,6 +19,7 @@ ALTER TABLE erp_customer_company add `address_verify_status` int(11) NOT NULL DE
 ALTER TABLE erp_order add `is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是';
 ALTER TABLE erp_customer_consign_info add `workflow_type` int(11) NOT NULL DEFAULT '0' COMMENT '工作流类型';
 ALTER TABLE erp_order add `statement_date` int(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定';
+ALTER TABLE erp_order add `is_k3_order` int(20)  NOT NULL DEFAULT '0' COMMENT '是否为K3订单，1是0否';
 
 
 ---------------------- 未执行 ----------------------
@@ -129,3 +130,5 @@ CREATE TABLE `erp_switch` (
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
+
+ALTER TABLE erp_k3_return_order_detail add `real_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '实际退货数量';

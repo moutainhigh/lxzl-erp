@@ -2,6 +2,8 @@ package com.lxzl.erp.web.test;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -9,7 +11,9 @@ import com.lxzl.erp.dataaccess.domain.product.ProductCategoryPropertyValueDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuPropertyDO;
 import org.junit.Test;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -194,5 +198,24 @@ public class SimpleTest {
 //            }
         }
         System.out.println();
+    }
+
+    @Test
+    public void callbackReturnOrderRest() throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+
+        K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180328035118307");
+        k3ReturnOrder.setUpdateUserRealName("喻晓艳");
+
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
+        K3ReturnOrderDetail k3ReturnOrderDetail = new K3ReturnOrderDetail();
+        k3ReturnOrderDetail.setOrderNo("LXO-20180328-1000-01286");
+        k3ReturnOrderDetail.setOrderItemId("1953");
+        k3ReturnOrderDetail.setRealProductCount(666);
+        k3ReturnOrderDetailList.add(k3ReturnOrderDetail);
+
+        k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+        String customer = restTemplate.postForObject("http://192.168.10.94:8085/k3Callback/callbackReturnOrder",k3ReturnOrder,String.class);
     }
 }

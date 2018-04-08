@@ -13,6 +13,7 @@ import java.util.Map;
 public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     ProductDO findByProductId(@Param("productId") Integer productId);
     ProductDO findByProductNo(@Param("productNo") String productNo);
+    ProductDO findByK3ProductNo(@Param("k3ProductNo") String k3ProductNo);
     List<ProductDO> findProductByParams(@Param("maps") Map<String, Object> paramMap);
     Integer findProductCountByParams(@Param("maps") Map<String, Object> paramMap);
 

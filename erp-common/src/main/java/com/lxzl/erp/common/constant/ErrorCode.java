@@ -413,6 +413,9 @@ public class ErrorCode {
     public static final String PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS = "J400138";
     public static final String ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME = "J400139";
     public static final String ORDER_ISPEER_NOT_NULL = "J400140";
+    public static final String ORDER_ITEM_ID_NOT_NULL = "J400141";
+    public static final String ORDER_ROW_ID_NOT_NULL = "J400142";
+    public static final String RETURN_DETAIL_LIST_NOT_NULL = "J400143";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -572,6 +575,7 @@ public class ErrorCode {
     public static final String CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT = "J500160";
     public static final String CUSTOMER_RETURN_ID_NOT_NULL = "J500161";
     public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
+    public static final String CUSTOMER_RISK_MANAGEMENT_NOT_FULL = "J500163";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -1293,6 +1297,9 @@ public class ErrorCode {
         MAP.put(PURCHASE_APPLY_ORDER_MATERIAL_NOT_EXISTS, "采购申请单的配件项不存在");
         MAP.put(ORDER_SUBCOMPANY_AND_DELIVERY_SUB_COMPANY_IS_NOT_SAME, "订单的电销人员不能选择自己电销发货所属分公司");
         MAP.put(ORDER_ISPEER_NOT_NULL, "是否是同行调拨不能为空");
+        MAP.put(ORDER_ITEM_ID_NOT_NULL, "订单项ID不能为空");
+        MAP.put(ORDER_ROW_ID_NOT_NULL, "订单行号不能为空");
+        MAP.put(RETURN_DETAIL_LIST_NOT_NULL, "退货详情列表不能为空");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1310,6 +1317,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RISK_MANAGEMENT_DEPOSIT_CYCLE_ERROR, "押金期数最小为0，最大为120");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_PAYMENT_CYCLE_ERROR, "付款期数最小为1，最大为120");
         MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS, "客户的风控信息不存在");
+        MAP.put(CUSTOMER_RISK_MANAGEMENT_NOT_FULL, "客户的风控信息不全，请联系风控部门完善");
         MAP.put(CUSTOMER_HAVE_NO_RETURN, "客户没有可归还商品");
         MAP.put(CUSTOMER_NOT_RENT_THIS, "客户没有租赁该商品");
         MAP.put(CUSTOMER_RETURN_TOO_MORE, "客户退换商品数超过限制");
@@ -1319,7 +1327,7 @@ public class ErrorCode {
         MAP.put(CITY_ID_NOT_NULL, "城市ID不能为空");
         MAP.put(DISTRICT_ID_NOT_NULL, "街道ID不能为空");
         MAP.put(ADDRESS_NOT_NULL, "地址不能为空");
-        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于0");
+        MAP.put(RETURN_COUNT_ERROR, "退还数量必须大于等于0");
         MAP.put(RETURN_ORDER_NO_NOT_NULL, "退还单号不能为空");
         MAP.put(EQUIPMENT_NO_NOT_NULL, "设备编号不能为空");
         MAP.put(RETURN_ORDER_NOT_EXISTS, "退还单不存在");
