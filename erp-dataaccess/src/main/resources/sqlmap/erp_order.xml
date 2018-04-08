@@ -343,32 +343,35 @@
             <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
                 and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
             </if>
-            <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
+            <if test="maps.orderQueryParam.deliveryMode != null">
                 and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
+            <if test="maps.orderQueryParam.subCompanyId != null">
                 and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null">
                 and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
+            <if test="maps.orderQueryParam.orderId != null">
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
             </if>
-            <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
+            <if test="maps.orderQueryParam.buyerCustomerId != null">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
-                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=INTEGER}
+                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
             </if>
-            <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
+            <if test="maps.orderQueryParam.orderSellerId != null">
                 and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
+            <if test="maps.orderQueryParam.rentType != null">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
                 and eo.order_status in
@@ -383,7 +386,6 @@
             <if test="maps.orderQueryParam.isPeer != null">
                 and eo.is_peer = #{maps.orderQueryParam.isPeer, jdbcType=INTEGER}
             </if>
-
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
             </if>
@@ -438,32 +440,35 @@
             <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
                 and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
             </if>
-            <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
+            <if test="maps.orderQueryParam.deliveryMode != null">
                 and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
+            <if test="maps.orderQueryParam.subCompanyId != null">
                 and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null">
                 and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
+            <if test="maps.orderQueryParam.orderId != null">
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
             </if>
-            <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
+            <if test="maps.orderQueryParam.buyerCustomerId != null">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
-                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=INTEGER}
+                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
             </if>
-            <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
+            <if test="maps.orderQueryParam.orderSellerId != null">
                 and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
+            <if test="maps.orderQueryParam.rentType != null">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
                 and eo.order_status in

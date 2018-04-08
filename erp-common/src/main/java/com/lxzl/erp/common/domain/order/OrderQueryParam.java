@@ -18,6 +18,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private String consigneeName;
     private String consigneePhone;
     private Integer rentType;
+    private Integer orderStatus;
     private List<Integer> orderStatusList;
     private Date createStartTime;
     private Date createEndTime;
@@ -63,6 +64,14 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setRentType(Integer rentType) {
         this.rentType = rentType;
+    }
+
+    public Integer getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(Integer orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public List<Integer> getOrderStatusList() {
