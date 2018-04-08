@@ -301,6 +301,11 @@ public class PageController extends BaseController {
         return "/component/customer/riskModal";
     }
 
+    @RequestMapping("/customer-manage/returnVisitModal")
+    public String customerManagereturnVisit() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordModal";
+    }
+
     //企业客户
     @RequestMapping("/customer-business-manage/list")
     public String businessCustomerManageList() {
