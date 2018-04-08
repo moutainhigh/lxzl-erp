@@ -32,11 +32,16 @@ public class ExceptionHandlerAdvice {
         if(StringUtil.isBlank(businessException.getMessage())){
             return new ResponseEntity<Object>(resultGenerator.generate(ErrorCode.SYSTEM_ERROR,ErrorCode.getMessage(ErrorCode.SYSTEM_ERROR) ),HttpStatus.OK);
         }else{
-            String description = ErrorCode.getMessage(businessException.getMessage());
+            String code = businessException.getCode();
+            code = code==null?ErrorCode.BUSINESS_EXCEPTION:code;
+            String description = businessException.getMessage();
             if(StringUtil.isNotBlank(description)){//获取到了错误码对应的描述，则返回错误码描述
-                return new ResponseEntity<Object>(resultGenerator.generate(businessException.getMessage(),ErrorCode.getMessage(businessException.getMessage()) ),HttpStatus.OK);
+                if(StringUtil.isNotBlank(ErrorCode.getMessage(description))){
+                    return new ResponseEntity<Object>(resultGenerator.generate(description,ErrorCode.getMessage(description)),HttpStatus.OK);
+                }
+                return new ResponseEntity<Object>(resultGenerator.generate(code,description),HttpStatus.OK);
             }else{//没有获取到错误码对应的描述，则直接返回异常的描述
-                return new ResponseEntity<Object>(resultGenerator.generate(null,businessException.getMessage() ),HttpStatus.OK);
+                return new ResponseEntity<Object>(resultGenerator.generate(code,ErrorCode.getMessage(code)),HttpStatus.OK);
             }
         }
     }
