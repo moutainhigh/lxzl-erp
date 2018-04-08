@@ -41,9 +41,17 @@
     <select id="findSendMessageCountByParams" resultType="java.lang.Integer" parameterType="map">
     SELECT count(*)
         FROM erp_message em
-
-    WHERE
-        em.`sender_user_id` = #{maps.senderUserId} AND em.data_status =1
+        <where>
+            <if test="maps.messageQueryParam != null &amp;&amp; maps.messageQueryParam.isRead != null &amp;&amp; maps.messageQueryParam.isRead == 1">
+                AND em.read_time IS NOT NULL
+            </if>
+            <if test="maps.messageQueryParam != null &amp;&amp; maps.messageQueryParam.isRead != null &amp;&amp; maps.messageQueryParam.isRead == 0">
+                AND em.read_time IS NULL
+            </if>
+            <if test="maps.isQueryAll == null">
+                and em.data_status =1 and em.sender_user_id = #{maps.senderUserId,jdbcType=INTEGER}
+            </if>
+        </where>
     </select>
 
     <sql id="column_List">
@@ -52,19 +60,38 @@
 
     <select id="findSendMessageByParams" resultMap="MessageDO" parameterType="map">
          SELECT
-            <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+            <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
+            CASE
+            WHEN em.read_time IS NULL THEN
+            0
+            ELSE 1
+            END AS isRead
           FROM erp_message em
             LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
             LEFT JOIN erp_user eru ON em.receiver_user_id = eru.id
-          WHERE
-          em.sender_user_id = #{maps.senderUserId} AND em.data_status =1
+        <where>
+            <if test="maps.messageQueryParam != null &amp;&amp; maps.messageQueryParam.isRead != null &amp;&amp; maps.messageQueryParam.isRead == 1">
+                AND em.read_time IS NOT NULL
+            </if>
+            <if test="maps.messageQueryParam != null &amp;&amp; maps.messageQueryParam.isRead != null &amp;&amp; maps.messageQueryParam.isRead == 0">
+                AND em.read_time IS NULL
+            </if>
+            <if test="maps.isQueryAll == null">
+                and em.data_status =1 and em.sender_user_id = #{maps.senderUserId,jdbcType=INTEGER}
+            </if>
+        </where>
         ORDER BY em.send_time DESC ,em.receiver_user_id DESC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
     
     <select id="findById" parameterType="int" resultMap="MessageDO">
         SELECT
-        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
+        CASE
+        WHEN em.read_time IS NULL THEN
+        0
+        ELSE 1
+        END AS isRead
         FROM erp_message em
         LEFT JOIN erp_user esu ON em.sender_user_id = esu.id
         LEFT JOIN erp_user eru ON em.receiver_user_id = eru.id
@@ -90,7 +117,12 @@
 
     <select id="findReceiveMessageByParams" resultMap="MessageDO" parameterType="map">
         SELECT
-        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName
+        <include refid="column_List"/>,esu.real_name AS senderUserName,  eru.real_name AS receiverUserName,
+        CASE
+        WHEN em.read_time IS NULL THEN
+        0
+        ELSE 1
+        END AS isRead
         FROM erp_message em
         LEFT JOIN erp_user esu ON em.`sender_user_id` = esu.id
         LEFT JOIN erp_user eru ON em.`receiver_user_id` = eru.id

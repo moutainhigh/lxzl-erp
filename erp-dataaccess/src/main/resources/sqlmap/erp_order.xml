@@ -5,78 +5,76 @@
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper">
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderDO" id="OrderDO">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
-        <result column="delivery_mode" jdbcType="INTEGER" property="deliveryMode"/>
-        <result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId"/>
-        <result column="buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo"/>
-        <result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName"/>
-        <result column="expect_delivery_time" jdbcType="TIMESTAMP" property="expectDeliveryTime"/>
-        <result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime"/>
-        <result column="rent_type" jdbcType="INTEGER" property="rentType"/>
-        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
-        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
-        <result column="total_deposit_amount" jdbcType="DECIMAL" property="totalDepositAmount"/>
-        <result column="total_must_deposit_amount" jdbcType="DECIMAL" property="totalMustDepositAmount"/>
-        <result column="total_credit_deposit_amount" jdbcType="DECIMAL" property="totalCreditDepositAmount"/>
-        <result column="total_rent_deposit_amount" jdbcType="INTEGER" property="totalRentDepositAmount"/>
-        <result column="total_insurance_amount" jdbcType="DECIMAL" property="totalInsuranceAmount"/>
-        <result column="total_product_count" jdbcType="INTEGER" property="totalProductCount"/>
-        <result column="total_product_amount" jdbcType="DECIMAL" property="totalProductAmount"/>
-        <result column="total_product_deposit_amount" jdbcType="DECIMAL" property="totalProductDepositAmount"/>
-        <result column="total_product_credit_deposit_amount" jdbcType="DECIMAL"
-                property="totalProductCreditDepositAmount"/>
-        <result column="total_product_rent_deposit_amount" jdbcType="DECIMAL" property="totalProductRentDepositAmount"/>
-        <result column="total_material_count" jdbcType="INTEGER" property="totalMaterialCount"/>
-        <result column="total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount"/>
-        <result column="total_material_deposit_amount" jdbcType="DECIMAL" property="totalMaterialDepositAmount"/>
-        <result column="total_material_credit_deposit_amount" jdbcType="DECIMAL"
-                property="totalMaterialCreditDepositAmount"/>
-        <result column="total_material_rent_deposit_amount" jdbcType="DECIMAL"
-                property="totalMaterialRentDepositAmount"/>
-        <result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount"/>
-        <result column="total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount"/>
-        <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount"/>
-        <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount"/>
-        <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId"/>
-        <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName"/>
-        <result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId"/>
-        <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
-        <result column="order_sub_company_name" jdbcType="VARCHAR" property="orderSubCompanyName"/>
-        <result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
-        <result column="order_status" jdbcType="INTEGER" property="orderStatus"/>
-        <result column="first_need_pay_amount" jdbcType="INTEGER" property="firstNeedPayAmount"/>
-        <result column="pay_status" jdbcType="INTEGER" property="payStatus"/>
-        <result column="is_peer" jdbcType="INTEGER" property="isPeer"/>
-        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
-        <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime"/>
-        <result column="confirm_delivery_time" jdbcType="TIMESTAMP" property="confirmDeliveryTime"/>
-        <result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime"/>
-        <result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime"/>
-        <result column="high_tax_rate" jdbcType="INTEGER" property="highTaxRate"/>
-        <result column="low_tax_rate" jdbcType="INTEGER" property="lowTaxRate"/>
-        <result column="buyer_remark" jdbcType="VARCHAR" property="buyerRemark"/>
-        <result column="product_summary" jdbcType="VARCHAR" property="productSummary"/>
-        <result column="is_k3_order" jdbcType="INTEGER" property="isK3Order"/>
-        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
-        <result column="remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="owner" jdbcType="INTEGER" property="owner"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
-        <collection property="orderProductDOList" resultMap="OrderProductDO"/>
-        <collection property="orderMaterialDOList" resultMap="OrderMaterialDO"/>
-        <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO"/>
-        <collection property="orderTimeAxisDOList" resultMap="OrderTimeAxisDO"/>
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="delivery_mode" jdbcType="INTEGER" property="deliveryMode" />
+        <result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
+        <result column="buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo" />
+        <result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
+        <result column="expect_delivery_time" jdbcType="TIMESTAMP" property="expectDeliveryTime" />
+        <result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
+        <result column="rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="total_deposit_amount" jdbcType="DECIMAL" property="totalDepositAmount" />
+        <result column="total_must_deposit_amount" jdbcType="DECIMAL" property="totalMustDepositAmount" />
+        <result column="total_credit_deposit_amount" jdbcType="DECIMAL" property="totalCreditDepositAmount" />
+        <result column="total_rent_deposit_amount" jdbcType="INTEGER" property="totalRentDepositAmount" />
+        <result column="total_insurance_amount" jdbcType="DECIMAL" property="totalInsuranceAmount" />
+        <result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+        <result column="total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
+        <result column="total_product_deposit_amount" jdbcType="DECIMAL" property="totalProductDepositAmount" />
+        <result column="total_product_credit_deposit_amount" jdbcType="DECIMAL" property="totalProductCreditDepositAmount" />
+        <result column="total_product_rent_deposit_amount" jdbcType="DECIMAL" property="totalProductRentDepositAmount" />
+        <result column="total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
+        <result column="total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
+        <result column="total_material_deposit_amount" jdbcType="DECIMAL" property="totalMaterialDepositAmount" />
+        <result column="total_material_credit_deposit_amount" jdbcType="DECIMAL" property="totalMaterialCreditDepositAmount" />
+        <result column="total_material_rent_deposit_amount" jdbcType="DECIMAL" property="totalMaterialRentDepositAmount" />
+        <result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
+        <result column="total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
+        <result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
+        <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount" />
+        <result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+        <result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName" />
+        <result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
+        <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId" />
+        <result column="order_sub_company_name" jdbcType="VARCHAR" property="orderSubCompanyName" />
+        <result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName" />
+        <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+        <result column="first_need_pay_amount" jdbcType="INTEGER" property="firstNeedPayAmount" />
+        <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+        <result column="is_peer" jdbcType="INTEGER" property="isPeer" />
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+        <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
+        <result column="confirm_delivery_time" jdbcType="TIMESTAMP" property="confirmDeliveryTime" />
+        <result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+        <result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
+        <result column="high_tax_rate" jdbcType="INTEGER" property="highTaxRate" />
+        <result column="low_tax_rate" jdbcType="INTEGER" property="lowTaxRate" />
+        <result column="buyer_remark" jdbcType="VARCHAR" property="buyerRemark" />
+        <result column="product_summary" jdbcType="VARCHAR" property="productSummary" />
+        <result column="is_k3_order" jdbcType="INTEGER" property="isK3Order" />
+        <result column="statement_date" jdbcType="INTEGER" property="statementDate" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="owner" jdbcType="INTEGER" property="owner" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <collection property="orderProductDOList" resultMap="OrderProductDO" />
+        <collection property="orderMaterialDOList" resultMap="OrderMaterialDO" />
+        <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO" />
+        <collection property="orderTimeAxisDOList" resultMap="OrderTimeAxisDO" />
     </resultMap>
-
+    
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderProductDO" id="OrderProductDO">
         <id column="order_product_id" property="id"/>
         <result column="product_order_id" property="orderId"/>
-        <result column="product_rent_type" jdbcType="INTEGER" property="rentType"/>
-        <result column="product_rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
-        <result column="product_rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
+        <result column="product_rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="product_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="product_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
         <result column="product_product_id" property="productId"/>
         <result column="product_product_name" property="productName"/>
         <result column="product_product_sku_id" property="productSkuId"/>
@@ -84,15 +82,15 @@
         <result column="product_product_count" property="productCount"/>
         <result column="product_product_unit_amount" property="productUnitAmount"/>
         <result column="product_product_amount" property="productAmount"/>
-        <result column="product_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount"/>
-        <result column="product_deposit_amount" jdbcType="DECIMAL" property="depositAmount"/>
-        <result column="product_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount"/>
-        <result column="product_insurance_amount" jdbcType="DECIMAL" property="insuranceAmount"/>
+        <result column="product_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+        <result column="product_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+        <result column="product_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+        <result column="product_insurance_amount" jdbcType="DECIMAL" property="insuranceAmount" />
         <result column="product_product_sku_snapshot" property="productSkuSnapshot"/>
-        <result column="product_deposit_cycle" jdbcType="INTEGER" property="depositCycle"/>
-        <result column="product_payment_cycle" jdbcType="INTEGER" property="paymentCycle"/>
-        <result column="product_pay_mode" jdbcType="INTEGER" property="payMode"/>
-        <result column="product_is_new_product" jdbcType="INTEGER" property="isNewProduct"/>
+        <result column="product_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+        <result column="product_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+        <result column="product_pay_mode" jdbcType="INTEGER" property="payMode" />
+        <result column="product_is_new_product" jdbcType="INTEGER" property="isNewProduct" />
         <result column="product_data_status" property="dataStatus"/>
         <result column="product_remark" property="remark"/>
         <result column="product_create_user" property="createUser"/>
@@ -102,31 +100,31 @@
     </resultMap>
 
     <resultMap id="OrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
-        <id column="material_id" jdbcType="INTEGER" property="id"/>
-        <result column="material_order_id" jdbcType="INTEGER" property="orderId"/>
-        <result column="material_rent_type" jdbcType="INTEGER" property="rentType"/>
-        <result column="material_rent_time_length" jdbcType="INTEGER" property="rentTimeLength"/>
-        <result column="material_rent_length_type" jdbcType="INTEGER" property="rentLengthType"/>
-        <result column="material_material_id" jdbcType="INTEGER" property="materialId"/>
-        <result column="material_material_name" jdbcType="VARCHAR" property="materialName"/>
-        <result column="material_material_count" jdbcType="INTEGER" property="materialCount"/>
-        <result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount"/>
-        <result column="material_material_amount" jdbcType="DECIMAL" property="materialAmount"/>
-        <result column="material_deposit_amount" jdbcType="DECIMAL" property="depositAmount"/>
-        <result column="material_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount"/>
-        <result column="material_insurance_amount" jdbcType="DECIMAL" property="insuranceAmount"/>
-        <result column="material_material_snapshot" jdbcType="VARCHAR" property="materialSnapshot"/>
-        <result column="material_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount"/>
-        <result column="material_deposit_cycle" jdbcType="INTEGER" property="depositCycle"/>
-        <result column="material_payment_cycle" jdbcType="INTEGER" property="paymentCycle"/>
-        <result column="material_pay_mode" jdbcType="INTEGER" property="payMode"/>
-        <result column="material_is_new_material" jdbcType="INTEGER" property="isNewMaterial"/>
-        <result column="material_data_status" jdbcType="INTEGER" property="dataStatus"/>
-        <result column="material_remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="material_create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="material_create_user" jdbcType="VARCHAR" property="createUser"/>
-        <result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="material_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <id column="material_id" jdbcType="INTEGER" property="id" />
+        <result column="material_order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="material_rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="material_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="material_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="material_material_id" jdbcType="INTEGER" property="materialId" />
+        <result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
+        <result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+        <result column="material_material_amount" jdbcType="DECIMAL" property="materialAmount" />
+        <result column="material_deposit_amount" jdbcType="DECIMAL" property="depositAmount" />
+        <result column="material_credit_deposit_amount" jdbcType="DECIMAL" property="creditDepositAmount" />
+        <result column="material_insurance_amount" jdbcType="DECIMAL" property="insuranceAmount" />
+        <result column="material_material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
+        <result column="material_rent_deposit_amount" jdbcType="DECIMAL" property="rentDepositAmount" />
+        <result column="material_deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+        <result column="material_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+        <result column="material_pay_mode" jdbcType="INTEGER" property="payMode" />
+        <result column="material_is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+        <result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="material_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
     </resultMap>
 
 
@@ -152,21 +150,21 @@
     </resultMap>
 
     <resultMap id="OrderTimeAxisDO" type="com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO">
-        <id column="time_axis_id" jdbcType="INTEGER" property="id"/>
-        <result column="time_axis_order_id" jdbcType="INTEGER" property="orderId"/>
-        <result column="time_axis_order_status" jdbcType="INTEGER" property="orderStatus"/>
-        <result column="time_axis_generation_time" jdbcType="TIMESTAMP" property="generationTime"/>
-        <result column="time_axis_order_snapshot" jdbcType="VARCHAR" property="orderSnapshot"/>
-        <result column="time_axis_data_status" jdbcType="INTEGER" property="dataStatus"/>
-        <result column="time_axis_remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="time_axis_create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="time_axis_create_user" jdbcType="VARCHAR" property="createUser"/>
-        <result column="time_axis_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="time_axis_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <id column="time_axis_id" jdbcType="INTEGER" property="id" />
+        <result column="time_axis_order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="time_axis_order_status" jdbcType="INTEGER" property="orderStatus" />
+        <result column="time_axis_generation_time" jdbcType="TIMESTAMP" property="generationTime" />
+        <result column="time_axis_order_snapshot" jdbcType="VARCHAR" property="orderSnapshot" />
+        <result column="time_axis_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="time_axis_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="time_axis_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="time_axis_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="time_axis_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="time_axis_update_user" jdbcType="VARCHAR" property="updateUser" />
     </resultMap>
 
     <sql id="column_List">
-		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.is_peer as is_peer,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.product_summary as product_summary,eo.is_k3_order as is_k3_order,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id
+		eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.is_peer as is_peer,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.product_summary as product_summary,eo.is_k3_order as is_k3_order,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id,eo.statement_date as statement_date
 	</sql>
 
     <sql id="product_column_List">
@@ -209,32 +207,30 @@
     <select id="findByOrderId" resultMap="OrderDO" parameterType="java.lang.Integer">
         SELECT m_order.*
         <trim prefix=",">
-            <include refid="product_column_List"/>
+            <include refid="product_column_List" />
         </trim>
         <trim prefix=",">
-            <include refid="material_column_List"/>
+            <include refid="material_column_List" />
         </trim>
         FROM (
-        SELECT
-        <include refid="column_List"/>
-        <trim prefix=",">
-            <include refid="consign_column_List"/>
-        </trim>
-        <trim prefix=",">
-            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
-            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
-            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
-        </trim>
-        FROM erp_order eo
-        LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
-        LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
-        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
-        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
-        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
-        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
-        LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
-        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-        WHERE eo.id = #{orderId, jdbcType=INTEGER} and eo.data_status=1
+            SELECT
+            <include refid="column_List"/>
+            <trim prefix=",">
+                <include refid="consign_column_List" />
+            </trim>
+            <trim prefix=",">
+                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+            </trim>
+            FROM erp_order eo
+            LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
+            LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+            LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+            LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+            LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+            LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+            LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+            LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+            WHERE eo.id = #{orderId, jdbcType=INTEGER} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
@@ -243,32 +239,30 @@
     <select id="findByOrderNo" resultMap="OrderDO" parameterType="java.lang.String">
         SELECT m_order.*
         <trim prefix=",">
-            <include refid="product_column_List"/>
+            <include refid="product_column_List" />
         </trim>
         <trim prefix=",">
-            <include refid="material_column_List"/>
+            <include refid="material_column_List" />
         </trim>
         FROM (
-        SELECT
-        <include refid="column_List"/>
-        <trim prefix=",">
-            <include refid="consign_column_List"/>
-        </trim>
-        <trim prefix=",">
-            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
-            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
-            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
-        </trim>
-        FROM erp_order eo
-        LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
-        LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
-        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
-        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
-        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
-        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
-        LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
-        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-        WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} and eo.data_status=1
+            SELECT
+            <include refid="column_List"/>
+            <trim prefix=",">
+                <include refid="consign_column_List" />
+            </trim>
+            <trim prefix=",">
+                eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+            </trim>
+            FROM erp_order eo
+            LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
+            LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+            LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+            LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+            LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+            LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+            LEFT JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+            LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+            WHERE eo.order_no = #{orderNo, jdbcType=VARCHAR} and eo.data_status=1
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
@@ -277,24 +271,22 @@
     <select id="findByCustomerId" resultMap="OrderDO" parameterType="java.lang.Integer">
         SELECT m_order.*
         <trim prefix=",">
-            <include refid="product_column_List"/>
+            <include refid="product_column_List" />
         </trim>
         <trim prefix=",">
-            <include refid="material_column_List"/>
+            <include refid="material_column_List" />
         </trim>
         <trim prefix=",">
-            <include refid="time_axis_column_List"/>
+            <include refid="time_axis_column_List" />
         </trim>
         FROM (
         SELECT
         <include refid="column_List"/>
         <trim prefix=",">
-            <include refid="consign_column_List"/>
+            <include refid="consign_column_List" />
         </trim>
         <trim prefix=",">
-            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
-            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
-            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
         </trim>
         FROM erp_order eo
         LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
@@ -317,12 +309,10 @@
         SELECT
         <include refid="column_List"/>
         <trim prefix=",">
-            <include refid="consign_column_List"/>
+            <include refid="consign_column_List" />
         </trim>
         <trim prefix=",">
-            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
-            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
-            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name, eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS delivery_sub_company_name, ec.customer_no AS buyer_customer_no
         </trim>
         FROM erp_order eo
         INNER JOIN erp_user eu ON eu.id = eo.order_seller_id
@@ -343,42 +333,35 @@
             <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
                 and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
             </if>
-            <if test="maps.orderQueryParam.deliveryMode != null">
+            <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
                 and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.subCompanyId != null">
+            <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
                 and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.deliverySubCompanyId != null">
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
                 and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderId != null">
+            <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
             </if>
-            <if test="maps.orderQueryParam.buyerCustomerId != null">
+            <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
-                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderSellerId != null">
+            <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
                 and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.rentType != null">
+            <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-            </if>
-            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
-                and eo.order_status in
-                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
             </if>
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
@@ -386,6 +369,7 @@
             <if test="maps.orderQueryParam.isPeer != null">
                 and eo.is_peer = #{maps.orderQueryParam.isPeer, jdbcType=INTEGER}
             </if>
+
             <if test='maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery != null &amp;&amp; maps.orderQueryParam.isPendingDelivery == 1'>
                 and eo.order_status in (8, 12) AND (eo.pay_status = 8 OR eo.first_need_pay_amount = 0)
             </if>
@@ -440,42 +424,35 @@
             <if test="maps.orderQueryParam.consigneePhone != null &amp;&amp; maps.orderQueryParam.consigneePhone != ''">
                 and eoci.consignee_phone = #{maps.orderQueryParam.consigneePhone, jdbcType=VARCHAR}
             </if>
-            <if test="maps.orderQueryParam.deliveryMode != null">
+            <if test="maps.orderQueryParam.deliveryMode != null &amp;&amp; maps.orderQueryParam.deliveryMode != ''">
                 and eo.delivery_mode = #{maps.orderQueryParam.deliveryMode, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.subCompanyId != null">
+            <if test="maps.orderQueryParam.subCompanyId != null &amp;&amp; maps.orderQueryParam.subCompanyId != ''">
                 and eo.order_sub_company_id = #{maps.orderQueryParam.subCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.deliverySubCompanyId != null">
+            <if test="maps.orderQueryParam.deliverySubCompanyId != null &amp;&amp; maps.orderQueryParam.deliverySubCompanyId != ''">
                 and eo.delivery_sub_company_id = #{maps.orderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderId != null">
+            <if test="maps.orderQueryParam.orderId != null &amp;&amp; maps.orderQueryParam.orderId != ''">
                 and eo.id = #{maps.orderQueryParam.orderId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderNo != null &amp;&amp; maps.orderQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.orderQueryParam.orderNo}','%' )
             </if>
-            <if test="maps.orderQueryParam.buyerCustomerId != null">
+            <if test="maps.orderQueryParam.buyerCustomerId != null &amp;&amp; maps.orderQueryParam.buyerCustomerId != ''">
                 and eo.buyer_customer_id = #{maps.orderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.buyerCustomerNo != null &amp;&amp; maps.orderQueryParam.buyerCustomerNo != ''">
-                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+                and ec.customer_no = #{maps.orderQueryParam.buyerCustomerNo, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderSellerId != null">
+            <if test="maps.orderQueryParam.orderSellerId != null &amp;&amp; maps.orderQueryParam.orderSellerId != ''">
                 and eo.order_seller_id = #{maps.orderQueryParam.orderSellerId, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.rentType != null">
+            <if test="maps.orderQueryParam.rentType != null &amp;&amp; maps.orderQueryParam.rentType != ''">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-            </if>
-            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
-                and eo.order_status in
-                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
             </if>
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
@@ -654,6 +631,9 @@
             <if test="deliverySubCompanyId != null">
                 delivery_sub_company_id = #{deliverySubCompanyId, jdbcType=INTEGER},
             </if>
+            <if test="statementDate != null">
+                statement_date = #{statementDate, jdbcType=INTEGER},
+            </if>
         </set>
     </sql>
 
@@ -673,13 +653,13 @@
         SET
         <trim>
             order_status =
-            <foreach item="orderDO" collection="orderDOList" index="index" separator=" " open="case id" close="end">
+            <foreach item="orderDO" collection="orderDOList"  index="index" separator=" " open="case id" close="end">
                 when #{orderDO.id} then #{orderDO.orderStatus}
             </foreach>
         </trim>
         <trim prefix=",">
             actual_return_time =
-            <foreach item="orderDO" collection="orderDOList" index="index" separator=" " open="case id" close="end">
+            <foreach item="orderDO" collection="orderDOList"  index="index" separator=" " open="case id" close="end">
                 when #{orderDO.id} then #{orderDO.actualReturnTime}
             </foreach>
         </trim>
