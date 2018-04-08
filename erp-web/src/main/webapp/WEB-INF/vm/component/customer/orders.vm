@@ -1,13 +1,13 @@
 <div class="panel">
     <div class="panel-heading">
         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
-            <li class="active"  id="productFirstNeedTab">
+            <li class="active">
                 <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备</a>
             </li>
-            <li id="productLastNeedTab">
+            <li>
                 <a href="#productLastNeed" data-toggle="tab" aria-expanded="false">后续所需设备</a>
             </li>
-            <li id="orderListTab">
+            <li>
                 <a href="#orderList" data-toggle="tab" aria-expanded="false">订单</a>
             </li>
             <li>
@@ -49,7 +49,10 @@
                         {{#dataSource}}
                         {{#listData}}
                         <tr>
-                            <td>{{productName}}</td>
+                            <td>
+                                {{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}
+                                {{productName}}
+                            </td>
                             <td>{{categoryName}}</td>
                             <td>{{brandName}}</td>
                             <td>{{propertiesToStr}}</td>
@@ -97,7 +100,10 @@
                         {{#dataSource}}
                         {{#listData}}
                         <tr>
-                            <td>{{productName}}</td>
+                            <td>
+                                {{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}
+                                {{productName}}
+                            </td>
                             <td>{{categoryName}}</td>
                             <td>{{brandName}}</td>
                             <td>{{propertiesToStr}}</td>
