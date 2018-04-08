@@ -2,6 +2,8 @@ package com.lxzl.erp.dataaccess.dao.mysql.coupon;
 
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDetailDO;import org.apache.ibatis.annotations.Param;
+
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
@@ -16,4 +18,6 @@ public interface CouponBatchDetailMapper extends BaseMysqlDAO<CouponBatchDetailD
     Integer findCouponBatchDetailCountByParams(@Param("maps") Map<String, Object> maps);
 
 	List<CouponBatchDetailDO> findCouponBatchDetailByParams(@Param("maps") Map<String, Object> maps);
+
+
 }

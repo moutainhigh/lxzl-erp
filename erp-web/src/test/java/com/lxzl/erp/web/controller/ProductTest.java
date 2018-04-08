@@ -26,7 +26,8 @@ public class ProductTest extends ERPUnTransactionalTest {
         ProductQueryParam productQueryParam = new ProductQueryParam();
         productQueryParam.setPageNo(1);
         productQueryParam.setPageSize(15);
-        productQueryParam.setProductId(2000065);
+  //      productQueryParam.setProductId(2000065);
+        productQueryParam.setK3ProductNo("10");
 //        productQueryParam.setIsRent(0);
 //        productQueryParam.setBrandId(15);
         TestResult testResult = getJsonTestResult("/product/queryAllProduct", productQueryParam);

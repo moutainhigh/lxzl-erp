@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.customer.impl.support;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -145,5 +146,26 @@ public class CustomerSupport {
             customerRiskManagementMapper.update(customerRiskManagementDO);
             return ErrorCode.SUCCESS;
         }
+    }
+
+    /**
+     * 风控信息存在，校验风控信息是否完整
+     */
+    public boolean isFullRiskManagement(Integer customerId) {
+        CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerId);
+        if (customerRiskManagementDO == null) {
+            return false;
+        }
+        if (customerRiskManagementDO.getCreditAmount() == null || customerRiskManagementDO.getDepositCycle() == null || customerRiskManagementDO.getPaymentCycle() == null || customerRiskManagementDO.getPayMode() == null) {
+            return false;
+        }
+        if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitNew()) && (customerRiskManagementDO.getNewDepositCycle() == null || customerRiskManagementDO.getNewPaymentCycle() == null || customerRiskManagementDO.getNewPayMode() == null)) {
+            return false;
+        }
+        if (!CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsLimitApple()) && (customerRiskManagementDO.getAppleDepositCycle() == null || customerRiskManagementDO.getApplePaymentCycle() == null || customerRiskManagementDO.getApplePayMode() == null)) {
+            return false;
+        }
+
+        return true;
     }
 }

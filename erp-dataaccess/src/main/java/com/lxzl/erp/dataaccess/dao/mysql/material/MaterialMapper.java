@@ -17,6 +17,7 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     MaterialDO findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,@Param("materialModelId") Integer materialModelId);
 
     MaterialDO findByNo(@Param("materialNo") String materialNo);
+    MaterialDO findByK3MaterialNo(@Param("k3MaterialNo") String k3MaterialNo);
 
     List<MaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 

@@ -793,7 +793,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerReturnVisitQueryParam customerReturnVisitQueryParam = new CustomerReturnVisitQueryParam();
         customerReturnVisitQueryParam.setPageNo(1);
         customerReturnVisitQueryParam.setPageSize(10);
-        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
+//        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
 
         TestResult testResult = getJsonTestResult("/customer/pageCustomerReturnVisit",customerReturnVisitQueryParam);
     }

@@ -2,9 +2,7 @@ package com.lxzl.erp.common.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
-import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,6 +16,15 @@ public class ProductQueryParam extends BasePageParam {
     private Integer categoryId;
     private Date createStartTime;
     private Date createEndTime;
+    private String k3ProductNo;
+
+    public String getK3ProductNo() {
+        return k3ProductNo;
+    }
+
+    public void setK3ProductNo(String k3ProductNo) {
+        this.k3ProductNo = k3ProductNo;
+    }
 
     public String getProductModel() {
         return productModel;

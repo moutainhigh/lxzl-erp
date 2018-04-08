@@ -39,6 +39,8 @@ public class OrderMaterial extends BasePO {
 	private String materialTypeStr;	// 配件类型
 	private String brandName;                   // 品牌
 
+	private Integer rentingMaterialCount;        // 在租配件数
+
 	private String FNumber;	// 配件代码
 
 	private BigDecimal firstNeedPayAmount;
@@ -282,5 +284,13 @@ public class OrderMaterial extends BasePO {
 
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
+	}
+
+	public Integer getRentingMaterialCount() {
+		return rentingMaterialCount;
+	}
+
+	public void setRentingMaterialCount(Integer rentingMaterialCount) {
+		this.rentingMaterialCount = rentingMaterialCount;
 	}
 }

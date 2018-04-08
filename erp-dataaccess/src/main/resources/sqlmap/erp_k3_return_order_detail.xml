@@ -11,6 +11,7 @@
 		<result column="product_no" jdbcType="VARCHAR" property="productNo" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
 		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="real_product_count" jdbcType="INTEGER" property="realProductCount" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -20,7 +21,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_item_id,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user
+		ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_item_id,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.real_product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user
 	</sql>
 
 	<select id="findById" resultMap="K3ReturnOrderDetailDO" parameterType="java.lang.Integer">
@@ -69,6 +70,9 @@
 			</if>
 			<if test="productCount != null">
 				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="realProductCount != null">
+				real_product_count = #{realProductCount,jdbcType=INTEGER},
 			</if>
 			<if test="dataStatus != null">
 				data_status = #{dataStatus,jdbcType=INTEGER},

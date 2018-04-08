@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.se.common.domain.Result;
@@ -377,6 +378,31 @@ public class PageController extends BaseController {
             }
         }
         return "redirect:/customer-business-manage/detail?no="+no;
+    }
+
+    @RequestMapping(value = "customer-common-manage/to-detail-by-consignInfoId", method = RequestMethod.GET)
+    public String detailCustomerByConsignInfoId(int id) {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(id);
+        ServiceResult<String, CustomerConsignInfo> detailCustomerConsignInfoResult = customerService.detailCustomerConsignInfo(customerConsignInfo);
+        if(detailCustomerConsignInfoResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+
+            String customerNo = detailCustomerConsignInfoResult.getResult().getCustomerNo();
+
+            CustomerQueryParam customerQueryParam = new CustomerQueryParam();
+            customerQueryParam.setCustomerNo(customerNo);
+            ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customerQueryParam.getCustomerNo());
+
+            if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
+                    return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
+                } else {
+                    return "redirect:/customer-manage/detail?no="+customerNo+"&consigninfoid="+id;
+                }
+            }
+            return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
+        }
+        return "redirect:/error";
     }
 
     //采购管理
