@@ -3,16 +3,11 @@ package com.lxzl.erp.web.interceptor;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.domain.Page;
-import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.functionSwitch.SwitchQueryParam;
-import com.lxzl.erp.common.domain.functionSwitch.pojo.Switch;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.domain.interfaceSwitch.SwitchQueryParam;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.functionSwitch.SwitchService;
-import com.lxzl.erp.core.service.functionSwitch.impl.support.SwitchSupport;
+import com.lxzl.erp.core.service.interfaceSwitch.impl.support.SwitchSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.functionSwitch.SwitchMapper;
-import com.lxzl.erp.dataaccess.domain.functionSwitch.SwitchDO;
+import com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +17,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.

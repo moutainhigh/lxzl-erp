@@ -1,4 +1,4 @@
-package com.lxzl.erp.core.service.functionSwitch.impl.support;
+package com.lxzl.erp.core.service.interfaceSwitch.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import org.springframework.stereotype.Component;

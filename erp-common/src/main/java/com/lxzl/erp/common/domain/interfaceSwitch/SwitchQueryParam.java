@@ -1,4 +1,4 @@
-package com.lxzl.erp.common.domain.functionSwitch;
+package com.lxzl.erp.common.domain.interfaceSwitch;
 
 import com.lxzl.erp.common.domain.base.BasePageParam;
 

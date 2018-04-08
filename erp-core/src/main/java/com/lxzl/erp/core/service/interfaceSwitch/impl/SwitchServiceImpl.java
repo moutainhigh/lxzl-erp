@@ -1,20 +1,23 @@
-package com.lxzl.erp.core.service.functionSwitch.impl;
+package com.lxzl.erp.core.service.interfaceSwitch.impl;
 
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.functionSwitch.SwitchQueryParam;
-import com.lxzl.erp.common.domain.functionSwitch.pojo.Switch;
+import com.lxzl.erp.common.domain.interfaceSwitch.SwitchQueryParam;
+import com.lxzl.erp.common.domain.interfaceSwitch.pojo.Switch;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.core.service.functionSwitch.SwitchService;
-import com.lxzl.erp.core.service.functionSwitch.impl.support.SwitchSupport;
+import com.lxzl.erp.core.service.interfaceSwitch.SwitchService;
+import com.lxzl.erp.core.service.interfaceSwitch.impl.support.SwitchSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.functionSwitch.SwitchMapper;
-import com.lxzl.erp.dataaccess.domain.functionSwitch.SwitchDO;
+import com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -39,10 +42,11 @@ public class SwitchServiceImpl implements SwitchService {
     SwitchSupport switchSupport;
 
     @Override
-    public ServiceResult<String, String> add(Switch functionSwitch) {
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> add(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         //接口地址format
-        String interfaceUrl = functionSwitch.getInterfaceUrl();
+        String interfaceUrl = interfaceSwitch.getInterfaceUrl();
         interfaceUrl = switchSupport.verifyInterfaceUrl(interfaceUrl);
 
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceUrl);
@@ -51,16 +55,18 @@ public class SwitchServiceImpl implements SwitchService {
             switchDO.setInterfaceUrl(interfaceUrl);
             switchDO.setIsOpen(CommonConstant.COMMON_CONSTANT_NO);
             switchDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            switchDO.setRemark(interfaceSwitch.getRemark());
             switchDO.setUpdateTime(now);
             switchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             switchMapper.update(switchDO);
         }else{
             switchDO = new SwitchDO();
-            switchDO.setCreateTime(now);
-            switchDO.setCreateUser(userSupport.getCurrentUserId().toString());
             switchDO.setInterfaceUrl(interfaceUrl);
             switchDO.setIsOpen(CommonConstant.COMMON_CONSTANT_NO);
+            switchDO.setRemark(interfaceSwitch.getRemark());
             switchDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            switchDO.setCreateTime(now);
+            switchDO.setCreateUser(userSupport.getCurrentUserId().toString());
             switchDO.setUpdateTime(now);
             switchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             switchMapper.save(switchDO);
@@ -71,24 +77,26 @@ public class SwitchServiceImpl implements SwitchService {
     }
 
     @Override
-    public ServiceResult<String, String> update(Switch functionSwitch) {
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> update(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         Date now = new Date();
-        SwitchDO dbSwitchDO = switchMapper.findById(functionSwitch.getSwitchId());
+        SwitchDO dbSwitchDO = switchMapper.findById(interfaceSwitch.getSwitchId());
         if(dbSwitchDO == null){
             serviceResult.setErrorCode(ErrorCode.SWITCH_NOT_EXISTS);
             return serviceResult;
         }
-        String interfaceUrl = switchSupport.verifyInterfaceUrl(functionSwitch.getInterfaceUrl());
+        String interfaceUrl = switchSupport.verifyInterfaceUrl(interfaceSwitch.getInterfaceUrl());
 
-        SwitchDO switchDO = switchMapper.findByInterfaceUrl(functionSwitch.getInterfaceUrl());
+        SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceSwitch.getInterfaceUrl());
         if(switchDO!=null){
             serviceResult.setErrorCode(ErrorCode.SWITCH_INTERFACE_URL_EXISTS);
             return serviceResult;
         }
         dbSwitchDO.setInterfaceUrl(interfaceUrl);
-        dbSwitchDO.setIsOpen(functionSwitch.getIsOpen());
+        dbSwitchDO.setIsOpen(interfaceSwitch.getIsOpen());
+        dbSwitchDO.setRemark(interfaceSwitch.getRemark());
         dbSwitchDO.setUpdateTime(now);
         dbSwitchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         switchMapper.update(dbSwitchDO);
@@ -117,15 +125,17 @@ public class SwitchServiceImpl implements SwitchService {
     }
 
     @Override
-    public ServiceResult<String, String> delete(Switch functionSwitch) {
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> delete(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         Date now = new Date();
-        SwitchDO switchDO = switchMapper.findById(functionSwitch.getSwitchId());
+        SwitchDO switchDO = switchMapper.findById(interfaceSwitch.getSwitchId());
         if(switchDO == null){
             serviceResult.setErrorCode(ErrorCode.SWITCH_NOT_EXISTS);
             return serviceResult;
         }
+        switchDO.setRemark(interfaceSwitch.getRemark());
         switchDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
         switchDO.setUpdateTime(now);
         switchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
