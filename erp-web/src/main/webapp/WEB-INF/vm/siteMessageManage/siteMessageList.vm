@@ -3,6 +3,8 @@
 <head>
     <title>凌雄ERP-消息管理-站内信</title>
     #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -52,6 +54,8 @@
     #parse("layout/footer.vm")
     #parse("component/siteMessage/sendMessage.vm")
 
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js','modal.choose.user.js', 'manage.message.site.sendMessage.js', 'manage.message.site.js');
     </script>

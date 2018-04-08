@@ -299,7 +299,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             }
             //调用提交审核服务
             peerDeploymentOrderCommitParam.setVerifyMatters("同行调拨单审核事项：1.租期 2.天租与月租 3.商品与配件的单价和数量 4.预计归还时间 ");
-            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO, dbPeerDeploymentOrderDO.getPeerDeploymentOrderNo(), peerDeploymentOrderCommitParam.getVerifyUserId(), peerDeploymentOrderCommitParam.getVerifyMatters(), peerDeploymentOrderCommitParam.getRemark(), peerDeploymentOrderCommitParam.getImgIdList(),null);
+            ServiceResult<String, String> verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO, dbPeerDeploymentOrderDO.getPeerDeploymentOrderNo(), peerDeploymentOrderCommitParam.getVerifyUserId(), peerDeploymentOrderCommitParam.getVerifyMatters(), peerDeploymentOrderCommitParam.getRemark(), peerDeploymentOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 dbPeerDeploymentOrderDO.setPeerDeploymentOrderStatus(PeerDeploymentOrderStatus.PEER_DEPLOYMENT_ORDER_STATUS_VERIFYING);
@@ -618,7 +618,7 @@ public class PeerDeploymentOrderServiceImpl implements PeerDeploymentOrderServic
             //同行调拨单审核
             String verifyMatters = "同行调拨单审核事项：1.租期 2.天租与月租 3.商品与配件的单价和数量 4.预计归还时间 ";
 
-            verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT, peerDeploymentOrderNo, verifyUserId, verifyMatters, remark, peerDeploymentOrderCommitParam.getImgIdList(),null);
+            verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT, peerDeploymentOrderNo, verifyUserId, verifyMatters, remark, peerDeploymentOrderCommitParam.getImgIdList());
             //修改提交审核状态
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {
                 //提交审核成功，改变同行调拨单的设备和散料的状态

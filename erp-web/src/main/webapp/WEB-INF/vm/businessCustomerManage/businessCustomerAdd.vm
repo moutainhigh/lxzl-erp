@@ -7,6 +7,8 @@
     <script type="text/javascript">
         common_load_css('${staticCommon}/rental/css','dropzone.css');
     </script>
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -43,6 +45,9 @@
 </div>
     #parse("layout/footer.vm")
 
+<script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'modal.choose.product.js',

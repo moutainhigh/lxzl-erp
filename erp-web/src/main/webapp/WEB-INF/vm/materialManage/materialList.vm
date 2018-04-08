@@ -3,6 +3,8 @@
 <head>
     <title>凌雄ERP-配件管理-配件列表</title>
     #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 ##    <script type="text/javascript">
 ##        common_load_css('${staticCommon}/rental/css','dropzone.css');
@@ -172,6 +174,8 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js','manage.material.js');
 </script>

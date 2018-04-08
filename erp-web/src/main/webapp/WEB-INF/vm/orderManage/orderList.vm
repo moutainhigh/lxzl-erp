@@ -87,7 +87,6 @@
                                         <th>订单总价</th>
                                         <th>支付状态</th>
                                         <th>订单状态</th>
-                                        <th>租期</th>
                                         <th>收货人</th>
                                         <th>创建人</th>
                                         {{#hasRowActionButtons}}
@@ -123,11 +122,6 @@
                                                 <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
                                             </td>
-                                            <td>
-                                                <p class="mn">{{rentTypeValue}}</p>
-                                                <p class="mn mt5">{{rentTimeLength}}{{rentTypeUnit}}</p>
-                                            </td>
-                                            <td></td>
                                             <td>
                                                 <p class="mn">{{orderConsignInfo.consigneeName}}</p>
                                                 <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
@@ -173,6 +167,8 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.order.handle.mixin.js',

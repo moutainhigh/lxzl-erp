@@ -126,6 +126,8 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.company.js',
