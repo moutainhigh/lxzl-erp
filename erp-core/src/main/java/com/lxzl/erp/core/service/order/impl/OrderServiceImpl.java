@@ -122,12 +122,12 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, subCompanyDO != null ? subCompanyDO.getSubCompanyCode() : null));
         orderDO.setOrderSellerId(customerDO.getOwner());
 
-        //todo 询问客户结算时间没有的处理
         //添加客户的结算时间（天）
         Date rentStartTime = order.getRentStartTime();
+        Integer statementDate = customerDO.getStatementDate();
 
         //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(customerDO.getStatementDate(),rentStartTime);
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate,rentStartTime);
 
         //获取
         orderDO.setStatementDate(statementDays);
@@ -227,10 +227,13 @@ public class OrderServiceImpl implements OrderService {
         //添加当前客户名称
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
-        //添加客户当前的结算时间
-        if (customerDO.getStatementDate() != null){
-            orderDO.setStatementDate(customerDO.getStatementDate());
-        }
+        //添加客户的结算时间（天）
+        Date rentStartTime = order.getRentStartTime();
+        Integer statementDate = customerDO.getStatementDate();
+
+        //计算结算时间
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate,rentStartTime);
+        orderDO.setStatementDate(statementDays);
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
