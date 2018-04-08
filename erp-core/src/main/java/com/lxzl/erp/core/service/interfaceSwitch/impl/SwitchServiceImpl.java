@@ -7,8 +7,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.interfaceSwitch.SwitchQueryParam;
 import com.lxzl.erp.common.domain.interfaceSwitch.pojo.Switch;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.StrReplaceUtil;
 import com.lxzl.erp.core.service.interfaceSwitch.SwitchService;
-import com.lxzl.erp.core.service.interfaceSwitch.impl.support.SwitchSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.functionSwitch.SwitchMapper;
 import com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO;
@@ -33,14 +33,10 @@ import java.util.Map;
 public class SwitchServiceImpl implements SwitchService {
 
     @Autowired
-    SwitchMapper switchMapper;
+    private SwitchMapper switchMapper;
 
     @Autowired
-    UserSupport userSupport;
-
-    @Autowired
-    SwitchSupport switchSupport;
-
+    private UserSupport userSupport;
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> add(Switch interfaceSwitch) {
@@ -52,7 +48,7 @@ public class SwitchServiceImpl implements SwitchService {
         }
         //接口地址format
         String interfaceUrl = interfaceSwitch.getInterfaceUrl();
-        interfaceUrl = switchSupport.formatSwitch(interfaceUrl);
+        interfaceUrl = StrReplaceUtil.formatInterfaceUrl(interfaceUrl);
 
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceUrl);
         Date now = new Date();
@@ -96,7 +92,7 @@ public class SwitchServiceImpl implements SwitchService {
             serviceResult.setErrorCode(ErrorCode.SWITCH_NOT_EXISTS);
             return serviceResult;
         }
-        String interfaceUrl = switchSupport.formatSwitch(interfaceSwitch.getInterfaceUrl());
+        String interfaceUrl = StrReplaceUtil.formatInterfaceUrl(interfaceSwitch.getInterfaceUrl());
 
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceSwitch.getInterfaceUrl());
         if(switchDO!=null){

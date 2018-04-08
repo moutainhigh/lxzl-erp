@@ -4,8 +4,8 @@ package com.lxzl.erp.web.interceptor;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.interfaceSwitch.SwitchQueryParam;
+import com.lxzl.erp.common.util.StrReplaceUtil;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.interfaceSwitch.impl.support.SwitchSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.functionSwitch.SwitchMapper;
 import com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO;
 import com.lxzl.se.common.exception.BusinessException;
@@ -28,14 +28,11 @@ public class SwitchInterceptor extends HandlerInterceptorAdapter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SwitchInterceptor.class);
 
-    @Autowired
-    SwitchSupport switchSupport;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String requestPath = request.getRequestURI();
-        requestPath = switchSupport.formatSwitch(requestPath);
+        requestPath = StrReplaceUtil.formatInterfaceUrl(requestPath);
         SwitchQueryParam switchQueryParam = new SwitchQueryParam();
         switchQueryParam.setIsOpen(CommonConstant.COMMON_CONSTANT_NO);
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(requestPath);
