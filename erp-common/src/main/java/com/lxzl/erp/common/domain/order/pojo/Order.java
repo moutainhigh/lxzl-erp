@@ -69,7 +69,7 @@ public class Order extends BasePO {
     private String orderSubCompanyName;                         // 分公司名称
     private String deliverySubCompanyName;                         // 发货所属分公司名称
     private Integer isK3Order;                                  // 是否是K3订单，1是0否
-
+    private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
@@ -588,5 +588,13 @@ public class Order extends BasePO {
 
     public void setIsK3Order(Integer isK3Order) {
         this.isK3Order = isK3Order;
+    }
+
+    public Integer getStatementDate() {
+        return statementDate;
+    }
+
+    public void setStatementDate(Integer statementDate) {
+        this.statementDate = statementDate;
     }
 }
