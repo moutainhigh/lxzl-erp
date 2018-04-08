@@ -194,7 +194,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180330-00826");
+        customer.setCustomerNo("LXCC-1000-20180330-00827");
         customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
@@ -793,9 +793,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerReturnVisitQueryParam customerReturnVisitQueryParam = new CustomerReturnVisitQueryParam();
         customerReturnVisitQueryParam.setPageNo(1);
         customerReturnVisitQueryParam.setPageSize(10);
-//        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
+        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
 
         TestResult testResult = getJsonTestResult("/customer/pageCustomerReturnVisit",customerReturnVisitQueryParam);
     }
+
 
 }
