@@ -24,11 +24,11 @@ import java.util.ArrayList;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void hideBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail= new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(13924);
+        bankSlipDetail.setBankSlipDetailId(1);
         TestResult result = getJsonTestResult("/bankSlip/hideBankSlipDetail", bankSlipDetail);
     }
 
@@ -86,7 +86,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void pushDownBankSlip() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(167);
+        bankSlip.setBankSlipId(1);
         TestResult result = getJsonTestResult("/bankSlip/pushDownBankSlip", bankSlip);
     }
 

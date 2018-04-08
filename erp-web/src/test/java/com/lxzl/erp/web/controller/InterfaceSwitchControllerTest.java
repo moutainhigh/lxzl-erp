@@ -4,6 +4,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.interfaceSwitch.SwitchQueryParam;
 import com.lxzl.erp.common.domain.interfaceSwitch.pojo.Switch;
+import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
 
 /**
@@ -16,7 +17,7 @@ public class InterfaceSwitchControllerTest extends ERPUnTransactionalTest{
     public void add() throws Exception {
 
         Switch interfaceSwitch = new Switch();
-        interfaceSwitch.setInterfaceUrl("/switch/page1");
+        interfaceSwitch.setInterfaceUrl("/switch/page122");
         interfaceSwitch.setRemark("新添加这是一个备注");
         TestResult jsonTestResult = getJsonTestResult("/interfaceSwitch/add",interfaceSwitch);
     }
@@ -40,7 +41,8 @@ public class InterfaceSwitchControllerTest extends ERPUnTransactionalTest{
 //        switchQueryParam.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-5-4"));
 //        switchQueryParam.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-3-5"));
         TestResult jsonTestResult = getJsonTestResult("/interfaceSwitch/page",switchQueryParam);
-
+        String beanToJSON = JSONUtil.convertBeanToJSON(jsonTestResult);
+        System.out.println(beanToJSON.toString());
     }
 
     @Test

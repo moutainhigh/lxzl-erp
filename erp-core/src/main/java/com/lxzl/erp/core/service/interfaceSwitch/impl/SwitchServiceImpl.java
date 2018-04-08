@@ -45,6 +45,11 @@ public class SwitchServiceImpl implements SwitchService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> add(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        if (!userSupport.isSuperUser()) {
+            //不为超级管理员
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
         //接口地址format
         String interfaceUrl = interfaceSwitch.getInterfaceUrl();
         interfaceUrl = switchSupport.verifyInterfaceUrl(interfaceUrl);
@@ -80,7 +85,11 @@ public class SwitchServiceImpl implements SwitchService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> update(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
+        if (!userSupport.isSuperUser()) {
+            //不为超级管理员
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
         Date now = new Date();
         SwitchDO dbSwitchDO = switchMapper.findById(interfaceSwitch.getSwitchId());
         if(dbSwitchDO == null){
@@ -106,8 +115,12 @@ public class SwitchServiceImpl implements SwitchService {
 
     @Override
     public ServiceResult<String, Page<Switch>> page(SwitchQueryParam switchQueryParam) {
-
         ServiceResult<String, Page<Switch>> serviceResult = new ServiceResult<>();
+        if (!userSupport.isSuperUser()) {
+            //不为超级管理员
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
         PageQuery pageQuery = new PageQuery(switchQueryParam.getPageNo(), switchQueryParam.getPageSize());
         Map<String, Object> map = new HashMap<>();
         map.put("start", pageQuery.getStart());
@@ -128,7 +141,11 @@ public class SwitchServiceImpl implements SwitchService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> delete(Switch interfaceSwitch) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
+        if (!userSupport.isSuperUser()) {
+            //不为超级管理员
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
         Date now = new Date();
         SwitchDO switchDO = switchMapper.findById(interfaceSwitch.getSwitchId());
         if(switchDO == null){
