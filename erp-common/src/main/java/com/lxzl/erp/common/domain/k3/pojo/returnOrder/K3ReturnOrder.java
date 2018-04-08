@@ -37,6 +37,7 @@ public class K3ReturnOrder extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
+	private BigDecimal eqAmount;   //需恢复的信用额度
 	@Valid
 	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
@@ -192,5 +193,13 @@ public class K3ReturnOrder extends BasePO {
 
 	public void setServiceAmount(BigDecimal serviceAmount) {
 		this.serviceAmount = serviceAmount;
+	}
+
+	public BigDecimal getEqAmount() {
+		return eqAmount;
+	}
+
+	public void setEqAmount(BigDecimal eqAmount) {
+		this.eqAmount = eqAmount;
 	}
 }

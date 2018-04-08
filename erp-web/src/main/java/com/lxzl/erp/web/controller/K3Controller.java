@@ -17,6 +17,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -68,6 +69,10 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "revokeReturnOrder", method = RequestMethod.POST)
+    public Result revokeReturnOrder(@RequestBody @Validated(IdGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        return resultGenerator.generate(k3Service.revokeReturnOrder(k3ReturnOrder.getReturnOrderNo()));
+    }
     @RequestMapping(value = "queryReturnOrder", method = RequestMethod.POST)
     public Result queryReturnOrder(@RequestBody K3ReturnOrderQueryParam param, BindingResult validResult) {
         ServiceResult<String, Page<K3ReturnOrder>> serviceResult = k3Service.queryReturnOrder(param);

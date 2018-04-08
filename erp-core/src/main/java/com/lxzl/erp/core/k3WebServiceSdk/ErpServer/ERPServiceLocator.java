@@ -24,7 +24,7 @@ public class ERPServiceLocator extends org.apache.axis.client.Service implements
     }
 
     // Use to get a proxy class for BasicHttpBinding_IERPService
-    private String BasicHttpBinding_IERPService_address = K3Config.k3Server;
+    private String BasicHttpBinding_IERPService_address = K3Config.k3Server+"/ERPService.svc";
 
     public String getBasicHttpBinding_IERPServiceAddress() {
         return BasicHttpBinding_IERPService_address;

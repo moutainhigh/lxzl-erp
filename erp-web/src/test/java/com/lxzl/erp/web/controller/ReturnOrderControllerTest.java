@@ -60,11 +60,11 @@ public class ReturnOrderControllerTest extends ERPUnTransactionalTest {
     @Test
     public void create3() throws Exception {
         AddReturnOrderParam addReturnOrderParam = new AddReturnOrderParam();
-        addReturnOrderParam.setCustomerNo("CC201712091546467081096");
+        addReturnOrderParam.setCustomerNo("LXCC-010-20180305-00248");
         addReturnOrderParam.setReturnMode(ReturnOrChangeMode.RETURN_OR_CHANGE_MODE_TO_DOOR);
         List<ReturnOrderProduct> returnOrderProductList = new ArrayList<>();
         ReturnOrderProduct returnOrderProduct = new ReturnOrderProduct();
-        returnOrderProduct.setReturnProductSkuId(40);
+        returnOrderProduct.setReturnProductSkuId(27);
         returnOrderProduct.setReturnProductSkuCount(1);
         returnOrderProductList.add(returnOrderProduct);
         addReturnOrderParam.setReturnOrderProductList(returnOrderProductList);

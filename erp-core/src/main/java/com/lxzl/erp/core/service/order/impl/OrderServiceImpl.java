@@ -1815,6 +1815,7 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
+    @Override
     public void verifyCustomerRiskInfo(OrderDO orderDO) {
         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
         boolean isCheckRiskManagement = isCheckRiskManagement(orderDO);
@@ -1867,19 +1868,25 @@ public class OrderServiceImpl implements OrderService {
                         depositCycle = 0;
                         payCycle = 1;
                         payMode = OrderPayMode.PAY_MODE_PAY_BEFORE;
-                    } else if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
-                        // 商品品牌为苹果品牌
-                        depositCycle = customerRiskManagementDO.getAppleDepositCycle();
-                        payCycle = customerRiskManagementDO.getApplePaymentCycle();
-                        payMode = customerRiskManagementDO.getApplePayMode();
-                    } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
-                        depositCycle = customerRiskManagementDO.getNewDepositCycle();
-                        payCycle = customerRiskManagementDO.getNewPaymentCycle();
-                        payMode = customerRiskManagementDO.getNewPayMode();
                     } else {
-                        depositCycle = customerRiskManagementDO.getDepositCycle();
-                        payCycle = customerRiskManagementDO.getPaymentCycle();
-                        payMode = customerRiskManagementDO.getPayMode();
+                        // 查看客户风控信息是否齐全
+                        /*if (!customerSupport.isFullRiskManagement(orderDO.getBuyerCustomerId())) {
+                            throw new BusinessException(ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_FULL);
+                        }*/
+                        if (BrandId.BRAND_ID_APPLE.equals(product.getBrandId())) {
+                            // 商品品牌为苹果品牌
+                            depositCycle = customerRiskManagementDO.getAppleDepositCycle();
+                            payCycle = customerRiskManagementDO.getApplePaymentCycle();
+                            payMode = customerRiskManagementDO.getApplePayMode();
+                        } else if (CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct())) {
+                            depositCycle = customerRiskManagementDO.getNewDepositCycle();
+                            payCycle = customerRiskManagementDO.getNewPaymentCycle();
+                            payMode = customerRiskManagementDO.getNewPayMode();
+                        } else {
+                            depositCycle = customerRiskManagementDO.getDepositCycle();
+                            payCycle = customerRiskManagementDO.getPaymentCycle();
+                            payMode = customerRiskManagementDO.getPayMode();
+                        }
                     }
                     if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
                         payCycle = payCycle > orderProductDO.getRentTimeLength() ? orderProductDO.getRentTimeLength() : payCycle;
@@ -1991,7 +1998,8 @@ public class OrderServiceImpl implements OrderService {
         return false;
     }
 
-    private boolean isCheckRiskManagement(OrderDO orderDO) {
+    @Override
+    public boolean isCheckRiskManagement(OrderDO orderDO) {
 
         BigDecimal totalProductAmount = BigDecimal.ZERO;
         BigDecimal totalMaterialAmount = BigDecimal.ZERO;
@@ -2003,10 +2011,12 @@ public class OrderServiceImpl implements OrderService {
                     return true;
                 }
                 ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
-                ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
-                BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
-                totalProductAmount = BigDecimalUtil.add(totalProductAmount, BigDecimalUtil.mul(new BigDecimal(orderProductDO.getProductCount()), skuPrice));
-                totalProductCount += orderProductDO.getProductCount();
+                if (ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
+                    ProductSku productSku = productServiceResult.getResult().getProductSkuList().get(0);
+                    BigDecimal skuPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderProductDO.getIsNewProduct()) ? productSku.getNewSkuPrice() : productSku.getSkuPrice();
+                    totalProductAmount = BigDecimalUtil.add(totalProductAmount, BigDecimalUtil.mul(new BigDecimal(orderProductDO.getProductCount()), skuPrice));
+                    totalProductCount += orderProductDO.getProductCount();
+                }
             }
         }
 
@@ -2018,9 +2028,11 @@ public class OrderServiceImpl implements OrderService {
                     return true;
                 }
                 ServiceResult<String, Material> materialResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
-                Material material = materialResult.getResult();
-                BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
-                totalMaterialAmount = BigDecimalUtil.add(totalMaterialAmount, BigDecimalUtil.mul(new BigDecimal(orderMaterialDO.getMaterialCount()), materialPrice));
+                if (ErrorCode.SUCCESS.equals(materialResult.getErrorCode())) {
+                    Material material = materialResult.getResult();
+                    BigDecimal materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
+                    totalMaterialAmount = BigDecimalUtil.add(totalMaterialAmount, BigDecimalUtil.mul(new BigDecimal(orderMaterialDO.getMaterialCount()), materialPrice));
+                }
             }
         }
         BigDecimal totalAmount = BigDecimalUtil.add(totalProductAmount, totalMaterialAmount);
