@@ -2709,8 +2709,8 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
 
-            if(customerCompanyDO.getAddress() == null){
-                errorCodeMsg.append("详细地址，");
+            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
+                errorCodeMsg.append("经营详细地址，");
             }
 
             //对图片附件进行判断
@@ -2758,9 +2758,6 @@ public class CustomerServiceImpl implements CustomerService {
             }
             if (StringUtil.isBlank(customerCompanyDO.getConnectPhone())) {
                 errorCodeMsg.append("紧急联系人手机号，");
-            }
-            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
-                errorCodeMsg.append("公司经营地址，");
             }
             if (customerCompanyDO.getIsLegalPersonApple() == null) {
                 errorCodeMsg.append("是否法人代表申请，");
