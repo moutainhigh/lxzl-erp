@@ -68,7 +68,7 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         UserQueryParam userQueryParam = new UserQueryParam();
 //        userQueryParam.setRoleId(600001);
 //        userQueryParam.setDepartmentId(400007);
-        userQueryParam.setIsDisabled(0);
+//        userQueryParam.setIsDisabled(1);
         TestResult testResult = getJsonTestResult("/user/page",userQueryParam);
     }
     @Test
