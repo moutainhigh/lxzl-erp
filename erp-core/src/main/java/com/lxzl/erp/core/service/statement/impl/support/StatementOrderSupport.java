@@ -1,8 +1,11 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
 import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.DataDictionaryType;
 import com.lxzl.erp.common.constant.RentLengthType;
+import com.lxzl.erp.common.constant.StatementMode;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsUnReceivableDetailForSubCompany;
@@ -17,19 +20,19 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerPersonMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -66,6 +69,9 @@ public class StatementOrderSupport {
 
     @Autowired
     private StatisticsService statisticsService;
+
+    @Autowired
+    private DataDictionaryMapper dataDictionaryMapper;
 
     public List<StatementOrderDO> getOverdueStatementOrderList(Integer customerId) {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
@@ -116,6 +122,36 @@ public class StatementOrderSupport {
             }
         }
         return totalShortRentReceivable;
+    }
+
+    /**
+     * 计算结算时间
+     *
+     * @param customerDO
+     * @return
+     */
+    public Integer getCustomerStatementDate(CustomerDO customerDO,Date rentStartTime) {
+        Integer statementDays;
+        if (customerDO.getStatementDate() == null){
+            DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
+            if (dataDictionaryDO == null) {
+                statementDays = StatementMode.STATEMENT_MONTH_END;
+            } else {
+                statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
+            }
+        }else{
+            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(customerDO.getStatementDate())) {
+                // 如果结算日为按月结算，那么就要自然日来结算
+                Calendar rentStartTimeCalendar = Calendar.getInstance();
+                rentStartTimeCalendar.setTime(rentStartTime);
+                rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
+                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
+            } else {
+                statementDays = customerDO.getStatementDate();
+            }
+        }
+
+        return statementDays;
     }
 
 }
