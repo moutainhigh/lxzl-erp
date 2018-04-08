@@ -504,6 +504,9 @@ public class BankSlipServiceImpl implements BankSlipService {
         } else if (BankSlipDetailStatus.IGNORE.equals(bankSlipDetailDO.getDetailStatus())) {
             //状态为忽略状态,已认领笔数+1
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + 1);
+            if (SlipStatus.ALL_CLAIM.equals(bankSlipDO.getSlipStatus())) {
+                bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+            }
         }
         bankSlipDO.setUpdateTime(now);
         bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
