@@ -71,7 +71,7 @@
                                                         <span class="checkbox mn"></span>
                                                     </label>
                                                 </th>
-                                                <th>{{readStatus}}</th>
+                                                <th style="width:50px;">状态</th>
                                                 <th>发件人</th>
                                                 <th>主题</th>
                                                 <th>内容</th>
@@ -83,14 +83,14 @@
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="message-unread">
+                                            <tr class="{{readClass}}">
                                                 <td style="width:50px;">
                                                     <label class="option block mn">
                                                         <input type="checkbox" name="checkItem" value="{{messageId}}">
                                                         <span class="checkbox mn"></span>
                                                     </label>
                                                 </td>
-                                                <td class="{{readClass}}">{{readStatus}}</td>
+                                                <td>{{readStatus}}</td>
                                                 <td>{{senderName}}</td>
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
@@ -109,7 +109,7 @@
                                             {{/dataSource}}
                                             </tbody>
                                         </script>
-                                        <table class="table admin-form" id="dataListTable" style="table-layout:fixed;"></table>
+                                        <table class="table admin-form inboxTable" id="dataListTable" style="table-layout:fixed;"></table>
                                     </div>
                                 </div>
 

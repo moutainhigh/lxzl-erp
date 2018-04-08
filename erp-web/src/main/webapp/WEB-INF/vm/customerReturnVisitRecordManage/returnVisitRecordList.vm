@@ -28,7 +28,7 @@
             {{#listData}}
             <tr>
                 <td>{{customerNo}}</td>
-                <td><a class="returnVisitImg open-img-popup" data-imgs={{returnVisitImgJSON}}><img src="{{mainImg}}" /></a></td>
+                <td><a class="returnVisitImg open-img-popup productImg" data-imgs={{returnVisitImgJSON}}><img src="{{mainImg}}" /></a></td>
                 <td>{{returnVisitDescribe}}</td>
                 <td>{{remark}}</td>
                 <td>
