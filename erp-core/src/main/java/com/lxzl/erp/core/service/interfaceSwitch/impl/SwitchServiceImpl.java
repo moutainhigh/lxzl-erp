@@ -93,11 +93,12 @@ public class SwitchServiceImpl implements SwitchService {
             return serviceResult;
         }
         String interfaceUrl = StrReplaceUtil.formatInterfaceUrl(interfaceSwitch.getInterfaceUrl());
-
-        SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceSwitch.getInterfaceUrl());
-        if(switchDO!=null){
-            serviceResult.setErrorCode(ErrorCode.SWITCH_INTERFACE_URL_EXISTS);
-            return serviceResult;
+        if(!dbSwitchDO.getInterfaceUrl().equals(interfaceUrl)){
+            SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceSwitch.getInterfaceUrl());
+            if(switchDO!=null){
+                serviceResult.setErrorCode(ErrorCode.SWITCH_INTERFACE_URL_EXISTS);
+                return serviceResult;
+            }
         }
         dbSwitchDO.setInterfaceUrl(interfaceUrl);
         dbSwitchDO.setIsOpen(interfaceSwitch.getIsOpen());
