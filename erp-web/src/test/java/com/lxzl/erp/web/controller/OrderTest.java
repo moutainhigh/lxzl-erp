@@ -1,7 +1,6 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
@@ -12,14 +11,9 @@ import com.lxzl.erp.common.domain.order.ProcessOrderParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
-import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
-import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -340,13 +334,19 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderNo("LXO-20180307-1000-00014");
 //        param.setDeliverySubCompanyId(2);
 //        param.setOrderStatus(16);
-        param.setPayStatus(24);
+//        List<Integer> statusList = new ArrayList<>();
+//        statusList.add(0);
+//        statusList.add(4);
+//        param.setOrderStatusList(statusList);
+        param.setOrderStatus(0);
+        //param.setPayStatus(24);
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
+
     @Test
     public void queryAllOrderJSON() throws Exception {
         String str = "{\"pageNo\":1,\"pageSize\":15,\"orderNo\":\"LXO-20180307-1000-00014\",\"buyerRealName\":\"\",\"createStartTime\":\"\",\"createEndTime\":\"\",\"createTimePicker\":\"\"}";
-        OrderQueryParam param = FastJsonUtil.toBean(str,OrderQueryParam.class);
+        OrderQueryParam param = FastJsonUtil.toBean(str, OrderQueryParam.class);
 //        param.setBuyerRealName("荣焱");
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
