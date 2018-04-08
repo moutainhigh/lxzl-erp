@@ -570,7 +570,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(19);
+        customerConsignInfo.setCustomerConsignInfoId(517);
 
 
         TestResult result = getJsonTestResult("/customer/detailCustomerConsignInfo", customerConsignInfo);
@@ -683,7 +683,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void rejectCustomer() throws Exception {
         CustomerRejectParam param = new CustomerRejectParam();
-        param.setCustomerNo("LXCC-027-20180329-00846");
+        param.setCustomerNo("LXCC-027-20180403-00007");
         param.setRemark("客户信息有错误，需更改数据");
 
         TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);

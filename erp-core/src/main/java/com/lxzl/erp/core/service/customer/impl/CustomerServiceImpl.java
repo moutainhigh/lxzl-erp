@@ -24,12 +24,14 @@ import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
@@ -430,11 +432,12 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
         //如果经营地址改变了，状态改为未提交，需要重新审核！
-        if(!newCustomerCompanyDO.getCity().equals(customerCompanyDO.getCity())
-                || !newCustomerCompanyDO.getAddress().equals(customerCompanyDO.getAddress())){
-            newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+        if(newCustomerCompanyDO.getCity() != null || StringUtil.isNotEmpty(newCustomerCompanyDO.getAddress())){
+            if(!newCustomerCompanyDO.getCity().equals(customerCompanyDO.getCity())
+                    || !newCustomerCompanyDO.getAddress().equals(customerCompanyDO.getAddress())){
+                newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
+            }
         }
-
         //用于接收所需设备的方法结果
         ServiceResult<String, BigDecimal> setServiceResult = new ServiceResult<>();
         //判断首次所需设备 list转json
@@ -2686,6 +2689,24 @@ public class CustomerServiceImpl implements CustomerService {
                     errorCodeMsg.append("法人身份证、姓名、电话，");
                 }
             }
+
+            if(customerCompanyDO.getProvince() == null){
+                errorCodeMsg.append("经营地址：省，");
+            }
+
+            AreaProvinceDO areaProvinceDO = areaProvinceMapper.findById(customerCompanyDO.getProvince());
+            if(areaProvinceDO != null){
+                if(!AreaType.AREA_TYPE_GANG_AO_TAI.equals(areaProvinceDO.getAreaType())){
+                    if(customerCompanyDO.getCity() == null){
+                        errorCodeMsg.append("市，");
+                    }
+                }
+            }
+
+            if(customerCompanyDO.getAddress() == null){
+                errorCodeMsg.append("详细地址，");
+            }
+
             //对图片附件进行判断
             List<ImageDO> imageDOList = imgMysqlMapper.findByRefId(customerCompanyDO.getCustomerId().toString());
             if (CollectionUtil.isEmpty(imageDOList)) {
@@ -3279,4 +3300,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private ReturnVisitMapper returnVisitMapper;
+
+    @Autowired
+    private AreaProvinceMapper areaProvinceMapper;
 }
