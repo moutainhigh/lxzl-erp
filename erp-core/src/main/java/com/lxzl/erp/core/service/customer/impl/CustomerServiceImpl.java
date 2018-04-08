@@ -438,6 +438,7 @@ public class CustomerServiceImpl implements CustomerService {
                 newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
             }
         }else{
+            //新的为空，旧的有值，改变状态
             if(customerCompanyDO.getCity() != null || StringUtil.isNotEmpty(customerCompanyDO.getAddress())){
                 newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
             }

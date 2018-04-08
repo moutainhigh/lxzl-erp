@@ -100,19 +100,10 @@
 			<if test="companyAbb != null">
 				company_abb = #{companyAbb,jdbcType=VARCHAR},
 			</if>
-			<if test="province != null">
 				province = #{province,jdbcType=INTEGER},
-			</if>
-			<if test="city != null">
 				city = #{city,jdbcType=INTEGER},
-			</if>
-			<if test="district != null">
 				district = #{district,jdbcType=INTEGER},
-			</if>
-			<if test="address != null">
 				address = #{address,jdbcType=VARCHAR},
-			</if>
-
 			<if test="legalPerson != null">
 				legal_person = #{legalPerson,jdbcType=VARCHAR},
 			</if>
