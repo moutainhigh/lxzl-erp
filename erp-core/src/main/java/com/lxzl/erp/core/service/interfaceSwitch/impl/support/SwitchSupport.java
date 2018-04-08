@@ -1,6 +1,6 @@
 package com.lxzl.erp.core.service.interfaceSwitch.impl.support;
 
-import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,13 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class SwitchSupport {
 
-    public String verifyInterfaceUrl(String interfaceUrl){
-        if(!"/".equals(interfaceUrl.substring(CommonConstant.COMMON_ZERO, CommonConstant.COMMON_ONE))){
-            interfaceUrl = "/"+interfaceUrl;
-        }
+    public String formatSwitch(String interfaceUrl) {
 
-        if("/".equals(interfaceUrl.substring(interfaceUrl.length() - 1, interfaceUrl.length()))){
-            interfaceUrl = interfaceUrl.substring(CommonConstant.COMMON_ZERO, interfaceUrl.length() - 1);
+        if(StringUtil.isEmpty(interfaceUrl)){
+            return "";
+        }
+        interfaceUrl = interfaceUrl.trim();
+        if ('/' != interfaceUrl.charAt(0)) {
+            interfaceUrl = "/" + interfaceUrl;
+        }
+        if ('/' == interfaceUrl.charAt(interfaceUrl.length() - 1)) {
+            interfaceUrl = interfaceUrl.substring(0, interfaceUrl.length() - 1);
         }
         return interfaceUrl;
     }

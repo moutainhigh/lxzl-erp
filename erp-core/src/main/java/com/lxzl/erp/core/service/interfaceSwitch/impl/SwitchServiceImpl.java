@@ -52,7 +52,7 @@ public class SwitchServiceImpl implements SwitchService {
         }
         //接口地址format
         String interfaceUrl = interfaceSwitch.getInterfaceUrl();
-        interfaceUrl = switchSupport.verifyInterfaceUrl(interfaceUrl);
+        interfaceUrl = switchSupport.formatSwitch(interfaceUrl);
 
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceUrl);
         Date now = new Date();
@@ -96,7 +96,7 @@ public class SwitchServiceImpl implements SwitchService {
             serviceResult.setErrorCode(ErrorCode.SWITCH_NOT_EXISTS);
             return serviceResult;
         }
-        String interfaceUrl = switchSupport.verifyInterfaceUrl(interfaceSwitch.getInterfaceUrl());
+        String interfaceUrl = switchSupport.formatSwitch(interfaceSwitch.getInterfaceUrl());
 
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(interfaceSwitch.getInterfaceUrl());
         if(switchDO!=null){

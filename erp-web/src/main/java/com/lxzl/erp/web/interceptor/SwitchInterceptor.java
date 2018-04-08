@@ -35,7 +35,7 @@ public class SwitchInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String requestPath = request.getRequestURI();
-        requestPath = switchSupport.verifyInterfaceUrl(requestPath);
+        requestPath = switchSupport.formatSwitch(requestPath);
         SwitchQueryParam switchQueryParam = new SwitchQueryParam();
         switchQueryParam.setIsOpen(CommonConstant.COMMON_CONSTANT_NO);
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(requestPath);

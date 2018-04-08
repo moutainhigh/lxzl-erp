@@ -17,7 +17,7 @@ public class InterfaceSwitchControllerTest extends ERPUnTransactionalTest{
     public void add() throws Exception {
 
         Switch interfaceSwitch = new Switch();
-        interfaceSwitch.setInterfaceUrl("/switch/page122");
+        interfaceSwitch.setInterfaceUrl("   switch/page122/   ");
         interfaceSwitch.setRemark("新添加这是一个备注");
         TestResult jsonTestResult = getJsonTestResult("/interfaceSwitch/add",interfaceSwitch);
     }
