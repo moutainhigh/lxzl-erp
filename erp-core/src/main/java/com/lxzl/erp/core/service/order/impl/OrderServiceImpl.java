@@ -1050,7 +1050,7 @@ public class OrderServiceImpl implements OrderService {
                         statementCache.put(statementOrderDO.getId(), statementOrderDO);
                     }
                     //处理结算单总金额
-                    statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                    statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     //处理结算租金押金金额
                     statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
                     //处理结算押金金额
@@ -1168,7 +1168,7 @@ public class OrderServiceImpl implements OrderService {
                     statementCache.put(statementOrderDO.getId(), statementOrderDO);
                 }
                 //处理结算单总金额
-                statementOrderDO.setStatementAmount(BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
                 //处理结算租金押金金额
                 statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
                 //处理结算押金金额
