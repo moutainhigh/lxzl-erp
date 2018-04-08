@@ -25,7 +25,10 @@
 			<bean class="com.lxzl.se.web.handler.CommonMethodReturnValueHandler" />
 		</mvc:return-value-handlers>
 	</mvc:annotation-driven>
-	
+
+	<mvc:interceptors>
+		<bean class="com.lxzl.erp.web.interceptor.SwitchInterceptor" />
+	</mvc:interceptors>
 	<!-- 添加统一异常处理器 -->
 	<!--<bean class="com.lxzl.se.web.handler.CommonExceptionHandler">-->
 	<!--</bean>-->

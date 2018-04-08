@@ -145,7 +145,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             if (needVerifyResult.getResult()) {
                 //走工作流
                 statementOrderCorrectParam.setVerifyMatters("结算冲正单");
-                ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectParam.getStatementCorrectNo(), statementOrderCorrectParam.getVerifyUserId(), statementOrderCorrectParam.getVerifyMatters(), statementOrderCorrectParam.getRemark(), statementOrderCorrectParam.getImgIdList(),null);
+                ServiceResult<String, String> workflowServiceResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT, statementOrderCorrectParam.getStatementCorrectNo(), statementOrderCorrectParam.getVerifyUserId(), statementOrderCorrectParam.getVerifyMatters(), statementOrderCorrectParam.getRemark(), statementOrderCorrectParam.getImgIdList(), null);
                 if (!ErrorCode.SUCCESS.equals(workflowServiceResult.getErrorCode())) {
                     serviceResult.setErrorCode(workflowServiceResult.getErrorCode());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -572,7 +572,7 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
             }
 
             BigDecimal oldStatementCorrectAmount = statementOrderDO.getStatementCorrectAmount();
-            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), oldStatementCorrectAmount), thisCorrectAllAmount));
+            statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(oldStatementCorrectAmount, BigDecimalUtil.STANDARD_SCALE)), BigDecimalUtil.round(thisCorrectAllAmount, BigDecimalUtil.STANDARD_SCALE)));
             //更新结算单
             if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
                 statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_CORRECTED);

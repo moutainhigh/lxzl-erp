@@ -1,6 +1,8 @@
 package com.lxzl.erp.common.util;
 
 
+import com.lxzl.se.common.util.StringUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -78,6 +80,24 @@ public class StrReplaceUtil {
         return new String(cha);
     }
 
+    /**
+     * 格式化接口地址
+     * @param interfaceUrl
+     * @return
+     */
+    public static String formatInterfaceUrl(String interfaceUrl) {
 
+        if(StringUtil.isEmpty(interfaceUrl)){
+            return "";
+        }
+        interfaceUrl = interfaceUrl.trim();
+        if ('/' != interfaceUrl.charAt(0)) {
+            interfaceUrl = "/" + interfaceUrl;
+        }
+        if ('/' == interfaceUrl.charAt(interfaceUrl.length() - 1)) {
+            interfaceUrl = interfaceUrl.substring(0, interfaceUrl.length() - 1);
+        }
+        return interfaceUrl;
+    }
 
 }
