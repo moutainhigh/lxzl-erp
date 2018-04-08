@@ -814,6 +814,14 @@ public class ErrorCode {
     public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
     public static final String COUPON_USED="J19000013";
 
+    public static final String SWITCH_INTERFACE_URL_NOT_NULL="J20000001";
+    public static final String SWITCH_IS_OPEN_NOT_NULL="J20000002";
+    public static final String SWITCH_ID_NOT_NULL="J20000003";
+    public static final String SWITCH_NOT_EXISTS="J20000004";
+    public static final String SWITCH_IS_OPEN_IS_FAIL="J20000005";
+    public static final String SWITCH_INTERFACE_URL_EXISTS="J20000006";
+    public static final String SWITCH_CLOSE="J20000007";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1621,6 +1629,13 @@ public class ErrorCode {
         MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
         MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
 
+        MAP.put(SWITCH_INTERFACE_URL_NOT_NULL,"接口URL不能为空");
+        MAP.put(SWITCH_IS_OPEN_NOT_NULL,"是否开启状态不能为空");
+        MAP.put(SWITCH_ID_NOT_NULL,"管理功能开关表ID不能为空");
+        MAP.put(SWITCH_NOT_EXISTS,"管理功能开关数据不存在");
+        MAP.put(SWITCH_IS_OPEN_IS_FAIL,"是否开启状态有误");
+        MAP.put(SWITCH_INTERFACE_URL_EXISTS,"已有接口URL");
+        MAP.put(SWITCH_CLOSE,"此功能开关已关闭");
 
     }
 

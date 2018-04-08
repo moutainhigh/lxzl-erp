@@ -303,7 +303,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -313,7 +313,11 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_INITIALIZE);
             return serviceResult;
         }
-        bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+        if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
+            bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+        } else {
+            bankSlipDO.setSlipStatus(SlipStatus.ALREADY_PUSH_DOWN);
+        }
         bankSlipDO.setUpdateTime(now);
         bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipMapper.update(bankSlipDO);
@@ -344,7 +348,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -389,9 +393,9 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         for (ClaimParam claimParam : claimParamList) {
             BigDecimal claimAmount = claimParam.getClaimAmount();
-            Pattern pattern= Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
-            Matcher match=pattern.matcher(claimAmount.toString());
-            if(!match.matches() || BigDecimalUtil.compare(claimAmount,BigDecimal.ZERO)<0){
+            Pattern pattern = Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
+            Matcher match = pattern.matcher(claimAmount.toString());
+            if (!match.matches() || BigDecimalUtil.compare(claimAmount, BigDecimal.ZERO) < 0) {
                 serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_AMOUNT_IS_FAIL);
                 return serviceResult;
             }
@@ -409,7 +413,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -542,7 +546,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -646,7 +650,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -668,7 +672,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -726,12 +730,12 @@ public class BankSlipServiceImpl implements BankSlipService {
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
 
-        if(SlipStatus.ALL_CLAIM.equals(bankSlipDO.getSlipStatus())){
+        if (SlipStatus.ALL_CLAIM.equals(bankSlipDO.getSlipStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IS_ALL_CLAIM);
             return serviceResult;
         }
@@ -740,7 +744,9 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
             bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - 1);
             if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
-                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                if (SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus())) {
+                    bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                }
             }
         }
 
@@ -783,7 +789,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
-        if(!ErrorCode.SUCCESS.equals(verifyPermission)){
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
             serviceResult.setErrorCode(verifyPermission);
             return serviceResult;
         }
@@ -804,11 +810,11 @@ public class BankSlipServiceImpl implements BankSlipService {
         return serviceResult;
     }
 
-    private String verifyPermission(BankSlipDO bankSlipDO){
+    private String verifyPermission(BankSlipDO bankSlipDO) {
 
         //当前用户如不是总公司,看是否有权先操作
-        if(!userSupport.isHeadUser()){
-            if(!userSupport.getCurrentUserCompanyId().equals(bankSlipDO.getSubCompanyId())){
+        if (!userSupport.isHeadUser()) {
+            if (!userSupport.getCurrentUserCompanyId().equals(bankSlipDO.getSubCompanyId())) {
                 return ErrorCode.DATA_HAVE_NO_PERMISSION;
             }
         }

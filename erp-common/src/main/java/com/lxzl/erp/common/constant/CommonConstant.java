@@ -56,5 +56,6 @@ public class CommonConstant {
     public static final BigDecimal ORDER_NEED_VERIFY_PRODUCT_AMOUNT = new BigDecimal(200000);
 
     public static final Integer COMMON_ZERO = 0;
+    public static final Integer COMMON_ONE = 1;
     public static final Integer WORKFLOW_STEP_TWO = 2;
 }
