@@ -770,12 +770,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
      }
 
     @Test
-    public void cancelCustomerReturnVisit() throws Exception {
+    public void deleteCustomerReturnVisit() throws Exception {
 
         ReturnVisit returnVisit = new ReturnVisit();
-        returnVisit.setReturnVisitId(17);
+        returnVisit.setReturnVisitId(24);
 
-        TestResult testResult = getJsonTestResult("/customer/cancelCustomerReturnVisit",returnVisit);
+        TestResult testResult = getJsonTestResult("/customer/deleteCustomerReturnVisit",returnVisit);
     }
 
     @Test
