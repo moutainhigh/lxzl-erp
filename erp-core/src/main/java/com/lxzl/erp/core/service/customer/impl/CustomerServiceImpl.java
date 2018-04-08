@@ -431,14 +431,15 @@ public class CustomerServiceImpl implements CustomerService {
             serviceResult.setErrorCode(customerConsignInfoDOServiceResult.getErrorCode());
             return serviceResult;
         }
-        //如果经营地址改变了，状态改为未提交，需要重新审核！
+        //如果新的经营地址有值
         if(newCustomerCompanyDO.getCity() != null && StringUtil.isNotEmpty(newCustomerCompanyDO.getAddress())){
+            //判断新的与旧的是否有改变，有改变改未提交状态
             if(!newCustomerCompanyDO.getCity().equals(customerCompanyDO.getCity())
                     || !newCustomerCompanyDO.getAddress().equals(customerCompanyDO.getAddress())){
                 newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
             }
         }else{
-            //新的为空，旧的有值，改变状态
+            //新的经营地址修改为空，旧的有值，改变状态
             if(customerCompanyDO.getCity() != null || StringUtil.isNotEmpty(customerCompanyDO.getAddress())){
                 newCustomerCompanyDO.setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING);
             }
