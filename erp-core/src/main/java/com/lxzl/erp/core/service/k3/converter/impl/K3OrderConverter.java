@@ -169,7 +169,7 @@ public class K3OrderConverter implements ConvertK3DataService {
                     }
 
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(erpOrder.getIsPeer())){
-//                        number.substring()
+                        number = "90"+number.substring(2,number.length());
                     }
                     FormSEOrderEntry formSEOrderEntry = new FormSEOrderEntry();
 
