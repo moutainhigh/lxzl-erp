@@ -96,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
+
         CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
 
@@ -120,6 +121,16 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, subCompanyDO != null ? subCompanyDO.getSubCompanyCode() : null));
         orderDO.setOrderSellerId(customerDO.getOwner());
+
+        //添加客户的结算时间（天）
+        Date rentStartTime = order.getRentStartTime();
+        Integer statementDate = customerDO.getStatementDate();
+
+        //计算结算时间
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate,rentStartTime);
+
+        //获取
+        orderDO.setStatementDate(statementDays);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
@@ -215,6 +226,14 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateTime(currentTime);
         //添加当前客户名称
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
+
+        //添加客户的结算时间（天）
+        Date rentStartTime = order.getRentStartTime();
+        Integer statementDate = customerDO.getStatementDate();
+
+        //计算结算时间
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate,rentStartTime);
+        orderDO.setStatementDate(statementDays);
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);

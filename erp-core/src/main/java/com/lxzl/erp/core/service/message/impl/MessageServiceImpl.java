@@ -156,8 +156,10 @@ public class MessageServiceImpl implements MessageService {
             messageMapper.update(messageDO);
         }
 
+        Message messagePojo = ConverterUtil.convert(messageDO, Message.class);
+
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(ConverterUtil.convert(messageDO, Message.class));
+        result.setResult(messagePojo);
         return result;
     }
 

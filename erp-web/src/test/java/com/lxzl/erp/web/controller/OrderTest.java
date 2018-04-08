@@ -134,9 +134,10 @@ public class OrderTest extends ERPUnTransactionalTest {
 
 //        order.setOrderMaterialList(orderMaterialList);
 
-        order.setBuyerCustomerNo("LXCC-1000-20180305-00299");
-        order.setCustomerConsignId(977);
+        order.setBuyerCustomerNo("LXCC-027-20180322-00784");
+        order.setCustomerConsignId(5445);
         order.setRentStartTime(new Date());
+        order.setIsPeer(0);
         TestResult testResult = getJsonTestResult("/order/create", order);
     }
 
@@ -254,10 +255,11 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setOrderMaterialList(orderMaterialList);
 
-        order.setOrderNo("LXO-20180322-1000-00033");
-        order.setBuyerCustomerNo("LXCC-1000-20180305-00299");
-        order.setCustomerConsignId(977);
+        order.setOrderNo("LXO-20180404-1000-00005");
+        order.setBuyerCustomerNo("LXCC-027-20180322-00784");
+        order.setCustomerConsignId(5445);
         order.setRentStartTime(new Date());
+        order.setIsPeer(0);
         TestResult testResult = getJsonTestResult("/order/update", order);
     }
 
@@ -366,7 +368,7 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180322-1000-00051");
+        order.setOrderNo("LXO-20180404-1000-00005");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
     }
 
