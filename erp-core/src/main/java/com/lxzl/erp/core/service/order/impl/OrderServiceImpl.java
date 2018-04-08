@@ -48,7 +48,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -62,7 +61,6 @@ import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
-import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -129,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
         Date rentStartTime = order.getRentStartTime();
 
         //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(customerDO,rentStartTime);
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(customerDO.getStatementDate(),rentStartTime);
 
         //获取
         orderDO.setStatementDate(statementDays);
@@ -2960,7 +2958,4 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialMapper materialMapper;
-
-    @Autowired
-    private DataDictionaryMapper dataDictionaryMapper;
 }
