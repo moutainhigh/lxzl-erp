@@ -50,34 +50,34 @@ import java.util.regex.Pattern;
 public class BankSlipServiceImpl implements BankSlipService {
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Autowired
-    ImportTrafficBank importTrafficBank;
+    private ImportTrafficBank importTrafficBank;
 
     @Autowired
-    ImportChinaBank importChinaBank;
+    private ImportChinaBank importChinaBank;
 
     @Autowired
-    ImportNanJingBank importNanJingBank;
+    private ImportNanJingBank importNanJingBank;
 
     @Autowired
-    ImportAgricultureBank importAgricultureBank;
+    private ImportAgricultureBank importAgricultureBank;
 
     @Autowired
-    ImportICBCBank importICBCBank;
+    private ImportICBCBank importICBCBank;
 
     @Autowired
-    ImportCCBBank importCCBBank;
+    private ImportCCBBank importCCBBank;
 
     @Autowired
-    ImportPingAnBank importPingAnBank;
+    private ImportPingAnBank importPingAnBank;
 
     @Autowired
-    ImportShangHaiPuDongDevelopmentBank importShanghaiPudongDevelopmentBank;
+    private ImportShangHaiPuDongDevelopmentBank importShanghaiPudongDevelopmentBank;
 
     @Autowired
-    ImportAlipay importAlipay;
+    private ImportAlipay importAlipay;
 
     @Autowired
-    ImportCMBCBank importCMBCBank;
+    private ImportCMBCBank importCMBCBank;
 
     @Autowired
     private BankSlipMapper bankSlipMapper;
@@ -660,6 +660,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> deleteBankSlip(BankSlip bankSlip) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
@@ -704,6 +705,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> hideBankSlipDetail(BankSlipDetail bankSlipDetail) {
         //校验权限可隐藏
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
@@ -763,6 +765,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> displayBankSlipDetail(BankSlipDetail bankSlipDetail) {
         //校验权限可显示
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
