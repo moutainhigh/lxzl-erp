@@ -22,7 +22,7 @@ public class K3ReturnOrder extends BasePO {
 	private String returnOrderNo;   //退还编号
 	private String k3CustomerNo;   //K3客户编码
 	private String k3CustomerName;   //K3客户名称
-	private Date returnTime;   //添加时间
+	private Date returnTime;   //退货时间
 	private String returnAddress;   //退货地址
 	private String returnContacts;   //联系人
 	private String returnPhone;   //联系电话
