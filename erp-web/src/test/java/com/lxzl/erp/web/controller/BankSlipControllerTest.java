@@ -63,19 +63,19 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(4);
+        bankSlipClaim.setBankSlipDetailId(17);
         ArrayList<ClaimParam> list = new ArrayList<>();
         ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal(7500));
-        claimParam.setCustomerNo("LXCC-020-20180408-00015");
-//        ClaimParam claimParam1 =  new ClaimParam();
-//        claimParam1.setClaimAmount(new BigDecimal(5000));
-//        claimParam1.setCustomerNo("LXCC-1000-20180328-00825");
+        claimParam.setClaimAmount(new BigDecimal("24000"));
+        claimParam.setCustomerNo("LXCC-027-20180409-00017");
+        ClaimParam claimParam1 =  new ClaimParam();
+        claimParam1.setClaimAmount(new BigDecimal("500"));
+        claimParam1.setCustomerNo("LXCC-027-20180409-00016");
 //        ClaimParam claimParam2 =  new ClaimParam();
 //        claimParam2.setClaimAmount(new BigDecimal(-10));
 //        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
         list.add(claimParam);
-//        list.add(claimParam1);
+        list.add(claimParam1);
 //        list.add(claimParam2);
         bankSlipClaim.setClaimParam(list);
         bankSlipClaim.setRemark("aaaaaaaaaaaaaaaaaaa");

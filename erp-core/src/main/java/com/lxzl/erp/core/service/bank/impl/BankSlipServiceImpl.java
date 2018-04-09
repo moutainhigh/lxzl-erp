@@ -386,21 +386,6 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Integer> claimBankSlipDetail(BankSlipClaim bankSlipClaim) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        List<ClaimParam> claimParamList = bankSlipClaim.getClaimParam();
-        if (CollectionUtil.isEmpty(claimParamList)) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_NEED_CLAIMED);
-            return serviceResult;
-        }
-        for (ClaimParam claimParam : claimParamList) {
-            BigDecimal claimAmount = claimParam.getClaimAmount();
-            Pattern pattern = Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
-            Matcher match = pattern.matcher(claimAmount.toString());
-            if (!match.matches() || BigDecimalUtil.compare(claimAmount, BigDecimal.ZERO) < 0) {
-                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_AMOUNT_IS_FAIL);
-                return serviceResult;
-            }
-        }
-
 
         //判断是否有银行对公流水项
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipClaim.getBankSlipDetailId());
@@ -411,6 +396,12 @@ public class BankSlipServiceImpl implements BankSlipService {
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
 
+        if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
+            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+                serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
+                return serviceResult;
+            }
+        }
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
         if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
@@ -418,15 +409,9 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
 
-        if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
-                serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
-                return serviceResult;
-            }
-        }
         //判断银行对公流水项状态(已确认)
-        if (BankSlipDetailStatus.CONFIRMED.equals(bankSlipDetailDO.getDetailStatus())) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED);
+        if (BankSlipDetailStatus.CONFIRMED.equals(bankSlipDetailDO.getDetailStatus()) || BankSlipDetailStatus.HIDE.equals(bankSlipDetailDO.getDetailStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED_OR_HIDE);
             return serviceResult;
         }
 
@@ -435,72 +420,67 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_INCOME);
             return serviceResult;
         }
-
-        //判断客户是否存在
-        BigDecimal allClaimAmount = new BigDecimal(0);
-
+        List<ClaimParam> claimParamList = bankSlipClaim.getClaimParam();
         //判断客户是否相等
-        if (claimParamList.size() > 1) {
-            if (ListUtil.listToMap(claimParamList, "customerNo").size() != claimParamList.size()) {
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_NAME_REPETITION);
-                return serviceResult;
-            }
-        }
 
-        //判断如果有已支付金额就不允许修改
-        int payFail = 0;
-        int paySuccess = 0;
-        List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
-        for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
-            if (RechargeStatus.PAY_FAIL.equals(bankSlipClaimDO.getRechargeStatus())) {
-                payFail = payFail + 1;
-            }
-            if (RechargeStatus.PAY_SUCCESS.equals(bankSlipClaimDO.getRechargeStatus())) {
-                paySuccess = paySuccess + 1;
-            }
-        }
-
-        if (payFail != 0 && paySuccess != 0) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_NEED_PAY_SUCCESS);
-            return serviceResult;
-        }
-
+        Set<String> customerNoSet = new HashSet<>();
+        //认领总金额
+        BigDecimal allClaimAmount = BigDecimal.ZERO;
         for (ClaimParam claimParam : claimParamList) {
             CustomerDO customerDO = customerMapper.findByNo(claimParam.getCustomerNo());
             if (customerDO == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                 return serviceResult;
             }
+            customerNoSet.add(claimParam.getCustomerNo());
+            BigDecimal claimAmount = claimParam.getClaimAmount();
             allClaimAmount = BigDecimalUtil.add(allClaimAmount, claimParam.getClaimAmount());
+            //校验是否保留两位小数
+            Pattern pattern = Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
+            Matcher match = pattern.matcher(claimAmount.toString());
+            if (!match.matches() || BigDecimalUtil.compare(claimAmount, BigDecimal.ZERO) < 0) {
+                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_AMOUNT_IS_FAIL);
+                return serviceResult;
+            }
         }
-
+        if(customerNoSet.size()!=claimParamList.size()){
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NAME_REPETITION);
+            return serviceResult;
+        }
         //判断总共金额是否相等
         if (BigDecimalUtil.compare(allClaimAmount, bankSlipDetailDO.getTradeAmount()) != 0) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT);
             return serviceResult;
         }
+        //判断如果有已支付金额就不允许修改
+        List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
+        if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
+            for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
+                if (!RechargeStatus.INITIALIZE.equals(bankSlipClaimDO.getRechargeStatus())&&
+                        !RechargeStatus.PAY_FAIL.equals(bankSlipClaimDO.getRechargeStatus())) {
+                    serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_PAY_STATUS_ERROR);
+                    return serviceResult;
+                }
+            }
+        }
 
         //这里是保存银行对公流水认领表 数据
-        serviceResult = updateClaim(bankSlipDetailDO, bankSlipClaim, claimParamList, now);
+        serviceResult = updateClaim(bankSlipDO,bankSlipDetailDO, bankSlipClaim, claimParamList, now);
         return serviceResult;
     }
 
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, Integer> updateClaim(BankSlipDetailDO bankSlipDetailDO, BankSlipClaim bankSlipClaim, List<ClaimParam> claimParamList, Date now) {
+    public ServiceResult<String, Integer> updateClaim(BankSlipDO bankSlipDO,BankSlipDetailDO bankSlipDetailDO, BankSlipClaim bankSlipClaim, List<ClaimParam> claimParamList, Date now) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         //如果状态为未认领状态
-        BankSlipClaimDO bankSlipClaimDO = ConverterUtil.convert(bankSlipClaim, BankSlipClaimDO.class);
-
-        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         if (BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
             //跟新银行对公流水已认领笔数
             bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() - 1);
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + 1);
 
         } else if (BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
-            //状态为已认领状态
-            //以前的全部删除 添加新的
-            bankSlipClaimMapper.updateDataStatusByBankSlipDetailId(bankSlipDetailDO.getId(), userSupport.getCurrentUserId().toString(), now);
+            //状态为已认领状态,以前的全部删除
+            bankSlipClaimMapper.deleteByBankSlipDetailId(bankSlipDetailDO.getId(), userSupport.getCurrentUserId().toString(), now);
         } else if (BankSlipDetailStatus.IGNORE.equals(bankSlipDetailDO.getDetailStatus())) {
             //状态为忽略状态,已认领笔数+1
             bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() + 1);
@@ -512,12 +492,14 @@ public class BankSlipServiceImpl implements BankSlipService {
         bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipMapper.update(bankSlipDO);
         long currentTimeMillis = System.currentTimeMillis();
+
         for (ClaimParam claimParam : claimParamList) {
+            BankSlipClaimDO bankSlipClaimDO = ConverterUtil.convert(claimParam,BankSlipClaimDO.class);
+            bankSlipClaimDO.setBankSlipDetailId(bankSlipClaim.getBankSlipDetailId());
             bankSlipClaimDO.setOtherSideAccountNo(bankSlipDetailDO.getOtherSideAccountNo());
-            bankSlipClaimDO.setClaimAmount(claimParam.getClaimAmount());
-            bankSlipClaimDO.setCustomerNo(claimParam.getCustomerNo());
             bankSlipClaimDO.setClaimSerialNo(currentTimeMillis);
             bankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
+            bankSlipClaimDO.setRemark(bankSlipClaimDO.getRemark());
             bankSlipClaimDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
             bankSlipClaimDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipClaimDO.setCreateTime(now);
@@ -559,7 +541,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.IS_NOT_BUSINESS_AFFAIRS_PERSON);
             return serviceResult;
         }
-        //是否为已经下推 或者为 部分确认
+        //是否为已经下推
         if (!SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN);
             return serviceResult;
