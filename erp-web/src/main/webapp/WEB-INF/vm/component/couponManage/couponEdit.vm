@@ -28,7 +28,7 @@
                         <label for="couponType" class="field-label">请选择优惠券类型</label>
                         <label class="field select">
                             <select id="couponType" name="couponType" class="required">
-                                <option value="">请选择</option>
+                                <option value="">请选择优惠券类型</option>
                             </select>
                             <i class="arrow"></i>
                         </label>

@@ -44,7 +44,7 @@
                                         <select name="bankType" id="bankType" class="form-control input-sm bradius"></select>
                                     </div>
                                 </div>
-                                <input type="hidden" name="slipMonth">
+##                                <input type="hidden" name="slipMonth">
                                 <div class="field form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select name="slipStatus" id="slipStatus" class="form-control input-sm bradius"></select>
@@ -72,7 +72,7 @@
                             ##                                    </label>
                             ##                                </th>
                             ##                                {{/hasCommonActionButtons}}
-                                <th>优惠券ID</th>
+                                <th>优惠券批次ID</th>
                                 <th>批次名称</th>
                                 <th>批次描述</th>
                                 <th>优惠券类型</th>
@@ -136,7 +136,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="14" class="text-center">没有查询到资金流水附件信息</td>
+                                <td valign="top" colspan="14" class="text-center">没有查询到优惠券批次信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
