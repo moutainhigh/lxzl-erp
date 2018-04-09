@@ -3,9 +3,12 @@ package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.k3.group.K3ReturnOrderCallback;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
 public class K3ReturnOrder extends BasePO {
 
 	private Integer k3ReturnOrderId;   //唯一标识
-	@NotNull(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL,groups = {IdGroup.class})
+	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL,groups = {IdGroup.class, K3ReturnOrderCallback.class})
 	private String returnOrderNo;   //退还编号
 	private String k3CustomerNo;   //K3客户编码
 	private String k3CustomerName;   //K3客户名称
@@ -34,6 +37,9 @@ public class K3ReturnOrder extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 
+	private BigDecimal eqAmount;   //需恢复的信用额度
+	@Valid
+	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
 
 
@@ -187,5 +193,13 @@ public class K3ReturnOrder extends BasePO {
 
 	public void setServiceAmount(BigDecimal serviceAmount) {
 		this.serviceAmount = serviceAmount;
+	}
+
+	public BigDecimal getEqAmount() {
+		return eqAmount;
+	}
+
+	public void setEqAmount(BigDecimal eqAmount) {
+		this.eqAmount = eqAmount;
 	}
 }

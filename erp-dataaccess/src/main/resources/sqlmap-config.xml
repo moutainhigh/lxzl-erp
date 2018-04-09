@@ -162,6 +162,8 @@
 
         <mapper resource="sqlmap/erp_return_visit.xml" />
 
+        <mapper resource="sqlmap/erp_switch.xml" />
+
     </mappers>
 
 </configuration>

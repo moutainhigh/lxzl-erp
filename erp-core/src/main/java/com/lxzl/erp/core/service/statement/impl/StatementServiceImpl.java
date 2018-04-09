@@ -152,7 +152,7 @@ public class StatementServiceImpl implements StatementService {
 
                     if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetailDO.getStatementDetailType())) {
                         String key = statementOrderDetailDO.getItemName() + "-" + statementOrderDetailDO.getItemIsNew() + "-" + statementOrderDetailDO.getOrderItemReferId() + "-" + statementOrderDetailDO.getOrderId();
-                        map.put(key, BigDecimalUtil.add(map.get(key),statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP)));
+                        map.put(key, BigDecimalUtil.add(map.get(key), statementOrderDetailDO.getStatementDetailAmount().setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP)));
                     }
                 }
             }
@@ -2524,7 +2524,7 @@ public class StatementServiceImpl implements StatementService {
             BigDecimal originalOverdueAmount = statementOrderDO.getStatementOverdueAmount();
             BigDecimal originalAmount = BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), originalOverdueAmount);
             BigDecimal nowOverdueAmount = BigDecimalUtil.add(totalOverdueAmount, statementOrderDO.getStatementOverduePaidAmount());
-            statementOrderDO.setStatementAmount(BigDecimalUtil.add(originalAmount, nowOverdueAmount));
+            statementOrderDO.setStatementAmount(BigDecimalUtil.add(BigDecimalUtil.round(originalAmount, BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(nowOverdueAmount, BigDecimalUtil.STANDARD_SCALE)));
             statementOrderDO.setStatementOverdueAmount(nowOverdueAmount);
             statementOrderMapper.update(statementOrderDO);
         }
@@ -2567,23 +2567,23 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderMapper.save(statementOrderDO);
                 } else {
                     statementOrderDO = statementOrderDOMap.get(dateKey);
-                    statementOrderDO.setStatementAmount(BigDecimalUtil.add(statementOrderDO.getStatementAmount(), statementOrderDetailDO.getStatementDetailAmount()));
+                    statementOrderDO.setStatementAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     // 结算单不能为负数
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) < 0) {
                         BigDecimal diffAmount = BigDecimalUtil.sub(BigDecimal.ZERO, statementOrderDO.getStatementAmount());
                         statementOrderDO.setStatementAmount(BigDecimal.ZERO);
-                        statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailAmount(), diffAmount));
+                        statementOrderDetailDO.setStatementDetailAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(diffAmount, BigDecimalUtil.STANDARD_SCALE)));
                     }
-                    statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
+                    statementOrderDO.setStatementRentAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     // 结算单不能为负数
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementRentAmount(), BigDecimal.ZERO) < 0) {
                         BigDecimal diffAmount = BigDecimalUtil.sub(BigDecimal.ZERO, statementOrderDO.getStatementRentAmount());
                         statementOrderDO.setStatementRentAmount(BigDecimal.ZERO);
-                        statementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), diffAmount));
+                        statementOrderDetailDO.setStatementDetailRentAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(diffAmount, BigDecimalUtil.STANDARD_SCALE)));
                     }
-                    statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
-                    statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
-                    statementOrderDO.setStatementOtherAmount(BigDecimalUtil.add(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
+                    statementOrderDO.setStatementDepositAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                    statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                    statementOrderDO.setStatementOtherAmount(BigDecimalUtil.add(BigDecimalUtil.round(statementOrderDO.getStatementOtherAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailOtherAmount(), BigDecimalUtil.STANDARD_SCALE)));
                     if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDO.getStatementStatus())) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
                     }

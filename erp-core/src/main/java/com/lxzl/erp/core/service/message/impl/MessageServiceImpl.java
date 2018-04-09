@@ -156,8 +156,10 @@ public class MessageServiceImpl implements MessageService {
             messageMapper.update(messageDO);
         }
 
+        Message messagePojo = ConverterUtil.convert(messageDO, Message.class);
+
         result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(ConverterUtil.convert(messageDO, Message.class));
+        result.setResult(messagePojo);
         return result;
     }
 
@@ -226,8 +228,11 @@ public class MessageServiceImpl implements MessageService {
             messageDO.setUpdateUser(userId.toString());
             messageDO.setUpdateTime(currentTime);
             needUpdateList.add(messageDO);
+
         }
-        messageMapper.batchUpdate(needUpdateList);
+        if (CollectionUtil.isNotEmpty(needUpdateList)) {
+            messageMapper.batchUpdate(needUpdateList);
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

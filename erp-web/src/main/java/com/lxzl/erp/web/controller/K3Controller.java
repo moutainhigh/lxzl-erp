@@ -17,6 +17,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -68,6 +69,10 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "revokeReturnOrder", method = RequestMethod.POST)
+    public Result revokeReturnOrder(@RequestBody @Validated(IdGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        return resultGenerator.generate(k3Service.revokeReturnOrder(k3ReturnOrder.getReturnOrderNo()));
+    }
     @RequestMapping(value = "queryReturnOrder", method = RequestMethod.POST)
     public Result queryReturnOrder(@RequestBody K3ReturnOrderQueryParam param, BindingResult validResult) {
         ServiceResult<String, Page<K3ReturnOrder>> serviceResult = k3Service.queryReturnOrder(param);
@@ -187,6 +192,12 @@ public class K3Controller extends BaseController {
     public Result batchSendDataToK3(@RequestBody K3SendRecordBatchParam k3SendRecordBatchParam, BindingResult validResult) {
         ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendDataToK3(k3SendRecordBatchParam);
         return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "transferOrder", method = RequestMethod.POST)
+    public Result transferOrder(@RequestBody K3OrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3Service.transferOrder(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
 

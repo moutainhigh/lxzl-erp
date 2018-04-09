@@ -2998,6 +2998,7 @@ CREATE TABLE `erp_k3_return_order_detail` (
   `product_no` varchar(64) NOT NULL COMMENT '产品代码',
   `product_name` varchar(64) NOT NULL COMMENT '产品名称',
   `product_count` int(11) NOT NULL COMMENT '退货数量',
+  `real_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '实际退货数量',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3245,5 +3246,5 @@ CREATE TABLE `erp_switch` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
 

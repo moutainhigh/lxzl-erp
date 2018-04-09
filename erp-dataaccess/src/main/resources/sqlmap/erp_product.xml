@@ -196,6 +196,9 @@
                 <if test="maps.productQueryParam.createEndTime != null">
                     <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
                 </if>
+                <if test="maps.productQueryParam.k3ProductNo != null &amp;&amp; maps.productQueryParam.k3ProductNo != ''">
+                    and UPPER (ep.k3_product_no) like (CONCAT('%','${maps.productQueryParam.k3ProductNo}','%'))
+                </if>
                 <if test="maps.isQueryAll == null">
                     and ep.data_status = 1
                 </if>
@@ -234,6 +237,9 @@
             </if>
             <if test="maps.productQueryParam.createEndTime != null">
                 <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.productQueryParam.k3ProductNo != null &amp;&amp; maps.productQueryParam.k3ProductNo != ''">
+                and UPPER (ep.k3_product_no) like (CONCAT('%','${maps.productQueryParam.k3ProductNo}','%'))
             </if>
             <if test="maps.isQueryAll == null">
                 and ep.data_status = 1
@@ -300,7 +306,35 @@
             FROM erp_product ep
             LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
             LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
-            WHERE ep.product_no = #{productNo, jdbcType=INTEGER} and ep.data_status = 1
+            WHERE ep.product_no = #{productNo, jdbcType=VARCHAR} and ep.data_status = 1
+        ) m_product
+        LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
+        LEFT JOIN erp_product_img epidesc ON epidesc.product_id = m_product.id AND epidesc.data_status = 1 AND epidesc.img_type = 2
+        LEFT JOIN erp_product_sku_property epsp ON epsp.product_id = m_product.id AND epsp.data_status = 1 AND epsp.is_sku = 0
+        LEFT JOIN erp_product_category_property epcp ON epcp.id = epsp.property_id AND epcp.data_status = 1
+        LEFT JOIN erp_product_category_property_value epcpv ON epcpv.id = epsp.property_value_id AND epcpv.data_status = 1
+        ORDER BY epcp.data_order DESC,epcpv.data_order DESC,epi.img_order DESC,epidesc.img_order DESC
+    </select>
+
+    <select id="findByK3ProductNo" resultMap="ProductDO" parameterType="java.lang.Integer">
+        SELECT m_product.*
+        <trim prefix=",">
+            <include refid="img_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="desc_img_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="property_column_List" />
+        </trim>
+        ,epcp.property_name property_property_name,epcpv.property_value_name property_property_value_name
+        FROM (
+            SELECT
+            <include refid="column_List"/>, eb.brand_name AS brand_name, epc.category_name as category_name
+            FROM erp_product ep
+            LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
+            LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+            WHERE ep.k3_product_no = #{k3ProductNo, jdbcType=VARCHAR} and ep.data_status = 1  LIMIT 0,1
         ) m_product
         LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
         LEFT JOIN erp_product_img epidesc ON epidesc.product_id = m_product.id AND epidesc.data_status = 1 AND epidesc.img_type = 2

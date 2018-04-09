@@ -21,7 +21,9 @@ public class K3OrderQueryParam extends BasePageParam implements Serializable {
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
+    private String orderSellerName;
     private Integer subCompanyId;
+    private String subCompanyNo;
     private Integer deliveryMode;
     private Integer isPendingDelivery;
 
@@ -144,5 +146,21 @@ public class K3OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setIsPendingDelivery(Integer isPendingDelivery) {
         this.isPendingDelivery = isPendingDelivery;
+    }
+
+    public String getOrderSellerName() {
+        return orderSellerName;
+    }
+
+    public void setOrderSellerName(String orderSellerName) {
+        this.orderSellerName = orderSellerName;
+    }
+
+    public String getSubCompanyNo() {
+        return subCompanyNo;
+    }
+
+    public void setSubCompanyNo(String subCompanyNo) {
+        this.subCompanyNo = subCompanyNo;
     }
 }

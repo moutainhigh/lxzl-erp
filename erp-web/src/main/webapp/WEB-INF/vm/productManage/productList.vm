@@ -71,7 +71,7 @@
                         <div class="table-responsive">
                             <script type="text/html" id="dataListTpl">
                                 <thead>
-                                    <tr>
+                                    <tr>5
                                         {{#hasCommonActionButtons}}
                                         <th>
                                             <label class="option block mn">

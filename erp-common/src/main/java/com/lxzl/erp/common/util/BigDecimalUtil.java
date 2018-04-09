@@ -146,6 +146,9 @@ public class BigDecimalUtil {
     }
 
     public static BigDecimal round(BigDecimal v, int scale) {
+        if(v == null){
+            v = null;
+        }
         if (scale < 0) {
             throw new IllegalArgumentException("精确度不能小于0");
         }

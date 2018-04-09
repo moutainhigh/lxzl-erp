@@ -24,11 +24,11 @@ import java.util.ArrayList;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void hideBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail= new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(13924);
+        bankSlipDetail.setBankSlipDetailId(1);
         TestResult result = getJsonTestResult("/bankSlip/hideBankSlipDetail", bankSlipDetail);
     }
 
@@ -86,7 +86,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void pushDownBankSlip() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(167);
+        bankSlip.setBankSlipId(1);
         TestResult result = getJsonTestResult("/bankSlip/pushDownBankSlip", bankSlip);
     }
 
@@ -146,13 +146,13 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
 
 //        北京(中国银行)
-//        BankSlip bankSlip = new BankSlip();
-////        bankSlip.setSubCompanyName("北京分公司");
-//        bankSlip.setSubCompanyId(4);
-//        bankSlip.setBankType(BankType.ALIPAY);
-//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/20"));
-//        bankSlip.setExcelUrl("/group1/M00/00/29/wKgKyFrC_A6AetqkAARqAFz_m5k047.xls");
-//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+        BankSlip bankSlip = new BankSlip();
+//        bankSlip.setSubCompanyName("北京分公司");
+        bankSlip.setSubCompanyId(9);
+        bankSlip.setBankType(BankType.BOC_BANK);
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20"));
+        bankSlip.setExcelUrl("/group1/M00/00/2B/wKgKyFrJ-YWAVCMwAAAvtZ6f-cw95.xlsx");
+        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
 //        BankSlip bankSlip = new BankSlip();
@@ -309,12 +309,12 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
         // 深圳总公司
 // 总公司(浦发银行)
-        BankSlip bankSlip = new BankSlip();
-        bankSlip.setSubCompanyId(1);
-        bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-        bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
-        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+//        BankSlip bankSlip = new BankSlip();
+//        bankSlip.setSubCompanyId(1);
+//        bankSlip.setBankType(BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK);
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
+//        bankSlip.setExcelUrl("/group1/M00/00/20/wKgKyFqxw-GAOZdvAAKWwZifgiU47.xlsx");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
 //        String json = "{\n" +
 //                "            \"bankType\": 2,\n" +

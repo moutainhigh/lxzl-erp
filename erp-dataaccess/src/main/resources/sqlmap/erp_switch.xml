@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.functionSwitch.SwitchMapper">
+
+	<resultMap id="SwitchDO" type="com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="interface_url" jdbcType="VARCHAR" property="interfaceUrl" />
+		<result column="is_open" jdbcType="INTEGER" property="isOpen" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		es.id,es.interface_url,es.is_open,es.data_status,es.remark,es.create_time,es.create_user,es.update_time,es.update_user
+	</sql>
+
+	<select id="findById" resultMap="SwitchDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_switch es 
+		WHERE es.id = #{id, jdbcType=INTEGER} AND es.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(es.id) FROM erp_switch es 
+		<where>
+			<if test="true">
+				AND es.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="SwitchDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_switch es 
+		<where>
+			<if test="true">
+				AND es.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="interfaceUrl != null">
+				interface_url = #{interfaceUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="isOpen != null">
+				is_open = #{isOpen,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO">
+		INSERT INTO erp_switch <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.interfaceSwitch.SwitchDO">
+		UPDATE erp_switch <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findSwitchCountByParam" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1) FROM erp_switch es
+		<where>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.interfaceUrl != null &amp;&amp; maps.switchQueryParam.interfaceUrl != ''">
+				AND es.interface_url like CONCAT('%','${maps.switchQueryParam.interfaceUrl}','%')
+			</if>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.isOpen != null">
+				AND es.is_open = #{maps.switchQueryParam.isOpen,jdbcType=INTEGER}
+			</if>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.createStartTime != null">
+				<![CDATA[ AND es.create_time >= #{maps.switchQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.createEndTime != null">
+				<![CDATA[ AND es.create_time <= #{maps.switchQueryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				AND es.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findSwitchByParam" resultMap="SwitchDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_switch es
+		<where>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.interfaceUrl != null &amp;&amp; maps.switchQueryParam.interfaceUrl != ''">
+				AND es.interface_url like CONCAT('%','${maps.switchQueryParam.interfaceUrl}','%')
+			</if>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.isOpen != null">
+				AND es.is_open = #{maps.switchQueryParam.isOpen,jdbcType=INTEGER}
+			</if>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.createStartTime != null">
+				<![CDATA[ AND es.create_time >= #{maps.switchQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.switchQueryParam != null &amp;&amp; maps.switchQueryParam.createEndTime != null">
+				<![CDATA[ AND es.create_time <= #{maps.switchQueryParam.createEndTime} ]]>
+			</if>
+			<if test="true">
+				AND es.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findByInterfaceUrl" resultMap="SwitchDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_switch es
+		WHERE es.interface_url = #{interfaceUrl,jdbcType=VARCHAR} AND es.data_status = 1
+	</select>
+
+	<select id="findByIsOpen" resultMap="SwitchDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_switch es
+		WHERE es.is_open = #{isOpen,jdbcType=INTEGER} AND es.data_status = 1
+	</select>
+</mapper>
