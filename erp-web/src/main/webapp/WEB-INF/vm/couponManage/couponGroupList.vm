@@ -103,17 +103,17 @@
                             ##                                </td>
                             ##                                {{/hasCommonActionButtons}}
                                 <td>{{couponBatchId}}</td>
-                                <td>{{couponBatchName}}</td>
-                                <td>{{couponBatchDescribe}}</td>
-                                <td>{{couponTypeValue}}</td>
-                                <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
-                                <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
+                                <td class="couponBatchName" data-couponBatchName="{{couponBatchName}}">{{couponBatchName}}</td>
+                                <td class="couponBatchDescribe" data-couponBatchDescribe="{{couponBatchDescribe}}">{{couponBatchDescribe}}</td>
+                                <td class="couponTypeValue" data-couponTypeValue="{{couponTypeValue}}">{{couponTypeValue}}</td>
+                                <td class="effectiveStartTime" data-effectiveStartTime="{{effectiveStartTime}}">{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
+                                <td class="effectiveEndTime" data-effectiveEndTime="{{effectiveEndTime}}">{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
                                 <td>{{couponBatchTotalCount}}</td>
                                 <td>{{couponBatchUsedCount}}</td>
                                 <td>{{totalFaceAmount}}</td>
                                 <td>{{totalUsedAmount}}</td>
                                 <td>{{totalDeductionAmount}}</td>
-                                <td>{{remark}}</td>
+                                <td class="remark" data-remark="{{remark}}">{{remark}}</td>
                                 <td>
                                     <p class="mn">{{updateUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
@@ -165,6 +165,7 @@
     management_load_script('${staticManagement}/js',
             'manage.coupon.list.js',
             'manage.coupon.add.js',
+            'manage.coupon.edit.js',
             'manage.coupon.pici.add.js'
     );
 </script>
