@@ -95,8 +95,8 @@
 		UPDATE erp_bank_slip_claim <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<update id="updateDataStatusByBankSlipDetailId">
-		UPDATE erp_bank_slip_claim ebsc SET ebsc.data_status = 0,ebsc.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsc.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsc.bank_slip_detail_id = #{bankSlipDetailId, jdbcType=INTEGER}
+	<update id="deleteByBankSlipDetailId">
+		UPDATE erp_bank_slip_claim ebsc SET ebsc.data_status = 2,ebsc.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsc.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsc.bank_slip_detail_id = #{bankSlipDetailId, jdbcType=INTEGER}
 	</update>
 
 	<update id="updateBankSlipClaimDO" parameterType="java.util.List">
