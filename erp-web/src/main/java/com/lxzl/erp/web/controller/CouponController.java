@@ -2,13 +2,11 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.coupon.CouponBatchDetailQueryParam;
-import com.lxzl.erp.common.domain.coupon.CouponBatchQueryParam;
-import com.lxzl.erp.common.domain.coupon.CouponDeleteParam;
-import com.lxzl.erp.common.domain.coupon.CouponQueryParam;
+import com.lxzl.erp.common.domain.coupon.*;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -26,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User : sunzhipeng
@@ -127,6 +126,27 @@ public class CouponController {
     public Result deleteCoupon(@RequestBody @Validated(IdGroup.class) CouponDeleteParam couponDeleteParam, BindingResult validResult){
         ServiceResult<String,String> serviceResult = couponService.deleteCoupon(couponDeleteParam.getCouponList());
         return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+
+    /**
+     * 发放优惠卷
+     * @param couponProvideParam
+     * @return
+     */
+    @RequestMapping(value = "provideCoupon",method = RequestMethod.POST)
+    public Result provideCoupon(@RequestBody CouponProvideParam couponProvideParam, BindingResult validResult){
+        ServiceResult<String,String> serviceResult = couponService.provideCoupon(couponProvideParam);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+    /**
+     * 按客户编号查询该客户优惠券
+     * @param customer
+     * @return
+     */
+    @RequestMapping(value = "findCouponByCustomerNo",method = RequestMethod.POST)
+    public Result findCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) Customer customer, BindingResult validResult){
+        ServiceResult<String,List<Coupon>> serviceResult = couponService.findCouponByCustomerNo(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
 }

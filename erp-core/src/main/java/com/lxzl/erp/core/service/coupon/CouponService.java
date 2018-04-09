@@ -4,10 +4,12 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.coupon.CouponBatchDetailQueryParam;
 import com.lxzl.erp.common.domain.coupon.CouponBatchQueryParam;
+import com.lxzl.erp.common.domain.coupon.CouponProvideParam;
 import com.lxzl.erp.common.domain.coupon.CouponQueryParam;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
 
 import java.util.List;
 
@@ -35,4 +37,8 @@ public interface CouponService {
     ServiceResult<String,Page<Coupon>> pageCoupon(CouponQueryParam couponQueryParam);
 
     ServiceResult<String,String> deleteCoupon(List<Coupon> list);
+
+    ServiceResult<String,String> provideCoupon(CouponProvideParam couponProvideParam);
+
+    ServiceResult<String,List<Coupon>> findCouponByCustomerNo(Customer customer);
 }
