@@ -51,6 +51,7 @@ CREATE TABLE `erp_coupon_batch_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
   `coupon_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
+  `coupon_received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已领取总数',
   `coupon_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
   `coupon_received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券线上已领取总数',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
@@ -80,6 +81,9 @@ CREATE TABLE `erp_coupon` (
   `coupon_status` int(11) NOT NULL DEFAULT 0  COMMENT '优惠券状态，0-未领取，4-可用，8-已用',
   `customer_no` varchar(100) COMMENT '客戶编号',
   `is_online` int(11) NOT NULL COMMENT '是否线上，0-否，1-是',
+  `order_id` int(20) DEFAULT NULL COMMENT '订单ID',
+  `order_no` varchar(100) DEFAULT NULL COMMENT '订单号',
+  `order_product_id` int(20) DEFAULT NULL COMMENT '订单商品项ID',
   `receive_time` datetime DEFAULT NULL COMMENT '领取时间',
   `use_time` datetime DEFAULT NULL COMMENT '使用时间',
   `effective_start_time` datetime DEFAULT NULL COMMENT '有效期起始时间',
@@ -91,7 +95,10 @@ CREATE TABLE `erp_coupon` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
-  INDEX index_customer_no ( `customer_no` )
+  INDEX index_customer_no ( `customer_no` ),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_order_product_id ( `order_product_id` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='优惠券表';
 
 DROP TABLE if exists `erp_sms_log`;
