@@ -22,15 +22,13 @@ public class ChargeRecord extends BasePO {
     private String chargeDescription;
     private String openId;
     private String businessCustomerNo;
-    private String businessCustomerName;
 
     private String thirdPartyPayOrderId;  //快付通单号字段
     private String remark;   //备注
-    private String chargeBodyId;    //充值主体ID（分公司ID）
-    private String chargeBodyName;  //充值主体名称（分公司名称）
-
-    // 冗余没啥用
+    private Integer subCompanyId;    //充值主体ID（分公司ID）
+    private String subCompanyName;  //充值主体名称（分公司名称）
     private String customerName;
+
 
     public Integer getChargeOrderId() { return chargeOrderId; }
 
@@ -88,13 +86,6 @@ public class ChargeRecord extends BasePO {
 
     public void setBusinessCustomerNo(String businessCustomerNo) { this.businessCustomerNo = businessCustomerNo; }
 
-    public String getBusinessCustomerName() {
-        return businessCustomerName;
-    }
-
-    public void setBusinessCustomerName(String businessCustomerName) {
-        this.businessCustomerName = businessCustomerName;
-    }
 
     public String getThirdPartyPayOrderId() {
         return thirdPartyPayOrderId;
@@ -112,19 +103,19 @@ public class ChargeRecord extends BasePO {
         this.remark = remark;
     }
 
-    public String getChargeBodyId() {
-        return chargeBodyId;
+    public Integer getSubCompanyId() {
+        return subCompanyId;
     }
 
-    public void setChargeBodyId(String chargeBodyId) {
-        this.chargeBodyId = chargeBodyId;
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
     }
 
-    public String getChargeBodyName() {
-        return chargeBodyName;
+    public String getSubCompanyName() {
+        return subCompanyName;
     }
 
-    public void setChargeBodyName(String chargeBodyName) {
-        this.chargeBodyName = chargeBodyName;
+    public void setSubCompanyName(String subCompanyName) {
+        this.subCompanyName = subCompanyName;
     }
 }

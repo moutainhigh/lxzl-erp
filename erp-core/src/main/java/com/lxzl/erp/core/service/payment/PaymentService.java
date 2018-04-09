@@ -4,10 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.*;
-import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
-import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountLogSummary;
-import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
+import com.lxzl.erp.common.domain.payment.account.pojo.*;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -96,10 +93,10 @@ public interface PaymentService extends BaseService {
 
     /**
      * 给ERP查看充值分页查询
-     * @param chargeRecordParam
+     * @param chargeRecordPageParam
      * @return
      */
-    ServiceResult<String, Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordParam chargeRecordParam);
+    ServiceResult<String,Page<ChargeRecord>> queryChargeRecordParamPage(ChargeRecordPageParam chargeRecordPageParam);
 
     /**
      * 退还用户押金
