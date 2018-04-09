@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.bank.ClaimBankSlipDetailGroup;
+import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -32,7 +33,8 @@ public class BankSlipClaim extends BasePO {
 	private String customerName;   //客户名称
 
 	@Valid
-	List<ClaimParam> claimParam;
+	@CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {ClaimBankSlipDetailGroup.class})
+	private List<ClaimParam> claimParam;
 
 	public String getCustomerName() {
 		return customerName;
