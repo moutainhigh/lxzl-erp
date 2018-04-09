@@ -24,11 +24,10 @@ public class ChargeRecord extends BasePO {
     private String businessCustomerNo;
     private String businessCustomerName;
 
-
     private String thirdPartyPayOrderId;  //快付通单号字段
     private String remark;   //备注
-    private String subCompanyId;    //充值主体ID（分公司ID）
-    private String subCompanyName;  //充值主体名称（分公司名称）
+    private String chargeBodyId;    //充值主体ID（分公司ID）
+    private String chargeBodyName;  //充值主体名称（分公司名称）
 
     // 冗余没啥用
     private String customerName;
@@ -113,19 +112,19 @@ public class ChargeRecord extends BasePO {
         this.remark = remark;
     }
 
-    public String getSubCompanyId() {
-        return subCompanyId;
+    public String getChargeBodyId() {
+        return chargeBodyId;
     }
 
-    public void setSubCompanyId(String subCompanyId) {
-        this.subCompanyId = subCompanyId;
+    public void setChargeBodyId(String chargeBodyId) {
+        this.chargeBodyId = chargeBodyId;
     }
 
-    public String getSubCompanyName() {
-        return subCompanyName;
+    public String getChargeBodyName() {
+        return chargeBodyName;
     }
 
-    public void setSubCompanyName(String subCompanyName) {
-        this.subCompanyName = subCompanyName;
+    public void setChargeBodyName(String chargeBodyName) {
+        this.chargeBodyName = chargeBodyName;
     }
 }
