@@ -728,11 +728,11 @@ public class StatementServiceImpl implements StatementService {
 //        }
 
         ServiceResult<String, Boolean> updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
-        if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
+        /*if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             result.setErrorCode(updatePayOrderResult.getErrorCode());
             return result;
-        }
+        }*/
 
         updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, currentTime, loginUser.getUserId());
         result.setResult(true);
@@ -753,7 +753,7 @@ public class StatementServiceImpl implements StatementService {
                 result.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
                 return result;
             }
-            if (statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT && statementOrderDO.getStatementStatus() != StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART) {
+            if (!StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT .equals(statementOrderDO.getStatementStatus())&& !StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART.equals(statementOrderDO.getStatementStatus())) {
                 result.setErrorCode(ErrorCode.STATEMENT_ORDER_STATUS_IS_ERROR);
                 return result;
             }
