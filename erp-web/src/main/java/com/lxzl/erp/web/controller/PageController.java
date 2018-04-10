@@ -911,6 +911,15 @@ public class PageController extends BaseController {
         return "/financialManage/jurnalAmountDetail";
     }
 
+    /**
+     * 系统功能开关设置
+     * @return
+     */
+    @RequestMapping("/system-manage/interface-switch")
+    public String systemManageInterfaceSwitchList() {
+        return "/systemManage/interfaceSwitchList";
+    }
+
     @RequestMapping("/private-manage/request")
     public String privateManageRequeset() {
         return "/privateManage/request";
