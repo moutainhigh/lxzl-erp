@@ -93,7 +93,7 @@ public class K3ServiceImpl implements K3Service {
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
     private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
 
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
@@ -170,6 +170,12 @@ public class K3ServiceImpl implements K3Service {
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
+                    K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(order.getOrderSubCompanyName());
+                    if(k3MappingSubCompanyDO != null){
+                        order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getErpSubCompanyCode()));
+                        order.setOrderSubCompanyName(k3MappingSubCompanyDO.getSubCompanyName());
+                    }
+
                     String measureList = obj.get("MeasureList").toString();
                     if (measureList != null && !"[]".equals(measureList)) {
                         List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
