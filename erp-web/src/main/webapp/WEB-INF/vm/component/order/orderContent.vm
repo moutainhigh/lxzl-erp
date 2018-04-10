@@ -175,6 +175,7 @@
                                 </label>
                             </th>
                             <th>商品名称</th>
+##                            <th>商品K3编号</th>
                             <th>类别</th>
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
@@ -205,6 +206,7 @@
                                     {{productName}}
                                 </p>
                             </td>
+##                            <td>{{k3ProductNo}}</td>
                             <td style="max-width:260px;">{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>
