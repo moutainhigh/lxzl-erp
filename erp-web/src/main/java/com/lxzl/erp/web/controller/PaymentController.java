@@ -8,7 +8,6 @@ import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccount
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
-import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccountLogSummary;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -77,7 +76,7 @@ public class PaymentController extends BaseController {
     }
 
     @RequestMapping(value = "queryChargeRecordParamPage", method = RequestMethod.POST)
-    public Result queryChargeRecordParamPage(@RequestBody ChargeRecordParam param, BindingResult validResult) {
+    public Result queryChargeRecordParamPage(@RequestBody ChargeRecordPageParam param, BindingResult validResult) {
         ServiceResult<String, Page<ChargeRecord>> serviceResult = paymentService.queryChargeRecordParamPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

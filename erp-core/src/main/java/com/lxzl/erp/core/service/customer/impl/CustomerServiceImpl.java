@@ -1645,15 +1645,6 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        //只有创建人和业务员和联合开发员才能功能
-        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
-                !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
-                !userSupport.isSuperUser()) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
-            return serviceResult;
-        }
-
         //获取地址信息的内容，存入客户地址信息表
         CustomerConsignInfoDO customerConsignInfoDO = ConverterUtil.convert(customerConsignInfo, CustomerConsignInfoDO.class);
         customerConsignInfoDO.setCustomerId(customerDO.getId());
@@ -1701,13 +1692,6 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerConsignInfoDO customerConsignInfoDO = customerConsignInfoMapper.findById(customerConsignInfo.getCustomerConsignInfoId());
         if (customerConsignInfoDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_EXISTS);
-            return serviceResult;
-        }
-
-        if (CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT.equals(customerConsignInfoDO.getVerifyStatus()) &&
-                CustomerConsignVerifyStatus.VERIFY_STATUS_FIRST_PASS.equals(customerConsignInfoDO.getVerifyStatus()) &&
-                CustomerConsignVerifyStatus.VERIFY_STATUS_END_PASS.equals(customerConsignInfoDO.getVerifyStatus())) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_PASS_NOT_UPDATE_AND_DELETE);
             return serviceResult;
         }
 
@@ -1792,15 +1776,6 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDO customerDO = customerMapper.findById(customerConsignInfoDO.getCustomerId());
         if (customerDO == null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return serviceResult;
-        }
-
-        //只有创建人和业务员和联合开发员才能功能
-        if (!loginUser.getUserId().toString().equals(customerDO.getCreateUser()) &&
-                !loginUser.getUserId().equals(customerDO.getOwner()) &&
-                !loginUser.getUserId().equals(customerDO.getUnionUser()) &&
-                !userSupport.isSuperUser()) {
-            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_IS_CREATE_USER_AND_OWNER_AND_UNION_USER);
             return serviceResult;
         }
 
@@ -2709,8 +2684,8 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
 
-            if(customerCompanyDO.getAddress() == null){
-                errorCodeMsg.append("详细地址，");
+            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
+                errorCodeMsg.append("经营详细地址，");
             }
 
             //对图片附件进行判断
@@ -2758,9 +2733,6 @@ public class CustomerServiceImpl implements CustomerService {
             }
             if (StringUtil.isBlank(customerCompanyDO.getConnectPhone())) {
                 errorCodeMsg.append("紧急联系人手机号，");
-            }
-            if (StringUtil.isBlank(customerCompanyDO.getAddress())) {
-                errorCodeMsg.append("公司经营地址，");
             }
             if (customerCompanyDO.getIsLegalPersonApple() == null) {
                 errorCodeMsg.append("是否法人代表申请，");

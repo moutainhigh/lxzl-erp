@@ -21,6 +21,9 @@ public class CouponDO  extends BaseDO {
 	private Date effectiveEndTime;
 	private String remark;
 	private Integer dataStatus;
+	private Integer orderId;	//订单ID
+	private String orderNo;		//订单号
+	private Integer orderProductId;		//订单商品项ID
 
 	public Integer getId(){
 		return id;
@@ -140,5 +143,29 @@ public class CouponDO  extends BaseDO {
 
 	public void setCouponCode(String couponCode) {
 		this.couponCode = couponCode;
+	}
+
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
+	public Integer getOrderProductId() {
+		return orderProductId;
+	}
+
+	public void setOrderProductId(Integer orderProductId) {
+		this.orderProductId = orderProductId;
 	}
 }
