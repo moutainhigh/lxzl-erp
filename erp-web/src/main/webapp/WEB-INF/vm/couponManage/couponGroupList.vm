@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-财务管理-资金流水附件</title>
+    <title>凌雄ERP-活动页管理-优惠券批次</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -41,18 +41,12 @@
                                 </div>
                                 <div class="field form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select name="bankType" id="bankType" class="form-control input-sm bradius"></select>
-                                    </div>
-                                </div>
-##                                <input type="hidden" name="slipMonth">
-                                <div class="field form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select name="slipStatus" id="slipStatus" class="form-control input-sm bradius"></select>
+                                        <select name="couponType" id="couponType" class="form-control input-sm bradius"></select>
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="subCompanyId"  id="subCompanyName"></select>
+                                        <input class="form-control input-sm bradius" name="couponBatchName" placeholder="请输入批次名称"  id="couponBatchName"/>
                                     </div>
                                 </div>
                             </form>
@@ -64,14 +58,6 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-                            ##                                {{#hasCommonActionButtons}}
-                            ##                                <th>
-                            ##                                    <label class="option block mn">
-                            ##                                        <input type="checkbox" name="checkAll" value="">
-                            ##                                        <span class="checkbox mn"></span>
-                            ##                                    </label>
-                            ##                                </th>
-                            ##                                {{/hasCommonActionButtons}}
                                 <th>优惠券批次ID</th>
                                 <th>批次名称</th>
                                 <th>批次描述</th>
@@ -94,14 +80,6 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                            ##                                {{#hasCommonActionButtons}}
-                            ##                                <td>
-                            ##                                    <label class="option block mn">
-                            ##                                        <input type="checkbox" name="checkItem" value="{{productId}}">
-                            ##                                        <span class="checkbox mn"></span>
-                            ##                                    </label>
-                            ##                                </td>
-                            ##                                {{/hasCommonActionButtons}}
                                 <td>{{couponBatchId}}</td>
                                 <td class="couponBatchName" data-couponBatchName="{{couponBatchName}}">{{couponBatchName}}</td>
                                 <td class="couponBatchDescribe" data-couponBatchDescribe="{{couponBatchDescribe}}">{{couponBatchDescribe}}</td>

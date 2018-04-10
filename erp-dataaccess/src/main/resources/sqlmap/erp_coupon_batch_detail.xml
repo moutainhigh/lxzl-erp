@@ -118,20 +118,20 @@
 		SELECT <include refid="column_List"/>
 		FROM erp_coupon_batch_detail ecbd
 		<where>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.couponBatchId != null ">
-				and ecbd.coupon_batch_id = #{maps.couponBatchDeatilQueryParam.couponBatchId, jdbcType=INTEGER}
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.couponBatchId != null ">
+				and ecbd.coupon_batch_id = #{maps.couponBatchDetailQueryParam.couponBatchId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.faceValue != null ">
-				and ecbd.face_value = #{maps.couponBatchDeatilQueryParam.faceValue, jdbcType=DECIMAL}
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.faceValue != null ">
+				and ecbd.face_value = #{maps.couponBatchDetailQueryParam.faceValue, jdbcType=DECIMAL}
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.isOnline != null ">
-				and ecbd.is_online = #{maps.couponBatchDeatilQueryParam.isOnline, jdbcType=INTEGER}
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.isOnline != null ">
+				and ecbd.is_online = #{maps.couponBatchDetailQueryParam.isOnline, jdbcType=INTEGER}
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.createStartTime != null ">
-				<![CDATA[ AND ecbd.create_time >= #{maps.couponBatchDeatilQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.createStartTime != null ">
+				<![CDATA[ AND ecbd.create_time >= #{maps.couponBatchDetailQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.createEndTime != null ">
-				<![CDATA[ AND ecbd.create_time <= #{maps.couponBatchDeatilQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.createEndTime != null ">
+				<![CDATA[ AND ecbd.create_time <= #{maps.couponBatchDetailQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="true">
 				AND ecbd.data_status = 1
@@ -145,20 +145,20 @@
 		SELECT count(id)
 		FROM erp_coupon_batch_detail ecbd
 		<where>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.couponBatchId != null ">
-				and ecbd.coupon_batch_id = #{maps.couponBatchDeatilQueryParam.couponBatchId, jdbcType=INTEGER}
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.couponBatchId != null ">
+				and ecbd.coupon_batch_id = #{maps.couponBatchDetailQueryParam.couponBatchId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.faceValue != null ">
-				and ecbd.face_value = #{maps.couponBatchDeatilQueryParam.faceValue, jdbcType=DECIMAL}
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.faceValue != null ">
+				and ecbd.face_value = #{maps.couponBatchDetailQueryParam.faceValue, jdbcType=DECIMAL}
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.isOnline != null ">
-				and ecbd.is_online = #{maps.couponBatchDeatilQueryParam.isOnline, jdbcType=INTEGER}
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.isOnline != null ">
+				and ecbd.is_online = #{maps.couponBatchDetailQueryParam.isOnline, jdbcType=INTEGER}
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.createStartTime != null ">
-				<![CDATA[ AND ecbd.create_time >= #{maps.couponBatchDeatilQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.createStartTime != null ">
+				<![CDATA[ AND ecbd.create_time >= #{maps.couponBatchDetailQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
 			</if>
-			<if test="maps.couponBatchDeatilQueryParam != null &amp;&amp; maps.couponBatchDeatilQueryParam.createEndTime != null ">
-				<![CDATA[ AND ecbd.create_time <= #{maps.couponBatchDeatilQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			<if test="maps.couponBatchDetailQueryParam != null &amp;&amp; maps.couponBatchDetailQueryParam.createEndTime != null ">
+				<![CDATA[ AND ecbd.create_time <= #{maps.couponBatchDetailQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="true">
 				AND ecbd.data_status = 1

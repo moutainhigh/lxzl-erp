@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-财务管理-资金流水附件</title>
+    <title>凌雄ERP-活动页管理-优惠券</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -44,17 +44,19 @@
                                         <select name="couponStatus" id="couponStatus" class="form-control input-sm bradius"></select>
                                     </div>
                                 </div>
-                                <input type="hidden" name="couponBatchId">
-                                <input type="hidden" name="couponBatchDetailId">
-                                <input type="hidden" name="customerNo">
-                                <div class="field form-group pull-right mn mr10">
+                                <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select name="slipStatus" id="slipStatus" class="form-control input-sm bradius"></select>
+                                        <input class="form-control input-sm bradius" name="customerNo" placeholder="请输入客户编号"  id="couponBatchName"/>
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="subCompanyId"  id="subCompanyName"></select>
+                                        <input class="form-control input-sm bradius" name="couponBatchId" placeholder="请输入批次ID"  id="couponBatchName"/>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <input class="form-control input-sm bradius" name="couponBatchDetailId" placeholder="请输入批次详情ID"  id="couponBatchName"/>
                                     </div>
                                 </div>
                             </form>
@@ -75,7 +77,7 @@
                                 </th>
                                 {{/hasCommonActionButtons}}
                                 <th>优惠券ID</th>
-                                <th>优惠券批次ID</th>
+                                <th>批次ID</th>
                                 <th>批次详情ID</th>
                                 <th>优惠券编号</th>
                                 <th>优惠券面值</th>
@@ -101,20 +103,20 @@
                                 {{#hasCommonActionButtons}}
                                 <td>
                                     <label class="option block mn">
-                                        <input type="checkbox" name="checkItem" value="{{productId}}">
+                                        <input type="checkbox" name="checkItem" value="{{couponId}}">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{couponId}}</td>
+                                <td class="couponId">{{couponId}}</td>
                                 <td>{{couponBatchId}}</td>
                                 <td>{{couponBatchDetailId}}</td>
                                 <td>{{couponCode}}</td>
                                 <td>{{faceValue}}</td>
                                 <td>{{deductionAmount}}</td>
-                                <td>{{couponStatus}}</td>
+                                <td>{{couponStatusValue}}</td>
                                 <td>{{customerNo}}</td>
-                                <td>{{isOnline}}</td>
+                                <td>{{isOnLineValue}}</td>
                                 <td>{{receiveTime}}</td>
                                 <td>{{useTime}}</td>
                                 <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
@@ -131,7 +133,7 @@
                                         <ul class="dropdown-menu pull-right" role="menu">
                                             {{#rowActionButtons}}
                                             <li>
-                                                <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}}" data-couponBatchId="{{couponBatchId}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}?couponId={{couponId}}" class="{{class}}" data-couponId="{{couponId}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
                                         </ul>

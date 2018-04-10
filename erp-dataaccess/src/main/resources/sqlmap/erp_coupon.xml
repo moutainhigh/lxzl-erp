@@ -5,7 +5,7 @@
 	<resultMap id="CouponDO" type="com.lxzl.erp.dataaccess.domain.coupon.CouponDO">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="coupon_batch_id" jdbcType="INTEGER" property="couponBatchId" />
-		<result column="batch_detail_id" jdbcType="INTEGER" property="couponBatchDetailId" />
+		<result column="coupon_batch_detail_id" jdbcType="INTEGER" property="couponBatchDetailId" />
 		<result column="face_value" jdbcType="DECIMAL" property="faceValue" />
 		<result column="deduction_amount" jdbcType="DECIMAL" property="deductionAmount" />
 		<result column="coupon_status" jdbcType="INTEGER" property="couponStatus" />
@@ -152,7 +152,7 @@
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.isOnline != null ">
 				and ec.is_online = #{maps.couponQueryParam.isOnline, jdbcType=INTEGER}
 			</if>
-			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null ">
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null &amp;&amp; maps.couponQueryParam.customerNo != ''">
 				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
@@ -185,7 +185,7 @@
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.isOnline != null ">
 				and ec.is_online = #{maps.couponQueryParam.isOnline, jdbcType=INTEGER}
 			</if>
-			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null ">
+			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null &amp;&amp; maps.couponQueryParam.customerNo != ''">
 				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
