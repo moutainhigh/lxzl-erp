@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.coupon;
 
+import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -21,5 +22,13 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
 
     void deleteCouponList(@Param("couponDOList") List<CouponDO> couponDOList);
 
-    CouponDO findByIdIgnoreDataStatus(Integer integer);
+    Integer findCouponStatusCountIsZeroByCouponBatchDetailId(Integer couponBatchDetailId);
+
+    void updateList(@Param("couponDOList") List<CouponDO> couponDOList);
+
+    List<CouponDO> findByCouponStatus(@Param("couponBatchDetailId") Integer couponBatchDetailId,@Param("totalCouponProvideAmount") Integer totalCouponProvideAmount);
+
+    List<CouponDO> findByCustomerNo(@Param("customerNo") String customerNo);
+
+    List<CouponDO> findCouponDOList(@Param("couponDOIdList") List<Integer> couponDOIdList);
 }
