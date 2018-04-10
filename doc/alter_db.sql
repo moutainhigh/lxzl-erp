@@ -139,3 +139,6 @@ CREATE TABLE `erp_switch` (
 ) ENGINE=InnoDB AUTO_INCREMENT=500001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
 
 ALTER TABLE erp_k3_return_order_detail add `real_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '实际退货数量';
+
+ALTER TABLE erp_order_product add `renting_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '在租商品总数';
+ALTER TABLE erp_order_material add `renting_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '在租配件总说';

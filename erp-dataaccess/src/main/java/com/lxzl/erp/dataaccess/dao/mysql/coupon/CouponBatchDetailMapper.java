@@ -20,4 +20,5 @@ public interface CouponBatchDetailMapper extends BaseMysqlDAO<CouponBatchDetailD
 	List<CouponBatchDetailDO> findCouponBatchDetailByParams(@Param("maps") Map<String, Object> maps);
 
 
+    void updateCouponBatchDetailDOList(@Param("couponBatchDetailDOList") List<CouponBatchDetailDO> couponBatchDetailDOList);
 }

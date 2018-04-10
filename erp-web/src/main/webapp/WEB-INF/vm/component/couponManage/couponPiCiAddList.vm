@@ -1,0 +1,55 @@
+<div id="addCustomerAddressModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>批次增券</span>
+        </div>
+        <form method="post" id="addPiCiCouponBatch" description="添加批次增券">
+##            <input type="hidden" name="couponBatchId">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="couponTotalCount" class="field-label">请填写优惠券总数</label>
+                        <label for="couponTotalCount" class="field prepend-icon">
+                            <input type="text" name="couponTotalCount" id="couponTotalCount" class="gui-input required" aria-required="true" placeholder="请填写优惠券总数">
+                            <label for="couponTotalCount" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="faceValue" class="field-label">请填写优惠券面值</label>
+                        <label for="faceValue" class="field prepend-icon">
+                            <input type="text" name="faceValue" id="faceValue" class="faceValue moneyNumber gui-input required" aria-required="true" placeholder="请填写优惠券面值">
+                            <label for="faceValue" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="isOnline" class="field-label">是否线上</label>
+                        <label class="field select">
+                            <select id="isOnline" name="isOnline" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="remark" class="field-label">备注</label>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary submit-btn">确定</button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

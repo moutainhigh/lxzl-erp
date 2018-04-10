@@ -813,6 +813,7 @@ public class ErrorCode {
     public static final String COUPON_COUNT_ERROR="J19000011";
     public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
     public static final String COUPON_USED="J19000013";
+    public static final String COUPON_PROVIDE_COUNT_ERROR="J19000014";
 
     public static final String SWITCH_INTERFACE_URL_NOT_NULL="J20000001";
     public static final String SWITCH_IS_OPEN_NOT_NULL="J20000002";
@@ -1569,7 +1570,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的K3退货单换货单不允许取消");
         MAP.put(K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3换货单可以提交");
         MAP.put(K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3换货单商品不能空，需有商品才能提交");
-        MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
+        MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交和已驳回状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
@@ -1628,6 +1629,7 @@ public class ErrorCode {
         MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
         MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
         MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
+        MAP.put(COUPON_PROVIDE_COUNT_ERROR,"优惠卷可发放数量不足");
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL,"接口URL不能为空");
         MAP.put(SWITCH_IS_OPEN_NOT_NULL,"是否开启状态不能为空");

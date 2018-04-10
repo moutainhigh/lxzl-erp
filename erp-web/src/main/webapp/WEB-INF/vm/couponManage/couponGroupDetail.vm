@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-活动页管理-优惠券批次-详细</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+            <form class="" id="statementOrderDetailForm">
+                <div class="panel panel-primary panel-border top mb15">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5 class="couponBatchId">优惠券批次ID：<small></small></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div id="couponBaseInfo"></div>
+                    </div>
+                    <script type="text/html" id="couponBaseInfoTpl">
+                        {{#couponData}}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl class="dl-horizontal">
+                                    <dt>批次名称：</dt><dd class="mb5">{{couponBatchName}}&nbsp;</dd>
+                                    <dt>批次描述：</dt><dd class="mb5">{{couponBatchDescribe}}&nbsp;</dd>
+                                    <dt>优惠券类型：</dt><dd class="mb5">{{couponType}}&nbsp;</dd>
+                                    <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+                                    <dt>创建时间：</dt><dd class="mb5">{{#clockTime}}{{createTime}}{{/clockTime}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6">
+                                <dl class="dl-horizontal">
+                                    <dt>优惠券总数：</dt><dd class="mb5">{{couponBatchTotalCount}}&nbsp;</dd>
+                                    <dt>优惠券已使用总数：</dt><dd class="mb5">{{couponBatchUsedCount}}&nbsp;</dd>
+                                    <dt>优惠券总面值：</dt><dd class="mb5">￥{{#price}}{{totalFaceAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>已使用总面值：</dt><dd class="mb5">￥{{#price}}{{totalUsedAmount}}{{/price}}&nbsp;</dd>
+                                    <dt>抵扣总金额：</dt><dd class="mb5">￥{{#price}}{{totalDeductionAmount}}{{/price}}&nbsp;</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        {{/couponData}}
+                    </script>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-body light pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                <tr class="bg-light">
+                                    <th>优惠券详情ID</th>
+                                    <th>优惠券批次ID</th>
+                                    <th>优惠券总数</th>
+                                    <th>已使用优惠券总数</th>
+                                    <th>优惠券线上已领取总数</th>
+                                    <th>优惠券面值</th>
+                                    <th>优惠券总面值</th>
+                                    <th>已使用总面值</th>
+                                    <th>抵扣总金额</th>
+                                    <th>是否线上</th>
+                                    <th>有效期起始时间</th>
+                                    <th>有效期结束时间</th>
+                                    <th>备注</th>
+                                    <th>添加人</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#dataSource}}
+                                {{#listData}}
+                                <tr>
+                                    <td>{{couponBatchDetailId}}</td>
+                                    <td>{{couponBatchId}}</td>
+                                    <td>{{couponTotalCount}}</td>
+                                    <td>{{couponUsedCount}}</td>
+                                    <td>{{couponReceivedCount}}</td>
+                                    <td>{{faceValue}}</td>
+                                    <td>{{totalFaceAmount}}</td>
+                                    <td>{{totalUsedAmount}}</td>
+                                    <td>{{totalDeductionAmount}}</td>
+                                    <td>{{isOnLineValue}}</td>
+                                    <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
+                                    <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
+                                    <td>{{remark}}</td>
+                                    <td>
+                                        <p class="mn">{{createUserRealName}}</p>
+                                        <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                    </td>
+                                </tr>
+                                {{/listData}}
+                                {{^listData}}
+                                <tr>
+                                    <td valign="top" colspan="10" class="text-center">无优惠券详情数据</td>
+                                </tr>
+                                {{/listData}}
+                                {{/dataSource}}
+                                </tbody>
+                            </script>
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <button class="btn btn-default pull-right ml15 goBack">返回</button>
+                    </div>
+                </div>
+
+            </form>
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js', 'manage.coupon.detail.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+
+    CouponDetailManage.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+</script>
+</body>
+</html>

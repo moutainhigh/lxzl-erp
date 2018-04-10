@@ -203,7 +203,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         BigDecimal b = k3ReturnOrder.getEqAmount();
         if (BigDecimalUtil.compare(b, BigDecimal.ZERO) != 0) {
             K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
-            CustomerDO customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+            CustomerDO customerDO = null;
+            if(k3MappingCustomerDO == null){
+                 customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+            }else{
+                customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
+            }
+
             customerSupport.subCreditAmountUsed(customerDO.getId(), b);
         }
 

@@ -563,7 +563,8 @@ public class K3ServiceImpl implements K3Service {
         if (k3ReturnOrderDO == null) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
-        } else if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+        } else if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
+                && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             //只有待提交状态的换货单可以提交
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
             return result;
@@ -1462,8 +1463,14 @@ public class K3ServiceImpl implements K3Service {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
-        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
-        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        String data = businessNo.substring(0,6);
+        K3ReturnOrderDO k3ReturnOrderDO = null;
+        K3ChangeOrderDO k3ChangeOrderDO = null;
+        if("LXK3RO".equals(data)){
+            k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        }else{
+            k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
+        }
         try {
             if (k3ChangeOrderDO != null) {//k3换货单
                 //不是审核中状态的收货单，拒绝处理
@@ -1484,12 +1491,12 @@ public class K3ServiceImpl implements K3Service {
                 }
                 if (verifyResult) {
                     ServiceResult result = sendToK3(businessNo);
-                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
-                        return ErrorCode.BUSINESS_EXCEPTION;
+                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())){
+                        return result.getErrorCode().toString();
                     }
                     k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
                 } else {
-                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
                 }
                 k3ReturnOrderMapper.update(k3ReturnOrderDO);
                 return ErrorCode.SUCCESS;
