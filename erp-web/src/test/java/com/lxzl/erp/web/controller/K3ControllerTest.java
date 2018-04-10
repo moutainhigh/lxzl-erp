@@ -173,7 +173,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setReturnOrderNo("6f52d4caa5a643109d7ccca400218d0c");
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180402153515825");
         k3ReturnOrder.setReturnTime(new Date());
         k3ReturnOrder.setReturnAddress("北京京西蓝靛厂1号");
         k3ReturnOrder.setReturnContacts("张三1");
@@ -210,7 +210,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void deleteReturnOrder() throws Exception {
         K3ReturnOrderDetail k3ReturnOrderDetail = new K3ReturnOrderDetail();
-        k3ReturnOrderDetail.setK3ReturnOrderDetailId(2);
+        k3ReturnOrderDetail.setK3ReturnOrderDetailId(3);
         TestResult testResult = getJsonTestResult("/k3/deleteReturnOrder", k3ReturnOrderDetail);
     }
 
