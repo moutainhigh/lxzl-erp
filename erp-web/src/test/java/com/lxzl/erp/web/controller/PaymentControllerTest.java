@@ -1,16 +1,16 @@
 package com.lxzl.erp.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
-import com.lxzl.erp.common.domain.payment.ChargeRecordParam;
+import com.lxzl.erp.common.domain.payment.ChargeRecordPageParam;
 import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.WeixinChargeParam;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Author : kai
@@ -38,17 +38,38 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void queryChargeRecordParamPage() throws Exception {
-        ChargeRecordParam param = new ChargeRecordParam();
+
+
+        ChargeRecordPageParam param = new ChargeRecordPageParam();
         param.setPageNo(1);
         param.setPageSize(10);
 //        param.setBusinessCustomerNo("LXCC10002018010500023");
 //        param.setCustomerName("腾讯");
         param.setChargeType(2);
+//        param.setChargeBodyId("2");
 //        param.setChargeStatus(20);
 //        param.setQueryStartTime(new Date("1514908800000"));
 //        param.setQueryEndTime(new Date("1517500799999"));
         TestResult testResult = getJsonTestResult("/payment/queryChargeRecordParamPage", param);
     }
+
+
+    @Test
+    public void queryChargeRecordParamPageJson() throws Exception {
+        String json = "{\n" +
+                "    \"businessAppId\":\"201712140001\",\n" +
+                "    \"businessAppSecret\":\"JN2hrJcxZjn6y4XvtdzqXOdy5ouol0FeQA2ZUfuayhcj4sUlqQMezAICJEM36sdg\",\n" +
+                "    \"pageNo\":1,\n" +
+                "    \"pageSize\":10,\n" +
+//                "    \"subCompanyId\":1545646,\n" +
+                "    \"customerName\":\"rwearwe\",\n" +
+                "    \"chargeType\":2\n" +
+                "}";
+        ChargeRecordPageParam param = JSON.parseObject(json,ChargeRecordPageParam.class);
+
+        TestResult testResult = getJsonTestResult("/payment/queryChargeRecordParamPage", param);
+    }
+
 
     @Test
     public void queryCustomerAccountLogPage() throws Exception {

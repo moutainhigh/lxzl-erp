@@ -20,6 +20,7 @@ public class CouponBatchDetailDO  extends BaseDO {
 	private Date effectiveEndTime;
 	private String remark;
 	private Integer dataStatus;
+	private Integer couponCancelCount;	//优惠券作废总数
 
 	public Integer getId(){
 		return id;
@@ -133,4 +134,11 @@ public class CouponBatchDetailDO  extends BaseDO {
 		this.dataStatus = dataStatus;
 	}
 
+	public Integer getCouponCancelCount() {
+		return couponCancelCount;
+	}
+
+	public void setCouponCancelCount(Integer couponCancelCount) {
+		this.couponCancelCount = couponCancelCount;
+	}
 }
