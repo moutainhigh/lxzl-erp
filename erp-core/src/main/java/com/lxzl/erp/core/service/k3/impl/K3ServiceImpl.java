@@ -1462,8 +1462,14 @@ public class K3ServiceImpl implements K3Service {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
-        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
-        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        String data = businessNo.substring(0,6);
+        K3ReturnOrderDO k3ReturnOrderDO = null;
+        K3ChangeOrderDO k3ChangeOrderDO = null;
+        if("LXK3RO".equals(data)){
+            k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        }else{
+            k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
+        }
         try {
             if (k3ChangeOrderDO != null) {//k3换货单
                 //不是审核中状态的收货单，拒绝处理
@@ -1484,12 +1490,12 @@ public class K3ServiceImpl implements K3Service {
                 }
                 if (verifyResult) {
                     ServiceResult result = sendToK3(businessNo);
-                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
-                        return ErrorCode.BUSINESS_EXCEPTION;
+                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())){
+                        return result.getErrorCode().toString();
                     }
                     k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
                 } else {
-                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
                 }
                 k3ReturnOrderMapper.update(k3ReturnOrderDO);
                 return ErrorCode.SUCCESS;
