@@ -310,4 +310,60 @@
 		WHERE ec.coupon_batch_detail_id = #{couponBatchDetailId, jdbcType=VARCHAR}
 		AND ec.data_status = 1
 	</select>
+	<update id="updateUseList" parameterType="java.util.ArrayList">
+		update erp_coupon
+		SET
+		<trim>
+			order_id =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.orderId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_no =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.orderNo}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_product_id =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.orderProductId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			deduction_amount =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.deductionAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_status =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.couponStatus}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			use_time =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.useTime}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="couponDOList" index="index" item="couponDO" separator="," open="(" close=")">
+			#{couponDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

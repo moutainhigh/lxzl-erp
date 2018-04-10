@@ -156,4 +156,42 @@
 		</where>
 
 	</select>
+	<update id="updateUseList" parameterType="java.util.ArrayList">
+		update erp_coupon_batch
+		SET
+		<trim>
+			update_user =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_batch_used_count =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.couponBatchUsedCount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			total_used_amount =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.totalUsedAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			total_deduction_amount =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.totalDeductionAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="couponBatchDOList" index="index" item="couponBatchDO" separator="," open="(" close=")">
+			#{couponBatchDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

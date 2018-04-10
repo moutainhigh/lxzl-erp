@@ -31,4 +31,8 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
     List<CouponDO> findByCustomerNo(@Param("customerNo") String customerNo);
 
     List<CouponDO> findCouponDOList(@Param("couponDOIdList") List<Integer> couponDOIdList);
+
+    List<CouponDO> findByCouponBatchDetailID(@Param("couponBatchDetailId") Integer couponBatchDetailId);
+
+    void updateUseList(@Param("couponDOList")List<CouponDO> couponDOList);
 }

@@ -8,15 +8,19 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import org.junit.Test;
 
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class CouponControllerTest extends ERPUnTransactionalTest{
+
+
+
     @Test
     public void addCouponBatch() throws Exception{
         CouponBatch couponBatch = new CouponBatch();
@@ -143,4 +147,70 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         TestResult testResult = getJsonTestResult("/coupon/findCouponByCustomerNo", customer);
     }
 
+    @Test
+    public void findCouponBatchByCouponBatchDetail() throws Exception {
+        CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
+        couponBatchDetail.setCouponBatchDetailId(14);
+
+        TestResult testResult = getJsonTestResult("/coupon/findCouponBatchByCouponBatchDetail", couponBatchDetail);
+    }
+    @Test
+    public void findCouponBatchByCoupon() throws Exception {
+        Coupon coupon = new Coupon();
+        coupon.setCouponId(154);
+
+        TestResult testResult = getJsonTestResult("/coupon/findCouponBatchByCoupon", coupon);
+    }
+
+    @Test
+    public void deleteCouponBatchDetail() throws Exception {
+        CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
+        couponBatchDetail.setCouponBatchDetailId(18);
+
+        TestResult testResult = getJsonTestResult("/coupon/deleteCouponBatchDetail", couponBatchDetail);
+    }
+    @Test
+    public void deleteCouponByCouponBatch() throws Exception {
+        CouponBatch couponBatch = new CouponBatch();
+        couponBatch.setCouponBatchId(19);
+
+        TestResult testResult = getJsonTestResult("/coupon/deleteCouponByCouponBatch", couponBatch);
+    }
+    @Test
+    public void useCoupon() throws Exception {
+        Order order = new Order();
+        order.setOrderId(1111);
+        order.setOrderNo("11111");
+        OrderProduct orderProduct1 = new OrderProduct();
+        orderProduct1.setOrderId(1111);
+        orderProduct1.setOrderProductId(1);
+        orderProduct1.setProductUnitAmount(new BigDecimal(80));
+        orderProduct1.setProductCount(3);
+        OrderProduct orderProduct2 = new OrderProduct();
+        orderProduct2.setOrderId(1111);
+        orderProduct2.setOrderProductId(2);
+        orderProduct2.setProductUnitAmount(new BigDecimal(100));
+        orderProduct2.setProductCount(2);
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        orderProductList.add(orderProduct1);
+        orderProductList.add(orderProduct2);
+        order.setOrderProductList(orderProductList);
+        Coupon coupon1 = new Coupon();
+        coupon1.setCouponId(954);
+        coupon1.setCouponBatchDetailId(15);
+        coupon1.setCouponBatchId(15);
+        coupon1.setFaceValue(new BigDecimal(15));
+        Coupon coupon2 = new Coupon();
+        coupon2.setCouponId(786);
+        coupon2.setCouponBatchDetailId(12);
+        coupon2.setCouponBatchId(31);
+        coupon2.setFaceValue(new BigDecimal(25));
+        List<Coupon> couponList = new ArrayList<>();
+        couponList.add(coupon1);
+        couponList.add(coupon2);
+        UseCoupon useCoupon = new UseCoupon();
+        useCoupon.setOrder(order);
+        useCoupon.setCouponList(couponList);
+        TestResult testResult = getJsonTestResult("/coupon/useCoupon", useCoupon);
+    }
 }
