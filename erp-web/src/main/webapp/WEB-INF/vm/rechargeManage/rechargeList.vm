@@ -80,9 +80,9 @@
                                 <th>编号</th>
                                 <th>客户编号</th>
                                 <th>客户名</th>
-                                <th>分公司ID</th>
+##                                <th>分公司ID</th>
                                 <th>分公司名称</th>
-                                <th>快付通第三方订单编号</th>
+                                <th>第三方订单编号</th>
                                 <th>预充值金额</th>
                                 <th>实际充值金额</th>
                                 <th>充值类型</th>
@@ -98,7 +98,7 @@
                                 <td>{{chargeOrderNo}}</td>
                                 <td>{{businessCustomerNo}}</td>
                                 <td>{{customerName}}</td>
-                                <td>{{subCompanyId}}</td>
+##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{thirdPartyPayOrderId}}</td>
                                 <td>￥{{#price}}{{chargeAmountExpect}}{{/price}}</td>
