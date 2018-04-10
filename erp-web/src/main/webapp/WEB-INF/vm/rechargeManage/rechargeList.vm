@@ -67,24 +67,23 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
+
                 <div class="panel-body pn">
                     <div class="table-responsive">
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
                                 <th>编号</th>
-                                <th>充值类型</th>
                                 <th>客户编号</th>
                                 <th>客户名</th>
-                                <th>业务系统订单号</th>
-                                <th>发起充值时间</th>
+                                <th>分公司名称</th>
+                                <th>快付通第三方订单编号</th>
                                 <th>充值金额</th>
+                                <th>充值类型</th>
+                                <th>发起充值时间</th>
                                 <th>充值状态</th>
-                                <th>简述</th>
-                                <th>充值详情</th>
-##                                <th>充值公总号</th>
+                                <th>备注</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -92,21 +91,20 @@
                             {{#listData}}
                             <tr>
                                 <td>{{chargeOrderNo}}</td>
-                                <td>{{chargeTypeValue}}</td>
                                 <td>{{businessCustomerNo}}</td>
                                 <td>{{customerName}}</td>
-                                <td>{{businessOrderNo}}</td>
-                                <td>{{#time}}{{chargeTime}}{{/time}}</td>
+                                <td>{{chargeBodyName}}</td>
+                                <td>{{thirdPartyPayOrderId}}</td>
                                 <td>￥{{#price}}{{chargeAmountExpect}}{{/price}}</td>
+                                <td>{{chargeTypeValue}}</td>
+                                <td>{{#time}}{{chargeTime}}{{/time}}</td>
                                 <td>{{chargeStatusValue}}</td>
-                                <td>{{chargeName}}</td>
-                                <td>{{chargeDescription}}</td>
-##                                <td>{{openId}}</td>
+                                <td>{{remark}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="16" class="text-center">无数据</td>
+                                <td valign="top" colspan="10" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
