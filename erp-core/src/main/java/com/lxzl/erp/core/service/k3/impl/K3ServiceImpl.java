@@ -170,6 +170,12 @@ public class K3ServiceImpl implements K3Service {
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
+                    K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(order.getOrderSubCompanyName());
+                    if(k3MappingSubCompanyDO != null){
+                        order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getErpSubCompanyCode()));
+                        order.setOrderSubCompanyName(k3MappingSubCompanyDO.getSubCompanyName());
+                    }
+
                     String measureList = obj.get("MeasureList").toString();
                     if (measureList != null && !"[]".equals(measureList)) {
                         List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
