@@ -13,6 +13,11 @@
                         </div>
                         <div class="form-group pull-right mn mr10" style="width: 120px;">
                             <div class="input-group">
+                                <input type="text" name="k3ProductNo" id="k3ProductNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品K3编号">
+                            </div>
+                        </div>
+                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                            <div class="input-group">
                                 <input type="text" name="productName" id="productName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品名称">
                             </div>
                         </div>

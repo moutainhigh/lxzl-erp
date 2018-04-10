@@ -245,6 +245,7 @@
                                             <th>类别</th>
                                             <th>品牌</th>
                                             <th>商品名称</th>
+##                                            <th>商品K3编号</th>
                                             <th>商品参数（SKU）</th>
                                             <th>商品保值价</th>
                                             <th>单价</th>
@@ -264,6 +265,7 @@
                                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                             <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+##                                            <td>{{k3ProductNo}}</td>
                                             <td>{{propertiesToStr}}</td>
                                             <td>￥{{currentSkuPrice}}</td>
                                             <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
