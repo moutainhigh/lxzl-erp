@@ -213,6 +213,7 @@
                 'manage.customer.business.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js',
+                'manage.customer.return.visit.add.js',
                 'modal.input.js',
                 'modal.submit.audit.js');
     </script>

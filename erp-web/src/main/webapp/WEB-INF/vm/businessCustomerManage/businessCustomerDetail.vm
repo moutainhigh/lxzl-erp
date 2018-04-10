@@ -325,6 +325,9 @@
             'manage.customer.address.edit.js',
             'manage.customer.orders.js',
             'manage.customer.riskHistory.js',
+            'manage.customer.return.visit.js',
+            'manage.customer.return.visit.add.js',
+            'manage.customer.return.visit.edit.js',
             'modal.input.js',
             'modal.submit.audit.js');
 </script>

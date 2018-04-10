@@ -127,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
         Integer statementDate = customerDO.getStatementDate();
 
         //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate,rentStartTime);
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
 
         //获取
         orderDO.setStatementDate(statementDays);
@@ -232,7 +232,7 @@ public class OrderServiceImpl implements OrderService {
         Integer statementDate = customerDO.getStatementDate();
 
         //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate,rentStartTime);
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
         orderDO.setStatementDate(statementDays);
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
@@ -290,12 +290,7 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, Integer> productNewStockMap = new HashMap<>();
             Map<Integer, Integer> productOldStockMap = new HashMap<>();
             for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(orderProductDO.getProductSkuId());
-                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
-                    result.setErrorCode(productServiceResult.getErrorCode());
-                    return result;
-                }
-                Product product = productServiceResult.getResult();
+                Product product = FastJsonUtil.toBean(orderProductDO.getProductSkuSnapshot(), Product.class);
                 if (CommonConstant.COMMON_CONSTANT_NO.equals(product.getIsRent())) {
                     result.setErrorCode(ErrorCode.PRODUCT_IS_NOT_RENT);
                     return result;
@@ -334,13 +329,7 @@ public class OrderServiceImpl implements OrderService {
         }
         if (CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
             for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(orderMaterialDO.getMaterialId());
-                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())
-                        || materialServiceResult.getResult() == null) {
-                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
-                    return result;
-                }
-                Material material = materialServiceResult.getResult();
+                Material material = FastJsonUtil.toBean(orderMaterialDO.getMaterialSnapshot(), Material.class);
                 /*if (CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial())) {
                     if (material == null || material.getNewMaterialCount() == null || material.getNewMaterialCount() <= 0 || (material.getNewMaterialCount() - orderMaterialDO.getMaterialCount()) < 0) {
                         result.setErrorCode(ErrorCode.ORDER_MATERIAL_STOCK_NEW_INSUFFICIENT);
