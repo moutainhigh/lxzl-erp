@@ -126,9 +126,11 @@
                     AND ekro.data_status = 1
                 </if>
             </where>
+            ORDER BY ekro.create_time DESC
             LIMIT #{maps.start},#{maps.pageSize}
         ) m_order
         LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
+        ORDER BY m_order.create_time DESC
 	</select>
 
 	<sql id="set_column_sql">
