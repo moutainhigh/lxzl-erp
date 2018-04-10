@@ -32,12 +32,12 @@
 	</sql>
 
 	<select id="findById" resultMap="CouponDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_coupon ec 
-		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
+		SELECT <include refid="column_List"/> FROM erp_coupon ec
+		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ec.id) FROM erp_coupon ec 
+		SELECT count(ec.id) FROM erp_coupon ec
 		<where>
 			<if test="true">
 				AND ec.data_status = 1
@@ -46,7 +46,7 @@
 	</select>
 
 	<select id="listPage" resultMap="CouponDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_coupon ec 
+		SELECT <include refid="column_List"/> FROM erp_coupon ec
 		<where>
 			<if test="true">
 				AND ec.data_status = 1
@@ -168,6 +168,9 @@
 				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
+				and ec.coupon_status IN (0,4,8)
+			</if>
+			<if test="true">
 				AND ec.data_status = 1
 			</if>
 		</where>
@@ -199,6 +202,9 @@
 			</if>
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null &amp;&amp; maps.couponQueryParam.customerNo != ''">
 				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
+			</if>
+			<if test="true">
+				and ec.coupon_status IN (0,4,8)
 			</if>
 			<if test="true">
 				AND ec.data_status = 1
@@ -297,6 +303,11 @@
 		<foreach collection="couponDOIdList" index="index" item="couponDOId" separator="," open="(" close=")">
 			#{couponDOId,jdbcType=INTEGER}
 		</foreach>
+		AND ec.data_status = 1
+	</select>
+	<select id="findByCouponBatchDetailID" resultType="CouponDO" parameterType="Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon ec
+		WHERE ec.coupon_batch_detail_id = #{couponBatchDetailId, jdbcType=VARCHAR}
 		AND ec.data_status = 1
 	</select>
 </mapper>
