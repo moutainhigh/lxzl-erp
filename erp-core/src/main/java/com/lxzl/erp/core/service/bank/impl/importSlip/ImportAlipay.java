@@ -72,7 +72,7 @@ public class ImportAlipay {
             Date now = new Date();
 
             //遍历Excel中所有的sheet
-            sheet = work.getSheetAt(1);
+            sheet = work.getSheetAt(0);
             if (sheet == null) {
                 serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
                 return serviceResult;
