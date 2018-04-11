@@ -25,6 +25,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer paymentCycle;
 	private Integer payMode;
 	private Integer isNewMaterial;
+	private Integer rentingMaterialCount;
 	private Integer dataStatus;
 	private String remark;
 
@@ -194,5 +195,13 @@ public class OrderMaterialDO  extends BaseDO {
 
 	public void setRentLengthType(Integer rentLengthType) {
 		this.rentLengthType = rentLengthType;
+	}
+
+	public Integer getRentingMaterialCount() {
+		return rentingMaterialCount;
+	}
+
+	public void setRentingMaterialCount(Integer rentingMaterialCount) {
+		this.rentingMaterialCount = rentingMaterialCount;
 	}
 }

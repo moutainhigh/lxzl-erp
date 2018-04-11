@@ -30,6 +30,7 @@ public class OrderMaterial extends BasePO {
 	private Integer paymentCycle;
 	private Integer payMode;
 	private Integer isNewMaterial;
+	private Integer rentingMaterialCount;
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -268,4 +269,12 @@ public class OrderMaterial extends BasePO {
 	public BigDecimal getFirstNeedPayDepositAmount() { return firstNeedPayDepositAmount; }
 
 	public void setFirstNeedPayDepositAmount(BigDecimal firstNeedPayDepositAmount) { this.firstNeedPayDepositAmount = firstNeedPayDepositAmount; }
+
+	public Integer getRentingMaterialCount() {
+		return rentingMaterialCount;
+	}
+
+	public void setRentingMaterialCount(Integer rentingMaterialCount) {
+		this.rentingMaterialCount = rentingMaterialCount;
+	}
 }
