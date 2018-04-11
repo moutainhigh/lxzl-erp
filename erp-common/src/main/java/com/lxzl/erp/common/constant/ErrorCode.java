@@ -1630,7 +1630,7 @@ public class ErrorCode {
         MAP.put(IS_ONLINE_ERROR,"优惠券是否线上状态有误，请重重新输入");
         MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
         MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
-        MAP.put(COUPON_USED,"您所要费的优惠券中存在已经使用的优惠券，不能作废");
+        MAP.put(COUPON_USED,"作废的优惠券中存在已经使用的优惠券，不能作废");
         MAP.put(COUPON_PROVIDE_COUNT_ERROR,"优惠卷可发放数量不足");
         MAP.put(COUPON_LIST_IS_EMPTY,"未选择需要使用的优惠券");
         MAP.put(COUPON_AMOUNT_TOO_MANY,"选择的优惠卷数量超过可使用数");
