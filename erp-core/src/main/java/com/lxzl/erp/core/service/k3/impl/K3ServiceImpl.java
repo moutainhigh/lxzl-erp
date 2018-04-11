@@ -14,7 +14,6 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -24,14 +23,10 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
-import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
-import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
-import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -50,7 +45,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
-import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
@@ -576,7 +570,7 @@ public class K3ServiceImpl implements K3Service {
                             orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(productDO, Product.class)));
                         }
 
-                        orderProductDO.setProductCount(k3OrderProduct.getRentingProductCount());
+                        orderProductDO.setRentingProductCount(k3OrderProduct.getRentingProductCount());
                         orderProductDO.setDepositCycle(order.getDepositCycle());
                         orderProductDO.setPaymentCycle(order.getPaymentCycle());
                         orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -602,7 +596,7 @@ public class K3ServiceImpl implements K3Service {
                             orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(materialDO, Material.class)));
                         }
 
-                        orderMaterialDO.setMaterialCount(k3OrderMaterial.getRentingMaterialCount());
+                        orderMaterialDO.setRentingMaterialCount(k3OrderMaterial.getRentingMaterialCount());
                         orderMaterialDO.setOrderId(orderDO.getId());
                         orderMaterialDO.setDepositCycle(order.getDepositCycle());
                         orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
