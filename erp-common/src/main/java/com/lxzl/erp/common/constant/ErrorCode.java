@@ -823,6 +823,7 @@ public class ErrorCode {
     public static final String COUPON_PROVIDE_COUNT_ERROR="J19000014";
     public static final String COUPON_LIST_IS_EMPTY="J19000015";
     public static final String COUPON_AMOUNT_TOO_MANY="J19000016";
+    public static final String COUPON_CANCEL="J19000017";
 
     public static final String SWITCH_INTERFACE_URL_NOT_NULL="J20000001";
     public static final String SWITCH_IS_OPEN_NOT_NULL="J20000002";
@@ -1648,6 +1649,8 @@ public class ErrorCode {
         MAP.put(COUPON_PROVIDE_COUNT_ERROR,"优惠卷可发放数量不足");
         MAP.put(COUPON_LIST_IS_EMPTY,"未选择需要使用的优惠券");
         MAP.put(COUPON_AMOUNT_TOO_MANY,"选择的优惠卷数量超过可使用数");
+        MAP.put(COUPON_CANCEL,"选择的优惠已作废，不可重复作废");
+
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL,"接口URL不能为空");
         MAP.put(SWITCH_IS_OPEN_NOT_NULL,"是否开启状态不能为空");
