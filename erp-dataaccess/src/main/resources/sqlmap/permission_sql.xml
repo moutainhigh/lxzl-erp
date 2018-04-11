@@ -328,5 +328,16 @@
 			</if>
 		</if>
 	</sql>
-
+	<sql id="k3_return_order_control">
+		<if test="maps.permissionParam!=null">
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ekro.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</if>
+	</sql>
 </mapper>

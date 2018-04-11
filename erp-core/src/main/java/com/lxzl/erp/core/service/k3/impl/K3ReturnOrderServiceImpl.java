@@ -27,6 +27,7 @@ import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
@@ -296,6 +297,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("k3ReturnOrderQueryParam", k3ReturnOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
 
         Integer totalCount = k3ReturnOrderMapper.listCount(maps);
         List<K3ReturnOrderDO> orderDOList = k3ReturnOrderMapper.listPage(maps);
@@ -589,4 +591,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private PermissionSupport permissionSupport;
 }
