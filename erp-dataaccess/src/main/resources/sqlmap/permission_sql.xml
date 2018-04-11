@@ -332,7 +332,7 @@
 		<if test="maps.permissionParam!=null">
 			AND
 			<if test="maps.permissionParam.permissionUserIdList!= null" >
-				(ekro.create_user in
+				ekro.create_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
 					#{item}
