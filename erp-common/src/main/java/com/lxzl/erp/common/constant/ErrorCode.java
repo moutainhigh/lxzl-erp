@@ -1311,7 +1311,7 @@ public class ErrorCode {
         MAP.put(ORDER_ROW_ID_NOT_NULL, "订单行号不能为空");
         MAP.put(RETURN_DETAIL_LIST_NOT_NULL, "退货详情列表不能为空");
         MAP.put(RETURN_TIME_LESS_RENT_TIME, "退货日期不能小于起租日期");
-        MAP.put(RETURN_TIME_LESS_MIN_TIME, "退货日期不能小于三月5号");
+        MAP.put(RETURN_TIME_LESS_MIN_TIME, "退货日期不能小于三月五号");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
