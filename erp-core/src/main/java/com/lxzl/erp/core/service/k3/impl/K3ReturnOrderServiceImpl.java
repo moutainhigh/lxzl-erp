@@ -113,7 +113,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
                 ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-                if (!ErrorCode.SUCCESS.equals(serviceResult)) {
+                if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
                     result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     return result;
