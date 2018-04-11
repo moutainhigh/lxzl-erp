@@ -161,10 +161,8 @@ public class ImportCMBCBank {
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             boolean tradeAmountFlag = false;
             if (row != null) {
@@ -240,7 +238,7 @@ public class ImportCMBCBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 16 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 8 || payPostscriptNo != 7 || payAccountNo != 17 || creditSumNo != 4 ){
+                    if (payerNameNo != 16 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 8 || payPostscriptNo != 7 || payAccountNo != 17 || creditSumNo != 4) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
@@ -315,7 +313,7 @@ public class ImportCMBCBank {
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
 
-        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
             return serviceResult;
         }

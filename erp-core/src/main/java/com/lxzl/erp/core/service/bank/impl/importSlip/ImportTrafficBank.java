@@ -164,10 +164,8 @@ public class ImportTrafficBank {
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("借方交易笔数:")) {
                 break bbb;
@@ -183,8 +181,8 @@ public class ImportTrafficBank {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("发生额".equals(value)) ||
                             ("查询账号:".equals(value)) ||
@@ -247,7 +245,7 @@ public class ImportTrafficBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 13 || payPostscriptNo != 1 || payAccountNo != 8 || borrowingMarksNo != 11){
+                    if (payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 13 || payPostscriptNo != 1 || payAccountNo != 8 || borrowingMarksNo != 11) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
@@ -318,7 +316,7 @@ public class ImportTrafficBank {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
             return serviceResult;
         }
