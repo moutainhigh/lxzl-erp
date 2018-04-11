@@ -160,10 +160,8 @@ public class ImportShangHaiPuDongDevelopmentBank {
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             boolean tradeAmountFlag = false;
             if (row != null) {
@@ -176,8 +174,8 @@ public class ImportShangHaiPuDongDevelopmentBank {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("贷方金额".equals(value)) ||
                             ("借方金额".equals(value)) ||
@@ -236,7 +234,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 6 || payPostscriptNo != 11 || payAccountNo != 8 || creditSumNo != 5 ){
+                    if (payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 6 || payPostscriptNo != 11 || payAccountNo != 8 || creditSumNo != 5) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
@@ -314,7 +312,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
             return serviceResult;
         }

@@ -160,10 +160,8 @@ public class ImportICBCBank {
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             boolean tradeAmountFlag = false;
             if (row != null) {
@@ -233,7 +231,7 @@ public class ImportICBCBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 10 || payTimeNo != 3 || payMoneyNo != 5 || payPostscriptNo != 8 || payAccountNo != 2 || creditSumNo != 6 ){
+                    if (payerNameNo != 10 || payTimeNo != 3 || payMoneyNo != 5 || payPostscriptNo != 8 || payAccountNo != 2 || creditSumNo != 6) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
@@ -306,7 +304,7 @@ public class ImportICBCBank {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
             return serviceResult;
         }
