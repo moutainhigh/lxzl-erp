@@ -49,6 +49,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +94,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         k3ReturnOrderDO.setCreateUser(loginUser.getUserId().toString());
         k3ReturnOrderDO.setUpdateTime(currentTime);
         k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        if(null==k3ReturnOrderDO.getLogisticsAmount())k3ReturnOrderDO.setLogisticsAmount(BigDecimal.ZERO);
+        if(null==k3ReturnOrderDO.getServiceAmount())k3ReturnOrderDO.setServiceAmount(BigDecimal.ZERO);
         k3ReturnOrderMapper.save(k3ReturnOrderDO);
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {

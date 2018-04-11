@@ -761,6 +761,13 @@ public class ErrorCode {
     public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
     public static final String K3_SERVER_ERROR = "J17000015";
     public static final String K3_RETURN_ORDER_FAIL = "J17000016";
+    public static final String K3_CUSTOMER_NO_IS_NULL = "J17000017";
+    public static final String K3_CUSTOMER_NAME_IS_NULL = "J17000018";
+    //public static final String K3_RETURN_TIME_IS_NULL = "J17000019";
+    public static final String K3_RETURN_ADDRESS_IS_NULL = "J17000019";
+    public static final String K3_RETURN_CONTACTS_IS_NULL = "J17000020";
+    public static final String K3_RETURN_PHONE_IS_NULL = "J17000021";
+    public static final String K3_RETURN_MODE_IS_NULL = "J17000022";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1578,6 +1585,12 @@ public class ErrorCode {
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
         MAP.put(K3_SERVER_ERROR, "K3服务异常");
         MAP.put(K3_RETURN_ORDER_FAIL, "K3退货失败");
+        MAP.put(K3_CUSTOMER_NO_IS_NULL,"客户编码不能为空");
+        MAP.put(K3_CUSTOMER_NAME_IS_NULL,"客户名不能为空");
+        MAP.put(K3_RETURN_ADDRESS_IS_NULL,"退货地址不能为空");
+        MAP.put(K3_RETURN_CONTACTS_IS_NULL,"联系人不能为空");
+        MAP.put(K3_RETURN_PHONE_IS_NULL,"联系电话不能为空");
+        MAP.put(K3_RETURN_MODE_IS_NULL,"退货方式不能为空");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
