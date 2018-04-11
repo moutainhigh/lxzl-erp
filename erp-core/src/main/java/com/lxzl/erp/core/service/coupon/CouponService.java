@@ -44,9 +44,9 @@ public interface CouponService {
 
     ServiceResult<String,CouponBatch> findCouponBatchByCoupon(Coupon coupon);
 
-    ServiceResult<String,String> deleteCouponBatchDetail(CouponBatchDetail couponBatchDetail);
+    ServiceResult<String,String> cancelCouponByCouponBatchDetail(CouponBatchDetail couponBatchDetail);
 
-    ServiceResult<String,String> deleteCouponByCouponBatch(CouponBatch couponBatch);
+    ServiceResult<String,String> cancelCouponByCouponBatch(CouponBatch couponBatch);
 
     ServiceResult<String,String> useCoupon(UseCoupon useCoupon);
 }

@@ -366,4 +366,9 @@
 			#{couponDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+	<update id="cancelCoupon" >
+		update erp_coupon
+		SET update_user = #{updateUser},coupon_status = 12,update_time = #{updateTime}
+		WHERE coupon_batch_detail_id = #{couponBatchDetailId}
+	</update>
 </mapper>

@@ -422,13 +422,14 @@ public class CouponServiceImpl implements CouponService{
         serviceResult.setResult(couponBatch);
         return serviceResult;
     }
+
     /**
      * 从增券列表进行作废优惠券
      * @param couponBatchDetail
      * @return
      */
     @Override
-    public ServiceResult<String, String> deleteCouponBatchDetail(CouponBatchDetail couponBatchDetail) {
+    public ServiceResult<String, String> cancelCouponByCouponBatchDetail(CouponBatchDetail couponBatchDetail) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
         CouponBatchDetailDO couponBatchDetailDO = couponBatchDetailMapper.findById(couponBatchDetail.getCouponBatchDetailId());
@@ -444,13 +445,7 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         couponBatchDetailDO.setCouponCancelCount(couponBatchDetailDO.getCouponTotalCount());
         couponBatchDetailMapper.update(couponBatchDetailDO);
-        List<CouponDO> couponDOList = couponMapper.findByCouponBatchDetailID(couponBatchDetailDO.getId());
-        for (int i = 0; i < couponDOList.size(); i++) {
-            couponDOList.get(i).setUpdateTime(date);
-            couponDOList.get(i).setUpdateUser(userSupport.getCurrentUserId().toString());
-            couponDOList.get(i).setCouponStatus(CouponStatus.COUPON_STATUS_CANCEL);
-        }
-        couponMapper.deleteCouponList(couponDOList);
+        couponMapper.cancelCoupon(couponBatchDetailDO.getId(),date,userSupport.getCurrentUserId().toString());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -460,7 +455,7 @@ public class CouponServiceImpl implements CouponService{
      * @return
      */
     @Override
-    public ServiceResult<String, String> deleteCouponByCouponBatch(CouponBatch couponBatch) {
+    public ServiceResult<String, String> cancelCouponByCouponBatch(CouponBatch couponBatch) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
         Date date = new Date();
         CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatch.getCouponBatchId());
@@ -481,19 +476,20 @@ public class CouponServiceImpl implements CouponService{
             couponBatchDetailDOList.get(i).setUpdateUser(userSupport.getCurrentUserId().toString());
             couponBatchDetailDOList.get(i).setCouponCancelCount(couponBatchDetailDOList.get(i).getCouponTotalCount());
             couponBatchDetailMapper.update(couponBatchDetailDOList.get(i));
-            List<CouponDO> couponDOList = couponMapper.findByCouponBatchDetailID(couponBatchDetailDOList.get(i).getId());
-            for (int j = 0; j < couponDOList.size(); j++) {
-                couponDOList.get(j).setUpdateTime(date);
-                couponDOList.get(j).setUpdateUser(userSupport.getCurrentUserId().toString());
-                couponDOList.get(j).setCouponStatus(CouponStatus.COUPON_STATUS_CANCEL);
-            }
-            couponMapper.deleteCouponList(couponDOList);
+            couponMapper.cancelCoupon(couponBatchDetailDOList.get(i).getId(),date,userSupport.getCurrentUserId().toString());
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+
     @Autowired
     private CouponSupport couponSupport;
+
+    /**
+     * 生成优惠券的测试方法
+     * @param useCoupon
+     * @return
+     */
     @Override
     public ServiceResult<String, String> useCoupon( UseCoupon useCoupon) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();

@@ -174,9 +174,9 @@ public class CouponController {
      * @param couponBatchDetail
      * @return
      */
-    @RequestMapping(value = "deleteCouponBatchDetail",method = RequestMethod.POST)
-    public Result deleteCouponBatchDetail(@RequestBody @Validated(IdGroup.class) CouponBatchDetail couponBatchDetail, BindingResult validResult){
-        ServiceResult<String,String> serviceResult = couponService.deleteCouponBatchDetail(couponBatchDetail);
+    @RequestMapping(value = "cancelCouponByCouponBatchDetail",method = RequestMethod.POST)
+    public Result cancelCouponByCouponBatchDetail(@RequestBody @Validated(IdGroup.class) CouponBatchDetail couponBatchDetail, BindingResult validResult){
+        ServiceResult<String,String> serviceResult = couponService.cancelCouponByCouponBatchDetail(couponBatchDetail);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
     /**
@@ -184,14 +184,14 @@ public class CouponController {
      * @param couponBatch
      * @return
      */
-    @RequestMapping(value = "deleteCouponByCouponBatch",method = RequestMethod.POST)
-    public Result deleteCouponByCouponBatch(@RequestBody @Validated(IdGroup.class) CouponBatch couponBatch, BindingResult validResult){
-        ServiceResult<String,String> serviceResult = couponService.deleteCouponByCouponBatch(couponBatch);
+    @RequestMapping(value = "cancelCouponByCouponBatch",method = RequestMethod.POST)
+    public Result cancelCouponByCouponBatch(@RequestBody @Validated(IdGroup.class) CouponBatch couponBatch, BindingResult validResult){
+        ServiceResult<String,String> serviceResult = couponService.cancelCouponByCouponBatch(couponBatch);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
     /**
      * 用于测试使用优惠券的Controller
-     * @param list
+     * @param useCoupon
      * @return
      */
     @RequestMapping(value = "useCoupon",method = RequestMethod.POST)

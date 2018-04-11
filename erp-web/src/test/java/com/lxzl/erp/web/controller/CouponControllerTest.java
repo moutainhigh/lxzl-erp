@@ -103,13 +103,13 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
 
         List<Coupon> list = new ArrayList<>();
         Coupon coupon1 = new Coupon();
-        coupon1.setCouponId(105);
+        coupon1.setCouponId(3121);
         Coupon coupon2 = new Coupon();
-        coupon2.setCouponId(106);
+        coupon2.setCouponId(3122);
         Coupon coupon3 = new Coupon();
-        coupon3.setCouponId(107);
+        coupon3.setCouponId(3123);
         Coupon coupon4 = new Coupon();
-        coupon4.setCouponId(108);
+        coupon4.setCouponId(3124);
         list.add(coupon1);
         list.add(coupon2);
         list.add(coupon3);
@@ -163,18 +163,18 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     }
 
     @Test
-    public void deleteCouponBatchDetail() throws Exception {
+    public void cancelCouponByCouponBatchDetail() throws Exception {
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchDetailId(18);
+        couponBatchDetail.setCouponBatchDetailId(29);
 
-        TestResult testResult = getJsonTestResult("/coupon/deleteCouponBatchDetail", couponBatchDetail);
+        TestResult testResult = getJsonTestResult("/coupon/cancelCouponByCouponBatchDetail", couponBatchDetail);
     }
     @Test
-    public void deleteCouponByCouponBatch() throws Exception {
+    public void cancelCouponByCouponBatch() throws Exception {
         CouponBatch couponBatch = new CouponBatch();
-        couponBatch.setCouponBatchId(19);
+        couponBatch.setCouponBatchId(17);
 
-        TestResult testResult = getJsonTestResult("/coupon/deleteCouponByCouponBatch", couponBatch);
+        TestResult testResult = getJsonTestResult("/coupon/cancelCouponByCouponBatch", couponBatch);
     }
     @Test
     public void useCoupon() throws Exception {

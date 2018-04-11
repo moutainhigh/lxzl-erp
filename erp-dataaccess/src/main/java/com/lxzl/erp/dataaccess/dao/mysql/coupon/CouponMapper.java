@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.dao.mysql.coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;import org.apache.ibatis.annotations.Param;
+import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
@@ -34,5 +35,7 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
 
     List<CouponDO> findByCouponBatchDetailID(@Param("couponBatchDetailId") Integer couponBatchDetailId);
 
-    void updateUseList(@Param("couponDOList")List<CouponDO> couponDOList);
+    void updateUseList(@Param("couponDOList") List<CouponDO> couponDOList);
+
+    void cancelCoupon(@Param("couponBatchDetailId") Integer couponBatchDetailId,@Param("updateTime") Date updateTime, @Param("updateUser") String updateUser);
 }
