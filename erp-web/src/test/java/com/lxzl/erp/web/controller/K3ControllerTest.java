@@ -460,7 +460,10 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     public void transferOrder() throws Exception {
         K3OrderQueryParam param = new K3OrderQueryParam();
         param.setPageNo(1);
-        param.setPageSize(10);
+        param.setPageSize(Integer.MAX_VALUE);
+        param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2017-10-15"));
+        param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2017-12-15"));
+        param.setSubCompanyNo("08");
         TestResult testResult = getJsonTestResult("/k3/transferOrder", param);
         Thread.sleep(1000);
     }
