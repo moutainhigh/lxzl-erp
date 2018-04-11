@@ -3090,7 +3090,6 @@ CREATE TABLE `erp_bank_slip_detail` (
   `trade_amount` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '交易金额',
   `trade_serial_no` varchar(100) COMMENT '交易流水号',
   `trade_time` datetime NOT NULL COMMENT '交易日期',
-  `bank_type` int(11) NOT NULL COMMENT '收款银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行',
   `trade_message` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '交易附言',
   `other_side_account_no` varchar(50) NOT NULL COMMENT '对方账号',
   `merchant_order_no` varchar(100) COMMENT '商户订单号',
