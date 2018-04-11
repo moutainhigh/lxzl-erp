@@ -34,6 +34,7 @@ public class OrderProduct extends BasePO {
     private Integer paymentCycle;               // 租金期数
     private Integer payMode;                    // 付款方式，1先付后用，2先用后付
     private Integer isNewProduct;               // 是否全新，1是0否
+    private Integer rentingProductCount;        // 在租商品总数
     private List<OrderProductEquipment> orderProductEquipmentList;
 
     private BigDecimal firstNeedPayAmount;      // 首付金额
@@ -257,4 +258,12 @@ public class OrderProduct extends BasePO {
     public BigDecimal getFirstNeedPayDepositAmount() { return firstNeedPayDepositAmount; }
 
     public void setFirstNeedPayDepositAmount(BigDecimal firstNeedPayDepositAmount) { this.firstNeedPayDepositAmount = firstNeedPayDepositAmount; }
+
+    public Integer getRentingProductCount() {
+        return rentingProductCount;
+    }
+
+    public void setRentingProductCount(Integer rentingProductCount) {
+        this.rentingProductCount = rentingProductCount;
+    }
 }

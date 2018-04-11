@@ -87,6 +87,7 @@ public class ImportNanJingBank {
             //todo 存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getNanJingBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -155,16 +156,14 @@ public class ImportNanJingBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int debtorAccountNo = 0; //借方发生额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
 
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
 
             if (row != null) {
@@ -177,8 +176,8 @@ public class ImportNanJingBank {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("贷方发生额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
@@ -243,11 +242,11 @@ public class ImportNanJingBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 3 || paySerialNumberNo != 9 || payPostscriptNo != 10 || payAccountNo != 8 || debtorAccountNo != 2){
+                    if (payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 3 || paySerialNumberNo != 9 || payPostscriptNo != 10 || payAccountNo != 8 || debtorAccountNo != 2) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注信息
@@ -311,7 +310,10 @@ public class ImportNanJingBank {
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
 
-
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

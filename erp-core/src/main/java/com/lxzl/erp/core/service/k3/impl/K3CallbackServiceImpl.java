@@ -124,12 +124,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         if (CollectionUtil.isNotEmpty(deliveryOrder.getDeliveryOrderProductList())) {
             for (DeliveryOrderProduct deliveryOrderProduct : deliveryOrder.getDeliveryOrderProductList()) {
                 OrderProductDO orderProductDO = orderProductMapper.findById(deliveryOrderProduct.getOrderProductId());
-
                 DeliveryOrderProductDO deliveryOrderProductDO = ConverterUtil.convert(deliveryOrderProduct, DeliveryOrderProductDO.class);
                 deliveryOrderProductDO.setDeliveryOrderId(deliveryOrderDO.getId());
                 if (orderProductDO == null) {
                     continue;
                 }
+                orderProductDO.setRentingProductCount(orderProductDO.getProductCount());
+                orderProductMapper.update(orderProductDO);
                 deliveryOrderProductDO.setOrderProductId(orderProductDO.getId());
                 deliveryOrderProductDO.setProductId(orderProductDO.getProductId());
                 deliveryOrderProductDO.setProductSkuId(orderProductDO.getProductSkuId());
@@ -146,12 +147,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         if (CollectionUtil.isNotEmpty(deliveryOrder.getDeliveryOrderMaterialList())) {
             for (DeliveryOrderMaterial deliveryOrderMaterial : deliveryOrder.getDeliveryOrderMaterialList()) {
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(deliveryOrderMaterial.getOrderMaterialId());
-
                 DeliveryOrderMaterialDO deliveryOrderMaterialDO = ConverterUtil.convert(deliveryOrderMaterial, DeliveryOrderMaterialDO.class);
                 deliveryOrderMaterialDO.setDeliveryOrderId(deliveryOrderDO.getId());
                 if (orderMaterialDO == null) {
                     continue;
                 }
+                orderMaterialDO.setRentingMaterialCount(orderMaterialDO.getMaterialCount());
+                orderMaterialMapper.update(orderMaterialDO);
                 deliveryOrderMaterialDO.setOrderMaterialId(orderMaterialDO.getId());
                 deliveryOrderMaterialDO.setMaterialId(orderMaterialDO.getMaterialId());
                 deliveryOrderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);

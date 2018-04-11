@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankType;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPUnTransactionalTest {
+public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void hideBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail= new BankSlipDetail();
@@ -165,9 +166,9 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         BankSlip bankSlip = new BankSlip();
 //        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(4);
-        bankSlip.setBankType(BankType.ALIPAY);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
-        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrMwyqAfiq-AAQyAE0RQI4229.xls");
+        bankSlip.setBankType(BankType.HAN_KOU_BANK);
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/20"));
+        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrNymmAFtceAAHeAPhb5II064.xls");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
 

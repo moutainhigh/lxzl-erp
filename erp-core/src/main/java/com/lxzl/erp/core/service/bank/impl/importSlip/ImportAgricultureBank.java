@@ -86,6 +86,7 @@ public class ImportAgricultureBank {
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getAgricultureBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -153,15 +154,13 @@ public class ImportAgricultureBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int debtorAccountNo = 0; //支出金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("汇总收入金额")) {
                 break bbb;
@@ -177,8 +176,8 @@ public class ImportAgricultureBank {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("收入金额".equals(value)) ||
                             ("对方省市".equals(value)) ||
@@ -242,11 +241,11 @@ public class ImportAgricultureBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 1 || payPostscriptNo != 8 || payAccountNo != 6 || debtorAccountNo != 2){
+                    if (payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 1 || payPostscriptNo != 8 || payAccountNo != 6 || debtorAccountNo != 2) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易用途
@@ -318,7 +317,10 @@ public class ImportAgricultureBank {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;
