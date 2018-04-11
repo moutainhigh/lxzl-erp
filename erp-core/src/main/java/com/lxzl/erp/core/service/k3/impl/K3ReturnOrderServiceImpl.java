@@ -37,7 +37,6 @@ import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.se.common.exception.BusinessException;
-import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
@@ -75,18 +74,20 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         //退货日期不能小于三月五号
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2018, 3, 5, 0, 0, 0);
+        calendar.set(2018, 2, 5, 0, 0, 0);
         Date minDate = calendar.getTime();
         if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
             result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
             return result;
         }
+        //商品物料唯一性校验
+        Set<String> primaryKeySet = new HashSet<String>();
         for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
-            if (StringUtil.isBlank(k3ReturnOrderDetail.getOrderItemId())
-                    || StringUtil.isBlank(k3ReturnOrderDetail.getProductNo())) {
-                result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
-                return result;
-            }
+            primaryKeySet.add(k3ReturnOrderDetail.getOrderItemId() + "_" + k3ReturnOrderDetail.getProductNo());
+        }
+        if (primaryKeySet.size() < k3ReturnOrder.getK3ReturnOrderDetailList().size()) {
+            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
+            return result;
         }
 
         ServiceResult<String, Customer> customerResult = customerService.queryCustomerByNo(k3ReturnOrder.getK3CustomerNo());

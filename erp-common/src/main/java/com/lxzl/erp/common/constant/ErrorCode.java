@@ -768,6 +768,8 @@ public class ErrorCode {
     public static final String K3_RETURN_CONTACTS_IS_NULL = "J17000020";
     public static final String K3_RETURN_PHONE_IS_NULL = "J17000021";
     public static final String K3_RETURN_MODE_IS_NULL = "J17000022";
+    public static final String HAS_SAME_PRODUCT = "J17000023";
+    public static final String PRODUCT_NO_IS_NULL = "J17000024";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1593,6 +1595,8 @@ public class ErrorCode {
         MAP.put(K3_RETURN_CONTACTS_IS_NULL,"联系人不能为空");
         MAP.put(K3_RETURN_PHONE_IS_NULL,"联系电话不能为空");
         MAP.put(K3_RETURN_MODE_IS_NULL,"退货方式不能为空");
+        MAP.put(HAS_SAME_PRODUCT,"不能有相同商品");
+        MAP.put(PRODUCT_NO_IS_NULL,"商品编号不能为空");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
