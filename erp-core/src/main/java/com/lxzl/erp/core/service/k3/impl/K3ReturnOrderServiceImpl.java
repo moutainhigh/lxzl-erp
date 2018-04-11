@@ -436,8 +436,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
         Map<Integer,Integer> rentingProductCountMap = new HashMap<>();
         Map<Integer,Integer> rentingMaterialCountMap = new HashMap<>();
-        Map<Integer,Integer> nowProductCount = new HashMap<>();
-        Map<Integer,Integer> nowMaterialCount = new HashMap<>();
+        Map<Integer,Integer> nowProductCountMap = new HashMap<>();
+        Map<Integer,Integer> nowMaterialCountMap = new HashMap<>();
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
             OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
@@ -455,13 +455,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     //设备，查询数量的在租数量
                     OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                     rentingProductCountMap.put(orderProductDO.getId(),orderProductDO.getRentingProductCount());
-                    nowProductCount.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                    nowProductCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
 
                 }else if("20".equals(productNo.substring(0,2))){
                     //物料
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                     rentingMaterialCountMap.put(orderMaterialDO.getId(),orderMaterialDO.getRentingMaterialCount());
-                    nowMaterialCount.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                    nowMaterialCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
                 }
             }
         }
@@ -497,32 +497,33 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
 
         //比较设备项
-        if (rentingProductCountMap.size() > 0 ){
-            for (Integer orderProductId : rentingProductCountMap.keySet()) {
-                if (productCountMap.size() >0){
-                    if (productCountMap.get(orderProductId) != null && productCountMap.get(orderProductId) > 0){
-                        if(productCountMap.get(orderProductId) + nowProductCount.get(orderProductId) - rentingProductCountMap.get(orderProductId) > 0){
-                            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH);
-                            return result;
-                        }
-                    }
+        if (nowProductCountMap.size() > 0 ){
+            for (Integer orderProductId : nowProductCountMap.keySet()) {
+                Integer rentingProductCount = rentingProductCountMap.get(orderProductId) == null ? 0 : rentingProductCountMap.get(orderProductId);//在租数
+                Integer processProductCount = productCountMap.get(orderProductId) == null ? 0 : productCountMap.get(orderProductId); //处理中和审核中数量
+                Integer nowProductCount = nowProductCountMap.get(orderProductId) == null ? 0 : nowProductCountMap.get(orderProductId); //处理中和审核中数量
+
+                if (processProductCount + nowProductCount - rentingProductCount > 0) {
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH);
+                    return result;
                 }
             }
         }
 
         //比较物料项
-        if (rentingMaterialCountMap.size() > 0 ){
+        if (nowMaterialCountMap.size() > 0 ){
             for (Integer orderMaterialId : rentingMaterialCountMap.keySet()) {
-                if (materialCountMap.size() > 0){
-                    if (materialCountMap.get(orderMaterialId) != null && materialCountMap.get(orderMaterialId) > 0){
-                        if(materialCountMap.get(orderMaterialId) + nowMaterialCount.get(orderMaterialId) - rentingMaterialCountMap.get(orderMaterialId) > 0){
-                            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH);
-                            return result;
-                        }
-                    }
+                Integer rentingMaterailCount = rentingMaterialCountMap.get(orderMaterialId) == null ? 0 : rentingMaterialCountMap.get(orderMaterialId);//在租数
+                Integer processMaterailCount = materialCountMap.get(orderMaterialId) == null ? 0 : materialCountMap.get(orderMaterialId); //处理中和审核中数量
+                Integer nowMaterailCount = nowMaterialCountMap.get(orderMaterialId) == null ? 0 : nowMaterialCountMap.get(orderMaterialId); //处理中和审核中数量
+
+                if (processMaterailCount + nowMaterailCount - rentingMaterailCount > 0){
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH);
+                    return result;
                 }
             }
         }
+
 
         ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_K3_RETURN);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
