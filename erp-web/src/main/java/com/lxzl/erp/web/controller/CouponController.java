@@ -150,25 +150,16 @@ public class CouponController {
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
     /**
-     * 查看优惠券详情表对应的优惠券批次信息
-     * @param couponBatchDetail
+     * 根据批次ID获取批次详情
+     * @param couponBatch
      * @return
      */
-    @RequestMapping(value = "findCouponBatchByCouponBatchDetail",method = RequestMethod.POST)
-    public Result findCouponBatchByCouponBatchDetail(@RequestBody @Validated(IdGroup.class) CouponBatchDetail couponBatchDetail, BindingResult validResult){
-        ServiceResult<String,CouponBatch> serviceResult = couponService.findCouponBatchByCouponBatchDetail(couponBatchDetail);
+    @RequestMapping(value = "findCouponBatchByID",method = RequestMethod.POST)
+    public Result findCouponBatchByID(@RequestBody @Validated(IdGroup.class) CouponBatch couponBatch, BindingResult validResult){
+        ServiceResult<String,CouponBatch> serviceResult = couponService.findCouponBatchByID(couponBatch);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
-    /**
-     * 查看优惠券对应的优惠券批次信息
-     * @param coupon
-     * @return
-     */
-    @RequestMapping(value = "findCouponBatchByCoupon",method = RequestMethod.POST)
-    public Result findCouponBatchByCoupon(@RequestBody @Validated(IdGroup.class) Coupon coupon, BindingResult validResult){
-        ServiceResult<String,CouponBatch> serviceResult = couponService.findCouponBatchByCoupon(coupon);
-        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
-    }
+
     /**
      * 从增券列表进行作废优惠券
      * @param couponBatchDetail

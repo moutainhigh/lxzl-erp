@@ -40,9 +40,7 @@ public interface CouponService {
 
     ServiceResult<String,List<Coupon>> findCouponByCustomerNo(Customer customer);
 
-    ServiceResult<String,CouponBatch> findCouponBatchByCouponBatchDetail(CouponBatchDetail couponBatchDetail);
-
-    ServiceResult<String,CouponBatch> findCouponBatchByCoupon(Coupon coupon);
+    ServiceResult<String,CouponBatch> findCouponBatchByID(CouponBatch couponBatch);
 
     ServiceResult<String,String> cancelCouponByCouponBatchDetail(CouponBatchDetail couponBatchDetail);
 
