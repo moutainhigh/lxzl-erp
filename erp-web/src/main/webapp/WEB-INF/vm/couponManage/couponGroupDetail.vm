@@ -60,7 +60,6 @@
                                 <thead>
                                 <tr class="bg-light">
                                     <th>优惠券详情ID</th>
-                                    <th>优惠券批次ID</th>
                                     <th>优惠券总数</th>
                                     <th>已使用优惠券总数</th>
                                     <th>优惠券线上已领取总数</th>
@@ -68,6 +67,7 @@
                                     <th>优惠券总面值</th>
                                     <th>已使用总面值</th>
                                     <th>抵扣总金额</th>
+                                    <th>优惠券作废总数</th>
                                     <th>是否线上</th>
                                     <th>有效期起始时间</th>
                                     <th>有效期结束时间</th>
@@ -80,7 +80,6 @@
                                 {{#listData}}
                                 <tr>
                                     <td>{{couponBatchDetailId}}</td>
-                                    <td>{{couponBatchId}}</td>
                                     <td>{{couponTotalCount}}</td>
                                     <td>{{couponUsedCount}}</td>
                                     <td>{{couponReceivedCount}}</td>
@@ -88,13 +87,14 @@
                                     <td>{{totalFaceAmount}}</td>
                                     <td>{{totalUsedAmount}}</td>
                                     <td>{{totalDeductionAmount}}</td>
+                                    <td>{{couponCancelCount}}</td>
                                     <td>{{isOnLineValue}}</td>
                                     <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
                                     <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
                                     <td>{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
-                                        <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                        <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                     </td>
                                 </tr>
                                 {{/listData}}
