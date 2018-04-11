@@ -150,7 +150,12 @@
                                                 </label>
                                             </td>
                                             {{/hasCommonActionButtons}}
-                                            <td>{{orderNo}}</td>
+                                            <td>
+                                                {{#isK3Order}}
+                                                <span class="label label-dark" title="K3订单">K3</span>
+                                                {{/isK3Order}}
+                                                {{orderNo}}
+                                            </td>
                                             <td>{{orderSubCompanyName}}</td>
                                             <td>{{buyerCustomerName}}</td>
                                             <td>
