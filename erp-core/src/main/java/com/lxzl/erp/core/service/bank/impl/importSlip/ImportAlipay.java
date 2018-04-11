@@ -161,11 +161,10 @@ public class ImportAlipay {
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
+
             if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("#导出时间")) {
                 break bbb;
             }
@@ -186,8 +185,8 @@ public class ImportAlipay {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("收入（+元）".equals(value)) ||
                             ("支出（-元）".equals(value)) ||
@@ -248,7 +247,7 @@ public class ImportAlipay {
 
                 if (j > next) {
 
-                    if( payerNameNo != 13 || payTimeNo != 1 || payMoneyNo != 6 || paySerialNumberNo != 3 || payPostscriptNo != 16 || payAccountNo != 12  || creditSumNo != 7 || merchantOrderNo != 4){
+                    if (payerNameNo != 13 || payTimeNo != 1 || payMoneyNo != 6 || paySerialNumberNo != 3 || payPostscriptNo != 16 || payAccountNo != 12 || creditSumNo != 7 || merchantOrderNo != 4) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
@@ -327,7 +326,7 @@ public class ImportAlipay {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
             return serviceResult;
         }
