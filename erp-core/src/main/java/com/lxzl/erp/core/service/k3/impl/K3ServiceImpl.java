@@ -328,24 +328,6 @@ public class K3ServiceImpl implements K3Service {
         return result;
     }
 
-    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
-        String type = null;
-        if ("erp-prod".equals(ApplicationConfig.application)) {
-            type = "【线上环境】";
-        } else if ("erp-dev".equals(ApplicationConfig.application)) {
-            type = "【开发环境】";
-        } else if ("erp-adv".equals(ApplicationConfig.application)) {
-            type = "【预发环境】";
-        } else if ("erp-test".equals(ApplicationConfig.application)) {
-            type = "【测试环境】";
-        }
-        StringBuffer sb = new StringBuffer(type);
-        sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
-        sb.append(JSON.toJSONString(response));
-        return sb.toString();
-    }
-
-
     @Override
     public ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam) {
         ServiceResult<String, Page<K3SendRecord>> result = new ServiceResult<>();
@@ -706,12 +688,6 @@ public class K3ServiceImpl implements K3Service {
     private K3MappingCategoryMapper k3MappingCategoryMapper;
 
     @Autowired
-    private K3ReturnOrderMapper k3ReturnOrderMapper;
-
-    @Autowired
-    private K3ChangeOrderMapper k3ChangeOrderMapper;
-
-    @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
 
     @Autowired
@@ -749,14 +725,16 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private CustomerMapper customerMapper;
+
     @Autowired
     private ProductMapper productMapper;
+
     @Autowired
     private OrderMapper orderMapper;
+
     @Autowired
     private UserMapper userMapper;
-    @Autowired
-    private PostK3ServiceManager postK3ServiceManager;
+
     @Autowired
     private DingDingSupport dingDingSupport;
 

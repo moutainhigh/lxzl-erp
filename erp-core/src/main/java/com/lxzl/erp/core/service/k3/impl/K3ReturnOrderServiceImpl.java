@@ -23,6 +23,7 @@ import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
+import com.lxzl.erp.core.service.k3.K3ChangeOrderService;
 import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
@@ -33,9 +34,15 @@ import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -427,6 +434,86 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             return result;
         }
 
+        Map<Integer,Integer> RentingProductCountMap = new HashMap<>();
+        Map<Integer,Integer> RentingMaterialCountMap = new HashMap<>();
+        Map<Integer,Integer> nowProductCount = new HashMap<>();
+        Map<Integer,Integer> nowMaterialCount = new HashMap<>();
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
+            OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+            if (orderDO != null){
+                //如果通过订单号查找到的订单状态是未发货状态的就不能进行提交
+                if (!OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())
+                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())){
+                    result.setErrorCode(ErrorCode.K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED);
+                    return result;
+                }
+
+                //对退货单提交的数量进行判断
+                String productNo = k3ReturnOrderDetailDO.getProductNo();
+                if ("10".equals(productNo.substring(0,2)) || "90".equals(productNo.substring(0,2))){
+                    //设备，查询数量的在租数量
+                    OrderProductDO OrderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                    RentingProductCountMap.put(OrderProductDO.getId(),OrderProductDO.getRentingProductCount());
+                    nowProductCount.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+
+                }else if("20".equals(productNo.substring(0,2))){
+                    //物料
+                    OrderMaterialDO OrderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                    RentingMaterialCountMap.put(OrderMaterialDO.getId(),OrderMaterialDO.getRentingMaterialCount());
+                    nowMaterialCount.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                }
+            }
+        }
+
+        Map<Integer,Integer> productCountMap = new HashMap<>();
+        Map<Integer,Integer> materialCountMap = new HashMap<>();
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = k3ReturnOrderMapper.findByCustomerNo(k3ReturnOrderDO.getK3CustomerNo());
+        if (CollectionUtil.isNotEmpty(k3ReturnOrderDOList)){
+            for (K3ReturnOrderDO dBK3ReturnOrderDO : k3ReturnOrderDOList){
+                if (ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(dBK3ReturnOrderDO.getReturnOrderStatus())
+                        || ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(dBK3ReturnOrderDO.getReturnOrderStatus())){
+                    List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dBK3ReturnOrderDO.getId());
+                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : dBK3ReturnOrderDetailDOList){
+                        String productNo = k3ReturnOrderDetailDO.getProductNo();
+                        if ("10".equals(productNo.substring(0,2)) || "90".equals(productNo.substring(0,2))){
+                            //设备
+                            productCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                        }else if("20".equals(productNo.substring(0,2))){
+                            //物料
+                            materialCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                        }
+                    }
+                }
+            }
+        }
+
+        //比较设备项
+        if (RentingProductCountMap.size() > 0 ){
+            for (Integer OrderProductId : RentingProductCountMap.keySet()) {
+                if (productCountMap.get(OrderProductId) != null && productCountMap.get(OrderProductId) > 0){
+                    if(productCountMap.get(OrderProductId) + nowProductCount.get(OrderProductId) - RentingProductCountMap.get(OrderProductId) < 0){
+                        result.setErrorCode(ErrorCode.K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH);
+                        return result;
+                    }
+                }
+            }
+        }
+
+        //比较物料项
+        if (RentingMaterialCountMap.size() > 0 ){
+            for (Integer OrderMaterialId : RentingMaterialCountMap.keySet()) {
+                if (materialCountMap.size() > 0){
+                    if (materialCountMap.get(OrderMaterialId) != null && materialCountMap.get(OrderMaterialId) > 0){
+                        if(materialCountMap.get(OrderMaterialId) + nowMaterialCount.get(OrderMaterialId) - RentingMaterialCountMap.get(OrderMaterialId) < 0){
+                            result.setErrorCode(ErrorCode.K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH);
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+
         ServiceResult<String, Boolean> needVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_K3_RETURN);
         if (!ErrorCode.SUCCESS.equals(needVerifyResult.getErrorCode())) {
             result.setErrorCode(needVerifyResult.getErrorCode());
@@ -601,4 +688,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private CustomerService customerService;
     @Autowired
     private PermissionSupport permissionSupport;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderProductMapper orderProductMapper;
+
+    @Autowired
+    private OrderMaterialMapper orderMaterialMapper;
 }
