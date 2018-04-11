@@ -298,6 +298,10 @@ public class CouponServiceImpl implements CouponService{
                 serviceResult.setErrorCode(ErrorCode.COUPON_USED);
                 return  serviceResult;
             }
+            if (couponDOList.get(i).getCouponStatus() == CouponStatus.COUPON_STATUS_CANCEL) {
+                serviceResult.setErrorCode(ErrorCode.COUPON_CANCEL);
+                return  serviceResult;
+            }
             //  根据每个优惠卷所属批次的详细ID进行存储并计数
             if (couponBatchDetailMap.containsKey(couponDOList.get(i).getCouponBatchDetailId())) {
                 couponBatchDetailMap.put(couponDOList.get(i).getCouponBatchDetailId(),couponBatchDetailMap.get(couponDOList.get(i).getCouponBatchDetailId())+1);
