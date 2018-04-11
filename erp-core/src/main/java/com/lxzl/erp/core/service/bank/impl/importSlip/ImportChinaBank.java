@@ -87,6 +87,7 @@ public class ImportChinaBank {
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getChinaBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -154,7 +155,7 @@ public class ImportChinaBank {
         int payPostscriptNo = 0; //交易附言[ Remark ]
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
 
         int next = Integer.MAX_VALUE;
         bbb:
@@ -240,7 +241,7 @@ public class ImportChinaBank {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言[ Remark ]
@@ -312,6 +313,10 @@ public class ImportChinaBank {
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount - claimCount);
         bankSlipDO.setClaimCount(claimCount);
+        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

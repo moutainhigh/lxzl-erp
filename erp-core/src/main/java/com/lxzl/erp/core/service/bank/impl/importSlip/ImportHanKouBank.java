@@ -86,6 +86,7 @@ public class ImportHanKouBank{
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getHanKouBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -154,7 +155,7 @@ public class ImportHanKouBank{
         int debtorAccountNo = 0; //支出金额
         int paySerialNumberNo = 0; //流水号
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
@@ -256,7 +257,7 @@ public class ImportHanKouBank{
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //摘要
@@ -331,6 +332,10 @@ public class ImportHanKouBank{
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
 
+        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

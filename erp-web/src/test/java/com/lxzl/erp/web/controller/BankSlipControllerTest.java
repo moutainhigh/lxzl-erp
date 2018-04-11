@@ -166,7 +166,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(4);
         bankSlip.setBankType(BankType.ALIPAY);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/03/20"));
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2018/01/20"));
         bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrMwyqAfiq-AAQyAE0RQI4229.xls");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
