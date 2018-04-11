@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-商品管理-功能开关列表</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <script type="text/javascript">
+        common_load_css('${staticCommon}/rental/css','dropzone.css');
+    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                <a href="javascript:;" class="btn btn-primary btn-sm addButton" title="添加">
+                                    <i class="fa fa-plus"></i> 添加
+                                </a>
+                            </script>
+
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="col-md-8 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <div class="input-group">
+                                        <input type="text" name="interfaceUrl" id="interfaceUrl" class="form-control input-sm bradius" autocomplete="off" placeholder="接口URL">
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="isOpen" id="isOpen">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 210px;">
+                                    <input type="hidden" name="createStartTime" id="createStartTime" />
+                                    <input type="hidden" name="createEndTime" id="createEndTime" />
+                                    <div class="input-group date" id="createTimePicker">
+                                        <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择创建时间">
+                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr>
+                                <th>功能开关ID</th>
+                                <th>接口url</th>
+                                <th>是否开启</th>
+                                <th>备注</th>
+                                <th>创建</th>
+                                <th>修改</th>
+                                <th class="text-right">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr data-rowdata="{{rowData}}">
+                                <td>{{switchId}}</td>
+                                <td>{{interfaceUrl}}</td>
+                                <td>
+                                    <label class="block mn switch switch-primary">
+                                        <input type="checkbox" name="isOpen" id="isOpen-{{switchId}}" class="switchCheckbox" value="1" {{#isOpen}}checked{{/isOpen}} />
+                                        <label for="isOpen-{{switchId}}" data-on="是" data-off="否"></label>
+                                        <span></span>
+                                    </label>
+                                </td>
+                                <td>{{remark}}</td>
+                                <td>
+                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                </td>
+                                <td>
+                                    <p class="mn">{{updateUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockTime}}{{updateTime}}{{/clockTime}}</p>
+                                </td>
+                                <td class="text-right">
+                                    <div class="btn-group text-right">
+                                        <a href="javascript:;" type="button" class="btn btn-default btn-xs editButton" >编辑</a>
+                                        <a href="javascript:;" type="button" class="btn btn-default btn-xs delButton" >删除</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="14" class="text-center">无数据</td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+
+<script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}js','modal.interface.switch.js','manage.interface.switch.js');
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    InterfaceSwitch.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+
+
+
+</body>
+</html>
