@@ -21,21 +21,20 @@ import java.util.List;
 public class K3ReturnOrder extends BasePO {
 
 	private Integer k3ReturnOrderId;   //唯一标识
-	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL,groups = {IdGroup.class, K3ReturnOrderCallback.class})
+	@NotBlank(message = ErrorCode.RETURN_ORDER_NO_NOT_NULL,groups = {IdGroup.class, K3ReturnOrderCallback.class,UpdateGroup.class})
 	private String returnOrderNo;   //退还编号
 	@NotBlank(message = ErrorCode.K3_CUSTOMER_NO_IS_NULL,groups = {AddGroup.class})
 	private String k3CustomerNo;   //K3客户编码
-	@NotBlank(message = ErrorCode.K3_CUSTOMER_NAME_IS_NULL,groups = {AddGroup.class})
 	private String k3CustomerName;   //K3客户名称
 	@NotNull(message = ErrorCode.RETURN_TIME_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Date returnTime;   //退货时间
-	@NotBlank(message = ErrorCode.K3_RETURN_ADDRESS_IS_NULL,groups = {AddGroup.class})
+	@NotBlank(message = ErrorCode.K3_RETURN_ADDRESS_IS_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String returnAddress;   //退货地址
-	@NotBlank(message = ErrorCode.K3_RETURN_CONTACTS_IS_NULL,groups = {AddGroup.class})
+	@NotBlank(message = ErrorCode.K3_RETURN_CONTACTS_IS_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String returnContacts;   //联系人
-	@NotBlank(message = ErrorCode.K3_RETURN_PHONE_IS_NULL,groups = {AddGroup.class})
+	@NotBlank(message = ErrorCode.K3_RETURN_PHONE_IS_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String returnPhone;   //联系电话
-	@NotNull(message = ErrorCode.K3_RETURN_MODE_IS_NULL,groups = {AddGroup.class})
+	@NotNull(message = ErrorCode.K3_RETURN_MODE_IS_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer returnMode;   //退还方式，1-上门取件，2邮寄
 	private Integer returnOrderStatus;   // 归还订单状态，0-待提交，4-审核中，16-已取消，20-已完成，24已驳回
 	private BigDecimal logisticsAmount;	// 运费

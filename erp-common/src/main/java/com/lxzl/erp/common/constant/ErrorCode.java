@@ -762,8 +762,6 @@ public class ErrorCode {
     public static final String K3_SERVER_ERROR = "J17000015";
     public static final String K3_RETURN_ORDER_FAIL = "J17000016";
     public static final String K3_CUSTOMER_NO_IS_NULL = "J17000017";
-    public static final String K3_CUSTOMER_NAME_IS_NULL = "J17000018";
-    //public static final String K3_RETURN_TIME_IS_NULL = "J17000019";
     public static final String K3_RETURN_ADDRESS_IS_NULL = "J17000019";
     public static final String K3_RETURN_CONTACTS_IS_NULL = "J17000020";
     public static final String K3_RETURN_PHONE_IS_NULL = "J17000021";
@@ -1586,7 +1584,6 @@ public class ErrorCode {
         MAP.put(K3_SERVER_ERROR, "K3服务异常");
         MAP.put(K3_RETURN_ORDER_FAIL, "K3退货失败");
         MAP.put(K3_CUSTOMER_NO_IS_NULL,"客户编码不能为空");
-        MAP.put(K3_CUSTOMER_NAME_IS_NULL,"客户名不能为空");
         MAP.put(K3_RETURN_ADDRESS_IS_NULL,"退货地址不能为空");
         MAP.put(K3_RETURN_CONTACTS_IS_NULL,"联系人不能为空");
         MAP.put(K3_RETURN_PHONE_IS_NULL,"联系电话不能为空");
