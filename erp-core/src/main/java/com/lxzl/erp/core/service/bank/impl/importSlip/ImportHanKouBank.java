@@ -36,20 +36,19 @@ import java.util.List;
 /**
  * @Author : XiaoLuYu
  * @Date : Created in 2018/3/20
- * @Time : Created in 21:09
+ * @Time : Created in 22:00
  */
 @Repository
-public class ImportNanJingBank {
-
+public class ImportHanKouBank{
     /**
-     * 保存南京银行
+     * 保存中国银行
      *
      * @param : runningWater
      * @Author : XiaoLuYu
      * @Date : Created in 2018/3/19 17:50
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    public ServiceResult<String, BankSlipDO> saveNanJingBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
+    public ServiceResult<String, BankSlipDO> saveHanKouBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
         ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
         BankSlipDO bankSlipDO = null;
         String excelUrl = bankSlip.getExcelUrl();
@@ -84,8 +83,8 @@ public class ImportNanJingBank {
 
             bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
 
-            //todo 存储
-            ServiceResult<String, List<BankSlipDetailDO>> data = getNanJingBankData(sheet, row, cell, bankSlipDO, now);
+            //存储
+            ServiceResult<String, List<BankSlipDetailDO>> data = getHanKouBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
@@ -138,7 +137,7 @@ public class ImportNanJingBank {
 
     //存中国银行数据
 
-    public ServiceResult<String, List<BankSlipDetailDO>> getNanJingBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
+    public ServiceResult<String, List<BankSlipDetailDO>> getHanKouBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
 
         ServiceResult<String, List<BankSlipDetailDO>> serviceResult = new ServiceResult<>();
 
@@ -149,13 +148,12 @@ public class ImportNanJingBank {
 
         int payerNameNo = 0; //对方户名
         int payTimeNo = 0; //交易日期
-        int payMoneyNo = 0; //贷方发生额
-        int paySerialNumberNo = 0; //流水号
-        int payPostscriptNo = 0; //备注信息
+        int payMoneyNo = 0; //收入金额
+        int payPostscriptNo = 0; //摘要
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
-        int debtorAccountNo = 0; //借方发生额
+        int debtorAccountNo = 0; //支出金额
+        int paySerialNumberNo = 0; //流水号
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
 
         int next = Integer.MAX_VALUE;
         bbb:
@@ -165,6 +163,9 @@ public class ImportNanJingBank {
                 if (row == null) {
                     continue bbb;
                 }
+            }
+            if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("汇总收入金额")) {
+                break bbb;
             }
 
             if (row != null) {
@@ -180,12 +181,17 @@ public class ImportNanJingBank {
                     value = value == null ? "":value;
                     value =  value.trim();
 
-                    if (("贷方发生额".equals(value)) ||
+                    if(getValue(row.getCell(0)).contains("记录数:")){
+                       break bbb;
+                    }
+
+                    if (("收入金额".equals(value)) ||
+                            ("对方省市".equals(value)) ||
+                            ("支出金额".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
-                            ("借方发生额".equals(value)) ||
                             ("流水号".equals(value)) ||
                             ("对方账号".equals(value)) ||
-                            ("备注信息".equals(value)) ||
+                            ("摘要".equals(value)) ||
                             ("交易日期".equals(value)) ||
                             ("对方户名".equals(value))) {
                         if ("查询账号[ Inquirer account number ]".equals(value)) {
@@ -204,15 +210,18 @@ public class ImportNanJingBank {
                             payerNameNo = y;
                             continue ccc;
                         }
+                        if ("对方省市".equals(value)) {
+                            continue ccc;
+                        }
                         if ("交易日期".equals(value)) {
                             payTimeNo = y;
                             continue ccc;
                         }
-                        if ("贷方发生额".equals(value)) {
+                        if ("收入金额".equals(value)) {
                             payMoneyNo = y;
                             continue ccc;
                         }
-                        if ("借方发生额".equals(value)) {
+                        if ("支出金额".equals(value)) {
                             debtorAccountNo = y;
                             continue ccc;
                         }
@@ -224,7 +233,7 @@ public class ImportNanJingBank {
                             payAccountNo = y;
                             continue ccc;
                         }
-                        if ("备注信息".equals(value)) {
+                        if ("摘要".equals(value)) {
                             payPostscriptNo = y;
                             //下一行开始存数据
                             continue ccc;
@@ -235,46 +244,57 @@ public class ImportNanJingBank {
                 // todo 以下可以直接存数据
                 String payerName = null;  //对方户名
                 String tradeTime = null;  //交易日期
-                String tradeAmount = null;  //贷方发生额
-                String tradeSerialNo = null;  //流水号
+                String tradeAmount = null;  //收入金额
                 String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
-                String tradeMessage = null;  //备注信息
-                String debtorAccount = null;  //借方金额
+                String tradeMessage = null;  //摘要
+                String debtorAccount = null;  //支出金额
+                String tradeSerialNo = null;  //流水号
 
                 if (j > next) {
 
-                    if( payerNameNo != 7 || payTimeNo != 0 || payMoneyNo != 3 || paySerialNumberNo != 9 || payPostscriptNo != 10 || payAccountNo != 8 || debtorAccountNo != 2){
+                    if( payerNameNo != 10 || paySerialNumberNo != 0 || payTimeNo != 1 || payPostscriptNo != 6 || payAccountNo != 8 || debtorAccountNo != 5 || payMoneyNo != 4){
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注信息
+                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //摘要
                     }
                     payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //对方户名
                     tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //贷方发生额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //流水号
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //收入金额
                     otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
-                    debtorAccount = (row.getCell(debtorAccountNo) == null ? "" : getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //借方金额
+                    debtorAccount = (row.getCell(debtorAccountNo) == null ? "" : getValue(row.getCell(debtorAccountNo)).replaceAll("\\s+", ""));  //支出金额
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //流水号
 
 
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
+                        if (tradeAmount.contains(",")) {
+                            tradeAmount = tradeAmount.replaceAll(",", "");
+                        }
+                        if ("0.0".equals(tradeAmount)) {
+                            tradeAmount = "";
+                        }
+                        if (debtorAccount.contains(",")) {
+                            debtorAccount = debtorAccount.replaceAll(",", "");
+                        }
+                        if ("0.0".equals(debtorAccount)) {
+                            debtorAccount = "";
+                        }
                         if (!"".equals(debtorAccount)) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(debtorAccount));
                         } else if (!"".equals(tradeAmount)) {
                             bankSlipDetailDO.setTradeAmount(new BigDecimal(tradeAmount));
                         }
-
                     } catch (Exception e) {
                         logger.error("-----------------金额转换出错------------------------", e);
                         serviceResult.setErrorCode(ErrorCode.MONEY_TRANSITION_IS_FAIL);
                         return serviceResult;
                     }
                     try {
-                        bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyyMMdd").parse(tradeTime));
+                        bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyy/MM/dd").parse(tradeTime));
                     } catch (Exception e) {
                         logger.error("-----------------交易日期转换出错------------------------", e);
                         serviceResult.setErrorCode(ErrorCode.DATE_TRANSITION_IS_FAIL);
@@ -311,7 +331,6 @@ public class ImportNanJingBank {
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
 
-
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;
@@ -319,6 +338,9 @@ public class ImportNanJingBank {
 
     //toString重写
     private String getValue(Cell cell) {
+        if (cell == null) {
+
+        }
         switch (cell.getCellType()) {
             case 0:
                 if (DateUtil.isCellDateFormatted(cell)) {
