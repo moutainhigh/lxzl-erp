@@ -113,7 +113,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
                 ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-                if (!ErrorCode.SUCCESS.equals(serviceResult)) {
+                if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
                     result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     return result;
@@ -330,7 +330,14 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-
+        //退货日期不能小于三月五号
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2018, 2, 5, 0, 0, 0);
+        Date minDate = calendar.getTime();
+        if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+            result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
+            return result;
+        }
         if (k3ReturnOrder == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
