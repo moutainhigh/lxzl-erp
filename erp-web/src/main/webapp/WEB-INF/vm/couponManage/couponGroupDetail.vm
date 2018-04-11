@@ -15,7 +15,7 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
-            <form class="" id="statementOrderDetailForm">
+            <form class="" id="couponBanchDetailForm">
                 <div class="panel panel-primary panel-border top mb15">
                     <div class="panel-body">
                         <div class="row">
