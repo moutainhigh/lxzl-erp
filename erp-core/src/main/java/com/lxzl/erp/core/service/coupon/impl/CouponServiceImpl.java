@@ -239,7 +239,6 @@ public class CouponServiceImpl implements CouponService{
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("couponBatchDetailQueryParam", couponBatchDetailQueryParam);
-        System.out.println(couponBatchDetailQueryParam.getCouponBatchId());
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = couponBatchDetailMapper.findCouponBatchDetailCountByParams(maps);
         List<CouponBatchDetailDO> couponBatchDetailDOList = couponBatchDetailMapper.findCouponBatchDetailByParams(maps);
@@ -385,41 +384,17 @@ public class CouponServiceImpl implements CouponService{
         return serviceResult;
     }
     /**
-     * 查看优惠券详情表对应的优惠券批次信息
-     * @param couponBatchDetail
+     * 根据批次ID获取批次详情
+     * @param couponBatch
      * @return
      */
     @Override
-    public ServiceResult<String, CouponBatch> findCouponBatchByCouponBatchDetail(CouponBatchDetail couponBatchDetail) {
+    public ServiceResult<String, CouponBatch> findCouponBatchByID(CouponBatch couponBatch) {
         ServiceResult<String,CouponBatch> serviceResult = new ServiceResult<>();
-        CouponBatchDetailDO couponBatchDetailDO = couponBatchDetailMapper.findById(couponBatchDetail.getCouponBatchDetailId());
-        if (couponBatchDetailDO == null) {
-            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-            return  serviceResult;
-        }
-        CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatchDetailDO.getCouponBatchId());
-        CouponBatch couponBatch = ConverterUtil.convert(couponBatchDO, CouponBatch.class);
+        CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatch.getCouponBatchId());
+        CouponBatch couponBatch1 = ConverterUtil.convert(couponBatchDO, CouponBatch.class);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(couponBatch);
-        return serviceResult;
-    }
-    /**
-     * 查看优惠券对应的优惠券批次信息
-     * @param coupon
-     * @return
-     */
-    @Override
-    public ServiceResult<String, CouponBatch> findCouponBatchByCoupon(Coupon coupon) {
-        ServiceResult<String,CouponBatch> serviceResult = new ServiceResult<>();
-        CouponDO couponDO = couponMapper.findById(coupon.getCouponId());
-        if (couponDO == null) {
-            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-            return  serviceResult;
-        }
-        CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponDO.getCouponBatchId());
-        CouponBatch couponBatch = ConverterUtil.convert(couponBatchDO, CouponBatch.class);
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(couponBatch);
+        serviceResult.setResult(couponBatch1);
         return serviceResult;
     }
 

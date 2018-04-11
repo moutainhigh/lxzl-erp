@@ -165,7 +165,7 @@
 				and ec.is_online = #{maps.couponQueryParam.isOnline, jdbcType=INTEGER}
 			</if>
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null &amp;&amp; maps.couponQueryParam.customerNo != ''">
-				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
+				and ec.customer_no  LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
 				and ec.coupon_status IN (0,4,8)
@@ -201,7 +201,7 @@
 				and ec.is_online = #{maps.couponQueryParam.isOnline, jdbcType=INTEGER}
 			</if>
 			<if test="maps.couponQueryParam != null &amp;&amp; maps.couponQueryParam.customerNo != null &amp;&amp; maps.couponQueryParam.customerNo != ''">
-				and ec.customer_no = LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
+				and ec.customer_no  LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
 				and ec.coupon_status IN (0,4,8)

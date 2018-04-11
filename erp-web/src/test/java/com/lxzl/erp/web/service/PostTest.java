@@ -19,6 +19,7 @@ import com.lxzl.erp.common.domain.supplier.pojo.Supplier;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -228,7 +229,7 @@ public class PostTest extends ERPUnTransactionalTest {
     @Test
     public void postReturnOrder2() throws InterruptedException {
 
-        k3Service.sendToK3("53f0140d84834f4e8502619ca88bb4a4");
+        k3ReturnOrderService.sendReturnOrderToK3("53f0140d84834f4e8502619ca88bb4a4");
         Thread.sleep(100000);
     }
 
@@ -259,4 +260,6 @@ public class PostTest extends ERPUnTransactionalTest {
     private K3SendRecordMapper k3SendRecordMapper;
     @Autowired
     private K3Service k3Service;
+    @Autowired
+    private K3ReturnOrderService k3ReturnOrderService;
 }

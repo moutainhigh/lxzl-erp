@@ -148,18 +148,11 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     }
 
     @Test
-    public void findCouponBatchByCouponBatchDetail() throws Exception {
-        CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchDetailId(14);
+    public void findCouponBatchByID() throws Exception {
+        CouponBatch couponBatch = new CouponBatch();
+        couponBatch.setCouponBatchId(15);
 
-        TestResult testResult = getJsonTestResult("/coupon/findCouponBatchByCouponBatchDetail", couponBatchDetail);
-    }
-    @Test
-    public void findCouponBatchByCoupon() throws Exception {
-        Coupon coupon = new Coupon();
-        coupon.setCouponId(154);
-
-        TestResult testResult = getJsonTestResult("/coupon/findCouponBatchByCoupon", coupon);
+        TestResult testResult = getJsonTestResult("/coupon/findCouponBatchByID", couponBatch);
     }
 
     @Test
