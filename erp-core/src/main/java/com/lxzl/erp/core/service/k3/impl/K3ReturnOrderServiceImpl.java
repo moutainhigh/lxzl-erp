@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
+import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
@@ -48,10 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: your name
@@ -70,9 +68,16 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-
         if (k3ReturnOrder == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        //退货日期不能小于三月五号
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2018, 3, 5, 0, 0, 0);
+        Date minDate = calendar.getTime();
+        if (minDate.compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+            result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
             return result;
         }
         for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
@@ -105,18 +110,21 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         k3ReturnOrderMapper.save(k3ReturnOrderDO);
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
-                ServiceResult serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-//                if(ErrorCode.SUCCESS.equals(serviceResult)){
-//                   if(serviceResult.getResult()==null){
-//                        serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-//                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                        return serviceResult;
-//                   }
-//                }else{
-//                    serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                    return serviceResult;
-//                }
+                ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
+                if (!ErrorCode.SUCCESS.equals(serviceResult)) {
+                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return result;
+                }
+                Order order = serviceResult.getResult();
+                //退货日期不能大于起租日期
+                if (order.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                    result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return result;
+                }
+
+
                 K3ReturnOrderDetailDO k3ReturnOrderDetailDO = ConverterUtil.convert(k3ReturnOrderDetail, K3ReturnOrderDetailDO.class);
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
