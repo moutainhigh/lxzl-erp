@@ -80,6 +80,9 @@ public class BankSlipServiceImpl implements BankSlipService {
     private ImportCMBCBank importCMBCBank;
 
     @Autowired
+    private ImportHanKouBank importHanKouBank;
+
+    @Autowired
     private BankSlipMapper bankSlipMapper;
 
     @Autowired
@@ -150,7 +153,8 @@ public class BankSlipServiceImpl implements BankSlipService {
                 !BankType.PING_AN_BANK.equals(bankType) &&
                 !BankType.CMBC_BANK.equals(bankType) &&
                 !BankType.SHANGHAI_PUDONG_DEVELOPMENT_BANK.equals(bankType) &&
-                !BankType.ALIPAY.equals(bankType)) {
+                !BankType.ALIPAY.equals(bankType) &&
+                !BankType.HAN_KOU_BANK.equals(bankType)) {
             serviceResult.setErrorCode(ErrorCode.BANK_TYPE_IS_FAIL);
             return serviceResult;
         }
@@ -191,6 +195,8 @@ public class BankSlipServiceImpl implements BankSlipService {
             result = importShanghaiPudongDevelopmentBank.saveShanghaiPudongDevelopmentBank(bankSlip, inputStream);
         } else if (BankType.ALIPAY.equals(bankType)) {
             result = importAlipay.saveAlipay(bankSlip, inputStream);
+        } else if (BankType.HAN_KOU_BANK.equals(bankType)) {
+            result = importHanKouBank.saveHanKouBank(bankSlip, inputStream);
         }
         if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
             //跟新 需要认领数据
