@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.bank.impl.importSlip;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -71,7 +72,7 @@ public class ImportAlipay {
             Date now = new Date();
 
             //遍历Excel中所有的sheet
-            sheet = work.getSheetAt(0);
+            sheet = work.getSheetAt(1);
             if (sheet == null) {
                 serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
                 return serviceResult;
@@ -102,7 +103,7 @@ public class ImportAlipay {
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipMapper.save(bankSlipDO);
             //查看是否为空
-            if (bankSlipDetailDOList == null) {
+            if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
                 return serviceResult;
@@ -144,11 +145,11 @@ public class ImportAlipay {
         String selectAccount = null; //查询账号[ Inquirer account number ]
         int inCount = 0; //进款笔数
 
-        int payerNameNo = 0; //付款人名称
-        int payTimeNo = 0; //交易日期
-        int payMoneyNo = 0; //交易金额
-        int paySerialNumberNo = 0; //交易流水号
-        int payPostscriptNo = 0; //交易附言
+        int payerNameNo = 0; //对方名称
+        int payTimeNo = 0; //入账时间
+        int payMoneyNo = 0; //收入（+元）
+        int paySerialNumberNo = 0; //支付宝流水号
+        int payPostscriptNo = 0; //备注
         int payAccountNo = 0; //对方账户
         int creditSumNo = 0; //支出（-元）
         int merchantOrderNo = 0; //商户订单号
@@ -184,17 +185,20 @@ public class ImportAlipay {
                     }
                     String value = getValue(cell);
 
-                    if (("交易金额".equals(value)) ||
+                    value = value == null ? "":value;
+                    value =  value.trim();
+
+                    if (("收入（+元）".equals(value)) ||
                             ("支出（-元）".equals(value)) ||
                             ("查询账号[ Inquirer account number ]".equals(value)) ||
-                            ("交易流水号".equals(value)) ||
+                            ("支付宝流水号".equals(value)) ||
                             ("对方账户".equals(value)) ||
                             ("商户订单号".equals(value)) ||
-                            ("交易附言".equals(value)) ||
-                            ("交易日期".equals(value)) ||
-                            ("付款人名称".equals(value))) {
+                            ("备注".equals(value)) ||
+                            ("入账时间".equals(value)) ||
+                            ("对方名称".equals(value))) {
 
-                        if ("付款人名称".equals(value)) {
+                        if ("对方名称".equals(value)) {
                             next = j;
                             payerNameNo = y;
                             continue ccc;
@@ -207,15 +211,15 @@ public class ImportAlipay {
                             merchantOrderNo = y;
                             continue ccc;
                         }
-                        if ("交易日期".equals(value)) {
+                        if ("入账时间".equals(value)) {
                             payTimeNo = y;
                             continue ccc;
                         }
-                        if ("交易金额".equals(value)) {
+                        if ("收入（+元）".equals(value)) {
                             payMoneyNo = y;
                             continue ccc;
                         }
-                        if ("交易流水号".equals(value)) {
+                        if ("支付宝流水号".equals(value)) {
                             paySerialNumberNo = y;
                             continue ccc;
                         }
@@ -223,7 +227,7 @@ public class ImportAlipay {
                             payAccountNo = y;
                             continue ccc;
                         }
-                        if ("交易附言".equals(value)) {
+                        if ("备注".equals(value)) {
                             payPostscriptNo = y;
                             //下一行开始存数据
                             continue ccc;
@@ -232,12 +236,12 @@ public class ImportAlipay {
                 }
 
                 // todo 以下可以直接存数据
-                String payerName = null;  //付款人名称
-                String tradeTime = null;  //交易日期
-                String tradeAmount = null;  //交易金额
-                String tradeSerialNo = null;  //交易流水号
+                String payerName = null;  //对方名称
+                String tradeTime = null;  //入账时间
+                String tradeAmount = null;  //收入（+元）
+                String tradeSerialNo = null;  //支付宝流水号
                 String otherSideAccountNo = null;  //对方账号
-                String tradeMessage = null;  //交易附言
+                String tradeMessage = null;  //备注
                 String tradeAmount1 = null;  //支出（-元）
                 String merchantOrder = null; //商户订单号
 
@@ -250,13 +254,13 @@ public class ImportAlipay {
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注
                     }
-                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
-                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //对方名称
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //入账时间
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //收入（+元）
                     tradeAmount1 = (row.getCell(creditSumNo) == null ? "" : getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //支付宝流水号
                     otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //付款人账号[ Debit Account No. ]
                     merchantOrder = (row.getCell(merchantOrderNo) == null ? "" : getValue(row.getCell(merchantOrderNo)).replaceAll("\\s+", ""));  //对方账号
 
@@ -286,7 +290,7 @@ public class ImportAlipay {
                         try {
                             bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyy-MM-ddHH:mm:ss").parse(tradeTime));
                         } catch (Exception e1) {
-                            logger.error("-----------------交易日期转换出错------------------------", e1);
+                            logger.error("-----------------入账时间转换出错------------------------", e1);
                             serviceResult.setErrorCode(ErrorCode.DATE_TRANSITION_IS_FAIL);
                             return serviceResult;
                         }

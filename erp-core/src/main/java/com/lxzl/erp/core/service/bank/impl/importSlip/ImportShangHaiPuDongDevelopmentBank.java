@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.bank.impl.importSlip;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -103,7 +104,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipMapper.save(bankSlipDO);
             //查看是否为空
-            if (bankSlipDetailDOList == null) {
+            if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
                 return serviceResult;
@@ -145,10 +146,10 @@ public class ImportShangHaiPuDongDevelopmentBank {
         String selectAccount = null; //查询账号[ Inquirer account number ]
         int inCount = 0; //进款笔数
 
-        int payerNameNo = 0; //付款人名称
+        int payerNameNo = 0; //对方户名
         int payTimeNo = 0; //交易日期
-        int payMoneyNo = 0; //交易金额
-        int payPostscriptNo = 0; //交易附言
+        int payMoneyNo = 0; //贷方金额
+        int payPostscriptNo = 0; //备注
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int creditSumNo = 0; //借方金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
@@ -174,14 +175,17 @@ public class ImportShangHaiPuDongDevelopmentBank {
                     }
                     String value = getValue(cell);
 
-                    if (("交易金额".equals(value)) ||
+                    value = value == null ? "":value;
+                    value =  value.trim();
+
+                    if (("贷方金额".equals(value)) ||
                             ("借方金额".equals(value)) ||
                             ("账号".equals(value)) ||
                             ("交易流水号".equals(value)) ||
                             ("对方账号".equals(value)) ||
-                            ("交易附言".equals(value)) ||
+                            ("备注".equals(value)) ||
                             ("交易日期".equals(value)) ||
-                            ("付款人名称".equals(value))) {
+                            ("对方户名".equals(value))) {
                         if ("账号".equals(value)) {
 
                             Cell accountCell = (row.getCell(y + 1));
@@ -193,7 +197,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
                             selectAccount = value;
                             continue ccc;
                         }
-                        if ("付款人名称".equals(value)) {
+                        if ("对方户名".equals(value)) {
                             next = j;
                             payerNameNo = y;
                             continue ccc;
@@ -206,7 +210,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
                             payTimeNo = y;
                             continue ccc;
                         }
-                        if ("交易金额".equals(value)) {
+                        if ("贷方金额".equals(value)) {
                             payMoneyNo = y;
                             continue ccc;
                         }
@@ -214,7 +218,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
                             payAccountNo = y;
                             continue ccc;
                         }
-                        if ("交易附言".equals(value)) {
+                        if ("备注".equals(value)) {
                             payPostscriptNo = y;
                             //下一行开始存数据
                             continue ccc;
@@ -222,11 +226,11 @@ public class ImportShangHaiPuDongDevelopmentBank {
                     }
                 }
                 // todo 以下可以直接存数据
-                String payerName = null;  //付款人名称
+                String payerName = null;  //对方户名
                 String tradeTime = null;  //交易日期
-                String tradeAmount = null;  //交易金额
+                String tradeAmount = null;  //贷方金额
                 String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
-                String tradeMessage = null;  //交易附言
+                String tradeMessage = null;  //备注
                 String tradeAmount1 = null;  //贷方发生额
 
                 if (j > next) {
@@ -238,11 +242,11 @@ public class ImportShangHaiPuDongDevelopmentBank {
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (row.getCell(payerNameNo) == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (row.getCell(payerNameNo) == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注
                     }
-                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //对方户名
                     tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //贷方金额
                     tradeAmount1 = (row.getCell(creditSumNo) == null ? "" : getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
                     otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
 

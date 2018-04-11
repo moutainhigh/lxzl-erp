@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.bank.impl.importSlip;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -104,7 +105,7 @@ public class ImportCCBBank {
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipMapper.save(bankSlipDO);
             //查看是否为空
-            if (bankSlipDetailDOList == null) {
+            if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
                 return serviceResult;
@@ -146,11 +147,11 @@ public class ImportCCBBank {
         String selectAccount = null; //查询账号[ Inquirer account number ]
         int inCount = 0; //进款笔数
 
-        int payerNameNo = 0; //付款人名称
-        int payTimeNo = 0; //交易日期
-        int payMoneyNo = 0; //交易金额
-        int paySerialNumberNo = 0; //交易流水号
-        int payPostscriptNo = 0; //交易附言
+        int payerNameNo = 0; //对方户名
+        int payTimeNo = 0; //交易时间
+        int payMoneyNo = 0; //贷方
+        int paySerialNumberNo = 0; //账户明细编号-交易流水号
+        int payPostscriptNo = 0; //备注
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int creditSumNo = 0; //贷方发生额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
@@ -176,14 +177,17 @@ public class ImportCCBBank {
                     }
                     String value = getValue(cell);
 
-                    if (("交易金额".equals(value)) ||
-                            ("借方               ".equals(value)) ||
+                    value = value == null ? "":value;
+                    value =  value.trim();
+
+                    if (("贷方".equals(value)) ||
+                            ("借方".equals(value)) ||
                             ("账　　号".equals(value)) ||
-                            ("交易流水号".equals(value)) ||
+                            ("账户明细编号-交易流水号".equals(value)) ||
                             ("对方账号".equals(value)) ||
-                            ("交易附言".equals(value)) ||
-                            ("交易日期".equals(value)) ||
-                            ("付款人名称".equals(value))) {
+                            ("备注".equals(value)) ||
+                            ("交易时间".equals(value)) ||
+                            ("对方户名".equals(value))) {
                         if ("账　　号".equals(value)) {
 
                             Cell accountCell = (row.getCell(y + 1));
@@ -195,24 +199,24 @@ public class ImportCCBBank {
                             selectAccount = value;
                             continue ccc;
                         }
-                        if ("付款人名称".equals(value)) {
+                        if ("对方户名".equals(value)) {
                             payerNameNo = y;
                             continue ccc;
                         }
-                        if ("借方               ".equals(value)) {
+                        if ("借方".equals(value)) {
                             creditSumNo = y;
                             continue ccc;
                         }
-                        if ("交易日期".equals(value)) {
+                        if ("交易时间".equals(value)) {
                             payTimeNo = y;
                             continue ccc;
                         }
-                        if ("交易金额".equals(value)) {
+                        if ("贷方".equals(value)) {
                             next = j;
                             payMoneyNo = y;
                             continue ccc;
                         }
-                        if ("交易流水号".equals(value)) {
+                        if ("账户明细编号-交易流水号".equals(value)) {
                             paySerialNumberNo = y;
                             continue ccc;
                         }
@@ -220,7 +224,7 @@ public class ImportCCBBank {
                             payAccountNo = y;
                             continue ccc;
                         }
-                        if ("交易附言".equals(value)) {
+                        if ("备注".equals(value)) {
                             payPostscriptNo = y;
                             //下一行开始存数据
                             continue ccc;
@@ -228,12 +232,12 @@ public class ImportCCBBank {
                     }
                 }
                 // todo 以下可以直接存数据
-                String payerName = null;  //付款人名称
-                String tradeTime = null;  //交易日期
-                String tradeAmount = null;  //交易金额
-                String tradeSerialNo = null;  //交易流水号
+                String payerName = null;  //对方户名
+                String tradeTime = null;  //交易时间
+                String tradeAmount = null;  //贷方
+                String tradeSerialNo = null;  //账户明细编号-交易流水号
                 String otherSideAccountNo = null;  //付款人账号[ Debit Account No. ]
-                String tradeMessage = null;  //交易附言
+                String tradeMessage = null;  //备注
                 String tradeAmount1 = null;  //贷方发生额
 
                 if (j > next) {
@@ -245,13 +249,13 @@ public class ImportCCBBank {
 
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //交易附言
+                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注
                     }
-                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //付款人名称
-                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易日期
-                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //交易金额
+                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", ""));  //对方户名
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", ""));  //交易时间
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", ""));  //贷方
                     tradeAmount1 = (row.getCell(creditSumNo) == null ? "" : getValue(row.getCell(creditSumNo)).replaceAll("\\s+", ""));  //贷方发生额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //交易流水号
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", ""));  //账户明细编号-交易流水号
                     otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", ""));  //对方账号
 
                     if ("".equals(payerName) &&
@@ -291,9 +295,9 @@ public class ImportCCBBank {
                         return serviceResult;
                     }
                     try {
-                        bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyyMMdd").parse(tradeTime));
+                        bankSlipDetailDO.setTradeTime(new SimpleDateFormat("yyyy-MM-ddHH:mm:ss").parse(tradeTime));
                     } catch (Exception e) {
-                        logger.error("-----------------交易日期转换出错------------------------", e);
+                        logger.error("-----------------交易时间转换出错------------------------", e);
                         serviceResult.setErrorCode(ErrorCode.DATE_TRANSITION_IS_FAIL);
                         return serviceResult;
                     }
