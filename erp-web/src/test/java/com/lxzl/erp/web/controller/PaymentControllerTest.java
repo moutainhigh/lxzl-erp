@@ -61,9 +61,9 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
                 "    \"businessAppSecret\":\"JN2hrJcxZjn6y4XvtdzqXOdy5ouol0FeQA2ZUfuayhcj4sUlqQMezAICJEM36sdg\",\n" +
                 "    \"pageNo\":1,\n" +
                 "    \"pageSize\":10,\n" +
-//                "    \"subCompanyId\":1545646,\n" +
-                "    \"customerName\":\"rwearwe\",\n" +
-                "    \"chargeType\":2\n" +
+//                "    \"subCompanyId\":2,\n" +
+//                "    \"customerName\":\"rwearwe\",\n" +
+//                "    \"chargeType\":5\n" +
                 "}";
         ChargeRecordPageParam param = JSON.parseObject(json,ChargeRecordPageParam.class);
 

@@ -107,6 +107,11 @@
                                 </td>
                                 <td class="{{returnOrderStatusClass}}">
                                     {{returnOrderStatusValue}}
+                                    {{#showViewWorkFlowButton}}
+                                    <span class="ml5 mr5 {{returnOrderStatusClass}}">/</span>
+                                    <a href="javascript:void(0)" class="{{returnOrderStatusClass}} viewWorkFlowButton" data-returnOrderNo="{{returnOrderNo}}">查看审核流</a>
+                                    {{/showViewWorkFlowButton}}
+
                                 </td>
                                 <td>
                                     {{remark}}

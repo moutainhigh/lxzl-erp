@@ -93,7 +93,7 @@ public class K3ServiceImpl implements K3Service {
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
     private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
 
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
@@ -170,6 +170,12 @@ public class K3ServiceImpl implements K3Service {
                     OrderConsignInfo orderConsignInfo = JSON.parseObject(address, OrderConsignInfo.class);
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
+                    K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(order.getOrderSubCompanyName());
+                    if(k3MappingSubCompanyDO != null){
+                        order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getErpSubCompanyCode()));
+                        order.setOrderSubCompanyName(k3MappingSubCompanyDO.getSubCompanyName());
+                    }
+
                     String measureList = obj.get("MeasureList").toString();
                     if (measureList != null && !"[]".equals(measureList)) {
                         List<OrderMaterial> orderMaterialList = JSON.parseArray(measureList, OrderMaterial.class);
@@ -410,7 +416,8 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(dbK3ReturnOrderDO.getReturnOrderStatus())
+                && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(dbK3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE);
             return result;
         }
@@ -440,7 +447,8 @@ public class K3ServiceImpl implements K3Service {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
+                && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
@@ -471,7 +479,8 @@ public class K3ServiceImpl implements K3Service {
             return result;
         }
         K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(k3ReturnOrderDetailDO.getReturnOrderId());
-        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+        if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
+                && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
@@ -531,7 +540,8 @@ public class K3ServiceImpl implements K3Service {
         }
         //判断何时可以取消
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus()) &&
-                !ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+                !ReturnOrderStatus.RETURN_ORDER_STATUS_VERIFYING.equals(k3ReturnOrderDO.getReturnOrderStatus())
+                && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL);
             return result;
         }
@@ -563,8 +573,9 @@ public class K3ServiceImpl implements K3Service {
         if (k3ReturnOrderDO == null) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_IS_NOT_NULL);
             return result;
-        } else if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
-            //只有待提交状态的换货单可以提交
+        } else if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
+                && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
+            //只有待提交和已驳回状态的换货单可以提交
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN);
             return result;
         }
@@ -1462,8 +1473,14 @@ public class K3ServiceImpl implements K3Service {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String receiveVerifyResult(boolean verifyResult, String businessNo) {
-        K3ChangeOrderDO k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
-        K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        String data = businessNo.substring(0,6);
+        K3ReturnOrderDO k3ReturnOrderDO = null;
+        K3ChangeOrderDO k3ChangeOrderDO = null;
+        if("LXK3RO".equals(data)){
+            k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(businessNo);
+        }else{
+            k3ChangeOrderDO = k3ChangeOrderMapper.findByNo(businessNo);
+        }
         try {
             if (k3ChangeOrderDO != null) {//k3换货单
                 //不是审核中状态的收货单，拒绝处理
@@ -1484,12 +1501,12 @@ public class K3ServiceImpl implements K3Service {
                 }
                 if (verifyResult) {
                     ServiceResult result = sendToK3(businessNo);
-                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
-                        return ErrorCode.BUSINESS_EXCEPTION;
+                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode().toString())){
+                        return result.getErrorCode().toString();
                     }
                     k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
                 } else {
-                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+                    k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED);
                 }
                 k3ReturnOrderMapper.update(k3ReturnOrderDO);
                 return ErrorCode.SUCCESS;

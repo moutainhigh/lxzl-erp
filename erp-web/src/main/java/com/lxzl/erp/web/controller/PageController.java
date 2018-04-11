@@ -888,7 +888,12 @@ public class PageController extends BaseController {
     public String couponManage() {
         return "/couponManage/couponCardList";
     }
-
+    @RequestMapping("/coupon-manage/add-coupon")
+    public String couponManageAdd(){return "/component/couponManage/couponAddList";}
+    @RequestMapping("/coupon-manage/add-coupon-pici")
+    public String couponManagePiCiAdd(){return "/component/couponManage/couponPiCiAddList";}
+    @RequestMapping("/coupon-manage/edit-coupon")
+    public  String couponManageEdit(){return "/component/couponManage/couponEdit";}
 
     /**
      * 资金流水附件信息列表

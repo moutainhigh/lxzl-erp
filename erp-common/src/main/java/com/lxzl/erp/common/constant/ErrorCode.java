@@ -1570,7 +1570,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "此状态的K3退货单换货单不允许取消");
         MAP.put(K3_CHANGE_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3换货单可以提交");
         MAP.put(K3_CHANGE_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3换货单商品不能空，需有商品才能提交");
-        MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交状态的K3退货单可以提交");
+        MAP.put(K3_RETURN_ORDER_COMMITTED_CAN_NOT_COMMIT_AGAIN, "只有待提交和已驳回状态的K3退货单可以提交");
         MAP.put(K3_RETURN_ORDER_DETAIL_COMMITTED_NOT_NULL, "K3退货单商品不能空，需有商品才能提交");
         MAP.put(K3_RETURN_ORDER_IS_NOT_EXISTS, "K3结算单不存在");
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
