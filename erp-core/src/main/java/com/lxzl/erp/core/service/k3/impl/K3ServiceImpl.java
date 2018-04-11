@@ -137,6 +137,9 @@ public class K3ServiceImpl implements K3Service {
             } else {
                 jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
+            if(!userSupport.isSuperUser()){
+                jsonObject.put("orderSellerName", userSupport.getCurrentUser().getRealName());
+            }
             jsonObject.put("pw", pw);
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(k3OrderUrl, requestJson, headerBuilder, "UTF-8");
