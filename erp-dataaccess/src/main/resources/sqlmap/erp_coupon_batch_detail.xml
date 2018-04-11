@@ -196,5 +196,46 @@
 			#{couponBatchDetailDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
-	
+	<select id="findByCouponBatchID" resultMap="CouponBatchDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon_batch_detail ecbd
+		WHERE ecbd.coupon_batch_id = #{couponBatchId, jdbcType=INTEGER} AND ecbd.data_status = 1
+	</select>
+	<update id="updateUseList" parameterType="java.util.ArrayList">
+		update erp_coupon_batch_detail
+		SET
+		<trim>
+			update_user =
+			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			total_used_amount =
+			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.totalUsedAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_used_count =
+			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.couponUsedCount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			total_deduction_amount =
+			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.totalDeductionAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="couponBatchDetailDOList" index="index" item="couponBatchDetailDO" separator="," open="(" close=")">
+			#{couponBatchDetailDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
 </mapper>

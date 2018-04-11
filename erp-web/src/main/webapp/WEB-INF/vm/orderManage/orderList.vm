@@ -55,24 +55,24 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus">
-                                                <option value="">请选择</option>
-                                            </select>
-                                        </div>
-                                    </div>
 ##                                    <div class="form-group pull-right mn mr10">
-##                                        <div class="topbar-right">
-##                                            <div class="ib topbar-dropdown bradius">
-##                                                <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
-##                                                    <optgroup label="请选择:">
-##                                                        <option value="">全部（订单状态）</option>
-##                                                    </optgroup>
-##                                                </select>
-##                                            </div>
+##                                        <div class="input-group">
+##                                            <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus">
+##                                                <option value="">请选择</option>
+##                                            </select>
 ##                                        </div>
 ##                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="topbar-right">
+                                            <div class="ib topbar-dropdown bradius">
+                                                <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
+                                                    <optgroup label="请选择:">
+                                                        <option value="">全部（订单状态）</option>
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group pull-right mn mr10">
                                         <div class="input-group">
                                             <select class="form-control input-sm bradius" name="rentType" id="rentType">
@@ -150,7 +150,12 @@
                                                 </label>
                                             </td>
                                             {{/hasCommonActionButtons}}
-                                            <td>{{orderNo}}</td>
+                                            <td>
+                                                {{#isK3Order}}
+                                                <span class="label label-dark" title="K3订单">K3</span>
+                                                {{/isK3Order}}
+                                                {{orderNo}}
+                                            </td>
                                             <td>{{orderSubCompanyName}}</td>
                                             <td>{{buyerCustomerName}}</td>
                                             <td>

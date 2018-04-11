@@ -5,19 +5,18 @@ import com.lxzl.erp.common.constant.CouponStatus;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.coupon.CouponBatchDetailQueryParam;
-import com.lxzl.erp.common.domain.coupon.CouponBatchQueryParam;
-import com.lxzl.erp.common.domain.coupon.CouponProvideParam;
-import com.lxzl.erp.common.domain.coupon.CouponQueryParam;
+import com.lxzl.erp.common.domain.coupon.*;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.CouponService;
+import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper;
@@ -240,7 +239,6 @@ public class CouponServiceImpl implements CouponService{
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("couponBatchDetailQueryParam", couponBatchDetailQueryParam);
-        System.out.println(couponBatchDetailQueryParam.getCouponBatchId());
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = couponBatchDetailMapper.findCouponBatchDetailCountByParams(maps);
         List<CouponBatchDetailDO> couponBatchDetailDOList = couponBatchDetailMapper.findCouponBatchDetailByParams(maps);
@@ -298,6 +296,10 @@ public class CouponServiceImpl implements CouponService{
         for (int i = 0; i < couponDOList.size(); i++) {
             if (couponDOList.get(i).getCouponStatus() == CouponStatus.COUPON_STATUS_USED) {
                 serviceResult.setErrorCode(ErrorCode.COUPON_USED);
+                return  serviceResult;
+            }
+            if (couponDOList.get(i).getCouponStatus() == CouponStatus.COUPON_STATUS_CANCEL) {
+                serviceResult.setErrorCode(ErrorCode.COUPON_CANCEL);
                 return  serviceResult;
             }
             //  根据每个优惠卷所属批次的详细ID进行存储并计数
@@ -385,6 +387,97 @@ public class CouponServiceImpl implements CouponService{
         serviceResult.setResult(couponList);
         return serviceResult;
     }
+    /**
+     * 根据批次ID获取批次详情
+     * @param couponBatch
+     * @return
+     */
+    @Override
+    public ServiceResult<String, CouponBatch> findCouponBatchByID(CouponBatch couponBatch) {
+        ServiceResult<String,CouponBatch> serviceResult = new ServiceResult<>();
+        CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatch.getCouponBatchId());
+        CouponBatch couponBatch1 = ConverterUtil.convert(couponBatchDO, CouponBatch.class);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(couponBatch1);
+        return serviceResult;
+    }
+
+    /**
+     * 从增券列表进行作废优惠券
+     * @param couponBatchDetail
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> cancelCouponByCouponBatchDetail(CouponBatchDetail couponBatchDetail) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        CouponBatchDetailDO couponBatchDetailDO = couponBatchDetailMapper.findById(couponBatchDetail.getCouponBatchDetailId());
+        if (couponBatchDetailDO == null) {
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return  serviceResult;
+        }
+        if (couponBatchDetailDO.getCouponUsedCount()>0) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_USED);
+            return serviceResult;
+        }
+        couponBatchDetailDO.setUpdateTime(date);
+        couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        couponBatchDetailDO.setCouponCancelCount(couponBatchDetailDO.getCouponTotalCount());
+        couponBatchDetailMapper.update(couponBatchDetailDO);
+        couponMapper.cancelCoupon(couponBatchDetailDO.getId(),date,userSupport.getCurrentUserId().toString());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+    /**
+     * 从批次列表进行作废优惠券
+     * @param couponBatch
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> cancelCouponByCouponBatch(CouponBatch couponBatch) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatch.getCouponBatchId());
+        if (couponBatchDO == null) {
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return  serviceResult;
+        }
+        if (couponBatchDO.getCouponBatchUsedCount()>0) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_USED);
+            return serviceResult;
+        }
+        couponBatchDO.setUpdateTime(date);
+        couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        couponBatchMapper.update(couponBatchDO);
+        List<CouponBatchDetailDO> couponBatchDetailDOList = couponBatchDetailMapper.findByCouponBatchID(couponBatchDO.getId());
+        for (int i = 0; i < couponBatchDetailDOList.size(); i++) {
+            couponBatchDetailDOList.get(i).setUpdateTime(date);
+            couponBatchDetailDOList.get(i).setUpdateUser(userSupport.getCurrentUserId().toString());
+            couponBatchDetailDOList.get(i).setCouponCancelCount(couponBatchDetailDOList.get(i).getCouponTotalCount());
+            couponBatchDetailMapper.update(couponBatchDetailDOList.get(i));
+            couponMapper.cancelCoupon(couponBatchDetailDOList.get(i).getId(),date,userSupport.getCurrentUserId().toString());
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Autowired
+    private CouponSupport couponSupport;
+
+    /**
+     * 生成优惠券的测试方法
+     * @param useCoupon
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> useCoupon( UseCoupon useCoupon) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Order order = useCoupon.getOrder();
+        List<Coupon> couponList = useCoupon.getCouponList();
+        serviceResult.setResult(couponSupport.useCoupon(order,couponList));
+        return serviceResult;
+    }
+
 
     /**
      * 增加优惠券方法

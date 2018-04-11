@@ -96,6 +96,7 @@
 			<if test="true">
 				AND ekro.data_status = 1
 			</if>
+            <include refid="permission_sql.k3_return_order_control"/>
 		</where>
 	</select>
 
@@ -125,6 +126,7 @@
                 <if test="true">
                     AND ekro.data_status = 1
                 </if>
+                <include refid="permission_sql.k3_return_order_control"/>
             </where>
             ORDER BY ekro.create_time DESC
             LIMIT #{maps.start},#{maps.pageSize}
@@ -196,4 +198,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO">
 		UPDATE erp_k3_return_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+    <select id="findByCustomerNo" resultMap="K3ReturnOrderDO" resultType="java.lang.String">
+        SELECT <include refid="column_List"/> from erp_k3_return_order ekro WHERE
+        ekro.k3_customer_no = #{k3CustomerNo,jdbcType=VARCHAR} AND ekro.data_status = 1
+    </select>
 </mapper>

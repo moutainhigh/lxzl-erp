@@ -5,6 +5,7 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
 import javax.validation.constraints.Min;
@@ -14,7 +15,7 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CouponBatchDetail extends BasePO {
-
+	@NotNull(message = ErrorCode.ID_NOT_NULL,groups = {IdGroup.class})
 	private Integer couponBatchDetailId;   //唯一标识
 	@NotNull(message = ErrorCode.COUPON_BATCH_ID_NOT_NULL , groups = {AddGroup.class})
 	private Integer couponBatchId;   //批次ID

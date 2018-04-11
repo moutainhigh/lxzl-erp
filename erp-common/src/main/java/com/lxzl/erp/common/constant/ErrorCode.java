@@ -416,6 +416,8 @@ public class ErrorCode {
     public static final String ORDER_ITEM_ID_NOT_NULL = "J400141";
     public static final String ORDER_ROW_ID_NOT_NULL = "J400142";
     public static final String RETURN_DETAIL_LIST_NOT_NULL = "J400143";
+    public static final String RETURN_TIME_LESS_RENT_TIME = "J400144";
+    public static final String RETURN_TIME_LESS_MIN_TIME = "J400145";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -761,6 +763,16 @@ public class ErrorCode {
     public static final String K3_SEND_RECORD_ID_IS_NOT_EXISTS = "J17000014";
     public static final String K3_SERVER_ERROR = "J17000015";
     public static final String K3_RETURN_ORDER_FAIL = "J17000016";
+    public static final String K3_CUSTOMER_NO_IS_NULL = "J17000017";
+    public static final String K3_RETURN_ADDRESS_IS_NULL = "J17000019";
+    public static final String K3_RETURN_CONTACTS_IS_NULL = "J17000020";
+    public static final String K3_RETURN_PHONE_IS_NULL = "J17000021";
+    public static final String K3_RETURN_MODE_IS_NULL = "J17000022";
+    public static final String HAS_SAME_PRODUCT = "J17000023";
+    public static final String PRODUCT_NO_IS_NULL = "J17000024";
+    public static final String K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED = "J17000025";
+    public static final String K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH = "J17000026";
+    public static final String K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH = "J17000027";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -814,6 +826,9 @@ public class ErrorCode {
     public static final String COUPON_FACE_AMOUNT_ERROR="J19000012";
     public static final String COUPON_USED="J19000013";
     public static final String COUPON_PROVIDE_COUNT_ERROR="J19000014";
+    public static final String COUPON_LIST_IS_EMPTY="J19000015";
+    public static final String COUPON_AMOUNT_TOO_MANY="J19000016";
+    public static final String COUPON_CANCEL="J19000017";
 
     public static final String SWITCH_INTERFACE_URL_NOT_NULL="J20000001";
     public static final String SWITCH_IS_OPEN_NOT_NULL="J20000002";
@@ -1301,6 +1316,8 @@ public class ErrorCode {
         MAP.put(ORDER_ITEM_ID_NOT_NULL, "订单项ID不能为空");
         MAP.put(ORDER_ROW_ID_NOT_NULL, "订单行号不能为空");
         MAP.put(RETURN_DETAIL_LIST_NOT_NULL, "退货详情列表不能为空");
+        MAP.put(RETURN_TIME_LESS_RENT_TIME, "退货日期不能小于起租日期");
+        MAP.put(RETURN_TIME_LESS_MIN_TIME, "退货日期不能小于三月五号");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1576,6 +1593,16 @@ public class ErrorCode {
         MAP.put(K3_SEND_RECORD_ID_IS_NOT_EXISTS, "K3数据发送记录表，此记录不存在");
         MAP.put(K3_SERVER_ERROR, "K3服务异常");
         MAP.put(K3_RETURN_ORDER_FAIL, "K3退货失败");
+        MAP.put(K3_CUSTOMER_NO_IS_NULL,"客户编码不能为空");
+        MAP.put(K3_RETURN_ADDRESS_IS_NULL,"退货地址不能为空");
+        MAP.put(K3_RETURN_CONTACTS_IS_NULL,"联系人不能为空");
+        MAP.put(K3_RETURN_PHONE_IS_NULL,"联系电话不能为空");
+        MAP.put(K3_RETURN_MODE_IS_NULL,"退货方式不能为空");
+        MAP.put(HAS_SAME_PRODUCT,"不能有相同商品");
+        MAP.put(PRODUCT_NO_IS_NULL,"商品编号不能为空");
+        MAP.put(K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED, "K3退货单所属的订单有处于未发货的状态，不能进行此操作");
+        MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH, "K3退货单设备的数量超过了可以退货的数量，不能进行此操作");
+        MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "K3退货单物料的数量超过了可以退货的数量，不能进行此操作");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1628,8 +1655,12 @@ public class ErrorCode {
         MAP.put(IS_ONLINE_ERROR,"优惠券是否线上状态有误，请重重新输入");
         MAP.put(COUPON_COUNT_ERROR,"新增优惠卷总数不能小于一张");
         MAP.put(COUPON_FACE_AMOUNT_ERROR,"优惠面值必须大于0");
-        MAP.put(COUPON_USED,"优惠卷已使用，不能作废");
+        MAP.put(COUPON_USED,"作废的优惠券中存在已经使用的优惠券，不能作废");
         MAP.put(COUPON_PROVIDE_COUNT_ERROR,"优惠卷可发放数量不足");
+        MAP.put(COUPON_LIST_IS_EMPTY,"未选择需要使用的优惠券");
+        MAP.put(COUPON_AMOUNT_TOO_MANY,"选择的优惠卷数量超过可使用数");
+        MAP.put(COUPON_CANCEL,"选择的优惠已作废，不可重复作废");
+
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL,"接口URL不能为空");
         MAP.put(SWITCH_IS_OPEN_NOT_NULL,"是否开启状态不能为空");

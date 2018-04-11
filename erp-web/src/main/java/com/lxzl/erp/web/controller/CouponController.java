@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -147,6 +148,48 @@ public class CouponController {
     public Result findCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) Customer customer, BindingResult validResult){
         ServiceResult<String,List<Coupon>> serviceResult = couponService.findCouponByCustomerNo(customer);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+    /**
+     * 根据批次ID获取批次详情
+     * @param couponBatch
+     * @return
+     */
+    @RequestMapping(value = "findCouponBatchByID",method = RequestMethod.POST)
+    public Result findCouponBatchByID(@RequestBody @Validated(IdGroup.class) CouponBatch couponBatch, BindingResult validResult){
+        ServiceResult<String,CouponBatch> serviceResult = couponService.findCouponBatchByID(couponBatch);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    /**
+     * 从增券列表进行作废优惠券
+     * @param couponBatchDetail
+     * @return
+     */
+    @RequestMapping(value = "cancelCouponByCouponBatchDetail",method = RequestMethod.POST)
+    public Result cancelCouponByCouponBatchDetail(@RequestBody @Validated(IdGroup.class) CouponBatchDetail couponBatchDetail, BindingResult validResult){
+        ServiceResult<String,String> serviceResult = couponService.cancelCouponByCouponBatchDetail(couponBatchDetail);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+    /**
+     * 从批次列表进行作废优惠券
+     * @param couponBatch
+     * @return
+     */
+    @RequestMapping(value = "cancelCouponByCouponBatch",method = RequestMethod.POST)
+    public Result cancelCouponByCouponBatch(@RequestBody @Validated(IdGroup.class) CouponBatch couponBatch, BindingResult validResult){
+        ServiceResult<String,String> serviceResult = couponService.cancelCouponByCouponBatch(couponBatch);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+    /**
+     * 用于测试使用优惠券的Controller
+     * @param useCoupon
+     * @return
+     */
+    @RequestMapping(value = "useCoupon",method = RequestMethod.POST)
+    public Result useCoupon(@RequestBody UseCoupon useCoupon, BindingResult validResult){
+
+        ServiceResult<String,String> serviceResult = couponService.useCoupon(useCoupon);
+        return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
 }

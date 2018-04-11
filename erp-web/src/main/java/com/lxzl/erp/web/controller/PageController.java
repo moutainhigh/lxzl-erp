@@ -924,6 +924,10 @@ public class PageController extends BaseController {
     public String systemManageInterfaceSwitchList() {
         return "/systemManage/interfaceSwitchList";
     }
+    @RequestMapping("/system-manage/switch-modal")
+    public String interfaceSwitchModal() {
+        return "/systemManage/switchModal";
+    }
 
     @RequestMapping("/private-manage/request")
     public String privateManageRequeset() {
