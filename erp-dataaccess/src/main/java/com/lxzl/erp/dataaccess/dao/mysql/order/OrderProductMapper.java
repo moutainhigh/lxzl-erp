@@ -20,4 +20,7 @@ public interface OrderProductMapper extends BaseMysqlDAO<OrderProductDO> {
                                              @Param("isNewProduct") Integer isNewProduct);
 
     List<OrderProductDO> findOrderProductByName(@Param("productName") String productName);
+
+    Integer findTotalRentingProductCountByOrderId(@Param("orderId") Integer orderId);
+
 }

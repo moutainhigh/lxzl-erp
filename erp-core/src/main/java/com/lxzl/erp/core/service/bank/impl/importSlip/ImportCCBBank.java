@@ -162,10 +162,8 @@ public class ImportCCBBank {
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             boolean tradeAmountFlag = false;
             if (row != null) {
@@ -178,8 +176,8 @@ public class ImportCCBBank {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("贷方".equals(value)) ||
                             ("借方".equals(value)) ||
@@ -243,7 +241,7 @@ public class ImportCCBBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 8 || payTimeNo != 1 || payMoneyNo != 5 || paySerialNumberNo != 12 || payPostscriptNo != 11 || payAccountNo != 9 || creditSumNo != 4 ){
+                    if (payerNameNo != 8 || payTimeNo != 1 || payMoneyNo != 5 || paySerialNumberNo != 12 || payPostscriptNo != 11 || payAccountNo != 9 || creditSumNo != 4) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
@@ -332,7 +330,7 @@ public class ImportCCBBank {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-        if(bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)){
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
             return serviceResult;
         }

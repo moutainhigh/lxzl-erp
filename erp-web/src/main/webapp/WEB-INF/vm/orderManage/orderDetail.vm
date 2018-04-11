@@ -20,7 +20,10 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <h5>订单编号：<small id="orderNo"></small></h5>
+                                <h5>订单编号：
+                                    <span id="spanIsK3Order" class="label label-dark hide" title="K3订单">K3</span>
+                                    <small id="orderNo"></small>
+                                </h5>
                             </div>
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">

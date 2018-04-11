@@ -59,9 +59,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -221,18 +219,52 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         k3ReturnOrderDO.setUpdateUser(userId);
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
+        Set<Integer> set = new HashSet();
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
-            k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
-            k3ReturnOrderDetailDO.setUpdateUser(userId);
-            k3ReturnOrderDetailDO.setUpdateTime(now);
-            k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+            if (isProduct(k3ReturnOrderDetailDO.getProductNo())) {
+                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
+                orderProductDO.setRentingProductCount(productCount);
+                orderProductMapper.update(orderProductDO);
+                set.add(orderProductDO.getOrderId());
+                k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                k3ReturnOrderDetailDO.setUpdateUser(userId);
+                k3ReturnOrderDetailDO.setUpdateTime(now);
+                k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+            } else {
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
+                orderMaterialDO.setRentingMaterialCount(materialCount);
+                orderMaterialMapper.update(orderMaterialDO);
+                set.add(orderMaterialDO.getOrderId());
+                k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                k3ReturnOrderDetailDO.setUpdateUser(userId);
+                k3ReturnOrderDetailDO.setUpdateTime(now);
+                k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+            }
+
+        }
+        for (Integer orderId : set) {
+
+            Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
+            Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
+            if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
+                OrderDO orderDO = orderMapper.findById(orderId);
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                orderMapper.update(orderDO);
+            }
         }
 
        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
-
+    private Boolean isProduct(String productNo){
+        if (productNo.startsWith("20.")) {
+            return false;
+        }
+        return true;
+    }
     @Autowired
     private OrderMapper orderMapper;
 
