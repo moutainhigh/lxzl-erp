@@ -29,9 +29,6 @@ public interface K3Service {
 
     ServiceResult<String, Order> queryOrder(String orderNo);
 
-
-    ServiceResult<String, String> sendToK3(String returnOrderNo);
-
     /**
      * K3数据发送记录表分页
      *
