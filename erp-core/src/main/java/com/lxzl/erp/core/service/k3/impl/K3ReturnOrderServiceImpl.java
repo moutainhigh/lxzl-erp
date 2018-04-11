@@ -478,10 +478,18 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                         String productNo = k3ReturnOrderDetailDO.getProductNo();
                         if ("10".equals(productNo.substring(0,2)) || "90".equals(productNo.substring(0,2))){
                             //设备
-                            productCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                            if (productCountMap.get(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId())) == null){
+                                productCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                            }else{
+                                productCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount()+ productCountMap.get(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId())));
+                            }
                         }else if("20".equals(productNo.substring(0,2))){
                             //物料
-                            materialCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                            if (materialCountMap.get(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId())) == null){
+                                materialCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount());
+                            }else{
+                                materialCountMap.put(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()),k3ReturnOrderDetailDO.getProductCount() + materialCountMap.get(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId())));
+                            }
                         }
                     }
                 }
