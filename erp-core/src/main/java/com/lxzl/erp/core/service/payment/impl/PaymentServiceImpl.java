@@ -166,11 +166,14 @@ public class PaymentServiceImpl implements PaymentService {
                 result.setResult((Boolean) paymentResult.getResultMap().get("data"));
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
-            }else{
-                result.setResult(Boolean.FALSE);
-                result.setErrorCode(paymentResult.getDescription());
-                return result;
             }
+
+//            else{
+//                result.setResult(Boolean.FALSE);
+//                result.setErrorCode(paymentResult.getDescription());
+//                return result;
+//            }
+            throw new BusinessException(paymentResult.getDescription());
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
