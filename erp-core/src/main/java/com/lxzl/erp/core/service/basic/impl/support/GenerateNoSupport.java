@@ -233,6 +233,7 @@ public class GenerateNoSupport {
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append("-");
             builder.append(String.format("%05d", count + 1));
+            builder.append(String.format("%05d", ((int)((Math.random()*9+1)*100000)) + 1));
             return builder.toString();
         }
     }
