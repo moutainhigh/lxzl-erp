@@ -2980,8 +2980,9 @@ CREATE TABLE `erp_k3_return_order` (
   `return_mode` int(11) NOT NULL COMMENT '退还方式，1-上门取件，2邮寄',
   `logistics_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '运费',
   `service_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '服务费',
+
   `return_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '换货订单状态，0-待提交，4-审核中，20-已完成',
-  `return_reason` VARCHAR(500) DEFAULT "" COMMENT '退货原因',
+  `return_reason_type` int(11) NOT NULL COMMENT '退还原因类型：1-客户方设备不愿或无法退还，2-期满正常收回，3-提前退租，4-未按时付款或风险等原因上门收回，5-设备故障等我方原因导致退货，6-主观因素等客户方原因导致退货，7-更换设备，8-公司倒闭，9-设备闲置，10-满三个月或六个月随租随还，11-其它',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3153,6 +3154,7 @@ CREATE TABLE `erp_coupon_batch` (
   `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
   `coupon_batch_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
   `coupon_batch_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `coupon_batch_cancel_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券作废总数',
   `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
   `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
   `total_deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣总金额',
