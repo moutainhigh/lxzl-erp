@@ -29,7 +29,6 @@ public class CustomerConsignInfo extends BasePO {
 	@NotBlank(message = ErrorCode.CONSIGNEE_PHONE_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private String consigneePhone;   //收货人手机号
 	private Integer province;   //省份ID，省份ID
-	@NotNull(message = ErrorCode.CITY_ID_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer city;   //城市ID，对应城市ID
 	private Integer district;   //区ID，对应区ID
 	@NotBlank(message = ErrorCode.ADDRESS_NOT_NULL,groups = {AddGroup.class,UpdateGroup.class})
