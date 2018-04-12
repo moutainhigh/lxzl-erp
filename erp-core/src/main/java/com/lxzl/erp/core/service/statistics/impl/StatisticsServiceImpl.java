@@ -20,15 +20,12 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIDeclaration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.*;
 
 /**
@@ -411,6 +408,50 @@ public class StatisticsServiceImpl implements StatisticsService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;
+    }
+
+    @Override
+    public ServiceResult queryAwaitReceivable(AwaitReceivablePageParam awaitReceivablePageParam) {
+        ServiceResult<Object, Object> serviceResult = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(awaitReceivablePageParam.getPageNo(), awaitReceivablePageParam.getPageSize());
+        Map<Object, Object> map = new HashMap<>();
+        map.put("start",pageQuery.getStart());
+        map.put("pageSize",pageQuery.getPageSize());
+        map.put("awaitReceivableQueryParam",awaitReceivablePageParam);
+
+        AwaitReceivable awaitReceivable = statisticsMapper.queryAwaitReceivableCount(map);
+        List<AwaitReceivableDetail> awaitReceivableDetailList = statisticsMapper.queryAwaitReceivable(map);
+        Page<AwaitReceivableDetail> page = new Page<>(awaitReceivableDetailList,awaitReceivable.getTotalCount(),awaitReceivablePageParam.getPageNo(),awaitReceivablePageParam.getPageSize());
+        awaitReceivable.setAwaitReceivableDetailPage(page);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(awaitReceivable);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult queryStatisticsAwaitReceivable(StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam) {
+        ServiceResult<String, StatisticsAwaitReceivable> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(statisticsAwaitReceivablePageParam.getPageNo(), statisticsAwaitReceivablePageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("statisticsAwaitReceivablePageParam", statisticsAwaitReceivablePageParam);
+
+        StatisticsAwaitReceivable statisticsAwaitReceivable = statisticsMapper.queryStatisticsAwaitReceivableCount(maps);
+        statisticsAwaitReceivable.setTotalCustomerCount(statisticsAwaitReceivable.getTotalRentedCustomerCountShort()+statisticsAwaitReceivable.getTotalRentingCustomerCountLong());
+        statisticsAwaitReceivable.setTotalAwaitReceivablePercentage(getPercentage(statisticsAwaitReceivable.getTotalAwaitReceivable(),statisticsAwaitReceivable.getTotalLastMonthRent()));
+        List<StatisticsAwaitReceivableDetail> statisticsAwaitReceivableDetailList = statisticsMapper.queryStatisticsAwaitReceivable(maps);
+        if(CollectionUtil.isNotEmpty(statisticsAwaitReceivableDetailList)){
+            for(StatisticsAwaitReceivableDetail statisticsAwaitReceivableDetail : statisticsAwaitReceivableDetailList){
+                statisticsAwaitReceivableDetail.setCustomerCount(statisticsAwaitReceivableDetail.getRentedCustomerCountShort()+statisticsAwaitReceivableDetail.getRentingCustomerCountLong());
+                statisticsAwaitReceivableDetail.setAwaitReceivablePercentage(getPercentage(statisticsAwaitReceivableDetail.getAwaitReceivable(),statisticsAwaitReceivableDetail.getLastMonthRent()));
+            }
+        }
+        Page<StatisticsAwaitReceivableDetail> page = new Page<>(statisticsAwaitReceivableDetailList, statisticsAwaitReceivable.getTotalCount(), statisticsAwaitReceivablePageParam.getPageNo(), statisticsAwaitReceivablePageParam.getPageSize());
+        statisticsAwaitReceivable.setStatisticsAwaitReceivableDetailPage(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(statisticsAwaitReceivable);
+        return result;
     }
 
     private BigDecimal calculateRentAmount(Date startTime, Date endTime, StatementOrderDetailDO statementOrderDetailDO) {
