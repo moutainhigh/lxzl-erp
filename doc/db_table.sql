@@ -660,7 +660,7 @@ CREATE TABLE `erp_workflow_link_detail` (
   `workflow_previous_node_id` int(20) COMMENT '上节点ID',
   `workflow_next_node_id` int(20) COMMENT '下节点ID',
   `verify_user` int(20) COMMENT '审核人',
-  `verify_user_group_id` int(20) DEFAULT NULL COMMENT '审核人组ID，审核人为空时，该字段有值',
+  `verify_user_group_id` varchar(100) DEFAULT NULL COMMENT '审核人组UUID，审核人为空时，该字段有值',
   `verify_time` datetime COMMENT '审核时间',
   `verify_status` int(20) COMMENT '审核状态',
   `verify_opinion` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '审核意见',

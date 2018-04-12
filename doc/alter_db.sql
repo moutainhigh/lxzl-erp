@@ -147,6 +147,8 @@ CREATE TABLE `erp_sms_log` (
 
 ALTER TABLE erp_workflow_link MODIFY  `verify_user_group_id` VARCHAR(100) COMMENT '审核人组UUID，审核人为空时，该字段有值';
 ALTER TABLE erp_workflow_verify_user_group MODIFY  `verify_user_group_id` VARCHAR(100) COMMENT '审核人组UUID';
+ALTER TABLE erp_workflow_link_detail MODIFY  `verify_user_group_id` varchar(100) DEFAULT NULL COMMENT '审核人组UUID，审核人为空时，该字段有值';
+
 
 
 
