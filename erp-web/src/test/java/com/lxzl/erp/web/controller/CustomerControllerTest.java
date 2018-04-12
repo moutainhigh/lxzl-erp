@@ -431,12 +431,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
 //        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
-//        customerCompanyQueryParam.setCompanyName("百");
+        customerCompanyQueryParam.setCompanyName("测试八卦三号");
 //        customerCompanyQueryParam.setProductPurpose("测试");
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //        customerCompanyQueryParam.setConnectPhone("13726273851");
-        customerCompanyQueryParam.setOwnerSubCompanyId(3);
+//        customerCompanyQueryParam.setOwnerSubCompanyId(3);
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
