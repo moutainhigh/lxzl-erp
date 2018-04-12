@@ -504,7 +504,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     rentingProductCountMap.put(productId,orderProductDO.getRentingProductCount());
                     nowProductCountMap.put(productId,k3ReturnOrderDetailDO.getProductCount());
 
-                }else if(isMaterial(productNo)){
+                }else{
                     //物料
                     materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(materialId);
@@ -532,7 +532,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                             }else{
                                 productCountMap.put(productId , k3ReturnOrderDetailDO.getProductCount() + productCountMap.get(productId));
                             }
-                        }else if(isMaterial(productNo)){
+                        }else{
                             //物料
                             materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
                             if (materialCountMap.get(materialId) == null){
@@ -608,14 +608,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             }
             return result;
-        }
-    }
-
-    private boolean isMaterial(String substring) {
-        if ("20.".equals(substring.substring(0,3))){
-             return true;
-        }else{
-            return false;
         }
     }
 
