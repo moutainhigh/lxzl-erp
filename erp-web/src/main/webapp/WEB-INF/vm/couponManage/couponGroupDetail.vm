@@ -102,27 +102,18 @@
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
-                                            <ul class="dropdown-menu pull-right" role="menu">
-                                                {{#rowActionButtons}}
-                                                <li>
-                                                    <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}}"
-                                                       data-couponTotalCount="{{couponTotalCount}}"
-                                                       data-couponCancelCount="{{couponCancelCount}}"
-                                                       data-couponBatchDetailId="{{couponBatchDetailId}}"
-                                                       data-couponReceivedCount="{{couponReceivedCount}}">
-                                                        {{text}}
-                                                    </a>
-                                                </li>
-                                                {{/rowActionButtons}}
-                                            </ul>
+                                          {{#rowActionButtons}}
+                                                <a type="button" href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}} btn btn-default btn-xs"
+                                                   data-couponTotalCount="{{couponTotalCount}}"
+                                                   data-couponCancelCount="{{couponCancelCount}}"
+                                                   data-couponBatchDetailId="{{couponBatchDetailId}}"
+                                                   data-couponReceivedCount="{{couponReceivedCount}}">
+                                                    {{text}}
+                                                </a>
+                                            {{/rowActionButtons}}
                                         </div>
                                     </td>
-                                    {{/hasRowActionButtons}}
-##                                    <td>
-##                                        <button class="abolishButton" data-couponTotalCount="{{couponTotalCount}}" data-couponCancelCount="{{couponCancelCount}}" data-couponBatchDetailId="{{couponBatchDetailId}}">作废</button>
-##                                        <button class="provideButton" data-couponReceivedCount="{{couponReceivedCount}}" data-couponTotalCount="{{couponTotalCount}}" data-couponBatchDetailId="{{couponBatchDetailId}}">发放优惠券</button>
-##                                    </td>
+                                    {{/hasRowActionButtons}
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}

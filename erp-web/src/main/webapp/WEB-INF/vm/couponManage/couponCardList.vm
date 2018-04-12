@@ -126,14 +126,9 @@
                                 {{#hasRowActionButtons}}
                                 <td class="text-right">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
-                                        <ul class="dropdown-menu pull-right" role="menu">
-                                            {{#rowActionButtons}}
-                                            <li>
-                                                <a href="${ctx}{{menuUrl}}?couponId={{couponId}}" class="{{class}}" data-couponId="{{couponId}}">{{text}}</a>
-                                            </li>
-                                            {{/rowActionButtons}}
-                                        </ul>
+                                        {{#rowActionButtons}}
+                                            <a type="button" href="${ctx}{{menuUrl}}?couponId={{couponId}}" class="{{class}} btn btn-default btn-xs" data-couponId="{{couponId}}">{{text}}</a>
+                                        {{/rowActionButtons}}
                                     </div>
                                 </td>
                                 {{/hasRowActionButtons}}
