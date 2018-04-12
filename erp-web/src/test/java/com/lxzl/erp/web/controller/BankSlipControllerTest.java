@@ -146,13 +146,13 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
 
 //        北京(中国银行)
-//        BankSlip bankSlip = new BankSlip();
-////        bankSlip.setSubCompanyName("北京分公司");
-//        bankSlip.setSubCompanyId(9);
-//        bankSlip.setBankType(BankType.BOC_BANK);
-//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20"));
-//        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrMwyqAfiq-AAQyAE0RQI4229.xls");
-//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+        BankSlip bankSlip = new BankSlip();
+//        bankSlip.setSubCompanyName("北京分公司");
+        bankSlip.setSubCompanyId(9);
+        bankSlip.setBankType(BankType.BOC_BANK);
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20"));
+        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrN3PaATMKaAARsADBxaDw847.xls");
+        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
 //        BankSlip bankSlip = new BankSlip();
@@ -163,13 +163,13 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //北京(支付宝)
-        BankSlip bankSlip = new BankSlip();
-//        bankSlip.setSubCompanyName("北京分公司");
-        bankSlip.setSubCompanyId(4);
-        bankSlip.setBankType(BankType.HAN_KOU_BANK);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/20"));
-        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrNymmAFtceAAHeAPhb5II064.xls");
-        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
+//        BankSlip bankSlip = new BankSlip();
+////        bankSlip.setSubCompanyName("北京分公司");
+//        bankSlip.setSubCompanyId(4);
+//        bankSlip.setBankType(BankType.HAN_KOU_BANK);
+//        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/20"));
+//        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrNymmAFtceAAHeAPhb5II064.xls");
+//        TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
 
         //成都(交通银行)
