@@ -2718,7 +2718,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             //对设备用途判断
             if (StringUtil.isEmpty(customerCompanyDO.getProductPurpose())) {
-                errorCodeMsg.append("设备用户，");
+                errorCodeMsg.append("设备用途，");
             }
             //对企业成立时间判断
             if (customerCompanyDO.getCompanyFoundTime() == null) {
