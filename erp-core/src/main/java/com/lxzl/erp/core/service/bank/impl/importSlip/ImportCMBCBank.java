@@ -86,6 +86,7 @@ public class ImportCMBCBank {
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getCMBCBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -154,16 +155,14 @@ public class ImportCMBCBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int creditSumNo = 0; //借方金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
 
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             boolean tradeAmountFlag = false;
             if (row != null) {
@@ -239,11 +238,11 @@ public class ImportCMBCBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 16 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 8 || payPostscriptNo != 7 || payAccountNo != 17 || creditSumNo != 4 ){
+                    if (payerNameNo != 16 || payTimeNo != 0 || payMoneyNo != 5 || paySerialNumberNo != 8 || payPostscriptNo != 7 || payAccountNo != 17 || creditSumNo != 4) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //摘要
@@ -314,6 +313,10 @@ public class ImportCMBCBank {
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
 
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

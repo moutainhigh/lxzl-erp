@@ -86,6 +86,7 @@ public class ImportShangHaiPuDongDevelopmentBank {
             //todo 存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getShanghaiPudongDevelopmentBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -153,16 +154,14 @@ public class ImportShangHaiPuDongDevelopmentBank {
         int payAccountNo = 0; //付款人账号[ Debit Account No. ]
         int creditSumNo = 0; //借方金额
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
 
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             boolean tradeAmountFlag = false;
             if (row != null) {
@@ -175,8 +174,8 @@ public class ImportShangHaiPuDongDevelopmentBank {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("贷方金额".equals(value)) ||
                             ("借方金额".equals(value)) ||
@@ -235,11 +234,11 @@ public class ImportShangHaiPuDongDevelopmentBank {
 
                 if (j > next) {
 
-                    if( payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 6 || payPostscriptNo != 11 || payAccountNo != 8 || creditSumNo != 5 ){
+                    if (payerNameNo != 9 || payTimeNo != 0 || payMoneyNo != 6 || payPostscriptNo != 11 || payAccountNo != 8 || creditSumNo != 5) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (row.getCell(payerNameNo) == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注
@@ -313,7 +312,10 @@ public class ImportShangHaiPuDongDevelopmentBank {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

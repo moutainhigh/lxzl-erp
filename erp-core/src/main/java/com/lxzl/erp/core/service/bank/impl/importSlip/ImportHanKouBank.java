@@ -39,7 +39,7 @@ import java.util.List;
  * @Time : Created in 22:00
  */
 @Repository
-public class ImportHanKouBank{
+public class ImportHanKouBank {
     /**
      * 保存中国银行
      *
@@ -86,6 +86,7 @@ public class ImportHanKouBank{
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getHanKouBankData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -154,15 +155,13 @@ public class ImportHanKouBank{
         int debtorAccountNo = 0; //支出金额
         int paySerialNumberNo = 0; //流水号
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
             if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("汇总收入金额")) {
                 break bbb;
@@ -178,11 +177,11 @@ public class ImportHanKouBank{
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
-                    if(getValue(row.getCell(0)).contains("记录数:")){
-                       break bbb;
+                    if (getValue(row.getCell(0)).contains("记录数:")) {
+                        break bbb;
                     }
 
                     if (("收入金额".equals(value)) ||
@@ -252,11 +251,11 @@ public class ImportHanKouBank{
 
                 if (j > next) {
 
-                    if( payerNameNo != 10 || paySerialNumberNo != 0 || payTimeNo != 1 || payPostscriptNo != 6 || payAccountNo != 8 || debtorAccountNo != 5 || payMoneyNo != 4){
+                    if (payerNameNo != 10 || paySerialNumberNo != 0 || payTimeNo != 1 || payPostscriptNo != 6 || payAccountNo != 8 || debtorAccountNo != 5 || payMoneyNo != 4) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //摘要
@@ -331,6 +330,10 @@ public class ImportHanKouBank{
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
 
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

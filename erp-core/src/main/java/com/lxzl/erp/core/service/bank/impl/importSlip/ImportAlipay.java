@@ -85,6 +85,7 @@ public class ImportAlipay {
             //存储
             ServiceResult<String, List<BankSlipDetailDO>> data = getAlipayData(sheet, row, cell, bankSlipDO, now);
             if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 serviceResult.setErrorCode(data.getErrorCode());
                 return serviceResult;
             }
@@ -154,17 +155,16 @@ public class ImportAlipay {
         int creditSumNo = 0; //支出（-元）
         int merchantOrderNo = 0; //商户订单号
         List<BankSlipDetailDO> bankSlipDetailDOList = new ArrayList<BankSlipDetailDO>();
-
+        boolean bankSlipDetailDOListIsEmpty = true;
 
         int next = Integer.MAX_VALUE;
         bbb:
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
             row = sheet.getRow(j);
-            if (j == 0 || j == 1) {
-                if (row == null) {
-                    continue bbb;
-                }
+            if (row == null) {
+                continue bbb;
             }
+
             if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("#导出时间")) {
                 break bbb;
             }
@@ -185,8 +185,8 @@ public class ImportAlipay {
                     }
                     String value = getValue(cell);
 
-                    value = value == null ? "":value;
-                    value =  value.trim();
+                    value = value == null ? "" : value;
+                    value = value.trim();
 
                     if (("收入（+元）".equals(value)) ||
                             ("支出（-元）".equals(value)) ||
@@ -247,11 +247,11 @@ public class ImportAlipay {
 
                 if (j > next) {
 
-                    if( payerNameNo != 13 || payTimeNo != 1 || payMoneyNo != 6 || paySerialNumberNo != 3 || payPostscriptNo != 16 || payAccountNo != 12  || creditSumNo != 7 || merchantOrderNo != 4){
+                    if (payerNameNo != 13 || payTimeNo != 1 || payMoneyNo != 6 || paySerialNumberNo != 3 || payPostscriptNo != 16 || payAccountNo != 12 || creditSumNo != 7 || merchantOrderNo != 4) {
                         serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
                         return serviceResult;
                     }
-
+                    bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
                         tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //备注
@@ -326,7 +326,10 @@ public class ImportAlipay {
         bankSlipDO.setAccountNo(selectAccount); //保存查询账号
         bankSlipDO.setInCount(inCount);
         bankSlipDO.setNeedClaimCount(inCount);
-
+        if (bankSlipDetailDOListIsEmpty && CollectionUtil.isEmpty(bankSlipDetailDOList)) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_IMPORT_FAIL);
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;

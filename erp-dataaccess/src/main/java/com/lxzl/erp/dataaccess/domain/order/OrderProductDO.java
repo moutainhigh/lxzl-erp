@@ -32,6 +32,7 @@ public class OrderProductDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private Integer isNewProduct;
+    private Integer rentingProductCount;        // 在租商品总数
 
     public Integer getId() {
         return id;
@@ -215,5 +216,13 @@ public class OrderProductDO extends BaseDO {
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
+    }
+
+    public Integer getRentingProductCount() {
+        return rentingProductCount;
+    }
+
+    public void setRentingProductCount(Integer rentingProductCount) {
+        this.rentingProductCount = rentingProductCount;
     }
 }

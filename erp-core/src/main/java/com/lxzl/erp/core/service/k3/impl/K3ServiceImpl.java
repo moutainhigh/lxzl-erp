@@ -14,7 +14,6 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -24,14 +23,10 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
-import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
-import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
-import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -50,7 +45,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
-import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
@@ -142,6 +136,9 @@ public class K3ServiceImpl implements K3Service {
                 jsonObject.remove("createEndTime");
             } else {
                 jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
+            }
+            if(!userSupport.isSuperUser()){
+                jsonObject.put("orderSellerName", userSupport.getCurrentUser().getRealName());
             }
             jsonObject.put("pw", pw);
             requestJson = jsonObject.toJSONString();
@@ -333,24 +330,6 @@ public class K3ServiceImpl implements K3Service {
         result.setResult(order);
         return result;
     }
-
-    private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
-        String type = null;
-        if ("erp-prod".equals(ApplicationConfig.application)) {
-            type = "【线上环境】";
-        } else if ("erp-dev".equals(ApplicationConfig.application)) {
-            type = "【开发环境】";
-        } else if ("erp-adv".equals(ApplicationConfig.application)) {
-            type = "【预发环境】";
-        } else if ("erp-test".equals(ApplicationConfig.application)) {
-            type = "【测试环境】";
-        }
-        StringBuffer sb = new StringBuffer(type);
-        sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
-        sb.append(JSON.toJSONString(response));
-        return sb.toString();
-    }
-
 
     @Override
     public ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam) {
@@ -563,56 +542,62 @@ public class K3ServiceImpl implements K3Service {
                     orderDO.setUpdateUser(orderDO.getOrderSellerId().toString());
 
                     List<OrderProductDO> orderProductDOList = new ArrayList<>();
-                    for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
-                        OrderProductDO orderProductDO = new OrderProductDO();
-                        BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
+                    if(CollectionUtil.isNotEmpty(k3Order.getOrderProductList())){
+                        for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
+                            OrderProductDO orderProductDO = new OrderProductDO();
+                            BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
 
-                        ProductDO productDO = productMapper.findByK3ProductNo(k3OrderProduct.getProductNumber());
+                            ProductDO productDO = productMapper.findByK3ProductNo(k3OrderProduct.getProductNumber());
 
-                        if (productDO != null) {
-                            orderProductDO.setProductId(productDO.getId());
-                            orderProductDO.setProductSkuId(0);
-                            orderProductDO.setProductName(productDO.getProductName());
-                            orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(productDO, Product.class)));
+                            if (productDO != null) {
+                                orderProductDO.setProductId(productDO.getId());
+                                orderProductDO.setProductSkuId(0);
+                                orderProductDO.setProductName(productDO.getProductName());
+                                orderProductDO.setProductSkuSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(productDO, Product.class)));
+                            }
+
+                            orderProductDO.setRentingProductCount(k3OrderProduct.getRentingProductCount());
+                            orderProductDO.setDepositCycle(order.getDepositCycle());
+                            orderProductDO.setPaymentCycle(order.getPaymentCycle());
+                            orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                            orderProductDO.setCreateTime(currentTime);
+                            orderProductDO.setCreateUser(orderDO.getOrderSellerId().toString());
+                            orderProductDO.setUpdateTime(currentTime);
+                            orderProductDO.setUpdateUser(orderDO.getOrderSellerId().toString());
+                            orderProductDOList.add(orderProductDO);
                         }
-
-                        orderProductDO.setProductCount(k3OrderProduct.getRentingProductCount());
-                        orderProductDO.setDepositCycle(order.getDepositCycle());
-                        orderProductDO.setPaymentCycle(order.getPaymentCycle());
-                        orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        orderProductDO.setCreateTime(currentTime);
-                        orderProductDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                        orderProductDO.setUpdateTime(currentTime);
-                        orderProductDO.setUpdateUser(orderDO.getOrderSellerId().toString());
-                        orderProductDOList.add(orderProductDO);
                     }
+
                     orderDO.setOrderProductDOList(orderProductDOList);
                     // K3老订单，插入-1
                     orderDO.setDeliverySubCompanyId(-1);
 
                     List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
-                    for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
-                        OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
-                        BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
-                        MaterialDO materialDO = materialMapper.findByK3MaterialNo(k3OrderMaterial.getFNumber());
+                    if(CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())){
+                        for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
+                            OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
+                            BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
+                            MaterialDO materialDO = materialMapper.findByK3MaterialNo(k3OrderMaterial.getFNumber());
 
-                        if (materialDO != null) {
-                            orderMaterialDO.setMaterialId(materialDO.getId());
-                            orderMaterialDO.setMaterialName(materialDO.getMaterialName());
-                            orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(materialDO, Material.class)));
+                            if (materialDO != null) {
+                                orderMaterialDO.setMaterialId(materialDO.getId());
+                                orderMaterialDO.setMaterialName(materialDO.getMaterialName());
+                                orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(ConverterUtil.convert(materialDO, Material.class)));
+                            }
+
+                            orderMaterialDO.setRentingMaterialCount(k3OrderMaterial.getRentingMaterialCount());
+                            orderMaterialDO.setOrderId(orderDO.getId());
+                            orderMaterialDO.setDepositCycle(order.getDepositCycle());
+                            orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
+                            orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                            orderMaterialDO.setCreateTime(currentTime);
+                            orderMaterialDO.setCreateUser(orderDO.getOrderSellerId().toString());
+                            orderMaterialDO.setUpdateTime(currentTime);
+                            orderMaterialDO.setUpdateUser(orderDO.getOrderSellerId().toString());
+                            orderMaterialDOList.add(orderMaterialDO);
                         }
-
-                        orderMaterialDO.setMaterialCount(k3OrderMaterial.getRentingMaterialCount());
-                        orderMaterialDO.setOrderId(orderDO.getId());
-                        orderMaterialDO.setDepositCycle(order.getDepositCycle());
-                        orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
-                        orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                        orderMaterialDO.setCreateTime(currentTime);
-                        orderMaterialDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                        orderMaterialDO.setUpdateTime(currentTime);
-                        orderMaterialDO.setUpdateUser(orderDO.getOrderSellerId().toString());
-                        orderMaterialDOList.add(orderMaterialDO);
                     }
+
                     orderDO.setOrderMaterialDOList(orderMaterialDOList);
 
                     if (orderService.isCheckRiskManagement(orderDO)) {
@@ -712,12 +697,6 @@ public class K3ServiceImpl implements K3Service {
     private K3MappingCategoryMapper k3MappingCategoryMapper;
 
     @Autowired
-    private K3ReturnOrderMapper k3ReturnOrderMapper;
-
-    @Autowired
-    private K3ChangeOrderMapper k3ChangeOrderMapper;
-
-    @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
 
     @Autowired
@@ -755,14 +734,16 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private CustomerMapper customerMapper;
+
     @Autowired
     private ProductMapper productMapper;
+
     @Autowired
     private OrderMapper orderMapper;
+
     @Autowired
     private UserMapper userMapper;
-    @Autowired
-    private PostK3ServiceManager postK3ServiceManager;
+
     @Autowired
     private DingDingSupport dingDingSupport;
 

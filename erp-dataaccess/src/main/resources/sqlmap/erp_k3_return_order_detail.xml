@@ -102,4 +102,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
 		UPDATE erp_k3_return_order_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findListByReturnOrderId" resultMap="K3ReturnOrderDetailDO" resultType="java.lang.Integer">
+		SELECT <include refid="column_List"/> from erp_k3_return_order_detail ekrod WHERE
+		ekrod.return_order_id = #{returnOrderId,jdbcType=VARCHAR} AND ekrod.data_status = 1
+	</select>
 </mapper>
