@@ -17,7 +17,7 @@
 		<result column="commit_user" jdbcType="INTEGER" property="commitUser" />
 		<result column="commit_user_name" jdbcType="VARCHAR" property="commitUserName" />
 		<result column="current_verify_user" jdbcType="INTEGER" property="currentVerifyUser" />
-		<result column="verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
+		<result column="verify_user_group_id" jdbcType="VARCHAR" property="verifyUserGroupId" />
 		<result column="current_verify_user_name" jdbcType="VARCHAR" property="currentVerifyUserName" />
 		<result column="current_verify_status" jdbcType="INTEGER" property="currentVerifyStatus" />
 		<result column="verify_matters" jdbcType="VARCHAR" property="verifyMatters" />
@@ -43,7 +43,7 @@
 		<result column="detail_workflow_next_node_id" jdbcType="INTEGER" property="workflowNextNodeId" />
 		<result column="detail_workflow_next_node_name" jdbcType="VARCHAR" property="workflowNextNodeName" />
 		<result column="detail_verify_user" jdbcType="INTEGER" property="verifyUser" />
-		<result column="detail_verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
+		<result column="detail_verify_user_group_id" jdbcType="VARCHAR" property="verifyUserGroupId" />
 		<result column="detail_verify_user_name" jdbcType="VARCHAR" property="verifyUserName" />
 		<result column="detail_verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
 		<result column="detail_verify_status" jdbcType="INTEGER" property="verifyStatus" />
@@ -58,7 +58,7 @@
 
 	<resultMap id="WorkflowVerifyUserGroupDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO">
 		<id column="group_id" jdbcType="INTEGER" property="id" />
-		<result column="group_verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId" />
+		<result column="group_verify_user_group_id" jdbcType="VARCHAR" property="verifyUserGroupId" />
 		<result column="group_verify_type" jdbcType="INTEGER" property="verifyType" />
 		<result column="group_verify_user" jdbcType="INTEGER" property="verifyUser" />
 		<result column="group_verify_user_name" jdbcType="VARCHAR" property="verifyUserName" />
@@ -248,7 +248,7 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 		) link
 		LEFT JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
-        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id
+        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id AND ewvug.data_status = 1
         LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
 		LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
@@ -287,7 +287,7 @@
 			current_verify_user = #{currentVerifyUser,jdbcType=INTEGER},
 
 			<if test="verifyUserGroupId != null">
-				verify_user_group_id = #{verifyUserGroupId,jdbcType=INTEGER},
+				verify_user_group_id = #{verifyUserGroupId,jdbcType=VARCHAR},
 			</if>
 			<if test="currentVerifyStatus != null">
 				current_verify_status = #{currentVerifyStatus,jdbcType=INTEGER},

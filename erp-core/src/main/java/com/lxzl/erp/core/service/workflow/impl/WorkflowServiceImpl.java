@@ -347,7 +347,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         return workflowVerifyUserGroupDO;
     }
 
-    public void saveWorkflowLinkDetail (Integer workflowLinkId,String workflowReferNo,Integer workflowStep,Integer loginUserId ,Integer verifyUserGroupId,Date currentTime,String commitRemark){
+    public void saveWorkflowLinkDetail (Integer workflowLinkId,String workflowReferNo,Integer workflowStep,Integer loginUserId ,String verifyUserGroupId,Date currentTime,String commitRemark){
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkId);
         workflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
@@ -390,7 +390,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
                     List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
                     Map<Integer, Integer> map = new HashMap<>();
-                    Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
+                    String verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
                     SubCompanyCityCoverDO subCompanyCityCoverDO;
                     //判断收货地址
                     for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
@@ -425,7 +425,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     workflowLinkDetailMapper.update(workflowLinkDetailDO);
                     System.out.println(workflowLinkDetailDO.getId());
                 } else {
-                    Integer groupId = generateNoSupport.generateVerifyUserGroupId();
+                    String groupId = generateNoSupport.generateVerifyUserGroupId();
                     WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                     workflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
                     workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
@@ -986,7 +986,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     if (workflowLinkDetailDOList.size() > 1) {
                         WorkflowLinkDetailDO previousWorkflowLinkDetailDO = workflowLinkDetailDOList.get(1);
                         List<WorkflowVerifyUserGroupDO> newWorkflowVerifyUserGroupDOList = workflowVerifyUserGroupMapper.findByVerifyUserGroupId(previousWorkflowLinkDetailDO.getVerifyUserGroupId());
-                        Integer groupId = generateNoSupport.generateVerifyUserGroupId();
+                        String groupId = generateNoSupport.generateVerifyUserGroupId();
                         for (WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO : newWorkflowVerifyUserGroupDOList) {
                             WorkflowVerifyUserGroupDO newWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                             newWorkflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
@@ -1483,7 +1483,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         Map<Integer, Integer> map = new HashMap<>();
         List<Integer> verifyUserList = new ArrayList<>();
-        Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
+        String verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
 
         SubCompanyCityCoverDO subCompanyCityCoverDO;
         if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
@@ -1707,7 +1707,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
 
-    private void saveWorkflowLink(WorkflowLinkDO workflowLinkDO, String workflowReferNo, WorkflowNodeDO thisWorkflowNodeDO, Integer loginUserId, String commitRemark, Date currentTime, List<Integer> imgIdList, Integer verifyUser, List<Integer> verifyUserList, List<WorkflowNodeDO> workflowNodeDOList, Integer verifyUserGroupId) {
+    private void saveWorkflowLink(WorkflowLinkDO workflowLinkDO, String workflowReferNo, WorkflowNodeDO thisWorkflowNodeDO, Integer loginUserId, String commitRemark, Date currentTime, List<Integer> imgIdList, Integer verifyUser, List<Integer> verifyUserList, List<WorkflowNodeDO> workflowNodeDOList, String verifyUserGroupId) {
         // 生成提交人工作流
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
         workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
