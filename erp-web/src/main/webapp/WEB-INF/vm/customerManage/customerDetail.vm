@@ -14,6 +14,9 @@
             #parse("layout/topbarDropmenu.vm")
             #parse("layout/topbar.vm")
             <section id="content" class="pn animated fadeIn">
+
+                #parse("component/loading.vm")
+                
                 <form id="customerDetail">
                     <div class="pv30 ph40 bg-light dark br-b br-grey posr">
                         <script type="text/html" id="customerHeadTpl">
