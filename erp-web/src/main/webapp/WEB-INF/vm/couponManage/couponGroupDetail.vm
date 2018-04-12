@@ -113,7 +113,7 @@
                                             {{/rowActionButtons}}
                                         </div>
                                     </td>
-                                    {{/hasRowActionButtons}
+                                    {{/hasRowActionButtons}}
                                 </tr>
                                 {{/listData}}
                                 {{^listData}}
