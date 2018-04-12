@@ -114,8 +114,8 @@
                                 <td>{{couponStatusValue}}</td>
                                 <td>{{customerNo}}</td>
                                 <td>{{isOnLineValue}}</td>
-                                <td>{{receiveTime}}</td>
-                                <td>{{useTime}}</td>
+                                <td>{{#clockShorTime}}{{receiveTime}}{{/clockShorTime}}</td>
+                                <td>{{#clockShorTime}}{{useTime}}{{/clockShorTime}}</td>
                                 <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
                                 <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
                                 <td>{{remark}}</td>

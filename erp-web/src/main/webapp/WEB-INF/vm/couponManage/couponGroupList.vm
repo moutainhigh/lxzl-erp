@@ -106,9 +106,6 @@
                                                 <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}}" data-couponBatchId="{{couponBatchId}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
-                                            <li>
-                                                <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="groupAbolishButton" data-couponBatchId="{{couponBatchId}}">批次作废</a>
-                                            </li>
                                         </ul>
                                     </div>
                                 </td>
