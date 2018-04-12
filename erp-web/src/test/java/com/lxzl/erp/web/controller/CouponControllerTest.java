@@ -123,7 +123,6 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void provideCoupon() throws Exception {
         CouponProvideParam couponProvideParam = new CouponProvideParam();
         couponProvideParam.setCouponBatchDetailId(5);
-        couponProvideParam.setCouponProvideAmount(3);
         Customer customer1 = new Customer();
         customer1.setCustomerNo("sssss");
         Customer customer2 = new Customer();
@@ -134,7 +133,6 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         customerList.add(customer1);
         customerList.add(customer2);
         customerList.add(customer3);
-        couponProvideParam.setCustomerList(customerList);
 
         TestResult testResult = getJsonTestResult("/coupon/provideCoupon", couponProvideParam);
     }
