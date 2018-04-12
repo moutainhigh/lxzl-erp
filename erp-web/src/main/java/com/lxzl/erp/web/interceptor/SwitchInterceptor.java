@@ -35,9 +35,10 @@ public class SwitchInterceptor extends HandlerInterceptorAdapter {
         requestPath = StrReplaceUtil.formatInterfaceUrl(requestPath);
         SwitchQueryParam switchQueryParam = new SwitchQueryParam();
         switchQueryParam.setIsOpen(CommonConstant.COMMON_CONSTANT_NO);
+        LOGGER.info("===================requestPath:"+requestPath);
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(requestPath);
         if(switchDO != null&&CommonConstant.COMMON_CONSTANT_NO.equals(switchDO.getIsOpen())){
-            throw new BusinessException(ErrorCode.SWITCH_CLOSE);
+            throw new BusinessException(ErrorCode.SWITCH_CLOSE,ErrorCode.getMessage(ErrorCode.SWITCH_CLOSE));
         }
         return true;
     }
