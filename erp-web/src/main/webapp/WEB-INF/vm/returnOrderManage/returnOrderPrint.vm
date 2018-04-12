@@ -461,7 +461,7 @@
                 'manage.return.order.print.js');
     </script>
     <script type="text/javascript">
-        OrderPrint.init();
+        ReturnOrderPrint.init();
     </script>
 </body>
 </html>
