@@ -20,7 +20,7 @@ public class WorkflowLinkDetail extends BasePO {
 	private Integer workflowPreviousNodeId;   //上节点ID
 	private Integer workflowNextNodeId;   //下节点ID
 	private Integer verifyUser;   //审核人
-	private Integer verifyUserGroupId;		// 审核人组ID，审核人为空时，该字段有值
+	private String verifyUserGroupId;		// 审核人组UUID，审核人为空时，该字段有值
 	private String verifyUserName;   //审核人
 	private Date verifyTime;   //审核时间
 	private Integer verifyStatus;   //审核状态
@@ -215,7 +215,7 @@ public class WorkflowLinkDetail extends BasePO {
 
 	public void setWorkflowVerifyUserGroupList(List<WorkflowVerifyUserGroup> workflowVerifyUserGroupList) { this.workflowVerifyUserGroupList = workflowVerifyUserGroupList; }
 
-	public Integer getVerifyUserGroupId() { return verifyUserGroupId; }
+	public String getVerifyUserGroupId() { return verifyUserGroupId; }
 
-	public void setVerifyUserGroupId(Integer verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
+	public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
 }

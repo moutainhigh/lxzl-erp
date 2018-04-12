@@ -4,7 +4,7 @@
 
     <resultMap id="WorkflowVerifyUserGroupDO" type="com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="verify_user_group_id" jdbcType="INTEGER" property="verifyUserGroupId"/>
+        <result column="verify_user_group_id" jdbcType="VARCHAR" property="verifyUserGroupId"/>
         <result column="verify_type" jdbcType="INTEGER" property="verifyType"/>
         <result column="verify_user" jdbcType="INTEGER" property="verifyUser"/>
         <result column="verifyUserName" jdbcType="VARCHAR" property="verifyUserName"/>
@@ -35,7 +35,7 @@
         eu.real_name AS verifyUserName
         FROM erp_workflow_verify_user_group ewvug
         LEFT JOIN erp_user eu ON ewvug.verify_user = eu.id
-        WHERE ewvug.verify_user_group_id = #{verifyUserGroupId, jdbcType=INTEGER} AND ewvug.data_status = 1
+        WHERE ewvug.verify_user_group_id = #{verifyUserGroupId, jdbcType=VARCHAR} AND ewvug.data_status = 1
     </select>
 
     <select id="listAllCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
@@ -71,7 +71,7 @@
     <sql id="set_column_sql">
         <set>
             <if test="verifyUserGroupId != null">
-                verify_user_group_id = #{verifyUserGroupId,jdbcType=INTEGER},
+                verify_user_group_id = #{verifyUserGroupId,jdbcType=VARCHAR},
             </if>
             <if test="verifyType != null">
                 verify_type = #{verifyType,jdbcType=INTEGER},
