@@ -30,7 +30,7 @@
         WHERE ewvug.id = #{id, jdbcType=INTEGER} AND ewvug.data_status = 1
     </select>
 
-    <select id="findByVerifyUserGroupId" resultMap="WorkflowVerifyUserGroupDO" parameterType="java.lang.Integer">
+    <select id="findByVerifyUserGroupId" resultMap="WorkflowVerifyUserGroupDO" parameterType="java.lang.String">
         SELECT<include refid="column_List"/>,
         eu.real_name AS verifyUserName
         FROM erp_workflow_verify_user_group ewvug
