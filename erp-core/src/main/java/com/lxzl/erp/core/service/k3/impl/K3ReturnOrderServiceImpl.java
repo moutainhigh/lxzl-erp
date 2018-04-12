@@ -359,7 +359,24 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE);
             return result;
         }
-
+        //退货日期校验(退货时间不能大于起租时间)
+        List<K3ReturnOrderDetailDO> orderDetailList=  k3ReturnOrderDetailMapper.findListByReturnOrderId(dbK3ReturnOrderDO.getId());
+        if(CollectionUtil.isEmpty(orderDetailList)){
+            result.setErrorCode(ErrorCode.RETURN_DETAIL_LIST_NOT_NULL);
+            return result;
+        }
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetail :orderDetailList) {
+            ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
+            if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                return result;
+            }
+            Order order = serviceResult.getResult();
+            if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+                result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+                return result;
+            }
+        }
         K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder, K3ReturnOrderDO.class);
         k3ReturnOrderDO.setId(dbK3ReturnOrderDO.getId());
         k3ReturnOrderDO.setUpdateTime(currentTime);
