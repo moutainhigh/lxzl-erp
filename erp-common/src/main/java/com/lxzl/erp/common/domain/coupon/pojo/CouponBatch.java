@@ -34,7 +34,15 @@ public class CouponBatch extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
+	private Integer couponBatchCancelCount;//优惠券作废总数
 
+	public Integer getCouponBatchCancelCount() {
+		return couponBatchCancelCount;
+	}
+
+	public void setCouponBatchCancelCount(Integer couponBatchCancelCount) {
+		this.couponBatchCancelCount = couponBatchCancelCount;
+	}
 
 	public Integer getCouponBatchId(){
 		return couponBatchId;

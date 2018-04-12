@@ -19,6 +19,15 @@ public class CouponBatchDO  extends BaseDO {
 	private BigDecimal totalDeductionAmount;
 	private String remark;
 	private Integer dataStatus;
+	private Integer couponBatchCancelCount;//优惠券作废总数
+
+	public Integer getCouponBatchCancelCount() {
+		return couponBatchCancelCount;
+	}
+
+	public void setCouponBatchCancelCount(Integer couponBatchCancelCount) {
+		this.couponBatchCancelCount = couponBatchCancelCount;
+	}
 
 	public Integer getId(){
 		return id;
