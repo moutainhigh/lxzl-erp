@@ -143,3 +143,13 @@ CREATE TABLE `erp_sms_log` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='短信发送日志表';
+
+
+ALTER TABLE erp_workflow_link MODIFY  `verify_user_group_id` VARCHAR(100) COMMENT '审核人组UUID，审核人为空时，该字段有值';
+ALTER TABLE erp_workflow_verify_user_group MODIFY  `verify_user_group_id` VARCHAR(100) COMMENT '审核人组UUID';
+
+
+
+
+
+

@@ -618,7 +618,7 @@ CREATE TABLE `erp_workflow_link` (
   `workflow_current_node_id` int(20) DEFAULT NULL COMMENT '当前结点ID',
   `commit_user` int(20) COMMENT '提交人',
   `current_verify_user` int(20) COMMENT '审核人',
-  `verify_user_group_id` int(20) COMMENT '审核人组ID，审核人为空时，该字段有值',
+  `verify_user_group_id` varchar(100) COMMENT '审核人组UUID，审核人为空时，该字段有值',
   `current_verify_status` int(20) COMMENT '审核状态',
   `verify_matters` varchar(500) COMMENT '审核事项',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
@@ -634,7 +634,7 @@ CREATE TABLE `erp_workflow_link` (
 DROP TABLE if exists `erp_workflow_verify_user_group`;
 CREATE TABLE `erp_workflow_verify_user_group` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `verify_user_group_id` int(20) NOT NULL COMMENT '审核组ID',
+  `verify_user_group_id` varchar(100) COMMENT '审核人组UUID',
   `verify_type` int(11) NOT NULL COMMENT '审核类型，1-本条审核通过则直接通过，2-相同审核组的所有2状态的审核通过才算通过',
   `verify_user` int(20) COMMENT '审核人',
   `verify_time` datetime COMMENT '审核时间',
