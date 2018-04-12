@@ -316,9 +316,9 @@ public class CouponServiceImpl implements CouponService{
         couponMapper.deleteCouponList(couponDOList);
         // 获取需要更改的优惠券批次详情对象的集合
         List<CouponBatchDetailDO> couponBatchDetailDOList = new ArrayList<>();
+        Map<Integer,Integer> coucouponBatchMap = new HashMap<>();
         Iterator it = couponBatchDetailMap.entrySet().iterator();
         while (it.hasNext()) {
-
             Map.Entry entry = (Map.Entry) it.next();
             Integer key = (Integer) entry.getKey();
             Integer value = (Integer) entry.getValue();
@@ -327,8 +327,21 @@ public class CouponServiceImpl implements CouponService{
             couponBatchDetailDO.setUpdateTime(date);
             couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             couponBatchDetailDOList.add(couponBatchDetailDO);
+
+            if (coucouponBatchMap.containsKey(couponBatchDetailDO.getCouponBatchId())) {
+                coucouponBatchMap.put(couponBatchDetailDO.getCouponBatchId(),coucouponBatchMap.get(couponBatchDetailDO.getCouponBatchId())+couponBatchDetailDO.getCouponCancelCount());
+            } else {
+                coucouponBatchMap.put(couponBatchDetailDO.getCouponBatchId(),couponBatchDetailDO.getCouponCancelCount());
+            }
         }
         couponBatchDetailMapper.updateCouponBatchDetailDOList(couponBatchDetailDOList);
+        for (Integer key : coucouponBatchMap.keySet()) {
+            CouponBatchDO couponBatchDO = couponBatchMapper.findById(key);
+            couponBatchDO.setCouponBatchCancelCount(coucouponBatchMap.get(key));
+            couponBatchDO.setUpdateTime(date);
+            couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            couponBatchMapper.update(couponBatchDO);
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -344,26 +357,27 @@ public class CouponServiceImpl implements CouponService{
         Date date = new Date();
         //  按照优惠卷批次详情ID查询可以发放优惠券的数量，与计算出传递过来需要发放总优惠卷数量进行比较，如果超过可发放优惠卷数量，给出错误提示
         Integer couponStatusCountIsZero = couponMapper.findCouponStatusCountIsZeroByCouponBatchDetailId(couponProvideParam.getCouponBatchDetailId());
-        Integer totalCouponProvideAmount = couponProvideParam.getCouponProvideAmount() * couponProvideParam.getCustomerList().size();
+        Integer totalCouponProvideAmount = 0;
+        for (Integer value : couponProvideParam.getProvideMap().values()) {
+            totalCouponProvideAmount+=value;
+        }
+
         if (couponStatusCountIsZero < totalCouponProvideAmount) {
             serviceResult.setErrorCode(ErrorCode.COUPON_PROVIDE_COUNT_ERROR);
             return serviceResult;
         }
-        //  查询指定数量的出可以发放的优惠卷集合(这里要按照优惠券批次ID进行查询)
-        List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),totalCouponProvideAmount);
-        //  遍历集合，将客户编号存入优惠券中（怎么遍历存储）
-        //  遍历需要发放的客户集合并根据每个客户发放的数量进行循环，取出客户编号存入优惠卷中
-
-        for (int i = 0; i < couponProvideParam.getCouponProvideAmount(); i++) {
-            for (int j = 0; j < couponProvideParam.getCustomerList().size(); j++) {
-                couponDOList.get(i*couponProvideParam.getCustomerList().size()+j).setCustomerNo(couponProvideParam.getCustomerList().get(j).getCustomerNo());
-                couponDOList.get(i*couponProvideParam.getCustomerList().size()+j).setCouponStatus(CouponStatus.COUPON_STATUS_USABLE);
-                couponDOList.get(i*couponProvideParam.getCustomerList().size()+j).setReceiveTime(date);
-                couponDOList.get(i*couponProvideParam.getCustomerList().size()+j).setUpdateTime(date);
-                couponDOList.get(i*couponProvideParam.getCustomerList().size()+j).setUpdateUser(userSupport.getCurrentUserId().toString());
+        for (Customer customer : couponProvideParam.getProvideMap().keySet()) {
+            //  查询指定数量的出可以发放的优惠卷集合(这里要按照优惠券批次ID进行查询)
+            List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),couponProvideParam.getProvideMap().get(customer));
+            for (int i = 0; i < couponDOList.size(); i++) {
+                couponDOList.get(i).setCustomerNo(customer.getCustomerNo());
+                couponDOList.get(i).setCouponStatus(CouponStatus.COUPON_STATUS_USABLE);
+                couponDOList.get(i).setReceiveTime(date);
+                couponDOList.get(i).setUpdateTime(date);
+                couponDOList.get(i).setUpdateUser(userSupport.getCurrentUserId().toString());
             }
+            couponMapper.updateList(couponDOList);
         }
-        couponMapper.updateList(couponDOList);
         CouponBatchDetailDO couponBatchDetailDO = couponBatchDetailMapper.findById(couponProvideParam.getCouponBatchDetailId());
         couponBatchDetailDO.setCouponReceivedCount(totalCouponProvideAmount+couponBatchDetailDO.getCouponReceivedCount());
         couponBatchDetailDO.setUpdateTime(date);
@@ -425,6 +439,11 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDetailDO.setCouponCancelCount(couponBatchDetailDO.getCouponTotalCount());
         couponBatchDetailMapper.update(couponBatchDetailDO);
         couponMapper.cancelCoupon(couponBatchDetailDO.getId(),date,userSupport.getCurrentUserId().toString());
+        CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponBatchDetailDO.getCouponBatchId());
+        couponBatchDO.setCouponBatchCancelCount(couponBatchDO.getCouponBatchCancelCount()+couponBatchDetailDO.getCouponCancelCount());
+        couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        couponBatchDO.setUpdateTime(date);
+        couponBatchMapper.update(couponBatchDO);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -446,8 +465,13 @@ public class CouponServiceImpl implements CouponService{
             serviceResult.setErrorCode(ErrorCode.COUPON_USED);
             return serviceResult;
         }
+        if (couponBatchDO.getCouponBatchTotalCount() == couponBatchDO.getCouponBatchCancelCount()) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_CANCEL);
+            return serviceResult;
+        }
         couponBatchDO.setUpdateTime(date);
         couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        couponBatchDO.setCouponBatchCancelCount(couponBatchDO.getCouponBatchTotalCount());
         couponBatchMapper.update(couponBatchDO);
         List<CouponBatchDetailDO> couponBatchDetailDOList = couponBatchDetailMapper.findByCouponBatchID(couponBatchDO.getId());
         for (int i = 0; i < couponBatchDetailDOList.size(); i++) {

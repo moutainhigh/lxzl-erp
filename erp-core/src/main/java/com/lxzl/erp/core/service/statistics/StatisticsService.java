@@ -37,4 +37,8 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, List<StatisticsHomeByRentLengthType>> queryLongRentByTime(HomeRentByTimeParam homeRentByTimeParam);
 
     ServiceResult<String, List<StatisticsHomeByRentLengthType>> queryShortRentByTime(HomeRentByTimeParam homeRentByTimeParam);
+
+    ServiceResult queryAwaitReceivable(AwaitReceivablePageParam awaitReceivablePageParam);
+
+    ServiceResult queryStatisticsAwaitReceivable(StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam);
 }

@@ -54,6 +54,7 @@
                                         <dt class="mb10">退货单状态</dt><dd>{{returnOrderStatusValue}}</dd>
                                         <dt class="mb10">退货日期:</dt><dd>{{#shortTime}}{{returnTime}}{{/shortTime}}</dd>
                                         <dt class="mb10">退货方式</dt><dd>{{returnModeValue}}</dd>
+                                        <dt class="mb10">退货原因</dt><dd>{{returnReasonTypeValue}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">

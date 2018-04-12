@@ -213,7 +213,7 @@ public class MaterialServiceImpl implements MaterialService {
         saveMaterialImage(material.getMaterialImgList(), 1, materialDO.getId(), loginUser, currentTime);
         saveProductMaterial(materialDO, loginUser.getUserId(), currentTime);
 
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class),true);
+//        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL,PostK3Type.POST_K3_TYPE_MATERIAL, ConverterUtil.convert(materialDO, Material.class),true);
         result.setResult(materialDO.getMaterialNo());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
