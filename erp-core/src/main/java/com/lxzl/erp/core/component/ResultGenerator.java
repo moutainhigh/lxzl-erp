@@ -27,7 +27,9 @@ public class ResultGenerator {
         }
         return result;
     }
-
+    public Result generateError(String code, String message) {
+        return new Result(code, message, false);
+    }
     public Result generate(String code) {
         return generate(code, "");
     }

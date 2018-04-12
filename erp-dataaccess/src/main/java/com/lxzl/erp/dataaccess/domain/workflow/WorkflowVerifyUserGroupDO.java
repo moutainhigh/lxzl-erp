@@ -11,7 +11,7 @@ import java.util.List;
 public class WorkflowVerifyUserGroupDO  extends BaseDO {
 
 	private Integer id;
-	private Integer verifyUserGroupId;
+	private String verifyUserGroupId;
 	private Integer verifyType;
 	private Integer verifyUser;
 	private Date verifyTime;
@@ -33,11 +33,11 @@ public class WorkflowVerifyUserGroupDO  extends BaseDO {
 		this.id = id;
 	}
 
-	public Integer getVerifyUserGroupId(){
+	public String getVerifyUserGroupId(){
 		return verifyUserGroupId;
 	}
 
-	public void setVerifyUserGroupId(Integer verifyUserGroupId){
+	public void setVerifyUserGroupId(String verifyUserGroupId){
 		this.verifyUserGroupId = verifyUserGroupId;
 	}
 
