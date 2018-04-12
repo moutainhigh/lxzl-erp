@@ -18,7 +18,7 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	private Integer workflowPreviousNodeId;
 	private Integer workflowNextNodeId;
 	private Integer verifyUser;
-	private Integer verifyUserGroupId;		// 审核人组ID，审核人为空时，该字段有值
+	private String verifyUserGroupId;		// 审核人组UUID，审核人为空时，该字段有值
 	private String verifyUserName;
 	private Date verifyTime;
 	private Integer verifyStatus;
@@ -181,7 +181,7 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 
 	public void setWorkflowVerifyUserGroupDOList(List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList) { this.workflowVerifyUserGroupDOList = workflowVerifyUserGroupDOList; }
 
-	public Integer getVerifyUserGroupId() { return verifyUserGroupId; }
+	public String getVerifyUserGroupId() { return verifyUserGroupId; }
 
-	public void setVerifyUserGroupId(Integer verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
+	public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
 }
