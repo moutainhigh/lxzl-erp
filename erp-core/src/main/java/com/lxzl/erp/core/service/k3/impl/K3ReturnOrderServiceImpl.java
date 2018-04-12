@@ -117,19 +117,23 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (k3ReturnOrderDO.getServiceAmount() == null) k3ReturnOrderDO.setServiceAmount(BigDecimal.ZERO);
         k3ReturnOrderMapper.save(k3ReturnOrderDO);
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
+            Map<String, Order> orderCatch = new HashMap<String, Order>();
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
-                ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-                if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return result;
-                }
-                Order order = serviceResult.getResult();
-                //退货日期不能大于起租日期
-                if (order.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
-                    result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return result;
+                if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
+                    ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
+                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                        result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        return result;
+                    }
+                    Order order = serviceResult.getResult();
+                    //退货日期不能大于起租日期
+                    if (order.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                        result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                        return result;
+                    }
+                    orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
                 }
 
 
@@ -214,11 +218,11 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         //退货单商品项不能全部删除（校验至少一个商品项）
         List<K3ReturnOrderDetailDO> orderDetailList = k3ReturnOrderDetailMapper.findListByReturnOrderId(k3ReturnOrderDO.getId());
-        if(CollectionUtil.isEmpty(orderDetailList)){
+        if (CollectionUtil.isEmpty(orderDetailList)) {
             result.setErrorCode(ErrorCode.RETURN_DETAIL_LIST_NOT_NULL);
             return result;
         }
-        if(orderDetailList.size()<=1){
+        if (orderDetailList.size() <= 1) {
             result.setErrorCode(ErrorCode.PRODUCT_ITEM_ALL_DELETE);
             return result;
         }
@@ -381,18 +385,22 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             return result;
         }
         //退货日期校验(退货时间不能大于起租时间)
+        Map<String, Order> orderCatch = new HashMap<String, Order>();
         List<K3ReturnOrderDetailDO> orderDetailList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dbK3ReturnOrderDO.getId());
         if (CollectionUtil.isNotEmpty(orderDetailList)) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetail : orderDetailList) {
-                ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-                if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-                    result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                    return result;
-                }
-                Order order = serviceResult.getResult();
-                if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
-                    result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
-                    return result;
+                if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
+                    ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
+                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+                        result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+                        return result;
+                    }
+                    Order order = serviceResult.getResult();
+                    if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
+                        result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
+                        return result;
+                    }
+                    orderCatch.put(k3ReturnOrderDetail.getOrderNo(), order);
                 }
             }
         }
