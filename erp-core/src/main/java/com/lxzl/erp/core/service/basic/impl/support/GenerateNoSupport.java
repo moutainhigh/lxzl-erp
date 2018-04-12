@@ -56,6 +56,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.se.common.util.StringUtil;
+import com.lxzl.se.common.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -233,6 +234,7 @@ public class GenerateNoSupport {
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append("-");
             builder.append(String.format("%05d", count + 1));
+            builder.append(String.format("%05d", ((int)((Math.random()*9+1)*100000)) + 1));
             return builder.toString();
         }
     }
@@ -543,11 +545,9 @@ public class GenerateNoSupport {
     /**
      * 生成审核组ID
      */
-    public Integer generateVerifyUserGroupId() {
+    public String generateVerifyUserGroupId() {
         synchronized (this) {
-            String count = String.format("%03d", workflowVerifyUserGroupMapper.listAllCount() + 1);
-            Integer data = Integer.valueOf(count);
-            return data;
+            return UUIDUtil.getUUID();
         }
     }
 
