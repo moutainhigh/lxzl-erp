@@ -2981,6 +2981,7 @@ CREATE TABLE `erp_k3_return_order` (
   `logistics_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '运费',
   `service_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '服务费',
   `return_order_status` int(11) NOT NULL DEFAULT '0' COMMENT '换货订单状态，0-待提交，4-审核中，20-已完成',
+  `return_reason` VARCHAR(500) DEFAULT "" COMMENT '退货原因',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',

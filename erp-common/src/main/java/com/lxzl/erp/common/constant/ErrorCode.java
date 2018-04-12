@@ -774,6 +774,7 @@ public class ErrorCode {
     public static final String K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH = "J17000026";
     public static final String K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH = "J17000027";
     public static final String PRODUCT_ITEM_ALL_DELETE = "J17000028";
+    public static final String K3_RETURN_REASON_IS_LENGTH = "J17000029";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -1605,6 +1606,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_ORDER_PRODUCT_COUNT_NOT_ENOUGH, "K3退货单设备的数量超过了可以退货的数量，不能进行此操作");
         MAP.put(K3_RETURN_ORDER_MATERIAL_COUNT_NOT_ENOUGH, "K3退货单物料的数量超过了可以退货的数量，不能进行此操作");
         MAP.put(PRODUCT_ITEM_ALL_DELETE, "退货单商品项不能全部删除");
+        MAP.put(K3_RETURN_REASON_IS_LENGTH,"退货原因长度不能超过500");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");

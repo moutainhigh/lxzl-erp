@@ -19,6 +19,20 @@ import java.util.Date;
  */
 public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
+    public void queryStatisticsAwaitReceivable() throws Exception {
+        StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam = new StatisticsAwaitReceivablePageParam();
+        statisticsAwaitReceivablePageParam.setPageNo(1);
+        statisticsAwaitReceivablePageParam.setPageSize(10);
+        TestResult testResult = getJsonTestResult("/statistics/queryStatisticsAwaitReceivable", statisticsAwaitReceivablePageParam);
+    }
+    @Test
+    public void queryAwaitReceivable() throws Exception {
+        AwaitReceivablePageParam awaitReceivablePageParam = new AwaitReceivablePageParam();
+        awaitReceivablePageParam.setPageNo(1);
+        awaitReceivablePageParam.setPageSize(10);
+        TestResult testResult = getJsonTestResult("/statistics/queryAwaitReceivable", awaitReceivablePageParam);
+    }
+    @Test
     public void queryIndexInfo() throws Exception {
         TestResult testResult = getJsonTestResult("/statistics/queryIndexInfo", null);
     }
