@@ -3154,6 +3154,7 @@ CREATE TABLE `erp_coupon_batch` (
   `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
   `coupon_batch_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
   `coupon_batch_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `coupon_batch_cancel_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券作废总数',
   `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
   `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
   `total_deduction_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '抵扣总金额',

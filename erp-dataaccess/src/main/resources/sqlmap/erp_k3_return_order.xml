@@ -15,7 +15,7 @@
         <result column="return_order_status" jdbcType="INTEGER" property="returnOrderStatus"/>
         <result column="logistics_amount" jdbcType="DECIMAL" property="logisticsAmount"/>
         <result column="service_amount" jdbcType="DECIMAL" property="serviceAmount"/>
-        <result column="return_reason" jdbcType="VARCHAR" property="returnReason"/>
+        <result column="return_reason_type" jdbcType="INTEGER" property="returnReasonType"/>
         <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -43,7 +43,7 @@
     </resultMap>
 
     <sql id="column_List">
-        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
+        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
     </sql>
 
     <sql id="detail_column_List">
@@ -175,7 +175,9 @@
             <if test="serviceAmount != null">
                 service_amount = #{serviceAmount,jdbcType=DECIMAL},
             </if>
-            return_reason = #{returnReason,jdbcType=VARCHAR},
+            <if test="returnReasonType != null">
+                return_reason_type = #{returnReasonType,jdbcType=INTEGER},
+            </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
             </if>
