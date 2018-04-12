@@ -51,12 +51,7 @@
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
-                                        <input class="form-control input-sm bradius" name="couponBatchId" placeholder="请输入批次ID"  id="couponBatchName"/>
-                                    </div>
-                                </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <input class="form-control input-sm bradius" name="couponBatchDetailId" placeholder="请输入批次详情ID"  id="couponBatchName"/>
+                                        <input class="form-control input-sm bradius" name="couponBatchId" placeholder="请输入批次ID"  id="couponBatchId"/>
                                     </div>
                                 </div>
                             </form>
@@ -76,9 +71,10 @@
                                     </label>
                                 </th>
                                 {{/hasCommonActionButtons}}
-                                <th>优惠券ID</th>
                                 <th>批次ID</th>
-                                <th>批次详情ID</th>
+                                <th>订单ID</th>
+                                <th>订单号</th>
+                                <th>订单商品项ID</th>
                                 <th>优惠券编号</th>
                                 <th>优惠券面值</th>
                                 <th>抵扣金额</th>
@@ -108,17 +104,18 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td class="couponId">{{couponId}}</td>
-                                <td>{{couponBatchId}}</td>
-                                <td>{{couponBatchDetailId}}</td>
+                                <td class="couponId">{{couponBatchId}}</td>
+                                <td>{{orderId}}</td>
+                                <td>{{orderNo}}</td>
+                                <td>{{orderProductId}}</td>
                                 <td>{{couponCode}}</td>
                                 <td>{{faceValue}}</td>
                                 <td>{{deductionAmount}}</td>
                                 <td>{{couponStatusValue}}</td>
                                 <td>{{customerNo}}</td>
                                 <td>{{isOnLineValue}}</td>
-                                <td>{{receiveTime}}</td>
-                                <td>{{useTime}}</td>
+                                <td>{{#clockShorTime}}{{receiveTime}}{{/clockShorTime}}</td>
+                                <td>{{#clockShorTime}}{{useTime}}{{/clockShorTime}}</td>
                                 <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
                                 <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
                                 <td>{{remark}}</td>
