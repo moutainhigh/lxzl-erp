@@ -23,8 +23,17 @@ public class K3ReturnOrderDO  extends BaseDO {
 	private BigDecimal serviceAmount;	// 服务费
 	private Integer dataStatus;
 	private String remark;
+	private Integer returnReasonType;	// 退货原因
 
 	private List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList;
+
+	public Integer getReturnReasonType() {
+		return returnReasonType;
+	}
+
+	public void setReturnReasonType(Integer returnReasonType) {
+		this.returnReasonType = returnReasonType;
+	}
 
 	public Integer getId(){
 		return id;

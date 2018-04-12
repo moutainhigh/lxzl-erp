@@ -171,11 +171,13 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateReturnOrder() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
-        k3ReturnOrder.setReturnOrderNo("LXK3RO20180411110618157");
+        k3ReturnOrder.setReturnOrderNo("LXK3RO20180411160705741");
         k3ReturnOrder.setReturnTime(new Date());
         k3ReturnOrder.setReturnAddress("北京京西蓝靛厂1号");
         k3ReturnOrder.setReturnContacts("张三1");
         k3ReturnOrder.setReturnPhone("13809908801");
+//        k3ReturnOrder.setReturnReason("修改的退货原因1");
+        k3ReturnOrder.setReturnMode(1);
 
         TestResult testResult = getJsonTestResult("/k3/updateReturnOrder", k3ReturnOrder);
     }
@@ -391,7 +393,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     @Test
     public void commitK3ReturnOrder() throws Exception {
         K3ReturnOrderCommitParam k3ReturnOrderCommitParam = new K3ReturnOrderCommitParam();
-        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180411222819220");
+        k3ReturnOrderCommitParam.setReturnOrderNo("LXK3RO20180412110846384");
         k3ReturnOrderCommitParam.setVerifyUserId(500343);
         TestResult testResult = getJsonTestResult("/k3/commitK3ReturnOrder", k3ReturnOrderCommitParam);
     }
@@ -402,6 +404,7 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
         k3ReturnOrder.setReturnOrderNo("LXK3RO20180406180514926");
         TestResult testResult = getJsonTestResult("/k3/revokeReturnOrder", k3ReturnOrder);
     }
+
     @Test
     public void cancelK3ChangeOrder() throws Exception {
         K3ChangeOrder k3ChangeOrder = new K3ChangeOrder();

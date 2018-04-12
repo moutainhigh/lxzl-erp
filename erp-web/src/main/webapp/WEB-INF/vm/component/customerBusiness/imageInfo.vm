@@ -1,9 +1,9 @@
 <script type="text/html" id="imgBoxTpl">
     {{#img}}
-    <a class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{des}}" data-bound="" style="display: inline-block;">
+    <span class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{des}}" data-bound="" style="display: inline-block;">
         <div class="panel p6 pbn">
             <div class="of-h">
-                <img src="{{url}}" style="max-height: 170px;" />
+                <img src="{{url}}" style="max-height: 170px;"  alt="{{des}}"/>
                 <div class="row table-layout">
                     <div class="col-xs-8 va-m pln">
                         <h6>{{des}}</h6>
@@ -16,7 +16,7 @@
             </div>
 
         </div>
-    </a>
+    </span>
     {{/img}}
 </script>
 <div id="mix-container" class="grid">

@@ -11,6 +11,8 @@ import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,6 +41,9 @@ public class K3ReturnOrder extends BasePO {
 	private Integer returnOrderStatus;   // 归还订单状态，0-待提交，4-审核中，16-已取消，20-已完成，24已驳回
 	private BigDecimal logisticsAmount;	// 运费
 	private BigDecimal serviceAmount;	// 服务费
+	@Min(value = 1,message = ErrorCode.K3_RETURN_REASON_TYPE_ERROR,groups = {AddGroup.class,UpdateGroup.class})
+	@Max(value = 11,message = ErrorCode.K3_RETURN_REASON_TYPE_ERROR,groups = {AddGroup.class,UpdateGroup.class})
+	private Integer returnReasonType;	// 退货原因
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
 	private String remark;   //备注
 	private Date createTime;   //添加时间
@@ -51,6 +56,13 @@ public class K3ReturnOrder extends BasePO {
 	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class,AddGroup.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
 
+	public Integer getReturnReasonType() {
+		return returnReasonType;
+	}
+
+	public void setReturnReasonType(Integer returnReasonType) {
+		this.returnReasonType = returnReasonType;
+	}
 
 	public Integer getK3ReturnOrderId(){
 		return k3ReturnOrderId;

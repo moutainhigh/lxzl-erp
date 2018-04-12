@@ -370,7 +370,7 @@
 				and ecc.connect_phone LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectPhone}','%' )
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
-				AND ecc.company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
+				AND ecc.simple_company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != ''">
 				AND owner_user.real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.ownerName}','%' )
@@ -423,7 +423,7 @@
 				and ecc.connect_phone LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectPhone}','%' )
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
-				AND ecc.company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
+				AND ecc.simple_company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != ''">
 				AND owner_user.real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.ownerName}','%' )

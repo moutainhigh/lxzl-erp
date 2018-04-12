@@ -855,7 +855,7 @@ public class CustomerServiceImpl implements CustomerService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-        customerCompanyQueryParam.setCompanyName(StrReplaceUtil.replaceAll(customerCompanyQueryParam.getCompanyName()));
+        customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);

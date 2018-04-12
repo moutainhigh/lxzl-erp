@@ -58,7 +58,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void queryNextVerifyUsers() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
         workflowLinkQueryParam.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
-        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180329-00846");
+        workflowLinkQueryParam.setWorkflowReferNo("LXCC-027-20180412-00021");
         TestResult testResult = getJsonTestResult("/workflow/queryNextVerifyUsers", workflowLinkQueryParam);
     }
 
@@ -76,7 +76,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
     public void queryWorkflowLinkDetail() throws Exception {
         WorkflowLinkQueryParam workflowLinkQueryParam = new WorkflowLinkQueryParam();
 
-        workflowLinkQueryParam.setWorkflowLinkNo("LXWF-500001-20180327-00747");
+        workflowLinkQueryParam.setWorkflowLinkNo("LXWF-500001-20180412-00096");
         TestResult testResult = getJsonTestResult("/workflow/queryWorkflowLinkDetail", workflowLinkQueryParam);
     }
 
@@ -153,7 +153,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
 
                     List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
                     Map<Integer, Integer> map = new HashMap<>();
-                    Integer verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
+                    String verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
                     SubCompanyCityCoverDO subCompanyCityCoverDO;
                     if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
                         customerDO = customerMapper.findCustomerCompanyByNo(workflowLinkDetailDO.getWorkflowReferNo());
@@ -196,7 +196,7 @@ public class WorkflowTest extends ERPUnTransactionalTest {
                     workflowLinkDetailMapper.update(workflowLinkDetailDO);
                     System.out.println(workflowLinkDetailDO.getId());
                 }else{
-                    Integer groupId = generateNoSupport.generateVerifyUserGroupId();
+                    String groupId = generateNoSupport.generateVerifyUserGroupId();
                     WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                     workflowVerifyUserGroupDO.setVerifyUserGroupId(groupId);
                     workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);

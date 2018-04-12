@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Sunzhipeng
@@ -15,8 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CouponProvideParam {
     private Integer couponBatchDetailId;
-    private Integer couponProvideAmount;
-    private List<Customer> customerList;
+    private Map<Customer,Integer> provideMap;
 
     public Integer getCouponBatchDetailId() {
         return couponBatchDetailId;
@@ -26,19 +26,11 @@ public class CouponProvideParam {
         this.couponBatchDetailId = couponBatchDetailId;
     }
 
-    public Integer getCouponProvideAmount() {
-        return couponProvideAmount;
+    public Map<Customer, Integer> getProvideMap() {
+        return provideMap;
     }
 
-    public void setCouponProvideAmount(Integer couponProvideAmount) {
-        this.couponProvideAmount = couponProvideAmount;
-    }
-
-    public List<Customer> getCustomerList() {
-        return customerList;
-    }
-
-    public void setCustomerList(List<Customer> customerList) {
-        this.customerList = customerList;
+    public void setProvideMap(Map<Customer, Integer> provideMap) {
+        this.provideMap = provideMap;
     }
 }

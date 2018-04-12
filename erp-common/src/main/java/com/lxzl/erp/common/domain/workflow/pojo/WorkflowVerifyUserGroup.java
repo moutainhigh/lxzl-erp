@@ -12,7 +12,7 @@ import java.util.List;
 public class WorkflowVerifyUserGroup extends BasePO {
 
 	private Integer workflowVerifyUserGroupId;   //唯一标识
-	private Integer verifyUserGroupId;   //审核组ID
+	private String verifyUserGroupId;   //审核人组UUID，审核人为空时，该字段有值
 	private Integer verifyType;   //审核类型，1-本条审核通过则直接通过，2-相同审核组的所有2状态的审核通过才算通过
 	private Integer verifyUser;   //审核人
 	private Date verifyTime;   //审核时间
@@ -35,11 +35,11 @@ public class WorkflowVerifyUserGroup extends BasePO {
 
 	public void setWorkflowVerifyUserGroupId(Integer workflowVerifyUserGroupId){ this.workflowVerifyUserGroupId = workflowVerifyUserGroupId; }
 
-	public Integer getVerifyUserGroupId(){
+	public String getVerifyUserGroupId(){
 		return verifyUserGroupId;
 	}
 
-	public void setVerifyUserGroupId(Integer verifyUserGroupId){
+	public void setVerifyUserGroupId(String verifyUserGroupId){
 		this.verifyUserGroupId = verifyUserGroupId;
 	}
 

@@ -260,6 +260,10 @@ public class PageController extends BaseController {
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
+    @RequestMapping("/order-return-manage/print")
+    public String returnOrderManagePrint() {
+        return "/returnOrderManage/returnOrderPrint";
+    }
     //输入退还当服务费等信息
     @RequestMapping("/return-order-end-info-modal/input")
     public String inputReturnOrderEndInfoModal() {
@@ -894,6 +898,10 @@ public class PageController extends BaseController {
     public String couponManagePiCiAdd(){return "/component/couponManage/couponPiCiAddList";}
     @RequestMapping("/coupon-manage/edit-coupon")
     public  String couponManageEdit(){return "/component/couponManage/couponEdit";}
+    @RequestMapping("/coupon-manage/provide-coupon")
+    public String couponManageProvide(){return "/component/couponManage/couponProvide";}
+    @RequestMapping("/coupon-manage/coupon-trade")
+    public String couponManageTrade(){return "/component/couponManage/couponTradeDetail";}
 
     /**
      * 资金流水附件信息列表

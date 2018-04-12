@@ -143,3 +143,16 @@ CREATE TABLE `erp_sms_log` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='短信发送日志表';
+
+
+ALTER TABLE erp_workflow_link MODIFY  `verify_user_group_id` VARCHAR(100) COMMENT '审核人组UUID，审核人为空时，该字段有值';
+ALTER TABLE erp_workflow_verify_user_group MODIFY  `verify_user_group_id` VARCHAR(100) COMMENT '审核人组UUID';
+ALTER TABLE erp_workflow_link_detail MODIFY  `verify_user_group_id` varchar(100) DEFAULT NULL COMMENT '审核人组UUID，审核人为空时，该字段有值';
+ALTER TABLE erp_k3_return_order ADD COLUMN `return_reason_type` int(11) NOT NULL COMMENT '退还原因类型：1-客户方设备不愿或无法退还，2-期满正常收回，3-提前退租，4-未按时付款或风险等原因上门收回，5-设备故障等我方原因导致退货，6-主观因素等客户方原因导致退货，7-更换设备，8-公司倒闭，9-设备闲置，10-满三个月或六个月随租随还，11-其它';
+
+
+
+
+
+
+
