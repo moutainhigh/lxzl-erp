@@ -36,8 +36,14 @@ public class ExceptionHandlerAdvice {
             code = code==null?ErrorCode.BUSINESS_EXCEPTION:code;
             String description = businessException.getMessage();
             if(StringUtil.isNotBlank(description)){
+                String msg = ErrorCode.getMessage(description);
                 //获取到了错误码对应的描述，则返回错误码描述
-                return new ResponseEntity<Object>(resultGenerator.generateError(code,description),HttpStatus.OK);
+                if(!StringUtil.isBlank(msg)){
+                    return new ResponseEntity<Object>(resultGenerator.generateError(code,msg),HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<Object>(resultGenerator.generateError(code,description),HttpStatus.OK);
+                }
+
             }else{
                 //先判断获得的code是否为错误码，如果不是错误码，直接把code字段当做描述处理
                 String msg = ErrorCode.getMessage(code);

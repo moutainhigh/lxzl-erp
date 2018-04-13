@@ -23,27 +23,39 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam = new StatisticsAwaitReceivablePageParam();
         statisticsAwaitReceivablePageParam.setPageNo(1);
         statisticsAwaitReceivablePageParam.setPageSize(10);
+        statisticsAwaitReceivablePageParam.setSubCompanyId(2);
+        statisticsAwaitReceivablePageParam.setSalesmanName("喻晓艳");
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsAwaitReceivable", statisticsAwaitReceivablePageParam);
     }
+
     @Test
     public void queryAwaitReceivable() throws Exception {
         AwaitReceivablePageParam awaitReceivablePageParam = new AwaitReceivablePageParam();
         awaitReceivablePageParam.setPageNo(1);
         awaitReceivablePageParam.setPageSize(10);
+//        awaitReceivablePageParam.setCustomerName("北京国际电影节有限公司");
+//        awaitReceivablePageParam.setRentLengthType(1);
+//        awaitReceivablePageParam.setSalesmanName("杜晶晶");
+        awaitReceivablePageParam.setSubCompanyId(2);
+//        awaitReceivablePageParam.setOrderType();
+//        awaitReceivablePageParam.setTotalCount();
+//        awaitReceivablePageParam.setOrderBy();
         TestResult testResult = getJsonTestResult("/statistics/queryAwaitReceivable", awaitReceivablePageParam);
     }
+
     @Test
     public void queryIndexInfo() throws Exception {
         TestResult testResult = getJsonTestResult("/statistics/queryIndexInfo", null);
     }
+
     @Test
     public void queryIncome() throws Exception {
         StatisticsIncomePageParam statisticsIncomePageParam = new StatisticsIncomePageParam();
         statisticsIncomePageParam.setPageNo(1);
         statisticsIncomePageParam.setPageSize(100);
-        SimpleDateFormat sdf =   new SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
-        Date start = sdf.parse( " 2008-07-10 19:20:00 " );
-        Date end = sdf.parse( " 2028-07-10 19:20:00 " );
+        SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
+        Date start = sdf.parse(" 2008-07-10 19:20:00 ");
+        Date end = sdf.parse(" 2028-07-10 19:20:00 ");
         statisticsIncomePageParam.setStartTime(start);
         statisticsIncomePageParam.setEndTime(end);
         statisticsIncomePageParam.setSubCompanyId(1);
@@ -52,13 +64,15 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsIncomePageParam.setSalesmanName("ad");
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
+
     @Test
     public void queryIncomeJson() throws Exception {
         String json = "{\"pageNo\":2,\"pageSize\":15,\"customerName\":\"\",\"salesmanName\":\"\",\"rentLengthType\":\"\",\"subCompanyId\":\"7\",\"startTime\":\"1517155200000\",\"endTime\":\"1519747199999\"}";
-        StatisticsIncomePageParam statisticsIncomePageParam = JSON.parseObject(json,StatisticsIncomePageParam.class);
+        StatisticsIncomePageParam statisticsIncomePageParam = JSON.parseObject(json, StatisticsIncomePageParam.class);
 
         TestResult testResult = getJsonTestResult("/statistics/queryIncome", statisticsIncomePageParam);
     }
+
     @Test
     public void queryUnReceivable() throws Exception {
         UnReceivablePageParam unReceivablePageParam = new UnReceivablePageParam();
@@ -78,7 +92,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void queryStatisticsUnReceivableJson() throws Exception {
         String json = "{\"pageNo\":1,\"pageSize\":15,\"salesmanName\":\"\"}";
-        StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = JSON.parseObject(json,StatisticsUnReceivablePageParam.class);
+        StatisticsUnReceivablePageParam statisticsUnReceivablePageParam = JSON.parseObject(json, StatisticsUnReceivablePageParam.class);
         TestResult testResult = getJsonTestResult("/statistics/queryStatisticsUnReceivable", statisticsUnReceivablePageParam);
     }
 
@@ -102,16 +116,18 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         homeRentParam.setEndTime(getEndByMonth());
         TestResult testResult = getJsonTestResult("/statistics/queryShortRent", homeRentParam);
     }
+
     @Test
     public void queryLongRentByTime() throws Exception {
         HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
         homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_MONTH);
         TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
     }
+
     @Test
     public void queryLongRentByTimeJson() throws Exception {
         String json = "{\"timeDimensionType\":1}";
-        HomeRentByTimeParam homeRentByTimeParam = JSON.parseObject(json,HomeRentByTimeParam.class);
+        HomeRentByTimeParam homeRentByTimeParam = JSON.parseObject(json, HomeRentByTimeParam.class);
         TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
     }
 
@@ -121,23 +137,25 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
         TestResult testResult = getJsonTestResult("/statistics/queryShortRentByTime", homeRentByTimeParam);
     }
-    private Date getFistByMonth(){
+
+    private Date getFistByMonth() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, 0);
         c.set(Calendar.DAY_OF_MONTH, 1);//设置为1号,当前日期既为本月第一天
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND,0);
+        c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
         return c.getTime();
     }
-    private Date getEndByMonth(){
+
+    private Date getEndByMonth() {
         //获取当前月最后一天
         Calendar ca = Calendar.getInstance();
         ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
         ca.set(Calendar.HOUR_OF_DAY, 23);
         ca.set(Calendar.MINUTE, 59);
-        ca.set(Calendar.SECOND,59);
+        ca.set(Calendar.SECOND, 59);
         ca.set(Calendar.MILLISECOND, 999);
         return ca.getTime();
     }

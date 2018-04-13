@@ -114,7 +114,7 @@
 
                                 </td>
                                 <td>
-                                    {{remark}}
+                                    <div class="mw200">{{remark}}</div>
                                 </td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>

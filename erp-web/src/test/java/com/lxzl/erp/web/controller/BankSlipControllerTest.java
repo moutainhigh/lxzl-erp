@@ -135,9 +135,9 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
     @Test
     public void pageBankSlipDetailJson() throws Exception {
-        String json = "{\"pageNo\":1,\"pageSize\":15,\"payerName\":\"\"}";
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"loanSign\":1,\"payerName\":\"\",\"bankSlipId\":\"69\"}";
         BankSlipDetailQueryParam bankSlipDetailQueryParam = JSON.parseObject(json, BankSlipDetailQueryParam.class);
-        TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
+        TestResult result = getJsonTestResult("/erp/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
 
