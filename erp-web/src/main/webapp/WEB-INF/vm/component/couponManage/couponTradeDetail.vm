@@ -1,4 +1,4 @@
-<div class="popup-basic popup-lg admin-form mfp-with-anim " id="tradeDetail">
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary" id="tradeDetail">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title" id="tradeAmountNum"></span>
@@ -17,16 +17,16 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="pull-right mr10 text-right">
-                            <div class="form-group pull-right mn mr10">
-                                <div class="input-group">
-                                    <label class="field prepend-icon" style="display: flex; align-items: center;width: auto;">
-                                        <label for="couponProvideAmount" style="width: 280px;">每个客户发放优惠券数量：</label>
-                                        <input style="width: 155px;" class="form-control required pl10 couponProvideAmount" id="couponProvideAmount" name="couponProvideAmount" placeholder="每个客户优惠券数量"/>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+##                        <div class="pull-right mr10 text-right">
+##                            <div class="form-group pull-right mn mr10">
+##                                <div class="input-group">
+##                                    <label class="field prepend-icon" style="display: flex; align-items: center;width: auto;">
+##                                        <label for="couponProvideAmount" style="width: 280px;">每个客户发放优惠券数量：</label>
+##                                        <input style="width: 155px;" class="form-control required pl10 couponProvideAmount" id="couponProvideAmount" name="couponProvideAmount" placeholder="每个客户优惠券数量"/>
+##                                    </label>
+##                                </div>
+##                            </div>
+##                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -41,7 +41,7 @@
                             </th>
                             <th>客户编号</th>
                             <th>公司名称（个人姓名）</th>
-##                            <th>优惠券数量</th>
+                            <th>优惠券数量</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -57,13 +57,12 @@
                             </td>
                             <td>{{customerNo}}</td>
                             <td>{{customerName}}</td>
-##                            <td>
-##                                <input type="hidden" name="customerNo" value="{{customerNo}}" class="customerNo" />
-##                                <label class="field prepend-icon">
-####                                    <input type="text" name="claimAmount-{{customerNo}}" value="{{claimAmount}}" class="claimAmount form-control required pl10" placeholder="输入优惠券数量" aria-required="true" aria-invalid="false"/>
-##                                    <span class="coupon-number">0</span>
-##                                </label>
-##                            </td>
+                            <td>
+                                <input type="hidden" name="customerNo" value="{{customerNo}}" class="customerNo" />
+                                <label class="field prepend-icon">
+                                    <input type="text" name="claimAmount-{{customerNo}}" value="{{claimAmount}}" class="claimAmount form-control required pl10" placeholder="输入优惠券数量" aria-required="true" aria-invalid="false"/>
+                                </label>
+                            </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
                                     <a href="#" type="button" class="btn btn-default btn-xs delButton" data-customerno="{{customerNo}}">删除</a>

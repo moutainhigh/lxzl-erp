@@ -58,14 +58,15 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-                                <th>优惠券批次ID</th>
+                                <th>批次ID</th>
                                 <th>批次名称</th>
                                 <th>批次描述</th>
                                 <th>优惠券类型</th>
                                 <th>有效起始时间</th>
                                 <th>有效结束时间</th>
                                 <th>优惠券总数</th>
-                                <th>优惠券已使用总数</th>
+                                <th>已使用总数</th>
+                                <th>已作废总数</th>
                                 <th>优惠券总面值</th>
                                 <th>已使用总面值</th>
                                 <th>抵扣总金额</th>
@@ -82,16 +83,17 @@
                             <tr>
                                 <td>{{couponBatchId}}</td>
                                 <td class="couponBatchName" data-couponBatchName="{{couponBatchName}}">{{couponBatchName}}</td>
-                                <td class="couponBatchDescribe" data-couponBatchDescribe="{{couponBatchDescribe}}">{{couponBatchDescribe}}</td>
+                                <td style="width: 150px;" class="couponBatchDescribe" data-couponBatchDescribe="{{couponBatchDescribe}}">{{couponBatchDescribe}}</td>
                                 <td class="couponTypeValue" data-couponTypeValue="{{couponTypeValue}}">{{couponTypeValue}}</td>
                                 <td class="effectiveStartTime" data-effectiveStartTime="{{effectiveStartTime}}">{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
                                 <td class="effectiveEndTime" data-effectiveEndTime="{{effectiveEndTime}}">{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
                                 <td>{{couponBatchTotalCount}}</td>
                                 <td>{{couponBatchUsedCount}}</td>
+                                <td>{{couponBatchCancelCount}}</td>
                                 <td>{{totalFaceAmount}}</td>
                                 <td>{{totalUsedAmount}}</td>
                                 <td>{{totalDeductionAmount}}</td>
-                                <td class="remark" data-remark="{{remark}}">{{remark}}</td>
+                                <td style="width: 150px;" class="remark" data-remark="{{remark}}">{{remark}}</td>
                                 <td>
                                     <p class="mn">{{updateUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
@@ -103,7 +105,7 @@
                                         <ul class="dropdown-menu pull-right" role="menu">
                                             {{#rowActionButtons}}
                                             <li>
-                                                <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}}" data-couponBatchId="{{couponBatchId}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}}" data-couponBatchCancelCount="{{couponBatchCancelCount}}" data-couponBatchId="{{couponBatchId}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
                                         </ul>
