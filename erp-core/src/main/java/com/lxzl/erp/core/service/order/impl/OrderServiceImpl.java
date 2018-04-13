@@ -2430,7 +2430,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setRentDepositAmount(rentDepositAmount);
                 orderMaterialDO.setDepositAmount(depositAmount);
                 orderMaterialDO.setCreditDepositAmount(creditDepositAmount);
-                orderMaterialDO.setMaterialName(materialName);
+                orderMaterialDO.setMaterialName(StringUtil.isBlank(materialName) ? orderMaterialDO.getMaterialName() : materialName);
                 orderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(orderMaterialDO.getRentTimeLength()), 2), new BigDecimal(orderMaterialDO.getMaterialCount())));
                 orderMaterialDO.setMaterialSnapshot(FastJsonUtil.toJSONString(material));
                 BigDecimal thisOrderMaterialInsuranceAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(orderMaterialDO.getInsuranceAmount(), new BigDecimal(orderMaterialDO.getRentTimeLength()), 2), new BigDecimal(orderMaterialDO.getMaterialCount()));

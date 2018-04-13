@@ -13,9 +13,7 @@ import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CouponControllerTest extends ERPUnTransactionalTest{
 
@@ -122,17 +120,17 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void provideCoupon() throws Exception {
         CouponProvideParam couponProvideParam = new CouponProvideParam();
-        couponProvideParam.setCouponBatchDetailId(5);
-        Customer customer1 = new Customer();
-        customer1.setCustomerNo("sssss");
-        Customer customer2 = new Customer();
-        customer2.setCustomerNo("aaaaa");
-        Customer customer3 = new Customer();
-        customer3.setCustomerNo("bbbbb");
-        List<Customer> customerList = new ArrayList<>();
-        customerList.add(customer1);
-        customerList.add(customer2);
-        customerList.add(customer3);
+        couponProvideParam.setCouponBatchDetailId(95);
+        List<CustomerProvide> customerProvideList = new ArrayList<>();
+        CustomerProvide customerProvide1 = new CustomerProvide();
+        customerProvide1.setCustomerNo("LXCC-1000-20180409-00004");
+        customerProvide1.setProvideCount(2);
+        CustomerProvide customerProvide2 = new CustomerProvide();
+        customerProvide2.setCustomerNo("LXCC-1000-20180408-00003");
+        customerProvide2.setProvideCount(2);
+       customerProvideList.add(customerProvide1);
+       customerProvideList.add(customerProvide2);
+       couponProvideParam.setCustomerProvideList(customerProvideList);
 
         TestResult testResult = getJsonTestResult("/coupon/provideCoupon", couponProvideParam);
     }

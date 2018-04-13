@@ -40,7 +40,7 @@ public class InterfaceSwitchControllerTest extends ERPUnTransactionalTest{
         switchQueryParam.setInterfaceUrl("/switch");
 //        switchQueryParam.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-5-4"));
 //        switchQueryParam.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2018-3-5"));
-        TestResult jsonTestResult = getJsonTestResult("/interfaceSwitch/page",switchQueryParam);
+        TestResult jsonTestResult = getJsonTestResult("/erp/interfaceSwitch/page",switchQueryParam);
         String beanToJSON = JSONUtil.convertBeanToJSON(jsonTestResult);
         System.out.println(beanToJSON.toString());
     }
