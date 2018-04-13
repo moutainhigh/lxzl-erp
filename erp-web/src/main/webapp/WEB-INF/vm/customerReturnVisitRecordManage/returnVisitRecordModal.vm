@@ -14,7 +14,7 @@
 
                 <div class="section row">
                     <div class="col-md-12">
-                        <label for="returnVisitDescribe" class="field-label">回访描述</label>
+                        <label for="returnVisitDescribe" class="field-label"><em class="text-danger">*</em>回访描述</label>
                         <label for="returnVisitDescribe" class="field prepend-icon">
                             <textarea class="gui-textarea" id="returnVisitDescribe" name="returnVisitDescribe" placeholder="请输入回访描述"></textarea>
                             <label for="returnVisitDescribe" class="field-icon"><i class="fa fa-comments"></i>

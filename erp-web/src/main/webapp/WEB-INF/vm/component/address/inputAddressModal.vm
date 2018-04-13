@@ -40,7 +40,7 @@
                             <div class="col-md-12">
                             ##                                <label for="city" class="field-label">城市</label>
                                 <label class="field select">
-                                    <select id="city" name="city" class="required">
+                                    <select id="city" name="city" class="">
                                         <option value="">请选择</option>
                                     </select>
                                     <i class="arrow"></i>
@@ -51,7 +51,7 @@
                             <div class="col-md-12">
                             ##                                <label for="district" class="field-label">地区</label>
                                 <label class="field select">
-                                    <select id="district" name="district" class="required">
+                                    <select id="district" name="district" class="">
                                         <option value="">请选择</option>
                                     </select>
                                     <i class="arrow"></i>

@@ -4,6 +4,7 @@
     <title>凌雄ERP-客户管理-企业客户列表-企业详细</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="gallery-page">
     #parse("layout/toolbox.vm")
@@ -14,6 +15,9 @@
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
         <section id="content" class="pn animated fadeIn">
+
+            #parse("component/loading.vm")
+
             <form id="customerDetailForm">
                 <div class="pv30 ph40 bg-light dark br-b br-grey posr">
                     <script type="text/html" id="customerHeadTpl">
@@ -314,6 +318,8 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+
+<script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.customer.mixin.js',
