@@ -366,11 +366,11 @@ public class CouponServiceImpl implements CouponService{
             serviceResult.setErrorCode(ErrorCode.COUPON_PROVIDE_COUNT_ERROR);
             return serviceResult;
         }
-        for (Customer customer : couponProvideParam.getProvideMap().keySet()) {
+        for (String customerNo : couponProvideParam.getProvideMap().keySet()) {
             //  查询指定数量的出可以发放的优惠卷集合(这里要按照优惠券批次ID进行查询)
-            List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),couponProvideParam.getProvideMap().get(customer));
+            List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),couponProvideParam.getProvideMap().get(customerNo));
             for (int i = 0; i < couponDOList.size(); i++) {
-                couponDOList.get(i).setCustomerNo(customer.getCustomerNo());
+                couponDOList.get(i).setCustomerNo(customerNo);
                 couponDOList.get(i).setCouponStatus(CouponStatus.COUPON_STATUS_USABLE);
                 couponDOList.get(i).setReceiveTime(date);
                 couponDOList.get(i).setUpdateTime(date);
@@ -489,7 +489,7 @@ public class CouponServiceImpl implements CouponService{
     private CouponSupport couponSupport;
 
     /**
-     * 生成优惠券的测试方法
+     * 生成优惠券的方法
      * @param useCoupon
      * @return
      */
