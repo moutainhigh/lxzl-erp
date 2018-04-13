@@ -3172,6 +3172,7 @@ CREATE TABLE `erp_coupon_batch_detail` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `coupon_batch_id` int(20) NOT NULL COMMENT '批次ID',
   `coupon_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
+  `coupon_can_received_count` int(11) NOT NULL DEFAULT 0 COMMENT '优惠券可领取总数',
   `coupon_received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已领取总数',
   `coupon_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
   `coupon_cancel_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券作废总数',
