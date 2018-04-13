@@ -525,6 +525,11 @@ public class K3ServiceImpl implements K3Service {
                         continue;
                     }
 
+                    OrderDO dbOrderDO = orderMapper.findByOrderNo(k3Order.getOrderNo());
+                    if (dbOrderDO != null) {
+                        continue;
+                    }
+
                     com.lxzl.erp.common.domain.order.pojo.Order order = new com.lxzl.erp.common.domain.order.pojo.Order();
                     BeanUtils.copyProperties(k3Order, order);
 
