@@ -96,7 +96,7 @@
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
-                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
+                        <textarea class="form-control" id="orderRemark" rows="3"  name="orderRemark"></textarea>
                     </div>
                 </div>
 
@@ -163,6 +163,7 @@
                             <td>
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
+                                    <input type="hidden" name="orderNo" class="orderNo" value="{{orderNo}}"  />
                                     <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
                                 </label>
                             </td>
