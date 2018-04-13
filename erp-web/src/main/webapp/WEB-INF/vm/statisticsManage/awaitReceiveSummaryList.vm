@@ -39,17 +39,17 @@
                                     <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
-                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
-                                </div>
+##                                <div class="field form-group pull-right mn mr10" style="width: 120px;">
+##                                    <input type="text" name="customerName" id="customerName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+##                                </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="salesmanName" id="salesmanName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入业务员姓名">
                                 </div>
-                                <div class="form-group pull-right mn mr10">
-                                    <div class="input-group">
-                                        <select class="form-control input-sm bradius" name="rentLengthType" id="rentLengthType"></select>
-                                    </div>
-                                </div>
+##                                <div class="form-group pull-right mn mr10">
+##                                    <div class="input-group">
+##                                        <select class="form-control input-sm bradius" name="rentLengthType" id="rentLengthType"></select>
+##                                    </div>
+##                                </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId"></select>
@@ -109,7 +109,7 @@
                             <tr>
                                 <td>合计</td>
                                 <td id="totalCount"></td>
-                                <td id="totalLastMonthRent"></td>
+                                <td id="totalLastMonthRent" colspan="2"></td>
                                 <td id="totalAwaitReceivableLong"></td>
                                 <td id="totalAwaitReceivableShort"></td>
                                 <td id="totalAwaitReceivable"></td>
