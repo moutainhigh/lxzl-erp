@@ -500,16 +500,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if (isMaterial(productNo)){
                     //物料
                     materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
-                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(materialId);
-                    rentingMaterialCountMap.put(materialId,orderMaterialDO.getRentingMaterialCount());
-                    nowMaterialCountMap.put(materialId,k3ReturnOrderDetailDO.getProductCount());
-
+                    if(materialId!=null&&materialId!=0){
+                        OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(materialId);
+                        rentingMaterialCountMap.put(materialId,orderMaterialDO.getRentingMaterialCount());
+                        nowMaterialCountMap.put(materialId,k3ReturnOrderDetailDO.getProductCount());
+                    }
                 }else{
                     //设备，查询数量的在租数量
                     productId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
-                    OrderProductDO orderProductDO = orderProductMapper.findById(productId);
-                    rentingProductCountMap.put(productId,orderProductDO.getRentingProductCount());
-                    nowProductCountMap.put(productId,k3ReturnOrderDetailDO.getProductCount());
+                    if(productId!=null&&productId!=0){
+                        OrderProductDO orderProductDO = orderProductMapper.findById(productId);
+                        rentingProductCountMap.put(productId,orderProductDO.getRentingProductCount());
+                        nowProductCountMap.put(productId,k3ReturnOrderDetailDO.getProductCount());
+                    }
                 }
             }
         }
