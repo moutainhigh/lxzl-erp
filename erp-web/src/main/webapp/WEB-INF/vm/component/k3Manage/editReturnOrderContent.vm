@@ -96,7 +96,7 @@
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注</label>
                     <div class="col-md-9">
-                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
+                        <textarea class="form-control" id="orderRemark" rows="3"  name="orderRemark"></textarea>
                     </div>
                 </div>
 
