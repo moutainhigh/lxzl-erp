@@ -32,6 +32,7 @@ import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
@@ -42,6 +43,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
@@ -137,7 +139,7 @@ public class K3ServiceImpl implements K3Service {
             } else {
                 jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
-            if(!userSupport.isSuperUser()){
+            if (!userSupport.isSuperUser()) {
                 jsonObject.put("orderSellerName", userSupport.getCurrentUser().getRealName());
             }
             jsonObject.put("pw", pw);
@@ -161,8 +163,11 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
                     K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(order.getOrderSubCompanyName());
-                    if(k3MappingSubCompanyDO != null){
-                        order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getErpSubCompanyCode()));
+                    if (k3MappingSubCompanyDO != null) {
+                        SubCompanyDO subCompanyDO = subCompanyMapper.findBySubCompanyCode(k3MappingSubCompanyDO.getErpSubCompanyCode());
+                        if (subCompanyDO != null) {
+                            order.setOrderSubCompanyId(subCompanyDO.getId());
+                        }
                         order.setOrderSubCompanyName(k3MappingSubCompanyDO.getSubCompanyName());
                     }
 
@@ -536,13 +541,13 @@ public class K3ServiceImpl implements K3Service {
                     }
                     orderDO.setIsK3Order(CommonConstant.COMMON_CONSTANT_YES);
                     orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    orderDO.setCreateTime(currentTime);
+                    orderDO.setCreateTime(orderDO.getRentStartTime());
                     orderDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                    orderDO.setUpdateTime(currentTime);
+                    orderDO.setUpdateTime(orderDO.getRentStartTime());
                     orderDO.setUpdateUser(orderDO.getOrderSellerId().toString());
 
                     List<OrderProductDO> orderProductDOList = new ArrayList<>();
-                    if(CollectionUtil.isNotEmpty(k3Order.getOrderProductList())){
+                    if (CollectionUtil.isNotEmpty(k3Order.getOrderProductList())) {
                         for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
                             OrderProductDO orderProductDO = new OrderProductDO();
                             BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
@@ -560,9 +565,9 @@ public class K3ServiceImpl implements K3Service {
                             orderProductDO.setDepositCycle(order.getDepositCycle());
                             orderProductDO.setPaymentCycle(order.getPaymentCycle());
                             orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                            orderProductDO.setCreateTime(currentTime);
+                            orderProductDO.setCreateTime(orderDO.getRentStartTime());
                             orderProductDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                            orderProductDO.setUpdateTime(currentTime);
+                            orderProductDO.setUpdateTime(orderDO.getRentStartTime());
                             orderProductDO.setUpdateUser(orderDO.getOrderSellerId().toString());
                             orderProductDOList.add(orderProductDO);
                         }
@@ -573,7 +578,7 @@ public class K3ServiceImpl implements K3Service {
                     orderDO.setDeliverySubCompanyId(-1);
 
                     List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
-                    if(CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())){
+                    if (CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())) {
                         for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
                             OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
                             BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
@@ -590,9 +595,9 @@ public class K3ServiceImpl implements K3Service {
                             orderMaterialDO.setDepositCycle(order.getDepositCycle());
                             orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
                             orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                            orderMaterialDO.setCreateTime(currentTime);
+                            orderMaterialDO.setCreateTime(orderDO.getRentStartTime());
                             orderMaterialDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                            orderMaterialDO.setUpdateTime(currentTime);
+                            orderMaterialDO.setUpdateTime(orderDO.getRentStartTime());
                             orderMaterialDO.setUpdateUser(orderDO.getOrderSellerId().toString());
                             orderMaterialDOList.add(orderMaterialDO);
                         }
@@ -628,9 +633,9 @@ public class K3ServiceImpl implements K3Service {
                     OrderConsignInfoDO orderConsignInfoDO = ConverterUtil.convert(orderConsignInfo, OrderConsignInfoDO.class);
                     orderConsignInfoDO.setOrderId(orderDO.getId());
                     orderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    orderConsignInfoDO.setCreateTime(currentTime);
+                    orderConsignInfoDO.setCreateTime(orderDO.getRentStartTime());
                     orderConsignInfoDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                    orderConsignInfoDO.setUpdateTime(currentTime);
+                    orderConsignInfoDO.setUpdateTime(orderDO.getRentStartTime());
                     orderConsignInfoDO.setUpdateUser(orderDO.getOrderSellerId().toString());
                     orderConsignInfoMapper.save(orderConsignInfoDO);
 
@@ -749,5 +754,8 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
+
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
 
 }

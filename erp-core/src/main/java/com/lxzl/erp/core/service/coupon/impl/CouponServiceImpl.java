@@ -21,9 +21,11 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDetailDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,8 @@ public class CouponServiceImpl implements CouponService{
     private UserSupport userSupport;
     @Autowired
     private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private CustomerMapper customerMapper;
 
 
     /**
@@ -358,19 +362,25 @@ public class CouponServiceImpl implements CouponService{
         //  按照优惠卷批次详情ID查询可以发放优惠券的数量，与计算出传递过来需要发放总优惠卷数量进行比较，如果超过可发放优惠卷数量，给出错误提示
         Integer couponStatusCountIsZero = couponMapper.findCouponStatusCountIsZeroByCouponBatchDetailId(couponProvideParam.getCouponBatchDetailId());
         Integer totalCouponProvideAmount = 0;
-        for (Integer value : couponProvideParam.getProvideMap().values()) {
-            totalCouponProvideAmount+=value;
+        for (CustomerProvide customerProvide : couponProvideParam.getCustomerProvideList()) {
+            totalCouponProvideAmount+=customerProvide.getProvideCount();
         }
 
         if (couponStatusCountIsZero < totalCouponProvideAmount) {
             serviceResult.setErrorCode(ErrorCode.COUPON_PROVIDE_COUNT_ERROR);
             return serviceResult;
         }
-        for (Customer customer : couponProvideParam.getProvideMap().keySet()) {
+
+        for (CustomerProvide customerProvide: couponProvideParam.getCustomerProvideList()) {
+            CustomerDO customerDO = customerMapper.findByNo(customerProvide.getCustomerNo());
+            if (customerDO == null) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                return serviceResult;
+            }
             //  查询指定数量的出可以发放的优惠卷集合(这里要按照优惠券批次ID进行查询)
-            List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),couponProvideParam.getProvideMap().get(customer));
+            List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),customerProvide.getProvideCount());
             for (int i = 0; i < couponDOList.size(); i++) {
-                couponDOList.get(i).setCustomerNo(customer.getCustomerNo());
+                couponDOList.get(i).setCustomerNo(customerProvide.getCustomerNo());
                 couponDOList.get(i).setCouponStatus(CouponStatus.COUPON_STATUS_USABLE);
                 couponDOList.get(i).setReceiveTime(date);
                 couponDOList.get(i).setUpdateTime(date);
@@ -489,7 +499,7 @@ public class CouponServiceImpl implements CouponService{
     private CouponSupport couponSupport;
 
     /**
-     * 生成优惠券的测试方法
+     * 生成优惠券的方法
      * @param useCoupon
      * @return
      */
