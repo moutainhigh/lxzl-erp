@@ -65,7 +65,7 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th>分公司ID</th>
+##                                <th>分公司ID</th>
                                 <th>分公司名称</th>
                                 <th>业务员ID</th>
                                 <th>业务员姓名</th>
@@ -85,7 +85,7 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{subCompanyId}}</td>
+##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{orderSellerId}}</td>
                                 <td>{{orderSellerName}}</td>
@@ -107,6 +107,7 @@
                             </tr>
                             {{/listData}}
                             <tr>
+                                <td>合计</td>
                                 <td id="totalCount"></td>
                                 <td id="totalLastMonthRent"></td>
                                 <td id="totalAwaitReceivableLong"></td>
