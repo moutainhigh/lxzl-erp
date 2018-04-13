@@ -16,7 +16,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CouponProvideParam {
     private Integer couponBatchDetailId;
-    private Map<Customer,Integer> provideMap;
+    private List<CustomerProvide> customerProvideList;
 
     public Integer getCouponBatchDetailId() {
         return couponBatchDetailId;
@@ -26,11 +26,11 @@ public class CouponProvideParam {
         this.couponBatchDetailId = couponBatchDetailId;
     }
 
-    public Map<Customer, Integer> getProvideMap() {
-        return provideMap;
+    public List<CustomerProvide> getCustomerProvideList() {
+        return customerProvideList;
     }
 
-    public void setProvideMap(Map<Customer, Integer> provideMap) {
-        this.provideMap = provideMap;
+    public void setCustomerProvideList(List<CustomerProvide> customerProvideList) {
+        this.customerProvideList = customerProvideList;
     }
 }
