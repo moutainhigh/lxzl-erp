@@ -541,9 +541,9 @@ public class K3ServiceImpl implements K3Service {
                     }
                     orderDO.setIsK3Order(CommonConstant.COMMON_CONSTANT_YES);
                     orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                    orderDO.setCreateTime(currentTime);
+                    orderDO.setCreateTime(orderDO.getRentStartTime());
                     orderDO.setCreateUser(orderDO.getOrderSellerId().toString());
-                    orderDO.setUpdateTime(currentTime);
+                    orderDO.setUpdateTime(orderDO.getRentStartTime());
                     orderDO.setUpdateUser(orderDO.getOrderSellerId().toString());
 
                     List<OrderProductDO> orderProductDOList = new ArrayList<>();

@@ -26,18 +26,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SwitchInterceptor extends HandlerInterceptorAdapter {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(SwitchInterceptor.class);
+    private final Logger logger = LoggerFactory.getLogger(SwitchInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String requestPath = request.getRequestURI();
-        requestPath = StrReplaceUtil.formatInterfaceUrl(requestPath);
-        SwitchQueryParam switchQueryParam = new SwitchQueryParam();
-        switchQueryParam.setIsOpen(CommonConstant.COMMON_CONSTANT_NO);
-        LOGGER.info("===================requestPath:"+requestPath);
+        String contextPath = request.getContextPath();
+        requestPath = StrReplaceUtil.formatInterfaceUrl(requestPath.replace(contextPath,""));
+        logger.info("===============requestPath:"+requestPath);
         SwitchDO switchDO = switchMapper.findByInterfaceUrl(requestPath);
-        if(switchDO != null&&CommonConstant.COMMON_CONSTANT_NO.equals(switchDO.getIsOpen())){
+         if(switchDO != null&&CommonConstant.COMMON_CONSTANT_NO.equals(switchDO.getIsOpen())){
             throw new BusinessException(ErrorCode.SWITCH_CLOSE,ErrorCode.getMessage(ErrorCode.SWITCH_CLOSE));
         }
         return true;
