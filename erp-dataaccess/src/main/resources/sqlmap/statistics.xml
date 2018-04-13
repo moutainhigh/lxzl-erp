@@ -543,17 +543,17 @@ ORDER BY esc.data_order DESC
             LEFT JOIN erp_order eo ON eo.id = esod.order_id AND eo.data_status = 1
             LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
             WHERE esod.statement_detail_status = 0 AND  esod.data_status = 1 AND esod.order_type = 1 AND esod.statement_expect_pay_time>NOW()
-        <if test="maps.unReceivableQueryParam != null &amp;&amp; maps.unReceivableQueryParam.rentLengthType!=null">
-            AND  eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType, jdbcType=INTEGER}
+        <if test="maps.awaitReceivableQueryParam != null &amp;&amp; maps.awaitReceivableQueryParam.rentLengthType!=null">
+            AND  eo.rent_length_type = #{maps.awaitReceivableQueryParam.rentLengthType, jdbcType=INTEGER}
         </if>
-        <if test="maps.unReceivableQueryParam != null &amp;&amp; maps.unReceivableQueryParam.customerName!=null &amp;&amp; maps.unReceivableQueryParam.customerName != ''">
-            AND  ec.customer_name LIKE CONCAT('%','${maps.unReceivableQueryParam.customerName}','%')
+        <if test="maps.awaitReceivableQueryParam != null &amp;&amp; maps.awaitReceivableQueryParam.customerName!=null &amp;&amp; maps.awaitReceivableQueryParam.customerName != ''">
+            AND  ec.customer_name LIKE CONCAT('%','${maps.awaitReceivableQueryParam.customerName}','%')
         </if>
-        <if test="maps.unReceivableQueryParam != null &amp;&amp; maps.unReceivableQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.unReceivableQueryParam.subCompanyId, jdbcType=INTEGER}
+        <if test="maps.awaitReceivableQueryParam != null &amp;&amp; maps.awaitReceivableQueryParam.subCompanyId!=null">
+            AND eo.order_sub_company_id = #{maps.awaitReceivableQueryParam.subCompanyId, jdbcType=INTEGER}
         </if>
-        <if test="maps.unReceivableQueryParam != null &amp;&amp; mmaps.unReceivableQueryParam.salesmanName!=null&amp;&amp; maps.unReceivableQueryParam.salesmanName != ''">
-            AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
+        <if test="maps.awaitReceivableQueryParam != null &amp;&amp; maps.awaitReceivableQueryParam.salesmanName!=null&amp;&amp; maps.awaitReceivableQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.awaitReceivableQueryParam.salesmanName}','%' )
         </if>
     </select>
 
@@ -574,16 +574,16 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_sub_company esc ON esc.id=eo.order_sub_company_id and esc.data_status = 1
         WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1 AND esod.statement_expect_pay_time>NOW()
         <if test="maps.awaitReceivableQueryParam.rentLengthType!=null">
-            AND eo.rent_length_type = #{maps.unReceivableQueryParam.rentLengthType}
+            AND eo.rent_length_type = #{maps.awaitReceivableQueryParam.rentLengthType}
         </if>
         <if test="maps.awaitReceivableQueryParam.customerName!=null&amp;&amp; maps.awaitReceivableQueryParam.customerName != ''">
-            AND ec.customer_name LIKE CONCAT('%','${maps.unReceivableQueryParam.customerName}','%' )
+            AND ec.customer_name LIKE CONCAT('%','${maps.awaitReceivableQueryParam.customerName}','%' )
         </if>
         <if test="maps.awaitReceivableQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.unReceivableQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.awaitReceivableQueryParam.subCompanyId}
         </if>
         <if test="maps.awaitReceivableQueryParam.salesmanName!=null&amp;&amp; maps.awaitReceivableQueryParam.salesmanName != ''">
-            AND eu.real_name LIKE CONCAT('%','${maps.unReceivableQueryParam.salesmanName}','%' )
+            AND eu.real_name LIKE CONCAT('%','${maps.awaitReceivableQueryParam.salesmanName}','%' )
         </if>
         GROUP BY eo.order_no,eo.rent_length_type
         ORDER BY esod_create_time ASC
