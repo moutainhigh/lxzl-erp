@@ -21,9 +21,11 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDetailDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,8 @@ public class CouponServiceImpl implements CouponService{
     private UserSupport userSupport;
     @Autowired
     private GenerateNoSupport generateNoSupport;
+    @Autowired
+    private CustomerMapper customerMapper;
 
 
     /**
@@ -366,7 +370,13 @@ public class CouponServiceImpl implements CouponService{
             serviceResult.setErrorCode(ErrorCode.COUPON_PROVIDE_COUNT_ERROR);
             return serviceResult;
         }
+
         for (CustomerProvide customerProvide: couponProvideParam.getCustomerProvideList()) {
+            CustomerDO customerDO = customerMapper.findByNo(customerProvide.getCustomerNo());
+            if (customerDO == null) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                return serviceResult;
+            }
             //  查询指定数量的出可以发放的优惠卷集合(这里要按照优惠券批次ID进行查询)
             List<CouponDO> couponDOList = couponMapper.findByCouponStatus(couponProvideParam.getCouponBatchDetailId(),customerProvide.getProvideCount());
             for (int i = 0; i < couponDOList.size(); i++) {
