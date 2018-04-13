@@ -32,6 +32,7 @@ import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
@@ -42,6 +43,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
@@ -137,7 +139,7 @@ public class K3ServiceImpl implements K3Service {
             } else {
                 jsonObject.put("createEndTime", DateUtil.formatDate(param.getCreateEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
             }
-            if(!userSupport.isSuperUser()){
+            if (!userSupport.isSuperUser()) {
                 jsonObject.put("orderSellerName", userSupport.getCurrentUser().getRealName());
             }
             jsonObject.put("pw", pw);
@@ -161,8 +163,11 @@ public class K3ServiceImpl implements K3Service {
                     orderConsignInfo.setConsigneePhone("");
                     order.setOrderConsignInfo(orderConsignInfo);
                     K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(order.getOrderSubCompanyName());
-                    if(k3MappingSubCompanyDO != null){
-                        order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getErpSubCompanyCode()));
+                    if (k3MappingSubCompanyDO != null) {
+                        SubCompanyDO subCompanyDO = subCompanyMapper.findBySubCompanyCode(k3MappingSubCompanyDO.getErpSubCompanyCode());
+                        if (subCompanyDO != null) {
+                            order.setOrderSubCompanyId(subCompanyDO.getId());
+                        }
                         order.setOrderSubCompanyName(k3MappingSubCompanyDO.getSubCompanyName());
                     }
 
@@ -542,7 +547,7 @@ public class K3ServiceImpl implements K3Service {
                     orderDO.setUpdateUser(orderDO.getOrderSellerId().toString());
 
                     List<OrderProductDO> orderProductDOList = new ArrayList<>();
-                    if(CollectionUtil.isNotEmpty(k3Order.getOrderProductList())){
+                    if (CollectionUtil.isNotEmpty(k3Order.getOrderProductList())) {
                         for (OrderProduct k3OrderProduct : k3Order.getOrderProductList()) {
                             OrderProductDO orderProductDO = new OrderProductDO();
                             BeanUtils.copyProperties(k3OrderProduct, orderProductDO);
@@ -573,7 +578,7 @@ public class K3ServiceImpl implements K3Service {
                     orderDO.setDeliverySubCompanyId(-1);
 
                     List<OrderMaterialDO> orderMaterialDOList = new ArrayList<>();
-                    if(CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())){
+                    if (CollectionUtil.isNotEmpty(k3Order.getOrderMaterialList())) {
                         for (OrderMaterial k3OrderMaterial : k3Order.getOrderMaterialList()) {
                             OrderMaterialDO orderMaterialDO = new OrderMaterialDO();
                             BeanUtils.copyProperties(k3OrderMaterial, orderMaterialDO);
@@ -749,5 +754,7 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private CustomerRiskManagementMapper customerRiskManagementMapper;
+
+    private SubCompanyMapper subCompanyMapper;
 
 }
