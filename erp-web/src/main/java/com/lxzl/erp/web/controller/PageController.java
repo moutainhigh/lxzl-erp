@@ -260,7 +260,7 @@ public class PageController extends BaseController {
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
-    @RequestMapping("/order-return-manage/print")
+    @RequestMapping(value = "/order-return-manage/print")
     public String returnOrderManagePrint() {
         return "/returnOrderManage/returnOrderPrint";
     }
