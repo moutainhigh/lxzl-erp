@@ -106,10 +106,10 @@
                                 <td valign="top" colspan="16" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
-                            <tr>
+                            <tr class="total-trade">
                                 <td>合计</td>
-                                <td id="totalCount"></td>
-                                <td id="totalLastMonthRent" colspan="2"></td>
+                                <td id="totalCount" colspan="2"></td>
+                                <td id="totalLastMonthRent"></td>
                                 <td id="totalAwaitReceivableLong"></td>
                                 <td id="totalAwaitReceivableShort"></td>
                                 <td id="totalAwaitReceivable"></td>
