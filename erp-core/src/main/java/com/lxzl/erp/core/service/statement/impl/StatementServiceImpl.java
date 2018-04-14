@@ -19,11 +19,11 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
-import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
+import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementPaySupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementReturnSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -193,7 +193,9 @@ public class StatementServiceImpl implements StatementService {
         }
         //统一拿订单结算日
         Integer statementDays = orderDO.getStatementDate();
-
+        if (statementDays == null) {
+            statementDays = statementOrderSupport.getCustomerStatementDate(customerDO.getStatementDate(), rentStartTime);
+        }
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
@@ -242,7 +244,9 @@ public class StatementServiceImpl implements StatementService {
         }
         //统一拿订单结算日
         Integer statementDays = orderDO.getStatementDate();
-
+        if (statementDays == null) {
+            statementDays = statementOrderSupport.getCustomerStatementDate(customerDO.getStatementDate(), rentStartTime);
+        }
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
@@ -3000,5 +3004,5 @@ public class StatementServiceImpl implements StatementService {
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
     @Autowired
-    private K3Service k3Service;
+    private StatementOrderSupport statementOrderSupport;
 }
