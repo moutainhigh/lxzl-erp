@@ -160,7 +160,7 @@
                         <th class="text-center" style="white-space: nowrap;">序号</th>
                         <th class="text-center">商品编号</th>
                         <th class="text-center">商品名称</th>
-                        <th class="text-center" style="white-space: nowrap;">退货数量</th>
+                        <th class="text-center" style="white-space: nowrap;">数量</th>
                         <th class="text-center">备注</th>
                     </tr>
                     </thead>
@@ -323,7 +323,6 @@
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',
-                'manage.return.order.print.mixin.js',
                 'manage.return.order.print.js');
     </script>
     <script type="text/javascript">
