@@ -695,4 +695,12 @@
             #{item.id,jdbcType=INTEGER}
         </foreach>
     </update>
+
+    <update id="deleteByOrderId">
+        UPDATE erp_statement_order_detail
+        <set>
+            data_status = 2,update_time = now(),update_user = #{updateUser,jdbcType=VARCHAR}
+        </set>
+        WHERE order_id = #{orderId, jdbcType=INTEGER} AND order_type=1 AND  data_status=1
+    </update>
 </mapper>

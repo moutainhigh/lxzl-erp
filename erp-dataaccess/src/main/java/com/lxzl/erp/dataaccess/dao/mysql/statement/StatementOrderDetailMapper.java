@@ -36,4 +36,6 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId") Integer itemReferId, @Param("statementOrderId") Integer statementOrderId);
 
     Integer batchUpdate(@Param("list") List<StatementOrderDetailDO> list);
+
+    void deleteByOrderId(@Param("orderId")Integer orderId,@Param("updateUser")String updateUser);
 }

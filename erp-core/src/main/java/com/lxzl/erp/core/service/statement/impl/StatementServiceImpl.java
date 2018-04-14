@@ -2833,17 +2833,21 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return result;
         }
-        //删除原结算数据
+        //删除原结算数据(订单类型)
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
         BigDecimal needReturnAmount = BigDecimal.ZERO;
         Map<Date, StatementOrderDO> statementOrderDOMap = new HashMap<>();//结算单缓存
+        String userId=userSupport.getCurrentUser().getUserId().toString();
+        Date now=new Date();
         for (StatementOrderDetailDO statementOrderDetailDO : dbStatementOrderDetailDOList) {
+            //非订单类型订单
+            if(!statementOrderDetailDO.getOrderType().equals(OrderType.ORDER_TYPE_ORDER))continue;
             Date dateKey = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementExpectPayTime());
             if (!statementOrderDOMap.containsKey(dateKey)) {
                 StatementOrderDO statementOrderDO = statementOrderMapper.findByCustomerAndPayTime(statementOrderDetailDO.getCustomerId(), dateKey);
                 statementOrderDOMap.put(dateKey, statementOrderDO);
             }
-            statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            //statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
             StatementOrderDO statementOrderDO = statementOrderDOMap.get(dateKey);
             //结算单存在则修改结算单(不存在则直接删除结算详情)
             if (statementOrderDO != null) {
@@ -2892,6 +2896,8 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
                 if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) < 0)
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+                statementOrderDO.setUpdateUser(userId);
+                statementOrderDO.setUpdateTime(now);
                 statementOrderMapper.update(statementOrderDO);
             }
         }
@@ -2908,7 +2914,8 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
-        statementOrderDetailMapper.batchUpdate(dbStatementOrderDetailDOList);
+        statementOrderDetailMapper.deleteByOrderId(orderDO.getId(),userId);
+        //statementOrderDetailMapper.batchUpdate(dbStatementOrderDetailDOList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
