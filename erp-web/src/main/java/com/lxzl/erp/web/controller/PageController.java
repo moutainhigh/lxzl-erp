@@ -704,6 +704,14 @@ public class PageController extends BaseController {
     public String statisticsManageUnReceivableList() {
         return "/statisticsManage/statisticsUnreceivableList";
     }
+    @RequestMapping("/statistics/awaitReceive-list")
+    public String statisticsManageReceiveList() {
+        return "/statisticsManage/awaitReceiveDetailList";
+    }
+    @RequestMapping("/statistics/awaitReceiveSummary-list")
+    public String statisticsManageReceiveSummaryList() {
+        return "/statisticsManage/awaitReceiveSummaryList";
+    }
 
 
     //充值记录
