@@ -169,16 +169,13 @@
                     {{#listData}}
                     <tr>
                         <td class="text-center">{{rowNum}}</td>
+                        <td class="text-center">{{productNo}}</td>
                         <td class="text-center">{{productName}}</td>
-                        <td class="text-center">{{propertiesToStr}}</td>
                         <td class="text-center">{{productCount}}</td>
-                        <td class="text-center"></td>
+                        <td class="text-center">{{remark}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
-                    <tr class="bg-light">
-                        <td colspan="5" class="text-center printH2">数量总计:</b>{{totalCount}}</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -253,9 +250,23 @@
         </div>
     </div>
 
+    <div id="totalInfo" class="hide">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="orderAmountInfo">
+                    <div class="bg-light" style="padding:9px 11px; border-bottom:1px solid #e5e5e5;">
+                        <b>退货商品数量总计:</b>
+                        <span id="totalCount" style="display:inline-block;margin-left:10px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="signature" class="hide">
         <div class=" row p15 pbn">
-            <div class="section col-md-12 mb30"><p class="printH2"><b>以下请用正楷书写</b></p></div>
+            <div class="section col-md-12 mb15"><p class="printH2"><b>以下请用正楷书写</b></p></div>
+
             <div class="row section mb40">
                 <div class="col-xs-12">
                     <div class="col-xs-4">
@@ -277,26 +288,26 @@
                         </dl>
                     </div>
                 </div>
-                <div class="row section mb40">
-                    <div class="col-xs-12">
-                        <div class="col-xs-4">
-                            <dl class="dl-horizontal dl-horizontal-rental mbn">
-                                <dt><label>接收人</label><span>：</span></dt>
-                                <dd class="mb5 print-under-line" style="margin-left: 4em !important;"></dd>
-                            </dl>
-                        </div>
-                        <div class="col-xs-4">
-                            <dl class="dl-horizontal dl-horizontal-rental mbn">
-                                <dt><label>联系方式</label><span>：</span></dt>
-                                <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
-                            </dl>
-                        </div>
-                        <div class="col-xs-4">
-                            <dl class="dl-horizontal dl-horizontal-rental mbn">
-                                <dt><label>接收日期</label><span>：</span></dt>
-                                <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
-                            </dl>
-                        </div>
+            </div>
+            <div class="row section mb15">
+                <div class="col-xs-12">
+                    <div class="col-xs-4">
+                        <dl class="dl-horizontal dl-horizontal-rental mbn">
+                            <dt><label>收货人</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 4em !important;"></dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-4">
+                        <dl class="dl-horizontal dl-horizontal-rental mbn">
+                            <dt><label>联系方式</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-4">
+                        <dl class="dl-horizontal dl-horizontal-rental mbn">
+                            <dt><label>收货日期</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
+                        </dl>
                     </div>
                 </div>
             </div>
