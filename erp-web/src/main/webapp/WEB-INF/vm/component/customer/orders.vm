@@ -1,6 +1,6 @@
 <div class="panel">
     <div class="panel-heading">
-        <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+        <ul class="nav panel-tabs-border panel-tabs panel-tabs-left" id="modalTab">
             <li class="active">
                 <a href="#productFirstNeed" data-toggle="tab" aria-expanded="false">首次所需设备</a>
             </li>
@@ -24,6 +24,9 @@
             </li>
             <li>
                 <a href="#returnVisitRecord" data-toggle="tab" aria-expanded="true">客户回访记录</a>
+            </li>
+            <li>
+                <a href="#couponList" data-toggle="tab" aria-expanded="true">优惠券</a>
             </li>
         </ul>
     </div>
@@ -343,6 +346,9 @@
             </div>
             <div id="returnVisitRecord" class="tab-pane">
                 #parse("customerReturnVisitRecordManage/returnVisitRecordList.vm")
+            </div>
+            <div id="couponList" class="tab-pane">
+                #parse("component/customer/coupon.vm")
             </div>
         </div>
     </div>
