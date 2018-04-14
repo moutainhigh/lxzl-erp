@@ -123,4 +123,16 @@ public class StatementController extends BaseController {
         ServiceResult<String, List<String>> serviceResult = statementService.batchPayStatementOrder(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "reCreateOrderStatement", method = RequestMethod.POST)
+    public Result reCreateOrderStatement(@RequestBody StatementOrderQueryParam param) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(param.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "reCreateK3OrderStatement", method = RequestMethod.POST)
+    public Result reCreateK3OrderStatement(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateK3OrderStatement(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }
