@@ -7,7 +7,6 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -147,6 +144,16 @@ public class CouponController {
     @RequestMapping(value = "findCouponByCustomerNo",method = RequestMethod.POST)
     public Result findCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) Customer customer, BindingResult validResult){
         ServiceResult<String,List<Coupon>> serviceResult = couponService.findCouponByCustomerNo(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+    /**
+     * 查询客户所有优惠券
+     * @param customerCouponQueryParam
+     * @return
+     */
+    @RequestMapping(value = "pageCouponByCustomerNo",method = RequestMethod.POST)
+    public Result pageCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) CustomerCouponQueryParam customerCouponQueryParam, BindingResult validResult){
+        ServiceResult<String,Page<Coupon>> serviceResult = couponService.pageCouponByCustomerNo(customerCouponQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
     /**

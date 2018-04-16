@@ -25,6 +25,16 @@ public class CouponDO  extends BaseDO {
 	private String orderNo;		//订单号
 	private Integer orderProductId;		//订单商品项ID
 
+	private String productName;
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
 	public Integer getId(){
 		return id;
 	}
