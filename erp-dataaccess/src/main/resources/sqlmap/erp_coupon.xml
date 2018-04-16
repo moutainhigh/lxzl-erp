@@ -25,6 +25,7 @@
 		<result column="order_id" jdbcType="INTEGER" property="orderId" />
 		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
 		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="product_name" jdbcType="INTEGER" property="productName" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -371,4 +372,42 @@
 		SET update_user = #{updateUser},coupon_status = 12,update_time = #{updateTime}
 		WHERE coupon_batch_detail_id = #{couponBatchDetailId}
 	</update>
+
+	<select id="findCustomerCouponByParams" resultMap="CouponDO" parameterType="map">
+		SELECT <include refid="column_List"/>,eop.product_name
+		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
+		<where>
+			<if test="maps.customerNo != null &amp;&amp;  maps.customerNo != ''">
+				and ec.customer_no  = #{maps.customerNo}
+			</if>
+			<if test="true">
+				and ec.coupon_status IN (0,4,8)
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+		ORDER BY ec.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findCustomerCouponCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(ec.id)
+		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
+		<where>
+			<if test="maps.customerNo != null &amp;&amp;  maps.customerNo != ''">
+				and ec.customer_no  = #{maps.customerNo}
+			</if>
+			<if test="true">
+				and ec.coupon_status IN (0,4,8)
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+		ORDER BY ec.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
 </mapper>
