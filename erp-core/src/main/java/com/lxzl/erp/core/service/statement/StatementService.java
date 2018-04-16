@@ -44,6 +44,14 @@ public interface StatementService extends BaseService {
     ServiceResult<String, BigDecimal> createK3OrderStatement(Order order);
 
     /**
+     * 重新创建结算单
+     * @param orderNo
+     * @return
+     */
+    ServiceResult<String, BigDecimal> reCreateOrderStatement(String orderNo);
+    ServiceResult<String, BigDecimal> reCreateK3OrderStatement(Order order);
+
+    /**
      * 计算订单首次需要缴纳费用
      *
      * @param orderDO 订单

@@ -341,7 +341,7 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDetailMapper.updateCouponBatchDetailDOList(couponBatchDetailDOList);
         for (Integer key : coucouponBatchMap.keySet()) {
             CouponBatchDO couponBatchDO = couponBatchMapper.findById(key);
-            couponBatchDO.setCouponBatchCancelCount(coucouponBatchMap.get(key));
+            couponBatchDO.setCouponBatchCancelCount(coucouponBatchMap.get(key)+couponBatchDO.getCouponBatchCancelCount());
             couponBatchDO.setUpdateTime(date);
             couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             couponBatchMapper.update(couponBatchDO);
