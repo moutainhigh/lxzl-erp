@@ -102,6 +102,11 @@
                                 <td valign="top" colspan="16" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
+                            <tr>
+                                <td>合计</td>
+                                <td id="totalCount" colspan="7"></td>
+                                <td id="totalAwaitReceivable" colspan="2"></td>
+                            </tr>
                             {{/dataSource}}
                             </tbody>
                         </script>

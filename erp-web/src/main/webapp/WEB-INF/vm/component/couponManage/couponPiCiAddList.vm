@@ -8,7 +8,7 @@
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="couponTotalCount" class="field-label">请填写优惠券总数</label>
+                        <label for="couponTotalCount" class="field-label"><em class="text-danger">*</em>请填写优惠券总数</label>
                         <label for="couponTotalCount" class="field prepend-icon">
                             <input type="text" name="couponTotalCount" id="couponTotalCount" class="gui-input required" aria-required="true" placeholder="请填写优惠券总数">
                             <label for="couponTotalCount" class="field-icon"><i class="fa fa-tag"></i>
@@ -16,7 +16,7 @@
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <label for="faceValue" class="field-label">请填写优惠券面值</label>
+                        <label for="faceValue" class="field-label"><em class="text-danger">*</em>请填写优惠券面值</label>
                         <label for="faceValue" class="field prepend-icon">
                             <input type="text" name="faceValue" id="faceValue" class="faceValue moneyNumber gui-input required" aria-required="true" placeholder="请填写优惠券面值">
                             <label for="faceValue" class="field-icon"><i class="fa fa-tag"></i>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="isOnline" class="field-label">是否线上</label>
+                        <label for="isOnline" class="field-label"><em class="text-danger">*</em>是否线上</label>
                         <label class="field select">
                             <select id="isOnline" name="isOnline" class="required">
                                 <option value="">请选择</option>
