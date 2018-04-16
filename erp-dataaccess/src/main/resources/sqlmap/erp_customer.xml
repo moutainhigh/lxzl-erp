@@ -459,7 +459,6 @@
 			<include refid="permission_sql.customer_company_control"/>
 		</where>
 		ORDER BY ecc.create_time DESC
-		LIMIT #{maps.start},#{maps.pageSize}
 		) ecc
 		LEFT JOIN erp_customer ec ON ecc.ecc_customer_id=ec.id AND ec.data_status=1
 		LEFT JOIN erp_area_province eap ON ecc.ecc_province=eap.id AND eap.data_status=1
@@ -478,6 +477,7 @@
 			</if>
 		</where>
 		ORDER BY ecc.ecc_create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 
 
