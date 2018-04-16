@@ -154,7 +154,7 @@
                 <table class="table table-bordered mbn">
                     <thead>
                     <tr class="bg-light">
-                        <th colspan="5" class="text-center printH2">商品租赁明细</th>
+                        <th colspan="5" class="text-center printH2">退货单明细</th>
                     </tr>
                     <tr class="bg-light">
                         <th class="text-center" style="white-space: nowrap;">序号</th>
@@ -293,7 +293,7 @@
                 <div class="col-xs-12">
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
-                            <dt><label>收货人</label><span>：</span></dt>
+                            <dt><label>接收人</label><span>：</span></dt>
                             <dd class="mb5 print-under-line" style="margin-left: 4em !important;"></dd>
                         </dl>
                     </div>
@@ -305,7 +305,7 @@
                     </div>
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
-                            <dt><label>收货日期</label><span>：</span></dt>
+                            <dt><label>接收日期</label><span>：</span></dt>
                             <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
                         </dl>
                     </div>
