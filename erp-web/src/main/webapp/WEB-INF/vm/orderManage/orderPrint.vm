@@ -13,9 +13,9 @@
             width:100%;
             width: 21cm;
             /*min-height: 29.7cm;*/
-            min-height: 27.9cm;
+            min-height: 25.9cm;
             padding: 1cm 0.5cm;
-            margin: 1cm auto;
+            margin: 0cm auto;
             border: 1px #D3D3D3 solid;
             border-radius: 5px;
             background: white;
@@ -36,7 +36,8 @@
         .subpage {
             padding: 0cm;
             border: 2px #666 solid;
-            height: 260mm;
+            /*height: 280mm;*/
+            height: 240mm;
             position: relative;
         }
 
@@ -45,7 +46,8 @@
         }
 
         @page {
-            size: A4;
+            /*size: A4;*/
+            size: 24.1cm 27.9cm;
             margin: 0;
         }
 
@@ -74,12 +76,12 @@
         }
 
         .qrcodeCanvas {
-            height:1.2cm;
-            width: 1.2cm;
+            height:0.8cm;
+            width:0.8cm;
             float: right;
             position: absolute;
             right: 0.5cm;
-            top:0.2cm;
+            top:0.5cm;
         }
 
         .orderNo {
