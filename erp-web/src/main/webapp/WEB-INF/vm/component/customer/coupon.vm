@@ -30,8 +30,8 @@
                 <td>{{#clockTime}}{{receiveTime}}{{/clockTime}}</td>
                 <td>{{#clockTime}}{{useTime}}{{/clockTime}}</td>
                 <td>{{#shortTime}}{{effectiveStartTime}}{{/shortTime}}~{{#shortTime}}{{effectiveEndTime}}{{/shortTime}}</td>
-                <td>{{orderNo}}</td>
-                <td>{{productName}}</td>
+                <td>{{orderNoValue}}</td>
+                <td>{{productNameValue}}</td>
                 <td>{{remark}}</td>
                 <td>
                     <p class="mn">{{createUserRealName}}</p>
