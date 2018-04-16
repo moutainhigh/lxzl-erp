@@ -21,7 +21,15 @@ public class CouponBatchDetailDO  extends BaseDO {
 	private String remark;
 	private Integer dataStatus;
 	private Integer couponCancelCount;	//优惠券作废总数
+	private Integer couponCanReceivedCount;//优惠券可领取总数
 
+	public Integer getCouponCanReceivedCount() {
+		return couponCanReceivedCount;
+	}
+
+	public void setCouponCanReceivedCount(Integer couponCanReceivedCount) {
+		this.couponCanReceivedCount = couponCanReceivedCount;
+	}
 	public Integer getId(){
 		return id;
 	}
