@@ -89,15 +89,15 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
             return result;
         }
-        //商品物料唯一性校验
-        Set<String> primaryKeySet = new HashSet<String>();
-        for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
-            primaryKeySet.add(k3ReturnOrderDetail.getOrderItemId() + "_" + k3ReturnOrderDetail.getProductNo());
-        }
-        if (primaryKeySet.size() < k3ReturnOrder.getK3ReturnOrderDetailList().size()) {
-            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
-            return result;
-        }
+ //       //商品物料唯一性校验
+//        Set<String> primaryKeySet = new HashSet<String>();
+//        for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+//            primaryKeySet.add(k3ReturnOrderDetail.getOrderItemId() + "_" + k3ReturnOrderDetail.getProductNo());
+//        }
+//        if (primaryKeySet.size() < k3ReturnOrder.getK3ReturnOrderDetailList().size()) {
+//            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
+//            return result;
+//        }
         //itemId校验
         if (!varifyOrderItemId(k3ReturnOrder.getK3ReturnOrderDetailList())){
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
@@ -181,17 +181,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
-        //添加商品时，重复性校验
-        Set<String> orientProductKeys = new HashSet<String>();
-        for (K3ReturnOrderDetail orderDetail : k3ReturnOrderDetailList)
-            orientProductKeys.add(orderDetail.getOrderItemId() + "_" + orderDetail.getProductNo());
-        List<K3ReturnOrderDetailDO> orderDetailList = k3ReturnOrderDetailMapper.findListByReturnOrderId(k3ReturnOrderDO.getId());
-        if (CollectionUtil.isNotEmpty(orderDetailList)) for (K3ReturnOrderDetailDO orderDetail : orderDetailList)
-            orientProductKeys.add(orderDetail.getOrderItemId() + "_" + orderDetail.getProductNo());
-        if (orientProductKeys.size() < k3ReturnOrderDetailList.size() + (CollectionUtil.isNotEmpty(orderDetailList) ? orderDetailList.size() : 0)) {
-            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
-            return result;
-        }
+//        //添加商品时，重复性校验
+//        Set<String> orientProductKeys = new HashSet<String>();
+//        for (K3ReturnOrderDetail orderDetail : k3ReturnOrderDetailList)
+//            orientProductKeys.add(orderDetail.getOrderItemId() + "_" + orderDetail.getProductNo());
+//        List<K3ReturnOrderDetailDO> orderDetailList = k3ReturnOrderDetailMapper.findListByReturnOrderId(k3ReturnOrderDO.getId());
+//        if (CollectionUtil.isNotEmpty(orderDetailList)) for (K3ReturnOrderDetailDO orderDetail : orderDetailList)
+//            orientProductKeys.add(orderDetail.getOrderItemId() + "_" + orderDetail.getProductNo());
+//        if (orientProductKeys.size() < k3ReturnOrderDetailList.size() + (CollectionUtil.isNotEmpty(orderDetailList) ? orderDetailList.size() : 0)) {
+//            result.setErrorCode(ErrorCode.HAS_SAME_PRODUCT);
+//            return result;
+//        }
         //itemId校验
         if (!varifyOrderItemId(k3ReturnOrder.getK3ReturnOrderDetailList())){
             result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
