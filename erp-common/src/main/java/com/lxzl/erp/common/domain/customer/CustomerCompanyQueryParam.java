@@ -31,8 +31,17 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String agentPersonNo;  //经办人身份证号码'
     private String unifiedCreditCode;  //统一信用代码'
     private String affiliatedEnterprise; //关联企业
+    private Integer isRisk; //是否授信
 
     private List<Integer> passiveUserIdList;
+
+    public Integer getIsRisk() {
+        return isRisk;
+    }
+
+    public void setIsRisk(Integer isRisk) {
+        this.isRisk = isRisk;
+    }
 
     public Integer getCustomerId() {
         return customerId;
