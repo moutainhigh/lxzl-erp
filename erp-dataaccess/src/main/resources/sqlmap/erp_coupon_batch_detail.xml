@@ -22,10 +22,11 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="coupon_cancel_count" jdbcType="INTEGER" property="couponCancelCount" />
+		<result column="coupon_can_received_count" jdbcType="INTEGER" property="couponCanReceivedCount" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecbd.id,ecbd.coupon_batch_id,ecbd.coupon_total_count,ecbd.coupon_used_count,ecbd.coupon_received_count,ecbd.face_value,ecbd.total_face_amount,ecbd.total_used_amount,ecbd.total_deduction_amount,ecbd.is_online,ecbd.effective_start_time,ecbd.effective_end_time,ecbd.remark,ecbd.create_time,ecbd.create_user,ecbd.update_time,ecbd.update_user,ecbd.data_status,ecbd.coupon_cancel_count
+		ecbd.id,ecbd.coupon_batch_id,ecbd.coupon_total_count,ecbd.coupon_used_count,ecbd.coupon_received_count,ecbd.face_value,ecbd.total_face_amount,ecbd.total_used_amount,ecbd.total_deduction_amount,ecbd.is_online,ecbd.effective_start_time,ecbd.effective_end_time,ecbd.remark,ecbd.create_time,ecbd.create_user,ecbd.update_time,ecbd.update_user,ecbd.data_status,ecbd.coupon_cancel_count,ecbd.coupon_can_received_count
 	</sql>
 
 	<select id="findById" resultMap="CouponBatchDetailDO" parameterType="java.lang.Integer">
@@ -108,6 +109,9 @@
 			<if test="couponCancelCount != null">
 				coupon_cancel_count = #{couponCancelCount,jdbcType=INTEGER},
 			</if>
+			<if test="couponCanReceivedCount != null">
+				coupon_can_received_count = #{couponCanReceivedCount,jdbcType=INTEGER},
+			</if>
 		</set>
 	</sql>
 
@@ -189,6 +193,12 @@
 			update_time =
 			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
 				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.updateTime}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_can_received_count =
+			<foreach item="couponBatchDetailDO" collection="couponBatchDetailDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDetailDO.id} then #{couponBatchDetailDO.couponCanReceivedCount}
 			</foreach>
 		</trim>
 		WHERE id in

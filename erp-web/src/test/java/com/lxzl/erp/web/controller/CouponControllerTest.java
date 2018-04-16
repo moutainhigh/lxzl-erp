@@ -22,8 +22,8 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void addCouponBatch() throws Exception{
         CouponBatch couponBatch = new CouponBatch();
-        couponBatch.setCouponBatchName("优惠批次修改测试");
-        couponBatch.setCouponBatchDescribe("优惠测试修改测试");
+        couponBatch.setCouponBatchName("可领取优惠券总数");
+        couponBatch.setCouponBatchDescribe("可领取优惠券总数");
         couponBatch.setEffectiveStartTime(new Date());
         couponBatch.setCouponBatchTotalCount(100);
         couponBatch.setCouponType(1);
@@ -64,13 +64,13 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void addCouponBatchDetail() throws Exception {
         Date date = new Date();
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchId(17);
-        couponBatchDetail.setCouponTotalCount(10);
-        BigDecimal faceValue = new BigDecimal(10.00);
+        couponBatchDetail.setCouponBatchId(62);
+        couponBatchDetail.setCouponTotalCount(20);
+        BigDecimal faceValue = new BigDecimal(30.00);
         couponBatchDetail.setFaceValue(faceValue);
         couponBatchDetail.setEffectiveEndTime(date);
-        couponBatchDetail.setIsOnline(0);
-        couponBatchDetail.setRemark("线下新优惠券生成");
+        couponBatchDetail.setIsOnline(1);
+        couponBatchDetail.setRemark("33333");
 
         TestResult testResult = getJsonTestResult("/coupon/addCouponBatchDetail", couponBatchDetail);
     }
@@ -101,13 +101,13 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
 
         List<Coupon> list = new ArrayList<>();
         Coupon coupon1 = new Coupon();
-        coupon1.setCouponId(3121);
+        coupon1.setCouponId(4636);
         Coupon coupon2 = new Coupon();
-        coupon2.setCouponId(3122);
+        coupon2.setCouponId(4637);
         Coupon coupon3 = new Coupon();
-        coupon3.setCouponId(3123);
+        coupon3.setCouponId(4650);
         Coupon coupon4 = new Coupon();
-        coupon4.setCouponId(3124);
+        coupon4.setCouponId(4651);
         list.add(coupon1);
         list.add(coupon2);
         list.add(coupon3);
@@ -120,14 +120,14 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void provideCoupon() throws Exception {
         CouponProvideParam couponProvideParam = new CouponProvideParam();
-        couponProvideParam.setCouponBatchDetailId(95);
+        couponProvideParam.setCouponBatchDetailId(122);
         List<CustomerProvide> customerProvideList = new ArrayList<>();
         CustomerProvide customerProvide1 = new CustomerProvide();
         customerProvide1.setCustomerNo("LXCC-1000-20180409-00004");
-        customerProvide1.setProvideCount(2);
+        customerProvide1.setProvideCount(6);
         CustomerProvide customerProvide2 = new CustomerProvide();
         customerProvide2.setCustomerNo("LXCC-1000-20180408-00003");
-        customerProvide2.setProvideCount(2);
+        customerProvide2.setProvideCount(4);
        customerProvideList.add(customerProvide1);
        customerProvideList.add(customerProvide2);
        couponProvideParam.setCustomerProvideList(customerProvideList);
@@ -154,7 +154,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void cancelCouponByCouponBatchDetail() throws Exception {
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchDetailId(29);
+        couponBatchDetail.setCouponBatchDetailId(118);
 
         TestResult testResult = getJsonTestResult("/coupon/cancelCouponByCouponBatchDetail", couponBatchDetail);
     }
@@ -201,5 +201,20 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         useCoupon.setOrder(order);
         useCoupon.setCouponList(couponList);
         TestResult testResult = getJsonTestResult("/coupon/useCoupon", useCoupon);
+    }
+    @Test
+    public void pageCouponByCustomerNo() throws Exception {
+        CustomerCouponQueryParam customerCouponQueryParam = new CustomerCouponQueryParam();
+        customerCouponQueryParam.setPageNo(1);
+        customerCouponQueryParam.setPageSize(1);
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC-1000-20180409-00004");
+//        Order order = new Order();
+//        OrderProduct orderProduct = new OrderProduct();
+        customerCouponQueryParam.setCustomer(customer);
+        //       couponQueryParam.setCouponBatchId(4);
+//        customerPersonQueryParam.setIsDisabled(0);
+//        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
+        TestResult testResult = getJsonTestResult("/coupon/pageCouponByCustomerNo", customerCouponQueryParam);
     }
 }
