@@ -8,7 +8,7 @@
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="province" class="field-label">请选择分公司名称</label>
+                        <label for="province" class="field-label"><em class="text-danger">*</em>请选择分公司名称</label>
                         <label class="field select">
                             <select id="subCompanyId" name="subCompanyId" class="required">
                                 <option value="">请选择</option>
@@ -17,7 +17,7 @@
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <label for="province" class="field-label">请选择银行类型</label>
+                        <label for="province" class="field-label"><em class="text-danger">*</em>请选择银行类型</label>
                         <label class="field select">
                             <select id="bankType" name="bankType" class="required">
                             </select>
