@@ -89,7 +89,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void pageCoupon() throws Exception {
         CouponQueryParam couponQueryParam = new CouponQueryParam();
-        couponQueryParam.setPageNo(1);
+        couponQueryParam.setPageNo(2);
         couponQueryParam.setPageSize(15);
  //       couponQueryParam.setCouponBatchId(4);
 //        customerPersonQueryParam.setIsDisabled(0);
@@ -206,7 +206,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void pageCouponByCustomerNo() throws Exception {
         CustomerCouponQueryParam customerCouponQueryParam = new CustomerCouponQueryParam();
         customerCouponQueryParam.setPageNo(1);
-        customerCouponQueryParam.setPageSize(1);
+        customerCouponQueryParam.setPageSize(15);
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-1000-20180409-00004");
 //        Order order = new Order();

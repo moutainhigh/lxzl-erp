@@ -2036,6 +2036,7 @@ CREATE TABLE `erp_statement_order` (
   `statement_rent_paid_amount` decimal(15,5) DEFAULT 0 COMMENT '租金已付金额',
   `statement_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
   `statement_overdue_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单逾期金额，结算单明细逾期总和',
+  `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和',
   `statement_overdue_paid_amount` decimal(15,5) DEFAULT 0 COMMENT '已结算的逾期金额',
   `statement_correct_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单冲正金额',
   `statement_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
@@ -2096,6 +2097,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_rent_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单租金金额',
   `statement_detail_rent_paid_amount` decimal(15,5) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
+  `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
   `statement_detail_overdue_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单逾期金额',
   `statement_detail_overdue_paid_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单已支付逾期金额',
   `statement_detail_overdue_days` int(20) COMMENT '逾期天数',
@@ -3075,6 +3077,7 @@ CREATE TABLE `erp_bank_slip` (
   `confirm_count` int(11) NOT NULL COMMENT '已确认笔数',
   `slip_status` int(11) NOT NULL COMMENT '单据状态：0-初始化，1-已下推，2-全部认领',
   `excel_url` varchar(200) NOT NULL DEFAULT '' COMMENT '表格URL',
+  `localization_count` int(11) COMMENT '属地化数量[总公司时有值]',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3098,6 +3101,8 @@ CREATE TABLE `erp_bank_slip_detail` (
   `loan_sign` int(11) NOT NULL COMMENT '借贷标志,1-贷（收入），2-借（支出）',
   `detail_status` int(11) NOT NULL COMMENT '明细状态，1-未认领，2-已认领，3-已确定，4-忽略',
   `detail_json` text COMMENT '明细json数据',
+  `sub_company_id` int(11) NOT NULL COMMENT '分公司ID',
+  `is_localization` int(11) COMMENT '是否已属地化,0-否，1-是[总公司时有值]',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3149,7 +3154,7 @@ CREATE TABLE `erp_coupon_batch` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `coupon_batch_name` varchar(100) NOT NULL COMMENT '批次名称',
   `coupon_batch_describe` varchar(1000) NOT NULL  DEFAULT '' COMMENT '批次描述',
-  `coupon_type` int(11) NOT NULL COMMENT '优惠券类型，1-设备优惠券',
+  `coupon_type` int(11) NOT NULL COMMENT '优惠券类型，1-设备优惠券，2-结算单优惠券',
   `effective_start_time` datetime DEFAULT NULL COMMENT '有效期起始时间',
   `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
   `coupon_batch_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
@@ -3205,6 +3210,9 @@ CREATE TABLE `erp_coupon` (
   `is_online` int(11) NOT NULL COMMENT '是否线上，0-否，1-是',
   `order_id` int(20) DEFAULT NULL COMMENT '订单ID',
   `order_no` varchar(100) DEFAULT NULL COMMENT '订单号',
+   `statement_order_id` int(20) COMMENT '结算单ID',
+   `statement_order_no` varchar(100) COMMENT '结算单编码',
+   `statement_order_detail_id` int(20) COMMENT '结算单详情ID',
   `order_product_id` int(20) DEFAULT NULL COMMENT '订单商品项ID',
   `receive_time` datetime DEFAULT NULL COMMENT '领取时间',
   `use_time` datetime DEFAULT NULL COMMENT '使用时间',
@@ -3316,4 +3324,6 @@ CREATE TABLE `erp_version_history_user` (
   INDEX index_versoin_history_id ( `versoin_history_id` ),
   INDEX index_versoin_history_no ( `versoin_history_no` )
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本变更推送记录表';
+
+
 

@@ -105,21 +105,18 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
-        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
-            if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
-                result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-                return result;
-            }
-            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
-        } else {
-            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-            orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
+
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
         }
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+
+        SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, subCompanyDO != null ? subCompanyDO.getSubCompanyCode() : null));
+        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
         orderDO.setOrderSellerId(customerDO.getOwner());
 
         //添加客户的结算时间（天）
@@ -204,18 +201,14 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
         calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
 
-        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
-            if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
-                result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-                return result;
-            }
-            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-            orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
-        } else {
-            orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-            orderDO.setDeliverySubCompanyId(userSupport.getCurrentUserCompanyId());
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
         }
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
         orderDO.setId(dbOrderDO.getId());
         orderDO.setOrderNo(dbOrderDO.getOrderNo());
