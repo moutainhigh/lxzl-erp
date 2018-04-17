@@ -260,7 +260,7 @@ public class PageController extends BaseController {
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
-    @RequestMapping("/order-return-manage/print")
+    @RequestMapping(value = "/order-return-manage/print")
     public String returnOrderManagePrint() {
         return "/returnOrderManage/returnOrderPrint";
     }
@@ -703,6 +703,14 @@ public class PageController extends BaseController {
     @RequestMapping("/statistics/unreceivable-list")
     public String statisticsManageUnReceivableList() {
         return "/statisticsManage/statisticsUnreceivableList";
+    }
+    @RequestMapping("/statistics/awaitReceive-list")
+    public String statisticsManageReceiveList() {
+        return "/statisticsManage/awaitReceiveDetailList";
+    }
+    @RequestMapping("/statistics/awaitReceiveSummary-list")
+    public String statisticsManageReceiveSummaryList() {
+        return "/statisticsManage/awaitReceiveSummaryList";
     }
 
 

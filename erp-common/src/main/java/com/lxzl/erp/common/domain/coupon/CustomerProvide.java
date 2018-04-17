@@ -1,10 +1,13 @@
 package com.lxzl.erp.common.domain.coupon;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @Author: Sunzhipeng
  * @Description:
  * @Date: Created in 2018\4\13 0013 11:59
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerProvide {
     private String customerNo;
     private Integer provideCount;

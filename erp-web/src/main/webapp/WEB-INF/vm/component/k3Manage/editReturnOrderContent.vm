@@ -154,7 +154,7 @@
                         <tr class="productRow skuRow" productRowKey="{{productNo}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productNo}}" data-productno="{{productNo}}">
+                                    <input type="checkbox" name="checkItem" value="{{productNo}}" data-productno="{{productNo}}" data-rowid="{{rowid}}" />
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
@@ -164,18 +164,19 @@
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
                                     <input type="hidden" name="orderNo" class="orderNo" value="{{orderNo}}"  />
+                                    <input type="hidden" name="rowid" class="rowid" value="{{rowid}}"  />
                                     <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
                                 </label>
                             </td>
                             <td>
                                 <label class="field prepend-icon mw200">
-                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;" >{{remark}}</textarea>
                                     <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                 </label>
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteProductButton" data-productno="{{productNo}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteProductButton" data-productno="{{productNo}}" data-rowid="{{rowid}}">删除</a>
                                 </div>
                             </td>
                         </tr>

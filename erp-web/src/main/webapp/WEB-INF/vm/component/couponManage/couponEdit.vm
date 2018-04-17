@@ -7,7 +7,7 @@
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="couponBatchName" class="field-label">请填写批次名称</label>
+                        <label for="couponBatchName" class="field-label"><em class="text-danger">*</em>请填写批次名称</label>
                         <label for="couponBatchName" class="field prepend-icon">
                             <input type="text" name="couponBatchName" id="couponBatchName" class="gui-input required" aria-required="true" placeholder="批次名称">
                             <label for="couponBatchName" class="field-icon"><i class="fa fa-tag"></i>
@@ -17,7 +17,7 @@
                     <div class="col-md-6">
                         <label for="couponBatchDescribe" class="field-label">请填写批次描述</label>
                         <label for="couponBatchDescribe" class="field prepend-icon">
-                            <input type="text" name="couponBatchDescribe" id="couponBatchDescribe" class="gui-input required" aria-required="true" placeholder="批次描述">
+                            <input type="text" name="couponBatchDescribe" id="couponBatchDescribe" class="gui-input" aria-required="true" placeholder="批次描述">
                             <label for="couponBatchDescribe" class="field-icon"><i class="fa fa-tag"></i>
                             </label>
                         </label>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="couponType" class="field-label">请选择优惠券类型</label>
+                        <label for="couponType" class="field-label"><em class="text-danger">*</em>请选择优惠券类型</label>
                         <label class="field select">
                             <select id="couponType" name="couponType" class="required">
                                 <option value="">请选择优惠券类型</option>
