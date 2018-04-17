@@ -3075,6 +3075,7 @@ CREATE TABLE `erp_bank_slip` (
   `confirm_count` int(11) NOT NULL COMMENT '已确认笔数',
   `slip_status` int(11) NOT NULL COMMENT '单据状态：0-初始化，1-已下推，2-全部认领',
   `excel_url` varchar(200) NOT NULL DEFAULT '' COMMENT '表格URL',
+  `localization_count` int(11) COMMENT '属地化数量[总公司时有值]',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3098,6 +3099,8 @@ CREATE TABLE `erp_bank_slip_detail` (
   `loan_sign` int(11) NOT NULL COMMENT '借贷标志,1-贷（收入），2-借（支出）',
   `detail_status` int(11) NOT NULL COMMENT '明细状态，1-未认领，2-已认领，3-已确定，4-忽略',
   `detail_json` text COMMENT '明细json数据',
+  `sub_company_id` int(11) NOT NULL COMMENT '分公司ID',
+  `is_localization` int(11) COMMENT '是否已属地化,0-否，1-是[总公司时有值]',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3316,4 +3319,6 @@ CREATE TABLE `erp_version_history_user` (
   INDEX index_versoin_history_id ( `versoin_history_id` ),
   INDEX index_versoin_history_no ( `versoin_history_no` )
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本变更推送记录表';
+
+
 
