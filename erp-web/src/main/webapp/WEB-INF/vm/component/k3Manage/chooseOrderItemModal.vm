@@ -137,6 +137,7 @@
                                                             <th>编号</th>
                                                             <th>数量</th>
                                                             <th>选择数量</th>
+                                                            <th>备注</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -154,6 +155,12 @@
                                                             <td>
                                                                 <label class="field prepend-icon mw200">
                                                                     <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                                    <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                                 </label>
                                                             </td>
                                                         </tr>
@@ -174,7 +181,7 @@
                                                             <th>配件名称</th>
                                                             <th>编号</th>
                                                             <th>数量</th>
-                                                            <th>选择数量</th>
+                                                            <th>备注</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -192,6 +199,12 @@
                                                             <td>
                                                                 <label class="field prepend-icon mw200">
                                                                     <input type="text" name="materialCount-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                                    <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                                 </label>
                                                             </td>
                                                         </tr>
