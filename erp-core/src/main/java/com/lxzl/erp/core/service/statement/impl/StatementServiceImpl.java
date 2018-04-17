@@ -188,8 +188,19 @@ public class StatementServiceImpl implements StatementService {
 
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
-            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return result;
+            if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
+                customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
+                if (customerDO == null) {
+                    result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                    return result;
+                }
+                orderDO.setBuyerCustomerId(customerDO.getId());
+                orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
+            }else{
+
+                result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+                return result;
+            }
         }
         //统一拿订单结算日
         Integer statementDays = orderDO.getStatementDate();
@@ -237,7 +248,7 @@ public class StatementServiceImpl implements StatementService {
             customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
             if (customerDO == null) {
                 result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-                return null;
+                return result;
             }
             orderDO.setBuyerCustomerId(customerDO.getId());
             orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
