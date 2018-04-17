@@ -2097,6 +2097,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_rent_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单租金金额',
   `statement_detail_rent_paid_amount` decimal(15,5) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
+  `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
   `statement_detail_overdue_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单逾期金额',
   `statement_detail_overdue_paid_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单已支付逾期金额',
   `statement_detail_overdue_days` int(20) COMMENT '逾期天数',

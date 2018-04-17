@@ -226,6 +226,7 @@ ALTER TABLE erp_bank_slip add `localization_count` int(11) COMMENT '属地化数
 ALTER TABLE erp_bank_slip_detail add `sub_company_id` int(11) NOT NULL COMMENT '分公司ID';
 ALTER TABLE erp_bank_slip_detail add `is_localization` int(11) COMMENT '是否已属地化,0-否，1-是[总公司时有值]';
 ALTER TABLE erp_statement_order add `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
+ALTER TABLE erp_statement_order_detail add `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
 ALTER TABLE erp_coupon add `statement_order_id` int(20) COMMENT '结算单ID';
 ALTER TABLE erp_coupon add `statement_order_no` varchar(100) COMMENT '结算单编码';
 ALTER TABLE erp_coupon add `statement_order_detail_id` int(20) COMMENT '结算单详情ID';
