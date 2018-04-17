@@ -146,6 +146,7 @@
                                                             <td>
                                                                 <label class="option block mn">
                                                                     <input type="checkbox" name="productNo" value="{{productNumber}}">
+                                                                    <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
                                                                     <span class="checkbox mn"></span>
                                                                 </label>
                                                             </td>
@@ -190,6 +191,7 @@
                                                             <td>
                                                                 <label class="option block mn">
                                                                     <input type="checkbox" name="fNumber" value="{{fNumber}}">
+                                                                    <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
                                                                     <span class="checkbox mn"></span>
                                                                 </label>
                                                             </td>
