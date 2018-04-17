@@ -407,7 +407,5 @@
 				AND ec.data_status = 1
 			</if>
 		</where>
-		ORDER BY ec.update_time DESC
-		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
 </mapper>
