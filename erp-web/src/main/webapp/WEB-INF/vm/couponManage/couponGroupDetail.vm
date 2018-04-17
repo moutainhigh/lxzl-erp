@@ -61,15 +61,16 @@
                                 <tr class="bg-light">
                                     <th>优惠券详情ID</th>
                                     <th>优惠券总数</th>
-                                    <th>已使用优惠券总数</th>
-                                    <th>优惠券线上已领取总数</th>
+                                    <th>已使用总数</th>
+                                    <th>已领取总数</th>
+                                    <th>可领取总数</th>
                                     <th>优惠券面值</th>
                                     <th>优惠券总面值</th>
                                     <th>已使用总面值</th>
                                     <th>抵扣总金额</th>
-                                    <th>优惠券作废总数</th>
+                                    <th>作废总数</th>
                                     <th>是否线上</th>
-                                    <th>优惠券生效期限</th>
+                                    <th>有效期开始时间</th>
                                     <th>有效期结束时间</th>
                                     <th>备注</th>
                                     <th>添加人</th>
@@ -86,6 +87,7 @@
                                     <td>{{couponTotalCount}}</td>
                                     <td>{{couponUsedCount}}</td>
                                     <td>{{couponReceivedCount}}</td>
+                                    <td>{{couponCanReceivedCount}}</td>
                                     <td>{{faceValue}}</td>
                                     <td>{{totalFaceAmount}}</td>
                                     <td>{{totalUsedAmount}}</td>
@@ -94,7 +96,7 @@
                                     <td>{{isOnLineValue}}</td>
                                     <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
                                     <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
-                                    <td>{{remark}}</td>
+                                    <td style="width: 140px;">{{remark}}</td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
                                         <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
@@ -107,7 +109,8 @@
                                                    data-couponTotalCount="{{couponTotalCount}}"
                                                    data-couponCancelCount="{{couponCancelCount}}"
                                                    data-couponBatchDetailId="{{couponBatchDetailId}}"
-                                                   data-couponReceivedCount="{{couponReceivedCount}}">
+                                                   data-couponReceivedCount="{{couponReceivedCount}}"
+                                                   data-couponCanReceivedCount="{{couponCanReceivedCount}}">
                                                     {{text}}
                                                 </a>
                                             {{/rowActionButtons}}
