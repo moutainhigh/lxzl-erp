@@ -97,7 +97,7 @@
 <body style="height: auto;">
     <div class="panel">
     <div class="panel-heading">
-        <span class="panel-title" style="color:red;"><span class="glyphicon glyphicon-print"></span>打印订单（请使用IE浏览器打印，设置打印规格241*279）</span>
+        <span class="panel-title" style="color:red;"><span class="glyphicon glyphicon-print"></span>打印订单（请使用IE浏览器打印）</span>
         <div class="panel-header-menu pull-right mr10">
             <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>
