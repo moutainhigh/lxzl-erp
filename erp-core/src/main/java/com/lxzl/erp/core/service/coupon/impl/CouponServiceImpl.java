@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -22,10 +23,15 @@ import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDetailDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.apache.velocity.runtime.directive.Foreach;
 import org.slf4j.Logger;
@@ -59,6 +65,12 @@ public class CouponServiceImpl implements CouponService{
     private GenerateNoSupport generateNoSupport;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private StatementOrderDetailMapper statementOrderDetailMapper;
+    @Autowired
+    private StatementOrderMapper statementOrderMapper;
+    @Autowired
+    private OrderMapper orderMapper;
 
 
     /**
@@ -560,6 +572,126 @@ public class CouponServiceImpl implements CouponService{
         Page<Coupon> page = new Page<>(couponList, totalCount, customerCouponQueryParam.getPageNo(), customerCouponQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);
+        return serviceResult;
+    }
+
+    /**
+     * 结算单使用结算优惠券
+     * @param statementCouponParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> useStatementCoupon(StatementCouponParam statementCouponParam) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        StatementOrderDetail statementOrderDetail = statementCouponParam.getStatementOrderDetail();
+        //判断传进来的结算单是否存在
+        if (statementOrderDetail == null) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        //结算单详情ID不能为空
+        if (statementOrderDetail.getStatementOrderDetailId() == null) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_ID_NOT_NULL);
+            return serviceResult;
+        }
+        //获取结算单对象和结算单详情对象
+        StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetail.getStatementOrderDetailId());
+        if (statementOrderDetailDO == null) {
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+        if (statementOrderDetailDO.getCustomerId() == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        //判断根据结算单的客户ID能否查到客户
+        CustomerDO customerDO = customerMapper.findById(statementOrderDetailDO.getCustomerId());
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+        //根据ID找到对应的优惠券
+        Coupon coupon = statementCouponParam.getCoupon();
+        if (coupon.getCouponId()==null){
+            serviceResult.setErrorCode(ErrorCode.COUPON_ID_NOT_NULL);
+            return serviceResult;
+        }
+        CouponDO couponDO = couponMapper.findById(coupon.getCouponId());
+        if (couponDO==null) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_NOT_EXISTS);
+            return serviceResult;
+        }
+        //判断优惠券状态是否是可用状态
+        if (couponDO.getCouponStatus() != CouponStatus.COUPON_STATUS_USABLE ) {//优惠券状态不是可用状态
+            serviceResult.setErrorCode(ErrorCode.COUPON_CUSTOMER_STATUS_NOT_USED);
+            return serviceResult;
+        }
+        //判断优惠券客户编号是否为空
+        if (couponDO.getCustomerNo() == null && couponDO.getCustomerNo() == "") {
+            serviceResult.setErrorCode(ErrorCode.COUPON_CUSTOMER_NO_IS_NULL_OR_NOT);
+            return serviceResult;
+        }
+        //判断优惠券是否属于该客户
+        if (!customerDO.getCustomerNo().equals(couponDO.getCustomerNo())) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_CUSTOMER_NO_IS_NULL_OR_NOT);
+            return serviceResult;
+        }
+        //使用优惠券，存入相关字段
+        couponDO.setCouponStatus(CouponStatus.COUPON_STATUS_USED);
+        couponDO.setUseTime(date);
+        couponDO.setUpdateTime(date);
+        couponDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        couponDO.setOrderId(statementOrderDetailDO.getOrderId());
+        couponDO.setOrderNo(orderMapper.findByOrderId(statementOrderDetailDO.getOrderId()).getOrderNo());
+        couponDO.setOrderProductId(statementOrderDetailDO.getOrderItemReferId());
+        couponDO.setStatementOrderId(statementOrderDO.getId());
+        couponDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
+        couponDO.setStatementOrderDetailId(statementOrderDetailDO.getStatementOrderId());
+        //保存抵扣金额,如果结算单租金金额大于优惠券面值，则抵扣金额为优惠卷面值（结算单优惠金额累加优惠券面值）
+        if (statementOrderDetailDO.getStatementDetailRentAmount().compareTo(couponDO.getFaceValue()) == 1) {
+            //判断结算单租金金额是否大于结算单抵扣金额加上优惠券面值，如果大于则抵扣金额存为结算单优惠金额累加优惠券面值
+            if (statementOrderDetailDO.getStatementDetailRentAmount().compareTo(BigDecimalUtil.add(statementOrderDetailDO.getStatementCouponAmount(), couponDO.getFaceValue())) == 1) {
+                couponDO.setDeductionAmount(couponDO.getFaceValue());
+                statementOrderDetailDO.setStatementCouponAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementCouponAmount(),couponDO.getFaceValue()));
+                statementOrderDO.setStatementCouponAmount(BigDecimalUtil.add(statementOrderDO.getStatementCouponAmount(),couponDO.getFaceValue()));
+            } else {//判断结算单租金金额是否大于结算单抵扣金额加上优惠券面值，如果小于或等于则抵扣金额存为结算单租金金额
+                //优惠券的抵扣金额就要存为结算单租金金额减去之前的优惠券优惠金额的差值
+                couponDO.setDeductionAmount(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(),statementOrderDetailDO.getStatementCouponAmount()));
+                statementOrderDetailDO.setStatementCouponAmount(statementOrderDetailDO.getStatementDetailRentAmount());
+                statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementDetailRentAmount());
+            }
+        } else { //保存抵扣金额,如果结算单租金金额小于或等于优惠券面值，则抵扣金额为结算单租金金额
+            couponDO.setDeductionAmount(statementOrderDetailDO.getStatementDetailRentAmount());
+            statementOrderDetailDO.setStatementCouponAmount(statementOrderDetailDO.getStatementDetailRentAmount());
+            statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementDetailRentAmount());
+        }
+        //保存优惠券
+        couponMapper.update(couponDO);
+        //设置结算单详情的更新时间和更新人并保存
+        statementOrderDetailDO.setUpdateTime(date);
+        statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        statementOrderDetailMapper.update(statementOrderDetailDO);
+        //设置结算单的更新时间和更新人并保存
+        statementOrderDO.setUpdateTime(date);
+        statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        statementOrderMapper.update(statementOrderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+    /**
+     * 按客户编号查询该客户可用的结算单优惠券
+     * @param customer
+     * @return
+     */
+    @Override
+    public ServiceResult<String, List<Coupon>> findStatementCouponByCustomerNo(Customer customer) {
+        ServiceResult<String,List<Coupon>> serviceResult = new ServiceResult<>();
+        List<CouponDO> couponDOList = couponMapper.findStatementCouponByCustomerNo(customer.getCustomerNo());
+        List<Coupon> couponList = ConverterUtil.convertList(couponDOList, Coupon.class);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(couponList);
         return serviceResult;
     }
 

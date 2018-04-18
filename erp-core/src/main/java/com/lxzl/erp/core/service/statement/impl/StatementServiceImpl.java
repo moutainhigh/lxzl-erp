@@ -19,6 +19,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
@@ -359,6 +360,11 @@ public class StatementServiceImpl implements StatementService {
                         statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                         statementOrderDetailDO.setStatementDetailPhase(statementMonthCount);
                         statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                        //添加优惠券抵扣金额
+                        ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                            statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                        }
                         addStatementOrderDetailDOList.add(statementOrderDetailDO);
                     }
                 } else {
@@ -374,6 +380,11 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                                //添加优惠券抵扣金额
+                                ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                                if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                                    statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                                }
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
                                 alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
                                 lastCalculateDate = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementEndTime());
@@ -386,6 +397,11 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                                //添加优惠券抵扣金额
+                                ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                                if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                                    statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                                }
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
                             }
                         } else {
@@ -396,6 +412,11 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                                //添加优惠券抵扣金额
+                                ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                                if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                                    statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                                }
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
                                 alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
                                 lastCalculateDate = statementOrderDetailDO.getStatementEndTime();
@@ -2634,6 +2655,7 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setUpdateUser(loginUserId.toString());
                     statementOrderDO.setCreateTime(currentTime);
                     statementOrderDO.setUpdateTime(currentTime);
+                    statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
                     statementOrderMapper.save(statementOrderDO);
                 } else {
                     statementOrderDO = statementOrderDOMap.get(dateKey);
@@ -2666,6 +2688,7 @@ public class StatementServiceImpl implements StatementService {
                     if (statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()) {
                         statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
                     }
+                    statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
                     statementOrderMapper.update(statementOrderDO);
                 }
                 statementOrderDOMap.put(dateKey, statementOrderDO);
@@ -3070,4 +3093,7 @@ public class StatementServiceImpl implements StatementService {
     private ProductMapper productMapper;
     @Autowired
     private MaterialMapper materialMapper;
+    @Autowired
+    private CouponSupport couponSupport;
+
 }

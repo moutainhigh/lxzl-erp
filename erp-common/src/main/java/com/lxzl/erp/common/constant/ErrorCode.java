@@ -747,6 +747,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT = "J16000018";
     public static final String STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT = "J16000019";
     public static final String STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO = "J16000020";
+    public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J16000021";
 
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
@@ -833,6 +834,12 @@ public class ErrorCode {
     public static final String COUPON_LIST_IS_EMPTY = "J19000015";
     public static final String COUPON_AMOUNT_TOO_MANY = "J19000016";
     public static final String COUPON_CANCEL = "J19000017";
+    public static final String COUPON_NOT_EXISTS = "J19000018";
+    public static final String COUPON_CUSTOMER_NO_IS_NULL_OR_NOT = "J19000019";
+    public static final String COUPON_CUSTOMER_STATUS_NOT_USED = "J19000020";
+    public static final String COUPON_NOT_USED_THIS_ORDER_TYPE = "J19000021";
+    public static final String COUPON_ID_NOT_NULL = "J19000022";
+    public static final String COUPON_NOT_USED_THIS_STATEMENT = "J19000023";
 
     public static final String SWITCH_INTERFACE_URL_NOT_NULL = "J20000001";
     public static final String SWITCH_IS_OPEN_NOT_NULL = "J20000002";
@@ -1579,6 +1586,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_AMOUNT_NOT_EQUAL_CORRECT_MOUNT, "结算单金额与结算冲正单的金额不相等，请检查清楚");
         MAP.put(STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT, "结算单明细有未交纳的押金，不能进行退货操作，请先补交所需的押金");
         MAP.put(STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO, "由结算单生成结算支付记录时，结算单的支付总金额必须大于0");
+        MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单详情ID不能为空");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -1665,6 +1673,12 @@ public class ErrorCode {
         MAP.put(COUPON_LIST_IS_EMPTY, "未选择需要使用的优惠券");
         MAP.put(COUPON_AMOUNT_TOO_MANY, "选择的优惠卷数量超过可使用数");
         MAP.put(COUPON_CANCEL, "选择的优惠已作废，不可重复作废");
+        MAP.put(COUPON_NOT_EXISTS, "优惠券不存在");
+        MAP.put(COUPON_CUSTOMER_NO_IS_NULL_OR_NOT,"优惠券未发放或该优惠券不属于要使用的用户");
+        MAP.put(COUPON_CUSTOMER_STATUS_NOT_USED,"优惠券不是可用状态");
+        MAP.put(COUPON_NOT_USED_THIS_ORDER_TYPE,"该类型结算单无法使用优惠券");
+        MAP.put(COUPON_ID_NOT_NULL,"优惠卷ID不能为空");
+        MAP.put(COUPON_NOT_USED_THIS_STATEMENT,"这个结算单未使用优惠券");
 
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL, "接口URL不能为空");
