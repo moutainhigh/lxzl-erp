@@ -47,7 +47,7 @@
             {{/listData}}
             {{^listData}}
             <tr>
-                <td valign="top" colspan="12" class="text-center">没有查询到优惠券</td>
+                <td valign="top" colspan="13" class="text-center">没有查询到优惠券</td>
             </tr>
             {{/listData}}
             {{/dataSource}}
