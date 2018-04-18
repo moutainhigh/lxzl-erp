@@ -3,14 +3,8 @@ package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.k3.group.K3ReturnOrderCallback;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
-import com.lxzl.erp.common.domain.validGroup.ExtendGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import org.hibernate.validator.constraints.NotBlank;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -19,17 +13,15 @@ public class K3ReturnOrderDetail extends BasePO {
 
     private Integer k3ReturnOrderDetailId;   //唯一标识
     private Integer returnOrderId;   //K3退货单ID
-    @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL, groups = {K3ReturnOrderCallback.class, AddGroup.class})
+    @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL, groups = {AddGroup.class})
     private String orderNo;   //订单号
-    @NotBlank(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {K3ReturnOrderCallback.class, AddGroup.class})
+    @NotBlank(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {AddGroup.class})
     private String orderItemId;    // 订单项ID
     private String orderEntry;   //订单行号
     @NotBlank(message = ErrorCode.PRODUCT_NO_IS_NULL, groups = {AddGroup.class})
     private String productNo;   //产品代码
     private String productName;   //产品名称
     private Integer productCount;   //退货数量
-    @NotNull(message = ErrorCode.RETURN_COUNT_ERROR, groups = {K3ReturnOrderCallback.class})
-    @Min(value = 0, message = ErrorCode.RETURN_COUNT_ERROR, groups = {K3ReturnOrderCallback.class})
     private Integer realProductCount;   //实际退货数量
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
