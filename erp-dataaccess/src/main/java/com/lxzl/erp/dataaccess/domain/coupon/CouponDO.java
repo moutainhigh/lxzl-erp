@@ -24,8 +24,44 @@ public class CouponDO  extends BaseDO {
 	private Integer orderId;	//订单ID
 	private String orderNo;		//订单号
 	private Integer orderProductId;		//订单商品项ID
+	private Integer statementOrderId;	//结算单ID
+	private String statementOrderNo;	//结算单编码
+	private Integer statementOrderDetailId;	//结算单详情ID
 
 	private String productName;
+	private Integer couponType;
+
+	public Integer getStatementOrderId() {
+		return statementOrderId;
+	}
+
+	public void setStatementOrderId(Integer statementOrderId) {
+		this.statementOrderId = statementOrderId;
+	}
+
+	public String getStatementOrderNo() {
+		return statementOrderNo;
+	}
+
+	public void setStatementOrderNo(String statementOrderNo) {
+		this.statementOrderNo = statementOrderNo;
+	}
+
+	public Integer getStatementOrderDetailId() {
+		return statementOrderDetailId;
+	}
+
+	public void setStatementOrderDetailId(Integer statementOrderDetailId) {
+		this.statementOrderDetailId = statementOrderDetailId;
+	}
+
+	public Integer getCouponType() {
+		return couponType;
+	}
+
+	public void setCouponType(Integer couponType) {
+		this.couponType = couponType;
+	}
 
 	public String getProductName() {
 		return productName;

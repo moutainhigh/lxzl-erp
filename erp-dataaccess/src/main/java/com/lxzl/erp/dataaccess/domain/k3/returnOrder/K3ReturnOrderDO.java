@@ -24,6 +24,7 @@ public class K3ReturnOrderDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private Integer returnReasonType;	// 退货原因
+	private Integer deliverySubCompanyId;//配送分公司
 
 	private List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList;
 
@@ -153,5 +154,13 @@ public class K3ReturnOrderDO  extends BaseDO {
 
 	public void setServiceAmount(BigDecimal serviceAmount) {
 		this.serviceAmount = serviceAmount;
+	}
+
+	public Integer getDeliverySubCompanyId() {
+		return deliverySubCompanyId;
+	}
+
+	public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
+		this.deliverySubCompanyId = deliverySubCompanyId;
 	}
 }

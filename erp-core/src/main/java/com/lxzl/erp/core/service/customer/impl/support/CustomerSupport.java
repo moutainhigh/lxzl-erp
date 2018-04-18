@@ -141,6 +141,7 @@ public class CustomerSupport {
                 }
             }
             BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), amount);
+            //额度减到0以下不处理
             if(BigDecimalUtil.compare(newValue, BigDecimal.ZERO) < 0){
                 return ErrorCode.SUCCESS;
             }

@@ -35,6 +35,7 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="owner" jdbcType="INTEGER" property="owner" />
 		<result column="ownerName" jdbcType="VARCHAR" property="ownerName" />
+		<result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
 		<collection property="statementOrderDetailDOList" resultMap="StatementOrderDetailDO" />
 	</resultMap>
 
@@ -78,12 +79,13 @@
 		<result column="detail_create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="detail_update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
 	</resultMap>
 
 	<sql id="column_List">
 		eso.id,eso.statement_order_no,eso.customer_id,eso.statement_expect_pay_time,eso.statement_amount,eso.statement_other_amount,eso.statement_other_paid_amount,eso.statement_rent_deposit_amount,eso.statement_rent_deposit_paid_amount,eso.statement_rent_deposit_return_amount,
 		eso.statement_deposit_amount,eso.statement_deposit_paid_amount,eso.statement_deposit_return_amount,
-		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_overdue_paid_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user,eso.statement_correct_amount
+		eso.statement_rent_amount,eso.statement_rent_paid_amount,eso.statement_paid_time,eso.statement_overdue_amount,eso.statement_overdue_paid_amount,eso.statement_status,eso.statement_start_time,eso.statement_end_time,eso.data_status,eso.remark,eso.create_time,eso.create_user,eso.update_time,eso.update_user,eso.statement_correct_amount,eso.statement_coupon_amount
 	</sql>
 
 	<sql id="detail_column_List">
@@ -91,7 +93,8 @@
 		esod.order_item_type as detail_order_item_type,esod.order_item_refer_id as detail_order_item_refer_id,esod.return_refer_id as detail_return_refer_id,esod.statement_detail_type as detail_statement_detail_type,esod.statement_detail_phase as detail_statement_detail_phase,esod.statement_expect_pay_time as detail_statement_expect_pay_time,
 		esod.statement_detail_amount as detail_statement_detail_amount,esod.statement_detail_other_amount as detail_statement_detail_other_amount,esod.statement_detail_other_paid_amount as detail_statement_detail_other_paid_amount,esod.statement_detail_rent_deposit_amount as detail_statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount as detail_statement_detail_rent_deposit_paid_amount,
 		esod.statement_detail_rent_deposit_return_amount as detail_statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time as detail_statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount as detail_statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount as detail_statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount as detail_statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time as detail_statement_detail_deposit_return_time,
-		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount as detail_statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days as detail_statement_detail_overdue_days,esod.statement_detail_overdue_phase_count as detail_statement_detail_overdue_phase_count,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.statement_detail_correct_amount as detail_statement_detail_correct_amount,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,esod.update_user as detail_update_user
+		esod.statement_detail_rent_amount as detail_statement_detail_rent_amount,esod.statement_detail_rent_paid_amount as detail_statement_detail_rent_paid_amount, esod.statement_detail_paid_time as detail_statement_detail_paid_time, esod.statement_detail_overdue_amount as detail_statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount as detail_statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days as detail_statement_detail_overdue_days,esod.statement_detail_overdue_phase_count as detail_statement_detail_overdue_phase_count,esod.statement_detail_status as detail_statement_detail_status,esod.statement_start_time as detail_statement_start_time,esod.statement_end_time as detail_statement_end_time,esod.statement_detail_correct_amount as detail_statement_detail_correct_amount,esod.data_status as detail_data_status,esod.remark as detail_remark,esod.create_time as detail_create_time,esod.create_user as detail_create_user,esod.update_time as detail_update_time,
+		esod.update_user as detail_update_user,esod.statement_coupon_amount as detail_statement_coupon_amount
 	</sql>
 
 	<select id="findById" resultMap="StatementOrderDO" parameterType="java.lang.Integer">
@@ -455,6 +458,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="statementCouponAmount != null">
+				statement_coupon_amount = #{statementCouponAmount,jdbcType=DECIMAL},
 			</if>
 		</set>
 	</sql>

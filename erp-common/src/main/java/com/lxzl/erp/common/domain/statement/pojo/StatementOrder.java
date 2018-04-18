@@ -42,6 +42,7 @@ public class StatementOrder extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
+    private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
     private List<StatementOrderDetail> statementOrderDetailList;
 
@@ -328,5 +329,13 @@ public class StatementOrder extends BasePO {
 
     public void setMonthTime(Date monthTime) {
         this.monthTime = monthTime;
+    }
+
+    public BigDecimal getStatementCouponAmount() {
+        return statementCouponAmount;
+    }
+
+    public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
+        this.statementCouponAmount = statementCouponAmount;
     }
 }
