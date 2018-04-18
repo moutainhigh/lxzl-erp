@@ -22,6 +22,7 @@ import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
@@ -254,8 +255,14 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 orderMapper.update(orderDO);
             }
         }
-
-       serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        //调用退货单结算
+        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
+        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            serviceResult.setErrorCode(statementResult.getErrorCode());
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
@@ -309,4 +316,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private CustomerMapper customerMapper;
     @Autowired
     private CustomerSupport customerSupport;
+    @Autowired
+    private StatementService statementService;
 }
