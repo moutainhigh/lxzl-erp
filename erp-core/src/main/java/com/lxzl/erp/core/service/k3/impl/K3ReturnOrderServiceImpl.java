@@ -190,12 +190,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
             return result;
         }
-        //发货分公司检查
-        SubCompanyDO subCompanyDO= subCompanyMapper.findById(k3ReturnOrder.getDeliverySubCompanyId());
-        if(subCompanyDO==null){
-            result.setErrorCode(ErrorCode.DELIVERY_COMPANY_NOT_EXIT);
-            return result;
-        }
 //        //添加商品时，重复性校验
 //        Set<String> orientProductKeys = new HashSet<String>();
 //        for (K3ReturnOrderDetail orderDetail : k3ReturnOrderDetailList)
