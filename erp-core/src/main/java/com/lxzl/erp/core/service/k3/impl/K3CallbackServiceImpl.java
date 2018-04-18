@@ -225,20 +225,24 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
             if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
-                orderProductDO.setRentingProductCount(productCount);
-                orderProductMapper.update(orderProductDO);
-                set.add(orderProductDO.getOrderId());
+                if(orderProductDO!=null){
+                    Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
+                    orderProductDO.setRentingProductCount(productCount);
+                    orderProductMapper.update(orderProductDO);
+                    set.add(orderProductDO.getOrderId());
+                }
                 k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
                 k3ReturnOrderDetailDO.setUpdateUser(userId);
                 k3ReturnOrderDetailDO.setUpdateTime(now);
                 k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
             } else {
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
-                orderMaterialDO.setRentingMaterialCount(materialCount);
-                orderMaterialMapper.update(orderMaterialDO);
-                set.add(orderMaterialDO.getOrderId());
+                if(orderMaterialDO!=null){
+                    Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
+                    orderMaterialDO.setRentingMaterialCount(materialCount);
+                    orderMaterialMapper.update(orderMaterialDO);
+                    set.add(orderMaterialDO.getOrderId());
+                }
                 k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
                 k3ReturnOrderDetailDO.setUpdateUser(userId);
                 k3ReturnOrderDetailDO.setUpdateTime(now);
