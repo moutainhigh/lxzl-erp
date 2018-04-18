@@ -132,7 +132,7 @@ public class K3OrderConverter implements ConvertK3DataService {
         formSEOrder.setCompanyNumber(k3MappingSubCompanyDO.getK3SubCompanyCode());//
         formSEOrder.setStatementDate(erpOrder.getStatementDate());//结算日
         if(erpOrder.getDeliverySubCompanyId()!=null&&erpOrder.getDeliverySubCompanyId()!=0&&subCompanyDO!=null){
-            formSEOrder.setExecuteCompanyNumber(k3Support.getK3CityCode(String.valueOf(erpOrder.getDeliverySubCompanyId())));
+            formSEOrder.setExecuteCompanyNumber(k3Support.getK3CityCode(String.valueOf(subCompanyDO.getSubCompanyCode())));
         }
         formSEOrder.setAreaPS("租赁");// 销售/租赁
         //对账部门代码填写订单部门
