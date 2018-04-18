@@ -43,4 +43,8 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
     Integer findCustomerCouponCountByParams(@Param("maps") Map<String, Object> maps);
 
     List<CouponDO> findCustomerCouponByParams(@Param("maps") Map<String, Object> maps);
+
+    List<CouponDO> findUsedCouponDoList(@Param("customerNo") String customerNo,@Param("orderId") Integer orderId,@Param("orderProductId") Integer orderProductId);
+
+    List<CouponDO> findStatementCouponByCustomerNo(@Param("customerNo") String customerNo);
 }
