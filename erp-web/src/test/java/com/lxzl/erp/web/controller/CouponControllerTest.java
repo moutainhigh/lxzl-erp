@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -64,9 +65,9 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void addCouponBatchDetail() throws Exception {
         Date date = new Date();
         CouponBatchDetail couponBatchDetail = new CouponBatchDetail();
-        couponBatchDetail.setCouponBatchId(62);
-        couponBatchDetail.setCouponTotalCount(20);
-        BigDecimal faceValue = new BigDecimal(30.00);
+        couponBatchDetail.setCouponBatchId(72);
+        couponBatchDetail.setCouponTotalCount(5);
+        BigDecimal faceValue = new BigDecimal(20.00);
         couponBatchDetail.setFaceValue(faceValue);
         couponBatchDetail.setEffectiveEndTime(date);
         couponBatchDetail.setIsOnline(1);
@@ -120,16 +121,16 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void provideCoupon() throws Exception {
         CouponProvideParam couponProvideParam = new CouponProvideParam();
-        couponProvideParam.setCouponBatchDetailId(122);
+        couponProvideParam.setCouponBatchDetailId(142);
         List<CustomerProvide> customerProvideList = new ArrayList<>();
         CustomerProvide customerProvide1 = new CustomerProvide();
-        customerProvide1.setCustomerNo("LXCC-1000-20180409-00004");
-        customerProvide1.setProvideCount(6);
-        CustomerProvide customerProvide2 = new CustomerProvide();
-        customerProvide2.setCustomerNo("LXCC-1000-20180408-00003");
-        customerProvide2.setProvideCount(4);
+        customerProvide1.setCustomerNo("LXCC-021-20180212-00809");
+        customerProvide1.setProvideCount(1);
+//        CustomerProvide customerProvide2 = new CustomerProvide();
+//        customerProvide2.setCustomerNo("LXCC-1000-20180408-00003");
+//        customerProvide2.setProvideCount(2);
        customerProvideList.add(customerProvide1);
-       customerProvideList.add(customerProvide2);
+//       customerProvideList.add(customerProvide2);
        couponProvideParam.setCustomerProvideList(customerProvideList);
 
         TestResult testResult = getJsonTestResult("/coupon/provideCoupon", couponProvideParam);
@@ -216,5 +217,22 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
         TestResult testResult = getJsonTestResult("/coupon/pageCouponByCustomerNo", customerCouponQueryParam);
+    }
+    @Test
+    public void findStatementCouponByCustomerNo() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC-1000-20180409-00004");
+        TestResult testResult = getJsonTestResult("/coupon/findStatementCouponByCustomerNo", customer);
+    }
+    @Test
+    public void useStatementCoupon() throws Exception {
+        Coupon coupon = new Coupon();
+        coupon.setCouponId(5273);
+        StatementOrderDetail statementOrderDetail = new StatementOrderDetail();
+        statementOrderDetail.setStatementOrderDetailId(2);
+        StatementCouponParam statementCouponParam = new StatementCouponParam();
+        statementCouponParam.setCoupon(coupon);
+        statementCouponParam.setStatementOrderDetail(statementOrderDetail);
+        TestResult testResult = getJsonTestResult("/coupon/useStatementCoupon", statementCouponParam);
     }
 }

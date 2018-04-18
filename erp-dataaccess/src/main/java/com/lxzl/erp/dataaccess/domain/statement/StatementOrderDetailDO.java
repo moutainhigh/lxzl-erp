@@ -43,6 +43,7 @@ public class StatementOrderDetailDO extends BaseDO {
     private Date statementEndTime;
     private Integer dataStatus;
     private String remark;
+    private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
     @Transient
     private Integer rentType;
@@ -372,5 +373,13 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setItemIsNew(Integer itemIsNew) {
         this.itemIsNew = itemIsNew;
+    }
+
+    public BigDecimal getStatementCouponAmount() {
+        return statementCouponAmount;
+    }
+
+    public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
+        this.statementCouponAmount = statementCouponAmount;
     }
 }
