@@ -35,7 +35,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
@@ -51,7 +53,9 @@ import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
@@ -1353,6 +1357,15 @@ public class StatementServiceImpl implements StatementService {
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                                //非即租即还设备，押金不退
+                                ProductDO product= productMapper.findById(orderProductDO.getProductId());
+                                if(product==null){
+                                    result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
+                                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                                    return result;
+                                }
+                                if(product.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
@@ -1470,6 +1483,15 @@ public class StatementServiceImpl implements StatementService {
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                                //非即租即还设备，押金不退
+                                MaterialDO material= materialMapper.findById(orderMaterialDO.getMaterialId());
+                                if(material==null){
+                                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                                    return result;
+                                }
+                                if(material.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
@@ -3044,4 +3066,8 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private StatementOrderSupport statementOrderSupport;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private MaterialMapper materialMapper;
 }
