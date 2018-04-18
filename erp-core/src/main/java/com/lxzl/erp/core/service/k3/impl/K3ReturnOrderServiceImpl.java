@@ -217,7 +217,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)){
             for (K3ReturnOrderDetail k3ReturnOrderDetail: k3ReturnOrderDetailList){
                 OrderDO orderDO=orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
-                if(orderDO==null)continue;//如果为k3数据则不验证
+                if(orderDO==null || CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()))continue;//如果为k3数据则不验证
                 if(isMaterial(k3ReturnOrderDetail.getProductNo())){
                     OrderMaterialDO orderMaterialDO=orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
                     if(orderMaterialDO!=null)continue;
