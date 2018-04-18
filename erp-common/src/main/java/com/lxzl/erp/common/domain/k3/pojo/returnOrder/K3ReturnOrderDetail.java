@@ -13,6 +13,7 @@ public class K3ReturnOrderDetail extends BasePO {
 
     private Integer k3ReturnOrderDetailId;   //唯一标识
     private Integer returnOrderId;   //K3退货单ID
+    private String returnOrderNo;//K3退货单号
     @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL, groups = {AddGroup.class})
     private String orderNo;   //订单号
     @NotBlank(message = ErrorCode.ORDER_ITEM_ID_NOT_NULL, groups = {AddGroup.class})
@@ -149,5 +150,13 @@ public class K3ReturnOrderDetail extends BasePO {
 
     public void setRealProductCount(Integer realProductCount) {
         this.realProductCount = realProductCount;
+    }
+
+    public String getReturnOrderNo() {
+        return returnOrderNo;
+    }
+
+    public void setReturnOrderNo(String returnOrderNo) {
+        this.returnOrderNo = returnOrderNo;
     }
 }

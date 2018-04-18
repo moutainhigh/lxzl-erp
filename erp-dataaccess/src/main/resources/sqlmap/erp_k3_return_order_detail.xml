@@ -18,6 +18,7 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo" />
 	</resultMap>
 
 	<sql id="column_List">
@@ -106,5 +107,11 @@
 	<select id="findListByReturnOrderId" resultMap="K3ReturnOrderDetailDO" resultType="java.lang.Integer">
 		SELECT <include refid="column_List"/> from erp_k3_return_order_detail ekrod WHERE
 		ekrod.return_order_id = #{returnOrderId,jdbcType=VARCHAR} AND ekrod.data_status = 1
+	</select>
+
+	<select id="findListByOrderNo" resultMap="K3ReturnOrderDetailDO">
+		SELECT <include refid="column_List"/>,ekro.return_order_no from erp_k3_return_order_detail ekrod
+		LEFT JOIN erp_k3_return_order ekro on ekro.id =ekrod.return_order_id
+		WHERE ekrod.order_no = #{orderNo,jdbcType=VARCHAR} AND ekrod.data_status = 1 AND  ekrod.real_product_count>0
 	</select>
 </mapper>
