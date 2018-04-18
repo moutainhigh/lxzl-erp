@@ -253,7 +253,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         for (Integer orderId : set) {
 
             Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
+            totalRentingProductCount = totalRentingProductCount == null ? 0 : totalRentingProductCount;
             Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
+            totalRentingMaterialCount = totalRentingMaterialCount == null ? 0 : totalRentingMaterialCount;
 
             OrderDO orderDO = orderMapper.findById(orderId);
             if(orderDO == null){
