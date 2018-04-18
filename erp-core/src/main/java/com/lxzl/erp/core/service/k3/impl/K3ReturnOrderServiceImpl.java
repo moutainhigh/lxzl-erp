@@ -30,6 +30,7 @@ import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
@@ -38,6 +39,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -89,6 +91,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.RETURN_TIME_LESS_MIN_TIME);
             return result;
         }
+        //发货分公司检查
+        SubCompanyDO subCompanyDO= subCompanyMapper.findById(k3ReturnOrder.getDeliverySubCompanyId());
+        if(subCompanyDO==null){
+            result.setErrorCode(ErrorCode.DELIVERY_COMPANY_NOT_EXIT);
+            return result;
+        }
+
  //       //商品物料唯一性校验
 //        Set<String> primaryKeySet = new HashSet<String>();
 //        for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
@@ -179,6 +188,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (!ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT.equals(k3ReturnOrderDO.getReturnOrderStatus())
                 && !ReturnOrderStatus.RETURN_ORDER_STATUS_BACKED.equals(k3ReturnOrderDO.getReturnOrderStatus())) {
             result.setErrorCode(ErrorCode.K3_RETURN_ORDER_STATUS_CAN_NOT_OPERATE);
+            return result;
+        }
+        //发货分公司检查
+        SubCompanyDO subCompanyDO= subCompanyMapper.findById(k3ReturnOrder.getDeliverySubCompanyId());
+        if(subCompanyDO==null){
+            result.setErrorCode(ErrorCode.DELIVERY_COMPANY_NOT_EXIT);
             return result;
         }
 //        //添加商品时，重复性校验
@@ -801,6 +816,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
     @Autowired
     private OrderMaterialMapper orderMaterialMapper;
+
+    @Autowired
+    private SubCompanyMapper subCompanyMapper;
 
 
 }
