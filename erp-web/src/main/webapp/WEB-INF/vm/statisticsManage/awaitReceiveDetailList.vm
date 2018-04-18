@@ -69,9 +69,9 @@
                                 <th>客户编号</th>
                                 <th>客户姓名</th>
                                 <th>业务类型</th>
-                                <th>分公司ID</th>
+##                                <th>分公司ID</th>
                                 <th>分公司名称</th>
-                                <th>业务员ID</th>
+##                                <th>业务员ID</th>
                                 <th>业务员姓名</th>
                                 <th>待结算金额</th>
                                 <th>逾期期数</th>
@@ -87,9 +87,9 @@
                                 <td>{{customerNo}}</td>
                                 <td>{{customerName}}</td>
                                 <td>{{rentLengthTypeValue}}</td>
-                                <td>{{subCompanyId}}</td>
+##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
-                                <td>{{orderSellerId}}</td>
+##                                <td>{{orderSellerId}}</td>
                                 <td>{{orderSellerName}}</td>
                                 <td>{{awaitReceivable}}</td>
                                 <td>{{overduePhaseCount}}</td>
@@ -104,7 +104,7 @@
                             {{/listData}}
                             <tr>
                                 <td>合计</td>
-                                <td id="totalCount" colspan="7"></td>
+                                <td id="totalCount" colspan="5"></td>
                                 <td id="totalAwaitReceivable" colspan="2"></td>
                             </tr>
                             {{/dataSource}}
