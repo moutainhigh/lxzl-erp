@@ -249,9 +249,13 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
             Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
             Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
+
+            OrderDO orderDO = orderMapper.findById(orderId);
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
-                OrderDO orderDO = orderMapper.findById(orderId);
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                orderMapper.update(orderDO);
+            }else if(orderDO.getTotalProductCount()>totalRentingProductCount||orderDO.getTotalMaterialCount()>totalRentingMaterialCount){//部分退货
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                 orderMapper.update(orderDO);
             }
         }
