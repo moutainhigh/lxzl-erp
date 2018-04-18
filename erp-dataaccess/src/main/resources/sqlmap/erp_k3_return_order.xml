@@ -23,6 +23,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
+        <result column="sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
         <collection property="k3ReturnOrderDetailDOList" resultMap="K3ReturnOrderDetailDO"/>
     </resultMap>
 
@@ -72,11 +73,13 @@
         </trim>
         FROM (
         SELECT
-        <include refid="column_List"/>
+        <include refid="column_List"/>,esc.sub_company_name
         FROM erp_k3_return_order ekro
+        LEFT  JOIN erp_sub_company esc on  ekro.delivery_sub_company_id=esc.id AND esc.data_status = 1
         WHERE ekro.return_order_no = #{returnOrderNo, jdbcType=VARCHAR} AND ekro.data_status = 1
         ) m_order
         LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
+
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
