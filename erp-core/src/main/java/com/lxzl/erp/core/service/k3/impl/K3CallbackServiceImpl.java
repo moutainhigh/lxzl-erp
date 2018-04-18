@@ -22,6 +22,7 @@ import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -222,7 +223,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         Set<Integer> set = new HashSet();
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
-            if (isProduct(k3ReturnOrderDetailDO.getProductNo())) {
+            if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                 orderProductDO.setRentingProductCount(productCount);
@@ -268,13 +269,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
-    }
-
-    private Boolean isProduct(String productNo){
-        if (productNo.startsWith("20.")) {
-            return false;
-        }
-        return true;
     }
     @Autowired
     private OrderMapper orderMapper;
@@ -322,4 +316,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private CustomerSupport customerSupport;
     @Autowired
     private StatementService statementService;
+    @Autowired
+    private ProductSupport productSupport;
 }

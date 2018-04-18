@@ -1486,7 +1486,7 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if (!k3ReturnOrderDetailDO.getProductNo().startsWith("20.") || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.")&& !k3ReturnOrderDetailDO.getProductNo().startsWith("30."))  || k3ReturnOrderDetailDO.getOrderItemId() == null) {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));

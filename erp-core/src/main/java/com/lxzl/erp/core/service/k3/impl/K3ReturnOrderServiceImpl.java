@@ -28,6 +28,7 @@ import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -227,7 +228,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             for (K3ReturnOrderDetail k3ReturnOrderDetail: k3ReturnOrderDetailList){
                 OrderDO orderDO=orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
                 if(orderDO==null || CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order()))continue;//如果为k3数据则不验证
-                if(isMaterial(k3ReturnOrderDetail.getProductNo())){
+                if(productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())){
                     OrderMaterialDO orderMaterialDO=orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
                     if(orderMaterialDO!=null)continue;
                     return false;
@@ -544,7 +545,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
                 //对退货单提交的数量进行判断
                 String productNo = k3ReturnOrderDetailDO.getProductNo();
-                if (isMaterial(productNo)){
+                if (productSupport.isMaterial(productNo)){
                     //物料
                     materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
                     if(materialId!=null&&materialId!=0){
@@ -574,7 +575,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     List<K3ReturnOrderDetailDO> dBK3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByReturnOrderId(dBK3ReturnOrderDO.getId());
                     for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : dBK3ReturnOrderDetailDOList){
                         String productNo = k3ReturnOrderDetailDO.getProductNo();
-                        if (isMaterial(productNo)){
+                        if (productSupport.isMaterial(productNo)){
                             //物料
                             materialId = Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId());
                             if (materialCountMap.get(materialId) == null){
@@ -662,13 +663,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
     }
 
-    private boolean isMaterial(String productNo) {
-        if (productNo.startsWith("20.")){
-            return true;
-        }else{
-            return false;
-        }
-    }
+
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -819,6 +814,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+    @Autowired
+    private ProductSupport productSupport;
 
 
 }
