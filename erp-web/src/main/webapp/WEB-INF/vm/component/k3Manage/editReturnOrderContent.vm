@@ -170,7 +170,7 @@
                             </td>
                             <td>
                                 <label class="field prepend-icon mw200">
-                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;" >{{remark}}</textarea>
                                     <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                 </label>
                             </td>
