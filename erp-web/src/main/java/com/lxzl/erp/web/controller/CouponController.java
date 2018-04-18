@@ -198,5 +198,25 @@ public class CouponController {
         ServiceResult<String,String> serviceResult = couponService.useCoupon(useCoupon);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
+    /**
+     * 结算单使用结算优惠券
+     * @param statementCouponParam
+     * @return
+     */
+    @RequestMapping(value = "useStatementCoupon",method = RequestMethod.POST)
+    public Result useStatementCoupon(@RequestBody StatementCouponParam statementCouponParam, BindingResult validResult){
 
+        ServiceResult<String,String> serviceResult = couponService.useStatementCoupon(statementCouponParam);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+    /**
+     * 按客户编号查询该客户可用的结算单优惠券
+     * @param customer
+     * @return
+     */
+    @RequestMapping(value = "findStatementCouponByCustomerNo",method = RequestMethod.POST)
+    public Result findStatementCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) Customer customer, BindingResult validResult){
+        ServiceResult<String,List<Coupon>> serviceResult = couponService.findStatementCouponByCustomerNo(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
 }

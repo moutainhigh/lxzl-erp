@@ -52,6 +52,9 @@ public class K3ReturnOrder extends BasePO {
 	private String updateUser;   //修改人
 
 	private BigDecimal eqAmount;   //需恢复的信用额度
+	@NotNull(message = ErrorCode.DELIVERY_COMPANY_ID_NULL,groups = {AddGroup.class,UpdateGroup.class})
+	private Integer deliverySubCompanyId;//发货分公司id
+	private String deliverySubCompanyName;//发货分公司
 	@Valid
 	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class,AddGroup.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
@@ -222,5 +225,21 @@ public class K3ReturnOrder extends BasePO {
 
 	public void setEqAmount(BigDecimal eqAmount) {
 		this.eqAmount = eqAmount;
+	}
+
+	public Integer getDeliverySubCompanyId() {
+		return deliverySubCompanyId;
+	}
+
+	public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
+		this.deliverySubCompanyId = deliverySubCompanyId;
+	}
+
+	public String getDeliverySubCompanyName() {
+		return deliverySubCompanyName;
+	}
+
+	public void setDeliverySubCompanyName(String deliverySubCompanyName) {
+		this.deliverySubCompanyName = deliverySubCompanyName;
 	}
 }

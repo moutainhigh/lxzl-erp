@@ -22,6 +22,8 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
+        <result column="sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
         <collection property="k3ReturnOrderDetailDOList" resultMap="K3ReturnOrderDetailDO"/>
     </resultMap>
 
@@ -43,7 +45,7 @@
     </resultMap>
 
     <sql id="column_List">
-        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user
+        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user,ekro.delivery_sub_company_id
     </sql>
 
     <sql id="detail_column_List">
@@ -71,11 +73,13 @@
         </trim>
         FROM (
         SELECT
-        <include refid="column_List"/>
+        <include refid="column_List"/>,esc.sub_company_name
         FROM erp_k3_return_order ekro
+        LEFT  JOIN erp_sub_company esc on  ekro.delivery_sub_company_id=esc.id AND esc.data_status = 1
         WHERE ekro.return_order_no = #{returnOrderNo, jdbcType=VARCHAR} AND ekro.data_status = 1
         ) m_order
         LEFT JOIN erp_k3_return_order_detail ekrod ON m_order.id = ekrod.return_order_id and ekrod.data_status = 1
+
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
@@ -195,6 +199,9 @@
             </if>
             <if test="updateUser != null">
                 update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="deliverySubCompanyId != null">
+                delivery_sub_company_id = #{deliverySubCompanyId,jdbcType=INTEGER},
             </if>
         </set>
     </sql>

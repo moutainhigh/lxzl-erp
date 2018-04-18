@@ -46,7 +46,8 @@
                                         <dt class="mb10">客户编号</dt><dd>{{k3CustomerNo}}</dd>
                                         <dt class="mb10">联系人</dt><dd>{{returnContacts}}</dd>
                                         <dt class="mb10">联系电话</dt><dd>{{returnPhone}}</dd>
-                                        <dt>收货地址</dt><dd>{{returnAddress}}</dd>
+                                        <dt class="mb10">收货地址</dt><dd>{{returnAddress}}</dd>
+                                        <dt>发货公司</dt><dd>{{deliverySubCompanyName}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
@@ -123,7 +124,8 @@
 ##                                                    <span class="checkbox mn"></span>
 ##                                                </label>
 ##                                            </th>
-                                            <th>编号</th>
+                                            <th>订单编号</th>
+                                            <th>商品编号</th>
                                             <th>商品名称</th>
                                             <th>退货数量</th>
                                             <th>备注</th>
@@ -139,6 +141,7 @@
 ##                                                    <span class="checkbox mn"></span>
 ##                                                </label>
 ##                                            </td>
+                                            <td>{{orderNo}}</td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
                                             <td>

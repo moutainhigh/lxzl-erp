@@ -14,6 +14,7 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -47,6 +48,7 @@ import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
@@ -331,6 +333,10 @@ public class K3ServiceImpl implements K3Service {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
         }
+        //获取订单退货单项列表
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList= k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList=ConverterUtil.convertList(k3ReturnOrderDetailDOList,K3ReturnOrderDetail.class);
+        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -757,5 +763,7 @@ public class K3ServiceImpl implements K3Service {
 
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+    @Autowired
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
 }

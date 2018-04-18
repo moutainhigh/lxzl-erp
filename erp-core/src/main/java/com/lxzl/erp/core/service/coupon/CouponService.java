@@ -49,4 +49,7 @@ public interface CouponService {
 
     ServiceResult<String,Page<Coupon>> pageCouponByCustomerNo(CustomerCouponQueryParam customerCouponQueryParam);
 
+    ServiceResult<String,String> useStatementCoupon(StatementCouponParam statementCouponParam);
+
+    ServiceResult<String,List<Coupon>> findStatementCouponByCustomerNo(Customer customer);
 }

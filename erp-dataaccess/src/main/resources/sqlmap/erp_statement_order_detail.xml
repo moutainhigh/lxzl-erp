@@ -56,10 +56,11 @@
         <result column="rent_type" jdbcType="INTEGER" property="rentType"/>
         <result column="goods_count" jdbcType="INTEGER" property="goodsCount"/>
         <result column="goods_unit_amount" jdbcType="DECIMAL" property="goodsUnitAmount"/>
+        <result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
     </resultMap>
 
     <sql id="column_List">
-		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount
+		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,esod.statement_coupon_amount
 	</sql>
 
     <select id="findById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
@@ -381,6 +382,9 @@
             <if test="updateUser != null">
                 update_user = #{updateUser,jdbcType=VARCHAR},
             </if>
+            <if test="statementCouponAmount != null">
+                statement_coupon_amount = #{statementCouponAmount,jdbcType=DECIMAL},
+            </if>
         </set>
     </sql>
 
@@ -398,10 +402,10 @@
 
     <insert id="saveList" parameterType="java.util.ArrayList">
         INSERT INTO erp_statement_order_detail
-        (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,return_refer_id,statement_detail_type,statement_detail_phase,statement_expect_pay_time,statement_detail_amount,statement_detail_other_amount,statement_detail_other_paid_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_overdue_paid_amount,statement_detail_overdue_days,statement_detail_overdue_phase_count,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user)
+        (statement_order_id,customer_id,order_type,order_id,order_item_type,order_item_refer_id,return_refer_id,statement_detail_type,statement_detail_phase,statement_expect_pay_time,statement_detail_amount,statement_detail_other_amount,statement_detail_other_paid_amount,statement_detail_rent_deposit_amount,statement_detail_rent_deposit_paid_amount,statement_detail_rent_deposit_return_amount,statement_detail_deposit_amount,statement_detail_deposit_paid_amount,statement_detail_deposit_return_amount,statement_detail_rent_amount,statement_detail_rent_paid_amount,statement_detail_paid_time,statement_detail_overdue_amount,statement_detail_overdue_paid_amount,statement_detail_overdue_days,statement_detail_overdue_phase_count,statement_detail_status,statement_start_time,statement_end_time,data_status,remark,create_time,create_user,update_time,update_user,statement_coupon_amount)
         VALUES
         <foreach item="statementOrderDetailDO" index="index" collection="statementOrderDetailDOList" separator=",">
-            (#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.returnReferId},#{statementOrderDetailDO.statementDetailType},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailOtherAmount},#{statementOrderDetailDO.statementDetailOtherPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailOverduePaidAmount},#{statementOrderDetailDO.statementDetailOverdueDays},#{statementOrderDetailDO.statementDetailOverduePhaseCount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser})
+            (#{statementOrderDetailDO.statementOrderId},#{statementOrderDetailDO.customerId},#{statementOrderDetailDO.orderType},#{statementOrderDetailDO.orderId},#{statementOrderDetailDO.orderItemType},#{statementOrderDetailDO.orderItemReferId},#{statementOrderDetailDO.returnReferId},#{statementOrderDetailDO.statementDetailType},#{statementOrderDetailDO.statementDetailPhase},#{statementOrderDetailDO.statementExpectPayTime},#{statementOrderDetailDO.statementDetailAmount},#{statementOrderDetailDO.statementDetailOtherAmount},#{statementOrderDetailDO.statementDetailOtherPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositAmount},#{statementOrderDetailDO.statementDetailRentDepositPaidAmount},#{statementOrderDetailDO.statementDetailRentDepositReturnAmount},#{statementOrderDetailDO.statementDetailDepositAmount},#{statementOrderDetailDO.statementDetailDepositPaidAmount},#{statementOrderDetailDO.statementDetailDepositReturnAmount},#{statementOrderDetailDO.statementDetailRentAmount},#{statementOrderDetailDO.statementDetailRentPaidAmount},#{statementOrderDetailDO.statementDetailPaidTime},#{statementOrderDetailDO.statementDetailOverdueAmount},#{statementOrderDetailDO.statementDetailOverduePaidAmount},#{statementOrderDetailDO.statementDetailOverdueDays},#{statementOrderDetailDO.statementDetailOverduePhaseCount},#{statementOrderDetailDO.statementDetailStatus},#{statementOrderDetailDO.statementStartTime},#{statementOrderDetailDO.statementEndTime},#{statementOrderDetailDO.dataStatus},#{statementOrderDetailDO.remark},#{statementOrderDetailDO.createTime},#{statementOrderDetailDO.createUser},#{statementOrderDetailDO.updateTime},#{statementOrderDetailDO.updateUser},#{statementOrderDetailDO.statementCouponAmount})
         </foreach>
     </insert>
 
@@ -688,6 +692,12 @@
             update_user =
             <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
                 when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=DECIMAL}
+            </foreach>
+        </trim>
+        <trim prefix=",">
+            statement_coupon_amount =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                when #{item.id,jdbcType=INTEGER} then #{item.statementCouponAmount,jdbcType=DECIMAL}
             </foreach>
         </trim>
         WHERE id in

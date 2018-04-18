@@ -2,109 +2,126 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper">
 
-	<resultMap id="K3ReturnOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
-		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="return_order_id" jdbcType="INTEGER" property="returnOrderId" />
-		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
-		<result column="order_item_id" jdbcType="VARCHAR" property="orderItemId" />
-		<result column="order_entry" jdbcType="VARCHAR" property="orderEntry" />
-		<result column="product_no" jdbcType="VARCHAR" property="productNo" />
-		<result column="product_name" jdbcType="VARCHAR" property="productName" />
-		<result column="product_count" jdbcType="INTEGER" property="productCount" />
-		<result column="real_product_count" jdbcType="INTEGER" property="realProductCount" />
-		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-	</resultMap>
+    <resultMap id="K3ReturnOrderDetailDO" type="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="return_order_id" jdbcType="INTEGER" property="returnOrderId"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="order_item_id" jdbcType="VARCHAR" property="orderItemId"/>
+        <result column="order_entry" jdbcType="VARCHAR" property="orderEntry"/>
+        <result column="product_no" jdbcType="VARCHAR" property="productNo"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="product_count" jdbcType="INTEGER" property="productCount"/>
+        <result column="real_product_count" jdbcType="INTEGER" property="realProductCount"/>
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="return_order_no" jdbcType="VARCHAR" property="returnOrderNo"/>
+    </resultMap>
 
-	<sql id="column_List">
+    <sql id="column_List">
 		ekrod.id,ekrod.return_order_id,ekrod.order_no,ekrod.order_item_id,ekrod.order_entry,ekrod.product_no,ekrod.product_name,ekrod.product_count,ekrod.real_product_count,ekrod.data_status,ekrod.remark,ekrod.create_time,ekrod.create_user,ekrod.update_time,ekrod.update_user
 	</sql>
 
-	<select id="findById" resultMap="K3ReturnOrderDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/> FROM erp_k3_return_order_detail ekrod 
-		WHERE ekrod.id = #{id, jdbcType=INTEGER} AND ekrod.data_status = 1 
-	</select>
+    <select id="findById" resultMap="K3ReturnOrderDetailDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_k3_return_order_detail ekrod
+        WHERE ekrod.id = #{id, jdbcType=INTEGER} AND ekrod.data_status = 1
+    </select>
 
-	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
-		SELECT count(ekrod.id) FROM erp_k3_return_order_detail ekrod 
-		<where>
-			<if test="true">
-				AND ekrod.data_status = 1
-			</if>
-		</where>
-	</select>
+    <select id="listCount" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(ekrod.id) FROM erp_k3_return_order_detail ekrod
+        <where>
+            <if test="true">
+                AND ekrod.data_status = 1
+            </if>
+        </where>
+    </select>
 
-	<select id="listPage" resultMap="K3ReturnOrderDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/> FROM erp_k3_return_order_detail ekrod 
-		<where>
-			<if test="true">
-				AND ekrod.data_status = 1
-			</if>
-		</where>
-		LIMIT #{maps.start},#{maps.pageSize}
-	</select>
+    <select id="listPage" resultMap="K3ReturnOrderDetailDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_k3_return_order_detail ekrod
+        <where>
+            <if test="true">
+                AND ekrod.data_status = 1
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
 
-	<sql id="set_column_sql">
-		<set>
-			<if test="returnOrderId != null">
-				return_order_id = #{returnOrderId,jdbcType=INTEGER},
-			</if>
-			<if test="orderNo != null">
-				order_no = #{orderNo,jdbcType=VARCHAR},
-			</if>
-			<if test="orderItemId != null">
-				order_item_id = #{orderItemId,jdbcType=VARCHAR},
-			</if>
-			<if test="orderEntry != null">
-				order_entry = #{orderEntry,jdbcType=VARCHAR},
-			</if>
-			<if test="productNo != null">
-				product_no = #{productNo,jdbcType=VARCHAR},
-			</if>
-			<if test="productName != null">
-				product_name = #{productName,jdbcType=VARCHAR},
-			</if>
-			<if test="productCount != null">
-				product_count = #{productCount,jdbcType=INTEGER},
-			</if>
-			<if test="realProductCount != null">
-				real_product_count = #{realProductCount,jdbcType=INTEGER},
-			</if>
-			<if test="dataStatus != null">
-				data_status = #{dataStatus,jdbcType=INTEGER},
-			</if>
-			<if test="remark != null">
-				remark = #{remark,jdbcType=VARCHAR},
-			</if>
-			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="createUser != null">
-				create_user = #{createUser,jdbcType=VARCHAR},
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateUser != null">
-				update_user = #{updateUser,jdbcType=VARCHAR},
-			</if>
-		</set>
-	</sql>
+    <sql id="set_column_sql">
+        <set>
+            <if test="returnOrderId != null">
+                return_order_id = #{returnOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="orderItemId != null">
+                order_item_id = #{orderItemId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderEntry != null">
+                order_entry = #{orderEntry,jdbcType=VARCHAR},
+            </if>
+            <if test="productNo != null">
+                product_no = #{productNo,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="productCount != null">
+                product_count = #{productCount,jdbcType=INTEGER},
+            </if>
+            <if test="realProductCount != null">
+                real_product_count = #{realProductCount,jdbcType=INTEGER},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </sql>
 
-	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
-		INSERT INTO erp_k3_return_order_detail <include refid="set_column_sql"/>
-	</insert>
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
+        INSERT INTO erp_k3_return_order_detail
+        <include refid="set_column_sql"/>
+    </insert>
 
-	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
-		UPDATE erp_k3_return_order_detail <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
-	</update>
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
+        UPDATE erp_k3_return_order_detail
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
 
-	<select id="findListByReturnOrderId" resultMap="K3ReturnOrderDetailDO" resultType="java.lang.Integer">
-		SELECT <include refid="column_List"/> from erp_k3_return_order_detail ekrod WHERE
-		ekrod.return_order_id = #{returnOrderId,jdbcType=VARCHAR} AND ekrod.data_status = 1
-	</select>
+    <select id="findListByReturnOrderId" resultMap="K3ReturnOrderDetailDO" resultType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        from erp_k3_return_order_detail ekrod WHERE
+        ekrod.return_order_id = #{returnOrderId,jdbcType=VARCHAR} AND ekrod.data_status = 1
+    </select>
+
+    <select id="findListByOrderNo" resultMap="K3ReturnOrderDetailDO">
+        SELECT<include refid="column_List"/>,ekro.return_order_no from erp_k3_return_order_detail ekrod
+        LEFT JOIN erp_k3_return_order ekro on ekro.id =ekrod.return_order_id AND ekro.data_status=1
+        WHERE ekrod.order_no = #{orderNo,jdbcType=VARCHAR} AND ekrod.data_status = 1 AND ekrod.real_product_count>0
+    </select>
 </mapper>

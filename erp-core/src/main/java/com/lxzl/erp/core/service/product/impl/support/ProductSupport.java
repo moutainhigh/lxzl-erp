@@ -35,5 +35,11 @@ public class ProductSupport {
         productSkuMapper.update(productSkuDO);
         return ErrorCode.SUCCESS;
     }
-
+    public boolean isMaterial(String productNo) {
+        if (productNo.startsWith("20.")||productNo.startsWith("30.")){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

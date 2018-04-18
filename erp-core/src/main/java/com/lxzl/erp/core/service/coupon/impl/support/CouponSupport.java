@@ -1,10 +1,14 @@
 package com.lxzl.erp.core.service.coupon.impl.support;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.CouponStatus;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -12,9 +16,16 @@ import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDetailDO;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
+import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -39,6 +50,14 @@ public class CouponSupport {
     private CouponBatchDetailMapper couponBatchDetailMapper;
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private StatementOrderDetailMapper statementOrderDetailMapper;
+    @Autowired
+    private StatementOrderMapper statementOrderMapper;
+    @Autowired
+    private OrderMapper orderMapper;
     /**
      * 使用优惠券
      * @param order
@@ -178,4 +197,75 @@ public class CouponSupport {
         couponBatchMapper.updateUseList(couponBatchDOList);
         return ErrorCode.SUCCESS;
     }
+    /**
+     * 结算单计算优惠券
+     * @param statementOrderDetailDO
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, BigDecimal> setDeductionAmount(StatementOrderDetailDO statementOrderDetailDO){
+        ServiceResult<String, BigDecimal> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        //先对结算单明细对象进行非空判断
+        if (statementOrderDetailDO == null){
+            serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_NOT_EXISTS);
+            return serviceResult;
+        }
+        // 不是订单的给出提示 ：该类型单子无法使用优惠券
+        if (statementOrderDetailDO.getOrderType()!=1) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_NOT_USED_THIS_ORDER_TYPE);//该类型结算单无法使用优惠券
+            return serviceResult;
+        }
+        //通过客户ID查出客户编号
+        CustomerDO customerDO = customerMapper.findById(statementOrderDetailDO.getCustomerId());
+        if (customerDO==null) {
+             serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+             return serviceResult;
+        }
+        //通过客户编号，订单id,订单商品项id，查出优惠券集合(在CouponDO中添加couponType，通过优惠券批次ID进行关联查询)
+        // TODO: 2018\4\17 0017 查询时要查询结算单ID为空的优惠券列表且状态为8，已使用的
+        List<CouponDO> couponDOList = couponMapper.findUsedCouponDoList(customerDO.getCustomerNo(),statementOrderDetailDO.getOrderId(),statementOrderDetailDO.getOrderItemReferId());
+        if (CollectionUtil.isEmpty(couponDOList)) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_NOT_USED_THIS_STATEMENT);//这个结算单未使用优惠券
+            return serviceResult;
+        }
+        //判断优惠券类型和结算单期数，将所有优惠券抵扣金额求和
+        Map<Integer,BigDecimal> couponTypeAndDeductionAmountMap = new HashMap<>();
+        for (CouponDO couponDO:couponDOList) {
+            if (couponTypeAndDeductionAmountMap.containsKey(couponDO.getCouponType())) {
+                couponTypeAndDeductionAmountMap.put(couponDO.getCouponType(), BigDecimalUtil.add(couponTypeAndDeductionAmountMap.get(couponDO.getCouponType()), couponDO.getDeductionAmount()));
+            } else {
+                couponTypeAndDeductionAmountMap.put(couponDO.getCouponType(),couponDO.getDeductionAmount());
+            }
+            //给设备优惠券添加结算单id
+            if (statementOrderDetailDO.getOrderItemType()==1 && couponDO.getCouponType()==1) {
+                couponDO.setStatementOrderId(statementOrderDetailDO.getStatementOrderId());
+                couponDO.setStatementOrderDetailId(statementOrderDetailDO.getOrderItemReferId());
+                couponDO.setUpdateTime(date);
+                couponDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                couponMapper.update(couponDO);
+            }
+        }
+        //设备类型计算抵扣金额
+        //增加结算单类型判断，设备的跟map集合中key为1的进行匹配
+        //商品使用商品结算单
+        if (statementOrderDetailDO.getOrderItemType()==1) {//订单项类型为商品
+            if (couponTypeAndDeductionAmountMap.containsKey(1)) {//该用户下有使用设备优惠券
+                //如果结算单租金金额大于使用的优惠券的总抵扣金额，则存入总抵扣金额
+                if (statementOrderDetailDO.getStatementDetailRentAmount().compareTo(couponTypeAndDeductionAmountMap.get(1)) == 1) {
+                    serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                    serviceResult.setResult(couponTypeAndDeductionAmountMap.get(1));
+                    return serviceResult;
+                } else {//如果结算单租金金额小于或等于使用的优惠券的总抵扣金额，则抵扣金额为结算单租金金额
+                    serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                    serviceResult.setResult(couponTypeAndDeductionAmountMap.get(1));
+                    return serviceResult;
+                }
+
+            }
+        }
+        serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+        return serviceResult;
+    }
+
 }

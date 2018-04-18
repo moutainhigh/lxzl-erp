@@ -19,6 +19,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
@@ -35,7 +36,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
@@ -51,7 +54,9 @@ import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.returnOrder.*;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
@@ -355,6 +360,11 @@ public class StatementServiceImpl implements StatementService {
                         statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                         statementOrderDetailDO.setStatementDetailPhase(statementMonthCount);
                         statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                        //添加优惠券抵扣金额
+                        ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                        if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                            statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                        }
                         addStatementOrderDetailDOList.add(statementOrderDetailDO);
                     }
                 } else {
@@ -370,6 +380,11 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                                //添加优惠券抵扣金额
+                                ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                                if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                                    statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                                }
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
                                 alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
                                 lastCalculateDate = com.lxzl.se.common.util.date.DateUtil.getBeginOfDay(statementOrderDetailDO.getStatementEndTime());
@@ -382,6 +397,11 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                                //添加优惠券抵扣金额
+                                ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                                if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                                    statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                                }
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
                             }
                         } else {
@@ -392,6 +412,11 @@ public class StatementServiceImpl implements StatementService {
                                 statementOrderDetailDO.setItemIsNew(orderProductDO.getIsNewProduct());
                                 statementOrderDetailDO.setStatementDetailPhase(i);
                                 statementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_RENT);
+                                //添加优惠券抵扣金额
+                                ServiceResult<String, BigDecimal> serviceResult = couponSupport.setDeductionAmount(statementOrderDetailDO);
+                                if (serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                                    statementOrderDetailDO.setStatementCouponAmount(serviceResult.getResult());
+                                }
                                 addStatementOrderDetailDOList.add(statementOrderDetailDO);
                                 alreadyPaidAmount = BigDecimalUtil.add(alreadyPaidAmount, statementOrderDetailDO.getStatementDetailAmount());
                                 lastCalculateDate = statementOrderDetailDO.getStatementEndTime();
@@ -1353,6 +1378,15 @@ public class StatementServiceImpl implements StatementService {
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                                //非即租即还设备，押金不退
+                                ProductDO product= productMapper.findById(orderProductDO.getProductId());
+                                if(product==null){
+                                    result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
+                                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                                    return result;
+                                }
+                                if(product.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
@@ -1452,7 +1486,7 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if (!k3ReturnOrderDetailDO.getProductNo().startsWith("20.") || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.")&& !k3ReturnOrderDetailDO.getProductNo().startsWith("30."))  || k3ReturnOrderDetailDO.getOrderItemId() == null) {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
@@ -1470,6 +1504,15 @@ public class StatementServiceImpl implements StatementService {
                         if (StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
+                                //非即租即还设备，押金不退
+                                MaterialDO material= materialMapper.findById(orderMaterialDO.getMaterialId());
+                                if(material==null){
+                                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
+                                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                                    return result;
+                                }
+                                if(material.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
                                     totalReturnDepositAmount = BigDecimalUtil.add(totalReturnDepositAmount, thisReturnDepositAmount);
@@ -2612,6 +2655,7 @@ public class StatementServiceImpl implements StatementService {
                     statementOrderDO.setUpdateUser(loginUserId.toString());
                     statementOrderDO.setCreateTime(currentTime);
                     statementOrderDO.setUpdateTime(currentTime);
+                    statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
                     statementOrderMapper.save(statementOrderDO);
                 } else {
                     statementOrderDO = statementOrderDOMap.get(dateKey);
@@ -2644,6 +2688,7 @@ public class StatementServiceImpl implements StatementService {
                     if (statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()) {
                         statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
                     }
+                    statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
                     statementOrderMapper.update(statementOrderDO);
                 }
                 statementOrderDOMap.put(dateKey, statementOrderDO);
@@ -3044,4 +3089,11 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private StatementOrderSupport statementOrderSupport;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private MaterialMapper materialMapper;
+    @Autowired
+    private CouponSupport couponSupport;
+
 }

@@ -22,6 +22,8 @@ import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
+import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.delivery.DeliveryOrderMapper;
@@ -221,7 +223,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
         Set<Integer> set = new HashSet();
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
-            if (isProduct(k3ReturnOrderDetailDO.getProductNo())) {
+            if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                 orderProductDO.setRentingProductCount(productCount);
@@ -248,22 +250,25 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 
             Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
             Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
+
+            OrderDO orderDO = orderMapper.findById(orderId);
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
-                OrderDO orderDO = orderMapper.findById(orderId);
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                orderMapper.update(orderDO);
+            }else if(orderDO.getTotalProductCount()>totalRentingProductCount||orderDO.getTotalMaterialCount()>totalRentingMaterialCount){//部分退货
+                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                 orderMapper.update(orderDO);
             }
         }
-
-       serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
-    }
-
-    private Boolean isProduct(String productNo){
-        if (productNo.startsWith("20.")) {
-            return false;
+        //调用退货单结算
+        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
+        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            serviceResult.setErrorCode(statementResult.getErrorCode());
+            return serviceResult;
         }
-        return true;
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
     @Autowired
     private OrderMapper orderMapper;
@@ -309,4 +314,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private CustomerMapper customerMapper;
     @Autowired
     private CustomerSupport customerSupport;
+    @Autowired
+    private StatementService statementService;
+    @Autowired
+    private ProductSupport productSupport;
 }
