@@ -280,6 +280,11 @@ public class PaymentServiceImpl implements PaymentService {
             String requestJson = FastJsonUtil.toJSONString(chargeRecordPageParam);
             JSONObject jsonObject = JSON.parseObject(requestJson);
             jsonObject.remove("count");
+            jsonObject.remove("subCompanyId");
+            jsonObject.remove("count");
+            if(jsonObject.containsKey("customerName") && StringUtil.isNotEmpty(jsonObject.get("customerName").toString())){
+                jsonObject.put("businessCustomerName",jsonObject.get("customerName"));
+            }
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
 
