@@ -184,6 +184,7 @@ public interface OrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String, String> processStatementOrderByCancel(String orderNo);
+    ServiceResult<String, String> addOrderMessage(Order order);
 
     boolean isCheckRiskManagement(OrderDO orderDO);
     void verifyCustomerRiskInfo(OrderDO orderDO);

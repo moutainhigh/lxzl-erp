@@ -418,6 +418,7 @@ public class ErrorCode {
     public static final String RETURN_DETAIL_LIST_NOT_NULL = "J400143";
     public static final String RETURN_TIME_LESS_RENT_TIME = "J400144";
     public static final String RETURN_TIME_LESS_MIN_TIME = "J400145";
+    public static final String ORDER_MESSAGE_NULL = "J400146";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1330,6 +1331,7 @@ public class ErrorCode {
         MAP.put(RETURN_DETAIL_LIST_NOT_NULL, "退货详情列表不能为空");
         MAP.put(RETURN_TIME_LESS_RENT_TIME, "退货日期不能小于起租日期");
         MAP.put(RETURN_TIME_LESS_MIN_TIME, "退货日期不能小于三月五号");
+        MAP.put(ORDER_MESSAGE_NULL, "订单消息不能为空");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
