@@ -124,6 +124,10 @@ public class OrderController extends BaseController {
     public Result processStatementOrderByCancel(@RequestBody Order order, BindingResult validResult) {
         return resultGenerator.generate(orderService.processStatementOrderByCancel(order.getOrderNo()));
     }
+    @RequestMapping(value = "addOrderMessage", method = RequestMethod.POST)
+    public Result addOrderMessage(@RequestBody Order order, BindingResult validResult) {
+        return resultGenerator.generate(orderService.addOrderMessage(order));
+    }
 
     @Autowired
     private ResultGenerator resultGenerator;
