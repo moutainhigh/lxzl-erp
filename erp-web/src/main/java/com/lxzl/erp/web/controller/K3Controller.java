@@ -169,7 +169,6 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "commitK3ChangeOrder", method = RequestMethod.POST)
     public Result commitK3ChangeOrder(@RequestBody K3ChangeOrderCommitParam k3ChangeOrderCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ChangeOrderService.commitK3ChangeOrder(k3ChangeOrderCommitParam);
-<<<<<<< HEAD
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -201,13 +200,10 @@ public class K3Controller extends BaseController {
     @RequestMapping(value = "transferOrder", method = RequestMethod.POST)
     public Result transferOrder(@RequestBody K3OrderQueryParam param, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3Service.transferOrder(param);
-=======
->>>>>>> remotes/origin/develop_v1.0.1
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     /**
-<<<<<<< HEAD
      * <p>
      * 导入k3历史退货单
      * </p>
@@ -228,39 +224,6 @@ public class K3Controller extends BaseController {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.importK3HistoricalRefundList(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
-=======
-     * K3数据发送记录表
-     *
-     * @param k3SendRecordParam
-     * @param validResult
-     * @return
-     */
-    @RequestMapping(value = "queryK3SendRecord", method = RequestMethod.POST)
-    public Result queryK3SendRecord(@RequestBody K3SendRecordParam k3SendRecordParam, BindingResult validResult) {
-        ServiceResult<String, Page<K3SendRecord>> serviceResult = k3Service.queryK3SendRecord(k3SendRecordParam);
-        return resultGenerator.generate(serviceResult);
-    }
-
-    @RequestMapping(value = "seedAgainK3SendRecord", method = RequestMethod.POST)
-    public Result seedAgainK3SendRecord(@RequestBody @Validated(IdGroup.class)K3SendRecord k3SendRecord, BindingResult validResult) {
-        ServiceResult<String,Integer> serviceResult = k3Service.sendAgainK3SendRecord(k3SendRecord);
-        return resultGenerator.generate(serviceResult);
-    }
-
-    @RequestMapping(value = "batchSendDataToK3", method = RequestMethod.POST)
-    public Result batchSendDataToK3(@RequestBody K3SendRecordBatchParam k3SendRecordBatchParam, BindingResult validResult) {
-        ServiceResult<String, Map<String, String>> serviceResult = k3Service.batchSendDataToK3(k3SendRecordBatchParam);
-        return resultGenerator.generate(serviceResult);
-    }
-
-    @RequestMapping(value = "transferOrder", method = RequestMethod.POST)
-    public Result transferOrder(@RequestBody K3OrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = k3Service.transferOrder(param);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-
->>>>>>> remotes/origin/develop_v1.0.1
     @Autowired
     private ResultGenerator resultGenerator;
 

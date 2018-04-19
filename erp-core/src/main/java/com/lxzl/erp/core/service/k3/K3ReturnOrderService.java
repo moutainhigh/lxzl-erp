@@ -91,7 +91,7 @@ public interface K3ReturnOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> revokeReturnOrder(String returnOrderNo);
-<<<<<<< HEAD
+
 	
     /**  
      * <p>
@@ -111,7 +111,5 @@ public interface K3ReturnOrderService extends VerifyReceiver {
      */  
     ServiceResult<String, String> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
 
-=======
->>>>>>> remotes/origin/develop_v1.0.1
 
 }

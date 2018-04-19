@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
-import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -15,10 +14,7 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
-<<<<<<< HEAD
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
-=======
->>>>>>> remotes/origin/develop_v1.0.1
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -30,7 +26,6 @@ import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
-import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -73,10 +68,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< HEAD
 import java.io.UnsupportedEncodingException;
-=======
->>>>>>> remotes/origin/develop_v1.0.1
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -93,12 +85,8 @@ public class K3ServiceImpl implements K3Service {
 
     private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
     private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
-<<<<<<< HEAD
     // k3历史退货单url
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
-=======
-
->>>>>>> remotes/origin/develop_v1.0.1
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
     @Override
@@ -347,13 +335,8 @@ public class K3ServiceImpl implements K3Service {
             throw new BusinessException(e.getMessage());
         }
         //获取订单退货单项列表
-<<<<<<< HEAD
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
-=======
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList= k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
-        List<K3ReturnOrderDetail> k3ReturnOrderDetailList=ConverterUtil.convertList(k3ReturnOrderDetailDOList,K3ReturnOrderDetail.class);
->>>>>>> remotes/origin/develop_v1.0.1
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
@@ -471,7 +454,6 @@ public class K3ServiceImpl implements K3Service {
                 } else {
                     failProductDOList.add(productDOList.get(i));
                 }
-<<<<<<< HEAD
             }
             strMap = recordTypeSupport.productK3SendRecord(productDOList, successProductDOList, failProductDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
         } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(k3SendRecordBatchParam.getRecordType())) {
@@ -488,24 +470,6 @@ public class K3ServiceImpl implements K3Service {
                     failMaterialDOList.add(materialDOList.get(i));
                 }
             }
-=======
-            }
-            strMap = recordTypeSupport.productK3SendRecord(productDOList, successProductDOList, failProductDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
-        } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(k3SendRecordBatchParam.getRecordType())) {
-            List<MaterialDO> materialDOList = materialMapper.findByMaterialParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
-            List<MaterialDO> successMaterialDOList = new ArrayList<>();
-            List<MaterialDO> failMaterialDOList = new ArrayList<>();
-            List<K3SendRecordDO> successK3SendRecordDOList = k3SendRecordMapper.findAllSuccessByType(PostK3Type.POST_K3_TYPE_MATERIAL);
-            Map<String, K3SendRecordDO> successK3SendRecordDOMap = ListUtil.listToMap(successK3SendRecordDOList, "recordReferId");
-            for (int i = 0; i < materialDOList.size(); i++) {
-                k3SendRecordDO = successK3SendRecordDOMap.get(materialDOList.get(i).getId());
-                if (k3SendRecordDO != null) {
-                    successMaterialDOList.add(materialDOList.get(i));
-                } else {
-                    failMaterialDOList.add(materialDOList.get(i));
-                }
-            }
->>>>>>> remotes/origin/develop_v1.0.1
             strMap = recordTypeSupport.materialK3SendRecord(materialDOList, successMaterialDOList, failMaterialDOList, k3SendRecordBatchParam.getBatchType(), k3SendRecordBatchParam.getIntervalTime());
         } else if (PostK3Type.POST_K3_TYPE_USER.equals(k3SendRecordBatchParam.getRecordType())) {
             List<UserDO> userDOList = userMapper.findByUserParam(k3SendRecordBatchParam.getStartTime(), k3SendRecordBatchParam.getEndTime());
@@ -719,7 +683,6 @@ public class K3ServiceImpl implements K3Service {
             return Boolean.FALSE;
         }
         k3Order.setOrderSellerId(userDO.getId());
-<<<<<<< HEAD
 
         K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
         if (k3MappingSubCompanyDO != null) {
@@ -759,23 +722,8 @@ public class K3ServiceImpl implements K3Service {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
-=======
-
-        K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
-        if (k3MappingSubCompanyDO != null) {
-            k3Order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getK3SubCompanyCode()));
         }
-        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName());
-        if (customerDO == null) {
-            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，客户不存在【%s】", k3Order.getOrderNo(), k3Order.getBuyerCustomerName()));
-            return Boolean.FALSE;
->>>>>>> remotes/origin/develop_v1.0.1
-        }
-        k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
-        k3Order.setBuyerCustomerId(customerDO.getId());
-        return Boolean.TRUE;
     }
-
 
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;

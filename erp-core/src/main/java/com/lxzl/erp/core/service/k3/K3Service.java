@@ -7,11 +7,7 @@ import com.lxzl.erp.common.domain.k3.K3SendRecordBatchParam;
 import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
-<<<<<<< HEAD
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
-=======
->>>>>>> remotes/origin/develop_v1.0.1
-import com.lxzl.erp.core.service.VerifyReceiver;
 
 import java.util.Map;
 
@@ -40,7 +36,6 @@ public interface K3Service {
      * @return
      */
     ServiceResult<String, Page<K3SendRecord>> queryK3SendRecord(K3SendRecordParam k3SendRecordParam);
-<<<<<<< HEAD
 
     ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord);
 
@@ -65,13 +60,5 @@ public interface K3Service {
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
     ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
-=======
-
-    ServiceResult<String, Integer> sendAgainK3SendRecord(K3SendRecord k3SendRecord);
-
-    ServiceResult<String, Map<String, String>> batchSendDataToK3(K3SendRecordBatchParam k3SendRecordBatchParam);
-
-    ServiceResult<String, String> transferOrder(K3OrderQueryParam param);
->>>>>>> remotes/origin/develop_v1.0.1
 
 }
