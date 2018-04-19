@@ -284,6 +284,8 @@ public class PaymentServiceImpl implements PaymentService {
             jsonObject.remove("count");
             if(jsonObject.containsKey("customerName") && StringUtil.isNotEmpty(jsonObject.get("customerName").toString())){
                 jsonObject.put("businessCustomerName",jsonObject.get("customerName"));
+            }else{
+                jsonObject.remove("customerName");
             }
             requestJson = jsonObject.toJSONString();
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
