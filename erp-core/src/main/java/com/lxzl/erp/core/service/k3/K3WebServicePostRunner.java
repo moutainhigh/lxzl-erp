@@ -3,19 +3,16 @@ package com.lxzl.erp.core.service.k3;
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.PostK3Type;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.*;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
-import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.xml.rpc.ServiceException;
 import java.util.Date;
 
 public class K3WebServicePostRunner implements Runnable {
@@ -52,6 +49,7 @@ public class K3WebServicePostRunner implements Runnable {
         ServiceResult response = null;
         try {
             k3SendRecordDO.setRecordJson(JSON.toJSONString(postData));
+            k3SendRecordDO.setSendTime(new Date());
             k3SendRecordMapper.update(k3SendRecordDO);
             logger.info("【推送消息】" + JSON.toJSONString(postData));
             IERPService service = new ERPServiceLocator().getBasicHttpBinding_IERPService();
@@ -68,7 +66,7 @@ public class K3WebServicePostRunner implements Runnable {
                 response = service.addSEorder((FormSEOrder) postData);
             }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
                 response = service.addUser((FormUser) postData);
-            }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
+            }else if (PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(postK3Type)) {
                 response = service.addSEOutstock((FormSEOutStock) postData);
             }
             //修改推送记录
@@ -102,7 +100,17 @@ public class K3WebServicePostRunner implements Runnable {
     }
 
     public String getErrorMessage(ServiceResult response){
-        StringBuffer sb = new StringBuffer();
+        String type = null;
+        if("erp-prod".equals(ApplicationConfig.application)){
+            type="【线上环境】";
+        }else if("erp-dev".equals(ApplicationConfig.application)){
+            type="【开发环境】";
+        }else if("erp-adv".equals(ApplicationConfig.application)){
+            type="【预发环境】";
+        }else if("erp-test".equals(ApplicationConfig.application)){
+            type="【测试环境】";
+        }
+        StringBuffer sb = new StringBuffer(type);
         if (PostK3Type.POST_K3_TYPE_PRODUCT.equals(postK3Type)) {
             sb.append("向K3推送【商品-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         } else if (PostK3Type.POST_K3_TYPE_MATERIAL.equals(postK3Type)) {
@@ -115,7 +123,7 @@ public class K3WebServicePostRunner implements Runnable {
             sb.append("向K3推送【订单-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }else if (PostK3Type.POST_K3_TYPE_USER.equals(postK3Type)) {
             sb.append("向K3推送【用户-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
-        }else if (PostK3Type.POST_K3_TYPE_K3_RETURN_ORDER.equals(postK3Type)) {
+        }else if (PostK3Type.POST_K3_TYPE_RETURN_ORDER.equals(postK3Type)) {
             sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         }
         sb.append(JSON.toJSONString(response));

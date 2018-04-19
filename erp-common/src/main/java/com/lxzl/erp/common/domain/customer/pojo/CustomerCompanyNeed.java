@@ -24,10 +24,14 @@ public class CustomerCompanyNeed {
     private BigDecimal unitPrice;  //设备单台价值
     @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_COUNT_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer rentCount;  //租赁数量
-    @NotNull(message = ErrorCode.IS_NEW_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_IS_NEW_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
     private Integer isNew;  //是否为新机,新是1，旧是0
     private BigDecimal totalPrice;  //总价值
-    private Integer rentLength;  //租赁期限
+
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    private Integer rentTimeLength;  //租赁时长
+    @NotNull(message = ErrorCode.CUSTOMER_COMPANY_NEED_RENT_LENGTH_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
+    private Integer rentType;  //租赁类型，1按天，2按月
 
     private Product product; //商品
 
@@ -63,12 +67,12 @@ public class CustomerCompanyNeed {
         this.totalPrice = totalPrice;
     }
 
-    public Integer getRentLength() {
-        return rentLength;
+    public Integer getRentTimeLength() {
+        return rentTimeLength;
     }
 
-    public void setRentLength(Integer rentLength) {
-        this.rentLength = rentLength;
+    public void setRentTimeLength(Integer rentTimeLength) {
+        this.rentTimeLength = rentTimeLength;
     }
 
     public Product getProduct() {
@@ -85,5 +89,13 @@ public class CustomerCompanyNeed {
 
     public void setIsNew(Integer isNew) {
         this.isNew = isNew;
+    }
+
+    public Integer getRentType() {
+        return rentType;
+    }
+
+    public void setRentType(Integer rentType) {
+        this.rentType = rentType;
     }
 }

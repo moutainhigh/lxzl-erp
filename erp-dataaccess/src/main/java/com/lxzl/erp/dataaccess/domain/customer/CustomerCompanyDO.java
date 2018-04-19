@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 public class CustomerCompanyDO  extends BaseDO {
@@ -45,6 +46,8 @@ public class CustomerCompanyDO  extends BaseDO {
 	private Double operatingArea; //经营面积
 	private Integer unitInsuredNumber; //单位参保人数
 	private String affiliatedEnterprise; //关联企业
+	private String simpleCompanyName;//公司简单名称字段（新增）
+	private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 4.审批驳回
 
 	@Transient
 	private String cityName;
@@ -52,6 +55,8 @@ public class CustomerCompanyDO  extends BaseDO {
 	private String districtName;
 	@Transient
 	private String provinceName;
+	@Transient
+	private List<CustomerConsignInfoDO> customerConsignInfoList;
 
 	public Integer getId(){
 		return id;
@@ -356,4 +361,20 @@ public class CustomerCompanyDO  extends BaseDO {
 	public void setDefaultAddressReferId(Integer defaultAddressReferId) {
 		this.defaultAddressReferId = defaultAddressReferId;
 	}
+
+	public List<CustomerConsignInfoDO> getCustomerConsignInfoList() { return customerConsignInfoList; }
+
+	public void setCustomerConsignInfoList(List<CustomerConsignInfoDO> customerConsignInfoList) { this.customerConsignInfoList = customerConsignInfoList; }
+
+	public String getSimpleCompanyName() {
+		return simpleCompanyName;
+	}
+
+	public void setSimpleCompanyName(String simpleCompanyName) {
+		this.simpleCompanyName = simpleCompanyName;
+	}
+
+	public Integer getAddressVerifyStatus() { return addressVerifyStatus; }
+
+	public void setAddressVerifyStatus(Integer addressVerifyStatus) { this.addressVerifyStatus = addressVerifyStatus; }
 }

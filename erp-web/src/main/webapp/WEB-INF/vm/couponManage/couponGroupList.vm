@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-活动页管理-优惠券批次</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <button class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </button>
+                                {{/acitonCommonButtons}}
+                            </script>
+
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="pull-right mr10 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="field form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select name="couponType" id="couponType" class="form-control input-sm bradius"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <input class="form-control input-sm bradius" name="couponBatchName" placeholder="请输入批次名称"  id="couponBatchName"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr>
+                                <th>批次ID</th>
+                                <th>批次名称</th>
+                                <th>批次描述</th>
+                                <th>优惠券类型</th>
+                                <th>有效起始时间</th>
+                                <th>有效结束时间</th>
+                                <th>优惠券总数</th>
+                                <th>已使用总数</th>
+                                <th>已作废总数</th>
+                                <th>优惠券总面值</th>
+                                <th>已使用总面值</th>
+                                <th>抵扣总金额</th>
+                                <th>备注</th>
+                                <th>添加人</th>
+                                {{#hasRowActionButtons}}
+                                <th class="text-right">操作</th>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr>
+                                <td>{{couponBatchId}}</td>
+                                <td class="couponBatchName" data-couponBatchName="{{couponBatchName}}">{{couponBatchName}}</td>
+                                <td style="width: 150px;" class="couponBatchDescribe" data-couponBatchDescribe="{{couponBatchDescribe}}">{{couponBatchDescribe}}</td>
+                                <td class="couponTypeValue" data-couponTypeValue="{{couponTypeValue}}">{{couponTypeValue}}</td>
+                                <td class="effectiveStartTime" data-effectiveStartTime="{{effectiveStartTime}}">{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
+                                <td class="effectiveEndTime" data-effectiveEndTime="{{effectiveEndTime}}">{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
+                                <td>{{couponBatchTotalCount}}</td>
+                                <td>{{couponBatchUsedCount}}</td>
+                                <td>{{couponBatchCancelCount}}</td>
+                                <td>{{totalFaceAmount}}</td>
+                                <td>{{totalUsedAmount}}</td>
+                                <td>{{totalDeductionAmount}}</td>
+                                <td style="width: 150px;" class="remark" data-remark="{{remark}}">{{remark}}</td>
+                                <td>
+                                    <p class="mn">{{updateUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                </td>
+                                {{#hasRowActionButtons}}
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            {{#rowActionButtons}}
+                                            <li>
+                                                <a href="${ctx}{{menuUrl}}?couponBatchId={{couponBatchId}}" class="{{class}}" data-couponBatchCancelCount="{{couponBatchCancelCount}}" data-couponBatchId="{{couponBatchId}}">{{text}}</a>
+                                            </li>
+                                            {{/rowActionButtons}}
+                                        </ul>
+                                    </div>
+                                </td>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="14" class="text-center">没有查询到优惠券批次信息</td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.coupon.list.js',
+            'manage.coupon.add.js',
+            'manage.coupon.edit.js',
+            'manage.coupon.pici.add.js'
+    );
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    CouponListManage.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+</body>
+</html>

@@ -2,14 +2,11 @@ package com.lxzl.erp.core.service.customer;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
-import com.lxzl.erp.common.domain.customer.pojo.Customer;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
-import com.lxzl.erp.common.domain.customer.pojo.CustomerRiskManagement;
+import com.lxzl.erp.common.domain.customer.*;
+import com.lxzl.erp.common.domain.customer.pojo.*;
+import com.lxzl.erp.core.service.VerifyReceiver;
 
-public interface CustomerService {
+public interface CustomerService extends VerifyReceiver {
     ServiceResult<String,String> addCompany(Customer customer);
     ServiceResult<String,String> addPerson(Customer customer);
     ServiceResult<String,String> updateCompany(Customer customer);
@@ -24,10 +21,12 @@ public interface CustomerService {
     ServiceResult<String,Customer> detailCustomerPerson(Customer customer);
     ServiceResult<String,String> updateRisk(CustomerRiskManagement customerRiskManagement);
 
+    ServiceResult<String,String> updateRiskCreditAmountUsed(CustomerRiskManagement customerRiskManagement);
+
     /**
      * 新增收货地址信息
      *
-     * @param customerConsignInfo 
+     * @param customerConsignInfo
      * @return 新增的收获地址信息ID
      */
     ServiceResult<String,Integer> addCustomerConsignInfo(CustomerConsignInfo customerConsignInfo);
@@ -95,12 +94,12 @@ public interface CustomerService {
 
     /**
     * 通过公司名称查找
-    * @Author : XiaoLuYu
-    * @Date : Created in 2018/1/17 9:46
-    * @param : customerQueryParam
+    * @Author : XiaoLuYu--kai
+    * @Date : Created in 2018/1/17 9:46  update in 2018/3/7 11:27
+    * @param : customerName
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.customer.pojo.Customer>>
     */
-    ServiceResult<String, Customer> queryCustomerByCompanyName(String companyName);
+    ServiceResult<String, Customer> queryCustomerByCustomerName(String customerName);
 
     /**
      * 增加短租应收上限金额
@@ -121,5 +120,96 @@ public interface CustomerService {
      */
     ServiceResult<String, Customer> queryCustomerByNo(String customerNo);
 
-//
+    /**
+     * 提交客户审核到工作流
+     *
+     * @param customerCommitParam
+     * @return
+     */
+    ServiceResult<String,String> commitCustomerToWorkflow(CustomerCommitParam customerCommitParam);
+
+    /**
+     * 驳回客户信息（已审批通过的）
+     *
+     * @param customerRejectParam
+     * @return
+     */
+    ServiceResult<String,String> rejectCustomer(CustomerRejectParam customerRejectParam);
+    /**
+     * 审核通过修改业务员和联合开发人
+     *
+     * @param customer
+     * @return
+     */
+    ServiceResult<String, String> updateOwnerAndUnionUser(Customer customer);
+
+
+    /**
+     *  客户风控信息历史记录分页查询
+     * @param customerRiskManageHistoryQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<CustomerRiskManagementHistory>> pageCustomerRiskManagementHistory(CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam);
+
+    /**
+     * 客户风控信息历史记录详情
+     * @param customerRiskManagementHistoryId
+     * @return
+     */
+    ServiceResult<String,CustomerRiskManagementHistory> detailCustomerRiskManagementHistory(Integer customerRiskManagementHistoryId);
+
+    /**
+     *  此方法只用于处理历史数据中公司客户的新增字段simple_company_name字段为空的情况，新增数据不会出现此种情况
+     *
+     * @return
+     */
+    ServiceResult<String,String> customerCompanySimpleNameProcessing();
+
+    /**
+     * 提交客户地址审核
+     *
+     * @param customerConsignCommitParam
+     * @return
+     */
+    ServiceResult<String,String> commitCustomerConsignInfo(CustomerConsignCommitParam customerConsignCommitParam);
+
+    /**
+     * 新增客户回访记录
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,Integer> addCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 更改客户回访记录
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,String> updateCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 取消客户回访记录
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,String> deleteCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 客户回访详情
+     *
+     * @param returnVisit
+     * @return
+     */
+    ServiceResult<String,ReturnVisit> detailCustomerReturnVisit(ReturnVisit returnVisit);
+
+    /**
+     * 客户回访列表
+     *
+     * @param customerReturnVisitQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<ReturnVisit>> pageCustomerReturnVisit(CustomerReturnVisitQueryParam customerReturnVisitQueryParam);
 }

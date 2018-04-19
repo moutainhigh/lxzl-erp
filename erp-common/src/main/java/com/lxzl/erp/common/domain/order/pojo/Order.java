@@ -44,9 +44,11 @@ public class Order extends BasePO {
     private BigDecimal logisticsAmount;                     // 运费
     private Integer orderSellerId;                          // 业务员ID
     private Integer orderSubCompanyId;                      // 分公司ID
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer orderStatus;                            // 订单状态
     private BigDecimal firstNeedPayAmount;                      // 首付租金
     private Integer payStatus;                                  // 支付状态
+    private Integer isPeer;                                  // 是否同行调拨，0-否，1是
     private Date payTime;                                       // 支付时间
     private Date deliveryTime;                                  // 发货时间
     private Date confirmDeliveryTime;                           // 确认发货时间
@@ -55,6 +57,7 @@ public class Order extends BasePO {
     private Integer highTaxRate;                                // 17%税率占比
     private Integer lowTaxRate;                                 // 6%税率占比
     private String buyerRemark;                                 // 租户备注
+    private String productSummary;                                 // 商品摘要
     private Integer dataStatus;
     private String remark;                                      // 备注信息
     private Date createTime;                                    // 订单创建时间
@@ -64,7 +67,9 @@ public class Order extends BasePO {
     private String buyerCustomerName;                           // 客户姓名
     private String orderSellerName;                             // 业务员姓名
     private String orderSubCompanyName;                         // 分公司名称
-
+    private String deliverySubCompanyName;                         // 发货所属分公司名称
+    private Integer isK3Order;                                  // 是否是K3订单，1是0否
+    private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
@@ -77,6 +82,9 @@ public class Order extends BasePO {
     private String commitRemark;                                // 提交审核备注
 
     private StatementOrder statementOrder;
+
+    private BigDecimal totalProductFirstNeedPayAmount;  //首付商品总金额
+    private BigDecimal totalMaterialFirstNeedPayAmount; //首付配件总金额
 
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
@@ -180,6 +188,14 @@ public class Order extends BasePO {
 
     public void setBuyerRemark(String buyerRemark) {
         this.buyerRemark = buyerRemark;
+    }
+
+    public String getProductSummary() {
+        return productSummary;
+    }
+
+    public void setProductSummary(String productSummary) {
+        this.productSummary = productSummary;
     }
 
     public Integer getDataStatus() {
@@ -540,5 +556,45 @@ public class Order extends BasePO {
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
+    }
+
+    public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
+
+    public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
+
+    public BigDecimal getTotalProductFirstNeedPayAmount() { return totalProductFirstNeedPayAmount; }
+
+    public void setTotalProductFirstNeedPayAmount(BigDecimal totalProductFirstNeedPayAmount) { this.totalProductFirstNeedPayAmount = totalProductFirstNeedPayAmount; }
+
+    public BigDecimal getTotalMaterialFirstNeedPayAmount() { return totalMaterialFirstNeedPayAmount; }
+
+    public void setTotalMaterialFirstNeedPayAmount(BigDecimal totalMaterialFirstNeedPayAmount) { this.totalMaterialFirstNeedPayAmount = totalMaterialFirstNeedPayAmount; }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
+    }
+
+    public Integer getIsK3Order() {
+        return isK3Order;
+    }
+
+    public void setIsK3Order(Integer isK3Order) {
+        this.isK3Order = isK3Order;
+    }
+
+    public Integer getStatementDate() {
+        return statementDate;
+    }
+
+    public void setStatementDate(Integer statementDate) {
+        this.statementDate = statementDate;
     }
 }

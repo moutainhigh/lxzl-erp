@@ -26,6 +26,7 @@
         <result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
         <result column="pay_mode" jdbcType="INTEGER" property="payMode" />
         <result column="is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+        <result column="renting_product_count" jdbcType="INTEGER" property="rentingProductCount" />
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
         <result column="create_user" property="createUser"/>
@@ -35,7 +36,7 @@
     </resultMap>
 
     <sql id="column_List">
-        eop.id as id,eop.order_id as order_id,eop.rent_type as rent_type,eop.rent_time_length as rent_time_length,eop.rent_length_type as rent_length_type,eop.product_id as product_id,eop.product_name as product_name,eop.product_sku_id as product_sku_id,eop.product_sku_name as product_sku_name,eop.product_count as product_count,eop.product_unit_amount as product_unit_amount,eop.product_amount as product_amount,eop.rent_deposit_amount as rent_deposit_amount,eop.deposit_amount as deposit_amount,eop.credit_deposit_amount as credit_deposit_amount,eop.insurance_amount as insurance_amount,eop.product_sku_snapshot as product_sku_snapshot,eop.deposit_cycle as deposit_cycle,eop.payment_cycle as payment_cycle,eop.pay_mode as pay_mode,eop.is_new_product as is_new_product,eop.data_status as data_status,eop.remark as remark,eop.create_time as create_time,eop.create_user as create_user,eop.update_time as update_time,eop.update_user as update_user
+        eop.id as id,eop.order_id as order_id,eop.rent_type as rent_type,eop.rent_time_length as rent_time_length,eop.rent_length_type as rent_length_type,eop.product_id as product_id,eop.product_name as product_name,eop.product_sku_id as product_sku_id,eop.product_sku_name as product_sku_name,eop.product_count as product_count,eop.product_unit_amount as product_unit_amount,eop.product_amount as product_amount,eop.rent_deposit_amount as rent_deposit_amount,eop.deposit_amount as deposit_amount,eop.credit_deposit_amount as credit_deposit_amount,eop.insurance_amount as insurance_amount,eop.product_sku_snapshot as product_sku_snapshot,eop.deposit_cycle as deposit_cycle,eop.payment_cycle as payment_cycle,eop.pay_mode as pay_mode,eop.is_new_product as is_new_product,eop.renting_product_count,eop.data_status as data_status,eop.remark as remark,eop.create_time as create_time,eop.create_user as create_user,eop.update_time as update_time,eop.update_user as update_user
     </sql>
 
     <select id="findById" resultMap="OrderProductDO" parameterType="java.lang.Integer">
@@ -43,7 +44,7 @@
     </select>
 
     <select id="findByOrderId" resultMap="OrderProductDO" parameterType="java.lang.Integer">
-        select <include refid="column_List"/> from erp_order_product as eop where order_id = #{orderId, jdbcType=INTEGER}
+        select <include refid="column_List"/> from erp_order_product as eop where order_id = #{orderId, jdbcType=INTEGER} and data_status = 1
     </select>
 
     <select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
@@ -113,6 +114,9 @@
             </if>
             <if test="isNewProduct != null">
                 is_new_product = #{isNewProduct, jdbcType=INTEGER},
+            </if>
+            <if test="rentingProductCount != null">
+                renting_product_count = #{rentingProductCount, jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus, jdbcType=INTEGER},
@@ -202,5 +206,8 @@
 
     <select id="findOrderProductByName" resultMap="OrderProductDO" parameterType="java.lang.String">
         SELECT <include refid="set_column_sql"/> FROM erp_order_product WHERE product_name = #{productName} AND data_status = 1
+    </select>
+    <select id="findTotalRentingProductCountByOrderId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT sum(renting_product_count) FROM erp_order_product WHERE order_id = #{orderId} AND data_status = 1
     </select>
 </mapper>

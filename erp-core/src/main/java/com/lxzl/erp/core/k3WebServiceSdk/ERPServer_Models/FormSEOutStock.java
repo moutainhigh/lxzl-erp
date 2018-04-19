@@ -7,10 +7,10 @@
 
 package com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models;
 
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStockEntry;
-
 public class FormSEOutStock  implements java.io.Serializable {
     private String address;
+
+    private String backCompanyNO;
 
     private java.util.Calendar backDate;
 
@@ -41,6 +41,7 @@ public class FormSEOutStock  implements java.io.Serializable {
 
     public FormSEOutStock(
            String address,
+           String backCompanyNO,
            java.util.Calendar backDate,
            String backMode,
            String backType,
@@ -54,6 +55,7 @@ public class FormSEOutStock  implements java.io.Serializable {
            String note,
            String phone) {
            this.address = address;
+           this.backCompanyNO = backCompanyNO;
            this.backDate = backDate;
            this.backMode = backMode;
            this.backType = backType;
@@ -86,6 +88,26 @@ public class FormSEOutStock  implements java.io.Serializable {
      */
     public void setAddress(String address) {
         this.address = address;
+    }
+
+
+    /**
+     * Gets the backCompanyNO value for this FormSEOutStock.
+     * 
+     * @return backCompanyNO
+     */
+    public String getBackCompanyNO() {
+        return backCompanyNO;
+    }
+
+
+    /**
+     * Sets the backCompanyNO value for this FormSEOutStock.
+     * 
+     * @param backCompanyNO
+     */
+    public void setBackCompanyNO(String backCompanyNO) {
+        this.backCompanyNO = backCompanyNO;
     }
 
 
@@ -343,6 +365,9 @@ public class FormSEOutStock  implements java.io.Serializable {
             ((this.address==null && other.getAddress()==null) || 
              (this.address!=null &&
               this.address.equals(other.getAddress()))) &&
+            ((this.backCompanyNO==null && other.getBackCompanyNO()==null) || 
+             (this.backCompanyNO!=null &&
+              this.backCompanyNO.equals(other.getBackCompanyNO()))) &&
             ((this.backDate==null && other.getBackDate()==null) || 
              (this.backDate!=null &&
               this.backDate.equals(other.getBackDate()))) &&
@@ -392,6 +417,9 @@ public class FormSEOutStock  implements java.io.Serializable {
         int _hashCode = 1;
         if (getAddress() != null) {
             _hashCode += getAddress().hashCode();
+        }
+        if (getBackCompanyNO() != null) {
+            _hashCode += getBackCompanyNO().hashCode();
         }
         if (getBackDate() != null) {
             _hashCode += getBackDate().hashCode();
@@ -450,6 +478,13 @@ public class FormSEOutStock  implements java.io.Serializable {
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("address");
         elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "Address"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("backCompanyNO");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "BackCompanyNO"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
@@ -552,8 +587,8 @@ public class FormSEOutStock  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           String mechType, 
-           Class _javaType,  
+           String mechType,
+           Class _javaType,
            javax.xml.namespace.QName _xmlType) {
         return 
           new  org.apache.axis.encoding.ser.BeanSerializer(
@@ -564,8 +599,8 @@ public class FormSEOutStock  implements java.io.Serializable {
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           String mechType, 
-           Class _javaType,  
+           String mechType,
+           Class _javaType,
            javax.xml.namespace.QName _xmlType) {
         return 
           new  org.apache.axis.encoding.ser.BeanDeserializer(

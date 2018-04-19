@@ -27,4 +27,5 @@ public class ImgType {
     public static final Integer WORKFLOW_IMG_TYPE = 14;
     public static final Integer AGENT_PERSON_NO_PICTURE_FRONT_IMG_TYPE = 15;
     public static final Integer AGENT_PERSON_NO_PICTURE_BACK_IMG_TYPE = 16;
+    public static final Integer CUSTOMER_RETURN_VISIT_IMG_TYPE = 17;
 }

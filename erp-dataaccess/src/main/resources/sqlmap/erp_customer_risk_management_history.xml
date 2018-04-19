@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementHistoryMapper">
+
+	<resultMap id="CustomerRiskManagementHistoryDO" type="com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementHistoryDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+		<result column="credit_amount" jdbcType="DECIMAL" property="creditAmount" />
+		<result column="credit_amount_used" jdbcType="DECIMAL" property="creditAmountUsed" />
+		<result column="deposit_cycle" jdbcType="INTEGER" property="depositCycle" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="apple_deposit_cycle" jdbcType="INTEGER" property="appleDepositCycle" />
+		<result column="apple_payment_cycle" jdbcType="INTEGER" property="applePaymentCycle" />
+		<result column="new_deposit_cycle" jdbcType="INTEGER" property="newDepositCycle" />
+		<result column="new_payment_cycle" jdbcType="INTEGER" property="newPaymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="apple_pay_mode" jdbcType="INTEGER" property="applePayMode" />
+		<result column="new_pay_mode" jdbcType="INTEGER" property="newPayMode" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="is_limit_apple" jdbcType="INTEGER" property="isLimitApple" />
+		<result column="is_limit_new" jdbcType="INTEGER" property="isLimitNew" />
+		<result column="single_limit_price" jdbcType="DECIMAL" property="singleLimitPrice" />
+		<result column="return_visit_frequency" jdbcType="INTEGER" property="returnVisitFrequency" />
+		<result column="is_full_deposit" jdbcType="INTEGER" property="isFullDeposit" />
+		<result column="import_credit_amount_used" jdbcType="DECIMAL" property="importCreditAmountUsed" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ecrmh.id,ecrmh.customer_id,ecrmh.customer_no,ecrmh.credit_amount,ecrmh.credit_amount_used,ecrmh.deposit_cycle,ecrmh.payment_cycle,ecrmh.apple_deposit_cycle,ecrmh.apple_payment_cycle,ecrmh.new_deposit_cycle,ecrmh.new_payment_cycle,ecrmh.pay_mode,ecrmh.apple_pay_mode,ecrmh.new_pay_mode,ecrmh.data_status,ecrmh.remark,ecrmh.is_limit_apple,ecrmh.is_limit_new,ecrmh.single_limit_price,ecrmh.return_visit_frequency,ecrmh.is_full_deposit,ecrmh.import_credit_amount_used,ecrmh.create_time,ecrmh.create_user,ecrmh.update_time,ecrmh.update_user
+	</sql>
+
+	<select id="findById" resultMap="CustomerRiskManagementHistoryDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_customer_risk_management_history ecrmh
+		WHERE ecrmh.id = #{id, jdbcType=INTEGER} AND ecrmh.data_status = 1 
+	</select>
+
+	<select id="findCustomerRiskHistoryByParams" resultMap="CustomerRiskManagementHistoryDO" parameterType="map">
+		SELECT <include refid="column_List"/>,ec.customer_name AS customerName
+		FROM erp_customer_risk_management_history ecrmh
+		LEFT JOIN erp_customer ec ON ec.id = ecrmh.customer_id AND ec.data_status=1
+		<where>
+			<if test="maps.customerRiskManageHistoryQueryParam != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != ''">
+				and ecrmh.customer_no = #{maps.customerRiskManageHistoryQueryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="true">
+				and ecrmh.data_status = 1
+			</if>
+			<include refid="permission_sql.customer_control"/>
+		</where>
+		ORDER BY ecrmh.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findCustomerRiskHistoryCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(ecrmh.id)
+		FROM erp_customer_risk_management_history ecrmh
+		INNER JOIN erp_customer ec ON ec.id = ecrmh.customer_id AND ec.data_status = 1
+		<where>
+			<if test="maps.customerRiskManageHistoryQueryParam != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != null &amp;&amp; maps.customerRiskManageHistoryQueryParam.customerNo != ''">
+				and ecrmh.customer_no = #{maps.customerRiskManageHistoryQueryParam.customerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="true">
+				and ecrmh.data_status = 1
+			</if>
+			<include refid="permission_sql.customer_control"/>
+		</where>
+
+	</select>
+	
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ecrmh.id) FROM erp_customer_risk_management_history ecrmh 
+		<where>
+			<if test="true">
+				AND ecrmh.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CustomerRiskManagementHistoryDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_customer_risk_management_history ecrmh 
+		<where>
+			<if test="true">
+				AND ecrmh.data_status = 1
+			</if>
+		</where>
+		  LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="customerId != null">
+				customer_id = #{customerId,jdbcType=INTEGER},
+			</if>
+			<if test="customerNo != null">
+				customer_no = #{customerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="creditAmount != null">
+				credit_amount = #{creditAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="creditAmountUsed != null">
+				credit_amount_used = #{creditAmountUsed,jdbcType=DECIMAL},
+			</if>
+			deposit_cycle = #{depositCycle,jdbcType=INTEGER},
+			payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			apple_deposit_cycle = #{appleDepositCycle,jdbcType=INTEGER},
+			apple_payment_cycle = #{applePaymentCycle,jdbcType=INTEGER},
+			new_deposit_cycle = #{newDepositCycle,jdbcType=INTEGER},
+			new_payment_cycle = #{newPaymentCycle,jdbcType=INTEGER},
+			apple_pay_mode = #{applePayMode,jdbcType=INTEGER},
+			pay_mode = #{payMode,jdbcType=INTEGER},
+			new_pay_mode = #{newPayMode,jdbcType=INTEGER},
+			is_limit_apple = #{isLimitApple, jdbcType=INTEGER},
+			is_limit_new = #{isLimitNew, jdbcType=INTEGER},
+			single_limit_price = #{singleLimitPrice, jdbcType=DECIMAL},
+			remark = #{remark,jdbcType=VARCHAR},
+			<if test="returnVisitFrequency != null">
+				return_visit_frequency = #{returnVisitFrequency,jdbcType=INTEGER},
+			</if>
+			<if test="isFullDeposit != null">
+				is_full_deposit = #{isFullDeposit,jdbcType=INTEGER},
+			</if>
+			<if test="importCreditAmountUsed != null">
+				import_credit_amount_used = #{importCreditAmountUsed,jdbcType=DECIMAL},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementHistoryDO">
+		INSERT INTO erp_customer_risk_management_history <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementHistoryDO">
+		UPDATE erp_customer_risk_management_history <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

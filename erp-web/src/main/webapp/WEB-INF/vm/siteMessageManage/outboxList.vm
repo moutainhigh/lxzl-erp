@@ -3,8 +3,6 @@
     <head>
         <title>凌雄ERP-消息管理-站内信</title>
         #parse("layout/header.vm")
-        <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-        <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
         #parse("layout/theme.vm")
     </head>
     <body class="blank-page">
@@ -83,7 +81,7 @@
                                                 <td>{{receiverName}}</td>
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
-                                                <td>{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
+                                                <td>{{#clockTime}}{{sendTime}}{{/clockTime}}</td>
                                                 <td class="text-right" style="width:50px;">
                                                     <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText="{{messageText}}">查看</a>
                                                 </td>
@@ -103,7 +101,7 @@
 
                                 <div id="messageContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
 
-                                <div class="panel-footer">
+                                <div class="panel-footer" style="border-top: none;">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                                             #parse("component/pager.vm")
@@ -121,8 +119,6 @@
         #parse("layout/footer.vm")
         #parse("component/siteMessage/sendMessage.vm")
 
-        <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-        <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
         <script type="text/javascript">
             management_load_script('${staticManagement}/js','modal.choose.user.js', 'manage.message.site.sendMessage.js', 'manage.message.site.outbox.js');
         </script>

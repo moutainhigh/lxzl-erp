@@ -69,7 +69,7 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "commitWorkFlow", method = RequestMethod.POST)
     public Result commitWorkFlow(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
-        ServiceResult<String, String> serviceResult = workflowService.commitWorkFlow(workflowLinkQueryParam.getWorkflowType(), workflowLinkQueryParam.getWorkflowReferNo(), workflowLinkQueryParam.getCurrentVerifyUser(), workflowLinkQueryParam.getVerifyMatters(),null,null);
+        ServiceResult<String, String> serviceResult = workflowService.commitWorkFlow(workflowLinkQueryParam.getWorkflowType(), workflowLinkQueryParam.getWorkflowReferNo(), workflowLinkQueryParam.getCurrentVerifyUser(), workflowLinkQueryParam.getVerifyMatters(),null,null,null);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -97,6 +97,17 @@ public class WorkflowController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    @RequestMapping(value = "workflowImportData", method = RequestMethod.POST)
+    public Result workflowImportData() {
+        ServiceResult<String, String> serviceResult = workflowService.workflowImportData();
+        return resultGenerator.generate(serviceResult);
+    }
+
+    @RequestMapping(value = "queryWorkflowLinkDetailByType", method = RequestMethod.POST)
+    public Result queryWorkflowLinkDetailByType(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam) {
+        ServiceResult<String, WorkflowLink> serviceResult = workflowService.getWorkflowLink(workflowLinkQueryParam.getWorkflowType(),workflowLinkQueryParam.getWorkflowReferNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
     @Autowired
     private WorkflowService workflowService;

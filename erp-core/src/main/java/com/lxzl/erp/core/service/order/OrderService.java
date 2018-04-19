@@ -4,13 +4,15 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.order.*;
-import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
-import com.lxzl.erp.common.domain.order.LastRentPriceResponse;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 
 import java.util.Date;
+import java.util.List;
 
 public interface OrderService extends VerifyReceiver {
 
@@ -155,4 +157,36 @@ public interface OrderService extends VerifyReceiver {
      * @return 操作结果
      */
     ServiceResult<String, String> returnBulkMaterial(String orderNo, String returnNBulkMaterialNo, String changeBulkMaterialNo, Date returnDate);
+    /**
+    * 强制取消订单
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/3/9 18:52
+    * @param : orderNo
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String, String> forceCancelOrder(String orderNo);
+
+    /**
+     * 订单计算首付金额
+     *
+     * @Author : kai
+     * @Date : Created in 2018/3/17 11:25
+     * @param order
+     * @return
+     */
+    ServiceResult<String, Order> createOrderFirstPayAmount(Order order);
+    /**
+     * 处理取消订单的结算单（临时使用该接口）
+     *
+     * @Author : liuke
+     * @Date : Created in 2018/3/28 17:25
+     * @param orderNo
+     * @return
+     */
+    ServiceResult<String, String> processStatementOrderByCancel(String orderNo);
+
+    boolean isCheckRiskManagement(OrderDO orderDO);
+    void verifyCustomerRiskInfo(OrderDO orderDO);
+    void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO);
+    void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO);
 }

@@ -27,7 +27,7 @@
                             <div class="col-md-6">
 
                                 <div class="form-group field">
-                                    <label class="col-md-3 control-label">添加日期</label>
+                                    <label class="col-md-3 control-label"><em class="text-danger">*</em>退货日期</label>
                                     <div class="col-md-9">
                                         <div class="input-group date" id="returnTimePicker">
                                             <input id="returnTime" name="returnTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择添加" />
@@ -37,21 +37,21 @@
                                 </div>
 
                                 <div class="form-group field">
-                                    <label class="col-md-3 control-label">退货地址</label>
+                                    <label class="col-md-3 control-label"><em class="text-danger">*</em>退货地址</label>
                                     <div class="col-md-9">
-                                        <textarea class="form-control" id="returnAddress" rows="3"  name="returnAddress"></textarea>
+                                        <textarea class="form-control required" id="returnAddress" rows="3"  name="returnAddress"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group field">
-                                    <label class="col-md-3 control-label">联系人</label>
+                                    <label class="col-md-3 control-label"><em class="text-danger">*</em>联系人</label>
                                     <div class="col-md-9">
                                         <input id="returnContacts" name="returnContacts" class="form-control required" type="text" placeholder="请输入联系人姓名" />
                                     </div>
                                 </div>
 
                                 <div class="form-group field">
-                                    <label class="col-md-3 control-label">联系人电话</label>
+                                    <label class="col-md-3 control-label"><em class="text-danger">*</em>联系人电话</label>
                                     <div class="col-md-9">
                                         <input id="returnPhone" name="returnPhone" class="form-control required" type="text" placeholder="请输入联系人电话" />
                                     </div>
@@ -76,13 +76,43 @@
                                 </div>
 
                                 <div class="form-group field">
-                                    <label class="col-md-3 control-label">退货方式</label>
+                                    <label class="col-md-3 control-label"><em class="text-danger">*</em>退货方式</label>
                                     <div class="col-md-9">
                                         <div class="input-group" style="width: 100%;">
                                             <select class="form-control required" name="returnMode" id="returnMode">
                                                 <option value="">请选择</option>
                                             </select>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label"><em class="text-danger">*</em>退货原因</label>
+                                    <div class="col-md-9">
+                                        <div class="input-group" style="width: 100%;">
+                                            <select class="form-control required" name="returnReasonType" id="returnReasonType">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group field">
+                                    <label class="col-md-3 control-label">备注</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group field" id="orderSubCompanyNameFormControl">
+                                    <label class="col-md-3 control-label">发货公司</label>
+                                    <div class="col-md-9">
+                                        <div>
+                                            <select class="form-control required" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -101,8 +131,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.k3.return.order.mixin.js',

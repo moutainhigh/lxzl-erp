@@ -51,6 +51,7 @@ public class StatementOrderDetail extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
+    private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
     private String orderNo;
     private String itemName;
@@ -416,5 +417,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementDetailOverduePaidAmount(BigDecimal statementDetailOverduePaidAmount) {
         this.statementDetailOverduePaidAmount = statementDetailOverduePaidAmount;
+    }
+
+    public BigDecimal getStatementCouponAmount() {
+        return statementCouponAmount;
+    }
+
+    public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
+        this.statementCouponAmount = statementCouponAmount;
     }
 }

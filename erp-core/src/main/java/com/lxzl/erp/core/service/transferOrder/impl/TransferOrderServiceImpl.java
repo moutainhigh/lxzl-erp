@@ -849,10 +849,10 @@ public class TransferOrderServiceImpl implements TransferOrderService {
             String verifyMatters = "1.流转单的类型，2.仓库的位置，3.流转的商品sku，商品数量，商品新旧，4流转的物料，物料数量，物料新旧";
             //转入的转移单审核
             if(TransferOrderMode.TRANSFER_ORDER_MODE_TRUN_INTO.equals(transferOrderDO.getTransferOrderMode())){
-                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark, transferOrderCommitParam.getImgIdList());
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark, transferOrderCommitParam.getImgIdList(),null);
             }else{
                 //转出的转移单审核
-                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark, transferOrderCommitParam.getImgIdList());
+                verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER, transferOrderNo, verifyUser,verifyMatters, commitRemark, transferOrderCommitParam.getImgIdList(),null);
             }
             //提交审核后，修改转移单的状态为审核中
             if (ErrorCode.SUCCESS.equals(verifyResult.getErrorCode())) {

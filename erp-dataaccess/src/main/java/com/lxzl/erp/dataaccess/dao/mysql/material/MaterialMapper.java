@@ -7,6 +7,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Repository
@@ -16,6 +17,7 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     MaterialDO findByMaterialTypeAndModelId(@Param("materialType") Integer materialType,@Param("materialModelId") Integer materialModelId);
 
     MaterialDO findByNo(@Param("materialNo") String materialNo);
+    MaterialDO findByK3MaterialNo(@Param("k3MaterialNo") String k3MaterialNo);
 
     List<MaterialDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
@@ -28,4 +30,6 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     List<String> findMaterialByName(@Param("materialName") String materialName);
 
     List<MaterialDO> findAllMaterial();
+
+    List<MaterialDO> findByMaterialParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 }

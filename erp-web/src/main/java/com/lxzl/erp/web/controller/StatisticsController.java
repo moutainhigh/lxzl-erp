@@ -106,6 +106,25 @@ public class StatisticsController extends BaseController {
     public Result queryShortRentByTime(@RequestBody @Validated HomeRentByTimeParam homeRentByTimeParam, BindingResult validResult) {
         return resultGenerator.generate(statisticsService.queryShortRentByTime(homeRentByTimeParam));
     }
+    /**
+     * 待收明细
+     * @param awaitReceivablePageParam
+     * @return
+     */
+    @RequestMapping(value = "queryAwaitReceivable", method = RequestMethod.POST)
+    public Result queryAwaitReceivable(@RequestBody AwaitReceivablePageParam awaitReceivablePageParam) {
+        return resultGenerator.generate(statisticsService.queryAwaitReceivable(awaitReceivablePageParam));
+    }
+
+    /**
+     * 待收统计
+     * @param statisticsAwaitReceivablePageParam
+     * @return
+     */
+    @RequestMapping(value = "queryStatisticsAwaitReceivable", method = RequestMethod.POST)
+    public Result queryStatisticsAwaitReceivable(@RequestBody StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam) {
+        return resultGenerator.generate(statisticsService.queryStatisticsAwaitReceivable(statisticsAwaitReceivablePageParam));
+    }
     @Autowired
     private ResultGenerator resultGenerator;
 

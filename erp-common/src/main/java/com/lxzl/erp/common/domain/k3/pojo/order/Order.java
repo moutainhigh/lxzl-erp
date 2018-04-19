@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.k3.pojo.order;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
@@ -73,6 +74,8 @@ public class Order extends BasePO {
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;                                 // 审核人ID
     private String commitRemark;                                // 提交审核备注
+
+    private  List<K3ReturnOrderDetail> k3ReturnOrderDetailList; //退货单项列表
 
 
     public List<OrderProduct> getOrderProductList() {
@@ -529,5 +532,13 @@ public class Order extends BasePO {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public List<K3ReturnOrderDetail> getK3ReturnOrderDetailList() {
+        return k3ReturnOrderDetailList;
+    }
+
+    public void setK3ReturnOrderDetailList(List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
+        this.k3ReturnOrderDetailList = k3ReturnOrderDetailList;
     }
 }

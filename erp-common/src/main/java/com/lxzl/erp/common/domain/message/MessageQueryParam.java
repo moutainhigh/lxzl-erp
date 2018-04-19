@@ -7,15 +7,23 @@ import com.lxzl.erp.common.domain.base.BasePageParam;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageQueryParam extends BasePageParam {
 
+    private Integer messageId;//信息id
 
-//    private Integer senderUserId;
-//
-//    public Integer getSenderUserId() {
-//        return senderUserId;
-//    }
-//
-//    public void setSenderUserId(Integer senderUserId) {
-//        this.senderUserId = senderUserId;
-//    }
+    private Integer isRead;//是否已读站内信，0-未读，1-已读
 
+    public Integer getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Integer messageId) {
+        this.messageId = messageId;
+    }
+
+    public Integer getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(Integer isRead) {
+        this.isRead = isRead;
+    }
 }

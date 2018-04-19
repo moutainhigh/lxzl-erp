@@ -40,7 +40,7 @@
                             <div class="col-md-12">
                             ##                                <label for="city" class="field-label">城市</label>
                                 <label class="field select">
-                                    <select id="city" name="city" class="required">
+                                    <select id="city" name="city" class="">
                                         <option value="">请选择</option>
                                     </select>
                                     <i class="arrow"></i>
@@ -51,7 +51,7 @@
                             <div class="col-md-12">
                             ##                                <label for="district" class="field-label">地区</label>
                                 <label class="field select">
-                                    <select id="district" name="district" class="required">
+                                    <select id="district" name="district" class="">
                                         <option value="">请选择</option>
                                     </select>
                                     <i class="arrow"></i>
@@ -84,11 +84,11 @@
 ##                </div>
             </div>
             <div class="panel-footer text-right">
-##                <label class="block mt15 switch switch-primary pull-left">
-##                    <input type="checkbox" name="isMain" id="isMain" value="1">
-##                    <label for="isMain" data-on="默认地址" data-off=""></label>
-##                    <span>设为默认地址</span>
-##                </label>
+                <label class="block mt15 switch switch-primary pull-left hide" id="iaMainLabel">
+                    <input type="checkbox" name="isMain" id="isMain" value="1">
+                    <label for="isMain" data-on="默认地址" data-off=""></label>
+                    <span>设为默认地址</span>
+                </label>
                 <button type="submit" class="button btn-primary">确定</button>
                 <button type="button" class="button btn-default cancelButton"">取消</button>
             </div>

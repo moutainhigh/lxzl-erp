@@ -1,20 +1,23 @@
 package com.lxzl.erp.web.controller;
 
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
 import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.domain.customer.CustomerCompanyQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerConsignInfoQueryParam;
-import com.lxzl.erp.common.domain.customer.CustomerPersonQueryParam;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
+import com.lxzl.erp.core.service.customer.impl.CustomerServiceImpl;
+import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
+import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
+import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,21 +25,65 @@ import java.util.List;
 
 public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
+    public void updateOwnerAndUnionUser() throws Exception {
+        Customer customer = new Customer();
+        customer.setCustomerNo("LXCC-1000-20180314-00333");
+        customer.setOwner(500032);
+        customer.setUnionUser(null);
+        TestResult result = getJsonTestResult("/customer/updateOwnerAndUnionUser", customer);
+    }
+
+    @Test
     public void addCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setOwner(500021);
+        customer.setOwner(500022);
 //        customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
-        customer.setDeliveryMode(1);
+        customer.setDeliveryMode(0);
 //        customer.setFirstApplyAmount(new BigDecimal(84000));
 //        customer.setLaterApplyAmount(new BigDecimal(50000));
-//        customer.setIsDefaultConsignAddress(1);
+        customer.setIsDefaultConsignAddress(1);
+        List<CustomerConsignInfo> customerConsignInfoList = new ArrayList<>();
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setConsigneeName("收货测试员工");
+        customerConsignInfo.setConsigneePhone("18566324595");
+        customerConsignInfo.setIsMain(1);
+        customerConsignInfo.setProvince(19);
+        customerConsignInfo.setCity(207);
+        customerConsignInfo.setDistrict(1991);
+        customerConsignInfo.setAddress("南京路24号");
+        customerConsignInfo.setIsBusinessAddress(0);
+        customerConsignInfoList.add(customerConsignInfo);
+
+        CustomerConsignInfo customerConsignInfo2 = new CustomerConsignInfo();
+        customerConsignInfo2.setConsigneeName("收货测试员工2");
+        customerConsignInfo2.setConsigneePhone("13555555555");
+        customerConsignInfo2.setIsMain(0);
+        customerConsignInfo2.setProvince(2);
+        customerConsignInfo2.setCity(3);
+        customerConsignInfo2.setDistrict(19);
+        customerConsignInfo2.setAddress("广安路9号");
+        customerConsignInfo2.setIsBusinessAddress(0);
+        customerConsignInfoList.add(customerConsignInfo2);
+
+        CustomerConsignInfo customerConsignInfo3 = new CustomerConsignInfo();
+        customerConsignInfo3.setConsigneeName("火狐032007107");
+        customerConsignInfo3.setConsigneePhone("13866253151");
+        customerConsignInfo3.setIsMain(0);
+        customerConsignInfo3.setProvince(2);
+        customerConsignInfo3.setCity(3);
+        customerConsignInfo3.setDistrict(19);
+        customerConsignInfo3.setAddress("企业信息详细地址测试update");
+        customerConsignInfo3.setIsBusinessAddress(1);
+        customerConsignInfoList.add(customerConsignInfo3);
 
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
         customerCompanyNeed1.setSkuId(70);
         customerCompanyNeed1.setRentCount(10);
         customerCompanyNeed1.setIsNew(0);
+        customerCompanyNeed1.setRentType(1);
+        customerCompanyNeed1.setRentTimeLength(30);
 
 //        CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
 //        customerCompanyNeed2.setSkuId(57);
@@ -53,16 +100,20 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("奇奇文化");
+        customerCompany.setCompanyName("56齐天文化-0330");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
-//        customerCompany.setConnectRealName("测试紧急联系人");
-//        customerCompany.setConnectPhone("18566324590");
-//        customerCompany.setAddress("彭企业信息详细地址测试103");
-//        customerCompany.setProductPurpose("测试设备用途");
-//        customerCompany.setIndustry("2");
-//        customerCompany.setRemark("记住这是公司的备注不是客户的备注");
-//        customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
+        customerCompany.setProvince(2);
+        customerCompany.setCity(3);
+        customerCompany.setDistrict(19);
+        customerCompany.setIsLegalPersonApple(1);
+        customerCompany.setConnectRealName("测试紧急联系人");
+        customerCompany.setConnectPhone("18566324590");
+        customerCompany.setAddress("彭企业信息详细地址测试103");
+        customerCompany.setProductPurpose("测试设备用途");
+        customerCompany.setIndustry("2");
+        customerCompany.setRemark("记住这是公司的备注不是客户的备注");
+        customerCompany.setCustomerCompanyNeedFirstList(customerCompanyNeedFirstList);
 //        customerCompany.setCustomerCompanyNeedLaterList(customerCompanyNeedLaterList);
 //        customerCompany.setIsLegalPersonApple(1);
         customerCompany.setAgentPersonPhone("18566324595");
@@ -84,6 +135,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonNoPictureBackImage(image3);
 */
 
+//        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
+
         //加入经营场所租赁合同
         List<Image> managerPlaceRentContractImageList = new ArrayList<>();
         Image image4= new Image();
@@ -96,11 +149,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         managerPlaceRentContractImageList.add(image5);
         managerPlaceRentContractImageList.add(image6);
 
-        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
+//        customerCompany.setManagerPlaceRentContractImageList(managerPlaceRentContractImageList);
 
         customer.setCustomerCompany(customerCompany);
         TestResult result = getJsonTestResult("/customer/addCompany", customer);
-        Thread.sleep(100000);
+        Thread.sleep(1000);
     }
 
     @Test
@@ -108,24 +161,40 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerType(CustomerType.CUSTOMER_TYPE_PERSON);
         customer.setOwner(500021);
-        customer.setDeliveryMode(2);
+        customer.setOwner(500003);
         customer.setIsDefaultConsignAddress(1);
+        customer.setFirstApplyAmount(new BigDecimal(0));
+        customer.setLaterApplyAmount(new BigDecimal(0));
 
         CustomerPerson customerPerson = new CustomerPerson();
-        customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setConnectRealName("赵二天");
-        customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("武神么");
-        customerPerson.setPhone("13888886666");
-        customerPerson.setAddress("个人信息详细地址测试");
+        customerPerson.setPersonNo("35052119870503651X");
+        customerPerson.setConnectRealName("cd");
+        customerPerson.setConnectPhone("18171408870");
+        customerPerson.setRealName("cc");
+        customerPerson.setPhone("18171408871");
+        customerPerson.setEmail("1234567@qq.com");
+        customerPerson.setProvince(17);
+        customerPerson.setCity(172);
+        customerPerson.setDistrict(1687);
+        customerPerson.setAddress("老地方烧烤摊儿");
+
         customer.setCustomerPerson(customerPerson);
+        TestResult result = getJsonTestResult("/customer/addPerson", customer);
+    }
+
+    @Test
+    public void testAddCustomerPerson() throws Exception {
+        String str = "{\"unionUser\":\"500356\",\"owner\":\"500356\",\"firstApplyAmount\":\"0\",\"laterApplyAmount\":\"0\",\"customerPerson\":{\"realName\":\"cc\",\"personNo\":\"35052119870503651X\",\"email\":\"1234567@qq.com\",\"phone\":\"18171408870\",\"unionUserName\":\"陈涵\",\"unionUser\":\"500356\",\"ownerName\":\"陈涵\",\"owner\":\"500356\",\"firstApplyAmount\":\"0\",\"laterApplyAmount\":\"0\",\"province\":\"17\",\"city\":\"172\",\"district\":\"1687\",\"address\":\"老地方烧烤摊儿\",\"connectRealName\":\"cc\",\"connectPhone\":\"18171408870\",\"remark\":\"个人客户的备注\"}}";
+
+        Customer customer = FastJsonUtil.toBean(str, Customer.class);
+
         TestResult result = getJsonTestResult("/customer/addPerson", customer);
     }
 
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180306-00313");
+        customer.setCustomerNo("LXCC-1000-20180330-00827");
         customer.setOwner(500014);
         customer.setUnionUser(500003);
         customer.setDeliveryMode(3);
@@ -133,15 +202,64 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setShortLimitReceivableAmount(new BigDecimal(2000));
         CustomerCompany customerCompany = new CustomerCompany();
 
+        customer.setIsDefaultConsignAddress(0);
+        List<CustomerConsignInfo> customerConsignInfoList = new ArrayList<>();
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(5646);
+        customerConsignInfo.setConsigneeName("收货测试员工123");
+        customerConsignInfo.setConsigneePhone("18566324595");
+        customerConsignInfo.setIsMain(1);
+        customerConsignInfo.setProvince(19);
+        customerConsignInfo.setCity(207);
+        customerConsignInfo.setDistrict(1991);
+        customerConsignInfo.setAddress("南京路24号");
+        customerConsignInfo.setIsBusinessAddress(0);
+        customerConsignInfo.setVerifyStatus(0);
+        customerConsignInfoList.add(customerConsignInfo);
+
+        CustomerConsignInfo customerConsignInfo2 = new CustomerConsignInfo();
+        customerConsignInfo2.setCustomerConsignInfoId(5647);
+        customerConsignInfo2.setConsigneeName("收货测试员工03301021");
+        customerConsignInfo2.setConsigneePhone("13555555555");
+        customerConsignInfo2.setIsMain(0);
+        customerConsignInfo2.setProvince(2);
+        customerConsignInfo2.setCity(3);
+        customerConsignInfo2.setDistrict(19);
+        customerConsignInfo2.setAddress("广安路9号");
+        customerConsignInfo2.setIsBusinessAddress(0);
+        customerConsignInfo2.setVerifyStatus(2);
+        customerConsignInfoList.add(customerConsignInfo2);
+
+        CustomerConsignInfo customerConsignInfo3 = new CustomerConsignInfo();
+        customerConsignInfo3.setCustomerConsignInfoId(5648);
+        customerConsignInfo3.setConsigneeName("火狐03200710810");
+        customerConsignInfo3.setConsigneePhone("13866253151");
+        customerConsignInfo3.setIsMain(0);
+        customerConsignInfo3.setProvince(2);
+        customerConsignInfo3.setCity(3);
+        customerConsignInfo3.setDistrict(19);
+        customerConsignInfo3.setAddress("企业信息详细地址测试update");
+        customerConsignInfo3.setIsBusinessAddress(0);
+        customerConsignInfo3.setVerifyStatus(2);
+        customerConsignInfoList.add(customerConsignInfo3);
+
+//        customerCompany.setCustomerConsignInfoList(customerConsignInfoList);
+
         //首次所需设备
         List<CustomerCompanyNeed> customerCompanyNeedFirstList = new ArrayList<>();
         CustomerCompanyNeed customerCompanyNeed1 = new CustomerCompanyNeed();
         customerCompanyNeed1.setSkuId(70);
         customerCompanyNeed1.setRentCount(15);
+        customerCompanyNeed1.setIsNew(0);
+        customerCompanyNeed1.setRentTimeLength(3);
+        customerCompanyNeed1.setRentType(1);
 
         CustomerCompanyNeed customerCompanyNeed2 = new CustomerCompanyNeed();
         customerCompanyNeed2.setSkuId(57);
         customerCompanyNeed2.setRentCount(30);
+        customerCompanyNeed2.setIsNew(0);
+        customerCompanyNeed2.setRentTimeLength(3);
+        customerCompanyNeed2.setRentType(1);
 
         customerCompanyNeedFirstList.add(customerCompanyNeed1);
         customerCompanyNeedFirstList.add(customerCompanyNeed2);
@@ -161,8 +279,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         customerCompany.setCustomerOrigin(1);
         customerCompany.setIndustry("3");
-        customerCompany.setCompanyName("齐跑文化");
-        customerCompany.setConnectRealName("测试紧急联系人");
+        customerCompany.setCompanyName("56齐天文化-0330");
+        customerCompany.setConnectRealName("测试紧急联系人0332");
         customerCompany.setConnectPhone("18566324578");
         customerCompany.setAddress("企业信息详细地址测试update");
         customerCompany.setProductPurpose("测试设备用途");
@@ -171,7 +289,10 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerCompany.setLegalPersonPhone("13866253152");
         customerCompany.setLegalPersonNo("422827199009080023");
         customerCompany.setAgentPersonPhone("13866253151");
-        customerCompany.setAgentPersonName("火狐666");
+        customerCompany.setAgentPersonName("火狐0320071011");
+        customerCompany.setProvince(2);
+        customerCompany.setCity(3);
+        customerCompany.setDistrict(19);
         customerCompany.setAgentPersonNo("422827199009080013");
 //        Image image1 = new Image();
 //        image1.setImgId(28);
@@ -269,16 +390,16 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerPerson() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCD-1000-20180304-00032");
+        customer.setCustomerNo("LXCP-1000-20180308-00329");
         customer.setOwner(500025);
         customer.setDeliveryMode(3);
         customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(1000));
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("422827999857463210");
-        customerPerson.setConnectRealName("赵二天");
+        customerPerson.setConnectRealName("赵二天111");
         customerPerson.setConnectPhone("18563214987");
-        customerPerson.setRealName("武神么");
+        customerPerson.setRealName("武神么11");
         customerPerson.setPhone("13888886666");
         customerPerson.setAddress("update个人信息详细地址测试");
         customer.setCustomerPerson(customerPerson);
@@ -310,12 +431,12 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
 //        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
-//        customerCompanyQueryParam.setCompanyName("百");
+        customerCompanyQueryParam.setCompanyName("测试八卦三号");
 //        customerCompanyQueryParam.setProductPurpose("测试");
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //        customerCompanyQueryParam.setConnectPhone("13726273851");
-        customerCompanyQueryParam.setOwnerSubCompanyId(3);
+//        customerCompanyQueryParam.setOwnerSubCompanyId(3);
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
@@ -348,7 +469,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180304-00031");
+        customer.setCustomerNo("LXCC-027-20180329-00833");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -356,7 +477,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomer() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180304-00029");
+        customer.setCustomerNo("LXCP-027-20180315-00767");
         TestResult result = getJsonTestResult("/customer/detailCustomer", customer);
     }
 
@@ -370,23 +491,34 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateRisk() throws Exception {
         CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
-        customerRiskManagement.setCustomerNo("LXCC-1000-20180126-00054");
+        customerRiskManagement.setCustomerNo("LXCC-1000-20180322-00350");
         customerRiskManagement.setPaymentCycle(12);
+        customerRiskManagement.setPayMode(1);
+        customerRiskManagement.setReturnVisitFrequency(12);
         customerRiskManagement.setCreditAmount(new BigDecimal(80000d));
         customerRiskManagement.setDepositCycle(12);
         customerRiskManagement.setIsFullDeposit(0);
-        customerRiskManagement.setIsLimitApple(1);
-        customerRiskManagement.setApplePayMode(0);
+        customerRiskManagement.setIsLimitApple(0);
+        customerRiskManagement.setApplePayMode(1);
         customerRiskManagement.setAppleDepositCycle(11);
-        customerRiskManagement.setApplePaymentCycle(12);
+        customerRiskManagement.setApplePaymentCycle(11);
         customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
-        customerRiskManagement.setIsLimitNew(1);
-        customerRiskManagement.setNewPayMode(0);
+        customerRiskManagement.setIsLimitNew(0);
+        customerRiskManagement.setNewPayMode(1);
         customerRiskManagement.setNewDepositCycle(11);
         customerRiskManagement.setNewPaymentCycle(12);
         customerRiskManagement.setSingleLimitPrice(new BigDecimal(1000));
         customerRiskManagement.setRemark("这是一个备注");
         TestResult result = getJsonTestResult("/customer/updateRisk", customerRiskManagement);
+    }
+
+    @Test
+    public void updateRiskCreditAmountUsed() throws Exception {
+        CustomerRiskManagement customerRiskManagement = new CustomerRiskManagement();
+        customerRiskManagement.setCustomerNo("CP201712060843154191841");
+        customerRiskManagement.setCreditAmountUsed(new BigDecimal(9000001));
+
+        TestResult result = getJsonTestResult("/customer/updateRiskCreditAmountUsed", customerRiskManagement);
     }
 
     @Test
@@ -398,7 +530,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void addCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerNo("CP01711221151519901204");
+        customerConsignInfo.setCustomerNo("LXCC-1000-20180314-00333");
         customerConsignInfo.setConsigneeName("add测试联系人6677");
         customerConsignInfo.setConsigneePhone("13566253480");
         customerConsignInfo.setProvince(9);
@@ -414,8 +546,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerConsignInfo() throws Exception {
         CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
-        customerConsignInfo.setCustomerConsignInfoId(987);
-        customerConsignInfo.setConsigneeName("update联系人");
+        customerConsignInfo.setCustomerConsignInfoId(1205);
+        customerConsignInfo.setConsigneeName("update联系人123");
         customerConsignInfo.setConsigneePhone("13566253478");
         customerConsignInfo.setProvince(29);
         customerConsignInfo.setCity(172); //武汉市
@@ -448,7 +580,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageCustomerConsignInfo() throws Exception {
         CustomerConsignInfoQueryParam customerConsignInfoQueryParam = new CustomerConsignInfoQueryParam();
-        customerConsignInfoQueryParam.setCustomerNo("C201711152010206581143");
+        customerConsignInfoQueryParam.setCustomerNo("LXCC-027-20180329-00837");
 //        customerConsignInfoQueryParam.setPageNo(1);
 //        customerConsignInfoQueryParam.setPageSize(3);
 
@@ -537,4 +669,134 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setStatementDate(20);
         TestResult testResult = getJsonTestResult("/customer/addStatementDate",customer);
     }
+
+    @Test
+    public void commitCustomerToWorkflow() throws Exception {
+        CustomerCommitParam param = new CustomerCommitParam();
+        param.setCustomerNo("LXCC-027-20180402-00002");
+        param.setVerifyUserId(500016);
+        param.setRemark("commit");
+
+        TestResult testResult = getJsonTestResult("/customer/commitCustomerToWorkflow",param);
+    }
+
+    @Test
+    public void rejectCustomer() throws Exception {
+        CustomerRejectParam param = new CustomerRejectParam();
+        param.setCustomerNo("LXCC-027-20180329-00846");
+        param.setRemark("客户信息有错误，需更改数据");
+
+        TestResult testResult = getJsonTestResult("/customer/rejectCustomer",param);
+    }
+
+    /**风控历史记录分页*/
+    @Test
+    public void pageCustomerRiskManagementHistory() throws Exception {
+        CustomerRiskManageHistoryQueryParam customerRiskManageHistoryQueryParam = new CustomerRiskManageHistoryQueryParam();
+        customerRiskManageHistoryQueryParam.setCustomerNo("LXCC-027-20180326-00798");
+        TestResult result = getJsonTestResult("/customer/pageCustomerRiskManagementHistory", customerRiskManageHistoryQueryParam);
+    }
+
+    /**风控历史记录详情*/
+    @Test
+    public void detailCustomerRiskManagementHistory() throws Exception {
+        CustomerRiskManagementHistory customerRiskManagementHistory = new CustomerRiskManagementHistory();
+        customerRiskManagementHistory.setCustomerRiskManagementHistoryId(3);
+        TestResult result = getJsonTestResult("/customer/detailCustomerRiskManagementHistory", customerRiskManagementHistory);
+    }
+    /**测试根据公司名称更新公司简单名称字段的测试用例*/
+    @Test
+    public void  customerCompanySimpleNameProcessingTest() throws Exception{
+        TestResult result = getJsonTestResult("/customer/customerCompanySimpleNameProcessing", null);
+    }
+
+    /**提交地址审批*/
+    @Test
+    public void commitCustomerConsignInfo() throws Exception {
+        CustomerConsignCommitParam param = new CustomerConsignCommitParam();
+        param.setCustomerConsignId(5657);
+        param.setVerifyUserId(500216);
+//        param.setVerifyUserId(500016);
+        param.setRemark("commit");
+
+        TestResult testResult = getJsonTestResult("/customer/commitCustomerConsignInfo",param);
+    }
+
+
+    @Test
+    public void addCustomerReturnVisit() throws Exception {
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setCustomerNo("LXCC-1000-20180330-00827");
+        returnVisit.setReturnVisitDescribe("第6次回访，不知道填什么好");
+        returnVisit.setRemark("回访是个什么感觉");
+
+        List<Image> customerReturnVisitImageList = new ArrayList<>();
+        Image customerReturnVisitImage1 = new Image();
+        Image customerReturnVisitImage2 = new Image();
+        customerReturnVisitImage1.setImgId(1833);
+        customerReturnVisitImage2.setImgId(1832);
+
+        customerReturnVisitImageList.add(customerReturnVisitImage1);
+        customerReturnVisitImageList.add(customerReturnVisitImage2);
+
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+
+        TestResult testResult = getJsonTestResult("/customer/addCustomerReturnVisit",returnVisit);
+    }
+
+    @Test
+    public void updateCustomerReturnVisit() throws Exception {
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(18);
+        returnVisit.setReturnVisitDescribe("更改第6次回访，这次就看看有不有效果");
+        returnVisit.setRemark("更改回访是个什么感觉");
+
+        List<Image> customerReturnVisitImageList = new ArrayList<>();
+        Image customerReturnVisitImage1 = new Image();
+        Image customerReturnVisitImage2 = new Image();
+        Image customerReturnVisitImage3 = new Image();
+        customerReturnVisitImage1.setImgId(1833);
+        customerReturnVisitImage2.setImgId(1832);
+        customerReturnVisitImage3.setImgId(1834);
+
+        customerReturnVisitImageList.add(customerReturnVisitImage1);
+        customerReturnVisitImageList.add(customerReturnVisitImage2);
+//        customerReturnVisitImageList.add(customerReturnVisitImage3);
+
+        returnVisit.setCustomerReturnVisitImageList(customerReturnVisitImageList);
+
+        TestResult testResult = getJsonTestResult("/customer/updateCustomerReturnVisit",returnVisit);
+     }
+
+    @Test
+    public void deleteCustomerReturnVisit() throws Exception {
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(24);
+
+        TestResult testResult = getJsonTestResult("/customer/deleteCustomerReturnVisit",returnVisit);
+    }
+
+    @Test
+    public void detailCustomerReturnVisit() throws Exception {
+
+        ReturnVisit returnVisit = new ReturnVisit();
+        returnVisit.setReturnVisitId(16);
+
+        TestResult testResult = getJsonTestResult("/customer/detailCustomerReturnVisit",returnVisit);
+    }
+
+
+    @Test
+    public void pageCustomerReturnVisit() throws Exception {
+        CustomerReturnVisitQueryParam customerReturnVisitQueryParam = new CustomerReturnVisitQueryParam();
+        customerReturnVisitQueryParam.setPageNo(1);
+        customerReturnVisitQueryParam.setPageSize(10);
+        customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
+
+        TestResult testResult = getJsonTestResult("/customer/pageCustomerReturnVisit",customerReturnVisitQueryParam);
+    }
+
+
 }

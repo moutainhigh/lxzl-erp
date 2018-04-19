@@ -36,6 +36,7 @@ public class StatementOrderDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
     private List<StatementOrderDetailDO> statementOrderDetailDOList;
+    private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
     @Transient
     private String customerName;
@@ -285,5 +286,13 @@ public class StatementOrderDO extends BaseDO {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public BigDecimal getStatementCouponAmount() {
+        return statementCouponAmount;
+    }
+
+    public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
+        this.statementCouponAmount = statementCouponAmount;
     }
 }

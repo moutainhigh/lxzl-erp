@@ -44,10 +44,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-
-<script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'modal.choose.product.js',
@@ -55,6 +51,7 @@
             'manage.order.util.js',
             'manage.customer.mixin.js',
             'manage.customer.business.edit.js',
+            'modal.input.address.js',
             'modal.choose.user.js');
 </script>
 <script type="text/javascript">

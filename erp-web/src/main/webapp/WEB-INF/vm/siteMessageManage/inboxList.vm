@@ -3,8 +3,6 @@
     <head>
         <title>凌雄ERP-消息管理-站内信</title>
         #parse("layout/header.vm")
-        <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-        <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
         #parse("layout/theme.vm")
     </head>
     <body class="blank-page">
@@ -55,6 +53,7 @@
                                         <div class="col-md-6">
                                             <div class="btn-group" id="actionCommonButtons">
                                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                                <button type="button" class="btn btn-primary btn-sm" id="batchReadButton" title="批量阅读">批量阅读</button>
                                             </div>
                                         </div>
                                     </div>
@@ -66,31 +65,39 @@
                                         <script  type="text/html" id="dataListTpl">
                                             <thead>
                                             <tr class="">
-##                                              <th>状态</th>
+                                                <th style="width:50px;">
+                                                    <label class="option block mn">
+                                                        <input type="checkbox" name="checkAll" value="">
+                                                        <span class="checkbox mn"></span>
+                                                    </label>
+                                                </th>
+                                                <th style="width:50px;">状态</th>
                                                 <th>发件人</th>
                                                 <th>主题</th>
                                                 <th>内容</th>
-                                                <th>时间</th>
+                                                <th>发送时间</th>
+                                                <th>读取时间</th>
                                                 <th class="text-right" style="width:50px;">操作</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="message-unread">
-                                                <td>
+                                            <tr class="{{readClass}}">
+                                                <td style="width:50px;">
                                                     <label class="option block mn">
-                                                        <input type="checkbox" name="mobileos" value="FR">
+                                                        <input type="checkbox" name="checkItem" value="{{messageId}}">
                                                         <span class="checkbox mn"></span>
                                                     </label>
                                                 </td>
-##                                                <td class="{{readClass}}">{{readStatus}}</td>
+                                                <td>{{readStatus}}</td>
                                                 <td>{{senderName}}</td>
                                                 <td class="textOverflow">{{title}}</td>
                                                 <td class="textOverflow">{{messageText}}</td>
-                                                <td class="text-center">{{#clockShorTime}}{{sendTime}}{{/clockShorTime}}</td>
+                                                <td>{{#clockTime}}{{sendTime}}{{/clockTime}}</td>
+                                                <td>{{#readed}}{{#clockTime}}{{readTime}}{{/clockTime}}{{/readed}}</td>
                                                 <td class="text-right" style="width:50px;">
-                                                    <a href="#" type="button" class="btn btn-default btn-xs viewContent" data-messageText="{{messageText}}">查看</a>
+                                                    <a href="javascript:;" type="button" class="btn btn-default btn-xs viewContent" data-messageid="{{messageId}}">查看</a>
                                                 </td>
                                             </tr>
                                             {{/listData}}
@@ -102,13 +109,13 @@
                                             {{/dataSource}}
                                             </tbody>
                                         </script>
-                                        <table class="table" id="dataListTable" style="table-layout:fixed;"></table>
+                                        <table class="table admin-form inboxTable" id="dataListTable" style="table-layout:fixed;"></table>
                                     </div>
                                 </div>
 
                                 <div id="messageContent" class="popup-basic p25 mfp-with-anim mfp-hide"></div>
 
-                                <div class="panel-footer">
+                                <div class="panel-footer" style="border-top: none;">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-12 text-right mt10 mb10">
                                             #parse("component/pager.vm")
@@ -125,9 +132,6 @@
         </div>
         #parse("layout/footer.vm")
         #parse("component/siteMessage/sendMessage.vm")
-
-        <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-        <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
         <script type="text/javascript">
             management_load_script('${staticManagement}/js','modal.choose.user.js', 'manage.message.site.sendMessage.js', 'manage.message.site.inbox.js');
         </script>

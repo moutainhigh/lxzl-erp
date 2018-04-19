@@ -26,6 +26,11 @@
                                 <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
                             </div>
                         </div>
+                        <div class="form-group pull-right mn mr10">
+                            <div class="input-group">
+                                <select class="form-control input-sm bradius" name="ownerSubCompanyId" id="ownerSubCompanyId"></select>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

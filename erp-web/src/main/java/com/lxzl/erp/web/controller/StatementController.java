@@ -53,7 +53,7 @@ public class StatementController extends BaseController {
     }
 
     @RequestMapping(value = "createK3StatementOrder", method = RequestMethod.POST)
-    public Result createNewOrderStatement(@RequestBody Order order, BindingResult validResult) {
+    public Result createK3StatementOrder(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, BigDecimal> serviceResult = statementService.createK3OrderStatement(order);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
@@ -121,6 +121,18 @@ public class StatementController extends BaseController {
     @RequestMapping(value = "batchPay", method = RequestMethod.POST)
     public Result batchPay(@RequestBody List<StatementOrderPayParam> param, BindingResult validResult) {
         ServiceResult<String, List<String>> serviceResult = statementService.batchPayStatementOrder(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "reCreateOrderStatement", method = RequestMethod.POST)
+    public Result reCreateOrderStatement(@RequestBody StatementOrderQueryParam param) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(param.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "reCreateK3OrderStatement", method = RequestMethod.POST)
+    public Result reCreateK3OrderStatement(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateK3OrderStatement(order);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

@@ -19,8 +19,18 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
     private Integer isDisabled;   //是否禁用，1不可用；0可用
     private Integer ownerSubCompanyId; //业务员所在分公司
+    private String ownerName; //业务员姓名
+    private Integer isRisk; //是否授信
 
     private List<Integer> passiveUserIdList;
+
+    public Integer getIsRisk() {
+        return isRisk;
+    }
+
+    public void setIsRisk(Integer isRisk) {
+        this.isRisk = isRisk;
+    }
 
     public Integer getCustomerId() {
         return customerId;
@@ -129,4 +139,8 @@ public class CustomerPersonQueryParam extends BasePageParam {
     public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
         this.ownerSubCompanyId = ownerSubCompanyId;
     }
+
+    public String getOwnerName() { return ownerName; }
+
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 }

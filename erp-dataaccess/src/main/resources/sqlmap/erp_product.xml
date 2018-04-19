@@ -7,6 +7,7 @@
     <resultMap type="com.lxzl.erp.dataaccess.domain.product.ProductDO" id="ProductDO">
         <result column="id" property="id"/>
         <result column="product_no" property="productNo"/>
+        <result column="k3_product_no" property="k3ProductNo"/>
         <result column="product_name" property="productName"/>
         <result column="product_model" property="productModel"/>
         <result column="brand_id" property="brandId"/>
@@ -124,7 +125,7 @@
     </resultMap>
 
     <sql id="column_List">
-		ep.id AS id,ep.product_no AS product_no,ep.product_name AS product_name,ep.product_model AS product_model,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_rent AS is_rent,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user,ep.is_return_any_time AS is_return_any_time
+		ep.id AS id,ep.product_no AS product_no,ep.product_name AS product_name,ep.product_model AS product_model,ep.brand_id AS brand_id,ep.category_id AS category_id,ep.subtitle AS subtitle,ep.unit AS unit,ep.list_price AS list_price,ep.is_rent AS is_rent,ep.product_desc AS product_desc,ep.keyword AS keyword,ep.remark AS remark,ep.data_status AS data_status,ep.create_time AS create_time,ep.create_user AS create_user,ep.update_time AS update_time,ep.update_user AS update_user,ep.is_return_any_time AS is_return_any_time,ep.k3_product_no AS k3_product_no
 	</sql>
 
     <sql id="img_column_List">
@@ -175,7 +176,7 @@
                     and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
                 </if>
                 <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
-                    and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
+                    and LOWER (ep.product_name) like LOWER (CONCAT('%','${maps.productQueryParam.productName}','%' ))
                 </if>
                 <if test="maps.productQueryParam.isRent != null">
                     and ep.is_rent = #{maps.productQueryParam.isRent, jdbcType=INTEGER}
@@ -194,6 +195,9 @@
                 </if>
                 <if test="maps.productQueryParam.createEndTime != null">
                     <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
+                </if>
+                <if test="maps.productQueryParam.k3ProductNo != null &amp;&amp; maps.productQueryParam.k3ProductNo != ''">
+                    and UPPER (ep.k3_product_no) like (CONCAT('%','${maps.productQueryParam.k3ProductNo}','%'))
                 </if>
                 <if test="maps.isQueryAll == null">
                     and ep.data_status = 1
@@ -214,7 +218,7 @@
                 and ep.id = #{maps.productQueryParam.productId, jdbcType=INTEGER}
             </if>
             <if test="maps.productQueryParam.productName != null &amp;&amp; maps.productQueryParam.productName != ''">
-                and ep.product_name like CONCAT('%','${maps.productQueryParam.productName}','%' )
+                and LOWER (ep.product_name) like LOWER (CONCAT('%','${maps.productQueryParam.productName}','%' ))
             </if>
             <if test="maps.productQueryParam.isRent != null">
                 and ep.is_rent = #{maps.productQueryParam.isRent, jdbcType=INTEGER}
@@ -233,6 +237,9 @@
             </if>
             <if test="maps.productQueryParam.createEndTime != null">
                 <![CDATA[ AND ep.create_time <= #{maps.productQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.productQueryParam.k3ProductNo != null &amp;&amp; maps.productQueryParam.k3ProductNo != ''">
+                and UPPER (ep.k3_product_no) like (CONCAT('%','${maps.productQueryParam.k3ProductNo}','%'))
             </if>
             <if test="maps.isQueryAll == null">
                 and ep.data_status = 1
@@ -268,6 +275,19 @@
         ORDER BY epcp.data_order DESC,epcpv.data_order DESC,epi.img_order DESC,epidesc.img_order DESC
     </select>
 
+    <select id="findByProductParam" resultMap="ProductDO" parameterType="java.lang.Integer">
+        SELECT <include refid="column_List"/> FROM erp_product ep
+        <where>
+            <if test="startTime != null ">
+                <![CDATA[ AND ep.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[ AND ep.create_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            AND ep.data_status = 1
+        </where>
+    </select>
+
     <select id="findByProductNo" resultMap="ProductDO" parameterType="java.lang.Integer">
         SELECT m_product.*
         <trim prefix=",">
@@ -286,7 +306,35 @@
             FROM erp_product ep
             LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
             LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
-            WHERE ep.product_no = #{productNo, jdbcType=INTEGER} and ep.data_status = 1
+            WHERE ep.product_no = #{productNo, jdbcType=VARCHAR} and ep.data_status = 1
+        ) m_product
+        LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
+        LEFT JOIN erp_product_img epidesc ON epidesc.product_id = m_product.id AND epidesc.data_status = 1 AND epidesc.img_type = 2
+        LEFT JOIN erp_product_sku_property epsp ON epsp.product_id = m_product.id AND epsp.data_status = 1 AND epsp.is_sku = 0
+        LEFT JOIN erp_product_category_property epcp ON epcp.id = epsp.property_id AND epcp.data_status = 1
+        LEFT JOIN erp_product_category_property_value epcpv ON epcpv.id = epsp.property_value_id AND epcpv.data_status = 1
+        ORDER BY epcp.data_order DESC,epcpv.data_order DESC,epi.img_order DESC,epidesc.img_order DESC
+    </select>
+
+    <select id="findByK3ProductNo" resultMap="ProductDO" parameterType="java.lang.Integer">
+        SELECT m_product.*
+        <trim prefix=",">
+            <include refid="img_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="desc_img_column_List" />
+        </trim>
+        <trim prefix=",">
+            <include refid="property_column_List" />
+        </trim>
+        ,epcp.property_name property_property_name,epcpv.property_value_name property_property_value_name
+        FROM (
+            SELECT
+            <include refid="column_List"/>, eb.brand_name AS brand_name, epc.category_name as category_name
+            FROM erp_product ep
+            LEFT JOIN erp_brand eb ON eb.id = ep.brand_id AND eb.data_status = 1
+            LEFT JOIN erp_product_category epc ON epc.id = ep.category_id AND epc.data_status = 1
+            WHERE ep.k3_product_no = #{k3ProductNo, jdbcType=VARCHAR} and ep.data_status = 1  LIMIT 0,1
         ) m_product
         LEFT JOIN erp_product_img epi ON epi.product_id = m_product.id AND epi.data_status = 1 AND epi.img_type = 1
         LEFT JOIN erp_product_img epidesc ON epidesc.product_id = m_product.id AND epidesc.data_status = 1 AND epidesc.img_type = 2
@@ -351,6 +399,9 @@
             </if>
             <if test="isReturnAnyTime != null">
                 is_return_any_time = #{isReturnAnyTime,jdbcType=INTEGER},
+            </if>
+            <if test="k3ProductNo != null">
+                k3_product_no = #{k3ProductNo, jdbcType=VARCHAR},
             </if>
         </set>
     </sql>

@@ -23,7 +23,7 @@
                 <div class="panel panel-primary panel-border top">
                     <div class="panel-menu p12">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="pull-left pl10">
                                 <script type="text/html" id="actionCommonButtonsTpl">
                                     <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
                                     {{#acitonCommonButtons}}
@@ -35,7 +35,7 @@
 
                                 <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
-                            <div class="col-md-9 text-right">
+                            <div class="text-right pull-right pr10">
                                 <form id="searchForm" class="form-horizontal">
                                     <div class="pull-right">
                                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
@@ -50,7 +50,48 @@
                                     </div>
                                     <div class="form-group pull-right mn mr10">
                                         <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
+                                            <select class="form-control input-sm bradius" name="payStatus" id="payStatus">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+##                                    <div class="form-group pull-right mn mr10">
+##                                        <div class="input-group">
+##                                            <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus">
+##                                                <option value="">请选择</option>
+##                                            </select>
+##                                        </div>
+##                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="topbar-right">
+                                            <div class="ib topbar-dropdown bradius">
+                                                <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
+                                                    <optgroup label="请选择:">
+                                                        <option value="">全部（订单状态）</option>
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="rentType" id="rentType">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group pull-right mn mr10" style="width: 210px;">
@@ -79,16 +120,19 @@
                                             </label>
                                         </th>
                                         {{/hasCommonActionButtons}}
-                                        <th>订单编号</th>
-                                        <th>订单归属</th>
+                                        <th>编号</th>
+                                        <th>订单归属公司</th>
+                                        <th>客户名称</th>
+                                        <th>收货人信息</th>
+                                        <th>类型/期限</th>
+                                        <th>商品名称</th>
+                                        <th>订单金额</th>
+                                        <th>发货公司</th>
                                         <th>送货日期</th>
-                                        <th>客户</th>
-                                        <th>商品名</th>
-                                        <th>订单总价</th>
+                                        <th>业务员</th>
+                                        <th>创建人</th>
                                         <th>支付状态</th>
                                         <th>订单状态</th>
-                                        <th>收货人</th>
-                                        <th>创建人</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -106,38 +150,72 @@
                                                 </label>
                                             </td>
                                             {{/hasCommonActionButtons}}
-                                            <td>{{orderNo}}</td>
+                                            <td>
+                                                {{#isK3Order}}
+                                                <span class="label label-dark" title="K3订单">K3</span>
+                                                {{/isK3Order}}
+                                                {{orderNo}}
+                                            </td>
                                             <td>{{orderSubCompanyName}}</td>
-                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                                             <td>{{buyerCustomerName}}</td>
-                                            <td>
-                                                {{orderItemName}}
-                                            </td>
-                                            <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                                            <td>
-                                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
-                                                <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
-                                            </td>
-                                            <td>
-                                                <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
-                                                <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
-                                            </td>
                                             <td>
                                                 <p class="mn">{{orderConsignInfo.consigneeName}}</p>
                                                 <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
                                                 <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
                                             </td>
                                             <td>
+                                                <p class="mn" style="white-space: nowrap;">{{rentTypeValue}}</p>
+                                                <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                            </td>
+                                            <td>
+                                                {{productSummary}}
+                                            </td>
+                                            <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td>{{deliverySubCompanyName}}</td>
+                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
+                                            <td>{{orderSellerName}}</td>
+                                            <td>
                                                 <p class="mn">{{createUserRealName}}</p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                             </td>
+                                            <td>
+                                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn nowrap {{orderStatusClass}}">
+                                                    <span class="{{orderStatusClass}}">{{orderStatusStr}}</span>
+                                                    {{#showViewWorkFlowButton}}
+                                                    <span class="ml5 mr5 {{orderStatusClass}}">/</span>
+                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton" data-orderno="{{orderNo}}">查看审核流</a>
+                                                    {{/showViewWorkFlowButton}}
+                                                </p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
+                                            </td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
-                                                <div class="btn-group text-right">
-                                                    {{#rowActionButtons}}
-                                                    <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
-                                                    {{/rowActionButtons}}
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                                    <ul class="dropdown-menu pull-right" role="menu">
+                                                        {{#rowActionButtons}}
+                                                        <li>
+                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+##                                                            <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
+##                                                               data-customerno="{{customerNo}}"
+##                                                               data-statementdate="{{statementDate}}"
+##                                                               data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
+##                                                               data-customertype="{{customerType}}"
+##                                                               class="{{class}}">{{text}}</a>
+                                                        </li>
+                                                        {{/rowActionButtons}}
+                                                    </ul>
                                                 </div>
+
+##                                                <div class="btn-group text-right">
+##                                                    {{#rowActionButtons}}
+##                                                    <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+##                                                    {{/rowActionButtons}}
+##                                                </div>
                                             </td>
                                             {{/hasRowActionButtons}}
                                         </tr>
@@ -167,8 +245,6 @@
         #parse("layout/sidebarRight.vm")
     </div>
     #parse("layout/footer.vm")
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'manage.order.handle.mixin.js',

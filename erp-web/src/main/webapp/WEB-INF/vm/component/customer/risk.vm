@@ -67,7 +67,7 @@
                     <span class="fa fa-circle text-info"></span>
                 </td>
                 <td>限制单台设备价值</td>
-                <td><span class='text-info'>￥{{#price}}{{singleLimitPrice}}{{/price}}</span></td>
+                <td><span class='text-info'>{{singleLimitPriceValue}}</span></td>
             </tr>
             <tr>
                 <td>
@@ -125,6 +125,20 @@
                 <td>是否限制全新机</td>
                 <td><span class='text-info'>{{#boolText}}{{isLimitNew}}{{/boolText}}</span></td>
             </tr>
+            <!-- <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
+                <td>逾期金额</td>
+                <td><span class='text-info'>{{paymentCycle}}</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="fa fa-circle text-info"></span>
+                </td>
+                <td>逾期次数</td>
+                <td><span class='text-info'>{{payModeValue}}</span></td>
+            </tr> -->
             <tr>
                 <td>
                     <span class="fa fa-circle text-success"></span>

@@ -18,17 +18,18 @@
 <!-- Fixed Header Table -->
 <script type="text/javascript" src="${staticCommon}vendor/plugins/fixedHeaderTable/jquery.fixedheadertable.min.js"></script>
 
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+
 <!-- Theme Javascript -->
 <script type="text/javascript" src="${staticCommon}assets/js/utility/utility.js?v=2017121301"></script>
 <script type="text/javascript" src="${staticCommon}assets/js/main.js"></script>
 <script type="text/javascript" src="${staticCommon}assets/js/demo.js"></script>
 
 
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js?v=2018030601"></script>
 
 <script type="text/javascript">
-    management_load_script('${staticManagement}js','rental.common.js','layout.js','manage.user.password.js','api.data.js','modal.submit.audit.js');
+    management_load_script('${staticManagement}js','rental.common.js','layout.js','manage.user.password.js','api.data.js','modal.submit.audit.js','modal.view.work.flow.js');
 </script>
 
 <script type="text/javascript">

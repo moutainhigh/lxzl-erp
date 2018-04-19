@@ -10,6 +10,7 @@ public class CustomerConsignInfoDO  extends BaseDO {
 
 	private Integer id;
 	private Integer customerId;
+	private String customerNo;
 	private String consigneeName;
 	private String consigneePhone;
 	private Integer province;
@@ -18,8 +19,11 @@ public class CustomerConsignInfoDO  extends BaseDO {
 	private String address;
 	private Integer isMain;
 	private Integer dataStatus;
+	private Integer verifyStatus;   //审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 ；4.审批驳回
 	private String remark;
 	private Date lastUseTime;
+	private Integer isBusinessAddress;	//是否为经营地址，0否1是
+	private Integer workflowType;	//工作流类型
 
 	@Transient
 	private String provinceName;
@@ -144,7 +148,21 @@ public class CustomerConsignInfoDO  extends BaseDO {
 		return lastUseTime;
 	}
 
-	public void setLastUseTime(Date lastUseTme) {
-		this.lastUseTime = lastUseTme;
-	}
+	public void setLastUseTime(Date lastUseTme) { this.lastUseTime = lastUseTme; }
+
+	public Integer getIsBusinessAddress() { return isBusinessAddress; }
+
+	public void setIsBusinessAddress(Integer isBusinessAddress) { this.isBusinessAddress = isBusinessAddress; }
+
+	public Integer getVerifyStatus() { return verifyStatus; }
+
+	public void setVerifyStatus(Integer verifyStatus) { this.verifyStatus = verifyStatus; }
+
+	public Integer getWorkflowType() { return workflowType; }
+
+	public void setWorkflowType(Integer workflowType) { this.workflowType = workflowType; }
+
+	public String getCustomerNo() { return customerNo; }
+
+	public void setCustomerNo(String customerNo) { this.customerNo = customerNo; }
 }

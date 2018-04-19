@@ -1,0 +1,70 @@
+<div id="addCustomerAddressModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>添加优惠券批次</span>
+        </div>
+        <form method="post" id="addCouponBatch" description="添加优惠券批次">
+            <div class="panel-body p25">
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="couponBatchName" class="field-label"><em class="text-danger">*</em>请填写批次名称</label>
+                        <label for="couponBatchName" class="field prepend-icon">
+                            <input type="text" name="couponBatchName" id="couponBatchName" class="gui-input required" aria-required="true" placeholder="批次名称">
+                            <label for="couponBatchName" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="couponBatchDescribe" class="field-label">请填写批次描述</label>
+                        <label for="couponBatchDescribe" class="field prepend-icon">
+                            <input type="text" name="couponBatchDescribe" id="couponBatchDescribe" class="gui-input" aria-required="true" placeholder="批次描述">
+                            <label for="couponBatchDescribe" class="field-icon"><i class="fa fa-tag"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="couponType" class="field-label"><em class="text-danger">*</em>请选择优惠券类型</label>
+                        <label class="field select">
+                            <select id="couponType" name="couponType" class="required">
+                                <option value="">请选择</option>
+                            </select>
+                            <i class="arrow"></i>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="effectiveStartTime" class="field-label">有效期起始时间</label>
+                        <label for="effectiveStartTime" class="field prepend-picker-icon" id="effectiveStartTimePicker">
+                            <input type="text" id="effectiveStartTime" data-type="date" data-format="yyyy-MM-dd mm:hh:ss" name="effectiveStartTime" class="gui-input hasDatepicker" readonly="" placeholder="请选择">
+                            <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-6">
+                        <label for="effectiveEndTime" class="field-label">有效期结束时间</label>
+                        <label for="effectiveEndTime" class="field prepend-picker-icon" id="effectiveEndTimePicker">
+                            <input type="text" id="effectiveEndTime" data-type="date" data-format="yyyy-MM-dd mm:hh:ss" name="effectiveEndTime" class="gui-input hasDatepicker" readonly="" placeholder="请选择">
+                            <button type="button" class="ui-datepicker-trigger"><i class="fa fa-calendar-o"></i></button>
+                        </label>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <label for="remark" class="field-label">备注</label>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="请输入备注"></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary submit-btn">确定</button>
+                <button type="button" class="button btn-default cancelButton"">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

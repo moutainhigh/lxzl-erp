@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.coupon.CouponBatchMapper">
+
+	<resultMap id="CouponBatchDO" type="com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="coupon_batch_name" jdbcType="VARCHAR" property="couponBatchName" />
+		<result column="coupon_batch_describe" jdbcType="VARCHAR" property="couponBatchDescribe" />
+		<result column="coupon_type" jdbcType="INTEGER" property="couponType" />
+		<result column="effective_start_time" jdbcType="TIMESTAMP" property="effectiveStartTime" />
+		<result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime" />
+		<result column="coupon_batch_total_count" jdbcType="INTEGER" property="couponBatchTotalCount" />
+		<result column="coupon_batch_used_count" jdbcType="INTEGER" property="couponBatchUsedCount" />
+		<result column="total_face_amount" jdbcType="DECIMAL" property="totalFaceAmount" />
+		<result column="total_used_amount" jdbcType="DECIMAL" property="totalUsedAmount" />
+		<result column="total_deduction_amount" jdbcType="DECIMAL" property="totalDeductionAmount" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="coupon_batch_cancel_count" jdbcType="INTEGER" property="couponBatchCancelCount" />
+	</resultMap>
+
+	<sql id="column_List">
+		ecb.id,ecb.coupon_batch_name,ecb.coupon_batch_describe,ecb.coupon_type,ecb.effective_start_time,ecb.effective_end_time,ecb.coupon_batch_total_count,ecb.coupon_batch_used_count,ecb.total_face_amount,ecb.total_used_amount,ecb.total_deduction_amount,ecb.remark,ecb.create_time,ecb.create_user,ecb.update_time,ecb.update_user,ecb.data_status,ecb.coupon_batch_cancel_count
+	</sql>
+
+	<select id="findById" resultMap="CouponBatchDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon_batch ecb 
+		WHERE ecb.id = #{id, jdbcType=INTEGER} AND ecb.data_status = 1 
+	</select>
+	<select id="findByIdIgnoreDataStatus" resultMap="CouponBatchDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_coupon_batch ecb
+		WHERE ecb.id = #{id, jdbcType=INTEGER}
+	</select>
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ecb.id) FROM erp_coupon_batch ecb 
+		<where>
+			<if test="true">
+				AND ecb.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="CouponBatchDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_coupon_batch ecb 
+		<where>
+			<if test="true">
+				AND ecb.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="couponBatchName != null">
+				coupon_batch_name = #{couponBatchName,jdbcType=VARCHAR},
+			</if>
+			<if test="couponBatchDescribe != null">
+				coupon_batch_describe = #{couponBatchDescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="couponType != null">
+				coupon_type = #{couponType,jdbcType=INTEGER},
+			</if>
+				effective_start_time = #{effectiveStartTime,jdbcType=TIMESTAMP},
+
+				effective_end_time = #{effectiveEndTime,jdbcType=TIMESTAMP},
+			<if test="couponBatchTotalCount != null">
+				coupon_batch_total_count = #{couponBatchTotalCount,jdbcType=INTEGER},
+			</if>
+			<if test="couponBatchUsedCount != null">
+				coupon_batch_used_count = #{couponBatchUsedCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalFaceAmount != null">
+				total_face_amount = #{totalFaceAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalUsedAmount != null">
+				total_used_amount = #{totalUsedAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalDeductionAmount != null">
+				total_deduction_amount = #{totalDeductionAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="couponBatchCancelCount != null">
+				coupon_batch_cancel_count = #{couponBatchCancelCount,jdbcType=INTEGER},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO">
+		INSERT INTO erp_coupon_batch <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.coupon.CouponBatchDO">
+		UPDATE erp_coupon_batch <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+	<select id="findCouponBatchByParams" resultMap="CouponBatchDO" parameterType="map">
+		SELECT <include refid="column_List"/>
+		FROM erp_coupon_batch ecb
+		<where>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.couponBatchName != null &amp;&amp; maps.couponBatchQueryParam.couponBatchName != ''">
+				and ecb.coupon_batch_name LIKE CONCAT('%','${maps.couponBatchQueryParam.couponBatchName}','%' )
+			</if>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.couponType != null ">
+				and ecb.coupon_type = #{maps.couponBatchQueryParam.couponType, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createStartTime != null ">
+				<![CDATA[ AND ecb.create_time >= #{maps.couponBatchQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createEndTime != null ">
+				<![CDATA[ AND ecb.create_time <= #{maps.couponBatchQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="true">
+				AND ecb.data_status = 1
+			</if>
+		</where>
+		ORDER BY ecb.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findCouponBatchCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(id)
+		FROM erp_coupon_batch ecb
+		<where>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.couponBatchName != null &amp;&amp; maps.couponBatchQueryParam.couponBatchName != ''">
+				and ecb.coupon_batch_name LIKE CONCAT('%','${maps.couponBatchQueryParam.couponBatchName}','%' )
+			</if>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.couponType != null ">
+				and ecb.coupon_type = #{maps.couponBatchQueryParam.couponType, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createStartTime != null ">
+				<![CDATA[ AND ecb.create_time >= #{maps.couponBatchQueryParam.createStartTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="maps.couponBatchQueryParam != null &amp;&amp; maps.couponBatchQueryParam.createEndTime != null ">
+				<![CDATA[ AND ecb.create_time <= #{maps.couponBatchQueryParam.createEndTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="true">
+				AND ecb.data_status = 1
+			</if>
+		</where>
+
+	</select>
+	<update id="updateUseList" parameterType="java.util.ArrayList">
+		update erp_coupon_batch
+		SET
+		<trim>
+			update_user =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_batch_used_count =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.couponBatchUsedCount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			total_used_amount =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.totalUsedAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			total_deduction_amount =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.totalDeductionAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="couponBatchDOList" index="index" item="couponBatchDO" separator="," open="(" close=")">
+			#{couponBatchDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+</mapper>

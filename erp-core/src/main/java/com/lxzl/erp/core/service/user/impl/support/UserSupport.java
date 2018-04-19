@@ -1,14 +1,11 @@
 package com.lxzl.erp.core.service.user.impl.support;
 
-import com.lxzl.erp.common.cache.CommonCache;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.DepartmentType;
 import com.lxzl.erp.common.constant.SubCompanyType;
-import com.lxzl.erp.common.domain.company.pojo.Department;
 import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.domain.user.pojo.UserRole;
 import com.lxzl.erp.common.domain.warehouse.pojo.Warehouse;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ListUtil;
@@ -17,9 +14,12 @@ import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.warehouse.WarehouseService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.user.UserRoleMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.user.RoleDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,6 +48,9 @@ public class UserSupport {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
 
     public User getCurrentUser() {
@@ -143,21 +146,104 @@ public class UserSupport {
     }
 
     /**
-     * 是否是售后人员
+     * 是否是售后人员、仓库人员、商务人员
      */
     public boolean isServicePerson(Integer userId) {
         List<Role> userRoleList = getCurrentUser().getRoleList();
         if (CollectionUtil.isNotEmpty(userRoleList)) {
             for (Role role : userRoleList) {
                 DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
-                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())
-                        || DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())) {
+                if (DepartmentType.DEPARTMENT_TYPE_SERVICE.equals(departmentDO.getDepartmentType())||
+                        DepartmentType.DEPARTMENT_TYPE_WAREHOUSE.equals(departmentDO.getDepartmentType())||
+                        DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())) {
                     return true;
                 }
             }
         }
         return false;
     }
+
+    /**
+     * 是否是财务人员
+     */
+    public boolean isFinancePerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_FINANCE.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否是商务人员
+     */
+    public boolean isBusinessAffairsPerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_BUSINESS_AFFAIRS.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否是风控人员
+     */
+    public boolean isRiskManagementPerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_RISK.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否是风控人员
+     */
+    public boolean isRiskManagementPerson(Integer userId) {
+        List<RoleDO> roleDOList = roleMapper.findByUserId(userId);
+        if (CollectionUtil.isNotEmpty(roleDOList)) {
+            for (RoleDO roleDO : roleDOList) {
+                DepartmentDO departmentDO = departmentMapper.findById(roleDO.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_RISK.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否是业务人员
+     */
+    public boolean isBusinessPerson() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_BUSINESS.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 
     /**
      * 是否是库房人员

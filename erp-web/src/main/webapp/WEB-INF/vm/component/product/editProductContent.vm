@@ -1,6 +1,6 @@
 <div class="panel panel-default panel-border top">
     <div class="panel-heading">
-        <span class="panel-title"><i class="fa fa-pencil"></i>添加商品</span>
+        <span class="panel-title" id="panelTitle"><i class="fa fa-pencil"></i>添加商品</span>
     </div>
     <div class="panel-body p25">
         <div class="section row">
@@ -10,6 +10,7 @@
                     <select id="categoryId" name="categoryId" class="required" readonly>
                         <option value="">请选择</option>
                     </select>
+                    <i class="arrow"></i>
                 </label>
             </div>
             <div class="col-md-3">
@@ -32,8 +33,8 @@
             <div class="col-md-3">
                 <label for="unit" class="field-label">单位</label>
                 <label for="unit" class="field select">
-                    <select id="unit" name="unit">
-                    </select>
+                    <select id="unit" name="unit"></select>
+                    <i class="arrow"></i>
                 </label>
             </div>
         </div>
@@ -72,6 +73,16 @@
                         <option value="0">否</option>
                     </select>
                     <i class="arrow"></i>
+                </label>
+            </div>
+        </div>
+        <div class="section row">
+            <div class="col-md-3">
+                <label for="k3ProductNo" class="field-label">K3商品编号</label>
+                <label for="k3ProductNo" class="field prepend-icon">
+                    <input type="text" name="k3ProductNo" id="k3ProductNo" class="gui-input required" />
+                    <label for="k3ProductNo" class="field-icon"><i class="fa fa-tag"></i>
+                    </label>
                 </label>
             </div>
         </div>
@@ -225,14 +236,14 @@
 
                         <div class="smart-widget sm-left sml-80">
                             <label class="field prepend-icon">
-                                <input type="text" name="skuPrice-{{rowId}}" value="{{skuPrice}}" class="skuPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="skuPrice-{{rowId}}" value="{{skuPrice}}" class="skuPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">次新</label>
                         </div>
                         <div class="smart-widget sm-left sml-80 mt10">
                             <label class="field prepend-icon">
-                                <input type="text" name="newSkuPrice-{{rowId}}" value="{{newSkuPrice}}" class="newSkuPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="newSkuPrice-{{rowId}}" value="{{newSkuPrice}}" class="newSkuPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">全新</label>
@@ -242,14 +253,14 @@
                     <td>
                         <div class="smart-widget sm-left sml-80">
                             <label class="field prepend-icon">
-                                <input type="text" name="dayRentPrice-{{rowId}}" value="{{dayRentPrice}}" class="dayRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="dayRentPrice-{{rowId}}" value="{{dayRentPrice}}" class="dayRentPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">次新</label>
                         </div>
                         <div class="smart-widget sm-left sml-80 mt10">
                             <label class="field prepend-icon">
-                                <input type="text" name="newDayRentPrice-{{rowId}}" value="{{newDayRentPrice}}" class="newDayRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="newDayRentPrice-{{rowId}}" value="{{newDayRentPrice}}" class="newDayRentPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">全新</label>
@@ -259,13 +270,13 @@
                         <div class="smart-widget sm-left sml-80">
                             <label class="field prepend-icon">
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-                                <input type="text" name="monthRentPrice-{{rowId}}" value="{{monthRentPrice}}" class="monthRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="monthRentPrice-{{rowId}}" value="{{monthRentPrice}}" class="monthRentPrice form-control gui-input required moneyNumber2" />
                             </label>
                             <label for="verification" class="button bradiusN">次新</label>
                         </div>
                         <div class="smart-widget sm-left sml-80 mt10">
                             <label class="field prepend-icon">
-                                <input type="text" name="newMonthRentPrice-{{rowId}}" value="{{newMonthRentPrice}}" class="newMonthRentPrice form-control gui-input required moneyNumber" />
+                                <input type="text" name="newMonthRentPrice-{{rowId}}" value="{{newMonthRentPrice}}" class="newMonthRentPrice form-control gui-input required moneyNumber2" />
                                 <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                             </label>
                             <label for="verification" class="button bradiusN">全新</label>

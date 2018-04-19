@@ -15,14 +15,16 @@
                             <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
                         </div>
 
-                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
-                        </div>
+##                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+##                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+##                        </div>
+
                         <div class="form-group pull-right mn mr10">
                             <div class="input-group">
                                 <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
                             </div>
                         </div>
+
                         <div class="form-group pull-right mn mr10" style="width: 210px;">
                             <input type="hidden" name="createStartTime" id="createStartTime" />
                             <input type="hidden" name="createEndTime" id="createEndTime" />
@@ -135,6 +137,7 @@
                                                             <th>编号</th>
                                                             <th>数量</th>
                                                             <th>选择数量</th>
+                                                            <th>备注</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -150,8 +153,15 @@
                                                             <td>{{productNumber}}</td>
                                                             <td>{{productCount}}</td>
                                                             <td>
+                                                                <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
                                                                 <label class="field prepend-icon mw200">
                                                                     <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                                    <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                                 </label>
                                                             </td>
                                                         </tr>
@@ -172,7 +182,7 @@
                                                             <th>配件名称</th>
                                                             <th>编号</th>
                                                             <th>数量</th>
-                                                            <th>选择数量</th>
+                                                            <th>备注</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -188,8 +198,15 @@
                                                             <td>{{fNumber}}</td>
                                                             <td>{{materialCount}}</td>
                                                             <td>
+                                                                <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
                                                                 <label class="field prepend-icon mw200">
                                                                     <input type="text" name="materialCount-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                                    <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
                                                                 </label>
                                                             </td>
                                                         </tr>

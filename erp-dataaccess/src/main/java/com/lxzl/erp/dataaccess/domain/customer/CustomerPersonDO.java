@@ -4,6 +4,7 @@ import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class CustomerPersonDO  extends BaseDO {
@@ -30,6 +31,8 @@ public class CustomerPersonDO  extends BaseDO {
 	private String cityName;
 	@Transient
 	private String districtName;
+
+	List<CustomerConsignInfoDO> customerConsignInfoDOList;
 
 	public Integer getId(){
 		return id;
@@ -143,7 +146,6 @@ public class CustomerPersonDO  extends BaseDO {
 		this.districtName = districtName;
 	}
 
-
 	public String getPersonNo() {
 		return personNo;
 	}
@@ -151,7 +153,6 @@ public class CustomerPersonDO  extends BaseDO {
 	public void setPersonNo(String personNo) {
 		this.personNo = personNo;
 	}
-
 
 	public String getConnectRealName() {
 		return connectRealName;
@@ -168,4 +169,8 @@ public class CustomerPersonDO  extends BaseDO {
 	public void setConnectPhone(String connectPhone) {
 		this.connectPhone = connectPhone;
 	}
+
+	public List<CustomerConsignInfoDO> getCustomerConsignInfoDOList() { return customerConsignInfoDOList; }
+
+	public void setCustomerConsignInfoDOList(List<CustomerConsignInfoDO> customerConsignInfoDOList) { this.customerConsignInfoDOList = customerConsignInfoDOList; }
 }

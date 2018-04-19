@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-商品管理-组合商品列表-添加组合商品</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                <div class="row">
+                    <div class="col-md-12 center-block">
+                        <div class="admin-form theme-primary">
+                            <form method="post" id="editProductForm">
+                                #parse("component/groupedProduct/groupedProductContent.vm")
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'api.data.js',
+                'manage.group.product.mixin.js',
+                'manage.group.product.edit.js',
+                'modal.choose.product.js',
+                'modal.choose.material.js',
+                'manage.order.item.render.js',
+                'manage.group.product.util.js',);
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        editGroupedProduct.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
+</body>
+</html>

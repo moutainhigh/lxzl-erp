@@ -1,9 +1,23 @@
 package com.lxzl.erp.web.controller;
 
+import com.lxzl.erp.common.constant.CustomerType;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.CustomerQueryParam;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
+import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.customer.CustomerService;
+import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +27,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("pageController")
 public class PageController extends BaseController {
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private ResultGenerator resultGenerator;
+
 //    @RequestMapping(value = "/uppwd")
 //    public String uppwd(HttpServletRequest request, HttpServletResponse response, Model model) {
 //        return "/uppwd";
@@ -241,6 +260,10 @@ public class PageController extends BaseController {
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
+    @RequestMapping(value = "/order-return-manage/print")
+    public String returnOrderManagePrint() {
+        return "/returnOrderManage/returnOrderPrint";
+    }
     //输入退还当服务费等信息
     @RequestMapping("/return-order-end-info-modal/input")
     public String inputReturnOrderEndInfoModal() {
@@ -283,6 +306,11 @@ public class PageController extends BaseController {
         return "/component/customer/riskModal";
     }
 
+    @RequestMapping("/customer-manage/returnVisitModal")
+    public String customerManagereturnVisit() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordModal";
+    }
+
     //企业客户
     @RequestMapping("/customer-business-manage/list")
     public String businessCustomerManageList() {
@@ -305,9 +333,7 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping("/customer-consign-info/add")
-    public String customerConsignInfoAdd() {
-        return "/component/customerConsignInfo/add";
-    }
+    public String customerConsignInfoAdd() { return "/component/customerConsignInfo/add";}
 
     @RequestMapping("/customer-consign-info/edit")
     public String customerConsignInfoEdit() {
@@ -326,6 +352,61 @@ public class PageController extends BaseController {
     @RequestMapping("/customer/set-short-rental-upper-limit-modal")
     public String customerSetShortRentalUpperLimit() {
         return "/component/customer/setShortRentalUpperLimit";
+    }
+
+    @RequestMapping("/customer/set-risk-credit-amount-used")
+    public String customerSetRiskCreditAmountUsed() {
+        return "/component/customer/updateRiskCreditAmountUsed";
+    }
+
+    @RequestMapping("/customer-manage/edit-after-pass")
+    public String customerManageEditAfterPass() {
+        return "/customerManage/customerEditAfterPass";
+    }
+
+    @RequestMapping("/customer-business-manage/edit-after-pass")
+    public String customerBusinessManageEditAfterPass() {
+        return "/businessCustomerManage/businessCustomerEditAfterPass";
+    }
+
+    @RequestMapping(value = "customer-common-manage/detail", method = RequestMethod.GET)
+    public String detailCustomer(String no) {
+        CustomerQueryParam customerQueryParam = new CustomerQueryParam();
+        customerQueryParam.setCustomerNo(no);
+        ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customerQueryParam.getCustomerNo());
+        if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+            if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
+                return "redirect:/customer-business-manage/detail?no="+no;
+            } else {
+                return "redirect:/customer-manage/detail?no="+no;
+            }
+        }
+        return "redirect:/customer-business-manage/detail?no="+no;
+    }
+
+    @RequestMapping(value = "customer-common-manage/to-detail-by-consignInfoId", method = RequestMethod.GET)
+    public String detailCustomerByConsignInfoId(int id) {
+        CustomerConsignInfo customerConsignInfo = new CustomerConsignInfo();
+        customerConsignInfo.setCustomerConsignInfoId(id);
+        ServiceResult<String, CustomerConsignInfo> detailCustomerConsignInfoResult = customerService.detailCustomerConsignInfo(customerConsignInfo);
+        if(detailCustomerConsignInfoResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+
+            String customerNo = detailCustomerConsignInfoResult.getResult().getCustomerNo();
+
+            CustomerQueryParam customerQueryParam = new CustomerQueryParam();
+            customerQueryParam.setCustomerNo(customerNo);
+            ServiceResult<String, Customer> serviceResult = customerService.detailCustomer(customerQueryParam.getCustomerNo());
+
+            if(serviceResult.getErrorCode().equals(ErrorCode.SUCCESS)) {
+                if(serviceResult.getResult().getCustomerType().equals(CustomerType.CUSTOMER_TYPE_COMPANY)) {
+                    return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
+                } else {
+                    return "redirect:/customer-manage/detail?no="+customerNo+"&consigninfoid="+id;
+                }
+            }
+            return "redirect:/customer-business-manage/detail?no="+customerNo+"&consigninfoid="+id;
+        }
+        return "redirect:/error";
     }
 
     //采购管理
@@ -623,6 +704,14 @@ public class PageController extends BaseController {
     public String statisticsManageUnReceivableList() {
         return "/statisticsManage/statisticsUnreceivableList";
     }
+    @RequestMapping("/statistics/awaitReceive-list")
+    public String statisticsManageReceiveList() {
+        return "/statisticsManage/awaitReceiveDetailList";
+    }
+    @RequestMapping("/statistics/awaitReceiveSummary-list")
+    public String statisticsManageReceiveSummaryList() {
+        return "/statisticsManage/awaitReceiveSummaryList";
+    }
 
 
     //充值记录
@@ -741,6 +830,14 @@ public class PageController extends BaseController {
     public String k3ChangeOrderEdit() {
         return "/k3Manage/k3ChangeOrderEdit";
     }
+    @RequestMapping("/k3-data/list")
+    public String k3DataManageList() {
+        return "/k3Manage/sendTok3";
+    }
+    @RequestMapping("/send-data-to-k3/modal")
+    public String sendDataToK3Modal() {
+        return "/k3Manage/bathSendTok3Modal";
+    }
 
     //分公司列表
     @RequestMapping("/company-manage/list")
@@ -752,6 +849,122 @@ public class PageController extends BaseController {
         return "/component/company/addShortReceivableAmountModal";
     }
 
+    //组合商品
+    @RequestMapping("/grouped-product/list")
+    public String groupedProductList() {
+        return "/groupedProductManage/groupedProductList";
+    }
+    @RequestMapping("/grouped-product/detail")
+    public String groupedProductDetail() {
+        return "/groupedProductManage/groupedProductDetail";
+    }
+    @RequestMapping("/grouped-product/add")
+    public String groupedProductAdd() {
+        return "/groupedProductManage/groupedProductAdd";
+    }
+    @RequestMapping("/grouped-product/edit")
+    public String groupedProductEdit() {
+        return "/groupedProductManage/groupedProductEdit";
+    }
+
+
+    //回访记录
+    @RequestMapping("/customer-return-visit-record/list")
+    public String customerReturnVisitRecordList() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordList";
+    }
+    @RequestMapping("/customer-return-visit-record/detail")
+    public String customerReturnVisitRecordDetail() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordDetail";
+    }
+    @RequestMapping("/customer-return-visit-record/add")
+    public String customerReturnVisitRecordAdd() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordAdd";
+    }
+    @RequestMapping("/customer-return-visit-record/edit")
+    public String customerReturnVisitRecordEdit() {
+        return "/customerReturnVisitRecordManage/returnVisitRecordEdit";
+    }
+
+
+    //优惠券
+    @RequestMapping("/coupon-manage/group-list")
+    public String couponGroupManage() {
+        return "/couponManage/couponGroupList";
+    }
+    @RequestMapping("/coupon-manage/group-detail")
+    public String couponGroupDetailManage() {
+        return "/couponManage/couponGroupDetail";
+    }
+    @RequestMapping("/coupon-manage/card-list")
+    public String couponManage() {
+        return "/couponManage/couponCardList";
+    }
+    @RequestMapping("/coupon-manage/add-coupon")
+    public String couponManageAdd(){return "/component/couponManage/couponAddList";}
+    @RequestMapping("/coupon-manage/add-coupon-pici")
+    public String couponManagePiCiAdd(){return "/component/couponManage/couponPiCiAddList";}
+    @RequestMapping("/coupon-manage/edit-coupon")
+    public  String couponManageEdit(){return "/component/couponManage/couponEdit";}
+    @RequestMapping("/coupon-manage/provide-coupon")
+    public String couponManageProvide(){return "/component/couponManage/couponProvide";}
+    @RequestMapping("/coupon-manage/coupon-trade")
+    public String couponManageTrade(){return "/component/couponManage/couponTradeDetail";}
+
+    /**
+     * 资金流水附件信息列表
+     * @return
+     */
+    @RequestMapping("/jurnal-amount-attachment/list")
+    public String jurnalAmountAttachmentList() {
+        return "/financialManage/jurnalAmountAttachmentList";
+    }
+    /**
+     * 资金流水列表
+     * @return
+     */
+    @RequestMapping("/jurnal-amount/list")
+    public String jurnalAmountList() {
+        return "/financialManage/jurnalAmountList";
+    }
+    @RequestMapping("/jurnal-amount/detail")
+    public String jurnalAmountDetail() {
+        return "/financialManage/jurnalAmountDetail";
+    }
+
+    /**
+     * 系统功能开关设置
+     * @return
+     */
+    @RequestMapping("/system-manage/interface-switch")
+    public String systemManageInterfaceSwitchList() {
+        return "/systemManage/interfaceSwitchList";
+    }
+    @RequestMapping("/system-manage/switch-modal")
+    public String interfaceSwitchModal() {
+        return "/systemManage/switchModal";
+    }
+
+    @RequestMapping("/private-manage/request")
+    public String privateManageRequeset() {
+        return "/privateManage/request";
+    }
+
+    //上传附件
+    @RequestMapping("/jurnal-attachment-list/file/upload")
+    public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
+
+    //选择所有客户(公司、个人)
+    @RequestMapping("/all-customer-modal/choose")
+    public String jurnalAmountCustomerList() {
+        return "/component/customer/chooseCustomerByAll";
+    }
+
+    //交易明细
+    @RequestMapping("/jurnal-amount/tradeDetail")
+    public String jurnalAmountTradeDetail() {
+        return "/component/jurnalAmount/tradeDetail";
+    }
 
     //选择仓库Modal
     @RequestMapping("/warehouse/choose")
@@ -767,7 +980,7 @@ public class PageController extends BaseController {
 
     //选择商品Modal
     @RequestMapping("/product/choose")
-    public String productChoose() {
+    public String manproductChoose() {
         return "/component/product/chooseModal";
     }
 
@@ -852,6 +1065,13 @@ public class PageController extends BaseController {
     @RequestMapping("/common-modal/remark")
     public String commonModalRemark() {
         return "/component/common/remarkModal";
+    }
+
+
+    //输入地址
+    @RequestMapping("/view-work-flow/modal")
+    public String viewWorkFlowModal() {
+        return "/component/workFlow/viewWorkFlow";
     }
 
 

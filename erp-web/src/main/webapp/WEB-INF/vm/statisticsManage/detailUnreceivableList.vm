@@ -3,8 +3,6 @@
 <head>
     <title>凌雄ERP-统计管理-未收明细列表</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -82,8 +80,8 @@
                                 <th>业务员</th>
                                 <th>未收金额</th>
                                 <th>逾期期数</th>
-                                <th>订单项ID</th>
-                                <th>订单项类型</th>
+                                <th>订单编号</th>
+##                                <th>订单项类型</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -97,8 +95,8 @@
                                 <td>{{orderSellerName}}</td>
                                 <td>￥{{#price}}{{unReceivable}}{{/price}}</td>
                                 <td>{{overduePhaseCount}}</td>
-                                <td>{{orderItemReferId}}</td>
-                                <td>{{orderItemTypeValue}}</td>
+                                <td>{{orderNo}}</td>
+##                                <td>{{orderItemTypeValue}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
@@ -131,8 +129,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js', 'manage.statistics.detail.unreceivable.js');
     </script>

@@ -19,14 +19,19 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private String consigneePhone;
     private Integer rentType;
     private Integer orderStatus;
+    private List<Integer> orderStatusList;
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
 
+
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer deliveryMode;
     private Integer isPendingDelivery;
+    private Integer payStatus;
+    private Integer isPeer;
 
 
     public Integer getOrderId() {
@@ -67,6 +72,14 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setOrderStatus(Integer orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public List<Integer> getOrderStatusList() {
+        return orderStatusList;
+    }
+
+    public void setOrderStatusList(List<Integer> orderStatusList) {
+        this.orderStatusList = orderStatusList;
     }
 
     public Date getCreateStartTime() {
@@ -155,5 +168,25 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setIsPendingDelivery(Integer isPendingDelivery) {
         this.isPendingDelivery = isPendingDelivery;
+    }
+
+    public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
+    }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
     }
 }

@@ -41,6 +41,11 @@
                                     </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <div class="input-group">
+                                            <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
+                                        </div>
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <div class="input-group">
                                             <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入真实姓名">
                                         </div>
                                     </div>
@@ -52,6 +57,13 @@
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <div class="input-group">
                                             <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 140px;">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="isRisk" id="isRisk">
+                                                <option value="">全部 （是否授信）</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group pull-right mn mr10" style="width: 140px;">
@@ -89,7 +101,8 @@
                                     <th>业务员</th>
                                     <th>所属公司</th>
                                     <th>是否禁用</th>
-                                    <th>审核备注</th>
+##                                    <th>审核备注</th>
+                                    <th>是否授信</th>
                                     {{#hasRowActionButtons}}
                                     <th class="text-right">操作</th>
                                     {{/hasRowActionButtons}}
@@ -98,7 +111,7 @@
                                 <tbody>
                                 {{#dataSource}}
                                 {{#listData}}
-                                <tr>
+                                <tr data-rowdata="{{rowData}}">
                                     {{#hasCommonActionButtons}}
                                     <td>
                                         <label class="option block mn">
@@ -115,7 +128,13 @@
                                         <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{addressForamt}}</p>
                                     </td>
                                     <td>
-                                        {{customerStatusValue}}
+                                        <p class="{{customerStatusClass}}">
+                                            <span class="{{customerStatusClass}}">{{customerStatusValue}}</span>
+                                            {{#showViewWorkFlowButton}}
+                                            <span class="ml5 mr5 {{customerStatusClass}}">/</span>
+                                            <a href="javascript:void(0)" class="{{customerStatusClass}} viewWorkFlowButton">查看审核流</a>
+                                            {{/showViewWorkFlowButton}}
+                                        </p>
                                     </td>
                                     <td>
                                         <p class="mn">{{createUserRealName}}</p>
@@ -124,8 +143,11 @@
                                     <td>{{ownerName}}</td>
                                     <td>{{ownerSubCompanyName}}</td>
                                     <td>{{isDisabledStr}}</td>
-                                    <td>
+                                   #* <td>
                                         <div class="mw200">{{auditReason}}</div>
+                                    </td>*#
+                                    <td>
+                                        <span class="{{isRiskClass}}">{{isRisk}}</span>
                                     </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">
@@ -138,6 +160,7 @@
                                                            data-customerno="{{customerNo}}"
                                                            data-statementdate="{{statementDate}}"
                                                            data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
+                                                           data-ownerSubCompanyId="{{ownerSubCompanyId}}"
                                                            data-customertype="{{customerType}}"
                                                             class="{{class}}">{{text}}</a>
                                                     </li>
@@ -191,7 +214,8 @@
                 'manage.customer.js',
                 'manage.customer.risk.js',
                 'manage.customer.address.add.js',
-                'modal.input.js');
+                'modal.input.js',
+                'modal.submit.audit.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化

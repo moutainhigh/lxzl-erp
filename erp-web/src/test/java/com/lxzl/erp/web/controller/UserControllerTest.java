@@ -68,12 +68,12 @@ public class UserControllerTest extends ERPUnTransactionalTest {
         UserQueryParam userQueryParam = new UserQueryParam();
 //        userQueryParam.setRoleId(600001);
 //        userQueryParam.setDepartmentId(400007);
-        userQueryParam.setIsDisabled(1);
+//        userQueryParam.setIsDisabled(1);
         TestResult testResult = getJsonTestResult("/user/page",userQueryParam);
     }
     @Test
     public void page1() throws Exception {
-        UserQueryParam userQueryParam = JSON.parseObject("{\"pageNo\":1,\"pageSize\":15,\"realName\":\"\",\"departmentId\":\"\",\"subCompanyId\":1}",UserQueryParam.class);
+        UserQueryParam userQueryParam = JSON.parseObject("{\"pageNo\":1,\"pageSize\":15,\"realName\":\"\",\"departmentId\":\"\",\"userName\":\"\",\"subCompanyId\":1}",UserQueryParam.class);
         TestResult testResult = getJsonTestResult("/user/page",userQueryParam);
     }
 

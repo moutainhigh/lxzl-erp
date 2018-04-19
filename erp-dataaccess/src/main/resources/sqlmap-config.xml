@@ -146,7 +146,24 @@
         <mapper resource="sqlmap/erp_k3_change_order_detail.xml" />
         <mapper resource="sqlmap/erp_delivery_order.xml" />
         <mapper resource="sqlmap/erp_delivery_order_product.xml" />
+        <mapper resource="sqlmap/erp_delivery_order_material.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_user.xml" />
+        <mapper resource="sqlmap/erp_k3_mapping_industry.xml" />
+        <mapper resource="sqlmap/erp_bank_slip.xml" />
+        <mapper resource="sqlmap/erp_bank_slip_detail.xml" />
+        <mapper resource="sqlmap/erp_customer_risk_management_history.xml" />
+        <mapper resource="sqlmap/erp_bank_slip_claim.xml" />
+        <mapper resource="sqlmap/erp_workflow_verify_user_group.xml" />
+        <mapper resource="sqlmap/erp_sub_company_city_cover.xml" />
+
+        <mapper resource="sqlmap/erp_coupon.xml" />
+        <mapper resource="sqlmap/erp_coupon_batch.xml" />
+        <mapper resource="sqlmap/erp_coupon_batch_detail.xml" />
+
+        <mapper resource="sqlmap/erp_return_visit.xml" />
+
+        <mapper resource="sqlmap/erp_switch.xml" />
+
     </mappers>
 
 </configuration>

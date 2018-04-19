@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -45,6 +46,8 @@ public class ProductSku extends BasePO {
 
     private Integer newProductSkuCount;     // 全新SKU设备数量
     private Integer oldProductSkuCount;     // 次新SKU设备数量
+    protected Date createTime;
+    protected Date updateTime;
 
     public Integer getSkuId() {
         return skuId;
@@ -228,5 +231,21 @@ public class ProductSku extends BasePO {
 
     public void setNewMonthRentPrice(BigDecimal newMonthRentPrice) {
         this.newMonthRentPrice = newMonthRentPrice;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

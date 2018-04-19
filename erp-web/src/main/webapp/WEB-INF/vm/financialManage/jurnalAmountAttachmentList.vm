@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-财务管理-资金流水附件</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+<div id="main">
+    #parse("layout/navbar.vm")
+    #parse("layout/sidebar.vm")
+
+    <section id="content_wrapper">
+        #parse("layout/topbarDropmenu.vm")
+        #parse("layout/topbar.vm")
+        <section id="content" class="animated fadeIn">
+
+            #parse("component/loading.vm")
+
+            <div class="panel panel-primary panel-border top">
+                <div class="panel-menu p12">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <script type="text/html" id="actionCommonButtonsTpl">
+                                <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                {{#acitonCommonButtons}}
+                                <button class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                    <i class="{{iClass}}"></i> {{text}}
+                                </button>
+                                {{/acitonCommonButtons}}
+                            </script>
+
+                            <div class="btn-group" id="actionCommonButtons"></div>
+                        </div>
+                        <div class="pull-right mr10 text-right">
+                            <form id="searchForm" class="form-horizontal">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                    <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                </div>
+                                <div class="field form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select name="bankType" id="bankType" class="form-control input-sm bradius"></select>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="slipMonth">
+                                <div class="field form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select name="slipStatus" id="slipStatus" class="form-control input-sm bradius"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="subCompanyId"  id="subCompanyName"></select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body pn">
+                    <div class="table-responsive">
+                        <script type="text/html" id="dataListTpl">
+                            <thead>
+                            <tr>
+##                                {{#hasCommonActionButtons}}
+##                                <th>
+##                                    <label class="option block mn">
+##                                        <input type="checkbox" name="checkAll" value="">
+##                                        <span class="checkbox mn"></span>
+##                                    </label>
+##                                </th>
+##                                {{/hasCommonActionButtons}}
+                                <th>资金流水附件ID</th>
+                                <th>分公司名称</th>
+                                <th>银行类型</th>
+                                <th>月份</th>
+                                <th>查询账号</th>
+                                <th>进款笔数</th>
+                                <th>需认领笔数</th>
+                                <th>已认领笔数</th>
+                                <th>已确认笔数</th>
+                                <th>创建人</th>
+                                <th>备注</th>
+                                <th>单据状态</th>
+                                {{#hasRowActionButtons}}
+                                <th class="text-right">操作</th>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#dataSource}}
+                            {{#listData}}
+                            <tr>
+##                                {{#hasCommonActionButtons}}
+##                                <td>
+##                                    <label class="option block mn">
+##                                        <input type="checkbox" name="checkItem" value="{{productId}}">
+##                                        <span class="checkbox mn"></span>
+##                                    </label>
+##                                </td>
+##                                {{/hasCommonActionButtons}}
+                                <td>{{bankSlipId}}</td>
+                                <td>{{subCompanyName}}</td>
+                                <td>{{bankTypeValue}}</td>
+                                <td>{{#clockMonthTime}}{{slipMonth}}{{/clockMonthTime}}</td>
+                                <td>{{accountNo}}</td>
+                                <td>{{inCount}}</td>
+                                <td>{{needClaimCount}}</td>
+                                <td>{{claimCount}}</td>
+                                <td>{{confirmCount}}</td>
+                                <td>
+                                    <p class="mn">{{createUserRealName}}</p>
+                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                </td>
+                                <td>{{remark}}</td>
+                                <td>{{slipStatusValue}}</td>
+                                {{#hasRowActionButtons}}
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            {{#rowActionButtons}}
+                                            <li>
+                                                <a href="${ctx}{{menuUrl}}?bankSlipId={{bankSlipId}}" class="{{class}}" data-bankSlipId="{{bankSlipId}}">{{text}}</a>
+                                            </li>
+                                            {{/rowActionButtons}}
+                                        </ul>
+                                    </div>
+                                </td>
+                                {{/hasRowActionButtons}}
+                            </tr>
+                            {{/listData}}
+                            {{^listData}}
+                            <tr>
+                                <td valign="top" colspan="14" class="text-center">没有查询到资金流水附件信息</td>
+                            </tr>
+                            {{/listData}}
+                            {{/dataSource}}
+                            </tbody>
+                        </script>
+                        <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                            #parse("component/pager.vm")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+    </section>
+
+    #parse("layout/sidebarRight.vm")
+</div>
+    #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
+<script type="text/javascript">
+    management_load_script('${staticManagement}/js',
+            'manage.jurnal.amount.js',
+            'manage.jurnal.upload.js'
+    );
+</script>
+<script type="text/javascript">
+    //功能事件初始化
+    Rental.init();
+    Layout.init();
+    JurnalAmountManage.init();
+
+    //UI效果初始化
+    Core.init();
+    Demo.init();
+
+</script>
+</body>
+</html>

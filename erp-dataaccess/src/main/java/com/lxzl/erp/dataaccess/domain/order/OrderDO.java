@@ -44,6 +44,7 @@ public class OrderDO extends BaseDO {
     private Integer orderStatus;
     private BigDecimal firstNeedPayAmount;
     private Integer payStatus;
+    private Integer isPeer;
     private Date payTime;
     private Date deliveryTime;
     private Date confirmDeliveryTime;
@@ -52,9 +53,13 @@ public class OrderDO extends BaseDO {
     private Integer highTaxRate;
     private Integer lowTaxRate;
     private String buyerRemark;
+    private String productSummary;
     private Integer dataStatus;
     private String remark;
     private Integer owner;
+    private Integer deliverySubCompanyId;                       // 发货所属分公司
+    private Integer isK3Order;                                  // 是否是K3订单，1是0否
+    private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
 
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
@@ -69,6 +74,8 @@ public class OrderDO extends BaseDO {
     private String orderSellerName;
     @Transient
     private String orderSubCompanyName;
+    @Transient
+    private String deliverySubCompanyName;                         // 发货所属分公司名称
 
     public Integer getId() {
         return id;
@@ -172,6 +179,14 @@ public class OrderDO extends BaseDO {
 
     public void setBuyerRemark(String buyerRemark) {
         this.buyerRemark = buyerRemark;
+    }
+
+    public String getProductSummary() {
+        return productSummary;
+    }
+
+    public void setProductSummary(String productSummary) {
+        this.productSummary = productSummary;
     }
 
     public Integer getDataStatus() {
@@ -484,5 +499,37 @@ public class OrderDO extends BaseDO {
 
     public void setRentLengthType(Integer rentLengthType) {
         this.rentLengthType = rentLengthType;
+    }
+
+    public Integer getDeliverySubCompanyId() { return deliverySubCompanyId; }
+
+    public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
+
+    public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
+    }
+
+    public Integer getIsK3Order() {
+        return isK3Order;
+    }
+
+    public void setIsK3Order(Integer isK3Order) {
+        this.isK3Order = isK3Order;
+    }
+
+    public Integer getStatementDate() {
+        return statementDate;
+    }
+
+    public void setStatementDate(Integer statementDate) {
+        this.statementDate = statementDate;
     }
 }

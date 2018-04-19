@@ -37,7 +37,7 @@
                     <div class="col-md-4">
                         <label for="singleLimitPrice" class="field-label">限制单台设备价值</label>
                         <label for="singleLimitPrice" class="field prepend-icon">
-                            <input type="text" name="singleLimitPrice" id="singleLimitPrice" class="gui-input moneyNumber" maxlength="7">
+                            <input type="text" name="singleLimitPrice" id="singleLimitPrice" class="gui-input moneyNumber" maxlength="7" placeholder="如不限制则此项不填" />
                             <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
                             </label>
                         </label>

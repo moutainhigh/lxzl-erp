@@ -3,8 +3,6 @@
 <head>
     <title>凌雄ERP-调拨单管理-调拨单列表-调拨单详细</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -286,8 +284,6 @@
 </div>
 
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'manage.deployment.order.handle.mixin.js',

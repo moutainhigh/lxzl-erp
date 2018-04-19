@@ -186,4 +186,55 @@ public class CustomerRiskManagementDO extends BaseDO {
     public void setIsFullDeposit(Integer isFullDeposit) {
         this.isFullDeposit = isFullDeposit;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CustomerRiskManagementDO that = (CustomerRiskManagementDO) o;
+
+        if (creditAmount.compareTo(that.creditAmount) != 0) return false;
+        if (depositCycle != null ? !depositCycle.equals(that.depositCycle) : that.depositCycle != null) return false;
+        if (paymentCycle != null ? !paymentCycle.equals(that.paymentCycle) : that.paymentCycle != null) return false;
+        if (appleDepositCycle != null ? !appleDepositCycle.equals(that.appleDepositCycle) : that.appleDepositCycle != null)
+            return false;
+        if (applePaymentCycle != null ? !applePaymentCycle.equals(that.applePaymentCycle) : that.applePaymentCycle != null)
+            return false;
+        if (newDepositCycle != null ? !newDepositCycle.equals(that.newDepositCycle) : that.newDepositCycle != null)
+            return false;
+        if (newPaymentCycle != null ? !newPaymentCycle.equals(that.newPaymentCycle) : that.newPaymentCycle != null)
+            return false;
+        if (payMode != null ? !payMode.equals(that.payMode) : that.payMode != null) return false;
+        if (applePayMode != null ? !applePayMode.equals(that.applePayMode) : that.applePayMode != null) return false;
+        if (newPayMode != null ? !newPayMode.equals(that.newPayMode) : that.newPayMode != null) return false;
+        if (isLimitApple != null ? !isLimitApple.equals(that.isLimitApple) : that.isLimitApple != null) return false;
+        if (isLimitNew != null ? !isLimitNew.equals(that.isLimitNew) : that.isLimitNew != null) return false;
+        if(that.singleLimitPrice==null&&singleLimitPrice!=null) return false;
+        if(that.singleLimitPrice!=null&&singleLimitPrice==null) return false;
+        if(that.singleLimitPrice!=null&&singleLimitPrice!=null&&singleLimitPrice.compareTo(that.singleLimitPrice) != 0) return false;
+
+        if (!returnVisitFrequency.equals(that.returnVisitFrequency)) return false;
+        return isFullDeposit.equals(that.isFullDeposit);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = creditAmount.hashCode();
+        result = 31 * result + (depositCycle != null ? depositCycle.hashCode() : 0);
+        result = 31 * result + (paymentCycle != null ? paymentCycle.hashCode() : 0);
+        result = 31 * result + (appleDepositCycle != null ? appleDepositCycle.hashCode() : 0);
+        result = 31 * result + (applePaymentCycle != null ? applePaymentCycle.hashCode() : 0);
+        result = 31 * result + (newDepositCycle != null ? newDepositCycle.hashCode() : 0);
+        result = 31 * result + (newPaymentCycle != null ? newPaymentCycle.hashCode() : 0);
+        result = 31 * result + (payMode != null ? payMode.hashCode() : 0);
+        result = 31 * result + (applePayMode != null ? applePayMode.hashCode() : 0);
+        result = 31 * result + (newPayMode != null ? newPayMode.hashCode() : 0);
+        result = 31 * result + (isLimitApple != null ? isLimitApple.hashCode() : 0);
+        result = 31 * result + (isLimitNew != null ? isLimitNew.hashCode() : 0);
+        result = 31 * result + (singleLimitPrice != null ? singleLimitPrice.hashCode() : 0);
+        result = 31 * result + returnVisitFrequency.hashCode();
+        result = 31 * result + isFullDeposit.hashCode();
+        return result;
+    }
 }

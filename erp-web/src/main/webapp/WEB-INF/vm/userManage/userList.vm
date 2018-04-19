@@ -40,11 +40,15 @@
                                 </div>
                                 <div class="col-md-8 text-right">
                                     <form id="searchForm" class="form-horizontal">
-                                        <div class="form-group pull-right mn" style="width: 220px;">
-                                            <div class="input-group">
-                                                <input type="text" name="realName" id="realName" class="form-control input-sm bradiusL" autocomplete="off" placeholder="输入姓名...">
-                                                <span class="input-group-addon btn-search input-sm bradiusR" id="submitSearchForm"><i class="fa fa-search"></i> 查询</span>
-                                            </div>
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                        </div>
+                                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                            <input type="text" name="realName" id="realName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入姓名">
+                                        </div>
+                                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                            <input type="text" name="userName" id="userName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入用户名">
                                         </div>
                                         <div class="form-group pull-right mn mr10">
                                             <div class="input-group">
@@ -75,10 +79,12 @@
                                             <th>公司部门角色</th>
                                             <th>姓名</th>
                                             <th>用户名</th>
-                                            <th>邮箱</th>
-                                            <th>手机号</th>
+##                                            <th>邮箱</th>
+##                                            <th>手机号</th>
                                             <th>激活</th>
                                             <th>禁用</th>
+                                            <th>最后登录时间</th>
+                                            <th>创建人</th>
                                             {{#hasRowActionButtons}}
                                             <th width="16%" class="text-right">操作</th>
                                             {{/hasRowActionButtons}}
@@ -102,12 +108,17 @@
                                                     <br />
                                                     {{/roleListData}}
                                                 </td>
-                                                <td class="">{{realName}}</td>
-                                                <td class="">{{userName}}</td>
-                                                <td class="">{{email}}</td>
-                                                <td class="">{{phone}}</td>
-                                                <td class="">{{isActivatedStr}}</td>
-                                                <td class="">{{isDisabledStr}}</td>
+                                                <td>{{realName}}</td>
+                                                <td>{{userName}}</td>
+##                                                <td>{{email}}</td>
+##                                                <td>{{phone}}</td>
+                                                <td>{{#boolText}}{{isActivated}}{{/boolText}}</td>
+                                                <td>{{#boolText}}{{isDisabled}}{{/boolText}}</td>
+                                                <td>{{#time}}{{lastLoginTime}}{{/time}}</td>
+                                                <td>
+                                                    <p class="mn">{{createUserRealName}}</p>
+                                                    <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                                </td>
                                                 {{#hasRowActionButtons}}
                                                     <td class="text-right">
                                                         <div class="btn-group text-right">

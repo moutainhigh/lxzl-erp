@@ -25,6 +25,7 @@ public class WorkflowNode extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
+    private Integer workflowRoleType;   //本步骤可审批角色类型
 
     private String departmentName;//可审批部门名字
     private String departmentTypeName;//可审批部门类型名字
@@ -172,4 +173,8 @@ public class WorkflowNode extends BasePO {
     public String getDepartmentTypeName() { return departmentTypeName; }
 
     public void setDepartmentTypeName(String departmentTypeName) { this.departmentTypeName = departmentTypeName; }
+
+    public Integer getWorkflowRoleType() { return workflowRoleType; }
+
+    public void setWorkflowRoleType(Integer workflowRoleType) { this.workflowRoleType = workflowRoleType; }
 }

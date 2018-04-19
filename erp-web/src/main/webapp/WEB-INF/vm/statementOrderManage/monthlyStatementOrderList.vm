@@ -3,8 +3,6 @@
 <head>
     <title>凌雄ERP-结算单管理-对账单</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -46,7 +44,7 @@
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
                                     <label for="monthTime" class="input-group date">
-                                        <input type="text" name="monthTime" id="monthTime" data-type="date" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
+                                        <input type="text" name="monthTime" id="monthTime" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                     </label>
                                 </div>
@@ -142,8 +140,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
 <script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 
 <script type="text/javascript">

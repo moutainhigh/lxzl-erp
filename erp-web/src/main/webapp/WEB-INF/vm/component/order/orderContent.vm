@@ -22,20 +22,36 @@
                     </div>
                 </div>
                 <div class="form-group field">
-                    <div class="col-md-6">
-                        <label class="col-md-6 control-label">配送方式</label>
-                        <div class="col-md-6">
-                            <div>
-                                <select class="form-control bradius required" name="deliveryMode" id="deliveryMode"></select>
-                            </div>
+                    <label class="col-md-3 control-label">税率</label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">17%</span>
+                            <input class="form-control required taxRate2" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
+                            <span class="input-group-addon">%</span>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="col-md-6 control-label">运费</label>
-                        <div class="col-md-6">
-                            <div>
-                                <input id="logisticsAmount" name="logisticsAmount" class="form-control moneyNumber" type="text" placeholder="请输入运费" />
-                            </div>
+                    <label class="col-md-3 control-label">税率</label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">6%</span>
+                            <input class="form-control required taxRate2" type="text" name="lowTaxRate" id="lowTaxRate" placeholder="请输入0-100的值" />
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">配送日期</label>
+                    <div class="col-md-3">
+                        <div class="input-group date" id="createExpectDeliveryTimePicker">
+                            <input id="expectDeliveryTime" name="expectDeliveryTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择交货日期" readonly />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                    <label class="col-md-3 control-label">起租日期</label>
+                    <div class="col-md-3">
+                        <div class="input-group date" id="createTimePicker">
+                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" readonly />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
                 </div>
@@ -58,39 +74,42 @@
                     </div>
                 </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">配送日期</label>
-                    <div class="col-md-3">
-                        <div class="input-group date" id="createExpectDeliveryTimePicker">
-                            <input id="expectDeliveryTime" name="expectDeliveryTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择交货日期" />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">配送方式</label>
+                        <div class="col-md-6">
+                            <div>
+                                <select class="form-control bradius required" name="deliveryMode" id="deliveryMode"></select>
+                            </div>
                         </div>
                     </div>
-                    <label class="col-md-3 control-label">起租日期</label>
-                    <div class="col-md-3">
-                        <div class="input-group date" id="createTimePicker">
-                            <input id="rentStartTime" name="rentStartTime" class="form-control required" type="text" autocomplete="off"  placeholder="请选择起租日期" />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <div class="col-md-6">
+                        <label class="col-md-6 control-label">是否同行调拨</label>
+                        <div class="col-md-6">
+                            <div>
+                                <select class="form-control bradius required" name="isPeer" id="isPeer">
+                                    <option value="0">否</option>
+                                    <option value="1">是</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">税率</label>
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-addon">17%</span>
-                            <input class="form-control required taxRate2" type="text" name="highTaxRate" id="highTaxRate"  placeholder="请输入0-100的值" />
-                            <span class="input-group-addon">%</span>
+
+                    <div class="col-md-6 hide" id="statementDateFormGroup">
+                        <label class="col-lg-6 control-label">结算日期</label>
+                        <div class="col-lg-6">
+                            <p class="form-control-static text-muted" id="statementDateValue"><a href="#" style="text-decoration: none;">请先选择客户</a></p>
                         </div>
                     </div>
-                    <label class="col-md-3 control-label">税率</label>
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-addon">6%</span>
-                            <input class="form-control required taxRate2" type="text" name="lowTaxRate" id="lowTaxRate" placeholder="请输入0-100的值" />
-                            <span class="input-group-addon">%</span>
-                        </div>
-                    </div>
+##                    <div class="col-md-6">
+##                        <label class="col-md-6 control-label">运费</label>
+##                        <div class="col-md-6">
+##                            <div>
+##                                <input id="logisticsAmount" name="logisticsAmount" class="form-control moneyNumber" type="text" placeholder="请输入运费" />
+##                            </div>
+##                        </div>
+##                    </div>
                 </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">购买人备注</label>
@@ -98,13 +117,15 @@
                         <textarea class="form-control" id="buyerRemark" rows="3"  name="buyerRemark"></textarea>
                     </div>
                 </div>
-                <div class="form-group field hide" id="orderSubCompanyNameFormControl">
-                    <label class="col-md-3 control-label">订单所属公司</label>
+                <div class="form-group field" id="orderSubCompanyNameFormControl">
+                    <label class="col-md-3 control-label">发货公司</label>
                     <div class="col-md-9">
-                        <div class="input-group bringContainer">
-                            <input id="orderSubCompanyName" name="orderSubCompanyName" bringFiled="orderSubCompanyName" class="form-control required" type="text" readonly placeholder="请选择订单所属公司" />
-                            <span class="input-group-addon cursor" id="chooseSubCompany"><i class="fa fa-search"></i></span>
+                        <div>
+                            <select class="form-control required" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                <option value="">请选择</option>
+                            </select>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -142,7 +163,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive hasTooltip">
                     <script type="text/html" id="dataListTpl">
                         <thead>
                         <tr class="bg-light">
@@ -153,16 +174,19 @@
                                 </label>
                             </th>
                             <th>商品名称</th>
+##                            <th>商品K3编号</th>
                             <th>类别</th>
                             <th>品牌</th>
                             <th>商品参数（SKU）</th>
-                            <th>商品价值</th>
-                            <th>商品单价</th>
-                            <th>租赁数量</th>
-##                            <th>租赁类型</th>
-##                            <th>租赁时长</th>
+                            <th>商品保值价</th>
+                            <th class="rentalPriceTh"><span class="text">单价</span>#*<i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i>*#</th>
+                            <th>数量</th>
+##                            <th>类型</th>
+##                            <th>期限</th>
                             <th>设备押金</th>
                             <th>支付方式</th>
+                            <th>首付金额</th>
+                            <th>首付押金</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -171,26 +195,29 @@
                         <tr class="productRow skuRow" productRowKey="{{productId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}">
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}" data-rowid="{{rowid}}" >
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
                             <td>
-##                                <span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>
-                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
-                                {{productName}}
+                                <p>
+                                    {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                    {{productName}}
+                                </p>
                             </td>
-                            <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+##                            <td>{{k3ProductNo}}</td>
+                            <td style="max-width:260px;">{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                             <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                             <td>{{propertiesToStr}}</td>
                             <td>#*￥{{#price}}{{skuPrice}}{{/price}}*# ￥{{currentSkuPrice}}</td>
                             <td class="productUnitAmountTd">
-                                <div class="smart-widget sm-right smr-50">
+                                <div class="smart-widget sm-right smr-50 mw200">
                                     <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                    <input type="hidden" name="rowid" value="{{rowid}}" class="rowid" />
                                     <label class="field prepend-icon">
-                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required moneyNumber gui-input" placeholder="输入商品单价" />
+                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required gui-input" placeholder="支持四位小数" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
                                     <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
@@ -201,6 +228,7 @@
                                     <input type="text" name="productCount-{{skuId}}-{{rowKey}}" value="{{productCount}}" class="productCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
+
 ##                            <td>
 ##                                <label class="field select">
 ##                                    <select name="rentType-{{skuId}}-{{rowKey}}" class="rentType required" style="min-width: 130px;">
@@ -219,12 +247,18 @@
 ##                                    </label>
 ##                                </div>
 ##                            </td>
+
                             <td>
                                 {{#showDepositAmount}}
-                                <label class="field prepend-icon">
+                                <label class="field prepend-icon mw200">
                                     <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
                                     <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                 </label>
+                                {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                    {{#isRentTypeByMonth}}
+                                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                    {{/isRentTypeByMonth}}
                                 {{/showDepositAmount}}
                             </td>
                             <td>
@@ -239,19 +273,33 @@
                                     <i class="arrow"></i>
                                 </label>
                                 {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                    <p>{{payModeValue}}</p>
+                                {{/showDepositAmount}}
                             </td>
+
+                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}" data-rowid="{{rowid}}">删除</a>
                                 </div>
                             </td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                            <td valign="top" colspan="13" class="text-center">没有选择商品</td>
                         </tr>
                         {{/listData}}
+
+                        <tr id="totalProductFirstNeedPay" class="text-danger hide">
+                            <td colspan="10"></td>
+                            <td colspan="3" class="text-right">
+                                <span class="txt">商品首付总额：</span>
+                                <span class="num"></span>
+                            </td>
+                        </tr>
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
@@ -286,12 +334,15 @@
                             <th>品牌</th>
                             <th>类型</th>
                             <th>配件价值</th>
-                            <th>配件单价</th>
+                            <th class="rentalPriceTh"><span class="text">单价</span>#*<i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i>*#</th>
                             <th>数量</th>
 ##                            <th>租赁类型</th>
 ##                            <th>租赁时长</th>
                             <th>设备押金</th>
                             <th>支付方式</th>
+
+                            <th>首付金额</th>
+                            <th>首付押金</th>
                             <th class="text-right">操作</th>
                         </tr>
                         </thead>
@@ -301,7 +352,7 @@
                         <tr class="materialRow">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{materialNo}}"  data-isnew="{{isNewMaterial}}">
+                                    <input type="checkbox" name="checkItem" value="{{materialNo}}"  data-isnew="{{isNewMaterial}}" data-rowid="{{rowid}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
@@ -313,12 +364,13 @@
                             <td>{{materialTypeStr}}</td>
                             <td>￥{{currentMaterialPrice}}</td>
                             <td class="materialUnitAmountTd">
-                                <div class="smart-widget sm-right smr-50">
+                                <div class="smart-widget sm-right smr-50 mw200">
                                     <label class="field prepend-icon">
                                         <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
                                         <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                         <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                        <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required moneyNumber gui-input" placeholder="输入配件单价" />
+                                        <input type="hidden" name="rowid" value="{{rowid}}" class="rowid" />
+                                        <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required gui-input" placeholder="支持四位小数" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
                                     <button type="button" class="button btn-primary bradiusN chooseMaterialUnitAmount" data-materialid="{{materialId}}"><i class="fa fa-search"></i></button>
@@ -349,10 +401,15 @@
 ##                            </td>
                             <td>
                                 {{#showDepositAmount}}
-                                <label class="field prepend-icon">
+                                <label class="field prepend-icon mw200">
                                     <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
                                     <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                 </label>
+                                {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                {{#isRentTypeByMonth}}
+                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                {{/isRentTypeByMonth}}
                                 {{/showDepositAmount}}
                             </td>
                             <td>
@@ -367,24 +424,46 @@
                                     <i class="arrow"></i>
                                 </label>
                                 {{/showDepositAmount}}
+                                {{^showDepositAmount}}
+                                    <p>{{payModeValue}}</p>
+
+                                {{/showDepositAmount}}
                             </td>
+                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}" data-rowid="{{rowid}}">删除</a>
                                 </div>
                             </td>
                         </tr>
                         {{/listData}}
                         {{^listData}}
                         <tr>
-                            <td valign="top" colspan="14" class="text-center">没有选择配件</td>
+                            <td valign="top" colspan="12" class="text-center">没有选择配件</td>
                         </tr>
                         {{/listData}}
                         {{/dataSource}}
+                        
+                        <tr id="totalMaterialFirstNeedPay" class="text-danger hide">
+                            <td colspan="9"></td>
+                            <td colspan="3" class="text-right">
+                                <span class="txt">配件首付总额：</span>
+                                <span class="num"></span>
+                            </td>
+                        </tr>
                         </tbody>
                     </script>
                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialDataListTable"></table>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body dark pn" style="border: none;">
+        <div class="section row mn">
+            <div class="col-md-12 text-danger text-right hide br-b br-l br-r" id="totalNeedPrice" style="padding:15px;">
+                <span class="txt">订单首付总额：</span>
+                <span class="num"></span>
             </div>
         </div>
     </div>

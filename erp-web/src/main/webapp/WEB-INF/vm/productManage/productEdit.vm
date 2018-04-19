@@ -33,7 +33,7 @@
                                             <img data-dz-thumbnail="" alt="avatar" src="{{imgDomain}}{{imgUrl}}" class="img-responsive">
                                         </div>
                                         <div class="dz-success-mark">
-                                                                             <span>âœ?/span>
+                                            <span>âœ?/span>
                                         </div>
                                         <a class="dz-remove" href="#" data-dz-remove>删除</a>
                                     </div>

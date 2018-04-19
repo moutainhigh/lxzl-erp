@@ -19,11 +19,13 @@ public class WorkflowLinkDO extends BaseDO {
     private Integer workflowCurrentNodeId;
     private Integer commitUser;
     private Integer currentVerifyUser;
+    private String verifyUserGroupId;		// 审核人组UUID，审核人为空时，该字段有值
     private Integer currentVerifyStatus;
     private String verifyMatters;
     private Integer dataStatus;
     private String remark;
     private List<WorkflowLinkDetailDO> workflowLinkDetailDOList;
+    private List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList;
 
     @Transient
     private String currentVerifyUserName;
@@ -195,4 +197,12 @@ public class WorkflowLinkDO extends BaseDO {
     public void setVerifyMatters(String verifyMatters) {
         this.verifyMatters = verifyMatters;
     }
+
+    public String getVerifyUserGroupId() { return verifyUserGroupId; }
+
+    public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
+
+    public List<WorkflowVerifyUserGroupDO> getWorkflowVerifyUserGroupDOList() { return workflowVerifyUserGroupDOList; }
+
+    public void setWorkflowVerifyUserGroupDOList(List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList) { this.workflowVerifyUserGroupDOList = workflowVerifyUserGroupDOList; }
 }

@@ -1,0 +1,103 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary" id="tradeDetail">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title" id="tradeAmountNum"></span>
+        </div>
+        <form method="post" id="tradeDetailForm">
+            <div class="panel-body pn">
+                <div class="panel-menu br-n br-b">
+                    <div class="row">
+                        <div class="pull-left ml10">
+                            <div class="btn-group" id="actionCommonButtons">
+                                <button type="button" class="btn btn-primary btn-sm" id="batchAddCustomer" title="选择客户">
+                                    <i class="fa fa-plus"></i> 选择客户
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="batchDeleteCustomer" title="删除">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+##                        <div class="pull-right mr10 text-right">
+##                            <div class="form-group pull-right mn mr10">
+##                                <div class="input-group">
+##                                    <label class="field prepend-icon" style="display: flex; align-items: center;width: auto;">
+##                                        <label for="couponProvideAmount" style="width: 280px;">每个客户发放优惠券数量：</label>
+##                                        <input style="width: 155px;" class="form-control required pl10 couponProvideAmount" id="couponProvideAmount" name="couponProvideAmount" placeholder="每个客户优惠券数量"/>
+##                                    </label>
+##                                </div>
+##                            </div>
+##                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <script type="text/html" id="tradeDetailTpl">
+                        <thead>
+                        <tr>
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            <th>客户编号</th>
+                            <th>公司名称（个人姓名）</th>
+                            <th>优惠券数量</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr data-rowdata="{{rowData}}" class="tradeRow">
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{customerNo}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            <td>{{customerNo}}</td>
+                            <td>{{customerName}}</td>
+                            <td>
+                                <input type="hidden" name="customerNo" value="{{customerNo}}" class="customerNo" />
+                                <label class="field prepend-icon">
+                                    <input type="text" name="claimAmount-{{customerNo}}" value="{{claimAmount}}" class="claimAmount form-control required pl10" placeholder="输入优惠券数量" aria-required="true" aria-invalid="false"/>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <div class="btn-group text-right">
+                                    <a href="#" type="button" class="btn btn-default btn-xs delButton" data-customerno="{{customerNo}}">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="tradeDetailTable"></table>
+                </div>
+            </div>
+##            <div class="panel-body pn">
+##                <div class="section row" style="margin:0;">
+##                    <div class="col-md-12">
+##                        <div class="section-divider mv40">
+##                            <span>备注</span>
+##                        </div>
+##                        <div class="section">
+##                            <label for="remark" class="field prepend-icon">
+##                                <textarea class="gui-textarea" id="remark" name="remark" rows="3" placeholder="输入备注"></textarea>
+##                                <label for="remark" class="field-icon"><i class="fa fa-comments"></i></label>
+##                            </label>
+##                        </div>
+##                    </div>
+##                </div>
+##            </div>
+            <div class="panel-footer clearfix">
+                <button class="btn btn-default pull-right ml15 cancelBtn">取消</button>
+                <button class="btn btn-primary pull-right sureBtn">确定</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+

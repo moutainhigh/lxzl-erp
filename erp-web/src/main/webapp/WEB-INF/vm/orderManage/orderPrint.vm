@@ -12,7 +12,8 @@
         .page {
             width:100%;
             width: 21cm;
-            min-height: 29.7cm;
+            /*min-height: 29.7cm;*/
+            min-height: 25.9cm;
             padding: 1cm 0.5cm;
             margin: 1cm auto;
             border: 1px #D3D3D3 solid;
@@ -23,9 +24,6 @@
         }
         .printHead {
             height:1cm;
-        }
-        .printHead {
-
         }
         .printHead .print-col {
             height: 1cm;
@@ -38,16 +36,18 @@
         .subpage {
             padding: 0cm;
             border: 2px #666 solid;
-            height: 260mm;
+            /*height: 280mm;*/
+            height: 240mm;
             position: relative;
         }
 
-        .printFooter:{
+        .printFooter {
             height:0.6cm;
         }
 
         @page {
-            size: A4;
+            /*size: A4;*/
+            size: 24.1cm 27.9cm;
             margin: 0;
         }
 
@@ -76,13 +76,20 @@
         }
 
         .qrcodeCanvas {
-            height:1.5cm;
-            width: 1.5cm;
+            height:0.8cm;
+            width:0.8cm;
             float: right;
             position: absolute;
-            right: 0;
             right: 0.5cm;
-            top:0.3cm;
+            top:0.5cm;
+        }
+
+        .orderNo {
+            position: absolute;
+            top: 1.4cm;
+            margin: 0;
+            padding: 0;
+            right: 0.5cm;
         }
     </style>
 
@@ -90,7 +97,7 @@
 <body style="height: auto;">
     <div class="panel">
     <div class="panel-heading">
-        <span class="panel-title"><span class="glyphicon glyphicon-print"></span>打印订单（暂不兼容谷歌浏览器）</span>
+        <span class="panel-title" style="color:red;"><span class="glyphicon glyphicon-print"></span>打印订单（请使用IE浏览器打印）</span>
         <div class="panel-header-menu pull-right mr10">
             <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>
@@ -185,8 +192,10 @@
                             ￥{{#price}}{{productAmount}}{{/price}}
                         </td>
                         <td class="text-center">
+                            {{#isRentTypeByMonth}}
                             <P style="white-space: nowrap">{{payModeValue}}</P>
                             <p style="white-space: nowrap">{{rentalWay}}</p>
+                            {{/isRentTypeByMonth}}
                         </td>
                         <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
@@ -239,7 +248,9 @@
                         </td>
                         <td class="text-center">
                             <p style="white-space: nowrap">{{payModeValue}}</p>
+                            {{#isRentTypeByMonth}}
                             <p style="white-space: nowrap">{{rentalWay}}</p>
+                            {{/isRentTypeByMonth}}
                         </td>
                         <td class="text-center">￥{{#price}}{{depositAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
@@ -266,6 +277,7 @@
                 <div class="print-col text-right">
 ##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
                     <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
+                    <p class="orderNo" id="orderNo{{pagerIndex}}"></p>
                 </div>
             </div>
 

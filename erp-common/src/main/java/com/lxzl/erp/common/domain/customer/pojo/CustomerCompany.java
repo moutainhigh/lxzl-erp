@@ -55,9 +55,10 @@ public class CustomerCompany extends BasePO {
     private BigDecimal registeredCapital;  //注册资本
     private Integer officeNumber;  //办公人数
     private String productPurpose;  //设备用途
-//    @Valid
+    @Valid
     private List<CustomerCompanyNeed> customerCompanyNeedFirstList;  //首次所需设备
     private BigDecimal firstListTotalPrice; //首次所需设备总金额
+    @Valid
     private List<CustomerCompanyNeed> customerCompanyNeedLaterList;  //后续所需设备
     private BigDecimal laterListTotalPrice; //后续所需设备总金额
     @NotBlank(message = ErrorCode.AGENT_PERSON_NAME_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
@@ -74,12 +75,15 @@ public class CustomerCompany extends BasePO {
     private String provinceName;// 省名
     private String cityName; //城市名
     private String districtName; //地区名
+    private Integer addressVerifyStatus; //公司经营地址审核状态：0未提交；1.已提交 2.初审通过；3.终审通过 4.审批驳回
+
+    @Valid
+    private List<CustomerConsignInfo> customerConsignInfoList;
 
     @Valid
     private Image agentPersonNoPictureFrontImage;//经办人身份证正面
     @Valid
     private Image agentPersonNoPictureBackImage;//经办人身份证反面
-
 
     @Valid
 //    @NotNull(message = ErrorCode.BUSINESS_LICENSE_PICTURE_IMAGE_NOT_NULL,groups = {AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class})
@@ -584,4 +588,12 @@ public class CustomerCompany extends BasePO {
     public void setAgentPersonNoPictureBackImage(Image agentPersonNoPictureBackImage) {
         this.agentPersonNoPictureBackImage = agentPersonNoPictureBackImage;
     }
+
+    public List<CustomerConsignInfo> getCustomerConsignInfoList() { return customerConsignInfoList; }
+
+    public void setCustomerConsignInfoList(List<CustomerConsignInfo> customerConsignInfoList) { this.customerConsignInfoList = customerConsignInfoList; }
+
+    public Integer getAddressVerifyStatus() { return addressVerifyStatus; }
+
+    public void setAddressVerifyStatus(Integer addressVerifyStatus) { this.addressVerifyStatus = addressVerifyStatus; }
 }

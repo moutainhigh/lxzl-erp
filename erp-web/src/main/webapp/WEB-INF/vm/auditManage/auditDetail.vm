@@ -27,24 +27,36 @@
                     <div class="form-horizontal panel-body bg-light dark">
                         <script type="text/html" id="baserInfoTpl">
                             {{#dataSource}}
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">工作流类型</dt><dd>{{workflowTypeStr}}</dd>
-                                        <dt class="mb10">关联编号</dt><dd><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></dd>
-                                    </dl>
+                                <div class="row section">
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">工作流类型</dt><dd>{{workflowTypeStr}}</dd>
+                                            <dt class="mb10">关联编号</dt><dd><a href="{{workflowReferUrl}}" target="_blank">{{workflowReferNo}}</a></dd>
+                                            <dt class="mb10">工作流说明</dt><dd>{{remark}}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">提交人</dt><dd>{{commitUserName}}</dd>
+                                            <dt class="mb10">当前审核人</dt><dd>{{getCurrentVerifyUserName}}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">审核状态</dt><dd><span class="label {{labelClass}}">{{workflowVerifyStatusStr}}</span></dd>
+                                            <dt class="mb10">是否最后一步</dt><dd>{{lastStepStr}}</dd>
+                                        </dl>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">提交人</dt><dd>{{commitUserName}}</dd>
-                                        <dt class="mb10">当前审核人</dt><dd>{{currentVerifyUserName}}</dd>
-                                    </dl>
+                                <div class="row section pt15" style="border-top: 1px solid #e5e5e5;">
+                                    <div class="col-md-12">
+                                        <dl class="dl-horizontal">
+                                            <dt class="mb10">审核事项</dt><dd>{{verifyMatters}}</dd>
+                                        </dl>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <dl class="dl-horizontal">
-                                        <dt class="mb10">审核状态</dt><dd><span class="label {{labelClass}}">{{workflowVerifyStatusStr}}</span></dd>
-                                        <dt class="mb10">是否最后一步</dt><dd>{{lastStepStr}}</dd>
-                                    </dl>
-                                </div>
+
+
                             {{/dataSource}}
                         </script>
                         <div class="row" id="baseInfo">
@@ -104,10 +116,14 @@
                                         <div class="timeline-icon">
                                             <span class="{{timeLinkClass}} {{textClass}}"></span>
                                         </div>
-                                        <div class="panel">
-                                            <div class="panel-heading clearfix" style="min-height: 40px; height: auto;">
+                                        <div class="panel" style="border-top: 1px solid #e5e5e5">
+
+                                            {{#verifyUserGroup}}
+                                            {{#verifyUserGroupDataSource}}
+
+                                            <div class="panel-heading clearfix" style="min-height: 40px; height: auto; border-top: none;">
                                                 <span class="panel-title"><span class="glyphicons glyphicons-user"></span>{{workflowCurrentNodeName}} - {{verifyUserName}}</span>
-                                                <div class="panel-header-menu pull-right mr10 text-muted fs12">{{verifyTimeFormat}}</div>
+                                                <div class="panel-header-menu pull-right mr10 text-muted fs12">{{#time}}{{verifyTime}}{{/time}}</div>
                                             </div>
                                             <div class="panel-body clearfix">
                                                 {{#imageListSource}}
@@ -120,7 +136,7 @@
                                                 </div>
                                                 {{/imageListSource}}
                                                 <blockquote class="mbn ml10">
-                                                    <p>{{verifyOpinion}}</p>
+                                                    <p>{{verifyOpinionText}}</p>
                                                     <small class="{{textClass}}">{{verifyStatusValue}}</small>
                                                 </blockquote>
                                             </div>
@@ -135,6 +151,12 @@
                                             </div>
                                             {{/show}}
                                             {{/showAction}}
+
+                                            {{/verifyUserGroupDataSource}}
+                                            {{/verifyUserGroup}}
+
+
+
                                         </div>
                                     </div>
                                     {{/dataSource}}

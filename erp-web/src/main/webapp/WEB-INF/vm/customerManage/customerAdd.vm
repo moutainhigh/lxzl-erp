@@ -41,11 +41,9 @@
 </div>
     #parse("layout/footer.vm")
 
-    <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-    <script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
+//                'manage.order.item.render.js',
                 'manage.customer.mixin.js',
                 'manage.customer.add.js',
                 'modal.choose.user.js');

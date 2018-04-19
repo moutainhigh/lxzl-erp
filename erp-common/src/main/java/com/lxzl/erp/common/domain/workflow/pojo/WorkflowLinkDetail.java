@@ -20,6 +20,7 @@ public class WorkflowLinkDetail extends BasePO {
 	private Integer workflowPreviousNodeId;   //上节点ID
 	private Integer workflowNextNodeId;   //下节点ID
 	private Integer verifyUser;   //审核人
+	private String verifyUserGroupId;		// 审核人组UUID，审核人为空时，该字段有值
 	private String verifyUserName;   //审核人
 	private Date verifyTime;   //审核时间
 	private Integer verifyStatus;   //审核状态
@@ -34,6 +35,8 @@ public class WorkflowLinkDetail extends BasePO {
 	private String workflowCurrentNodeName;
 	private String workflowPreviousNodeName;
 	private String workflowNextNodeName;
+
+	private List<WorkflowVerifyUserGroup> workflowVerifyUserGroupList;
 
 	private List<Image> imageList;
 	public Integer getWorkflowLinkDetailId(){
@@ -184,17 +187,13 @@ public class WorkflowLinkDetail extends BasePO {
 		return workflowCurrentNodeName;
 	}
 
-	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
-		this.workflowCurrentNodeName = workflowCurrentNodeName;
-	}
+	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) { this.workflowCurrentNodeName = workflowCurrentNodeName; }
 
 	public String getWorkflowPreviousNodeName() {
 		return workflowPreviousNodeName;
 	}
 
-	public void setWorkflowPreviousNodeName(String workflowPreviousNodeName) {
-		this.workflowPreviousNodeName = workflowPreviousNodeName;
-	}
+	public void setWorkflowPreviousNodeName(String workflowPreviousNodeName) { this.workflowPreviousNodeName = workflowPreviousNodeName; }
 
 	public String getWorkflowNextNodeName() {
 		return workflowNextNodeName;
@@ -211,4 +210,12 @@ public class WorkflowLinkDetail extends BasePO {
 	public void setImageList(List<Image> imageList) {
 		this.imageList = imageList;
 	}
+
+	public List<WorkflowVerifyUserGroup> getWorkflowVerifyUserGroupList() { return workflowVerifyUserGroupList; }
+
+	public void setWorkflowVerifyUserGroupList(List<WorkflowVerifyUserGroup> workflowVerifyUserGroupList) { this.workflowVerifyUserGroupList = workflowVerifyUserGroupList; }
+
+	public String getVerifyUserGroupId() { return verifyUserGroupId; }
+
+	public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
 }

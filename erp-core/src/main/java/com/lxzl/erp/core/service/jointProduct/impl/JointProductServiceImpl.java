@@ -4,9 +4,9 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
-import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -147,11 +147,13 @@ public class JointProductServiceImpl implements JointProductService {
             //判断是否有重复id
             Set<Integer> skuIdSet = new HashSet<>();
             for (JointProductSku jointProductSku : jointProductSkuList) {
-                skuIdSet.add(jointProductSku.getJointProductSkuId());
+                skuIdSet.add(jointProductSku.getSkuId());
             }
-            if (jointProductSkuList.size() > skuIdSet.size()) {
-                serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_CAN_NOT_REPEAT);
-                return serviceResult;
+            if(skuIdSet.size() > 0 ) {
+                if (jointProductSkuList.size() > skuIdSet.size()) {
+                    serviceResult.setErrorCode(ErrorCode.PRODUCT_SKU_CAN_NOT_REPEAT);
+                    return serviceResult;
+                }
             }
 
             for (JointProductSku jointProductSku : jointProductSkuList) {
@@ -197,15 +199,19 @@ public class JointProductServiceImpl implements JointProductService {
         if (CollectionUtil.isNotEmpty(jointMaterialList)) {
             //以下是处理 erp_joint_material 的数据
             //判断是否有重复id
-            HashSet<Integer> MaterialIdSet = new HashSet<>();
+            HashSet<Integer> materialIdSet = new HashSet<>();
             for (JointMaterial jointMaterial : jointMaterialList) {
-                MaterialIdSet.add(jointMaterial.getJointMaterialId());
+                    materialIdSet.add(jointMaterial.getMaterialId());
             }
-            if (jointMaterialList.size() > MaterialIdSet.size()) {
-                serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return serviceResult;
+            if(materialIdSet.size() > 0 ){
+                if (jointMaterialList.size() > materialIdSet.size()) {
+                    serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return serviceResult;
+                }
             }
+
+
             for (JointMaterial jointMaterial : jointMaterialList) {
                 if (jointMaterial.getJointMaterialId() == null) {
                     //新增
@@ -361,6 +367,20 @@ public class JointProductServiceImpl implements JointProductService {
         Integer jointProductCount = jointProductMapper.findJointProductCountByParam(maps);
         List<JointProductDO> jointProductDOList = jointProductMapper.findJointProductByParams(maps);
         List<JointProduct> jointProductList = ConverterUtil.convertList(jointProductDOList, JointProduct.class);
+        for (JointProduct jointProduct : jointProductList) {
+            List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
+            for (JointMaterial jointMaterial : jointMaterialList) {
+                MaterialDO materialDO = materialMapper.findById(jointMaterial.getMaterialId());
+                jointMaterial.setMaterialName(materialDO.getMaterialName());
+            }
+            List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
+            for (JointProductSku jointProductSku : jointProductSkuList) {
+                Integer skuId = jointProductSku.getSkuId();
+                ProductSkuDO productSkuDO = productSkuMapper.findById(skuId);
+                jointProductSku.setProductName(productSkuDO.getProductName());
+            }
+        }
+
         Page<JointProduct> page = new Page<>(jointProductList, jointProductCount, jointProductQueryParam.getPageNo(), jointProductQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(page);

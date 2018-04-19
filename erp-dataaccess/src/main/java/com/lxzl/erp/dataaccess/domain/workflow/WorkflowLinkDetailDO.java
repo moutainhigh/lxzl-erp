@@ -18,6 +18,7 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	private Integer workflowPreviousNodeId;
 	private Integer workflowNextNodeId;
 	private Integer verifyUser;
+	private String verifyUserGroupId;		// 审核人组UUID，审核人为空时，该字段有值
 	private String verifyUserName;
 	private Date verifyTime;
 	private Integer verifyStatus;
@@ -25,6 +26,7 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList;
 
 	@Transient
 	private String workflowCurrentNodeName;
@@ -151,17 +153,13 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 		return workflowCurrentNodeName;
 	}
 
-	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) {
-		this.workflowCurrentNodeName = workflowCurrentNodeName;
-	}
+	public void setWorkflowCurrentNodeName(String workflowCurrentNodeName) { this.workflowCurrentNodeName = workflowCurrentNodeName; }
 
 	public String getWorkflowPreviousNodeName() {
 		return workflowPreviousNodeName;
 	}
 
-	public void setWorkflowPreviousNodeName(String workflowPreviousNodeName) {
-		this.workflowPreviousNodeName = workflowPreviousNodeName;
-	}
+	public void setWorkflowPreviousNodeName(String workflowPreviousNodeName) { this.workflowPreviousNodeName = workflowPreviousNodeName; }
 
 	public String getWorkflowNextNodeName() {
 		return workflowNextNodeName;
@@ -178,4 +176,12 @@ public class WorkflowLinkDetailDO  extends BaseDO {
 	public void setImageDOList(List<ImageDO> imageDOList) {
 		this.imageDOList = imageDOList;
 	}
+
+	public List<WorkflowVerifyUserGroupDO> getWorkflowVerifyUserGroupDOList() { return workflowVerifyUserGroupDOList; }
+
+	public void setWorkflowVerifyUserGroupDOList(List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList) { this.workflowVerifyUserGroupDOList = workflowVerifyUserGroupDOList; }
+
+	public String getVerifyUserGroupId() { return verifyUserGroupId; }
+
+	public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
 }

@@ -4,7 +4,10 @@ import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectService;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.changeOrder.ChangeOrderService;
+import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.deploymentOrder.DeploymentOrderService;
+import com.lxzl.erp.core.service.k3.K3ChangeOrderService;
+import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
@@ -48,6 +51,12 @@ public class WorkFlowManager {
     private StatementOrderCorrectService statementOrderCorrectService;
     @Autowired
     private K3Service k3Service;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private K3ChangeOrderService k3ChangeOrderService;
+    @Autowired
+    private K3ReturnOrderService k3ReturnOrderService;
 
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -73,9 +82,12 @@ public class WorkFlowManager {
         }else if(WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)){
             return statementOrderCorrectService;
         }else if(WorkflowType.WORKFLOW_TYPE_K3_CHANGE.equals(workflowType)){
-            return k3Service;
+            return k3ChangeOrderService;
         }else if(WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)){
-            return k3Service;
+            return k3ReturnOrderService;
+        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)
+                ||WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)){
+            return customerService;
         }
         return null;
     }

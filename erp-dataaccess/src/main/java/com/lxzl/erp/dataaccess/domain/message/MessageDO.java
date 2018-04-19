@@ -18,10 +18,13 @@ public class MessageDO extends BaseDO {
     private Integer dataStatus;
     private String remark;
 
+
     @Transient
     private String senderName;
     @Transient
     private String receiverName;
+    @Transient
+    private Integer isRead;
 
     public Integer getDataStatus() {
         return dataStatus;
@@ -80,8 +83,6 @@ public class MessageDO extends BaseDO {
         return title;
     }
 
-
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -112,5 +113,13 @@ public class MessageDO extends BaseDO {
 
     public void setMessageText(String messageText) {
         this.messageText = messageText;
+    }
+
+    public Integer getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(Integer isRead) {
+        this.isRead = isRead;
     }
 }
