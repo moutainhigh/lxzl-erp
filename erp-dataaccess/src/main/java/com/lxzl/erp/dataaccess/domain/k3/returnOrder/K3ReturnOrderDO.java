@@ -1,6 +1,7 @@
 package com.lxzl.erp.dataaccess.domain.k3.returnOrder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -24,7 +25,9 @@ public class K3ReturnOrderDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private Integer returnReasonType;	// 退货原因
-	private Integer deliverySubCompanyId;//配送分公司
+	private Integer deliverySubCompanyId;//配送分公司id
+	@Transient
+	private String deliverySubCompanyName;//配送分公司
 
 	private List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList;
 
@@ -162,5 +165,13 @@ public class K3ReturnOrderDO  extends BaseDO {
 
 	public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
 		this.deliverySubCompanyId = deliverySubCompanyId;
+	}
+
+	public String getDeliverySubCompanyName() {
+		return deliverySubCompanyName;
+	}
+
+	public void setDeliverySubCompanyName(String deliverySubCompanyName) {
+		this.deliverySubCompanyName = deliverySubCompanyName;
 	}
 }

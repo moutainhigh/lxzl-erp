@@ -225,20 +225,24 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
             if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
-                orderProductDO.setRentingProductCount(productCount);
-                orderProductMapper.update(orderProductDO);
-                set.add(orderProductDO.getOrderId());
+                if(orderProductDO!=null){
+                    Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
+                    orderProductDO.setRentingProductCount(productCount);
+                    orderProductMapper.update(orderProductDO);
+                    set.add(orderProductDO.getOrderId());
+                }
                 k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
                 k3ReturnOrderDetailDO.setUpdateUser(userId);
                 k3ReturnOrderDetailDO.setUpdateTime(now);
                 k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
             } else {
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
-                orderMaterialDO.setRentingMaterialCount(materialCount);
-                orderMaterialMapper.update(orderMaterialDO);
-                set.add(orderMaterialDO.getOrderId());
+                if(orderMaterialDO!=null){
+                    Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
+                    orderMaterialDO.setRentingMaterialCount(materialCount);
+                    orderMaterialMapper.update(orderMaterialDO);
+                    set.add(orderMaterialDO.getOrderId());
+                }
                 k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
                 k3ReturnOrderDetailDO.setUpdateUser(userId);
                 k3ReturnOrderDetailDO.setUpdateTime(now);
@@ -249,9 +253,14 @@ public class K3CallbackServiceImpl implements K3CallbackService {
         for (Integer orderId : set) {
 
             Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
+            totalRentingProductCount = totalRentingProductCount == null ? 0 : totalRentingProductCount;
             Integer totalRentingMaterialCount = orderMaterialMapper.findTotalRentingMaterialCountByOrderId(orderId);
+            totalRentingMaterialCount = totalRentingMaterialCount == null ? 0 : totalRentingMaterialCount;
 
             OrderDO orderDO = orderMapper.findById(orderId);
+            if(orderDO == null){
+                continue;
+            }
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                 orderMapper.update(orderDO);
@@ -261,12 +270,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
         }
         //调用退货单结算
-        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
-        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            serviceResult.setErrorCode(statementResult.getErrorCode());
-            return serviceResult;
-        }
+//        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
+//        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            serviceResult.setErrorCode(statementResult.getErrorCode());
+//            return serviceResult;
+//        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

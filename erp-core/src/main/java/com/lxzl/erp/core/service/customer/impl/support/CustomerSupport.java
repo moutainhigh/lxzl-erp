@@ -137,7 +137,7 @@ public class CustomerSupport {
             if (customerRiskManagementDO == null) {
                 customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(customerDO.getId());
                 if (customerRiskManagementDO == null) {
-                    throw new BusinessException();
+                    return ErrorCode.CUSTOMER_RISK_MANAGEMENT_NOT_EXISTS;
                 }
             }
             BigDecimal newValue = BigDecimalUtil.sub(customerRiskManagementDO.getCreditAmountUsed(), amount);

@@ -36,6 +36,7 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
     private Integer deliveryMode;
     private Integer isPendingDelivery;
     private Integer deliverySubCompanyId;
+    private List<Integer> orderStatusList;
 
     @NotNull(message = ErrorCode.BUSINESS_APP_ID_NOT_NULL)
     private String erpAppId;   //业务系统APP ID由ERP系统生成，提供给业务系统
@@ -201,5 +202,13 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setDeliverySubCompanyId(Integer deliverySubCompanyId) {
         this.deliverySubCompanyId = deliverySubCompanyId;
+    }
+
+    public List<Integer> getOrderStatusList() {
+        return orderStatusList;
+    }
+
+    public void setOrderStatusList(List<Integer> orderStatusList) {
+        this.orderStatusList = orderStatusList;
     }
 }
