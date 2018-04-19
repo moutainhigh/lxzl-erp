@@ -46,7 +46,7 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     private Integer payStatus;
     private Integer isPeer;
-
+    private Integer isRecycleBin;//是否回收站
 
     public Integer getOrderId() {
         return orderId;
@@ -230,5 +230,13 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setIsPeer(Integer isPeer) {
         this.isPeer = isPeer;
+    }
+
+    public Integer getIsRecycleBin() {
+        return isRecycleBin;
+    }
+
+    public void setIsRecycleBin(Integer isRecycleBin) {
+        this.isRecycleBin = isRecycleBin;
     }
 }
