@@ -203,7 +203,27 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-
+    /**
+     * <p>
+     * 导入k3历史退货单
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     *     pageNo : 1 : 当前导入的页数 : 是
+     *     pageSize : 10 : 每页显示数量 : 是
+     * </pre>
+     * @author daiqi
+     * @date 2018/4/18 17:53
+     * @param  param
+     * @param validResult
+     * @return com.lxzl.se.common.domain.Result
+     */
+    @RequestMapping(value = "importK3HistoricalRefundList", method = RequestMethod.POST)
+    public Result importK3HistoricalRefundList(@RequestBody K3ReturnOrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3ReturnOrderService.importK3HistoricalRefundList(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     @Autowired
     private ResultGenerator resultGenerator;
 

@@ -3,7 +3,6 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
-import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -15,6 +14,7 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -26,7 +26,6 @@ import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
-import com.lxzl.erp.core.service.k3.PostK3ServiceManager;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.k3.support.RecordTypeSupport;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -69,6 +68,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -85,7 +85,8 @@ public class K3ServiceImpl implements K3Service {
 
     private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
     private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
-
+    // k3历史退货单url
+    private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
     @Override
@@ -334,8 +335,8 @@ public class K3ServiceImpl implements K3Service {
             throw new BusinessException(e.getMessage());
         }
         //获取订单退货单项列表
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList= k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
-        List<K3ReturnOrderDetail> k3ReturnOrderDetailList=ConverterUtil.convertList(k3ReturnOrderDetailDOList,K3ReturnOrderDetail.class);
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
@@ -697,6 +698,32 @@ public class K3ServiceImpl implements K3Service {
         return Boolean.TRUE;
     }
 
+    @Override
+    public ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
+        if (k3ReturnOrderQueryParam == null) {
+            k3ReturnOrderQueryParam = new K3ReturnOrderQueryParam();
+            k3ReturnOrderQueryParam.setPageNo(1);
+            k3ReturnOrderQueryParam.setPageSize(10);
+        }
+        ServiceResult<String, String> result = new ServiceResult<>();
+        result.setErrorCode(ErrorCode.SUCCESS);
+        Map<String, Object> requestData = new HashMap<>();
+        requestData.put("pageNo", k3ReturnOrderQueryParam.getPageNo());
+        requestData.put("pageSize", k3ReturnOrderQueryParam.getPageSize());
+        requestData.put("pw", pw);
+        String requestJson = JSONObject.toJSONString(requestData);
+
+        HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+        headerBuilder.contentType("application/json");
+        try {
+            String response = HttpClientUtil.post(k3HistoricalRefundListUrl, requestJson, headerBuilder, "UTF-8");
+            result.setResult(response);
+            return result;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new BusinessException(e.getMessage());
+        }
+    }
 
     @Autowired
     private K3MappingBrandMapper k3MappingBrandMapper;

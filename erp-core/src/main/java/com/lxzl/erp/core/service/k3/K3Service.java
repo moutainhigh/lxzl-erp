@@ -7,7 +7,7 @@ import com.lxzl.erp.common.domain.k3.K3SendRecordBatchParam;
 import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
-import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 
 import java.util.Map;
 
@@ -42,5 +42,23 @@ public interface K3Service {
     ServiceResult<String, Map<String, String>> batchSendDataToK3(K3SendRecordBatchParam k3SendRecordBatchParam);
 
     ServiceResult<String, String> transferOrder(K3OrderQueryParam param);
+
+    /**
+     * <p>
+     * 导入k3历史退货单
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     *     pageNo : 1 : 当前导入的页数 : 是
+     *     pageSize : 10 : 每页显示数量 : 是
+     * </pre>
+     * @author daiqi
+     * @date 2018/4/18 16:32
+     * @param  k3ReturnOrderQueryParam
+
+     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+     */
+    ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
 
 }
