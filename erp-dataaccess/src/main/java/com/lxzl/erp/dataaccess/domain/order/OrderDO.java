@@ -60,6 +60,7 @@ public class OrderDO extends BaseDO {
     private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer isK3Order;                                  // 是否是K3订单，1是0否
     private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
+    private String orderMessage;                                //订单消息
 
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
@@ -531,5 +532,13 @@ public class OrderDO extends BaseDO {
 
     public void setStatementDate(Integer statementDate) {
         this.statementDate = statementDate;
+    }
+
+    public String getOrderMessage() {
+        return orderMessage;
+    }
+
+    public void setOrderMessage(String orderMessage) {
+        this.orderMessage = orderMessage;
     }
 }

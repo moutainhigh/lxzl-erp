@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
@@ -1179,6 +1180,48 @@ public class OrderServiceImpl implements OrderService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> addOrderMessage(Order order) {
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (order== null||StringUtil.isEmpty(order.getOrderNo())) {
+            result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(order.getOrderNo());
+        if(orderDO==null){
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus())||OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if(StringUtil.isEmpty(order.getRemark())){
+            result.setErrorCode(ErrorCode.ORDER_MESSAGE_NULL);
+            return result;
+        }
+        OrderMessage orderMessage=new OrderMessage();
+        orderMessage.setCreateTime(currentTime);
+        orderMessage.setUserId(loginUser.getUserId());
+        orderMessage.setUserRealName(loginUser.getRealName());
+        orderMessage.setContent(order.getRemark());
+        List<OrderMessage> orderMessageList;
+        if(StringUtil.isNotEmpty(orderDO.getOrderMessage())){
+            orderMessageList=JSON.parseArray(orderDO.getOrderMessage(),OrderMessage.class);
+        }else {
+            orderMessageList=new ArrayList<OrderMessage>();
+        }
+        orderMessageList.add(orderMessage);
+        orderDO.setOrderMessage(JSON.toJSONString(orderMessageList));
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
