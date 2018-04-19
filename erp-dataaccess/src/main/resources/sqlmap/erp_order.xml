@@ -373,16 +373,28 @@
             <if test="maps.orderQueryParam.rentType != null">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderStatus != null">
-                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-            </if>
-            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
-                and eo.order_status in
-                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
+            <choose>
+                <when test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==1">
+                    and eo.order_status = 28
+                </when>
+                <otherwise>
+                    <choose>
+                        <when test="maps.orderQueryParam.orderStatus != null">
+                            and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+                        </when>
+                        <otherwise>
+                            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
+                                and eo.order_status in
+                                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
+                                         open="(" separator="," close=")">
+                                    #{item}
+                                </foreach>
+                            </if>
+                        </otherwise>
+                    </choose>
+                </otherwise>
+            </choose>
+
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
             </if>
@@ -470,16 +482,27 @@
             <if test="maps.orderQueryParam.rentType != null">
                 and eo.rent_type = #{maps.orderQueryParam.rentType, jdbcType=INTEGER}
             </if>
-            <if test="maps.orderQueryParam.orderStatus != null">
-                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
-            </if>
-            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
-                and eo.order_status in
-                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
+            <choose>
+                <when test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==1">
+                    and eo.order_status = 28
+                </when>
+                <otherwise>
+                    <choose>
+                        <when test="maps.orderQueryParam.orderStatus != null">
+                            and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+                        </when>
+                        <otherwise>
+                            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
+                                and eo.order_status in
+                                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
+                                         open="(" separator="," close=")">
+                                    #{item}
+                                </foreach>
+                            </if>
+                        </otherwise>
+                    </choose>
+                </otherwise>
+            </choose>
             <if test="maps.orderQueryParam.payStatus != null">
                 and eo.pay_status = #{maps.orderQueryParam.payStatus, jdbcType=INTEGER}
             </if>
