@@ -44,6 +44,10 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
     private String erpAppSecret;   //业务系统app secret由ERP系统生成，提供给业务系统
     private String erpOperateUser;   //系统名称
 
+    private Integer payStatus;
+    private Integer isPeer;
+    private Integer isRecycleBin;//是否回收站
+
     public Integer getOrderId() {
         return orderId;
     }
@@ -210,5 +214,29 @@ public class InterfaceOrderQueryParam extends BasePageParam implements Serializa
 
     public void setOrderStatusList(List<Integer> orderStatusList) {
         this.orderStatusList = orderStatusList;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
+    }
+
+    public Integer getIsPeer() {
+        return isPeer;
+    }
+
+    public void setIsPeer(Integer isPeer) {
+        this.isPeer = isPeer;
+    }
+
+    public Integer getIsRecycleBin() {
+        return isRecycleBin;
+    }
+
+    public void setIsRecycleBin(Integer isRecycleBin) {
+        this.isRecycleBin = isRecycleBin;
     }
 }
