@@ -540,7 +540,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             if (orderDO != null) {
                 //如果通过订单号查找到的订单状态是未发货状态的就不能进行提交
                 if (!OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())
-                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())) {
+                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
                     result.setErrorCode(ErrorCode.K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED);
                     return result;
                 }
