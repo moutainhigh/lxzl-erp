@@ -74,9 +74,11 @@ public class K3OrderConverter implements ConvertK3DataService {
             fetchStyleNumber = "FJH02";
         }
         formSEOrder.setFetchStyleNumber(fetchStyleNumber);// 交货方式  FJH01 客户自提 FJH02 送货上门 FJH03 物流发货
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(erpOrder.getDeliverySubCompanyId());//改为发货分公司
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(erpOrder.getOrderSubCompanyId());//所属分公司
+        SubCompanyDO deliverySubCompanyDO = subCompanyMapper.findById(erpOrder.getDeliverySubCompanyId());//发货分公司
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(erpOrder.getOrderSubCompanyId());//如果是电销则为线上（XX）类型
         K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(subCompanyDO.getSubCompanyCode());
+        K3MappingSubCompanyDO k3MappingDeliverySubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(deliverySubCompanyDO.getSubCompanyCode());
         formSEOrder.setDeptNumber(k3MappingSubCompanyDO.getK3SubCompanyCode() + ".06");// 部门代码
         formSEOrder.setDeptName(k3MappingSubCompanyDO.getSubCompanyName() + "-" + "租赁业务部");
         Integer subCompanyId = userSupport.getCompanyIdByUser(erpOrder.getOrderSellerId());
@@ -129,10 +131,11 @@ public class K3OrderConverter implements ConvertK3DataService {
         address = provinceName + cityName + districtName + address;
         formSEOrder.setDeliveryAddress(address);// 交货地址
         formSEOrder.setDeliverPhone(erpOrder.getOrderConsignInfo().getConsigneePhone());// 收货人电话
-        formSEOrder.setCompanyNumber(k3MappingSubCompanyDO.getK3SubCompanyCode());//
+        formSEOrder.setCompanyNumber(k3MappingSubCompanyDO.getK3SubCompanyCode());//所属分公司
         formSEOrder.setStatementDate(erpOrder.getStatementDate());//结算日
-        if(erpOrder.getDeliverySubCompanyId()!=null&&erpOrder.getDeliverySubCompanyId()!=0&&subCompanyDO!=null){
-            formSEOrder.setExecuteCompanyNumber(k3Support.getK3CityCode(String.valueOf(subCompanyDO.getSubCompanyCode())));
+        //发货分公司
+        if(erpOrder.getDeliverySubCompanyId()!=null&&erpOrder.getDeliverySubCompanyId()!=0&&k3MappingDeliverySubCompanyDO!=null){
+            formSEOrder.setExecuteCompanyNumber(k3MappingDeliverySubCompanyDO.getK3SubCompanyCode());
         }
         formSEOrder.setAreaPS("租赁");// 销售/租赁
         //对账部门代码填写订单部门
