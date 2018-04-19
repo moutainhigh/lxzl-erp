@@ -92,4 +92,24 @@ public interface K3ReturnOrderService extends VerifyReceiver {
      */
     ServiceResult<String,String> revokeReturnOrder(String returnOrderNo);
 
+	
+    /**  
+     * <p>
+     * 导入k3历史退货单
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     *     pageNo : 1 : 当前导入的页数 : 是
+     *     pageSize : 10 : 每页显示数量 : 是
+     * </pre>
+     * @author daiqi  
+     * @date 2018/4/18 16:32
+     * @param  k3ReturnOrderQueryParam
+      
+     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>  
+     */  
+    ServiceResult<String, String> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
+
+
 }
