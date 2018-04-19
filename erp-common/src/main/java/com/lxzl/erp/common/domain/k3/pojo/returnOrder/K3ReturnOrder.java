@@ -9,7 +9,10 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
+<<<<<<< HEAD
 import org.apache.commons.lang.StringUtils;
+=======
+>>>>>>> remotes/origin/develop_v1.0.1
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -244,9 +247,12 @@ public class K3ReturnOrder extends BasePO {
 	public void setDeliverySubCompanyName(String deliverySubCompanyName) {
 		this.deliverySubCompanyName = deliverySubCompanyName;
 	}
+<<<<<<< HEAD
 
 	@JSONField(name = "Note")
 	public void setNote(String note) {
 		this.remark = StringUtils.trimToNull(note);
 	}
+=======
+>>>>>>> remotes/origin/develop_v1.0.1
 }
