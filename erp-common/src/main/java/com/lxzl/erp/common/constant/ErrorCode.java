@@ -819,6 +819,12 @@ public class ErrorCode {
     public static final String BANK_SLIP_IMPORT_FAIL = "J18000036";
     public static final String BANK_SLIP_IS_ALL_CLAIM = "J18000037";
     public static final String BANK_SLIP_CLAIM_AMOUNT_IS_FAIL = "J18000038";
+    public static final String EXPORT_DATE_IS_FAIL = "J18000039";
+    public static final String BANK_SLIP_DETAIL_NOT_HEADER_COMPANY = "J18000040";
+    public static final String BANK_SLIP_MONTH_IS_DIFFERENT = "J18000041";
+    public static final String COUNT_MORE_THAN_OR_EQUALITY_ZERO = "J18000042";
+    public static final String BANK_SLIP_DETAIL_ASSIGN_IS_NULL = "J18000043";
+    public static final String BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000044";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1660,6 +1666,12 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");
         MAP.put(BANK_SLIP_IS_ALL_CLAIM, "银行对公流水是全部确认状态,不能隐藏");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT_IS_FAIL, "认领金额填写有误");
+        MAP.put(EXPORT_DATE_IS_FAIL, "导出数据失败");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据无法认领");
+        MAP.put(BANK_SLIP_MONTH_IS_DIFFERENT, "派发或下推到分公司的数据有的不是同一月");
+        MAP.put(COUNT_MORE_THAN_OR_EQUALITY_ZERO, "数量必须大于等于0");
+        MAP.put(BANK_SLIP_DETAIL_ASSIGN_IS_NULL, "需派发数据为空");
+        MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
 
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
