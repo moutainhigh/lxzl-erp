@@ -231,7 +231,7 @@ ALTER TABLE erp_coupon add `statement_order_id` int(20) COMMENT '结算单ID';
 ALTER TABLE erp_coupon add `statement_order_no` varchar(100) COMMENT '结算单编码';
 ALTER TABLE erp_coupon add `statement_order_detail_id` int(20) COMMENT '结算单详情ID';
 ALTER TABLE erp_k3_return_order add `delivery_sub_company_id` int(20) NOT NULL COMMENT '发货分公司';
-
+ALTER TABLE erp_order add `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]';
 
 
 

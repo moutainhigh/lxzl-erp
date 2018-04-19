@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
@@ -8,6 +9,8 @@ import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
+import org.apache.commons.lang.StringUtils;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -242,4 +245,11 @@ public class K3ReturnOrder extends BasePO {
 	public void setDeliverySubCompanyName(String deliverySubCompanyName) {
 		this.deliverySubCompanyName = deliverySubCompanyName;
 	}
+
+
+	@JSONField(name = "Note")
+	public void setNote(String note) {
+		this.remark = StringUtils.trimToNull(note);
+	}
+
 }

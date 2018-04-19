@@ -224,4 +224,19 @@
         from erp_k3_return_order ekro WHERE
         ekro.k3_customer_no = #{k3CustomerNo,jdbcType=VARCHAR} AND ekro.data_status = 1
     </select>
+
+    <select id="listByReturnOrderNos" resultMap="K3ReturnOrderDO">
+        SELECT
+        <include refid="column_List"/>
+        from erp_k3_return_order ekro WHERE
+        ekro.data_status = 1
+        <if test="returnOrderNos != null">
+            AND
+            ekro.return_order_no IN
+            <foreach item="returnOrderNo" index="index" collection="returnOrderNos" open="(" separator="," close=")">
+                #{returnOrderNo}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>
