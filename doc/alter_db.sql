@@ -25,6 +25,10 @@ ALTER TABLE erp_k3_return_order_detail add `real_product_count` int(11) NOT NULL
 ALTER TABLE erp_order_product add `renting_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '在租商品总数';
 ALTER TABLE erp_order_material add `renting_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '在租配件总说';
 
+ALTER TABLE erp_statement_order add `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
+ALTER TABLE erp_statement_order_detail add `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
+ALTER TABLE erp_k3_return_order add `delivery_sub_company_id` int(20) NOT NULL COMMENT '发货分公司';
+ALTER TABLE erp_order add `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]';
 
 DROP TABLE if exists `erp_switch`;
 CREATE TABLE `erp_switch` (
@@ -225,13 +229,11 @@ CREATE TABLE `mall_verify_code` (
 ALTER TABLE erp_bank_slip add `localization_count` int(11) COMMENT '属地化数量[总公司时有值]';
 ALTER TABLE erp_bank_slip_detail add `sub_company_id` int(11) NOT NULL COMMENT '分公司ID';
 ALTER TABLE erp_bank_slip_detail add `is_localization` int(11) COMMENT '是否已属地化,0-否，1-是[总公司时有值]';
-ALTER TABLE erp_statement_order add `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
-ALTER TABLE erp_statement_order_detail add `statement_coupon_amount` decimal(15,5) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
 ALTER TABLE erp_coupon add `statement_order_id` int(20) COMMENT '结算单ID';
 ALTER TABLE erp_coupon add `statement_order_no` varchar(100) COMMENT '结算单编码';
 ALTER TABLE erp_coupon add `statement_order_detail_id` int(20) COMMENT '结算单详情ID';
-ALTER TABLE erp_k3_return_order add `delivery_sub_company_id` int(20) NOT NULL COMMENT '发货分公司';
-ALTER TABLE erp_order add `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]';
+ALTER TABLE erp_customer add `is_risk` int(4) NOT NULL DEFAULT '0' COMMENT '是否授信，0-未授信；1-已授信';
+
 
 
 

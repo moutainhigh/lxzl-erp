@@ -990,6 +990,12 @@ public class PageController extends BaseController {
         return "/component/audit/submitModal";
     }
 
+    //选择取消/强制取消订单原因
+    @RequestMapping("/cancel-reason/modal")
+    public String cancelReasonModal() {
+        return "/component/order/cancelReasonModal";
+    }
+
     //采购单选择审核人Modal
     @RequestMapping("/audit-user/choose")
     public String auditUserChoose() {
