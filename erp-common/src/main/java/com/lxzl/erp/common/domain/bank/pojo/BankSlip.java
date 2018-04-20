@@ -5,8 +5,11 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.bank.AssignGroup;
+import com.lxzl.erp.common.util.validate.constraints.CollectionNotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +40,19 @@ public class BankSlip extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
+	private Integer localizationCount;  //属地化数量
 
+	@Valid
+	@CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {AssignGroup.class})
 	private List<BankSlipDetail> bankSlipDetailList;
+
+	public Integer getLocalizationCount() {
+		return localizationCount;
+	}
+
+	public void setLocalizationCount(Integer localizationCount) {
+		this.localizationCount = localizationCount;
+	}
 
 	public List<BankSlipDetail> getBankSlipDetailList() {
 		return bankSlipDetailList;

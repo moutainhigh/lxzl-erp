@@ -22,8 +22,17 @@ public class BankSlipDO  extends BaseDO {
 	private String excelUrl;
 	private Integer dataStatus;
 	private String remark;
+	private Integer localizationCount;  //属地化数量
 
 	private List<BankSlipDetailDO> bankSlipDetailDOList;
+
+	public Integer getLocalizationCount() {
+		return localizationCount;
+	}
+
+	public void setLocalizationCount(Integer localizationCount) {
+		this.localizationCount = localizationCount;
+	}
 
 	public List<BankSlipDetailDO> getBankSlipDetailDOList() {
 		return bankSlipDetailDOList;
