@@ -18,7 +18,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InterfaceOrderQueryParam extends BasePageParam implements Serializable {
     private Integer orderId;
-    @NotNull(message = ErrorCode.CUSTOMER_NO_NOT_NULL,groups = {QueryCustomerNoGroup.class})
+    @NotNull(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {QueryCustomerNoGroup.class})
     private String orderNo;
     private String buyerRealName;
     private Integer buyerCustomerId;
