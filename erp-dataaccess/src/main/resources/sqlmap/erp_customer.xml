@@ -29,6 +29,7 @@
 		<result column="delivery_mode" jdbcType="INTEGER" property="deliveryMode" />
 		<result column="owner_sub_company_id" jdbcType="INTEGER" property="ownerSubCompanyId" />
 		<result column="ownerSubCompanyName" jdbcType="VARCHAR" property="ownerSubCompanyName" />
+		<result column="is_risk" jdbcType="INTEGER" property="isRisk" />
 
 		<association resultMap="CustomerCompanyDO" property="customerCompanyDO"/>
 		<association resultMap="CustomerPersonDO" property="customerPersonDO"/>
@@ -162,7 +163,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status,ec.first_apply_amount,ec.later_apply_amount,ec.localization_time,ec.short_limit_receivable_amount,ec.statement_date,ec.pass_reason,ec.fail_reason,ec.delivery_mode,ec.owner_sub_company_id
+		ec.id,ec.customer_type,ec.customer_no,ec.customer_name,ec.is_disabled,ec.data_status,ec.remark,ec.create_time,ec.create_user,ec.update_time,ec.update_user,ec.owner,ec.union_user,ec.customer_status,ec.first_apply_amount,ec.later_apply_amount,ec.localization_time,ec.short_limit_receivable_amount,ec.statement_date,ec.pass_reason,ec.fail_reason,ec.delivery_mode,ec.owner_sub_company_id,ec.is_risk
 	</sql>
 	<sql id="company_column_List">
 		ecc.id AS ecc_id,ecc.customer_id AS ecc_customer_id,ecc.landline AS ecc_landline,ecc.connect_real_name AS ecc_connect_real_name,ecc.connect_phone AS ecc_connect_phone,ecc.company_name AS ecc_company_name,ecc.company_abb AS ecc_company_abb,ecc.province AS ecc_province,ecc.city AS ecc_city,ecc.district AS ecc_district,ecc.address AS ecc_address,ecc.legal_person AS ecc_legal_person,ecc.legal_person_no AS ecc_legal_person_no,ecc.business_license_no AS ecc_business_license_no,ecc.data_status AS ecc_data_status,ecc.remark AS ecc_remark,ecc.create_time AS ecc_create_time,ecc.create_user AS ecc_create_user,ecc.update_time AS ecc_update_time,ecc.update_user AS ecc_update_user,ecc.customer_origin AS ecc_customer_origin,ecc.company_found_time AS ecc_company_found_time,ecc.industry AS ecc_industry,ecc.registered_capital AS ecc_registered_capital,ecc.office_number AS ecc_office_number,ecc.product_purpose AS ecc_product_purpose,ecc.customer_company_need_first_json AS ecc_customer_company_need_first_json,ecc.customer_company_need_later_json AS ecc_customer_company_need_later_json,ecc.agent_person_name AS ecc_agent_person_name,ecc.agent_person_phone AS ecc_agent_person_phone,ecc.agent_person_no AS ecc_agent_person_no,ecc.unified_credit_code AS ecc_unified_credit_code,ecc.customer_no AS ecc_customer_no,ecc.is_legal_person_apple AS ecc_is_legal_person_apple,ecc.legal_person_phone AS ecc_legal_person_phone,ecc.operating_area AS ecc_operating_area,ecc.unit_insured_number AS ecc_unit_insured_number,ecc.affiliated_enterprise AS ecc_affiliated_enterprise,ecc.default_address_refer_id AS ecc_default_address_refer_id,ecc.address_verify_status AS ecc_address_verify_status
@@ -340,6 +341,9 @@
 			<if test="ownerSubCompanyId != null">
 				owner_sub_company_id = #{ownerSubCompanyId,jdbcType=INTEGER},
 			</if>
+			<if test="isRisk != null">
+				is_risk = #{isRisk,jdbcType=INTEGER},
+			</if>
 				pass_reason = #{passReason,jdbcType=VARCHAR},
 				fail_reason = #{failReason,jdbcType=VARCHAR},
 				union_user = #{unionUser,jdbcType=INTEGER},
@@ -396,11 +400,8 @@
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerSubCompanyId != null">
 				AND ec.owner_sub_company_id = #{maps.customerCompanyQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk == 0">
-				and ecrm.id IS NULL
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk == 1">
-				and ecrm.id IS NOT NULL
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
+				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ecc.data_status = 1
@@ -410,7 +411,8 @@
 
 	</select>
 	<select id="findCustomerCompanyByParams" resultMap="CustomerDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>,<include refid="risk_column_List"/>,eap.province_name AS provinceName
+		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>,<include refid="risk_column_List"/>,
+		eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
 		,union_user.real_name AS unionUserName
@@ -421,9 +423,6 @@
 		FROM erp_customer_company ecc
 		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
-			LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		</if>
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
 				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
@@ -458,11 +457,8 @@
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerSubCompanyId != null">
 				AND ec.owner_sub_company_id = #{maps.customerCompanyQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk == 0">
-				and ecrm.id IS NULL
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk == 1">
-				and ecrm.id IS NOT NULL
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
+				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ecc.data_status = 1
@@ -479,7 +475,9 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
+		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
+			LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
+		</if>
 		ORDER BY ecc.ecc_create_time DESC
 
 	</select>
@@ -534,11 +532,8 @@
 			<if test="maps.isQueryAll == null">
 				and ec.data_status = 1 AND ec.customer_type = 2
 			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk == 0">
-				and ecrm.id IS NULL
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk == 1">
-				and ecrm.id IS NOT NULL
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
+				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
@@ -603,16 +598,29 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerSubCompanyId != null">
 				AND ec.owner_sub_company_id = #{maps.customerPersonQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk == 0">
-				and ecrm.id IS NULL
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk == 1">
-				and ecrm.id IS NOT NULL
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
+				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
-
+	<update id="setIsRisk" parameterType="java.util.ArrayList">
+		UPDATE erp_customer
+		SET
+		<trim>
+			is_risk =
+			<foreach item="id" collection="idList"  index="index" separator=" " open="case id" close="end">
+				when #{id} then 1
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="idList" index="index" item="id" separator="," open="(" close=")">
+			#{id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	<select id="getIsRiskId" resultType="Integer" >
+		select ec.id FROM erp_customer ec LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
+	</select>
 </mapper>
