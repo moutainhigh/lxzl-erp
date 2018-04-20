@@ -6,9 +6,13 @@
         <form method="post" id="returnVisitForm" description="客户回访">
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb10">
                         <span>客户编号:</span>
                         <span id="customerNo"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <span>客户名称:</span>
+                        <span id="customerName"></span>
                     </div>
                 </div>
 

@@ -74,7 +74,7 @@
                                         <dd>{{customerNo}}</dd>
 
                                         <dt class="mb10">公司名：</dt>
-                                        <dd>{{customerCompany.companyName}}</dd>
+                                        <dd class="customerName" data-customername="{{customerCompany.companyName}}">{{customerCompany.companyName}}</dd>
 
                                         <dt class="mb10">公司简称：</dt>
                                         <dd>{{customerCompany.companyAbb}}</dd>

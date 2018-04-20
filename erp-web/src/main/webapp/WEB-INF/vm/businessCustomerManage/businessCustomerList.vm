@@ -167,6 +167,7 @@
                                                 <li>
                                                     <a href="${ctx}{{menuUrl}}?no={{customerNo}}"
                                                        data-customerno="{{customerNo}}"
+                                                       data-customername="{{customerName}}"
                                                        data-statementdate="{{statementDate}}"
                                                        data-shortLimitReceivableAmount="{{shortLimitReceivableAmount}}"
                                                        data-customertype="{{customerType}}"

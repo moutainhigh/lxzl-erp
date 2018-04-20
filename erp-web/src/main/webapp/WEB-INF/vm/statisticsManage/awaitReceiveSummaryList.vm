@@ -67,7 +67,7 @@
                             <tr class="bg-light">
 ##                                <th>分公司ID</th>
                                 <th>分公司名称</th>
-                                <th>业务员ID</th>
+##                                <th>业务员ID</th>
                                 <th>业务员姓名</th>
                                 <th>上月租金</th>
                                 <th>长租待收</th>
@@ -87,7 +87,7 @@
                             <tr>
 ##                                <td>{{subCompanyId}}</td>
                                 <td>{{subCompanyName}}</td>
-                                <td>{{orderSellerId}}</td>
+##                                <td>{{orderSellerId}}</td>
                                 <td>{{orderSellerName}}</td>
                                 <td>{{lastMonthRent}}</td>
                                 <td>{{awaitReceivableLong}}</td>
@@ -108,7 +108,7 @@
                             {{/listData}}
                             <tr class="total-trade">
                                 <td>合计</td>
-                                <td id="totalCount" colspan="2"></td>
+                                <td id="totalCount"></td>
                                 <td id="totalLastMonthRent"></td>
                                 <td id="totalAwaitReceivableLong"></td>
                                 <td id="totalAwaitReceivableShort"></td>
