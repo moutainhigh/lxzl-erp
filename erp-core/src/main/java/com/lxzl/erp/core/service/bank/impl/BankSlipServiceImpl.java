@@ -859,15 +859,23 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         List<BankSlipDetailDO> updateBankSlipDetailDOList = new ArrayList<>();
         Map<Integer, Integer> localizationMap = new HashMap<>();
-        List<BankSlipDO> headquartersBankSlipDOList = new ArrayList<>();
+        Map<Integer,BankSlipDO> bankSlipDOMap = new HashMap<>();
+
         for (BankSlipDetail bankSlipDetail : bankSlip.getBankSlipDetailList()) {
             BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
             if (bankSlipDetailDO == null) {
                 serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
                 return serviceResult;
             }
+
+            if(!bankSlipDOMap.containsKey(bankSlipDetailDO.getBankSlipId())){
+                BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+                bankSlipDOMap.put(bankSlipDO.getId(),bankSlipDO);
+            }
+            BankSlipDO bankSlipDO = bankSlipDOMap.get(bankSlipDetailDO.getBankSlipId());
+
             //判断所属公司是否是总公司
-            if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetail.getSubCompanyId())) {
+            if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
                 serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HEADER_COMPANY);
                 return serviceResult;
             }
@@ -883,6 +891,22 @@ public class BankSlipServiceImpl implements BankSlipService {
                 serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
                 return serviceResult;
             }
+            //判断所属公司是否是总公司
+            if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
+                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HEADER_COMPANY);
+                return serviceResult;
+            }
+            //需判断这个单子是否下推,未推只有财务管理员操作 ,下推了只有业务员和商务可以操作
+            String localizationPermission = verifyLocalizationPermission(bankSlipDO);
+            if (!ErrorCode.SUCCESS.equals(localizationPermission)) {
+                serviceResult.setErrorCode(localizationPermission);
+                return serviceResult;
+            }
+            //总公司的数量和状态的改变
+            bankSlipDO.setLocalizationCount(bankSlipDO.getLocalizationCount() == null ? 1 : bankSlipDO.getLocalizationCount() + 1);
+            bankSlipDO.setUpdateTime(now);
+            bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+
             if (CommonConstant.COMMON_CONSTANT_NO.equals(bankSlipDetailDO.getIsLocalization())) {
                 if (localizationMap.get(bankSlipDetailDO.getBankSlipId()) == null) {
                     localizationMap.put(bankSlipDetailDO.getBankSlipId(), 0);
@@ -896,26 +920,6 @@ public class BankSlipServiceImpl implements BankSlipService {
                 updateBankSlipDetailDOList.add(bankSlipDetailDO);
             }
         }
-        for (Integer bankSlipId : localizationMap.keySet()) {
-            Integer localizationCount = localizationMap.get(bankSlipId);
-            BankSlipDO headquartersBankSlipDO = bankSlipMapper.findById(bankSlipId);
-            //判断所属公司是否是总公司
-            if (!CommonConstant.HEADER_COMPANY_ID.equals(headquartersBankSlipDO.getSubCompanyId())) {
-                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HEADER_COMPANY);
-                return serviceResult;
-            }
-            //需判断这个单子是否下推,未推只有财务管理员操作 ,下推了只有业务员和商务可以操作
-            String localizationPermission = verifyLocalizationPermission(headquartersBankSlipDO);
-            if (!ErrorCode.SUCCESS.equals(localizationPermission)) {
-                serviceResult.setErrorCode(localizationPermission);
-                return serviceResult;
-            }
-            //总公司的数量和状态的改变
-            headquartersBankSlipDO.setLocalizationCount(headquartersBankSlipDO.getLocalizationCount() == null ? localizationCount : headquartersBankSlipDO.getLocalizationCount() + localizationCount);
-            headquartersBankSlipDO.setUpdateTime(now);
-            headquartersBankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            headquartersBankSlipDOList.add(headquartersBankSlipDO);
-        }
 
         //跟新对公流水项
         if (CollectionUtil.isEmpty(updateBankSlipDetailDOList)) {
@@ -924,7 +928,8 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         bankSlipDetailMapper.updateBankSlipDetailDO(updateBankSlipDetailDOList);
         //跟新总表数据
-        bankSlipMapper.updateBankSlipDO(headquartersBankSlipDOList);
+        List<BankSlipDO> bankSlipDOList = ListUtil.mapToList(bankSlipDOMap);
+        bankSlipMapper.updateBankSlipDO(bankSlipDOList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
