@@ -37,13 +37,14 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void assignBankSlipDetail() throws Exception {
         BankSlip bankSlip = new BankSlip();
+        bankSlip.setLocalizationSubCompanyId(3);
         List<BankSlipDetail> list = new ArrayList<>();
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(8088);
-        bankSlipDetail.setLocalizationSubCompanyId(3);
+        bankSlipDetail.setBankSlipDetailId(8107);
+//        bankSlipDetail.setLocalizationSubCompanyId(3);
         BankSlipDetail bankSlipDetai2 = new BankSlipDetail();
-        bankSlipDetai2.setBankSlipDetailId(8089);
-        bankSlipDetai2.setLocalizationSubCompanyId(3);
+        bankSlipDetai2.setBankSlipDetailId(8106);
+//        bankSlipDetai2.setLocalizationSubCompanyId(3);
         list.add(bankSlipDetail);
         list.add(bankSlipDetai2);
         bankSlip.setBankSlipDetailList(list);
@@ -175,7 +176,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(1);
         bankSlip.setBankType(BankType.BOC_BANK);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/02/20"));
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2016/01/20"));
         bankSlip.setExcelUrl("/group1/M00/00/2D/wKgKyFrV5dGAO61-AAA1wFAIG9Y45.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
