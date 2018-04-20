@@ -25,7 +25,7 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void unAssignBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -38,15 +38,15 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     public void assignBankSlipDetail() throws Exception {
         BankSlip bankSlip = new BankSlip();
         List<BankSlipDetail> list = new ArrayList<>();
-//        BankSlipDetail bankSlipDetail = new BankSlipDetail();
-//        bankSlipDetail.setBankSlipDetailId(7879);
-//        bankSlipDetail.setSubCompanyId(1);
-//        bankSlipDetail.setLocalizationSubCompanyId(3);
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(8064);
+        bankSlipDetail.setSubCompanyId(1);
+        bankSlipDetail.setLocalizationSubCompanyId(3);
         BankSlipDetail bankSlipDetai2 = new BankSlipDetail();
-        bankSlipDetai2.setBankSlipDetailId(7909);
+        bankSlipDetai2.setBankSlipDetailId(8063);
         bankSlipDetai2.setSubCompanyId(1);
         bankSlipDetai2.setLocalizationSubCompanyId(3);
-//        list.add(bankSlipDetail);
+        list.add(bankSlipDetail);
         list.add(bankSlipDetai2);
         bankSlip.setBankSlipDetailList(list);
         TestResult jsonTestResult = getJsonTestResult("/bankSlip/localizationBankSlipDetail",bankSlip);
@@ -177,7 +177,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(1);
         bankSlip.setBankType(BankType.BOC_BANK);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/05/20"));
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/04/20"));
         bankSlip.setExcelUrl("/group1/M00/00/2D/wKgKyFrV5dGAO61-AAA1wFAIG9Y45.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
