@@ -59,6 +59,9 @@
                                 <li>
                                     <a href="#statementOrderList" data-toggle="tab">结算单</a>
                                 </li>
+                                <li>
+                                    <a href="#returnOrderList" data-toggle="tab">退货单</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -73,6 +76,9 @@
 
                             <!-- 结算单 -->
                             #parse("component/order/orderStatement.vm")
+
+                            <!-- 退货单 -->
+                            #parse("component/order/returnOrder.vm")
                         </div>
                     </div>
                     <div class="panel-footer clearfix">

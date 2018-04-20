@@ -111,9 +111,9 @@
                                     <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
                                 <td>{{tradeMessage}}</td>
-                                <td>{{tradeMessage}}</td>
-                                <td>{{tradeMessage}}</td>
-                                <td>{{tradeMessage}}</td>
+                                <td>{{subCompanyName}}</td>
+                                <td>{{localizationSubCompanyName}}</td>
+                                <td>{{isLocalizationValue}}</td>
                                 <td>{{detailStatusValue}}</td>
                                 <td>{{remark}}</td>
                                 <td>
