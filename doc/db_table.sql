@@ -359,6 +359,7 @@ CREATE TABLE `erp_customer` (
   `fail_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '拒绝原因',
   `first_apply_amount` decimal(15,5) DEFAULT '0.00' COMMENT '首期申请额度',
   `later_apply_amount` decimal(15,5) DEFAULT '0.00' COMMENT '后期申请额度',
+  `is_risk` int(4) NOT NULL DEFAULT '0' COMMENT '是否授信，0-未授信；1-已授信',
   `is_disabled` int(4) NOT NULL DEFAULT '0' COMMENT '是否禁用，0不可用；1可用',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `pass_reason` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '通过原因',

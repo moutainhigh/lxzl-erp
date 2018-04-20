@@ -22,6 +22,11 @@ public class BankSlipDetailDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private Integer bankSlipId;
+	private Integer subCompanyId;
+	private String subCompanyName;
+	private Integer isLocalization;
+	private Integer localizationSubCompanyId;  //归属公司id
+	private String localizationSubCompanyName;  //归属公司名称
 
 	private List<BankSlipClaimDO> bankSlipClaimDOList;
 
@@ -31,6 +36,46 @@ public class BankSlipDetailDO  extends BaseDO {
 
 	public void setBankSlipClaimDOList(List<BankSlipClaimDO> bankSlipClaimDOList) {
 		this.bankSlipClaimDOList = bankSlipClaimDOList;
+	}
+
+	public String getSubCompanyName() {
+		return subCompanyName;
+	}
+
+	public Integer getLocalizationSubCompanyId() {
+		return localizationSubCompanyId;
+	}
+
+	public void setLocalizationSubCompanyId(Integer localizationSubCompanyId) {
+		this.localizationSubCompanyId = localizationSubCompanyId;
+	}
+
+	public String getLocalizationSubCompanyName() {
+		return localizationSubCompanyName;
+	}
+
+	public void setLocalizationSubCompanyName(String localizationSubCompanyName) {
+		this.localizationSubCompanyName = localizationSubCompanyName;
+	}
+
+	public void setSubCompanyName(String subCompanyName) {
+		this.subCompanyName = subCompanyName;
+	}
+
+	public Integer getSubCompanyId() {
+		return subCompanyId;
+	}
+
+	public void setSubCompanyId(Integer subCompanyId) {
+		this.subCompanyId = subCompanyId;
+	}
+
+	public Integer getIsLocalization() {
+		return isLocalization;
+	}
+
+	public void setIsLocalization(Integer isLocalization) {
+		this.isLocalization = isLocalization;
 	}
 
 	public Integer getId(){
