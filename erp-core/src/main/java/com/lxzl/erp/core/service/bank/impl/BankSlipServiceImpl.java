@@ -857,6 +857,14 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
+
+        //判断公司是否存在
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getLocalizationSubCompanyId());
+        if (subCompanyDO == null) {
+            serviceResult.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return serviceResult;
+        }
+
         List<BankSlipDetailDO> updateBankSlipDetailDOList = new ArrayList<>();
         Map<Integer, Integer> localizationMap = new HashMap<>();
         Map<Integer,BankSlipDO> bankSlipDOMap = new HashMap<>();
@@ -880,12 +888,7 @@ public class BankSlipServiceImpl implements BankSlipService {
                 return serviceResult;
             }
 
-            //判断公司是否存在
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlipDetail.getLocalizationSubCompanyId());
-            if (subCompanyDO == null) {
-                serviceResult.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-                return serviceResult;
-            }
+
             //未认领和忽略状态的可以属地化
             if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && !BankSlipDetailStatus.IGNORE.equals(bankSlipDetailDO.getDetailStatus())) {
                 serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
@@ -913,7 +916,7 @@ public class BankSlipServiceImpl implements BankSlipService {
                 }
                 localizationMap.put(bankSlipDetailDO.getBankSlipId(), localizationMap.get(bankSlipDetailDO.getBankSlipId()) + 1);
                 //属地化公司id  属地化状态的改变
-                bankSlipDetailDO.setSubCompanyId(bankSlipDetail.getLocalizationSubCompanyId());
+                bankSlipDetailDO.setSubCompanyId(bankSlip.getLocalizationSubCompanyId());
                 bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_YES);
                 bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                 bankSlipDetailDO.setUpdateTime(now);

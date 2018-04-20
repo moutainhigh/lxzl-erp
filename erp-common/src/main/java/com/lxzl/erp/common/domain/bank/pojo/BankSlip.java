@@ -41,6 +41,8 @@ public class BankSlip extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 	private Integer localizationCount;  //属地化数量
+	@NotNull(message = ErrorCode.SUB_COMPANY_ID_NOT_NULL,groups = {AssignGroup.class})
+	private Integer localizationSubCompanyId;  //属地化公司id
 
 	@Valid
 	@CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {AssignGroup.class})
@@ -60,6 +62,14 @@ public class BankSlip extends BasePO {
 
 	public void setBankSlipDetailList(List<BankSlipDetail> bankSlipDetailList) {
 		this.bankSlipDetailList = bankSlipDetailList;
+	}
+
+	public Integer getLocalizationSubCompanyId() {
+		return localizationSubCompanyId;
+	}
+
+	public void setLocalizationSubCompanyId(Integer localizationSubCompanyId) {
+		this.localizationSubCompanyId = localizationSubCompanyId;
 	}
 
 	public Integer getBankSlipId(){
