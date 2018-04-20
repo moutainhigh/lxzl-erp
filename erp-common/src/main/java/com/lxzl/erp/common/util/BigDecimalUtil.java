@@ -155,6 +155,16 @@ public class BigDecimalUtil {
         BigDecimal one = new BigDecimal("1");
         return v.divide(one, scale, BigDecimal.ROUND_HALF_UP);
     }
+    public static BigDecimal roundNullReturnZero(BigDecimal v, int scale) {
+        if(v == null){
+            v = new BigDecimal(0);
+        }
+        if (scale < 0) {
+            throw new IllegalArgumentException("精确度不能小于0");
+        }
+        BigDecimal one = new BigDecimal("1");
+        return v.divide(one, scale, BigDecimal.ROUND_HALF_UP);
+    }
 
     /**
      * 提供精确加法计算的add方法，确认精确度
