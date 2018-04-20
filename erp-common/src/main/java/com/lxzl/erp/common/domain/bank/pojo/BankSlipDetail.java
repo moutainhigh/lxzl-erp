@@ -34,13 +34,12 @@ public class BankSlipDetail extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 	private Integer bankSlipId;   //银行对公流水表id
-	@NotNull(message = ErrorCode.SUB_COMPANY_ID_NOT_NULL,groups = {AssignGroup.class})
-	private Integer subCompanyId;  //归属分公司ID
+	private Integer subCompanyId;  //数据归属分公司ID
 	private Integer isLocalization;  //是否已属地化,0-否，1-是[总公司时有值]
-	private String subCompanyName;  //分公司名称
+	private String subCompanyName;  //数据归属分公司名称
 	@NotNull(message = ErrorCode.SUB_COMPANY_ID_NOT_NULL,groups = {AssignGroup.class})
-	private Integer localizationSubCompanyId;  //归属公司id
-	private String localizationSubCompanyName;  //归属公司名称
+	private Integer localizationSubCompanyId;  //属地化公司id
+	private String localizationSubCompanyName;  //属地化公司名称
 
 	private List<BankSlipClaim> bankSlipClaimList;
 
