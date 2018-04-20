@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.bank.impl.importSlip;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
@@ -111,8 +112,16 @@ public class ImportCMBCBank {
                 return serviceResult;
             }
             //保存  银行对公流水明细表
+            Integer isLocalization = null;
+            if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
+                isLocalization = CommonConstant.COMMON_CONSTANT_NO;
+            }
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
+                if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
+                    bankSlipDetailDO.setIsLocalization(isLocalization);
+                }
+                bankSlipDetailDO.setSubCompanyId(bankSlipDO.getSubCompanyId());
             }
             bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
             bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
@@ -300,6 +309,16 @@ public class ImportCMBCBank {
                     bankSlipDetailDO.setUpdateTime(now);
                     bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
+                    //处理 银联商务有限公司客户备付金 多的手续费处理
+                    if ("银联商务有限公司客户备付金".equals(payerName)) {
+                        //截取摘要信息
+                        int i = tradeMessage.lastIndexOf("费");
+                        tradeMessage = tradeMessage.substring(i + 1, tradeMessage.length());
+                        int i1 = tradeMessage.lastIndexOf("元");
+                        tradeMessage = tradeMessage.substring(0, i1);
+                        BigDecimal bigDecimal = new BigDecimal(tradeMessage);
+                        bankSlipDetailDO.setTradeAmount(BigDecimalUtil.add(bankSlipDetailDO.getTradeAmount(), bigDecimal));
+                    }
 
                 }
             }
