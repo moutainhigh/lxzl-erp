@@ -40,4 +40,7 @@
         <property name="paymentSystemQueryCustomerAccountLogPageURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_LOG_PAGE_URL}"/>
     </bean>
 
+    <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">
+        <property name="dingDingGatewayUrl" value="${DINGDING-GATEWAY-URL}"/>
+    </bean>
 </beans>
