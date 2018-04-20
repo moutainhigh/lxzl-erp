@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: Pengbinjie
@@ -24,11 +25,35 @@ import java.util.ArrayList;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
+    @Test
+    public void unAssignBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(7907);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/cancelLocalizationBankSlipDetail",bankSlipDetail);
+
+    }
+
+    @Test
+    public void assignBankSlipDetail() throws Exception {
+        BankSlip bankSlip = new BankSlip();
+        List<BankSlipDetail> list = new ArrayList<>();
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(8088);
+        bankSlipDetail.setLocalizationSubCompanyId(3);
+        BankSlipDetail bankSlipDetai2 = new BankSlipDetail();
+        bankSlipDetai2.setBankSlipDetailId(8089);
+        bankSlipDetai2.setLocalizationSubCompanyId(3);
+        list.add(bankSlipDetail);
+        list.add(bankSlipDetai2);
+        bankSlip.setBankSlipDetailList(list);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/localizationBankSlipDetail",bankSlip);
+    }
+
     @Test
     public void hideBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail= new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(1);
+        bankSlipDetail.setBankSlipDetailId(7908);
         TestResult result = getJsonTestResult("/bankSlip/hideBankSlipDetail", bankSlipDetail);
     }
 
@@ -93,7 +118,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void ignoreBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(708);
+        bankSlipDetail.setBankSlipDetailId(7909);
         TestResult result = getJsonTestResult("/bankSlip/ignoreBankSlipDetail", bankSlipDetail);
     }
 
@@ -148,10 +173,10 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        北京(中国银行)
         BankSlip bankSlip = new BankSlip();
 //        bankSlip.setSubCompanyName("北京分公司");
-        bankSlip.setSubCompanyId(9);
+        bankSlip.setSubCompanyId(1);
         bankSlip.setBankType(BankType.BOC_BANK);
-        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20"));
-        bankSlip.setExcelUrl("/group1/M00/00/2C/wKgKyFrN3PaATMKaAARsADBxaDw847.xls");
+        bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2017/02/20"));
+        bankSlip.setExcelUrl("/group1/M00/00/2D/wKgKyFrV5dGAO61-AAA1wFAIG9Y45.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
