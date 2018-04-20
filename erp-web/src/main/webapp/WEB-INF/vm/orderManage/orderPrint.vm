@@ -197,7 +197,7 @@
                             <p style="white-space: nowrap">{{rentalWay}}</p>
                             {{/isRentTypeByMonth}}
                         </td>
-                        <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
+                        <td>￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
                     </tr>
                     {{/listData}}
@@ -252,7 +252,7 @@
                             <p style="white-space: nowrap">{{rentalWay}}</p>
                             {{/isRentTypeByMonth}}
                         </td>
-                        <td class="text-center">￥{{#price}}{{depositAmount}}{{/price}}</td>
+                        <td class="text-center">￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}</td>
                         <td class="text-center">￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
                     </tr>
                     {{/listData}}
@@ -348,7 +348,7 @@
             <tr>
                 <td class="bg-light"><b>数量总计:</b></td><td>{{totalCount}}</td>
                 <td class="bg-light"><b>设备总价值:</b></td><td>￥{{#price}}{{totalEquiumentDepositAmount}}{{/price}}</td>
-                <td class="bg-light"><b>押金:</b></td><td>￥{{#price}}{{totalDepositAmount}}{{/price}} #*设备押金*#</td>
+                <td class="bg-light"><b>押金:</b></td><td>￥{{#price}}{{orderotalDepositAmount}}{{/price}} #*设备押金*#</td>
             </tr>
             <tr>
                 <td class="bg-light"><b>订单总价:</b></td><td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
