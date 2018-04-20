@@ -185,7 +185,7 @@
 						#{item}
 					</foreach>
 				</if>
-				<if test="maps.currentUserGroupLis==null">
+				<if test="maps.currentUserGroupList==null">
 					('-1')
 				</if>
 				)
