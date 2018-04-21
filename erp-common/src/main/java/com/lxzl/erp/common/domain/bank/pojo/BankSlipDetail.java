@@ -3,7 +3,9 @@ package com.lxzl.erp.common.domain.bank.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.bank.AssignGroup;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -13,7 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BankSlipDetail extends BasePO {
 
-	@NotNull(message = ErrorCode.BANK_SLIP_DETAIL_ID_NULL,groups = {IdGroup.class})
+	@NotNull(message = ErrorCode.BANK_SLIP_DETAIL_ID_NULL,groups = {IdGroup.class, AssignGroup.class})
 	private Integer bankSlipDetailId;   //唯一标识
 	private String payerName;   //付款人名称
 	private BigDecimal tradeAmount;   //交易金额
@@ -32,6 +34,11 @@ public class BankSlipDetail extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 	private Integer bankSlipId;   //银行对公流水表id
+	private Integer subCompanyId;  //数据归属分公司ID
+	private Integer isLocalization;  //是否已属地化,0-否，1-是[总公司时有值]
+	private String subCompanyName;  //数据归属分公司名称
+	private Integer localizationSubCompanyId;  //属地化公司id
+	private String localizationSubCompanyName;  //属地化公司名称
 
 	private List<BankSlipClaim> bankSlipClaimList;
 
@@ -39,8 +46,48 @@ public class BankSlipDetail extends BasePO {
 		return bankSlipClaimList;
 	}
 
+	public String getSubCompanyName() {
+		return subCompanyName;
+	}
+
+	public void setSubCompanyName(String subCompanyName) {
+		this.subCompanyName = subCompanyName;
+	}
+
+	public Integer getLocalizationSubCompanyId() {
+		return localizationSubCompanyId;
+	}
+
+	public void setLocalizationSubCompanyId(Integer localizationSubCompanyId) {
+		this.localizationSubCompanyId = localizationSubCompanyId;
+	}
+
+	public String getLocalizationSubCompanyName() {
+		return localizationSubCompanyName;
+	}
+
+	public void setLocalizationSubCompanyName(String localizationSubCompanyName) {
+		this.localizationSubCompanyName = localizationSubCompanyName;
+	}
+
 	public void setBankSlipClaimList(List<BankSlipClaim> bankSlipClaimList) {
 		this.bankSlipClaimList = bankSlipClaimList;
+	}
+
+	public Integer getSubCompanyId() {
+		return subCompanyId;
+	}
+
+	public void setSubCompanyId(Integer subCompanyId) {
+		this.subCompanyId = subCompanyId;
+	}
+
+	public Integer getIsLocalization() {
+		return isLocalization;
+	}
+
+	public void setIsLocalization(Integer isLocalization) {
+		this.isLocalization = isLocalization;
 	}
 
 	public Integer getBankSlipDetailId(){
