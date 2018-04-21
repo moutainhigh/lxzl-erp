@@ -232,6 +232,13 @@ ALTER TABLE erp_bank_slip_detail add `is_localization` int(11) COMMENT '是否�
 ALTER TABLE erp_coupon add `statement_order_id` int(20) COMMENT '结算单ID';
 ALTER TABLE erp_coupon add `statement_order_no` varchar(100) COMMENT '结算单编码';
 ALTER TABLE erp_coupon add `statement_order_detail_id` int(20) COMMENT '结算单详情ID';
+ALTER TABLE erp_customer add `is_risk` int(4) NOT NULL DEFAULT '0' COMMENT '是否授信，0-未授信；1-已授信';
+ALTER TABLE erp_customer add `is_risk` int(4) NOT NULL DEFAULT '0' COMMENT '是否授信，0-未授信；1-已授信';
+
+ALTER TABLE erp_statement_order add `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金';
+ALTER TABLE erp_statement_order add `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金';
+ALTER TABLE erp_statement_order_detail add `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金';
+ALTER TABLE erp_statement_order_detail add `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金';
 
 
 

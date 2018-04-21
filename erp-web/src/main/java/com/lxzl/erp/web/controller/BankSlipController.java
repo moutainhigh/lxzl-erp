@@ -9,10 +9,12 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.bank.AssignGroup;
 import com.lxzl.erp.common.domain.validGroup.bank.ClaimBankSlipDetailGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.se.common.domain.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * @Author: bengbinjie
@@ -105,4 +109,17 @@ public class BankSlipController {
         ServiceResult<String, Integer> serviceResult = bankSlipService.displayBankSlipDetail(bankSlipDetail);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
+
+    @RequestMapping(value = "localizationBankSlipDetail", method = RequestMethod.POST)
+    public Result assignBankSlipDetail(@RequestBody @Validated(AssignGroup.class) BankSlip bankSlip, BindingResult validated) throws Exception {
+        ServiceResult<String, Integer> serviceResult = bankSlipService.localizationBankSlipDetail(bankSlip);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "cancelLocalizationBankSlipDetail", method = RequestMethod.POST)
+    public Result unAssignBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
+        ServiceResult<String, BankSlipDetailDO> serviceResult = bankSlipService.cancelLocalizationBankSlipDetail(bankSlipDetail);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
 }

@@ -7,6 +7,10 @@ import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
+
+import java.util.List;
 
 /**
  * @Author: your name
@@ -101,4 +105,20 @@ public interface BankSlipService {
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
     */
     ServiceResult<String,Integer> displayBankSlipDetail(BankSlipDetail bankSlipDetail);
+    /**
+    * 批量指派银行流水明细
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/16 17:31
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */ 
+    ServiceResult<String,Integer> localizationBankSlipDetail(BankSlip bankSlip);
+    /**
+    * 取消指派银行流水明细
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/16 21:17
+    * @param : bankSlipDetailList
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
+    ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail);
 }
