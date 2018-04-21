@@ -83,8 +83,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/order";
+    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
     // k3历史退货单url
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
