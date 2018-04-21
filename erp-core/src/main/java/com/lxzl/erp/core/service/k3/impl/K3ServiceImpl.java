@@ -616,13 +616,13 @@ public class K3ServiceImpl implements K3Service {
 
                     orderDO.setOrderMaterialDOList(orderMaterialDOList);
 
-                    if (orderService.isCheckRiskManagement(orderDO)) {
+                    /*if (orderService.isCheckRiskManagement(orderDO)) {
                         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
                         if (customerRiskManagementDO == null) {
                             dingDingSupport.dingDingSendMessage(String.format("订单【%s】，风控信息不存在", k3Order.getOrderNo()));
                             continue;
                         }
-                    }
+                    }*/
                     orderService.calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
                     orderService.calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
                     orderMapper.save(orderDO);
@@ -680,13 +680,6 @@ public class K3ServiceImpl implements K3Service {
         }
 
 
-        // 校验K3传过来的订单是否合规，如果合规才存
-        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
-        if (userDO == null) {
-            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
-            return Boolean.FALSE;
-        }
-        k3Order.setOrderSellerId(userDO.getId());
 
         K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
         if (k3MappingSubCompanyDO != null) {
@@ -699,6 +692,18 @@ public class K3ServiceImpl implements K3Service {
         }
         k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
         k3Order.setBuyerCustomerId(customerDO.getId());
+
+
+        // 校验K3传过来的订单是否合规，如果合规才存
+        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
+        if (userDO == null) {
+            userDO = userMapper.findByUserId(customerDO.getOwner());
+            if(userDO == null){
+                dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
+                return Boolean.FALSE;
+            }
+        }
+        k3Order.setOrderSellerId(userDO.getId());
         return Boolean.TRUE;
     }
 
