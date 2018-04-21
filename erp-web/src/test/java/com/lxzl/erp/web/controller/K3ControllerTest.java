@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
@@ -42,7 +43,7 @@ import java.util.List;
  * @author gaochao
  * @date 2018-02-13 9:41
  */
-public class K3ControllerTest extends ERPUnTransactionalTest {
+public class K3ControllerTest extends ERPTransactionalTest {
 
     @Autowired
     private PenaltySupport penaltySupport;
@@ -460,10 +461,11 @@ public class K3ControllerTest extends ERPUnTransactionalTest {
     public void transferOrder() throws Exception {
         K3OrderQueryParam param = new K3OrderQueryParam();
         param.setPageNo(1);
-        param.setPageSize(Integer.MAX_VALUE);
+        param.setPageSize(300);
+        param.setOrderNo("LXSE2017121166");
         param.setCreateStartTime(new SimpleDateFormat("yyyy-MM-dd").parse("2017-10-15"));
         param.setCreateEndTime(new SimpleDateFormat("yyyy-MM-dd").parse("2017-12-15"));
-        param.setSubCompanyNo("08");
+        param.setSubCompanyNo("03");
         TestResult testResult = getJsonTestResult("/k3/transferOrder", param);
         Thread.sleep(1000);
     }
