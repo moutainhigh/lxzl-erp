@@ -363,9 +363,7 @@
 		FROM erp_customer_company ecc
 		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
-			LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		</if>
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
 				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
@@ -475,9 +473,7 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
-			LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		</if>
+		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		ORDER BY ecc.ecc_create_time DESC
 
 	</select>
