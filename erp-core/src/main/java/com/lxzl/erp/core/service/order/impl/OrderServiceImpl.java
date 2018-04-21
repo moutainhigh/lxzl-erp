@@ -2356,7 +2356,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     depositAmount = orderProductDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
                     depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
@@ -2449,7 +2449,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     depositAmount = orderMaterialDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
                     depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {

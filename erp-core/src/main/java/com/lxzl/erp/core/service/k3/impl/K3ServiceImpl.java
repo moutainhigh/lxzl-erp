@@ -83,8 +83,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/order";
+    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
     // k3历史退货单url
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
@@ -616,13 +616,13 @@ public class K3ServiceImpl implements K3Service {
 
                     orderDO.setOrderMaterialDOList(orderMaterialDOList);
 
-                    if (orderService.isCheckRiskManagement(orderDO)) {
+                    /*if (orderService.isCheckRiskManagement(orderDO)) {
                         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
                         if (customerRiskManagementDO == null) {
                             dingDingSupport.dingDingSendMessage(String.format("订单【%s】，风控信息不存在", k3Order.getOrderNo()));
                             continue;
                         }
-                    }
+                    }*/
                     orderService.calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
                     orderService.calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
                     orderMapper.save(orderDO);
@@ -680,13 +680,6 @@ public class K3ServiceImpl implements K3Service {
         }
 
 
-        // 校验K3传过来的订单是否合规，如果合规才存
-        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
-        if (userDO == null) {
-            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
-            return Boolean.FALSE;
-        }
-        k3Order.setOrderSellerId(userDO.getId());
 
         K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
         if (k3MappingSubCompanyDO != null) {
@@ -699,6 +692,18 @@ public class K3ServiceImpl implements K3Service {
         }
         k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
         k3Order.setBuyerCustomerId(customerDO.getId());
+
+
+        // 校验K3传过来的订单是否合规，如果合规才存
+        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
+        if (userDO == null) {
+            userDO = userMapper.findByUserId(customerDO.getOwner());
+            if(userDO == null){
+                dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
+                return Boolean.FALSE;
+            }
+        }
+        k3Order.setOrderSellerId(userDO.getId());
         return Boolean.TRUE;
     }
 
