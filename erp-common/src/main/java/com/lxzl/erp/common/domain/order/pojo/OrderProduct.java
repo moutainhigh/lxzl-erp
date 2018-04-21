@@ -41,6 +41,10 @@ public class OrderProduct extends BasePO {
     private BigDecimal firstNeedPayRentAmount;      // 首付租金金额
     private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
+    // 以下为K3的数据字段
+    private Integer FEntryID;
+    private String productNumber;
+
     public Integer getOrderProductId() {
         return orderProductId;
     }
@@ -265,5 +269,21 @@ public class OrderProduct extends BasePO {
 
     public void setRentingProductCount(Integer rentingProductCount) {
         this.rentingProductCount = rentingProductCount;
+    }
+
+    public Integer getFEntryID() {
+        return FEntryID;
+    }
+
+    public void setFEntryID(Integer FEntryID) {
+        this.FEntryID = FEntryID;
+    }
+
+    public String getProductNumber() {
+        return productNumber;
+    }
+
+    public void setProductNumber(String productNumber) {
+        this.productNumber = productNumber;
     }
 }

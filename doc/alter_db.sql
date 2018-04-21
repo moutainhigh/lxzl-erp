@@ -30,6 +30,12 @@ ALTER TABLE erp_statement_order_detail add `statement_coupon_amount` decimal(15,
 ALTER TABLE erp_k3_return_order add `delivery_sub_company_id` int(20) NOT NULL COMMENT '发货分公司';
 ALTER TABLE erp_order add `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]';
 
+ALTER TABLE erp_order_product add `FEntry_id` int(11) NOT NULL DEFAULT 0 COMMENT '行数';
+ALTER TABLE erp_order_product add `product_number` varchar(64) COMMENT '商品编码';
+
+ALTER TABLE erp_order_material add `FEntry_id` int(11) NOT NULL DEFAULT 0 COMMENT '行数';
+ALTER TABLE erp_order_material add `product_number` varchar(64) COMMENT '商品编码';
+
 DROP TABLE if exists `erp_switch`;
 CREATE TABLE `erp_switch` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',

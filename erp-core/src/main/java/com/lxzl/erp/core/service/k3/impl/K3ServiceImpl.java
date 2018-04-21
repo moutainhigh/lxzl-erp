@@ -83,8 +83,8 @@ public class K3ServiceImpl implements K3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(K3ServiceImpl.class);
 
-    private String k3OrderUrl = "http://103.239.207.170:9090/order/list";
-    private String k3OrderDetailUrl = "http://103.239.207.170:9090/order/order";
+    private String k3OrderUrl = "http://103.239.207.170:8888/order/list";
+    private String k3OrderDetailUrl = "http://103.239.207.170:8888/order/order";
     // k3历史退货单url
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
@@ -571,6 +571,8 @@ public class K3ServiceImpl implements K3Service {
                             orderProductDO.setRentingProductCount(k3OrderProduct.getRentingProductCount());
                             orderProductDO.setDepositCycle(order.getDepositCycle());
                             orderProductDO.setPaymentCycle(order.getPaymentCycle());
+                            orderProductDO.setProductNumber(k3OrderProduct.getProductNumber());
+                            orderProductDO.setFEntryID(k3OrderProduct.getFEntryID());
                             orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                             orderProductDO.setCreateTime(orderDO.getRentStartTime());
                             orderProductDO.setCreateUser(orderDO.getOrderSellerId().toString());
@@ -601,6 +603,8 @@ public class K3ServiceImpl implements K3Service {
                             orderMaterialDO.setOrderId(orderDO.getId());
                             orderMaterialDO.setDepositCycle(order.getDepositCycle());
                             orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
+                            orderMaterialDO.setProductNumber(k3OrderMaterial.getFNumber());
+                            orderMaterialDO.setFEntryID(k3OrderMaterial.getFEntryID());
                             orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                             orderMaterialDO.setCreateTime(orderDO.getRentStartTime());
                             orderMaterialDO.setCreateUser(orderDO.getOrderSellerId().toString());
@@ -688,7 +692,7 @@ public class K3ServiceImpl implements K3Service {
         if (k3MappingSubCompanyDO != null) {
             k3Order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getK3SubCompanyCode()));
         }
-        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName());
+        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName().trim());
         if (customerDO == null) {
             dingDingSupport.dingDingSendMessage(String.format("订单【%s】，客户不存在【%s】", k3Order.getOrderNo(), k3Order.getBuyerCustomerName()));
             return Boolean.FALSE;
