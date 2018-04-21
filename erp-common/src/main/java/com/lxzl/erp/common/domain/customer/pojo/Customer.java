@@ -49,6 +49,7 @@ public class Customer extends BasePO {
 	private Integer deliveryMode; //发货方式，1快递，2自提,3凌雄配送'
 	private Integer ownerSubCompanyId; //业务员所属分公司ID
 	private String ownerSubCompanyName; //业务员所属分公司名称
+	private Integer isRisk;//'是否授信，0-未授信；1-已授信'
 
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
@@ -380,4 +381,11 @@ public class Customer extends BasePO {
 		this.ownerSubCompanyName = ownerSubCompanyName;
 	}
 
+	public Integer getIsRisk() {
+		return isRisk;
+	}
+
+	public void setIsRisk(Integer isRisk) {
+		this.isRisk = isRisk;
+	}
 }

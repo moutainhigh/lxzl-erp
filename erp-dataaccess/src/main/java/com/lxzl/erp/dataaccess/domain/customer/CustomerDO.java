@@ -30,6 +30,7 @@ public class CustomerDO  extends BaseDO {
 	private BigDecimal laterApplyAmount;		// 后期申请额度
 	private String passReason; //通过原因
 	private String failReason; //拒绝原因
+	private Integer isRisk;//'是否授信，0-未授信；1-已授信'
 
 	@Transient
 	private CustomerCompanyDO customerCompanyDO;
@@ -262,5 +263,13 @@ public class CustomerDO  extends BaseDO {
 
 	public void setOwnerSubCompanyName(String ownerSubCompanyName) {
 		this.ownerSubCompanyName = ownerSubCompanyName;
+	}
+
+	public Integer getIsRisk() {
+		return isRisk;
+	}
+
+	public void setIsRisk(Integer isRisk) {
+		this.isRisk = isRisk;
 	}
 }
