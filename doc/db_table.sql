@@ -2040,6 +2040,8 @@ CREATE TABLE `erp_statement_order` (
   `statement_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单逾期金额，结算单明细逾期总和',
   `statement_coupon_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单优惠券优惠总和',
   `statement_overdue_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的逾期金额',
+  `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金',
+  `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金',
   `statement_correct_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单冲正金额',
   `statement_status` int(11) NOT NULL DEFAULT '0' COMMENT '结算状态，0未结算，1已结算',
   `statement_start_time` date NOT NULL COMMENT '结算开始时间，结算单明细最早的一个',
@@ -2100,6 +2102,8 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
   `statement_coupon_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
+  `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金',
+  `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金',
   `statement_detail_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单逾期金额',
   `statement_detail_overdue_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单已支付逾期金额',
   `statement_detail_overdue_days` int(20) COMMENT '逾期天数',

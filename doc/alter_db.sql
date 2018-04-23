@@ -30,6 +30,12 @@ ALTER TABLE erp_statement_order_detail add `statement_coupon_amount` decimal(15,
 ALTER TABLE erp_k3_return_order add `delivery_sub_company_id` int(20) NOT NULL COMMENT '发货分公司';
 ALTER TABLE erp_order add `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]';
 
+ALTER TABLE erp_order_product add `FEntry_id` int(11) NOT NULL DEFAULT 0 COMMENT '行数';
+ALTER TABLE erp_order_product add `product_number` varchar(64) COMMENT '商品编码';
+
+ALTER TABLE erp_order_material add `FEntry_id` int(11) NOT NULL DEFAULT 0 COMMENT '行数';
+ALTER TABLE erp_order_material add `product_number` varchar(64) COMMENT '商品编码';
+
 DROP TABLE if exists `erp_switch`;
 CREATE TABLE `erp_switch` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -233,7 +239,12 @@ ALTER TABLE erp_coupon add `statement_order_id` int(20) COMMENT '结算单ID';
 ALTER TABLE erp_coupon add `statement_order_no` varchar(100) COMMENT '结算单编码';
 ALTER TABLE erp_coupon add `statement_order_detail_id` int(20) COMMENT '结算单详情ID';
 ALTER TABLE erp_customer add `is_risk` int(4) NOT NULL DEFAULT '0' COMMENT '是否授信，0-未授信；1-已授信';
+ALTER TABLE erp_customer add `is_risk` int(4) NOT NULL DEFAULT '0' COMMENT '是否授信，0-未授信；1-已授信';
 
+ALTER TABLE erp_statement_order add `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金';
+ALTER TABLE erp_statement_order add `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金';
+ALTER TABLE erp_statement_order_detail add `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金';
+ALTER TABLE erp_statement_order_detail add `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金';
 
 
 
