@@ -3230,8 +3230,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, String> setIsRisk() {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        List<Integer> idList = customerMapper.getIsRiskId();
-        customerMapper.setIsRisk(idList);
+        customerMapper.setIsRisk();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

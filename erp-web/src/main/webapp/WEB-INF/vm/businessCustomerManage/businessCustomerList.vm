@@ -156,7 +156,7 @@
 ##                                        <div class="mw200">{{auditReason}}</div>
 ##                                    </td>
                                     <td>
-                                        <span class="{{isRiskClass}}">{{isRisk}}</span>
+                                        <span class="{{isRiskClass}}">{{#boolText}}{{isRisk}}{{/boolText}}</span>
                                     </td>
                                     {{#hasRowActionButtons}}
                                     <td class="text-right">

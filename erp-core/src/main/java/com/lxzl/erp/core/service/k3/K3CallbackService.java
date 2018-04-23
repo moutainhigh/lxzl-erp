@@ -18,7 +18,7 @@ public interface K3CallbackService extends BaseService {
 
     ServiceResult<String, String> callbackDelivery(DeliveryOrder deliveryOrder);
 
-    ServiceResult<String, String> callbackCancelOrder(String orderNo);
+    ServiceResult<String, String> callbackCancelOrder(String orderNo,Integer cancelOrderReasonType);
 
     ServiceResult<String,String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder);
 }

@@ -363,9 +363,6 @@
 		FROM erp_customer_company ecc
 		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
-			LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		</if>
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
 				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
@@ -408,13 +405,9 @@
 			</if>
 			<include refid="permission_sql.customer_company_control"/>
 		</where>
-
 	</select>
 	<select id="findCustomerCompanyByParams" resultMap="CustomerDO" parameterType="map">
 		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>
-		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
-			,<include refid="risk_column_List"/>
-		</if>
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
@@ -478,11 +471,7 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk !=null">
-			LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		</if>
 		ORDER BY ecc.ecc_create_time DESC
-
 	</select>
 
 
@@ -491,7 +480,6 @@
 		FROM erp_customer ec
 		LEFT JOIN erp_customer_person ecp ON ec.id = ecp.customer_id AND ecp.data_status=1
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		<where>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
 				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
@@ -535,15 +523,15 @@
 			<if test="maps.isQueryAll == null">
 				and ec.data_status = 1 AND ec.customer_type = 2
 			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
-				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
+				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
 	</select>
 
 	<select id="findCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>,<include refid="risk_column_List"/>
+		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>
 		,eap.province_name AS provinceName
 		,eac.city_name AS cityName
 		,ead.district_name AS districtName
@@ -557,7 +545,6 @@
 		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
 		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
 		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
 		<where>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
 				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
@@ -601,29 +588,19 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerSubCompanyId != null">
 				AND ec.owner_sub_company_id = #{maps.customerPersonQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
 			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
-				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
+				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
-	<update id="setIsRisk" parameterType="java.util.ArrayList">
-		UPDATE erp_customer
-		SET
-		<trim>
-			is_risk =
-			<foreach item="id" collection="idList"  index="index" separator=" " open="case id" close="end">
-				when #{id} then 1
-			</foreach>
-		</trim>
-		WHERE id in
-		<foreach collection="idList" index="index" item="id" separator="," open="(" close=")">
-			#{id,jdbcType=INTEGER}
-		</foreach>
+	<update id="setIsRisk">
+		UPDATE erp_customer ec
+		INNER JOIN erp_customer_risk_management ecrm
+		ON ecrm.customer_id = ec.id
+		SET ec.is_risk = 1;
 	</update>
-	<select id="getIsRiskId" resultType="Integer" >
-		select ec.id FROM erp_customer ec LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-	</select>
+
 </mapper>

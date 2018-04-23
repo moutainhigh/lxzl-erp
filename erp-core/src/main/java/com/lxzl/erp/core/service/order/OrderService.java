@@ -62,7 +62,7 @@ public interface OrderService extends VerifyReceiver {
      * @param orderNo 订单号码
      * @return 是否成功，订单号码
      */
-    ServiceResult<String, String> cancelOrder(String orderNo);
+    ServiceResult<String, String> cancelOrder(String orderNo,Integer cancelOrderReasonType);
 
     /**
      * 根据参数查询订单
@@ -164,7 +164,7 @@ public interface OrderService extends VerifyReceiver {
     * @param : orderNo
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
     */
-    ServiceResult<String, String> forceCancelOrder(String orderNo);
+    ServiceResult<String, String> forceCancelOrder(String orderNo,Integer cancelOrderReasonType);
 
     /**
      * 订单计算首付金额
