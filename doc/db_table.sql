@@ -1210,6 +1210,7 @@ CREATE TABLE `erp_order` (
   `order_sub_company_id` int(20) DEFAULT NULL COMMENT '订单所属分公司',
   `delivery_sub_company_id` int(20) NOT NULL COMMENT '订单发货分公司',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,22-部分归还，24-全部归还,28-取消,32-结束',
+  `cancel_order_reason_type` int(11) COMMENT '取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符',
   `first_need_pay_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '首次需要交金额',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款,3逾期中',
   `is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是',
@@ -2102,8 +2103,8 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
   `statement_coupon_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
-  `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金',
-  `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金',
+  `statement_detail_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金',
+  `statement_detail_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金',
   `statement_detail_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单逾期金额',
   `statement_detail_overdue_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单已支付逾期金额',
   `statement_detail_overdue_days` int(20) COMMENT '逾期天数',
