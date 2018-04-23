@@ -201,7 +201,7 @@ public class StatementServiceImpl implements StatementService {
                 }
                 orderDO.setBuyerCustomerId(customerDO.getId());
                 orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
-            }else{
+            } else {
 
                 result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                 return result;
@@ -1379,13 +1379,13 @@ public class StatementServiceImpl implements StatementService {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                                 //非即租即还设备，押金不退
-                                ProductDO product= productMapper.findById(orderProductDO.getProductId());
-                                if(product==null){
+                                ProductDO product = productMapper.findById(orderProductDO.getProductId());
+                                if (product == null) {
                                     result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
                                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                                     return result;
                                 }
-                                if(product.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+                                if (product.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES) continue;
 
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
@@ -1486,7 +1486,7 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.")&& !k3ReturnOrderDetailDO.getProductNo().startsWith("30."))  || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.") && !k3ReturnOrderDetailDO.getProductNo().startsWith("30.")) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
@@ -1505,13 +1505,13 @@ public class StatementServiceImpl implements StatementService {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                                 //非即租即还设备，押金不退
-                                MaterialDO material= materialMapper.findById(orderMaterialDO.getMaterialId());
-                                if(material==null){
+                                MaterialDO material = materialMapper.findById(orderMaterialDO.getMaterialId());
+                                if (material == null) {
                                     result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                                     return result;
                                 }
-                                if(material.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+                                if (material.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES) continue;
 
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
@@ -2710,6 +2710,9 @@ public class StatementServiceImpl implements StatementService {
             return statementMonthCount;
         } else {
             // 按月租的情况
+            if (paymentCycle == null || rentTimeLength == null) {
+                return null;
+            }
             if (paymentCycle == null || paymentCycle >= rentTimeLength || paymentCycle == 0) {
                 return statementMonthCount;
             }
@@ -2791,6 +2794,7 @@ public class StatementServiceImpl implements StatementService {
             }
             firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, unitAmount, itemCount);
         }
+        firstPhaseAmount = BigDecimalUtil.round(firstPhaseAmount, 0);
         // 先不考虑保险
         /*BigDecimal insuranceTotalAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(insuranceAmount, new BigDecimal(itemCount)));
         firstPhaseAmount = BigDecimalUtil.add(firstPhaseAmount, insuranceTotalAmount);*/
