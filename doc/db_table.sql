@@ -1210,6 +1210,7 @@ CREATE TABLE `erp_order` (
   `order_sub_company_id` int(20) DEFAULT NULL COMMENT '订单所属分公司',
   `delivery_sub_company_id` int(20) NOT NULL COMMENT '订单发货分公司',
   `order_status` int(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-待发货,12-处理中,16-已发货,20-确认收货,22-部分归还，24-全部归还,28-取消,32-结束',
+  `cancel_order_reason_type` int(11) COMMENT '取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符',
   `first_need_pay_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '首次需要交金额',
   `pay_status` int(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款,3逾期中',
   `is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是',
@@ -2102,8 +2103,8 @@ CREATE TABLE `erp_statement_order_detail` (
   `statement_detail_rent_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '租金已付金额',
   `statement_detail_paid_time` datetime DEFAULT NULL COMMENT '结算单支付时间',
   `statement_coupon_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单优惠券优惠总和';
-  `statement_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金',
-  `statement_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金',
+  `statement_detail_penalty_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单违约金',
+  `statement_detail_penalty_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '已结算的结算单违约金',
   `statement_detail_overdue_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单逾期金额',
   `statement_detail_overdue_paid_amount` decimal(15,2) DEFAULT 0 COMMENT '结算单已支付逾期金额',
   `statement_detail_overdue_days` int(20) COMMENT '逾期天数',
@@ -3274,62 +3275,192 @@ CREATE TABLE `erp_switch` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='管理功能开关表';
 
-DROP TABLE if exists `erp_version_history`
+DROP TABLE IF EXISTS `erp_version_history`;
 CREATE TABLE `erp_version_history` (
-  `id` int(20) NOT NULL ATUO_INCREMENT COMMENT '唯一标识',
-  `versoin_no` varchar(100) NOT NULL COMMENT '版本编号',
-  `versoin_summary` varchar(120) DEFAULT "" COMMENT '版本摘要',
-  `online_time` datetime COMMENT '实际上线时间',
-  `expect_online_start_time` datetime COMMENT '预计上线开始时间',
-  `expect_online_end_time` datetime COMMENT '预计上线结束时间',
-  `online_status` int(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
-  `is_use` int(11) NOT NULL DEFAULT '0' COMMENT '是否为当前使用的版本，1是，0否',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `versoin_no` VARCHAR(100) NOT NULL COMMENT '版本编号',
+  `versoin_summary` VARCHAR(120) DEFAULT "" COMMENT '版本摘要',
+  `online_time` DATETIME COMMENT '实际上线时间',
+  `expect_online_start_time` DATETIME COMMENT '预计上线开始时间',
+  `expect_online_end_time` DATETIME COMMENT '预计上线结束时间',
+  `online_status` INT(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
+  `is_use` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为当前使用的版本，1是，0否',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本更改历史表';
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本历史表';
 
-DROP TABLE if exists `erp_version_history_detail`
+
+
+DROP TABLE IF EXISTS `erp_version_history_detail`;
 CREATE TABLE `erp_version_history_detail` (
-  `id` int(20) NOT NULL ATUO_INCREMENT COMMENT '唯一标识',
-  `versoin_history_id` int(20) NOT NULL COMMENT '版本ID',
-  `versoin_history_no` varchar(100) NOT NULL COMMENT '版本编号',
-  `versoin_describe` varchar(150) NOT NULL COMMENT '变更描述',
-  `detail_status` int(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `versoin_history_id` INT(20) NOT NULL COMMENT '版本历史表',
+  `versoin_history_no` VARCHAR(100) NOT NULL COMMENT '版本历史编号',
+  `versoin_describe` VARCHAR(150) NOT NULL COMMENT '变更描述',
+  `detail_status` INT(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   INDEX index_versoin_history_id ( `versoin_history_id` ),
   INDEX index_versoin_history_no ( `versoin_history_no` )
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本更改历史明细表';
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本历史明细表';
 
-DROP TABLE if exists `erp_version_history_user`
+DROP TABLE IF EXISTS `erp_version_history_user`;
 CREATE TABLE `erp_version_history_user` (
-  `id` int(20) NOT NULL ATUO_INCREMENT COMMENT '唯一标识',
-  `user_id` int(20) NOT NULL COMMENT '用户ID',
-  `versoin_history_id` int(20) NOT NULL COMMENT '版本ID',
-  `versoin_history_no` varchar(100) NOT NULL COMMENT '版本编号',
-  `before_online_is_send` int(20) NOT NULL COMMENT '上线前是否推送，0-否，1-是',
-  `after_online_is_send` int(20) NOT NULL COMMENT '上线后是否推送，0-否，1-是',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `user_id` INT(20) NOT NULL COMMENT '用户ID',
+  `versoin_history_id` INT(20) NOT NULL COMMENT '版本历史ID',
+  `versoin_history_no` VARCHAR(100) NOT NULL COMMENT '版本历史编号',
+  `before_online_send` INT(20) NOT NULL COMMENT '上线前是否推送，0-否，1-是',
+  `after_online_send` INT(20) NOT NULL COMMENT '上线后是否推送，0-否，1-是',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   INDEX index_user_id ( `user_id` ),
   INDEX index_versoin_history_id ( `versoin_history_id` ),
   INDEX index_versoin_history_no ( `versoin_history_no` )
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本变更推送记录表';
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本用户推送记录表';
+
+DROP TABLE IF EXISTS `erp_relet_order`;
+CREATE TABLE `erp_relet_order` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
+  `order_id` INT(20) NOT NULL COMMENT '订单ID',
+  `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
+  `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
+  `buyer_customer_no` INT(20) NOT NULL COMMENT '购买人编号',
+  `buyer_customer_name` VARCHAR(64) NOT NULL COMMENT '客户名称',
+  `order_sub_company_id` INT(20) DEFAULT NULL COMMENT '订单所属分公司',
+  `delivery_sub_company_id` INT(20) NOT NULL COMMENT '订单发货分公司',
+   `rent_type` INT(20) NOT NULL COMMENT '租赁类型',
+   `rent_time_length` INT(20) NOT NULL COMMENT '租赁时长',
+  `rent_length_type` INT(20) NOT NULL COMMENT '租赁时长类型',
+  `rent_start_time` DATETIME NOT NULL COMMENT '起租时间',
+  `total_product_count` INT(11) DEFAULT 0 COMMENT '商品总数',
+  `total_product_amount` DECIMAL(15,5) DEFAULT 0 COMMENT '商品总价',
+  `total_material_count` INT(11) DEFAULT 0 COMMENT '配件总数',
+  `total_material_amount` DECIMAL(15,5) DEFAULT 0 COMMENT '配件总价',
+  `total_order_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '订单总价，实际支付价格，商品金额+配件金额-优惠(无运费，区别与订单)',
+  `total_paid_order_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '已经支付金额',
+  `order_seller_id` INT(20) NOT NULL COMMENT '订单销售员',
+  `order_union_seller_id` INT(20) COMMENT '订单联合销售员',
+  `total_discount_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
+  `relet_order_status` INT(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-续租中,12-部分归还,16-全部归还,20-取消,24-结束',
+  `pay_status` INT(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款,3逾期中',
+  `pay_time` DATETIME DEFAULT NULL COMMENT '支付时间',
+  `expect_return_time` DATETIME DEFAULT NULL COMMENT '预计归还时间',
+  `actual_return_time` DATETIME DEFAULT NULL COMMENT '实际归还时间，最后一件设备归还的时间',
+  `high_tax_rate` INT(11) NOT NULL DEFAULT 0 COMMENT '17%税率',
+  `low_tax_rate` INT(11) NOT NULL DEFAULT 0 COMMENT '6%税率',
+  `tax_rate` DOUBLE NOT NULL DEFAULT 0 COMMENT '税率',
+  `statement_date` INT(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定',
+  `buyer_remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
+  `product_summary` VARCHAR(500)  CHARACTER SET utf8 DEFAULT NULL COMMENT '商品摘要',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `owner` INT(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_relet_order_no` (`relet_order_no`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_buyer_customer_id ( `buyer_customer_id` ),
+  INDEX index_buyer_customer_no ( `buyer_customer_no` ),
+  INDEX index_order_sub_company_id ( `order_sub_company_id` ),
+  INDEX index_delivery_sub_company_id ( `delivery_sub_company_id` ),
+  INDEX index_order_seller_id ( `order_seller_id` ),
+  INDEX index_order_union_seller_id ( `order_union_seller_id` )
+) ENGINE=INNODB AUTO_INCREMENT=3000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单表';
+
+
+DROP TABLE IF EXISTS `erp_relet_order_product`;
+CREATE TABLE `erp_relet_order_product` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `relet_order_id` INT(20) NOT NULL COMMENT '续租订单ID',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
+  `order_id` INT(20) NOT NULL COMMENT '订单ID',
+  `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
+  `order_product_id` INT(20) NOT NULL COMMENT '订单商品项ID',
+  `product_id` INT(20) COMMENT '商品ID',
+  `product_name` VARCHAR(100) COLLATE utf8_bin COMMENT '商品名称',
+  `product_sku_id` INT(20) COMMENT '商品SKU ID',
+  `product_sku_name` VARCHAR(100) COLLATE utf8_bin COMMENT '商品SKU名称',
+  `product_count` INT(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
+  `product_unit_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `product_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '商品价格',
+  `product_sku_snapshot` TEXT COMMENT '商品冗余信息，防止商品修改留存快照',
+  `payment_cycle` INT(11) NOT NULL DEFAULT 0 COMMENT '付款期数',
+  `pay_mode` INT(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
+  `is_new_product` INT(11) NOT NULL DEFAULT 0 COMMENT '是否是全新机，1是0否',
+  `renting_product_count` INT(11) NOT NULL DEFAULT 0 COMMENT '在租商品总数',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_relet_order_id ( `relet_order_id` ),
+  INDEX index_relet_order_no ( `relet_order_no` ),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_order_product_id ( `order_product_id` ),
+  INDEX index_product_id ( `product_id` ),
+  INDEX index_product_sku_id ( `product_sku_id` )
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单商品项表';
+
+
+DROP TABLE IF EXISTS `erp_relet_order_material`;
+CREATE TABLE `erp_relet_order_material` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `relet_order_id` INT(20) NOT NULL COMMENT '续租订单ID',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
+  `order_id` INT(20) NOT NULL COMMENT '订单ID',
+  `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
+  `order_material_id` INT(20) NOT NULL COMMENT '订单配件项ID',
+  `material_id` INT(20) COMMENT '配件ID',
+  `material_name` VARCHAR(100) COLLATE utf8_bin COMMENT '配件名称',
+  `material_count` INT(11) NOT NULL DEFAULT '0' COMMENT '配件总数',
+  `material_unit_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '配件单价',
+  `material_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '配件价格',
+  `material_snapshot` TEXT COMMENT '配件冗余信息，防止商品修改留存快照',
+  `payment_cycle` INT(11) NOT NULL DEFAULT 0 COMMENT '付款期数',
+  `pay_mode` INT(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
+  `is_new_material` INT(11) NOT NULL DEFAULT 0 COMMENT '是否是全新机，1是0否',
+  `renting_material_count` INT(11) NOT NULL DEFAULT 0 COMMENT '在租配件总数',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_relet_order_id ( `relet_order_id` ),
+  INDEX index_relet_order_no ( `relet_order_no` ),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_order_material_id ( `order_material_id` ),
+  INDEX index_material_id ( `material_id` )
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
+
+
+
 
 
 
