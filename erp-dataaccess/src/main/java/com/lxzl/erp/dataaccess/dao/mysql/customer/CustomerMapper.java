@@ -33,7 +33,6 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 
 	CustomerDO findCustomerPersonByNo(@Param("customerNo") String customerNo);
 
-    void setIsRisk(@Param("idList") List<Integer> idList);
+    void setIsRisk();
 
-	List<Integer> getIsRiskId();
 }
