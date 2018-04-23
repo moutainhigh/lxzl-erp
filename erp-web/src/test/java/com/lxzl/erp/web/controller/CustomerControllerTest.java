@@ -431,7 +431,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
 //        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
-        customerCompanyQueryParam.setCompanyName("测试八卦三号");
+//          customerCompanyQueryParam.setCompanyName("广东尚云信息技术有限公司");
+          customerCompanyQueryParam.setIsRisk(1);
 //        customerCompanyQueryParam.setProductPurpose("测试");
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
@@ -447,7 +448,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerPersonQueryParam.setPageSize(5);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
-        customerPersonQueryParam.setOwnerSubCompanyId(2);
+//        customerPersonQueryParam.setOwnerSubCompanyId(2);
+        customerPersonQueryParam.setIsRisk(1);
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
     }
 
@@ -796,6 +798,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customerReturnVisitQueryParam.setCustomerNo("LXCC-1000-20180330-00827");
 
         TestResult testResult = getJsonTestResult("/customer/pageCustomerReturnVisit",customerReturnVisitQueryParam);
+    }
+    @Test
+    public void setIsRisk() throws Exception {
+
+        TestResult testResult = getJsonTestResult("/customer/setIsRisk",null);
     }
 
 

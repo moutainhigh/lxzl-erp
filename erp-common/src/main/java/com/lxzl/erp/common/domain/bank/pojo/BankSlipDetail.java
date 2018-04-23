@@ -37,7 +37,6 @@ public class BankSlipDetail extends BasePO {
 	private Integer subCompanyId;  //数据归属分公司ID
 	private Integer isLocalization;  //是否已属地化,0-否，1-是[总公司时有值]
 	private String subCompanyName;  //数据归属分公司名称
-	@NotNull(message = ErrorCode.SUB_COMPANY_ID_NOT_NULL,groups = {AssignGroup.class})
 	private Integer localizationSubCompanyId;  //属地化公司id
 	private String localizationSubCompanyName;  //属地化公司名称
 
