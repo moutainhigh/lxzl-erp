@@ -15,6 +15,7 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="dingding_dept_id" jdbcType="VARCHAR" property="dingdingDeptId" />
 		<collection property="roleDOList" resultMap="RoleDO"/>
 		<collection property="userDOList" resultMap="UserDO"/>
 	</resultMap>
@@ -54,7 +55,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user
+		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user,dingding_dept_id
 	</sql>
 
 	<sql id="user_column_List">
@@ -202,6 +203,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="dingdingDeptId != null">
+				dingding_dept_id = #{dingdingDeptId,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>

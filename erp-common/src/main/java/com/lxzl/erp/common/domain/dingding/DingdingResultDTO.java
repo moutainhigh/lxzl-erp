@@ -27,7 +27,7 @@ public class DingdingResultDTO {
         this.resultMap = resultMap;
     }
 
-    public Boolean getSuccess() {
+    public Boolean isSuccess() {
         return success;
     }
 

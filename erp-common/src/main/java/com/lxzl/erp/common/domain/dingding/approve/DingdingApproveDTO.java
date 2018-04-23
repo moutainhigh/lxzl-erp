@@ -1,5 +1,10 @@
 package com.lxzl.erp.common.domain.dingding.approve;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.util.CollectionUtil;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,15 +15,20 @@ import java.util.Set;
  * @author daiqi
  * @create 2018-04-20 10:58
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DingdingApproveDTO {
     /**
      * 审批人钉钉用户id列表
      */
-    private Set<String> approvers;
+    private Set<String> approverList;
     /**
      * 抄送人钉钉用户id列表
      */
-    private Set<String> ccList;
+    private Set<String> ccUserIdsList;
+    /**
+     * 抄送时间---START,FINISH,START_FINISH
+     */
+    private String ccPosition;
     /**
      * 发起人部门id---erp部门id
      */
@@ -26,7 +36,7 @@ public class DingdingApproveDTO {
     /**
      * 审批流表单参数
      */
-    private List<Map<String, Object>> formComponentValue;
+    private List<DingdingFormComponentValueDTO> formComponentValueList;
     /**
      * 审批实例发起人的钉钉用户id
      */
@@ -36,36 +46,52 @@ public class DingdingApproveDTO {
      */
     private String processCode;
 
-    public Set<String> getApprovers() {
-        return approvers;
+    /**
+     * 审批回调url
+     */
+    private String callbackUrl;
+
+    @JSONField(serialize = false)
+    public Set<String> getApproverList() {
+        return approverList;
     }
 
-    public void setApprovers(Set<String> approvers) {
-        this.approvers = approvers;
+    public void setApproverList(Set<String> approverList) {
+        this.approverList = approverList;
     }
 
-    public Set<String> getCcList() {
-        return ccList;
+    @JSONField(serialize = false)
+    public Set<String> getCcUserIdsList() {
+        return ccUserIdsList;
     }
 
-    public void setCcList(Set<String> ccList) {
-        this.ccList = ccList;
+    public void setCcUserIdsList(Set<String> ccUserIdsList) {
+        this.ccUserIdsList = ccUserIdsList;
     }
 
     public String getDeptId() {
         return deptId;
     }
 
+    public String getCcPosition() {
+        return ccPosition;
+    }
+
+    public void setCcPosition(String ccPosition) {
+        this.ccPosition = ccPosition;
+    }
+
     public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 
-    public List<Map<String, Object>> getFormComponentValue() {
-        return formComponentValue;
+    @JSONField(serialize = false)
+    public List<DingdingFormComponentValueDTO> getFormComponentValueList() {
+        return formComponentValueList;
     }
 
-    public void setFormComponentValue(List<Map<String, Object>> formComponentValue) {
-        this.formComponentValue = formComponentValue;
+    public void setFormComponentValueList(List<DingdingFormComponentValueDTO> formComponentValueList) {
+        this.formComponentValueList = formComponentValueList;
     }
 
     public String getOriginatorUserId() {
@@ -84,5 +110,48 @@ public class DingdingApproveDTO {
         this.processCode = processCode;
     }
 
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
 
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
+    }
+
+    public String getFormComponentValues() {
+        if (CollectionUtil.isEmpty(formComponentValueList)) {
+            return null;
+        }
+        return JSONArray.toJSONString(formComponentValueList);
+    }
+
+    /**
+     * 获取审批人userid列表(逗号分割)
+     */
+    public String getApprovers() {
+        return getCommaStr(approverList);
+    }
+
+    /**
+     * 抄送人userid列表(逗号分割)
+     */
+    public String getCcList() {
+        return getCommaStr(ccUserIdsList);
+    }
+
+    private String getCommaStr(Set<String> list) {
+        if (CollectionUtil.isEmpty(list)) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (String value : list) {
+            sb.append(value);
+            if (i < list.size() - 1) {
+                sb.append(",");
+            }
+            i++;
+        }
+        return sb.toString();
+    }
 }

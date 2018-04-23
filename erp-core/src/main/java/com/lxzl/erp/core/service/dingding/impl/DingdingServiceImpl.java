@@ -6,6 +6,8 @@ import com.lxzl.erp.common.domain.DingDingConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.DingdingResultDTO;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
+import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
+import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveDTO;
 import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -90,8 +92,25 @@ public class DingdingServiceImpl implements DingdingService {
     }
 
     @Override
-    public ServiceResult<String, Object> applyApprovingWorkflow() {
-        return null;
+    public ServiceResult<String, Object> applyApprovingWorkflow(DingdingApproveDTO dingdingApproveDTO) {
+        ServiceResult<String, Object> serviceResult = new ServiceResult<>();
+        DingdingResultDTO dingdingResultDTO = doApplyApprovingWorkflowToDingdingGateway(dingdingApproveDTO);
+        if (!dingdingResultDTO.isSuccess()) {
+            logger.error("通过钉钉网关发起审批实例失败：" + JSONObject.toJSONString(dingdingResultDTO));
+            serviceResult.setResult(dingdingResultDTO.getResultMap());
+            serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            return serviceResult;
+        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
+        logger.info("工作流回调接口数据是：" + JSONObject.toJSONString(dingdingApproveCallBackDTO));
+        ServiceResult<String, Object> serviceResult = new ServiceResult<>();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     @Override
@@ -112,7 +131,6 @@ public class DingdingServiceImpl implements DingdingService {
         logger.info("更新钉钉id的条数为：" + count);
         List<DingdingUserDTO> notMatchUsers = getNotMatchUsers(dingdingUserDTOS, usersFromDataBase);
         logger.info("没有匹配上的钉钉用户为：" + JSONObject.toJSONString(notMatchUsers));
-        // TODO doImportDingDingUsers执行导入用户数据
         result.setResult(notMatchUsers);
         return result;
     }
@@ -173,7 +191,7 @@ public class DingdingServiceImpl implements DingdingService {
     private List<DingdingUserDTO> getUsersFromDingdingGateway() {
         String respContent = doGetUsersFromDingdingGateway();
         DingdingResultDTO dingdingResultDTO = JSONObject.parseObject(respContent, DingdingResultDTO.class);
-        if (dingdingResultDTO == null || !dingdingResultDTO.getSuccess()) {
+        if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
             logger.info("从钉钉网关获取用户信息失败：" + JSONObject.toJSONString(dingdingResultDTO));
             return null;
         }
@@ -200,5 +218,48 @@ public class DingdingServiceImpl implements DingdingService {
             logger.error("importDingDingUsers message error,{}", e);
         }
         return respContent;
+    }
+
+    /**  
+     * <p>
+     * 发起审批实例到钉钉网关
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     * </pre>
+     * @author daiqi  
+     * @date 2018/4/23 9:19
+     * @param  dingdingApproveDTO : 钉钉发起审批实例数据传输对象
+      
+     * @return com.lxzl.erp.common.domain.dingding.DingdingResultDTO  
+     */  
+    private DingdingResultDTO doApplyApprovingWorkflowToDingdingGateway(DingdingApproveDTO dingdingApproveDTO) {
+        DingdingResultDTO dingdingResultDTO = null;
+        String respContent = null;
+        try {
+            String requestUrl = DingDingConfig.getApplyApprovingWorkflowUrl() + "?callbackUrl=" + dingdingApproveDTO.getCallbackUrl();
+            HttpPost httpPost = new HttpPost(requestUrl);
+            CloseableHttpClient client = HttpClients.createDefault();
+            String jsonStr = JSONObject.toJSONString(dingdingApproveDTO);
+            logger.info("申请审批实例钉钉网关请求数据：" + jsonStr);
+            //解决中文乱码问题
+            StringEntity entity = new StringEntity(jsonStr, "UTF-8");
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType("application/json;charset=utf-8");
+            httpPost.setEntity(entity);
+            HttpResponse resp = client.execute(httpPost);
+            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                HttpEntity he = resp.getEntity();
+                respContent = EntityUtils.toString(he, "UTF-8");
+            }
+            dingdingResultDTO = JSONObject.parseObject(respContent, DingdingResultDTO.class);
+            logger.info("申请审批实例钉钉网关返回的结果为：" + respContent);
+        } catch (Exception e) {
+            dingdingResultDTO = new DingdingResultDTO();
+            dingdingResultDTO.setCode(ErrorCode.BUSINESS_EXCEPTION);
+            logger.error("applyApprovingWorkflow message error,{}", e);
+        }
+        return dingdingResultDTO;
     }
 }

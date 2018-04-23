@@ -33,6 +33,7 @@ public class WorkflowLink extends BasePO {
 	private String createUser;   //添加人
 	private Date updateTime;   //添加时间
 	private String updateUser;   //修改人
+	private String dingdingWorkflowId;   //钉钉工作流编号
 
 	private List<WorkflowLinkDetail> workflowLinkDetailList;
 	private List<WorkflowVerifyUserGroup> workflowVerifyUserGroupList;
@@ -237,6 +238,14 @@ public class WorkflowLink extends BasePO {
 	public String getVerifyUserGroupId() { return verifyUserGroupId; }
 
 	public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
+
+	public String getDingdingWorkflowId() {
+		return dingdingWorkflowId;
+	}
+
+	public void setDingdingWorkflowId(String dingdingWorkflowId) {
+		this.dingdingWorkflowId = dingdingWorkflowId;
+	}
 
 	public List<WorkflowVerifyUserGroup> getWorkflowVerifyUserGroupList() { return workflowVerifyUserGroupList; }
 

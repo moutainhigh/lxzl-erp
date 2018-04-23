@@ -11,6 +11,10 @@ public class DingDingConfig {
      * 钉钉网关url
      */
     public static String dingDingGatewayUrl;
+
+    public static String CC_POSITION_START = "START";
+    public static String CC_POSITION_FINISH = "FINISH";
+    public static String CC_POSITION_START_FINISH = "START_FINISH";
     /**
      * 接口---根据部门编号获取人员列表信息
      */

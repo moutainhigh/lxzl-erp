@@ -30,7 +30,7 @@ public class DingdingApproveBO {
         if (StringUtils.isBlank(approver)) {
             return;
         }
-        Set<String> approversFromDTO = this.dingdingApproveDTO.getApprovers();
+        Set<String> approversFromDTO = this.dingdingApproveDTO.getApproverList();
         approversFromDTO = getLinkedHashSetNotNull(approversFromDTO);
         approversFromDTO.add(approver);
     }
@@ -40,7 +40,7 @@ public class DingdingApproveBO {
         if (approvers == null) {
             return;
         }
-        Set<String> approversFromDTO = this.dingdingApproveDTO.getApprovers();
+        Set<String> approversFromDTO = this.dingdingApproveDTO.getApproverList();
         approversFromDTO = getLinkedHashSetNotNull(approversFromDTO);
         approversFromDTO.addAll(approvers);
     }
@@ -52,7 +52,7 @@ public class DingdingApproveBO {
         if (StringUtils.isBlank(ccUserId)) {
             return;
         }
-        Set<String> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcList();
+        Set<String> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcUserIdsList();
         ccUserIdsFromDTO = getLinkedHashSetNotNull(ccUserIdsFromDTO);
         ccUserIdsFromDTO.add(ccUserId);
     }
@@ -64,7 +64,7 @@ public class DingdingApproveBO {
         if (ccUserIds == null) {
             return;
         }
-        Set<String> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcList();
+        Set<String> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcUserIdsList();
         ccUserIdsFromDTO = getLinkedHashSetNotNull(ccUserIdsFromDTO);
         ccUserIdsFromDTO.addAll(ccUserIds);
     }
