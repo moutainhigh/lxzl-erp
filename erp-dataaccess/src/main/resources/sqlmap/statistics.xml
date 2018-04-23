@@ -712,4 +712,74 @@ ORDER BY esc.data_order DESC
         group by esod.order_seller_id,esod.order_sub_company_id
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
+    
+    <resultMap id="StatisticsSalesman" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman">
+        <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+        <result column="total_deals_count" jdbcType="INTEGER" property="totalDealsCount" />
+        <result column="total_deals_product_count" jdbcType="INTEGER" property="totalDealsProductCount" />
+        <result column="total_deals_amount" jdbcType="DECIMAL" property="totalDealsAmount" />
+        <result column="total_await_receivable" jdbcType="DECIMAL" property="totalAwaitReceivable" />
+        <result column="total_income" jdbcType="DECIMAL" property="totalIncome" />
+    </resultMap>
+
+    <select id="querySalesmanCount" resultMap="StatisticsSalesman" parameterType="map">
+        select
+        count(distinct eu.id) total_count,
+        SUM(CASE WHEN eo.order_status = 20 THEN 1 ELSE 0 END) total_deals_count,
+        SUM(CASE WHEN eo.order_status = 20 THEN eo.total_product_count ELSE 0 END) total_deals_product_count,
+        SUM(CASE WHEN eo.order_status = 20 THEN eo.total_order_amount ELSE 0 END) total_deals_amount,
+        SUM(CASE WHEN (esod.statement_detail_status = 0 AND esod.statement_expect_pay_time > NOW() ) THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable,
+        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>=#{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime}>esod.statement_detail_paid_time)THEN esod.statement_detail_amount ELSE 0 END) total_income
+        FROM erp_order eo
+        LEFT JOIN erp_user eu on eo.order_seller_id = eu.id or eo.order_union_seller_id = eu.id
+        LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
+        LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id
+        where eo.data_status = 1 and esod.order_type = 1 and esod.data_status = 1
+        AND eo.confirm_delivery_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.confirm_delivery_time
+        <if test="maps.salesmanQueryParam.subCompanyId!=null">
+            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+        </if>
+        <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
+        </if>
+    </select>
+    
+    <resultMap id="SalesmanDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetail">
+        <result column="salesman_id" jdbcType="INTEGER" property="salesmanId"/>
+        <result column="salesman_name" jdbcType="VARCHAR" property="salesmanName"/>
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
+        <result column="deals_count" jdbcType="INTEGER" property="dealsCount"/>
+        <result column="deals_product_count" jdbcType="INTEGER" property="dealsProductCount"/>
+        <result column="deals_amount" jdbcType="DECIMAL" property="dealsAmount"/>
+        <result column="await_receivable" jdbcType="DECIMAL" property="awaitReceivable"/>
+        <result column="income" jdbcType="DECIMAL" property="income"/>
+    </resultMap>
+
+    <select id="querySalesman" resultMap="SalesmanDetail" parameterType="map">
+        select
+        eu.id salesman_id,
+        MIN(eu.real_name) salesman_name,
+        MIN(esc.id) sub_company_id,
+        MIN(esc.sub_company_name) sub_company_name,
+        SUM(CASE WHEN eo.order_status = 20 THEN 1 ELSE 0 END) deals_count,
+        SUM(CASE WHEN eo.order_status = 20 THEN eo.total_product_count ELSE 0 END) deals_product_count,
+        SUM(CASE WHEN eo.order_status = 20 THEN eo.total_order_amount ELSE 0 END) deals_amount,
+        SUM(CASE WHEN (esod.statement_detail_status = 0 AND esod.statement_expect_pay_time > NOW() ) THEN esod.statement_detail_amount ELSE 0 END ) await_receivable,
+        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>=#{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_amount ELSE 0 END) income
+        from erp_order eo
+        LEFT JOIN erp_user eu on eo.order_seller_id = eu.id or eo.order_union_seller_id = eu.id
+        LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
+        LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id
+        where eo.data_status = 1 and esod.order_type = 1 and esod.data_status = 1
+        AND eo.confirm_delivery_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.confirm_delivery_time
+        <if test="maps.salesmanQueryParam.subCompanyId!=null">
+            AND eo.order_sub_company_id = #{maps.salesmanQueryParam.subCompanyId}
+        </if>
+        <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
+        </if>
+        group by eu.id, eo.order_sub_company_id
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
 </mapper>
