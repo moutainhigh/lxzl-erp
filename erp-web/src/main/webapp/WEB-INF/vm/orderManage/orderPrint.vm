@@ -261,8 +261,8 @@
                         <th class="text-center">配件名称</th>
                         <th class="text-center">配件参数</th>
                         <th class="text-center">配件价值</th>
-                        <th class="text-center" style="white-space: nowrap;">数量</th>
-                        <th class="text-center">租赁单价</th>
+##                        <th class="text-center" style="white-space: nowrap;">数量</th>
+                        <th class="text-center">租赁单价/数量</th>
                         <th class="text-center">租期</th>
                         <th class="text-center">支付方式</th>
                         <th class="text-center">押金</th>
@@ -277,9 +277,11 @@
                         <td class="text-center">{{materialName}}</td>
                         <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
                         <td class="text-center">￥{{#price}}{{materialPrice}}{{/price}}</td>
-                        <td class="text-center">{{materialCount}}</td>
-                        <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
-
+##                        <td class="text-center">{{materialCount}}</td>
+                        <td class="text-center">
+                            <p>￥{{#price}}{{materialUnitAmount}}{{/price}}</p>
+                            <p>{{materialCount}}</p>
+                        </td>
                         <td class="text-center">
                             <p style="white-space: nowrap">{{rentTypeValue}}</p>
                             <p style="white-space: nowrap">{{rentTimeLength}}{{rentTypeUnit}}</p>
