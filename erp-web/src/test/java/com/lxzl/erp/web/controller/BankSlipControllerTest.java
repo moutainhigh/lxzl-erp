@@ -25,7 +25,7 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPUnTransactionalTest {
+public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void unAssignBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -48,6 +48,13 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         list.add(bankSlipDetail);
         list.add(bankSlipDetai2);
         bankSlip.setBankSlipDetailList(list);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/localizationBankSlipDetail",bankSlip);
+    }
+
+    @Test
+    public void assignBankSlipDetail1() throws Exception {
+       String str = "{\"bankSlipDetailList\":[{\"bankSlipDetailId\":\"18200\"},{\"bankSlipDetailId\":\"18210\"}],\"localizationSubCompanyId\":3}";
+        BankSlip bankSlip = JSONUtil.parseObject(str, BankSlip.class);
         TestResult jsonTestResult = getJsonTestResult("/bankSlip/localizationBankSlipDetail",bankSlip);
     }
 
@@ -136,6 +143,20 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlipQueryParam.setBankSlipId(167);
 
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
+    }
+    @Test
+    public void exportPageBankSlip() throws Exception {
+        BankSlipQueryParam bankSlipQueryParam = new BankSlipQueryParam();
+        bankSlipQueryParam.setPageNo(1);
+        bankSlipQueryParam.setPageSize(10);
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipQueryParam.setSubCompanyName("南京分公司");
+//        bankSlipQueryParam.setSubCompanyId(5);
+//        bankSlipQueryParam.setBankSlipId(167);
+
+        TestResult result = getJsonTestResult("/exportExcel/exportPageBankSlip", bankSlipQueryParam);
     }
 
     @Test
