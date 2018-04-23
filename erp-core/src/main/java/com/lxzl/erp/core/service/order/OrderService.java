@@ -190,4 +190,12 @@ public interface OrderService extends VerifyReceiver {
     void verifyCustomerRiskInfo(OrderDO orderDO);
     void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO);
     void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO);
+
+    /**
+     * 当前用户待审核订单分页
+     * @Author : sunzhipeng
+     * @param param
+     * @return
+     */
+    ServiceResult<String,Page<Order>> queryVerifyOrder(VerifyOrderQueryParam param);
 }

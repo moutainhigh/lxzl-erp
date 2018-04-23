@@ -2496,6 +2496,32 @@ public class OrderServiceImpl implements OrderService {
             orderDO.setTotalMaterialAmount(materialAmountTotal);
         }
     }
+    /**
+     * 当前用户待审核订单分页
+     * @Author : sunzhipeng
+     * @param verifyOrderQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Order>> queryVerifyOrder(VerifyOrderQueryParam verifyOrderQueryParam) {
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
+        Integer currentVerifyUser= userSupport.getCurrentUserId();
+        verifyOrderQueryParam.setCurrentVerifyUser(currentVerifyUser);
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("verifyOrderQueryParam", verifyOrderQueryParam);
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+
+        Integer totalCount = orderMapper.findVerifyOrderCountByParams(maps);
+        List<OrderDO> orderDOList = orderMapper.findVerifyOrderByParams(maps);
+        List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
+        Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
 
     private String verifyOperateOrder(Order order) {
         if (order == null) {

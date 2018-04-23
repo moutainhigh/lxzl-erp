@@ -5,10 +5,7 @@ import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
-import com.lxzl.erp.common.domain.order.LastRentPriceRequest;
-import com.lxzl.erp.common.domain.order.OrderCommitParam;
-import com.lxzl.erp.common.domain.order.OrderQueryParam;
-import com.lxzl.erp.common.domain.order.ProcessOrderParam;
+import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
@@ -437,4 +434,17 @@ public class OrderTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/order/createOrderFirstPayAmount", order);
     }
 
+    @Test
+    public void queryVerifyOrder() throws Exception {
+        VerifyOrderQueryParam param =new VerifyOrderQueryParam();
+//        param.setOrderId(3001219);
+//        param.setBuyerRealName("二零一八三月");
+//        param.setBuyerRealName("深圳市点时");
+//        param.setIsPendingDelivery(1);
+//        param.setOrderNo("LXO-20180307-1000-00014");
+//        param.setDeliverySubCompanyId(2);
+//        param.setOrderStatus(16);
+
+        TestResult testResult = getJsonTestResult("/order/queryVerifyOrder", param);
+    }
 }

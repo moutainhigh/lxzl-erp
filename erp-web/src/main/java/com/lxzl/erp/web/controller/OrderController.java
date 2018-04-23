@@ -129,6 +129,19 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(orderService.addOrderMessage(order));
     }
 
+    /**
+     * 当前用户待审核订单分页
+     * @Author : sunzhipeng
+     * @param param
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryVerifyOrder", method = RequestMethod.POST)
+    public Result queryVerifyOrder(@RequestBody VerifyOrderQueryParam param, BindingResult validResult) {
+        ServiceResult<String, Page<Order>> serviceResult = orderService.queryVerifyOrder(param);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 
