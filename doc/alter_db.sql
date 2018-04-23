@@ -159,62 +159,68 @@ ALTER TABLE erp_workflow_verify_user_group MODIFY  `verify_user_group_id` VARCHA
 ALTER TABLE erp_workflow_link_detail MODIFY  `verify_user_group_id` varchar(100) DEFAULT NULL COMMENT '审核人组UUID，审核人为空时，该字段有值';
 ALTER TABLE erp_k3_return_order ADD COLUMN `return_reason_type` int(11) NOT NULL COMMENT '退还原因类型：1-客户方设备不愿或无法退还，2-期满正常收回，3-提前退租，4-未按时付款或风险等原因上门收回，5-设备故障等我方原因导致退货，6-主观因素等客户方原因导致退货，7-更换设备，8-公司倒闭，9-设备闲置，10-满三个月或六个月随租随还，11-其它';
 
-DROP TABLE if exists `erp_version_history`
+DROP TABLE IF EXISTS `erp_version_history`;
 CREATE TABLE `erp_version_history` (
-  `id` int(20) NOT NULL ATUO_INCREMENT COMMENT '唯一标识',
-  `versoin_no` varchar(100) NOT NULL COMMENT '版本编号',
-  `versoin_summary` varchar(120) DEFAULT "" COMMENT '版本摘要',
-  `online_time` datetime COMMENT '实际上线时间',
-  `expect_online_start_time` datetime COMMENT '预计上线开始时间',
-  `expect_online_end_time` datetime COMMENT '预计上线结束时间',
-  `online_status` int(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
-  `is_use` int(11) NOT NULL DEFAULT '0' COMMENT '是否为当前使用的版本，1是，0否',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `versoin_no` VARCHAR(100) NOT NULL COMMENT '版本编号',
+  `versoin_summary` VARCHAR(120) DEFAULT "" COMMENT '版本摘要',
+  `online_time` DATETIME COMMENT '实际上线时间',
+  `expect_online_start_time` DATETIME COMMENT '预计上线开始时间',
+  `expect_online_end_time` DATETIME COMMENT '预计上线结束时间',
+  `online_status` INT(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
+  `is_use` INT(11) NOT NULL DEFAULT '0' COMMENT '是否为当前使用的版本，1是，0否',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本更改历史表';
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本历史表';
 
-DROP TABLE if exists `erp_version_history_detail`
+
+
+DROP TABLE IF EXISTS `erp_version_history_detail`;
 CREATE TABLE `erp_version_history_detail` (
-  `id` int(20) NOT NULL ATUO_INCREMENT COMMENT '唯一标识',
-  `versoin_history_id` int(20) NOT NULL COMMENT '版本ID',
-  `versoin_history_no` varchar(100) NOT NULL COMMENT '版本编号',
-  `versoin_describe` varchar(150) NOT NULL COMMENT '变更描述',
-  `detail_status` int(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `versoin_history_id` INT(20) NOT NULL COMMENT '版本历史表',
+  `versoin_history_no` VARCHAR(100) NOT NULL COMMENT '版本历史编号',
+  `versoin_describe` VARCHAR(150) NOT NULL COMMENT '变更描述',
+  `detail_status` INT(11) NOT NULL DEFAULT '0' COMMENT '上线状态，0-未上线，1-上线中，2-已上线，3-取消上线',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   INDEX index_versoin_history_id ( `versoin_history_id` ),
   INDEX index_versoin_history_no ( `versoin_history_no` )
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本更改历史明细表';
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本历史明细表';
 
-DROP TABLE if exists `erp_version_history_user`
+DROP TABLE IF EXISTS `erp_version_history_user`;
 CREATE TABLE `erp_version_history_user` (
-  `id` int(20) NOT NULL ATUO_INCREMENT COMMENT '唯一标识',
-  `user_id` int(20) NOT NULL COMMENT '用户ID',
-  `versoin_history_id` int(20) NOT NULL COMMENT '版本ID',
-  `versoin_history_no` varchar(100) NOT NULL COMMENT '版本编号',
-  `before_online_is_send` int(20) NOT NULL COMMENT '上线前是否推送，0-否，1-是',
-  `after_online_is_send` int(20) NOT NULL COMMENT '上线后是否推送，0-否，1-是',
-  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `user_id` INT(20) NOT NULL COMMENT '用户ID',
+  `versoin_history_id` INT(20) NOT NULL COMMENT '版本历史ID',
+  `versoin_history_no` VARCHAR(100) NOT NULL COMMENT '版本历史编号',
+  `before_online_send` INT(20) NOT NULL COMMENT '上线前是否推送，0-否，1-是',
+  `after_online_send` INT(20) NOT NULL COMMENT '上线后是否推送，0-否，1-是',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   INDEX index_user_id ( `user_id` ),
   INDEX index_versoin_history_id ( `versoin_history_id` ),
   INDEX index_versoin_history_no ( `versoin_history_no` )
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本变更推送记录表';
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本用户推送记录表';
+
+
+
+
 
 DROP TABLE IF EXISTS `mall_verify_code`;
 CREATE TABLE `mall_verify_code` (
