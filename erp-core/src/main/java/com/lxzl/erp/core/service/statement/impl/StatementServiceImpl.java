@@ -201,7 +201,7 @@ public class StatementServiceImpl implements StatementService {
                 }
                 orderDO.setBuyerCustomerId(customerDO.getId());
                 orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
-            }else{
+            } else {
 
                 result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                 return result;
@@ -1379,13 +1379,13 @@ public class StatementServiceImpl implements StatementService {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                                 //非即租即还设备，押金不退
-                                ProductDO product= productMapper.findById(orderProductDO.getProductId());
-                                if(product==null){
+                                ProductDO product = productMapper.findById(orderProductDO.getProductId());
+                                if (product == null) {
                                     result.setErrorCode(ErrorCode.PRODUCT_NOT_EXISTS);
                                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                                     return result;
                                 }
-                                if(product.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+                                if (product.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES) continue;
 
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
@@ -1486,7 +1486,7 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.")&& !k3ReturnOrderDetailDO.getProductNo().startsWith("30."))  || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.") && !k3ReturnOrderDetailDO.getProductNo().startsWith("30.")) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
                     continue;
                 }
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
@@ -1505,13 +1505,13 @@ public class StatementServiceImpl implements StatementService {
                             // 第一期如果支付了押金，就要退押金，否则不退了
                             if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
                                 //非即租即还设备，押金不退
-                                MaterialDO material= materialMapper.findById(orderMaterialDO.getMaterialId());
-                                if(material==null){
+                                MaterialDO material = materialMapper.findById(orderMaterialDO.getMaterialId());
+                                if (material == null) {
                                     result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
                                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                                     return result;
                                 }
-                                if(material.getIsReturnAnyTime()!=IsReturnAnyTime.RETURN_ANY_TIME_YES)continue;
+                                if (material.getIsReturnAnyTime() != IsReturnAnyTime.RETURN_ANY_TIME_YES) continue;
 
                                 StatementOrderDO statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
                                 if (BigDecimalUtil.compare(BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositReturnAmount()), thisReturnDepositAmount) >= 0) {
@@ -2913,9 +2913,15 @@ public class StatementServiceImpl implements StatementService {
         //删除原结算数据(订单类型)
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
         BigDecimal needReturnAmount = BigDecimal.ZERO;
+        BigDecimal totalDepositPaidAmount=BigDecimal.ZERO;
+        BigDecimal totalDepositRentPaidAmount=BigDecimal.ZERO;
         Map<Date, StatementOrderDO> statementOrderDOMap = new HashMap<>();//结算单缓存
         String userId = userSupport.getCurrentUser().getUserId().toString();
         Date now = new Date();
+        //部分结算或结算完成需退还
+        Set<Integer> canReturnStatusSet = new HashSet<Integer>();
+        canReturnStatusSet.add(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+        canReturnStatusSet.add(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
         for (StatementOrderDetailDO statementOrderDetailDO : dbStatementOrderDetailDOList) {
             //非订单类型订单
             if (!statementOrderDetailDO.getOrderType().equals(OrderType.ORDER_TYPE_ORDER)) continue;
@@ -2928,35 +2934,48 @@ public class StatementServiceImpl implements StatementService {
             StatementOrderDO statementOrderDO = statementOrderDOMap.get(dateKey);
             //结算单存在则修改结算单(不存在则直接删除结算详情)
             if (statementOrderDO != null) {
-                statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementRentAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentAmount(), BigDecimalUtil.STANDARD_SCALE)));
                 // 结算单不能为负数
                 if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) < 0 || BigDecimalUtil.compare(statementOrderDO.getStatementRentAmount(), BigDecimal.ZERO) < 0) {
                     result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                     return result;
                 }
-                statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementOtherAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailOtherAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                //部分结算或结算完成需退还
-                Set<Integer> canReturnStatusSet = new HashSet<Integer>();
-                canReturnStatusSet.add(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
-                canReturnStatusSet.add(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
-                BigDecimal orderDetailTotalPaid = BigDecimal.ZERO;
+                statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentDepositAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementOtherAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailOtherAmount(), BigDecimalUtil.STANDARD_SCALE)));
+
+
                 if (canReturnStatusSet.contains(statementOrderDetailDO.getStatementDetailStatus())) {
-                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
-                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-                    needReturnAmount = BigDecimalUtil.add(needReturnAmount, orderDetailTotalPaid);
-                    statementOrderDO.setStatementPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementPaidAmount(), orderDetailTotalPaid));
-                    statementOrderDO.setStatementDepositPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositPaidAmount(), statementOrderDetailDO.getStatementDetailDepositPaidAmount()));
-                    statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherPaidAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount()));
-                    statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositPaidAmount(), statementOrderDetailDO.getStatementDetailRentDepositPaidAmount()));
-                    statementOrderDO.setStatementOverduePaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOverduePaidAmount(), statementOrderDetailDO.getStatementDetailOverduePaidAmount()));
-                    statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentPaidAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount()));
+
+                    BigDecimal needReturnStatementDepositPaidAmount= BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), BigDecimalUtil.STANDARD_SCALE),BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailDepositReturnAmount(),BigDecimalUtil.STANDARD_SCALE));
+                    BigDecimal needReturnStatementRentDepositPaidAmount= BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), BigDecimalUtil.STANDARD_SCALE),BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentDepositReturnAmount(), BigDecimalUtil.STANDARD_SCALE));
+
+                    BigDecimal orderDetailTotalPaid = BigDecimal.ZERO;
+                    //非押金
+                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentPaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailOverduePaidAmount(),BigDecimalUtil.STANDARD_SCALE));
+
+                    //记录非押金金额（退回账户）
+                    needReturnAmount = BigDecimalUtil.add(needReturnAmount,orderDetailTotalPaid);
+                    //押金（退押金用）
+                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, needReturnStatementDepositPaidAmount);
+                    orderDetailTotalPaid = BigDecimalUtil.add(orderDetailTotalPaid, needReturnStatementRentDepositPaidAmount);
+
+                    totalDepositRentPaidAmount=BigDecimalUtil.add(totalDepositRentPaidAmount,needReturnStatementRentDepositPaidAmount);
+                    totalDepositPaidAmount=BigDecimalUtil.add(totalDepositPaidAmount,needReturnStatementDepositPaidAmount);
+
+                    //修改结算单金额
+                    statementOrderDO.setStatementPaidAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementPaidAmount(),BigDecimalUtil.STANDARD_SCALE), orderDetailTotalPaid));
+                    statementOrderDO.setStatementDepositPaidAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE)));
+                    statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementOtherPaidAmount(),BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailOtherPaidAmount(),BigDecimalUtil.STANDARD_SCALE)));
+                    statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementRentDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(),BigDecimalUtil.STANDARD_SCALE)));
+                    statementOrderDO.setStatementOverduePaidAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementOverduePaidAmount(),BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailOverduePaidAmount(),BigDecimalUtil.STANDARD_SCALE)));
+                    statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.sub(BigDecimalUtil.roundNullReturnZero(statementOrderDO.getStatementRentPaidAmount(),BigDecimalUtil.STANDARD_SCALE),BigDecimalUtil.roundNullReturnZero(statementOrderDetailDO.getStatementDetailRentPaidAmount(),BigDecimalUtil.STANDARD_SCALE)));
+
+
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(), BigDecimal.ZERO) < 0
                             || BigDecimalUtil.compare(statementOrderDO.getStatementDepositPaidAmount(), BigDecimal.ZERO) < 0
                             || BigDecimalUtil.compare(statementOrderDO.getStatementOtherPaidAmount(), BigDecimal.ZERO) < 0
@@ -2971,8 +2990,8 @@ public class StatementServiceImpl implements StatementService {
                 //todo 后续增加冲正判断
                 if (BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(), BigDecimal.ZERO) <= 0)
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
-                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) < 0)
-                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
+//                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) <= 0)
+//                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                 statementOrderDO.setUpdateUser(userId);
                 statementOrderDO.setUpdateTime(now);
                 statementOrderMapper.update(statementOrderDO);
@@ -2991,8 +3010,25 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
+        if(!(BigDecimalUtil.compare(totalDepositPaidAmount, BigDecimal.ZERO)<=0&&BigDecimalUtil.compare(totalDepositRentPaidAmount, BigDecimal.ZERO)<=0)){
+            ServiceResult<String, Boolean> payResult = paymentService.returnDeposit(customerDO.getCustomerNo(),totalDepositRentPaidAmount,totalDepositPaidAmount);
+            if (!ErrorCode.SUCCESS.equals(payResult.getErrorCode()) || !payResult.getResult()) {
+                result.setErrorCode(ErrorCode.RE_STATEMENT_BACK_AMOUNT_FAIL);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
+        }
+        //失效订单关联结算
         statementOrderDetailMapper.deleteByOrderId(orderDO.getId(), userId);
-        //statementOrderDetailMapper.batchUpdate(dbStatementOrderDetailDOList);
+
+        //恢复订单状态为未支付
+        if (PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
+        }
+        orderDO.setTotalPaidOrderAmount(BigDecimalUtil.sub(orderDO.getTotalPaidOrderAmount(), needReturnAmount));
+        orderDO.setPayTime(now);
+        orderMapper.update(orderDO);
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

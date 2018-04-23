@@ -40,7 +40,7 @@ public class K3CallbackController extends BaseController {
 
     @RequestMapping(value = "callbackCancelOrder", method = RequestMethod.POST)
     public Result callbackCancelOrder(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = k3CallbackService.callbackCancelOrder(order.getOrderNo());
+        ServiceResult<String, String> serviceResult = k3CallbackService.callbackCancelOrder(order.getOrderNo(),order.getCancelOrderReasonType());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
