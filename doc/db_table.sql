@@ -3334,5 +3334,133 @@ CREATE TABLE `erp_version_history_user` (
   INDEX index_versoin_history_no ( `versoin_history_no` )
 )ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='版本用户推送记录表';
 
+DROP TABLE IF EXISTS `erp_relet_order`;
+CREATE TABLE `erp_relet_order` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
+  `order_id` INT(20) NOT NULL COMMENT '订单ID',
+  `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
+  `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
+  `buyer_customer_no` INT(20) NOT NULL COMMENT '购买人编号',
+  `buyer_customer_name` VARCHAR(64) NOT NULL COMMENT '客户名称',
+  `order_sub_company_id` INT(20) DEFAULT NULL COMMENT '订单所属分公司',
+  `delivery_sub_company_id` INT(20) NOT NULL COMMENT '订单发货分公司',
+   `rent_type` INT(20) NOT NULL COMMENT '租赁类型',
+   `rent_time_length` INT(20) NOT NULL COMMENT '租赁时长',
+  `rent_length_type` INT(20) NOT NULL COMMENT '租赁时长类型',
+  `rent_start_time` DATETIME NOT NULL COMMENT '起租时间',
+  `total_product_count` INT(11) DEFAULT 0 COMMENT '商品总数',
+  `total_product_amount` DECIMAL(15,5) DEFAULT 0 COMMENT '商品总价',
+  `total_material_count` INT(11) DEFAULT 0 COMMENT '配件总数',
+  `total_material_amount` DECIMAL(15,5) DEFAULT 0 COMMENT '配件总价',
+  `total_order_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '订单总价，实际支付价格，商品金额+配件金额-优惠(无运费，区别与订单)',
+  `total_paid_order_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '已经支付金额',
+  `order_seller_id` INT(20) NOT NULL COMMENT '订单销售员',
+  `order_union_seller_id` INT(20) COMMENT '订单联合销售员',
+  `total_discount_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '共计优惠金额',
+  `relet_order_status` INT(11) NOT NULL DEFAULT '0' COMMENT '订单状态，0-待提交,4-审核中,8-续租中,12-部分归还,16-全部归还,20-取消,24-结束',
+  `pay_status` INT(11) NOT NULL DEFAULT '0' COMMENT '支付状态，0未支付，1已支付，2已退款,3逾期中',
+  `pay_time` DATETIME DEFAULT NULL COMMENT '支付时间',
+  `expect_return_time` DATETIME DEFAULT NULL COMMENT '预计归还时间',
+  `actual_return_time` DATETIME DEFAULT NULL COMMENT '实际归还时间，最后一件设备归还的时间',
+  `high_tax_rate` INT(11) NOT NULL DEFAULT 0 COMMENT '17%税率',
+  `low_tax_rate` INT(11) NOT NULL DEFAULT 0 COMMENT '6%税率',
+  `tax_rate` DOUBLE NOT NULL DEFAULT 0 COMMENT '税率',
+  `statement_date` INT(20) COMMENT '结算时间（天），20和31两种情况，如果为空取系统设定',
+  `buyer_remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '购买人备注',
+  `product_summary` VARCHAR(500)  CHARACTER SET utf8 DEFAULT NULL COMMENT '商品摘要',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `owner` INT(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_relet_order_no` (`relet_order_no`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_buyer_customer_id ( `buyer_customer_id` ),
+  INDEX index_buyer_customer_no ( `buyer_customer_no` ),
+  INDEX index_order_sub_company_id ( `order_sub_company_id` ),
+  INDEX index_delivery_sub_company_id ( `delivery_sub_company_id` ),
+  INDEX index_order_seller_id ( `order_seller_id` ),
+  INDEX index_order_union_seller_id ( `order_union_seller_id` )
+) ENGINE=INNODB AUTO_INCREMENT=3000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单表';
+
+
+DROP TABLE IF EXISTS `erp_relet_order_product`;
+CREATE TABLE `erp_relet_order_product` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `relet_order_id` INT(20) NOT NULL COMMENT '续租订单ID',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
+  `order_id` INT(20) NOT NULL COMMENT '订单ID',
+  `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
+  `order_product_id` INT(20) NOT NULL COMMENT '订单商品项ID',
+  `product_id` INT(20) COMMENT '商品ID',
+  `product_name` VARCHAR(100) COLLATE utf8_bin COMMENT '商品名称',
+  `product_sku_id` INT(20) COMMENT '商品SKU ID',
+  `product_sku_name` VARCHAR(100) COLLATE utf8_bin COMMENT '商品SKU名称',
+  `product_count` INT(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
+  `product_unit_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '商品单价',
+  `product_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '商品价格',
+  `product_sku_snapshot` TEXT COMMENT '商品冗余信息，防止商品修改留存快照',
+  `payment_cycle` INT(11) NOT NULL DEFAULT 0 COMMENT '付款期数',
+  `pay_mode` INT(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
+  `is_new_product` INT(11) NOT NULL DEFAULT 0 COMMENT '是否是全新机，1是0否',
+  `renting_product_count` INT(11) NOT NULL DEFAULT 0 COMMENT '在租商品总数',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_relet_order_id ( `relet_order_id` ),
+  INDEX index_relet_order_no ( `relet_order_no` ),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_order_product_id ( `order_product_id` ),
+  INDEX index_product_id ( `product_id` ),
+  INDEX index_product_sku_id ( `product_sku_id` )
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单商品项表';
+
+
+DROP TABLE IF EXISTS `erp_relet_order_material`;
+CREATE TABLE `erp_relet_order_material` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `relet_order_id` INT(20) NOT NULL COMMENT '续租订单ID',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
+  `order_id` INT(20) NOT NULL COMMENT '订单ID',
+  `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
+  `order_material_id` INT(20) NOT NULL COMMENT '订单配件项ID',
+  `material_id` INT(20) COMMENT '配件ID',
+  `material_name` VARCHAR(100) COLLATE utf8_bin COMMENT '配件名称',
+  `material_count` INT(11) NOT NULL DEFAULT '0' COMMENT '配件总数',
+  `material_unit_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '配件单价',
+  `material_amount` DECIMAL(15,5) NOT NULL DEFAULT 0 COMMENT '配件价格',
+  `material_snapshot` TEXT COMMENT '配件冗余信息，防止商品修改留存快照',
+  `payment_cycle` INT(11) NOT NULL DEFAULT 0 COMMENT '付款期数',
+  `pay_mode` INT(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
+  `is_new_material` INT(11) NOT NULL DEFAULT 0 COMMENT '是否是全新机，1是0否',
+  `renting_material_count` INT(11) NOT NULL DEFAULT 0 COMMENT '在租配件总数',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+  INDEX index_relet_order_id ( `relet_order_id` ),
+  INDEX index_relet_order_no ( `relet_order_no` ),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_order_material_id ( `order_material_id` ),
+  INDEX index_material_id ( `material_id` )
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
+
+
+
+
 
 
