@@ -132,6 +132,9 @@
 				ec.customer_name AS customer_name
 			</trim>
 			<trim prefix=",">
+				ec.customer_no AS customer_no
+			</trim>
+			<trim prefix=",">
 				owner_user.real_name AS ownerName
 			</trim>
 			FROM erp_statement_order eso
