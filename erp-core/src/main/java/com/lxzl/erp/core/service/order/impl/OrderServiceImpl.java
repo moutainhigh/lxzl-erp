@@ -940,10 +940,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> cancelOrder(String orderNo) {
+    public ServiceResult<String, String> cancelOrder(String orderNo,Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
+        if(cancelOrderReasonType==null){
+            result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
+            return result;
+        }
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ID_NOT_NULL);
             return result;
@@ -961,6 +965,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
             return result;
         }
+        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -975,12 +980,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> forceCancelOrder(String orderNo) {
+    public ServiceResult<String, String> forceCancelOrder(String orderNo,Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
+            return result;
+        }
+        if(cancelOrderReasonType==null){
+            result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -1061,6 +1070,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());

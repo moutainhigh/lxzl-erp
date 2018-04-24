@@ -172,8 +172,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     }
 
     @Override
-    public ServiceResult<String, String> callbackCancelOrder(String orderNo) {
-        return orderService.cancelOrder(orderNo);
+    public ServiceResult<String, String> callbackCancelOrder(String orderNo,Integer cancelOrderReasonType) {
+        return orderService.cancelOrder(orderNo,cancelOrderReasonType);
     }
 
     @Override
