@@ -1,0 +1,84 @@
+<div id="useCouponFormModal" class="popup-basic popup-xl admin-form mfp-with-anim theme-primary"> ##mfp-hide
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>使用结算单优惠券</span>
+        </div>
+        <form method="post" id="useCouponForm" description="使用优惠券">
+            <div class="panel-body p25">
+                <div class="table-responsive">
+                    <script type="text/html" id="dataListTpl">
+                        <thead>
+                        <tr>
+                            {{#hasCommonActionButtons}}
+                            <th>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkAll" value="">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </th>
+                            {{/hasCommonActionButtons}}
+                            <th>优惠券ID</th>
+                            <th>优惠券编号</th>
+                            <th>优惠券面值</th>
+##                            <th>抵扣金额</th>
+                            <th>客戶编号</th>
+                            <th>是否线上</th>
+                            <th>添加人</th>
+##                            {{#hasRowActionButtons}}
+                            <th class="text-right">操作</th>
+##                            {{/hasRowActionButtons}}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#dataSource}}
+                        {{#listData}}
+                        <tr>
+                            {{#hasCommonActionButtons}}
+                            <td>
+                                <label class="option block mn">
+                                    <input type="checkbox" name="checkItem" value="{{couponId}}">
+                                    <span class="checkbox mn"></span>
+                                </label>
+                            </td>
+                            {{/hasCommonActionButtons}}
+                            <td>{{couponId}}</td>
+                            <td>{{couponCode}}</td>
+                            <td>{{faceValue}}</td>
+##                            <td>{{deductionAmount}}</td>
+                            <td>{{customerNo}}</td>
+                            <td>{{isOnLineValue}}</td>
+                            <td>
+                                <p class="mn">{{updateUserRealName}}</p>
+                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                            </td>
+##                            {{#hasRowActionButtons}}
+                            <td class="text-right">
+                                <div class="btn-group">
+##                                    {{#rowActionButtons}}
+                                    <a type="button" href="${ctx}{{menuUrl}}?couponId={{couponId}}" class="useCouponButton btn btn-default btn-xs"
+                                       data-couponId="{{couponId}}"
+                                       data-statementOrderDetailId="{{statementOrderDetailId}}">使用优惠券</a>
+##                                    {{/rowActionButtons}}
+                                </div>
+                            </td>
+##                            {{/hasRowActionButtons}}
+                        </tr>
+                        {{/listData}}
+                        {{^listData}}
+                        <tr>
+                            <td valign="top" colspan="14" class="text-center">没有查询到优惠券信息</td>
+                        </tr>
+                        {{/listData}}
+                        {{/dataSource}}
+                        </tbody>
+                    </script>
+                    <table class="table table-striped admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                </div>
+            </div>
+##            <div class="panel-footer text-right">
+##                <button type="submit" class="button btn-primary submit-btn">确定</button>
+##                <button type="button" class="button btn-default cancelButton"">取消</button>
+##            </div>
+        </form>
+    </div>
+</div>

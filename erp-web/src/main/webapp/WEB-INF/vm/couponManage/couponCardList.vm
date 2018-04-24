@@ -66,7 +66,7 @@
                                 {{#hasCommonActionButtons}}
                                 <th>
                                     <label class="option block mn">
-                                        <input type="checkbox" name="checkAll" value="">
+                                        <input type="checkbox" name="checkAll" value="" class="checkInput">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </th>
