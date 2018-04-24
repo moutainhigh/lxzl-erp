@@ -41,7 +41,7 @@
                                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                         <button type="reset" class="btn btn-default btn-sm">重置</button>
                                         <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
-                                        <input type="hidden" name="isRecycleBin" id="isRecycleBin">
+                                        <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
                                     </div>
                                     <div class="form-group pull-right mn mr10" style="width: 120px;">
                                         <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
