@@ -74,8 +74,7 @@ public class Order extends BasePO {
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;                                 // 审核人ID
     private String commitRemark;                                // 提交审核备注
-
-    private  List<K3ReturnOrderDetail> k3ReturnOrderDetailList; //退货单项列表
+    private Integer cancelOrderReasonType;                      //取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符
 
 
     public List<OrderProduct> getOrderProductList() {
@@ -534,11 +533,11 @@ public class Order extends BasePO {
         this.productName = productName;
     }
 
-    public List<K3ReturnOrderDetail> getK3ReturnOrderDetailList() {
-        return k3ReturnOrderDetailList;
+    public Integer getCancelOrderReasonType() {
+        return cancelOrderReasonType;
     }
 
-    public void setK3ReturnOrderDetailList(List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
-        this.k3ReturnOrderDetailList = k3ReturnOrderDetailList;
+    public void setCancelOrderReasonType(Integer cancelOrderReasonType) {
+        this.cancelOrderReasonType = cancelOrderReasonType;
     }
 }

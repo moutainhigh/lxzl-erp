@@ -1,17 +1,16 @@
-<div id="cancelReasonModal" class="popup-basic admin-form mfp-with-anim ">
+<div id="addRemarkModal" class="popup-basic admin-form mfp-with-anim ">
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="fa fa-pencil"></i>取消订单原因</span>
+            <span class="panel-title"><i class="fa fa-pencil"></i>添加备注</span>
         </div>
-        <form method="post" class="inputForm" description="取消原因">
+        <form method="post" id="addRemarkForm" description="添加备注">
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-12">
-                        <label class="field select">
-                            <select id="cancelOrderReasonType" name="cancelOrderReasonType" class="required">
-                                <option value="">请选择取消原因</option>
-                            </select>
-                            <i class="arrow"></i>
+                        <label for="remark" class="field prepend-icon">
+                            <textarea class="gui-textarea" id="remark" name="remark" placeholder="备注..."></textarea>
+                            <label for="remark" class="field-icon"><i class="fa fa-comments"></i>
+                            </label>
                         </label>
                     </div>
                 </div>
