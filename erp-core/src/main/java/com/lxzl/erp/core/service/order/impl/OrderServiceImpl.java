@@ -2507,13 +2507,11 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
         Integer currentVerifyUser= userSupport.getCurrentUserId();
-        verifyOrderQueryParam.setCurrentVerifyUser(currentVerifyUser);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("verifyOrderQueryParam", verifyOrderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
-
+        maps.put("currentVerifyUser", currentVerifyUser);
         Integer totalCount = orderMapper.findVerifyOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findVerifyOrderByParams(maps);
         List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);

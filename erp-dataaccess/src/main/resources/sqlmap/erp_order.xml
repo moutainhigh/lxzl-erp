@@ -728,7 +728,7 @@
         INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-        INNER JOIN erp_workflow_link ewl ON ewl.current_verify_user = #{maps.verifyOrderQueryParam.currentVerifyUser, jdbcType=INTEGER}
+        INNER JOIN erp_workflow_link ewl ON ewl.current_verify_user = #{maps.currentVerifyUser, jdbcType=INTEGER}
               AND ewl.workflow_type = 2 AND ewl.workflow_refer_no = eo.order_no
         <where>
             <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
@@ -749,14 +749,8 @@
             <if test="maps.verifyOrderQueryParam.deliverySubCompanyId != null">
                 and eo.delivery_sub_company_id = #{maps.verifyOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.verifyOrderQueryParam.orderId != null">
-                and eo.id = #{maps.verifyOrderQueryParam.orderId, jdbcType=INTEGER}
-            </if>
             <if test="maps.verifyOrderQueryParam.orderNo != null &amp;&amp; maps.verifyOrderQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.verifyOrderQueryParam.orderNo}','%' )
-            </if>
-            <if test="maps.verifyOrderQueryParam.buyerCustomerId != null">
-                and eo.buyer_customer_id = #{maps.verifyOrderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
             <if test="maps.verifyOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.verifyOrderQueryParam.buyerCustomerNo != ''">
                 and ec.customer_no = #{maps.verifyOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
@@ -770,9 +764,6 @@
             <if test="true">
                 and eo.order_status = 4
             </if>
-            <if test="maps.verifyOrderQueryParam.isPeer != null">
-                and eo.is_peer = #{maps.verifyOrderQueryParam.isPeer, jdbcType=INTEGER}
-            </if>
             <if test="maps.verifyOrderQueryParam.createStartTime != null">
                 <![CDATA[ AND eo.create_time >= #{maps.verifyOrderQueryParam.createStartTime} ]]>
             </if>
@@ -782,7 +773,6 @@
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
-            <include refid="permission_sql.order_control"/>
         </where>
     </select>
 
@@ -807,7 +797,7 @@
         INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-        INNER JOIN erp_workflow_link ewl ON ewl.current_verify_user = #{maps.verifyOrderQueryParam.currentVerifyUser, jdbcType=INTEGER}
+        INNER JOIN erp_workflow_link ewl ON ewl.current_verify_user = #{maps.currentVerifyUser, jdbcType=INTEGER}
               AND ewl.workflow_type = 2 AND ewl.workflow_refer_no = eo.order_no
         <where>
             <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
@@ -828,14 +818,8 @@
             <if test="maps.verifyOrderQueryParam.deliverySubCompanyId != null">
                 and eo.delivery_sub_company_id = #{maps.verifyOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
             </if>
-            <if test="maps.verifyOrderQueryParam.orderId != null">
-                and eo.id = #{maps.verifyOrderQueryParam.orderId, jdbcType=INTEGER}
-            </if>
             <if test="maps.verifyOrderQueryParam.orderNo != null &amp;&amp; maps.verifyOrderQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.verifyOrderQueryParam.orderNo}','%' )
-            </if>
-            <if test="maps.verifyOrderQueryParam.buyerCustomerId != null">
-                and eo.buyer_customer_id = #{maps.verifyOrderQueryParam.buyerCustomerId, jdbcType=INTEGER}
             </if>
             <if test="maps.verifyOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.verifyOrderQueryParam.buyerCustomerNo != ''">
                 and ec.customer_no = #{maps.verifyOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
@@ -849,9 +833,6 @@
             <if test="true">
                 and eo.order_status = 4
             </if>
-            <if test="maps.verifyOrderQueryParam.isPeer != null">
-                and eo.is_peer = #{maps.verifyOrderQueryParam.isPeer, jdbcType=INTEGER}
-            </if>
             <if test="maps.verifyOrderQueryParam.createStartTime != null">
                 <![CDATA[ AND eo.create_time >= #{maps.verifyOrderQueryParam.createStartTime} ]]>
             </if>
@@ -861,7 +842,6 @@
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
-            <include refid="permission_sql.order_control"/>
         </where>
         ORDER BY eo.create_time DESC
         LIMIT #{maps.start},#{maps.pageSize}
