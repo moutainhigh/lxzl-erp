@@ -3,13 +3,13 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i>取消订单原因</span>
         </div>
-        <form method="post" id="submitAuditForm" description="提交审核">
+        <form method="post" class="inputForm" description="取消原因">
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-12">
                         <label class="field select">
                             <select id="cancelOrderReasonType" name="cancelOrderReasonType" class="required">
-                                <option value="">请选择下一步审核人</option>
+                                <option value="">请选择取消原因</option>
                             </select>
                             <i class="arrow"></i>
                         </label>

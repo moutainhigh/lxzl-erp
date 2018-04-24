@@ -24,11 +24,11 @@
                         <div class="pull-left ml10">
                             <script type="text/html" id="actionCommonButtonsTpl">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-                                {{#acitonCommonButtons}}
-                                <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
-                                    <i class="{{iClass}}"></i> {{text}}
+##                                {{#acitonCommonButtons}}
+                                <a href="javascript:;" class="btn btn-primary btn-sm designateBtn" title="批量指派">
+                                    <i class="fa fa-tag"></i> 批量指派
                                 </a>
-                                {{/acitonCommonButtons}}
+##                                {{/acitonCommonButtons}}
                             </script>
 
                             <div class="btn-group" id="actionCommonButtons"></div>
@@ -63,14 +63,14 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-                                {{#hasCommonActionButtons}}
+##                                {{#hasCommonActionButtons}}
                                 <th>
                                     <label class="option block mn">
                                         <input type="checkbox" name="checkAll" value="">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </th>
-                                {{/hasCommonActionButtons}}
+##                                {{/hasCommonActionButtons}}
                                 <th>资金流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
@@ -93,14 +93,14 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                {{#hasCommonActionButtons}}
+##                                {{#hasCommonActionButtons}}
                                 <td>
                                     <label class="option block mn">
-                                        <input type="checkbox" name="checkItem" value="{{productId}}">
+                                        <input type="checkbox" name="checkItem" value="{{bankSlipDetailId}}">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </td>
-                                {{/hasCommonActionButtons}}
+##                                {{/hasCommonActionButtons}}
                                 <td>{{bankSlipId}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>
@@ -111,9 +111,9 @@
                                     <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
                                 <td>{{tradeMessage}}</td>
-                                <td>{{tradeMessage}}</td>
-                                <td>{{tradeMessage}}</td>
-                                <td>{{tradeMessage}}</td>
+                                <td>{{subCompanyName}}</td>
+                                <td>{{localizationSubCompanyName}}</td>
+                                <td>{{isLocalizationValue}}</td>
                                 <td>{{detailStatusValue}}</td>
                                 <td>{{remark}}</td>
                                 <td>
