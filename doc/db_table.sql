@@ -3459,8 +3459,8 @@ CREATE TABLE `erp_relet_order_material` (
   INDEX index_material_id ( `material_id` )
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
 
-DROP TABLE IF EXISTS `erp_business_commission_role`;
-CREATE TABLE `erp_business_commission_role` (
+DROP TABLE IF EXISTS `erp_business_commission_config`;
+CREATE TABLE `erp_business_commission_config` (
   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `role_id` INT(20) NOT NULL COMMENT '角色ID',
   `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',

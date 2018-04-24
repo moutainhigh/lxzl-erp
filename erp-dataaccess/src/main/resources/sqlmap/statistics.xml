@@ -730,8 +730,8 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN (eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28) THEN eo.total_order_amount ELSE 0 END) total_deals_amount,
         SUM(CASE WHEN (esod.statement_detail_status = 0 AND esod.statement_expect_pay_time > NOW() ) THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable,
         SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>=#{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime}>esod.statement_detail_paid_time)THEN esod.statement_detail_amount ELSE 0 END) total_income
-        from erp_business_commission_role ebcr
-        LEFT JOIN erp_user_role eur on ebcr.role_id = eur.role_id
+        from erp_business_commission_config ebcc
+        LEFT JOIN erp_user_role eur on ebcc.role_id = eur.role_id
         LEFT JOIN erp_user eu on eur.user_id = eu.id
         LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1 AND eo.create_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.create_time
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
@@ -769,8 +769,8 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN (eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28) THEN eo.total_order_amount ELSE 0 END) deals_amount,
         SUM(CASE WHEN (esod.statement_detail_status = 0 AND esod.statement_expect_pay_time > NOW() ) THEN esod.statement_detail_amount ELSE 0 END ) await_receivable,
         SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>=#{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_amount ELSE 0 END) income
-        from erp_business_commission_role ebcr
-        LEFT JOIN erp_user_role eur on ebcr.role_id = eur.role_id
+        from erp_business_commission_config ebcc
+        LEFT JOIN erp_user_role eur on ebcc.role_id = eur.role_id
         LEFT JOIN erp_user eu on eur.user_id = eu.id
         LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1 AND eo.create_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.create_time
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
