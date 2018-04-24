@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
@@ -40,6 +41,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
@@ -54,6 +56,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
@@ -933,6 +936,10 @@ public class OrderServiceImpl implements OrderService {
             }
             order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit, totalMaterialRent));
         }
+        //获取订单退货单项列表
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
+        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -3020,4 +3027,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialMapper materialMapper;
+    @Autowired
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 }

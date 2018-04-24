@@ -35,6 +35,8 @@ public class StatementOrderDetailDO extends BaseDO {
     private Date statementDetailPaidTime;
     private BigDecimal statementDetailOverdueAmount;
     private BigDecimal statementDetailOverduePaidAmount;
+    private BigDecimal statementDetailPenaltyAmount;
+    private BigDecimal statementDetailPenaltyPaidAmount;
     private Integer statementDetailOverdueDays;
     private Integer statementDetailOverduePhaseCount;
     private Integer statementDetailStatus;
@@ -381,5 +383,21 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
         this.statementCouponAmount = statementCouponAmount;
+    }
+
+    public BigDecimal getStatementDetailPenaltyAmount() {
+        return statementDetailPenaltyAmount;
+    }
+
+    public void setStatementDetailPenaltyAmount(BigDecimal statementDetailPenaltyAmount) {
+        this.statementDetailPenaltyAmount = statementDetailPenaltyAmount;
+    }
+
+    public BigDecimal getStatementDetailPenaltyPaidAmount() {
+        return statementDetailPenaltyPaidAmount;
+    }
+
+    public void setStatementDetailPenaltyPaidAmount(BigDecimal statementDetailPenaltyPaidAmount) {
+        this.statementDetailPenaltyPaidAmount = statementDetailPenaltyPaidAmount;
     }
 }

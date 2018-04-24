@@ -420,6 +420,7 @@ public class ErrorCode {
     public static final String RETURN_TIME_LESS_MIN_TIME = "J400145";
     public static final String ORDER_MESSAGE_NULL = "J400146";
     public static final String CANCEL_ORDER_REASON_TYPE_NULL = "J400147";
+    public static final String DAY_RENT_ORDER_NOT_PAY = "J400148";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1341,6 +1342,7 @@ public class ErrorCode {
         MAP.put(RETURN_TIME_LESS_MIN_TIME, "退货日期不能小于三月五号");
         MAP.put(ORDER_MESSAGE_NULL, "订单消息不能为空");
         MAP.put(CANCEL_ORDER_REASON_TYPE_NULL, "订单取消类型不能为空");
+        MAP.put(DAY_RENT_ORDER_NOT_PAY, "短短租需支付所有合同金额才能退货");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
