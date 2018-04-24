@@ -57,6 +57,9 @@
 
                 <dt><label>同行调拨</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{#boolText}}{{isPeer}}{{/boolText}}&nbsp;</dd>
+
+                <dt><label>取消原因</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{cancelReasonValue}}&nbsp;</dd>
             </dl>
         </div>
         <div class="col-md-4">
