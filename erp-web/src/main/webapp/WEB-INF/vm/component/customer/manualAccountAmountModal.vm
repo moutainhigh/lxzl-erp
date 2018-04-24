@@ -8,7 +8,7 @@
                 <div class="section">
                     <label for="username" class="field-label">金额</label>
                     <label for="remark" class="field prepend-icon">
-                        <input type="text" name="amount" id="amount" class="gui-input required moneyNumber" maxlength="7">
+                        <input type="text" name="amount" id="amount" class="gui-input required moneyNumber" />
                         <label for="creditAmount" class="field-icon"><i class="fa fa-jpy"></i>
                         </label>
                     </label>

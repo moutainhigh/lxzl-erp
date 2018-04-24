@@ -70,6 +70,7 @@
 
             .table-bordered > tbody > tr > td, .table>thead>tr>th {
                 border: 1px solid #666 !important;
+                padding: 2px 5px;
             }
             .table>thead>tr>th:first-child,
             .table-bordered > tbody > tr > td:first-child {
@@ -112,6 +113,7 @@
 
         .table-bordered > tbody > tr > td, .table>thead>tr>th {
             border: 1px solid #666;
+            padding: 2px 5px;
         }
         .table>thead>tr>th:first-child,
         .table-bordered > tbody > tr > td:first-child {
@@ -258,11 +260,11 @@
                     </tr>
                     <tr class="bg-light">
                         <th class="text-center" style="white-space: nowrap;">序号</th>
-                        <th class="text-center">配件名称</th>
-                        <th class="text-center">配件参数</th>
+                        <th class="text-center">配件名称/参数</th>
+##                        <th class="text-center">配件参数</th>
                         <th class="text-center">配件价值</th>
-                        <th class="text-center" style="white-space: nowrap;">数量</th>
-                        <th class="text-center">租赁单价</th>
+##                        <th class="text-center" style="white-space: nowrap;">数量</th>
+                        <th class="text-center">租赁单价/数量</th>
                         <th class="text-center">租期</th>
                         <th class="text-center">支付方式</th>
                         <th class="text-center">押金</th>
@@ -274,12 +276,17 @@
                     {{#listData}}
                     <tr>
                         <td class="text-center">{{rowNum}}</td>
-                        <td class="text-center">{{materialName}}</td>
-                        <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
+                        <td class="text-center">
+                            <p>{{materialName}}</p>
+                            <p>{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</p>
+                        </td>
+##                        <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
                         <td class="text-center">￥{{#price}}{{materialPrice}}{{/price}}</td>
-                        <td class="text-center">{{materialCount}}</td>
-                        <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
-
+##                        <td class="text-center">{{materialCount}}</td>
+                        <td class="text-center">
+                            <p>￥{{#price}}{{materialUnitAmount}}{{/price}}</p>
+                            <p>{{materialCount}}</p>
+                        </td>
                         <td class="text-center">
                             <p style="white-space: nowrap">{{rentTypeValue}}</p>
                             <p style="white-space: nowrap">{{rentTimeLength}}{{rentTypeUnit}}</p>
@@ -426,9 +433,9 @@
 
     <div id="signature" class="hide">
         <div class=" row p15 pbn">
-            <div class="section col-md-12 mb30"><p class="printH2"><b>以下请用正楷书写</b></p></div>
+            <div class="section col-md-12 mb5"><p class="printH2"><b>以下请用正楷书写</b></p></div>
 
-            <div class="row section mb40">
+            <div class="row section mb20">
                 <div class="col-xs-12">
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
@@ -450,7 +457,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row section mb40">
+            <div class="row section mb20">
                 <div class="col-xs-12">
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
@@ -480,10 +487,11 @@
                             <dd class="mb5 print-under-line" style="margin-left: 8em !important;"></dd>
                         </dl>
                     </div>
+                    <div class="col-xs-8"><p>(温馨提示：签收时应当对设备进行验收及清点，签字后视同货物合格)</p></div>
                 </div>
             </div>
             <div class="section">
-                <div class="col-xs-12"><p>温馨提示：签收时应当对设备进行验收及清点，签字后视同货物合格</p></div>
+
             </div>
         </div>
     </div>
