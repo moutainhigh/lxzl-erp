@@ -2710,6 +2710,9 @@ public class StatementServiceImpl implements StatementService {
             return statementMonthCount;
         } else {
             // 按月租的情况
+            if (paymentCycle == null || rentTimeLength == null) {
+                return null;
+            }
             if (paymentCycle == null || paymentCycle >= rentTimeLength || paymentCycle == 0) {
                 return statementMonthCount;
             }
@@ -2791,6 +2794,7 @@ public class StatementServiceImpl implements StatementService {
             }
             firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, unitAmount, itemCount);
         }
+        firstPhaseAmount = BigDecimalUtil.round(firstPhaseAmount, 0);
         // 先不考虑保险
         /*BigDecimal insuranceTotalAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(insuranceAmount, new BigDecimal(itemCount)));
         firstPhaseAmount = BigDecimalUtil.add(firstPhaseAmount, insuranceTotalAmount);*/
