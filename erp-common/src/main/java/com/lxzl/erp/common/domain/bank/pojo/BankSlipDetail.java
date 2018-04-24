@@ -39,8 +39,10 @@ public class BankSlipDetail extends BasePO {
 	private String subCompanyName;  //数据归属分公司名称
 	private Integer localizationSubCompanyId;  //属地化公司id
 	private String localizationSubCompanyName;  //属地化公司名称
+	private Integer bankSlipBankType;  //银行类型
 
 	private List<BankSlipClaim> bankSlipClaimList;
+
 
 	public List<BankSlipClaim> getBankSlipClaimList() {
 		return bankSlipClaimList;
@@ -60,6 +62,14 @@ public class BankSlipDetail extends BasePO {
 
 	public void setLocalizationSubCompanyId(Integer localizationSubCompanyId) {
 		this.localizationSubCompanyId = localizationSubCompanyId;
+	}
+
+	public Integer getBankSlipBankType() {
+		return bankSlipBankType;
+	}
+
+	public void setBankSlipBankType(Integer bankSlipBankType) {
+		this.bankSlipBankType = bankSlipBankType;
 	}
 
 	public String getLocalizationSubCompanyName() {
