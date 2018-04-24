@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-结算单管理-对账单-详细</title>
+    <title>凌雄ERP-财务管理-资金流水-详细</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -27,13 +27,11 @@
                             </div>
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">
-                                    {{#acitonButtons}}
-                                    {{#showButton}}
-                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                    {{#actionButtons}}
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankslipdetailid}}" data-status="{{detailStatus}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </a>
-                                    {{/showButton}}
-                                    {{/acitonButtons}}
+                                    {{/actionButtons}}
                                 </script>
                                 <div class="btn-group" id="actionButtons"></div>
                             </div>
@@ -126,7 +124,12 @@
 </div>
     #parse("layout/footer.vm")
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js', 'manage.jurnal.amount.detail.js');
+    management_load_script('${staticManagement}/js', 
+        'modal.choose.customerByAll.js',
+        'modal.choose.company.js',
+        'manage.jurnal.amount.trade.modal.js',
+        'manage.jurnal.amount.handle.mixin.js', 
+        'manage.jurnal.amount.detail.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化

@@ -168,6 +168,7 @@
             'modal.choose.customerByAll.js',
             'modal.choose.company.js',
             'manage.jurnal.amount.trade.modal.js',
+            'manage.jurnal.amount.handle.mixin.js',
             'manage.jurnal.amount.detail.list.js');
 </script>
 <script type="text/javascript">
