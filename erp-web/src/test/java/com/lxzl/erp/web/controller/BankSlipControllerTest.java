@@ -175,7 +175,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
 //        bankSlipDetailQueryParam.setSubCompanyName();
-
+        bankSlipDetailQueryParam.setIsLocalization(1);
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
