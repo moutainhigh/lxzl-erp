@@ -1000,6 +1000,12 @@ public class PageController extends BaseController {
         return "/component/order/cancelReasonModal";
     }
 
+    //添加备注
+    @RequestMapping("/add-remark/modal")
+    public String addRemarkModal() {
+        return "/component/order/addRemarkModal";
+    }
+
     //采购单选择审核人Modal
     @RequestMapping("/audit-user/choose")
     public String auditUserChoose() {

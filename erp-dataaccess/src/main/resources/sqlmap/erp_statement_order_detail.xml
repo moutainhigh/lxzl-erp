@@ -57,10 +57,12 @@
         <result column="goods_count" jdbcType="INTEGER" property="goodsCount"/>
         <result column="goods_unit_amount" jdbcType="DECIMAL" property="goodsUnitAmount"/>
         <result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
+        <result column="statement_detail_penalty_amount" jdbcType="DECIMAL" property="statementDetailPenaltyAmount" />
+        <result column="statement_detail_penalty_paid_amount" jdbcType="DECIMAL" property="statementDetailPenaltyPaidAmount" />
     </resultMap>
 
     <sql id="column_List">
-		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,esod.statement_coupon_amount
+		esod.id,esod.statement_order_id,esod.customer_id,esod.order_type,esod.order_id,esod.order_item_type,esod.order_item_refer_id,esod.return_refer_id,esod.statement_detail_type,esod.statement_detail_phase,esod.statement_detail_amount,esod.statement_detail_other_amount,esod.statement_detail_other_paid_amount ,esod.statement_detail_rent_deposit_amount,esod.statement_detail_rent_deposit_paid_amount,esod.statement_detail_rent_deposit_return_amount,esod.statement_detail_rent_deposit_return_time,esod.statement_detail_deposit_amount,esod.statement_detail_deposit_paid_amount,esod.statement_detail_deposit_return_amount,esod.statement_detail_deposit_return_time,esod.statement_detail_rent_amount,esod.statement_detail_rent_paid_amount,esod.statement_detail_paid_time,esod.statement_detail_overdue_amount,esod.statement_detail_overdue_paid_amount,esod.statement_detail_overdue_days,esod.statement_detail_overdue_phase_count,esod.statement_detail_status,esod.statement_expect_pay_time,esod.statement_start_time,esod.statement_end_time,esod.data_status,esod.remark,esod.create_time,esod.create_user,esod.update_time,esod.update_user,esod.statement_detail_correct_amount,esod.statement_coupon_amount,esod.statement_detail_penalty_amount as statement_detail_penalty_amount,esod.statement_detail_penalty_paid_amount as statement_detail_penalty_paid_amount
 	</sql>
 
     <select id="findById" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
@@ -384,6 +386,12 @@
             </if>
             <if test="statementCouponAmount != null">
                 statement_coupon_amount = #{statementCouponAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="statementDetailPenaltyAmount != null">
+                statement_detail_penalty_amount = #{statementDetailPenaltyAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="statementDetailPenaltyPaidAmount != null">
+                statement_detail_penalty_paid_amount = #{statementDetailPenaltyPaidAmount,jdbcType=DECIMAL},
             </if>
         </set>
     </sql>
