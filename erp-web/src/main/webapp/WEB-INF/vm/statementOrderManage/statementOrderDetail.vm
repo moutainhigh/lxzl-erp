@@ -101,6 +101,7 @@
                                         <th class="nowrap">结算支付时间</th>
 
                                         <th class="nowrap text-info">结算单金额</th>
+                                        <th class="nowrap text-info">抵扣金额</th>
                                         <th class="nowrap">租金</th>
                                         <th class="nowrap">租金押金</th>
                                         <th class="nowrap">押金</th>
@@ -145,6 +146,7 @@
                                         <td class="nowrap">{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
 
                                         <td class="nowrap text-info">￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
+                                        <td class="nowrap text-info">￥{{#price}}{{statementCouponAmount}}{{/price}}</td>
                                         <td class="nowrap">￥{{#price}}{{statementDetailRentAmount}}{{/price}}</td>
                                         <td class="nowrap">￥{{#price}}{{statementDetailRentDepositAmount}}{{/price}}</td>
                                         <td class="nowrap">￥{{#price}}{{statementDetailDepositAmount}}{{/price}}</td>
