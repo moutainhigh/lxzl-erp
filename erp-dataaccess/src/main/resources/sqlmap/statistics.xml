@@ -739,7 +739,7 @@ ORDER BY esc.data_order DESC
         where esc.id is not null
         AND eo.create_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.create_time
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.salesmanQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
