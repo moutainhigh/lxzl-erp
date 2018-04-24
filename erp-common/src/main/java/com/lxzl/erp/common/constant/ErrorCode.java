@@ -780,6 +780,8 @@ public class ErrorCode {
     public static final String K3_RETURN_REASON_TYPE_ERROR = "J17000029";
     public static final String DELIVERY_COMPANY_NOT_EXIT = "J17000030";
     public static final String DELIVERY_COMPANY_ID_NULL = "J17000031";
+    /** k3历史退货单响应代码 */
+    public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -850,6 +852,7 @@ public class ErrorCode {
     public static final String SWITCH_IS_OPEN_IS_FAIL = "J20000005";
     public static final String SWITCH_INTERFACE_URL_EXISTS = "J20000006";
     public static final String SWITCH_CLOSE = "J20000007";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1620,6 +1623,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_REASON_TYPE_ERROR, "退货原因出错");
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
+        MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
