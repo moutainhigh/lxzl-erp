@@ -984,6 +984,12 @@ public class PageController extends BaseController {
         return "/component/product/chooseModal";
     }
 
+    //选择商品/组合商品Modal
+    @RequestMapping("/all-product/choose")
+    public String allProductChoose() {
+        return "/component/order/chooseProductModal";
+    }
+
     //提交审核选择审核人及填写审核备注
     @RequestMapping("/submit-audit/modal")
     public String submitAuditModal() {
