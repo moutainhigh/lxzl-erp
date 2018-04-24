@@ -15,15 +15,6 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     private String payerName;   //付款人名称
     private Integer loanSign;   //借贷标志,1-贷（收入），2-借（支出）
     private Integer detailStatus;   //明细状态，1-未认领，2-已认领，3-已确定，4-忽略
-    private Integer isLocalization;   //'是否已属地化,0-否，1-是[总公司时有值]',
-
-    public Integer getIsLocalization() {
-        return isLocalization;
-    }
-
-    public void setIsLocalization(Integer isLocalization) {
-        this.isLocalization = isLocalization;
-    }
 
     public Integer getBankSlipId() {
         return bankSlipId;
