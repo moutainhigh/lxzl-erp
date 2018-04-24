@@ -15,7 +15,7 @@ public class StatementOrder extends BasePO {
     private String statementOrderNo;   //结算单编码
     private Integer customerId;   //客户ID
     private String customerName;    // 客户姓名
-    private String customerNo;    // 客户姓名
+    private String customerNo;    // 客户编号
     private Date statementExpectPayTime; // 结算单预计支付时间
     private BigDecimal statementAmount;   //结算单金额，结算单明细总和
     private BigDecimal statementOtherAmount;   // 结算单其他金额
@@ -32,6 +32,8 @@ public class StatementOrder extends BasePO {
     private Date statementPaidTime;        // 结算单支付时间
     private BigDecimal statementOverdueAmount;    // 逾期金额
     private BigDecimal statementOverduePaidAmount;
+    private BigDecimal statementPenaltyAmount;   //违约金
+    private BigDecimal statementPenaltyPaidAmount;  //已付违约金
     private Integer statementStatus;   //结算状态，0未结算，1已结算
     private Date statementStartTime;   //结算开始时间，结算单明细最早的一个
     private Date statementEndTime;   //结算结束时间，结算单明细最晚的一个
@@ -337,5 +339,21 @@ public class StatementOrder extends BasePO {
 
     public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
         this.statementCouponAmount = statementCouponAmount;
+    }
+
+    public BigDecimal getStatementPenaltyAmount() {
+        return statementPenaltyAmount;
+    }
+
+    public void setStatementPenaltyAmount(BigDecimal statementPenaltyAmount) {
+        this.statementPenaltyAmount = statementPenaltyAmount;
+    }
+
+    public BigDecimal getStatementPenaltyPaidAmount() {
+        return statementPenaltyPaidAmount;
+    }
+
+    public void setStatementPenaltyPaidAmount(BigDecimal statementPenaltyPaidAmount) {
+        this.statementPenaltyPaidAmount = statementPenaltyPaidAmount;
     }
 }
