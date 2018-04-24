@@ -850,6 +850,7 @@ public class ErrorCode {
     public static final String COUPON_NOT_USED_THIS_ORDER_TYPE = "J19000021";
     public static final String COUPON_ID_NOT_NULL = "J19000022";
     public static final String COUPON_NOT_USED_THIS_STATEMENT = "J19000023";
+    public static final String COUPON_USED_THIS_STATEMENT = "J19000024";
 
     public static final String SWITCH_INTERFACE_URL_NOT_NULL = "J20000001";
     public static final String SWITCH_IS_OPEN_NOT_NULL = "J20000002";
@@ -1699,6 +1700,7 @@ public class ErrorCode {
         MAP.put(COUPON_NOT_USED_THIS_ORDER_TYPE,"该类型结算单无法使用优惠券");
         MAP.put(COUPON_ID_NOT_NULL,"优惠卷ID不能为空");
         MAP.put(COUPON_NOT_USED_THIS_STATEMENT,"这个结算单未使用优惠券");
+        MAP.put(COUPON_USED_THIS_STATEMENT,"该结算单已使用过结算单优惠券，不能重复使用");
 
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL, "接口URL不能为空");

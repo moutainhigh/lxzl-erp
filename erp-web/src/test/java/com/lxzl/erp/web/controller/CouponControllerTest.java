@@ -227,9 +227,9 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void useStatementCoupon() throws Exception {
         Coupon coupon = new Coupon();
-        coupon.setCouponId(5273);
+        coupon.setCouponId(5324);
         StatementOrderDetail statementOrderDetail = new StatementOrderDetail();
-        statementOrderDetail.setStatementOrderDetailId(2);
+        statementOrderDetail.setStatementOrderDetailId(6584);
         StatementCouponParam statementCouponParam = new StatementCouponParam();
         statementCouponParam.setCoupon(coupon);
         statementCouponParam.setStatementOrderDetail(statementOrderDetail);
