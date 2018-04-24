@@ -255,4 +255,14 @@ public class CustomerController {
         ServiceResult<String, Page<ReturnVisit>> serviceResult = customerService.pageCustomerReturnVisit(customerReturnVisitQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    /**
+     *将已授信的公司的erp_customer表中的is_risk字段设置为1
+     */
+    @RequestMapping(value = "setIsRisk", method = RequestMethod.POST)
+    public Result setIsRisk() {
+        ServiceResult<String, String> serviceResult = customerService.setIsRisk();
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+
 }

@@ -159,6 +159,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         customerDO.setOwner(customer.getOwner());
         customerDO.setUnionUser(customer.getUnionUser());
+        customerDO.setIsRisk(CommonConstant.COMMON_CONSTANT_NO);
         customerMapper.save(customerDO);
 
 
@@ -850,12 +851,14 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult<String, Page<Customer>> pageCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
         ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
-
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
-        //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
-        customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+        if (customerCompanyQueryParam.getCompanyName()!=null) {
+            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+            customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+        }
+
         maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
         maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer totalCount = customerMapper.findCustomerCompanyCountByParams(maps);
@@ -1553,6 +1556,8 @@ public class CustomerServiceImpl implements CustomerService {
             customerRiskManagementHistoryDO.setCustomerNo(customerDO.getCustomerNo());
             customerRiskManagementHistoryMapper.save(customerRiskManagementHistoryDO);
 
+            customerDO.setIsRisk(CommonConstant.COMMON_CONSTANT_YES);
+            customerMapper.update(customerDO);
         } else {//有风控信息则修改
             //在执行更改方法前，进行原数据和更改传入数据的不同判断
             CustomerRiskManagementDO customerRiskManagementDO = ConverterUtil.convert(customerRiskManagement, CustomerRiskManagementDO.class);
@@ -3217,6 +3222,17 @@ public class CustomerServiceImpl implements CustomerService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    /**
+     *将已授信的公司的erp_customer表中的is_risk字段设置为1
+     */
+    @Override
+    public ServiceResult<String, String> setIsRisk() {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        customerMapper.setIsRisk();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
     }
 
     @Autowired

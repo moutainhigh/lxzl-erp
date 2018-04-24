@@ -1,0 +1,88 @@
+<div id="orderBaseInfo"></div>
+<script type="text/html" id="orderBaseInfoTpl">
+    {{#order}}
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal dl-horizontal-rental">
+                <dt><label>所属公司</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{orderSubCompanyName}}</dd>
+
+                <dt><label  style="letter-spacing: 0.33em">创建人</label><span class="mr5">：</span></dt>
+                <dd class="mb5" >{{createUserRealName}}</dd>
+
+                <dt><label style="letter-spacing: 0.33em;">业务员</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{orderSellerName}}&nbsp;</dd>
+
+                <dt><label>发货公司</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{deliverySubCompanyName}}</dd>
+
+                <dt><label style="letter-spacing: 1em;">类型</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
+
+                <dt><label style="letter-spacing: 1em;">期限</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
+
+                {{#rentTypeByMonth}}
+                <dt><label style="letter-spacing: 0.33em;">结算日</label><span class="mr5">：</span></dt>
+                <dd class="mb5" id="statementDate"></dd>
+                {{/rentTypeByMonth}}
+
+                <dt><label style="letter-spacing: 1em;">备注</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
+
+
+                <!-- <dt><label>创建时间</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#time}}{{createTime}}{{/time}}</dd> -->
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal dl-horizontal-rental">
+                <dt><label>客户编号</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{buyerCustomerNo}}&nbsp;</dd>
+
+                <dt><label>客户名称</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{buyerCustomerName}}&nbsp;</dd>
+
+                <dt><label style="letter-spacing: 0.33em">收货人</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{orderConsignInfo.consigneeName}}&nbsp;</dd>
+
+                <dt><label>联系方式</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{orderConsignInfo.consigneePhone}}&nbsp;</dd>
+
+                <dt><label>收货地址</label><span class="mr5">：</span></dt>
+                <dd>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}&nbsp;</dd>
+
+                <dt><label>配送方式</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{deliveryModeValue}}&nbsp;</dd>
+
+                <dt><label>同行调拨</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#boolText}}{{isPeer}}{{/boolText}}&nbsp;</dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal dl-horizontal-rental">
+                <dt><label style="letter-spacing: 0.5em;">创建时间</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}&nbsp;</dd>
+
+                <dt><label style="letter-spacing: 0.5em;">配送日期</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}&nbsp;</dd>
+
+                <dt><label style="letter-spacing: 0.5em;">起算日期</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#shortTime}}{{rentStartTime}}{{/shortTime}}&nbsp;</dd>
+
+                <dt><label>预计归还日期</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</dd>
+
+                <dt><label>实际归还时间</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#shortTime}}{{actualReturnTime}}{{/shortTime}}&nbsp;</dd>
+
+                <dt><label style="letter-spacing: 0.5em;">发货时间</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#time}}{{deliveryTime}}{{/time}}&nbsp;</dd>
+
+                <dt><label style="letter-spacing: 0.5em;">收货日期</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{#shortTime}}{{confirmDeliveryTime}}{{/shortTime}}&nbsp;</dd>
+            </dl>
+        </div>
+    </div>
+    {{/order}}
+</script>
