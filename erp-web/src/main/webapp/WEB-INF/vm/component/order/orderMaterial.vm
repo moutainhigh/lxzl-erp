@@ -1,0 +1,115 @@
+<div id="purchaseOrderMaterialItems" class="tab-pane tab-pane-order">
+    <div class="table-responsive">
+        <script type="text/html" id="materialDataListTpl">
+            <thead>
+            <tr class="bg-light">
+##                                            <th>编号</th>
+##                                            <th>图片</th>
+                <th>类别</th>
+                <th>品牌</th>
+                <th>配件名称</th>
+                <th>配件保值价</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>在租数量</th>
+                <th>类型/期限</th>
+                <th>配件总价</th>
+                <th>支付方式</th>
+                <th>设备押金</th>
+                <th>首付金额</th>
+                <th>首付押金</th>
+                <th class="text-right">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#dataSource}}
+            {{#listData}}
+            <tr class="materialRow">
+##                                            <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialNo}}</td>
+##                                            <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                
+                <td>{{materialTypeStr}}</td>
+                <td>{{brandName}}</td>
+                <td><span class="badge {{isNewMaterialBadgeClass}} mr5">{{#isNewValue}}{{isNewMaterial}}{{/isNewValue}}</span>{{materialName}}</td>
+                <td>￥{{currentMaterialPrice}}</td>
+                <td>￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                <td>{{materialCount}}</td>
+                <td>{{rentingMaterialCount}}</td>
+                <td>
+                    <p>{{rentTypeValue}}</p>
+                    <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
+                </td>
+                <td>￥{{#price}}{{materialAmount}}{{/price}}</td>
+                <td>
+                    <p>{{payModeValue}}</p>
+                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                </td>
+                <td>
+                    ￥{{#price}}{{depositAmount}}{{/price}}
+                </td>
+                <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                <td class="text-right">
+                    <div class="btn-group text-right">
+                        {{#rowActionButtons}}
+                        <a href="#"
+                           class="btn btn-default btn-xs {{class}}"
+                           data-materialno="{{materialNo}}"
+                           data-materialid="{{materialId}}"
+                           data-orderno="{{orderNo}}"
+                           data-materialcount="{{materialCount}}"
+                           data-isnewmaterial="{{isNewMaterial}}">{{text}}</a>
+                        {{/rowActionButtons}}
+                        <a href="#" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                    </div>
+                </td>
+            </tr>
+            <tr class="bg-light affixTr" style="height: 0;">
+                <td colspan="13" class="pn br-n" style="height:0;">
+                    <div class="panel m15 affixPanel"  style="display: none;">
+                        {{#orderMaterialBulkListData}}
+                        <div class="panel-heading pn ph8">
+                            <span>已配散料：共 {{sourcceLength}} 件</span>
+                        </div>
+                        <div class="panel-body pn">
+                            <table class="table">
+                                {{#orderMaterialBulkListSource}}
+                                <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                    <td class="br-r">{{bulkMaterialNo}}</td>
+                                </tr>
+                                {{/orderMaterialBulkListSource}}
+                                {{^orderMaterialBulkListSource}}
+                                <tr class="materialRow" data-materialtype="{{materialType}}" data-skuid="{{skuId}}" data-productid="{{productId}}">
+                                    <td class="br-r">无配货信息</td>
+                                </tr>
+                                {{/orderMaterialBulkListSource}}
+                            </table>
+                        </div>
+                        <div class="panel-footer pn pv5 ph15">
+                            <div class="row">
+                                <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                            </div>
+                        </div>
+                        {{/orderMaterialBulkListData}}
+                    </div>
+                </td>
+            </tr>
+            {{/listData}}
+            {{^listData}}
+            <tr>
+                <td valign="top" colspan="14" class="text-center">没有配件</td>
+            </tr>
+            {{/listData}}
+            {{/dataSource}}
+            <tr id="totalMaterialFirstNeedPay" class="text-danger hide">
+                <td colspan="10"></td>
+                <td colspan="3">
+                    <span class="txt">首付总额：</span>
+                    <span class="num"></span>
+                </td>
+            </tr>
+            </tbody>
+        </script>
+        <table class="table admin-form theme-warning tc-checkbox-1 fs13 br-t" id="materialDataListTable"></table>
+    </div>
+</div>
