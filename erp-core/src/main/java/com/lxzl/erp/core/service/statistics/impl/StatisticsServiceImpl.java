@@ -469,7 +469,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         } else if (OrderRentType.RENT_TYPE_DAY.equals(statementOrderDetailDO.getRentType())) {
             //计算两日期时间差
             Integer dayCount = DateUtil.daysBetween(start, end);
-            return BigDecimalUtil.mul(statementOrderDetailDO.getGoodsUnitAmount(), new BigDecimal(dayCount));
+
+            // 结算单开始和结束同一天也算一天，都要加上一天
+            dayCount = dayCount + 1;
+            return BigDecimalUtil.mul(BigDecimalUtil.mul(statementOrderDetailDO.getGoodsUnitAmount(), new BigDecimal(dayCount)), new BigDecimal(statementOrderDetailDO.getGoodsCount()));
         }
 
         return BigDecimal.ZERO;
