@@ -217,4 +217,17 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.company.DepartmentDO">
 		update erp_department <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findByUserIdOfDingdingDepId" resultMap="DepartmentDO" parameterType="Integer">
+		SELECT d.id,d.dingding_dept_id
+		FROM
+		erp_role_department_data rdd,erp_user_role ur,erp_department d
+		WHERE
+		ur.user_id = #{userId, jdbcType=INTEGER}
+		AND rdd.role_id = ur.role_id
+		AND rdd.department_id = d.id
+		AND d.dingding_dept_id IS NOT NULL
+		AND d.data_status = 1
+		limit 1
+	</select>
 </mapper>

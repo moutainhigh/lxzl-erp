@@ -32,6 +32,8 @@ public interface UserMapper extends BaseMysqlDAO<UserDO> {
 
     /** 根据钉钉用户数据传输列表获取用户列表信息 */
     List<UserDO>  findUsersByDingdingUsers(@Param("queryParams") List<DingdingUserDTO> dingdingUserDTOS);
-    /** 根据id根性钉钉用户id */
+    /** 根据用户id列表获取用户列表信息 */
+    List<UserDO>  findUsersByIds(@Param("userIds") List<Integer> userIds);
+    /** 根据id更新钉钉用户id */
     int updateDingdingUserIdById(@Param("user") UserDO userDO);
 }

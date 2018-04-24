@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @create 2018-04-23 15:04
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DingdingApproveCallBackDTO {
+public class DingdingApproveCallBackDTO extends DingdingApproveResultDTO{
     /** 响应的时间类型--- bpms_task_change:审批任务类型 --- bpms_instance_change:审批实例类型*/
     private String eventType;
     /** 双类id */
@@ -22,8 +22,6 @@ public class DingdingApproveCallBackDTO {
     private Long finishTime;
     /** 实例模板代码 */
     private String processCode;
-    /** 审批进程实例id */
-    private String processInstanceId;
     /** 审批结果 */
     private String result;
     /** 职员id---钉钉的用户id */
@@ -80,14 +78,6 @@ public class DingdingApproveCallBackDTO {
 
     public void setProcessCode(String processCode) {
         this.processCode = processCode;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
     }
 
     public String getResult() {

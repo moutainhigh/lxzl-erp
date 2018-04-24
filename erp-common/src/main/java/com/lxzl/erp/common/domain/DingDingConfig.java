@@ -12,6 +12,8 @@ public class DingDingConfig {
      */
     public static String dingDingGatewayUrl;
 
+    public static String applyApprovingWorkflowCallBackUrl;
+
     public static String CC_POSITION_START = "START";
     public static String CC_POSITION_FINISH = "FINISH";
     public static String CC_POSITION_START_FINISH = "START_FINISH";
@@ -38,6 +40,9 @@ public class DingDingConfig {
         return dingDingGatewayUrl + "/" + interfaceApplyApprovingWorkflow;
     }
 
+    public void setApplyApprovingWorkflowCallBackUrl(String applyApprovingWorkflowCallBackUrl) {
+        DingDingConfig.applyApprovingWorkflowCallBackUrl = applyApprovingWorkflowCallBackUrl;
+    }
 
     public void setDingDingGatewayUrl(String dingDingGatewayUrl) {
         DingDingConfig.dingDingGatewayUrl = dingDingGatewayUrl;

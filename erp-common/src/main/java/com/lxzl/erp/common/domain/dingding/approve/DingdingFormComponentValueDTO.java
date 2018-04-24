@@ -9,6 +9,15 @@ public class DingdingFormComponentValueDTO {
     private String name;
     private String value;
 
+    public DingdingFormComponentValueDTO() {
+
+    }
+
+    public DingdingFormComponentValueDTO(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public String getName() {
         return name;
     }
