@@ -334,10 +334,6 @@ public class K3ServiceImpl implements K3Service {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
         }
-        //获取订单退货单项列表
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
-        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
-        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
