@@ -19,4 +19,6 @@ public interface WorkflowLinkMapper extends BaseMysqlDAO<WorkflowLinkDO> {
 												@Param("workflowReferNo") String workflowReferNo);
 
 	WorkflowLinkDO findByNo(@Param("workflowLinkNo") String workflowLinkNo);
+
+    List<String> findWorkflowReferNoList(@Param("currentVerifyUser") Integer currentVerifyUser);
 }

@@ -438,7 +438,9 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void queryVerifyOrder() throws Exception {
         VerifyOrderQueryParam param =new VerifyOrderQueryParam();
 //        param.setOrderId(3001219);
-//        param.setBuyerRealName("二零一八三月");
+//        param.setPageNo(2);
+//        param.setPageSize(5);
+//        param.setBuyerRealName("无锡博蓝广告传播");
 //        param.setBuyerRealName("深圳市点时");
 //        param.setIsPendingDelivery(1);
 //        param.setOrderNo("LXO-20180307-1000-00014");

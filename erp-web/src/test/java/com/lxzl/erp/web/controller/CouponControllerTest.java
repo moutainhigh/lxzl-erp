@@ -209,7 +209,8 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         customerCouponQueryParam.setPageNo(1);
         customerCouponQueryParam.setPageSize(15);
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180409-00004");
+//        customer.setCustomerNo("LXCC-1000-20180409-00004");
+        customer.setCustomerNo("LXCC-1000");
 //        Order order = new Order();
 //        OrderProduct orderProduct = new OrderProduct();
         customerCouponQueryParam.setCustomer(customer);
@@ -227,9 +228,9 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void useStatementCoupon() throws Exception {
         Coupon coupon = new Coupon();
-        coupon.setCouponId(5324);
+        coupon.setCouponId(5390);
         StatementOrderDetail statementOrderDetail = new StatementOrderDetail();
-        statementOrderDetail.setStatementOrderDetailId(6584);
+        statementOrderDetail.setStatementOrderDetailId(524);
         StatementCouponParam statementCouponParam = new StatementCouponParam();
         statementCouponParam.setCoupon(coupon);
         statementCouponParam.setStatementOrderDetail(statementOrderDetail);

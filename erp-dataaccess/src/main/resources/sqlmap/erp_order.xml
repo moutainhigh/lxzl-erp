@@ -728,9 +728,8 @@
         INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-        INNER JOIN erp_workflow_link ewl ON ewl.current_verify_user = #{maps.currentVerifyUser, jdbcType=INTEGER}
-              AND ewl.workflow_type = 2 AND ewl.workflow_refer_no = eo.order_no
         <where>
+
             <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
                 and eo.buyer_customer_name like CONCAT('%','${maps.verifyOrderQueryParam.buyerRealName}','%' )
             </if>
@@ -773,11 +772,17 @@
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
+            <if test="maps.workflowReferNoList != null &amp;&amp; maps.workflowReferNoList.size() > 0">
+                and eo.order_no in
+                <foreach item="workflowReferNo" index="index" collection="maps.workflowReferNoList"
+                         open="(" separator="," close=")">
+                    #{workflowReferNo,jdbcType=VARCHAR}
+                </foreach>
+            </if>
         </where>
     </select>
 
     <select id="findVerifyOrderByParams" resultMap="OrderDO" parameterType="map">
-
         SELECT
         <include refid="column_List"/>
         <trim prefix=",">
@@ -797,9 +802,8 @@
         INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
-        INNER JOIN erp_workflow_link ewl ON ewl.current_verify_user = #{maps.currentVerifyUser, jdbcType=INTEGER}
-              AND ewl.workflow_type = 2 AND ewl.workflow_refer_no = eo.order_no
         <where>
+
             <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
                 and eo.buyer_customer_name like CONCAT('%','${maps.verifyOrderQueryParam.buyerRealName}','%' )
             </if>
@@ -841,6 +845,13 @@
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
+            </if>
+            <if test="maps.workflowReferNoList != null &amp;&amp; maps.workflowReferNoList.size() > 0">
+                and eo.order_no in
+                <foreach item="workflowReferNo" index="index" collection="maps.workflowReferNoList"
+                         open="(" separator="," close=")">
+                    #{workflowReferNo,jdbcType=VARCHAR}
+                </foreach>
             </if>
         </where>
         ORDER BY eo.create_time DESC
