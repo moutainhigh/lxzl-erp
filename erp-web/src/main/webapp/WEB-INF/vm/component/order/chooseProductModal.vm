@@ -1,0 +1,188 @@
+<div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseProductModal">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>选择商品</span>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                        <li class="active">
+                            <a href="#singleProduct" data-toggle="tab">商品</a>
+                        </li>
+                        <li>
+                            <a href="#groupProduct" data-toggle="tab">组合商品</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body light pn">
+                <div class="tab-content pn br-n">
+                    <div id="singleProduct" class="tab-pane tab-pane-order active">
+                        <div class="panel-menu p12">
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <form id="chooseProductSearchForm" class="form-horizontal">
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                            <div class="input-group">
+                                                <input type="text" name="k3ProductNo" id="k3ProductNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品K3编号">
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                            <div class="input-group">
+                                                <input type="text" name="productName" id="productName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入商品名称">
+                                            </div>
+                                        </div>
+                                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                            <div class="input-group">
+                                                <input type="text" name="productId" id="productId" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入商品ID">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body pn">
+                            <div class="table-responsive">
+                                <script type="text/html" id="chooseProductModalDataListTpl">
+                                    <thead>
+                                    <tr class="bg-light">
+                                        <th>商品ID</th>
+                                        <th>图片</th>
+                                        <th>商品名称</th>
+                                        <th>K3商品编号</th>
+                                        <th>类别</th>
+                                        <th>是否在租</th>
+                                        <th class="text-right">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#dataSource}}
+                                    {{#listData}}
+                                    <tr>
+                                        <td>{{productId}}</td>
+                                        <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
+                                        <td>{{productName}}</td>
+                                        <td>{{k3ProductNo}}</td>
+                                        <td>{{categoryName}}</td>
+                                        <td>{{isRentStr}}</td>
+                                        <td class="text-right">
+                                            <div class="btn-group text-right">
+                                                <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-productid="{{productId}}">选择</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-light br-n" style="height: 0">
+                                        <td colspan="7" class="pn mn br-n" style="height: 0"></td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{^listData}}
+                                    <tr>
+                                        <td valign="top" colspan="14" class="text-center">没有查询到商品</td>
+                                    </tr>
+                                    {{/listData}}
+                                    {{/dataSource}}
+                                    </tbody>
+                                </script>
+                                <script type="text/html"  id="chooseProductModalDetialTpl">
+                                    {{#product}}
+                                    <div class="productDetial row p15" data-product="{{productJSONString}}">
+                                        {{#skuListSource}}
+                                        <div  class="row ph15">
+                                            <div class="panel m15">
+                                                <div class="panel-heading pn ph8">
+                                                    <span>选择SKU</span>
+                                                </div>
+                                                <div class="panel-body pn">
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr class="bg-light">
+                                                            <th></th>
+                                                            {{#showIsNewCheckBox}}
+                                                            <th>商品属性</th>
+                                                            {{/showIsNewCheckBox}}
+                                                            <th>SKU</th>
+                                                            <th>库存</th>
+                                                            <th>价值</th>
+                                                            <th>日租</th>
+                                                            <th>月租</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {{#skuList}}
+                                                            <tr class="skuTr">
+                                                                <td>
+                                                                    <label class="option block mn">
+                                                                        <input type="checkbox" name="sku" value="{{skuId}}">
+                                                                        <span class="checkbox mn"></span>
+                                                                    </label>
+                                                                </td>
+                                                                {{#showIsNewCheckBox}}
+                                                                <td>
+                                                                    <label class="block mn switch switch-primary">
+                                                                        <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
+                                                                        <label for="isNewProduct-{{skuId}}" data-on="全新" data-off="次新"></label>
+                                                                        <span></span>
+                                                                    </label>
+                                                                </td>
+                                                                {{/showIsNewCheckBox}}
+                                                                <td>{{propertiesToStr}}</td>
+                                                                <td>
+                                                                    <p class="isUsed">{{oldProductSkuCount}}</p>
+                                                                    <p class="isNew hide">{{newProductSkuCount}}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
+                                                                    <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                                                    <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                                                                    <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
+                                                                </td>
+                                                            </tr>
+                                                            {{/skuList}}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="panel-footer pn pv5 ph15">
+                                                    <div class="row">
+                                                        <div class="form-group mn pull-right">
+                                                            <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
+                                                            <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{/skuListSource}}
+                                    </div>
+                                    {{/product}}
+                                </script>
+                                <table class="table  admin-form theme-warning tc-checkbox-1 fs13" id="chooseProductDataListTable"></table>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                    #parse("component/pager.vm")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="groupProduct" class="tab-pane tab-pane-order"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

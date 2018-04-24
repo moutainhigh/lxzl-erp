@@ -135,6 +135,7 @@
                                         <th>创建人</th>
                                         <th>支付状态</th>
                                         <th>订单状态</th>
+##                                        <th>备注</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -194,6 +195,7 @@
                                                 </p>
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
                                             </td>
+##                                            <td>{{buyerRemark}}</td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group">
