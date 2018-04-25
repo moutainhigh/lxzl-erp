@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowNode;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplateDingding;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
@@ -186,8 +187,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkNo);
-        // TODO 提交工作流到钉钉上
-        // dingdingService.applyApprovingWorkflowToDingding(workflowLinkNo);
+        // 提交工作流到钉钉上
+        dingdingService.applyApprovingWorkflowToDingding(workflowLinkNo);
         return result;
     }
 
