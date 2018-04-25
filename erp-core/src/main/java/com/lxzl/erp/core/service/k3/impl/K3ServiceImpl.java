@@ -334,10 +334,6 @@ public class K3ServiceImpl implements K3Service {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
         }
-        //获取订单退货单项列表
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
-        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
-        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -720,6 +716,12 @@ public class K3ServiceImpl implements K3Service {
         requestData.put("pageNo", k3ReturnOrderQueryParam.getPageNo());
         requestData.put("pageSize", k3ReturnOrderQueryParam.getPageSize());
         requestData.put("pw", pw);
+        if (k3ReturnOrderQueryParam.getReturnStartTime() != null) {
+            requestData.put("createStartTime", DateUtil.formatDate(k3ReturnOrderQueryParam.getReturnStartTime(), DateUtil.SHORT_DATE_FORMAT_STR));
+        }
+        if (k3ReturnOrderQueryParam.getReturnEndTime() != null) {
+            requestData.put("createEndTime", DateUtil.formatDate(k3ReturnOrderQueryParam.getReturnEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
+        }
         String requestJson = JSONObject.toJSONString(requestData);
 
         HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();

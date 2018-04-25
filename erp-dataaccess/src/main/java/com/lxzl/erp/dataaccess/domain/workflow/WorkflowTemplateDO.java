@@ -14,7 +14,7 @@ public class WorkflowTemplateDO extends BaseDO {
     private Integer workflowType;
     private Integer dataStatus;
     private String remark;
-
+    private String dingdingProcessCode;   //钉钉模板代码
     @Transient
     private List<WorkflowNodeDO> workflowNodeDOList;
 
@@ -64,6 +64,14 @@ public class WorkflowTemplateDO extends BaseDO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getDingdingProcessCode() {
+        return dingdingProcessCode;
+    }
+
+    public void setDingdingProcessCode(String dingdingProcessCode) {
+        this.dingdingProcessCode = dingdingProcessCode;
     }
 
     public List<WorkflowNodeDO> getWorkflowNodeDOList() {

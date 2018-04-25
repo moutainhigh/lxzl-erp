@@ -454,6 +454,24 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, StatisticsSalesman> querySalesman(StatisticsSalesmanPageParam statisticsSalesmanPageParam) {
+        ServiceResult<String, StatisticsSalesman> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
+
+        StatisticsSalesman statisticsSalesman = statisticsMapper.querySalesmanCount(maps);
+        List<StatisticsSalesmanDetail> statisticsSalesmanDetailList = statisticsMapper.querySalesman(maps);
+        Page<StatisticsSalesmanDetail> page = new Page<>(statisticsSalesmanDetailList, statisticsSalesman.getTotalCount(), statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
+        statisticsSalesman.setStatisticsSalesmanDetailPage(page);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(statisticsSalesman);
+        return result;
+    }
+
     private BigDecimal calculateRentAmount(Date startTime, Date endTime, StatementOrderDetailDO statementOrderDetailDO) {
         //比较日期大小确定统计起始时间，结束时间
         //起始时间为MAX[统计起始时间，结算开始时间]

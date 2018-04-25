@@ -15,6 +15,7 @@ import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.message.MessageService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.UserService;
@@ -46,6 +47,8 @@ import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.*;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -129,6 +132,11 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Autowired
     private CustomerCompanyMapper customerCompanyMapper;
 
+    @Autowired
+    private DingdingService dingdingService;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> commitWorkFlow(Integer workflowType, String workflowReferNo, Integer verifyUser, String verifyMatters, String commitRemark, List<Integer> imgIdList, String orderRemark) {
@@ -178,6 +186,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkNo);
+        // TODO 提交工作流到钉钉上
+        // dingdingService.applyApprovingWorkflowToDingding(workflowLinkNo);
         return result;
     }
 
@@ -223,7 +233,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 } else {
                     //针对香港澳门审核
                     SubCompanyCityCoverDO ProvinceSubCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
-                    if(ProvinceSubCompanyCityCoverDO != null){
+                    if (ProvinceSubCompanyCityCoverDO != null) {
                         subCompanyId = ProvinceSubCompanyCityCoverDO.getSubCompanyId();
                     }
                 }
@@ -293,8 +303,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_TEMPLATE_NOT_EXISTS);
             return result;
         }
-        if(workflowLinkDO != null){
-            WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = saveWorkflowVerifyUserGroup(loginUser.getUserId(),currentTime,commitRemark);
+        if (workflowLinkDO != null) {
+            WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = saveWorkflowVerifyUserGroup(loginUser.getUserId(), currentTime, commitRemark);
 
             workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_BACK);
             workflowLinkDO.setVerifyUserGroupId(workflowVerifyUserGroupDO.getVerifyUserGroupId());
@@ -302,9 +312,9 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDO.setUpdateTime(currentTime);
             workflowLinkMapper.update(workflowLinkDO);
 
-            saveWorkflowLinkDetail(workflowLinkDO.getId(),workflowReferNo,(workflowTemplateDO.getWorkflowNodeDOList().size() + 1),loginUser.getUserId(),workflowVerifyUserGroupDO.getVerifyUserGroupId(),currentTime,commitRemark);
-        }else{
-            WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = saveWorkflowVerifyUserGroup(loginUser.getUserId(),currentTime,commitRemark);
+            saveWorkflowLinkDetail(workflowLinkDO.getId(), workflowReferNo, (workflowTemplateDO.getWorkflowNodeDOList().size() + 1), loginUser.getUserId(), workflowVerifyUserGroupDO.getVerifyUserGroupId(), currentTime, commitRemark);
+        } else {
+            WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = saveWorkflowVerifyUserGroup(loginUser.getUserId(), currentTime, commitRemark);
 
             WorkflowLinkDO newWorkflowLinkDO = new WorkflowLinkDO();
             newWorkflowLinkDO.setWorkflowLinkNo(generateNoSupport.generateWorkflowLinkNo(currentTime, loginUser.getUserId()));
@@ -324,14 +334,14 @@ public class WorkflowServiceImpl implements WorkflowService {
             newWorkflowLinkDO.setRemark(commitRemark);
             workflowLinkMapper.save(newWorkflowLinkDO);
 
-            saveWorkflowLinkDetail(newWorkflowLinkDO.getId(),workflowReferNo,(workflowTemplateDO.getWorkflowNodeDOList().size() + 1),loginUser.getUserId(),workflowVerifyUserGroupDO.getVerifyUserGroupId(),currentTime,commitRemark);
+            saveWorkflowLinkDetail(newWorkflowLinkDO.getId(), workflowReferNo, (workflowTemplateDO.getWorkflowNodeDOList().size() + 1), loginUser.getUserId(), workflowVerifyUserGroupDO.getVerifyUserGroupId(), currentTime, commitRemark);
         }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
-    public WorkflowVerifyUserGroupDO saveWorkflowVerifyUserGroup (Integer loginUserId,Date currentTime,String commitRemark){
+    public WorkflowVerifyUserGroupDO saveWorkflowVerifyUserGroup(Integer loginUserId, Date currentTime, String commitRemark) {
         WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
         workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
         workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
@@ -347,7 +357,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         return workflowVerifyUserGroupDO;
     }
 
-    public void saveWorkflowLinkDetail (Integer workflowLinkId,String workflowReferNo,Integer workflowStep,Integer loginUserId ,String verifyUserGroupId,Date currentTime,String commitRemark){
+    public void saveWorkflowLinkDetail(Integer workflowLinkId, String workflowReferNo, Integer workflowStep, Integer loginUserId, String verifyUserGroupId, Date currentTime, String commitRemark) {
         WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
         workflowLinkDetailDO.setWorkflowLinkId(workflowLinkId);
         workflowLinkDetailDO.setWorkflowReferNo(workflowReferNo);
@@ -500,9 +510,9 @@ public class WorkflowServiceImpl implements WorkflowService {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
                         return result;
                     }
-                    if(CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())){
+                    if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
                         customerDO = customerMapper.findCustomerCompanyByNo(customerDO.getCustomerNo());
-                        if(CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())){
+                        if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
                             result.setErrorCode(ErrorCode.SUCCESS);
                             return result;
                         }
@@ -1710,7 +1720,6 @@ public class WorkflowServiceImpl implements WorkflowService {
         result.setResult(workflowLinkNo);
         return result;
     }
-
 
     private void saveWorkflowLink(WorkflowLinkDO workflowLinkDO, String workflowReferNo, WorkflowNodeDO thisWorkflowNodeDO, Integer loginUserId, String commitRemark, Date currentTime, List<Integer> imgIdList, Integer verifyUser, List<Integer> verifyUserList, List<WorkflowNodeDO> workflowNodeDOList, String verifyUserGroupId) {
         // 生成提交人工作流

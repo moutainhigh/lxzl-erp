@@ -262,7 +262,7 @@ CREATE TABLE `erp_relet_order` (
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
-  `buyer_customer_no` INT(20) NOT NULL COMMENT '购买人编号',
+  `buyer_customer_no` VARCHAR(100) NOT NULL COMMENT '购买人编号',
   `buyer_customer_name` VARCHAR(64) NOT NULL COMMENT '客户名称',
   `order_sub_company_id` INT(20) DEFAULT NULL COMMENT '订单所属分公司',
   `delivery_sub_company_id` INT(20) NOT NULL COMMENT '订单发货分公司',
@@ -379,6 +379,33 @@ CREATE TABLE `erp_relet_order_material` (
   INDEX index_order_material_id ( `order_material_id` ),
   INDEX index_material_id ( `material_id` )
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
+
+
+--  钉钉功能脚本
+alter table erp_user add dingding_user_id varchar(31) COMMENT "钉钉用户id" AFTER last_login_ip; #
+-- erp_workflow_template表新增映射钉钉模板代码字段
+alter table erp_workflow_template add dingding_process_code varchar(127) COMMENT "钉钉模板代码"; #
+-- erp_department表新增映射钉钉的部门编号字段
+alter table erp_department add dingding_dept_id varchar(31) COMMENT "钉钉部门编号"; #
+-- erp_workflow_link表新增钉钉的工作流编号字段
+alter table erp_workflow_link add dingding_workflow_id varchar(63) COMMENT "钉钉工作流id"; #
+
+CREATE TABLE `erp_workflow_template_dingding` (
+`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+`dingding_process_code` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '钉钉工作流模板代码',
+`name` varchar(31) COLLATE utf8_bin NOT NULL COMMENT '模版表单名称',
+`name_index` int(11) NOT NULL DEFAULT '1' COMMENT '钉钉模板表单元素名所在的位置，从上到下依次为1,2,3以此类推',
+`data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+`remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+`create_time` datetime DEFAULT NULL COMMENT '添加时间',
+`create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+`update_time` datetime DEFAULT NULL COMMENT '修改时间',
+`update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='钉钉工作流模板表';
+
+-- erp_k3_return_order表新处理成功的状态字段
+alter table erp_k3_return_order add success_status int(11) NOT NULL DEFAULT 1 COMMENT "处理成功的状态0 未成功处理 1 处理成功"; #
 
 
 

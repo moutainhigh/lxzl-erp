@@ -42,27 +42,29 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">客户</dt><dd>{{k3CustomerName}}</dd>
-                                        <dt class="mb10">客户编号</dt><dd>{{k3CustomerNo}}</dd>
-                                        <dt class="mb10">联系人</dt><dd>{{returnContacts}}</dd>
-                                        <dt class="mb10">联系电话</dt><dd>{{returnPhone}}</dd>
-                                        <dt class="mb10">收货地址</dt><dd>{{returnAddress}}</dd>
-                                        <dt>发货公司</dt><dd>{{deliverySubCompanyName}}</dd>
+                                        <dt class="mb10">客户：</dt><dd>{{k3CustomerName}}</dd>
+                                        <dt class="mb10">客户编号：</dt><dd>{{k3CustomerNo}}</dd>
+                                        <dt class="mb10">联系人：</dt><dd>{{returnContacts}}</dd>
+                                        <dt class="mb10">联系电话：</dt><dd>{{returnPhone}}</dd>
+                                        <dt class="mb10">收货地址：</dt><dd>{{returnAddress}}</dd>
+                                        <dt>发货公司：</dt><dd>{{deliverySubCompanyName}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">退货单状态</dt><dd>{{returnOrderStatusValue}}</dd>
-                                        <dt class="mb10">退货日期:</dt><dd>{{#shortTime}}{{returnTime}}{{/shortTime}}</dd>
-                                        <dt class="mb10">退货方式</dt><dd>{{returnModeValue}}</dd>
-                                        <dt class="mb10">退货原因</dt><dd>{{returnReasonTypeValue}}</dd>
+                                        <dt class="mb10">退货单状态：</dt><dd>{{returnOrderStatusValue}}</dd>
+                                        <dt class="mb10">退货日期：</dt><dd>{{#shortTime}}{{returnTime}}{{/shortTime}}</dd>
+                                        <dt class="mb10">退货方式：</dt><dd>{{returnModeValue}}</dd>
+                                        <dt class="mb10">退货原因：</dt><dd>{{returnReasonTypeValue}}</dd>
+                                        <dt class="mb10">运费：</dt><dd class="text-danger">￥{{#price}}{{logisticsAmount}}{{/price}}</dd>
+                                        <dt class="mb10">服务费：</dt><dd class="text-danger">￥{{#price}}{{serviceAmount}}{{/price}}</dd>
                                     </dl>
                                 </div>
                                 <div class="col-md-4">
                                     <dl class="dl-horizontal">
-                                        <dt class="mb10">创建人</dt><dd>{{createUserRealName}}&nbsp;</dd>
-                                        <dt class="mb10">创建时间</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
-                                        <dt class="mb10">备注</dt><dd>{{remark}}</dd>
+                                        <dt class="mb10">创建人：</dt><dd>{{createUserRealName}}&nbsp;</dd>
+                                        <dt class="mb10">创建时间：</dt><dd>{{#time}}{{createTime}}{{/time}}&nbsp;</dd>
+                                        <dt class="mb10">备注：</dt><dd>{{remark}}</dd>
                                     </dl>
                                 </div>
                             </div>

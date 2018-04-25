@@ -593,15 +593,15 @@ CREATE TABLE `erp_workflow_node` (
   `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
   `workflow_previous_node_id` int(20) COMMENT '上节点ID',
   `workflow_next_node_id` int(20) COMMENT '下节点ID',
-  `workflow_department_type` int(20) COMMENT '可审核的部门类型，如果没有指定部门，则由本公司的该部门审核',
-  `workflow_department` int(20) COMMENT '本步骤可审批部门',
+
   `workflow_role_type` int(20) COMMENT '本步骤可审批角色类型',
   `workflow_role` int(20) COMMENT '本步骤可审批角色',
   `workflow_user` int(20) COMMENT '本步骤可审批人员',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `create_user` varchar(20  `workflow_department_type` int(20) COMMENT '可审核的部门类型，如果没有指定部门，则由本公司的该部门审核',
+  `workflow_department` int(20) COMMENT '本步骤可审批部门',) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
@@ -3341,7 +3341,7 @@ CREATE TABLE `erp_relet_order` (
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
-  `buyer_customer_no` INT(20) NOT NULL COMMENT '购买人编号',
+  `buyer_customer_no` VARCHAR(100) NOT NULL COMMENT '购买人编号',
   `buyer_customer_name` VARCHAR(64) NOT NULL COMMENT '客户名称',
   `order_sub_company_id` INT(20) DEFAULT NULL COMMENT '订单所属分公司',
   `delivery_sub_company_id` INT(20) NOT NULL COMMENT '订单发货分公司',
@@ -3458,6 +3458,19 @@ CREATE TABLE `erp_relet_order_material` (
   INDEX index_order_material_id ( `order_material_id` ),
   INDEX index_material_id ( `material_id` )
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
+
+DROP TABLE IF EXISTS `erp_business_commission_config`;
+CREATE TABLE `erp_business_commission_config` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `role_id` INT(20) NOT NULL COMMENT '角色ID',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成角色表';
 
 
 

@@ -58,6 +58,7 @@ public class K3ReturnOrder extends BasePO {
 	@NotNull(message = ErrorCode.DELIVERY_COMPANY_ID_NULL,groups = {AddGroup.class,UpdateGroup.class})
 	private Integer deliverySubCompanyId;//发货分公司id
 	private String deliverySubCompanyName;//发货分公司
+	private Integer successStatus;//处理成功状态---1处理成功 0 未处理成功
 	@Valid
 	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class,AddGroup.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
@@ -246,10 +247,27 @@ public class K3ReturnOrder extends BasePO {
 		this.deliverySubCompanyName = deliverySubCompanyName;
 	}
 
+	public Integer getSuccessStatus() {
+		return successStatus;
+	}
+
+	public void setSuccessStatus(Integer successStatus) {
+		this.successStatus = successStatus;
+	}
 
 	@JSONField(name = "Note")
 	public void setNote(String note) {
 		this.remark = StringUtils.trimToNull(note);
+	}
+
+	@JSONField(name = "returnReason")
+	public void setReturnReason(Integer returnReason) {
+		this.returnReasonType = returnReason;
+	}
+
+	@JSONField(name = "consignmentCompany")
+	public void setConsignmentCompany(String consignmentCompany) {
+		this.deliverySubCompanyId = Integer.parseInt(consignmentCompany);
 	}
 
 }
