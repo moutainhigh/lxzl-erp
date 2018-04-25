@@ -92,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    // TODO: 2018\4\25 0025 添加优惠券使用逻辑 
     public ServiceResult<String, String> createOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -2529,7 +2530,7 @@ public class OrderServiceImpl implements OrderService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("verifyOrderQueryParam", verifyOrderQueryParam);
         maps.put("workflowReferNoList", workflowReferNoList);
-        Integer totalCount = workflowReferNoList.size();
+        Integer totalCount = orderMapper.findVerifyOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findVerifyOrderByParams(maps);
         List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
         Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
