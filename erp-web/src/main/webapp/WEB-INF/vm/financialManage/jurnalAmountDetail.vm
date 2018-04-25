@@ -48,12 +48,14 @@
                                     <dt>商户订单号：</dt><dd class="mb5">{{merchantOrderNo}}&nbsp;</dd>
                                     <dt>对方账号：</dt><dd class="mb5">{{otherSideAccountNo}}&nbsp;</dd>
                                     <dt>明细状态：</dt><dd class="mb5">{{detailStatusValue}}&nbsp;</dd>
-                                    <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
-                                    <dt>创建时间：</dt><dd class="mb5">{{#clockTime}}{{createTime}}{{/clockTime}}&nbsp;</dd>
+##                                    <dt>数据归属公司：</dt><dd class="mb5">{{subCompanyName}}&nbsp;</dd>
+##                                    <dt>属地化分公司：</dt><dd class="mb5">{{localizationSubCompanyId}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-6">
                                 <dl class="dl-horizontal">
+                                    <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+                                    <dt>创建时间：</dt><dd class="mb5">{{#clockTime}}{{createTime}}{{/clockTime}}&nbsp;</dd>
                                     <dt>交易流水号：</dt><dd class="mb5">{{tradeSerialNo}}&nbsp;</dd>
                                     <dt>交易金额：</dt><dd class="mb5">￥{{#price}}{{tradeAmount}}{{/price}}&nbsp;</dd>
                                     <dt>交易日期：</dt><dd class="mb5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}&nbsp;</dd>
