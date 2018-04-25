@@ -2447,15 +2447,9 @@ public class OrderServiceImpl implements OrderService {
                     if (material == null) {
                         throw new BusinessException(ErrorCode.MATERIAL_NOT_EXISTS);
                     }
-                    MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
                     orderMaterialDO.setMaterialName(material.getMaterialName());
                     materialName = material.getMaterialName();
                     materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(orderMaterialDO.getIsNewMaterial()) ? material.getNewMaterialPrice() : material.getMaterialPrice();
-
-                    if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
-                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
-                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
-                    }
                 }
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
@@ -2478,6 +2472,11 @@ public class OrderServiceImpl implements OrderService {
                         totalRentDepositAmount = BigDecimalUtil.add(totalRentDepositAmount, rentDepositAmount);
                     }
 
+                    MaterialTypeDO materialTypeDO = materialTypeMapper.findById(material.getMaterialType());
+                    if (materialTypeDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(materialTypeDO.getIsMainMaterial())) {
+                        creditDepositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
+                        totalCreditDepositAmount = BigDecimalUtil.add(totalCreditDepositAmount, creditDepositAmount);
+                    }
                 }
 
                 orderMaterialDO.setRentDepositAmount(rentDepositAmount);
@@ -2542,7 +2541,7 @@ public class OrderServiceImpl implements OrderService {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
         try {
-            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-05 00:00:00").getTime()) {
+            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
                 return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
             }
         } catch (Exception e) {
