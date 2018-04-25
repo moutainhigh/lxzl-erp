@@ -178,15 +178,12 @@
 						 separator="," close=")">
 					#{item}
 				</foreach>
-				OR ewl.verify_user_group_id in
-				<if test="maps.currentUserGroupList!=null">
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewl.verify_user_group_id in
 					<foreach item="item" index="index" collection="maps.currentUserGroupList"
 							 open="(" separator="," close=")">
 						#{item}
 					</foreach>
-				</if>
-				<if test="maps.currentUserGroupList==null">
-					('-1')
 				</if>
 				)
 			</if>
