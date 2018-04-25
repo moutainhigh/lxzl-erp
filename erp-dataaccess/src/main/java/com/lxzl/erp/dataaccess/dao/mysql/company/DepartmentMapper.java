@@ -16,6 +16,6 @@ public interface DepartmentMapper extends BaseMysqlDAO<DepartmentDO> {
 	List<DepartmentDO> getRoleList(@Param("maps") Map<String, Object> paramMap);
 	List<DepartmentDO> getUserList(@Param("maps") Map<String, Object> paramMap);
 
-	/** 根据用户编号查找该用户所在钉钉部门编号 */
-	DepartmentDO findByUserIdOfDingdingDepId(@Param(value = "userId") Integer userId);
+	/** 根据用户编号查找该用户所在部门编号 */
+	DepartmentDO findByUserId(@Param(value = "userId") Integer userId);
 }

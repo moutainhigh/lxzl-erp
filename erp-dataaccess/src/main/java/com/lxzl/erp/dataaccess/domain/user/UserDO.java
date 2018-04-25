@@ -28,7 +28,6 @@ public class UserDO extends BaseDO {
 	private Date lastLoginTime;
 	private String lastLoginIp;
 	private String remark;
-	private String dingdingUserId;
 	private List<RoleDO> roleDOList;
 
 	public Integer getId() {
@@ -137,14 +136,6 @@ public class UserDO extends BaseDO {
 
 	public List<RoleDO> getRoleDOList() {
 		return roleDOList;
-	}
-
-	public String getDingdingUserId() {
-		return dingdingUserId;
-	}
-
-	public void setDingdingUserId(String dingdingUserId) {
-		this.dingdingUserId = dingdingUserId;
 	}
 
 	public void setRoleDOList(List<RoleDO> roleDOList) {

@@ -69,6 +69,9 @@ public class WorkflowController extends BaseController {
 
     @RequestMapping(value = "commitWorkFlow", method = RequestMethod.POST)
     public Result commitWorkFlow(@RequestBody WorkflowLinkQueryParam workflowLinkQueryParam, HttpServletRequest request) {
+        User user = new User();
+        user.setUserId(500013);
+        request.getSession().setAttribute(CommonConstant.ERP_USER_SESSION_KEY, user);
         ServiceResult<String, String> serviceResult = workflowService.commitWorkFlow(workflowLinkQueryParam.getWorkflowType(), workflowLinkQueryParam.getWorkflowReferNo(), workflowLinkQueryParam.getCurrentVerifyUser(), workflowLinkQueryParam.getVerifyMatters(), null, null, null);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

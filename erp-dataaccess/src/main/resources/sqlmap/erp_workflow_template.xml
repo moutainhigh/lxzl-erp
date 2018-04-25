@@ -13,7 +13,6 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
-        <result column="dingding_process_code" jdbcType="VARCHAR" property="dingdingProcessCode"/>
         <collection property="workflowNodeDOList" resultMap="WorkflowNodeDO"/>
     </resultMap>
 
@@ -38,7 +37,7 @@
     </resultMap>
 
     <sql id="column_List">
-		ewt.id,ewt.workflow_name,ewt.workflow_desc,ewt.workflow_type,ewt.data_status,ewt.remark,ewt.create_time,ewt.create_user,ewt.update_time,ewt.update_user,dingding_process_code
+		ewt.id,ewt.workflow_name,ewt.workflow_desc,ewt.workflow_type,ewt.data_status,ewt.remark,ewt.create_time,ewt.create_user,ewt.update_time,ewt.update_user
 	</sql>
 
     <sql id="node_column_List">
@@ -134,9 +133,6 @@
             </if>
             <if test="updateUser != null">
                 update_user = #{updateUser,jdbcType=VARCHAR},
-            </if>
-            <if test="dingdingProcessCode != null">
-                dingding_process_code = #{dingdingProcessCode,jdbcType=VARCHAR},
             </if>
         </set>
     </sql>

@@ -405,29 +405,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         return result;
     }
 
-    @Override
-    public List<User> findUsersByDingdingUsers(List<DingdingUserDTO> dingdingUserDTOS) {
-        if (CollectionUtil.isEmpty(dingdingUserDTOS)) {
-            return null;
-        }
-        List<UserDO> userDOs = userMapper.findUsersByDingdingUsers(dingdingUserDTOS);
-        if (CollectionUtil.isEmpty(userDOs)) {
-            return null;
-        }
-        return ConverterUtil.convertList(userDOs, User.class);
-    }
-
-    @Override
-    public int updateDingdingIdUsers(List<User> users) {
-        if (CollectionUtil.isEmpty(users)) {
-            return 0;
-        }
-        List<UserDO> userDOS = ConverterUtil.convertList(users, UserDO.class);
-        for (UserDO userDO : userDOS) {
-            userMapper.updateDingdingUserIdById(userDO);
-        }
-        return users.size();
-    }
 
     // 不使用正则表达式
     private static boolean isNotSimple(String s) {
