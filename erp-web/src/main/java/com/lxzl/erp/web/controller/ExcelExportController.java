@@ -29,8 +29,6 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) {
-        bankSlipDetailQueryParam.setPageNo(1);
-        bankSlipDetailQueryParam.setPageSize(Integer.MAX_VALUE);
         ServiceResult<String,String> serviceResult = excelExportService.export(bankSlipService.exportPageBankSlipDetail(bankSlipDetailQueryParam), ExcelExportConfigGroup.bankSlipDetailConfig, "bankSlipDetail", "sheet1",response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
