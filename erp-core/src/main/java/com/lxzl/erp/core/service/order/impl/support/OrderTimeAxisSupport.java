@@ -21,6 +21,13 @@ public class OrderTimeAxisSupport {
 
 
     public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, Integer loginUserId) {
+        String userId = loginUserId==null?null:loginUserId.toString();
+        if(loginUserId!=null){
+            addOrderTimeAxis( orderId,  orderStatus,  orderSnapshot,  currentTime, userId);
+        }
+    }
+    public void addOrderTimeAxis(Integer orderId, Integer orderStatus, String orderSnapshot, Date currentTime, String loginUserId) {
+
         List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisMapper.findByOrderId(orderId);
         if (CollectionUtil.isNotEmpty(orderTimeAxisDOList)) {
             OrderTimeAxisDO lastRecord = orderTimeAxisDOList.get(orderTimeAxisDOList.size() - 1);
@@ -34,17 +41,15 @@ public class OrderTimeAxisSupport {
         orderTimeAxisDO.setOrderStatus(orderStatus);
         orderTimeAxisDO.setGenerationTime(currentTime);
         orderTimeAxisDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        orderTimeAxisDO.setCreateUser(loginUserId.toString());
-        orderTimeAxisDO.setUpdateUser(loginUserId.toString());
+        orderTimeAxisDO.setCreateUser(loginUserId);
+        orderTimeAxisDO.setUpdateUser(loginUserId);
         orderTimeAxisDO.setCreateTime(currentTime);
         orderTimeAxisDO.setUpdateTime(currentTime);
         orderTimeAxisMapper.save(orderTimeAxisDO);
     }
-
     public List<OrderTimeAxisDO> getOrderTimeAxis(Integer orderId) {
-       return orderTimeAxisMapper.findByOrderId(orderId);
+        return orderTimeAxisMapper.findByOrderId(orderId);
     }
-
 
     @Autowired
     private OrderTimeAxisMapper orderTimeAxisMapper;
