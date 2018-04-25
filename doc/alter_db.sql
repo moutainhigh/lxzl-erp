@@ -262,7 +262,7 @@ CREATE TABLE `erp_relet_order` (
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
-  `buyer_customer_no` INT(20) NOT NULL COMMENT '购买人编号',
+  `buyer_customer_no` VARCHAR(100) NOT NULL COMMENT '购买人编号',
   `buyer_customer_name` VARCHAR(64) NOT NULL COMMENT '客户名称',
   `order_sub_company_id` INT(20) DEFAULT NULL COMMENT '订单所属分公司',
   `delivery_sub_company_id` INT(20) NOT NULL COMMENT '订单发货分公司',
