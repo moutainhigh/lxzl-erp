@@ -30,7 +30,6 @@ import java.util.Map;
 @RequestMapping("/order")
 public class OrderController extends BaseController {
 
-
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public Result create(@RequestBody Order order, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = orderService.createOrder(order);
