@@ -243,6 +243,11 @@ public class PageController extends BaseController {
         return "/orderManage/waiteForDeliveryOrderList";
     }
 
+    @RequestMapping("/order-manage/to-audit-list")
+    public String orderManageToAuditList() {
+        return "/orderManage/orderToAuditList";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
