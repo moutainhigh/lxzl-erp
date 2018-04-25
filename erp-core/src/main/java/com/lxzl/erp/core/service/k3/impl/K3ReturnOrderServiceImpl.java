@@ -11,6 +11,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3HistoricalReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -394,8 +396,27 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        K3ReturnOrder k3ReturnOrder= ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class);
+        //增加退货单订单商品项和物料项
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList=k3ReturnOrder.getK3ReturnOrderDetailList();
+        if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)){
+            List<OrderProductDO> orderProducts=new ArrayList<OrderProductDO>();
+            List<OrderMaterialDO> orderMaterials=new ArrayList<OrderMaterialDO>();
+            for(K3ReturnOrderDetail k3ReturnOrderDetail:k3ReturnOrderDetailList){
+                boolean isMaterial=productSupport.isMaterial(k3ReturnOrderDetail.getProductNo());
+                if(isMaterial){
+                    OrderMaterialDO materialDO= orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
+                    orderMaterials.add(materialDO);
+                }else {
+                    OrderProductDO orderProductDO=orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
+                    orderProducts.add(orderProductDO);
+                }
+            }
+            if(CollectionUtil.isNotEmpty(orderMaterials))k3ReturnOrder.setOrderMaterialList(ConverterUtil.convertList(orderMaterials,OrderMaterial.class));
+            if(CollectionUtil.isNotEmpty(orderProducts)) k3ReturnOrder.setOrderProductList(ConverterUtil.convertList(orderProducts,OrderProduct.class));
+        }
 
-        result.setResult(ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class));
+        result.setResult(k3ReturnOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
