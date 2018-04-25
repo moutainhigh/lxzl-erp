@@ -164,8 +164,6 @@
 
         <mapper resource="sqlmap/erp_switch.xml" />
 
-        <mapper resource="sqlmap/erp_workflow_template_dingding.xml" />
-
     </mappers>
 
 </configuration>

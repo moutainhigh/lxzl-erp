@@ -10,7 +10,6 @@ import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowNode;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
-import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplateDingding;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;

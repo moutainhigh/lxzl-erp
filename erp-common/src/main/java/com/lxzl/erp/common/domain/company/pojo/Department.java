@@ -23,7 +23,6 @@ public class Department extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
-    private String dingdingDeptId;   //钉钉部门编号
     private List<Department> children;
     private List<Role> roleList;
     private List<User> userList;
@@ -130,14 +129,6 @@ public class Department extends BasePO {
 
     public void setSubCompanyId(Integer subCompanyId) {
         this.subCompanyId = subCompanyId;
-    }
-
-    public String getDingdingDeptId() {
-        return dingdingDeptId;
-    }
-
-    public void setDingdingDeptId(String dingdingDeptId) {
-        this.dingdingDeptId = dingdingDeptId;
     }
 
     public List<Role> getRoleList() {

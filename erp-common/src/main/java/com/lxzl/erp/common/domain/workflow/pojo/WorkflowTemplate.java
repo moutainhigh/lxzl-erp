@@ -20,8 +20,6 @@ public class WorkflowTemplate extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
-    private String dingdingProcessCode;   //钉钉模板代码
-
     private List<WorkflowNode> workflowNodeList;    //工作流节点列表
 
     public Integer getWorkflowTemplateId() {
@@ -102,14 +100,6 @@ public class WorkflowTemplate extends BasePO {
 
     public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
-    }
-
-    public String getDingdingProcessCode() {
-        return dingdingProcessCode;
-    }
-
-    public void setDingdingProcessCode(String dingdingProcessCode) {
-        this.dingdingProcessCode = dingdingProcessCode;
     }
 
     public List<WorkflowNode> getWorkflowNodeList() {

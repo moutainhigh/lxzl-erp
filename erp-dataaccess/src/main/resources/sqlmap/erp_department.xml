@@ -15,7 +15,6 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<result column="dingding_dept_id" jdbcType="VARCHAR" property="dingdingDeptId" />
 		<collection property="roleDOList" resultMap="RoleDO"/>
 		<collection property="userDOList" resultMap="UserDO"/>
 	</resultMap>
@@ -55,7 +54,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user,dingding_dept_id
+		ed.id,ed.department_name,ed.department_type,ed.parent_department_id,ed.sub_company_id,ed.data_order,ed.data_status,ed.remark,ed.create_time,ed.create_user,ed.update_time,ed.update_user
 	</sql>
 
 	<sql id="user_column_List">
@@ -204,9 +203,6 @@
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
 			</if>
-			<if test="dingdingDeptId != null">
-				dingding_dept_id = #{dingdingDeptId,jdbcType=VARCHAR},
-			</if>
 		</set>
 	</sql>
 
@@ -218,16 +214,11 @@
 		update erp_department <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<select id="findByUserIdOfDingdingDepId" resultMap="DepartmentDO" parameterType="Integer">
-		SELECT d.id,d.dingding_dept_id
-		FROM
-		erp_role_department_data rdd,erp_user_role ur,erp_department d
-		WHERE
-		ur.user_id = #{userId, jdbcType=INTEGER}
-		AND rdd.role_id = ur.role_id
-		AND rdd.department_id = d.id
-		AND d.dingding_dept_id IS NOT NULL
-		AND d.data_status = 1
+	<select id="findByUserId" resultMap="DepartmentDO" parameterType="Integer">
+		SELECT
+		rdd.department_id,ur.user_id
+		from erp_role_department_data rdd,erp_user_role ur
+		WHERE ur.user_id = #{userId} and rdd.role_id = ur.role_id
 		limit 1
 	</select>
 </mapper>
