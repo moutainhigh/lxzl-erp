@@ -58,6 +58,10 @@ public class CommonConstant {
     public static final Integer COMMON_ZERO = 0;
     public static final Integer COMMON_ONE = 1;
     public static final Integer COMMON_TWO = 2;
+    public static final Integer COMMON_FOUR = 4;
+    public static final Integer COMMON_EIGHT = 8;
+    public static final Integer COMMON_SIXTEEN = 16;
+    public static final Integer COMMON_TWENTY= 20;
     public static final Integer WORKFLOW_STEP_TWO = 2;
 
 }

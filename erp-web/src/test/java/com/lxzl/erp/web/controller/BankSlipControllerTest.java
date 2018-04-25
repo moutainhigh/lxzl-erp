@@ -25,13 +25,12 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void unAssignBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
         bankSlipDetail.setBankSlipDetailId(7907);
         TestResult jsonTestResult = getJsonTestResult("/bankSlip/cancelLocalizationBankSlipDetail",bankSlipDetail);
-
     }
 
     @Test
@@ -161,30 +160,30 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
     @Test
     public void pageBankSlip2Json() throws Exception {
-        String json = "{\"pageNo\": 1, \"pageSize\": 15, \"bankType\": \"\", \"slipMonth\": \"\", \"slipStatus\": \"\", \"subCompanyId\": \"2\"}";
+        String json = "{\"pageNo\": 1, \"pageSize\": 15, \"bankType\": \"\", \"slipMonth\": \"\", \"slipStatus\": \"\", \"subCompanyId\": \"\"}";
         BankSlipQueryParam bankSlipQueryParam = JSONUtil.convertJSONToBean(json, BankSlipQueryParam.class);
-        TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
+        TestResult result = getJsonTestResult("/exportExcel/exportPageBankSlip", bankSlipQueryParam);
     }
 
     @Test
     public void pageBankSlipDetail() throws Exception {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
         bankSlipDetailQueryParam.setPageNo(1);
-        bankSlipDetailQueryParam.setPageSize(20);
-//        bankSlipDetailQueryParam.setBankSlipId(161);
+        bankSlipDetailQueryParam.setPageSize(100);
+//        bankSlipDetailQueryParam.setBankSlipId(203);
 //        bankSlipQueryParam.setBankType();
 //        bankSlipQueryParam.setSlipMonth();
 //        bankSlipQueryParam.setSlipStatus();
 //        bankSlipDetailQueryParam.setSubCompanyName();
-
+        bankSlipDetailQueryParam.setIsLocalization(1);
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
     @Test
     public void pageBankSlipDetailJson() throws Exception {
-        String json = "{\"pageNo\":1,\"pageSize\":15,\"loanSign\":1,\"payerName\":\"\",\"bankSlipId\":\"69\"}";
+        String json = "{\"pageNo\":1,\"pageSize\":15,\"loanSign\":1,\"payerName\":\"\",\"bankSlipId\":\"\"}";
         BankSlipDetailQueryParam bankSlipDetailQueryParam = JSON.parseObject(json, BankSlipDetailQueryParam.class);
-        TestResult result = getJsonTestResult("/erp/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
+        TestResult result = getJsonTestResult("/exportExcel/exportPageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
 
@@ -198,7 +197,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
         bankSlip.setSubCompanyId(1);
         bankSlip.setBankType(BankType.BOC_BANK);
         bankSlip.setSlipMonth(new SimpleDateFormat("yyyy/MM/dd").parse("2016/01/20"));
-        bankSlip.setExcelUrl("/group1/M00/00/2D/wKgKyFrV5dGAO61-AAA1wFAIG9Y45.xlsx");
+        bankSlip.setExcelUrl("/group1/M00/00/2E/wKgKyFreo_WAHddhAAA4LANCStg20.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)

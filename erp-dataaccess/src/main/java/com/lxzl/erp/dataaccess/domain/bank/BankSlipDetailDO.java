@@ -27,8 +27,10 @@ public class BankSlipDetailDO  extends BaseDO {
 	private Integer isLocalization;
 	private Integer localizationSubCompanyId;  //归属公司id
 	private String localizationSubCompanyName;  //归属公司名称
+	private Integer bankSlipBankType;  //银行类型
 
 	private List<BankSlipClaimDO> bankSlipClaimDOList;
+
 
 	public List<BankSlipClaimDO> getBankSlipClaimDOList() {
 		return bankSlipClaimDOList;
@@ -56,6 +58,14 @@ public class BankSlipDetailDO  extends BaseDO {
 
 	public void setLocalizationSubCompanyName(String localizationSubCompanyName) {
 		this.localizationSubCompanyName = localizationSubCompanyName;
+	}
+
+	public Integer getBankSlipBankType() {
+		return bankSlipBankType;
+	}
+
+	public void setBankSlipBankType(Integer bankSlipBankType) {
+		this.bankSlipBankType = bankSlipBankType;
 	}
 
 	public void setSubCompanyName(String subCompanyName) {
