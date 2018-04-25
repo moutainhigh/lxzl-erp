@@ -71,6 +71,8 @@ public class Customer extends BasePO {
 
 	private CustomerAccount customerAccount;
 
+	private String orderAddress;
+
 	private User customerOwnerUser;
 	private User customerUnionUser;
 
@@ -388,4 +390,8 @@ public class Customer extends BasePO {
 	public void setIsRisk(Integer isRisk) {
 		this.isRisk = isRisk;
 	}
+
+	public String getOrderAddress() { return orderAddress; }
+
+	public void setOrderAddress(String orderAddress) { this.orderAddress = orderAddress; }
 }
