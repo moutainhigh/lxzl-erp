@@ -366,7 +366,9 @@ public class JointProductServiceImpl implements JointProductService {
         maps.put("jointProductQueryParam", jointProductQueryParam);
         Integer jointProductCount = jointProductMapper.findJointProductCountByParam(maps);
         List<JointProductDO> jointProductDOList = jointProductMapper.findJointProductByParams(maps);
+
         List<JointProduct> jointProductList = ConverterUtil.convertList(jointProductDOList, JointProduct.class);
+
         for (JointProduct jointProduct : jointProductList) {
             List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
             for (JointMaterial jointMaterial : jointMaterialList) {
@@ -375,9 +377,12 @@ public class JointProductServiceImpl implements JointProductService {
             }
             List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
             for (JointProductSku jointProductSku : jointProductSkuList) {
-                Integer skuId = jointProductSku.getSkuId();
-                ProductSkuDO productSkuDO = productSkuMapper.findById(skuId);
-                jointProductSku.setProductName(productSkuDO.getProductName());
+                ServiceResult<String, Product> productResult = productService.queryProductBySkuId(jointProductSku.getSkuId());
+                if (!ErrorCode.SUCCESS.equals(productResult.getErrorCode())) {
+                    serviceResult.setErrorCode(productResult.getErrorCode());
+                    return serviceResult;
+                }
+                jointProductSku.setProduct(productResult.getResult());
             }
         }
 
@@ -386,7 +391,6 @@ public class JointProductServiceImpl implements JointProductService {
         serviceResult.setResult(page);
         return serviceResult;
     }
-
 
     @Autowired
     private UserSupport userSupport;
