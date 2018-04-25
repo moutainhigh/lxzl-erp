@@ -268,6 +268,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
                 orderMapper.update(orderDO);
             }
+            // 记录订单时间轴
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, Integer.parseInt(userId));
         }
         //调用退货单结算
 //        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
