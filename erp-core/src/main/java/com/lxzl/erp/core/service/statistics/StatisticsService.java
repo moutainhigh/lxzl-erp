@@ -41,4 +41,12 @@ public interface StatisticsService extends BaseService {
     ServiceResult queryAwaitReceivable(AwaitReceivablePageParam awaitReceivablePageParam);
 
     ServiceResult queryStatisticsAwaitReceivable(StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam);
+
+    /**
+     * 查询业务员提成数据
+     *
+     * @param salesmanPageParam
+     * @return
+     */
+    ServiceResult<String, StatisticsSalesman> querySalesman(StatisticsSalesmanPageParam statisticsSalesmanPageParam);
 }

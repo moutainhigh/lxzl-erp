@@ -783,6 +783,8 @@ public class ErrorCode {
     public static final String K3_RETURN_REASON_TYPE_ERROR = "J17000029";
     public static final String DELIVERY_COMPANY_NOT_EXIT = "J17000030";
     public static final String DELIVERY_COMPANY_ID_NULL = "J17000031";
+    /** k3历史退货单响应代码 */
+    public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -859,6 +861,7 @@ public class ErrorCode {
     public static final String SWITCH_IS_OPEN_IS_FAIL = "J20000005";
     public static final String SWITCH_INTERFACE_URL_EXISTS = "J20000006";
     public static final String SWITCH_CLOSE = "J20000007";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1632,6 +1635,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_REASON_TYPE_ERROR, "退货原因出错");
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
+        MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1671,7 +1675,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_IS_ALL_CLAIM, "银行对公流水是全部确认状态,不能隐藏");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT_IS_FAIL, "认领金额填写有误");
         MAP.put(EXPORT_DATE_IS_FAIL, "导出数据失败");
-        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据无法认领");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据");
         MAP.put(BANK_SLIP_MONTH_IS_DIFFERENT, "派发或下推到分公司的数据有的不是同一月");
         MAP.put(COUNT_MORE_THAN_OR_EQUALITY_ZERO, "数量必须大于等于0");
         MAP.put(BANK_SLIP_DETAIL_ASSIGN_IS_NULL, "需派发数据为空");
