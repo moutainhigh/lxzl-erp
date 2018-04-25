@@ -1189,9 +1189,9 @@ public class CustomerServiceImpl implements CustomerService {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
         //最近订单地址信息
-        List<OrderDO> orderDO = orderMapper.findConsignByCustomerId(customerDO.getId());
-        if(CollectionUtil.isNotEmpty(orderDO)){
-            customerResult.setOrderAddress(orderDO.get(0).getOrderConsignInfoDO().getAddress());
+        OrderDO orderDO = orderMapper.findConsignByCustomerNo(customerNo);
+        if(orderDO != null){
+            customerResult.setOrderAddress(orderDO.getOrderConsignInfoDO().getAddress());
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
