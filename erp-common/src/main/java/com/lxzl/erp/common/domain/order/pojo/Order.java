@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -70,6 +71,7 @@ public class Order extends BasePO {
     private String deliverySubCompanyName;                         // 发货所属分公司名称
     private Integer isK3Order;                                  // 是否是K3订单，1是0否
     private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
+    private String orderMessage;                                //订单消息
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
@@ -85,6 +87,10 @@ public class Order extends BasePO {
 
     private BigDecimal totalProductFirstNeedPayAmount;  //首付商品总金额
     private BigDecimal totalMaterialFirstNeedPayAmount; //首付配件总金额
+
+    private Integer cancelOrderReasonType;                      //取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符
+
+    private  List<K3ReturnOrderDetail> k3ReturnOrderDetailList; //退货单项列表
 
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
@@ -596,5 +602,29 @@ public class Order extends BasePO {
 
     public void setStatementDate(Integer statementDate) {
         this.statementDate = statementDate;
+    }
+
+    public String getOrderMessage() {
+        return orderMessage;
+    }
+
+    public void setOrderMessage(String orderMessage) {
+        this.orderMessage = orderMessage;
+    }
+
+    public Integer getCancelOrderReasonType() {
+        return cancelOrderReasonType;
+    }
+
+    public void setCancelOrderReasonType(Integer cancelOrderReasonType) {
+        this.cancelOrderReasonType = cancelOrderReasonType;
+    }
+
+    public List<K3ReturnOrderDetail> getK3ReturnOrderDetailList() {
+        return k3ReturnOrderDetailList;
+    }
+
+    public void setK3ReturnOrderDetailList(List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
+        this.k3ReturnOrderDetailList = k3ReturnOrderDetailList;
     }
 }

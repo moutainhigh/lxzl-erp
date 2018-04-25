@@ -32,6 +32,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Integer isPendingDelivery;
     private Integer payStatus;
     private Integer isPeer;
+    private Integer isRecycleBin;//是否回收站
 
 
     public Integer getOrderId() {
@@ -188,5 +189,13 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setIsPeer(Integer isPeer) {
         this.isPeer = isPeer;
+    }
+
+    public Integer getIsRecycleBin() {
+        return isRecycleBin;
+    }
+
+    public void setIsRecycleBin(Integer isRecycleBin) {
+        this.isRecycleBin = isRecycleBin;
     }
 }

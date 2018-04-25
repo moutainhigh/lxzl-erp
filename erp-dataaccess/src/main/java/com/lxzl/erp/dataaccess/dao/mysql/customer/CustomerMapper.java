@@ -1,7 +1,7 @@
 package com.lxzl.erp.dataaccess.dao.mysql.customer;
 
-import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -32,4 +32,7 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 	CustomerDO findCustomerCompanyByNo(@Param("customerNo") String customerNo);
 
 	CustomerDO findCustomerPersonByNo(@Param("customerNo") String customerNo);
+
+    void setIsRisk();
+
 }

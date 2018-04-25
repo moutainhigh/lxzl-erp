@@ -303,7 +303,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             if (k3SendRecordDO == null) {
                 //创建推送记录，此时发送状态失败，接收状态失败
                 k3SendRecordDO = new K3SendRecordDO();
-                k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
+                k3SendRecordDO.setRecordType(PostK3Type.POST_K3_TYPE_RETURN_ORDER);
                 k3SendRecordDO.setSendResult(CommonConstant.COMMON_CONSTANT_NO);
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
                 k3SendRecordDO.setRecordJson(JSON.toJSONString(k3ReturnOrder));
@@ -540,7 +540,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             if (orderDO != null) {
                 //如果通过订单号查找到的订单状态是未发货状态的就不能进行提交
                 if (!OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())
-                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())) {
+                        && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())) {
                     result.setErrorCode(ErrorCode.K3_RETURN_ORDER_DETAIL_ORDER_STATUS_NOT_DELIVERED);
                     return result;
                 }

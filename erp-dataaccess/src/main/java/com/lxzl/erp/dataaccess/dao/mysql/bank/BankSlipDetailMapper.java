@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,4 +27,12 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
     void saveBankSlipDetailDOList(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
 
     void deleteByBankSlipId(@Param("list") List<BankSlipDetailDO> bankSlipDetailDOList);
+
+    void updateBankSlipDetailDO(@Param("list") List<BankSlipDetailDO> updateBankSlipDetailDOList);
+
+    List<BankSlipDetailDO>  findLocalizationBankSlipDetailDO();
+
+    void updateSubCompanyAndIsLocalization(@Param("list") List<BankSlipDetailDO> newBankSlipDetailDOList);
+
+    List<BankSlipDetailDO> exportBankSlipDetailDOByParams(@Param("maps")Map<String, Object> maps);
 }

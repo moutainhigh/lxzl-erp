@@ -63,13 +63,13 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "cancel", method = RequestMethod.POST)
     public Result cancel(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.cancelOrder(order.getOrderNo());
+        ServiceResult<String, String> serviceResult = orderService.cancelOrder(order.getOrderNo(),order.getCancelOrderReasonType());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "forceCancel", method = RequestMethod.POST)
     public Result forceCancel(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.forceCancelOrder(order.getOrderNo());
+        ServiceResult<String, String> serviceResult = orderService.forceCancelOrder(order.getOrderNo(),order.getCancelOrderReasonType());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -123,6 +123,10 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "processStatementOrderByCancel", method = RequestMethod.POST)
     public Result processStatementOrderByCancel(@RequestBody Order order, BindingResult validResult) {
         return resultGenerator.generate(orderService.processStatementOrderByCancel(order.getOrderNo()));
+    }
+    @RequestMapping(value = "addOrderMessage", method = RequestMethod.POST)
+    public Result addOrderMessage(@RequestBody Order order, BindingResult validResult) {
+        return resultGenerator.generate(orderService.addOrderMessage(order));
     }
 
     @Autowired

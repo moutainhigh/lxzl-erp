@@ -29,6 +29,10 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	// 以下为K3的数据字段
+	private Integer FEntryID;
+	private String productNumber;
+
 	public Integer getId(){
 		return id;
 	}
@@ -203,5 +207,21 @@ public class OrderMaterialDO  extends BaseDO {
 
 	public void setRentingMaterialCount(Integer rentingMaterialCount) {
 		this.rentingMaterialCount = rentingMaterialCount;
+	}
+
+	public Integer getFEntryID() {
+		return FEntryID;
+	}
+
+	public void setFEntryID(Integer FEntryID) {
+		this.FEntryID = FEntryID;
+	}
+
+	public String getProductNumber() {
+		return productNumber;
+	}
+
+	public void setProductNumber(String productNumber) {
+		this.productNumber = productNumber;
 	}
 }

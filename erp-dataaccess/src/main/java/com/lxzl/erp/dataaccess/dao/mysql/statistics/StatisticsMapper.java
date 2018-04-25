@@ -40,4 +40,8 @@ public interface StatisticsMapper extends BaseMysqlDAO {
     StatisticsAwaitReceivable queryStatisticsAwaitReceivableCount(@Param("maps") Map<String, Object> maps);
 
     List<StatisticsAwaitReceivableDetail> queryStatisticsAwaitReceivable(@Param("maps") Map<String, Object> maps);
+
+    StatisticsSalesman querySalesmanCount(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetail> querySalesman(@Param("maps") Map<String, Object> maps);
 }

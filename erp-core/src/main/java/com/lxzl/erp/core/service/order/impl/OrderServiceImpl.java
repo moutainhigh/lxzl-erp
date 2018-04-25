@@ -6,6 +6,8 @@ import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
+import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
@@ -39,6 +41,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
@@ -53,6 +56,7 @@ import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
@@ -932,6 +936,10 @@ public class OrderServiceImpl implements OrderService {
             }
             order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit, totalMaterialRent));
         }
+        //获取订单退货单项列表
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
+        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -939,10 +947,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> cancelOrder(String orderNo) {
+    public ServiceResult<String, String> cancelOrder(String orderNo,Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
+        if(cancelOrderReasonType==null){
+            result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
+            return result;
+        }
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ID_NOT_NULL);
             return result;
@@ -960,6 +972,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
             return result;
         }
+        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -974,12 +987,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> forceCancelOrder(String orderNo) {
+    public ServiceResult<String, String> forceCancelOrder(String orderNo,Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
         if (orderNo == null) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
+            return result;
+        }
+        if(cancelOrderReasonType==null){
+            result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
@@ -1060,6 +1077,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -1179,6 +1197,48 @@ public class OrderServiceImpl implements OrderService {
 
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> addOrderMessage(Order order) {
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (order== null||StringUtil.isEmpty(order.getOrderNo())) {
+            result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(order.getOrderNo());
+        if(orderDO==null){
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus())||OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if(StringUtil.isEmpty(order.getRemark())){
+            result.setErrorCode(ErrorCode.ORDER_MESSAGE_NULL);
+            return result;
+        }
+        OrderMessage orderMessage=new OrderMessage();
+        orderMessage.setCreateTime(currentTime);
+        orderMessage.setUserId(loginUser.getUserId());
+        orderMessage.setUserRealName(loginUser.getRealName());
+        orderMessage.setContent(order.getRemark());
+        List<OrderMessage> orderMessageList;
+        if(StringUtil.isNotEmpty(orderDO.getOrderMessage())){
+            orderMessageList=JSON.parseArray(orderDO.getOrderMessage(),OrderMessage.class);
+        }else {
+            orderMessageList=new ArrayList<OrderMessage>();
+        }
+        orderMessageList.add(orderMessage);
+        orderDO.setOrderMessage(JSON.toJSONString(orderMessageList));
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
@@ -2313,7 +2373,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     depositAmount = orderProductDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
                     depositAmount = BigDecimalUtil.mul(skuPrice, new BigDecimal(orderProductDO.getProductCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
@@ -2406,7 +2466,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     depositAmount = orderMaterialDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
-                } else if (CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
+                } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {
                     depositAmount = BigDecimalUtil.mul(materialPrice, new BigDecimal(orderMaterialDO.getMaterialCount()));
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else {
@@ -2943,4 +3003,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MaterialMapper materialMapper;
+    @Autowired
+    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 }

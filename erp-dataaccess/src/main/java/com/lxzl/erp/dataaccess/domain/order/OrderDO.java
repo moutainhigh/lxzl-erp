@@ -60,6 +60,8 @@ public class OrderDO extends BaseDO {
     private Integer deliverySubCompanyId;                       // 发货所属分公司
     private Integer isK3Order;                                  // 是否是K3订单，1是0否
     private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
+    private String orderMessage;                                //订单消息
+    private Integer cancelOrderReasonType;                      //取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符
 
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
@@ -531,5 +533,21 @@ public class OrderDO extends BaseDO {
 
     public void setStatementDate(Integer statementDate) {
         this.statementDate = statementDate;
+    }
+
+    public String getOrderMessage() {
+        return orderMessage;
+    }
+
+    public void setOrderMessage(String orderMessage) {
+        this.orderMessage = orderMessage;
+    }
+
+    public Integer getCancelOrderReasonType() {
+        return cancelOrderReasonType;
+    }
+
+    public void setCancelOrderReasonType(Integer cancelOrderReasonType) {
+        this.cancelOrderReasonType = cancelOrderReasonType;
     }
 }

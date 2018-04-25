@@ -12,4 +12,5 @@ public class StatementDetailType {
     public static final Integer STATEMENT_DETAIL_TYPE_RETURN_DEPOSIT = 4;         // 退押金
     public static final Integer STATEMENT_DETAIL_TYPE_OTHER = 5;         // 其他费用
     public static final Integer STATEMENT_DETAIL_TYPE_OVERDUE = 6;         // 逾期费用，这个只供冲正使用
+    public static final Integer STATEMENT_DETAIL_TYPE_PENALTY=7;           //违约费用
 }

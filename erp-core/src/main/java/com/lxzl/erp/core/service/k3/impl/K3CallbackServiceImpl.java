@@ -172,8 +172,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     }
 
     @Override
-    public ServiceResult<String, String> callbackCancelOrder(String orderNo) {
-        return orderService.cancelOrder(orderNo);
+    public ServiceResult<String, String> callbackCancelOrder(String orderNo,Integer cancelOrderReasonType) {
+        return orderService.cancelOrder(orderNo,cancelOrderReasonType);
     }
 
     @Override
@@ -270,12 +270,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
         }
         //调用退货单结算
-//        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
-//        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            serviceResult.setErrorCode(statementResult.getErrorCode());
-//            return serviceResult;
-//        }
+        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());
+        if(!ErrorCode.SUCCESS.equals(statementResult.getErrorCode())){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            serviceResult.setErrorCode(statementResult.getErrorCode());
+            return serviceResult;
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }

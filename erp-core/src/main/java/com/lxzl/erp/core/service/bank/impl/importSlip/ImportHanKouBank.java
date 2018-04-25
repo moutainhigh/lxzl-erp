@@ -111,8 +111,16 @@ public class ImportHanKouBank {
                 return serviceResult;
             }
             //保存  银行对公流水明细表
+            Integer isLocalization = null;
+            if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
+                isLocalization = CommonConstant.COMMON_CONSTANT_NO;
+            }
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
+                if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
+                    bankSlipDetailDO.setIsLocalization(isLocalization);
+                }
+                bankSlipDetailDO.setSubCompanyId(bankSlipDO.getSubCompanyId());
             }
             bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
             bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);

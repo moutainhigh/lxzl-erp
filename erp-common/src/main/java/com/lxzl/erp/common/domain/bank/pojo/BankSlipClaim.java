@@ -31,10 +31,19 @@ public class BankSlipClaim extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 	private String customerName;   //客户名称
+	private String k3CustomerNo;  //k3客户编码
 
 	@Valid
 	@CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {ClaimBankSlipDetailGroup.class})
 	private List<ClaimParam> claimParam;
+
+	public String getK3CustomerNo() {
+		return k3CustomerNo;
+	}
+
+	public void setK3CustomerNo(String k3CustomerNo) {
+		this.k3CustomerNo = k3CustomerNo;
+	}
 
 	public String getCustomerName() {
 		return customerName;

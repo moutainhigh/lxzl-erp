@@ -9,7 +9,9 @@ import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStockEntry;
 import com.lxzl.erp.core.service.k3.K3Support;
 import com.lxzl.erp.core.service.k3.converter.ConvertK3DataService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingSubCompanyMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingSubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class K3ReturnOrderConverter implements ConvertK3DataService {
     private K3Support k3Support;
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+    @Autowired
+    private K3MappingSubCompanyMapper k3MappingSubCompanyMapper;
 
     @Override
     public Object getK3PostWebServiceData(Integer postK3OperatorType, Object data) throws Exception {
@@ -45,9 +49,10 @@ public class K3ReturnOrderConverter implements ConvertK3DataService {
         formSEOutStock.setBillNO(k3ReturnOrder.getReturnOrderNo());//单据编号
         formSEOutStock.setBiller(getString(k3ReturnOrder.getCreateUserRealName()));//创建人
         if (k3ReturnOrder.getDeliverySubCompanyId() != null && k3ReturnOrder.getDeliverySubCompanyId() != 0) {
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(k3ReturnOrder.getDeliverySubCompanyId());
-            if (subCompanyDO != null) {
-                formSEOutStock.setBackCompanyNO(k3Support.getK3CityCode(subCompanyDO.getSubCompanyCode()));
+            SubCompanyDO deliverySubCompanyDO = subCompanyMapper.findById(k3ReturnOrder.getDeliverySubCompanyId());//发货分公司
+            K3MappingSubCompanyDO k3MappingDeliverySubCompanyDO = k3MappingSubCompanyMapper.findByErpCode(deliverySubCompanyDO.getSubCompanyCode());
+            if(k3MappingDeliverySubCompanyDO!=null){
+                formSEOutStock.setBackCompanyNO(k3MappingDeliverySubCompanyDO.getK3SubCompanyCode());
             }
         }
         formSEOutStock.setContacts(getString(k3ReturnOrder.getReturnContacts()));

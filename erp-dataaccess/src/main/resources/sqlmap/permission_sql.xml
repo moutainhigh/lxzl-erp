@@ -178,11 +178,17 @@
 						 separator="," close=")">
 					#{item}
 				</foreach>
-				OR ewvug.verify_user in
-				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
-						 separator="," close=")">
-					#{item}
-				</foreach>)
+				OR ewl.verify_user_group_id in
+				<if test="maps.currentUserGroupList!=null">
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				<if test="maps.currentUserGroupList==null">
+					('-1')
+				</if>
+				)
 			</if>
 		</if>
 	</sql>

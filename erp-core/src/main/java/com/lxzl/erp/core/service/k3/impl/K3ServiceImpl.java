@@ -334,10 +334,6 @@ public class K3ServiceImpl implements K3Service {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
         }
-        //获取订单退货单项列表
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
-        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
-        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -571,6 +567,8 @@ public class K3ServiceImpl implements K3Service {
                             orderProductDO.setRentingProductCount(k3OrderProduct.getRentingProductCount());
                             orderProductDO.setDepositCycle(order.getDepositCycle());
                             orderProductDO.setPaymentCycle(order.getPaymentCycle());
+                            orderProductDO.setProductNumber(k3OrderProduct.getProductNumber());
+                            orderProductDO.setFEntryID(k3OrderProduct.getFEntryID());
                             orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                             orderProductDO.setCreateTime(orderDO.getRentStartTime());
                             orderProductDO.setCreateUser(orderDO.getOrderSellerId().toString());
@@ -601,6 +599,8 @@ public class K3ServiceImpl implements K3Service {
                             orderMaterialDO.setOrderId(orderDO.getId());
                             orderMaterialDO.setDepositCycle(order.getDepositCycle());
                             orderMaterialDO.setPaymentCycle(order.getPaymentCycle());
+                            orderMaterialDO.setProductNumber(k3OrderMaterial.getFNumber());
+                            orderMaterialDO.setFEntryID(k3OrderMaterial.getFEntryID());
                             orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                             orderMaterialDO.setCreateTime(orderDO.getRentStartTime());
                             orderMaterialDO.setCreateUser(orderDO.getOrderSellerId().toString());
@@ -612,13 +612,13 @@ public class K3ServiceImpl implements K3Service {
 
                     orderDO.setOrderMaterialDOList(orderMaterialDOList);
 
-                    if (orderService.isCheckRiskManagement(orderDO)) {
+                    /*if (orderService.isCheckRiskManagement(orderDO)) {
                         CustomerRiskManagementDO customerRiskManagementDO = customerRiskManagementMapper.findByCustomerId(orderDO.getBuyerCustomerId());
                         if (customerRiskManagementDO == null) {
                             dingDingSupport.dingDingSendMessage(String.format("订单【%s】，风控信息不存在", k3Order.getOrderNo()));
                             continue;
                         }
-                    }
+                    }*/
                     orderService.calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
                     orderService.calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
                     orderMapper.save(orderDO);
@@ -676,25 +676,30 @@ public class K3ServiceImpl implements K3Service {
         }
 
 
-        // 校验K3传过来的订单是否合规，如果合规才存
-        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
-        if (userDO == null) {
-            dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
-            return Boolean.FALSE;
-        }
-        k3Order.setOrderSellerId(userDO.getId());
 
         K3MappingSubCompanyDO k3MappingSubCompanyDO = k3MappingSubCompanyMapper.findByK3Code(k3Order.getOrderSubCompanyName());
         if (k3MappingSubCompanyDO != null) {
             k3Order.setOrderSubCompanyId(Integer.parseInt(k3MappingSubCompanyDO.getK3SubCompanyCode()));
         }
-        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName());
+        CustomerDO customerDO = customerMapper.findByName(k3Order.getBuyerCustomerName().trim());
         if (customerDO == null) {
             dingDingSupport.dingDingSendMessage(String.format("订单【%s】，客户不存在【%s】", k3Order.getOrderNo(), k3Order.getBuyerCustomerName()));
             return Boolean.FALSE;
         }
         k3Order.setBuyerCustomerNo(customerDO.getCustomerNo());
         k3Order.setBuyerCustomerId(customerDO.getId());
+
+
+        // 校验K3传过来的订单是否合规，如果合规才存
+        UserDO userDO = userMapper.findByUserRealName(k3Order.getOrderSellerName());
+        if (userDO == null) {
+            userDO = userMapper.findByUserId(customerDO.getOwner());
+            if(userDO == null){
+                dingDingSupport.dingDingSendMessage(String.format("订单【%s】，业务员不存在【%s】", k3Order.getOrderNo(), k3Order.getOrderSellerName()));
+                return Boolean.FALSE;
+            }
+        }
+        k3Order.setOrderSellerId(userDO.getId());
         return Boolean.TRUE;
     }
 
