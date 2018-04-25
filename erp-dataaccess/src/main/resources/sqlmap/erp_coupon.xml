@@ -442,4 +442,13 @@
 		AND ec.coupon_status = 4
 		AND ecb.coupon_type = 2
 	</select>
+	<select id="findByStatementOrderDetailId" resultMap="CouponDO" parameterType="Integer">
+		SELECT <include refid="column_List"/>,ecb.coupon_type
+		FROM erp_coupon ec
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		WHERE ec.statement_order_detail_id = #{statementOrderDetailId , jdbcType=INTEGER}
+		AND ec.data_status = 1
+		AND ec.coupon_status = 8
+		AND ecb.coupon_type = 2
+	</select>
 </mapper>

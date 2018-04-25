@@ -187,7 +187,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(workflowLinkNo);
         // 提交工作流到钉钉上
-        dingdingService.applyApprovingWorkflowToDingding(workflowLinkNo);
+//        dingdingService.applyApprovingWorkflowToDingding(workflowLinkNo);
         return result;
     }
 

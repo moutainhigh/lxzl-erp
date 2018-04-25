@@ -51,6 +51,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
@@ -2504,6 +2505,40 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    /**
+     * 当前用户待审核订单分页
+     * @Author : sunzhipeng
+     * @param verifyOrderQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Order>> queryVerifyOrder(VerifyOrderQueryParam verifyOrderQueryParam) {
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
+        Integer currentVerifyUser= userSupport.getCurrentUserId();
+        List<String> workflowReferNoList = workflowLinkMapper.findWorkflowReferNoList(currentVerifyUser);
+        if (workflowReferNoList.size() == 0) {
+            List<Order> orderList = new ArrayList<>();
+            Page<Order> page = new Page<>(orderList, 0, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(page);
+            return result;
+        }
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("verifyOrderQueryParam", verifyOrderQueryParam);
+        maps.put("workflowReferNoList", workflowReferNoList);
+        Integer totalCount = workflowReferNoList.size();
+        List<OrderDO> orderDOList = orderMapper.findVerifyOrderByParams(maps);
+        List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
+        Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+
     private String verifyOperateOrder(Order order) {
         if (order == null) {
             return ErrorCode.PARAM_IS_NOT_NULL;
@@ -3005,4 +3040,8 @@ public class OrderServiceImpl implements OrderService {
     private MaterialMapper materialMapper;
     @Autowired
     private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
+
+    @Autowired
+    private WorkflowLinkMapper workflowLinkMapper;
+
 }

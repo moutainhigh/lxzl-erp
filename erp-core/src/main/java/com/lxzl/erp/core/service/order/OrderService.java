@@ -190,4 +190,6 @@ public interface OrderService extends VerifyReceiver {
     void verifyCustomerRiskInfo(OrderDO orderDO);
     void calculateOrderProductInfo(List<OrderProductDO> orderProductDOList, OrderDO orderDO);
     void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO);
+
+    ServiceResult<String,Page<Order>> queryVerifyOrder(VerifyOrderQueryParam param);
 }
