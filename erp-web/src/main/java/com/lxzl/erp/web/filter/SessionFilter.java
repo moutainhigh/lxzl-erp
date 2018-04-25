@@ -73,7 +73,6 @@ public class SessionFilter implements Filter {
                     out.write("timeout");
                     out.close();
                 }else{
-//                    ((HttpServletResponse) servletResponse).sendRedirect(request.getContextPath()+"/login");
                     filterChain.doFilter(request, servletResponse);
                 }
                 return;
