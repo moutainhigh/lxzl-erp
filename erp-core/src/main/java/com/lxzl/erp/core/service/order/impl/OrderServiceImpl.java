@@ -2516,11 +2516,10 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
         Integer currentVerifyUser= userSupport.getCurrentUserId();
-        List<String> workflowReferNoList = workflowLinkMapper.findWorkflowReferNoList(500166);
+        List<String> workflowReferNoList = workflowLinkMapper.findWorkflowReferNoList(currentVerifyUser);
         if (workflowReferNoList.size() == 0) {
             List<Order> orderList = new ArrayList<>();
-            Integer totalCount = 0;
-            Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
+            Page<Order> page = new Page<>(orderList, 0, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
             result.setErrorCode(ErrorCode.SUCCESS);
             result.setResult(page);
             return result;
@@ -2530,7 +2529,7 @@ public class OrderServiceImpl implements OrderService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("verifyOrderQueryParam", verifyOrderQueryParam);
         maps.put("workflowReferNoList", workflowReferNoList);
-        Integer totalCount = orderMapper.findVerifyOrderCountByParams(maps);
+        Integer totalCount = workflowReferNoList.size();
         List<OrderDO> orderDOList = orderMapper.findVerifyOrderByParams(maps);
         List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
         Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
