@@ -420,11 +420,11 @@ public class PenaltySupport {
                 }
                 //短短租的若提前退还，需补齐所有合同金额。若有支付部分的，需补交全部剩余租金。
                 if (orderProductDO.getRentType() == OrderRentType.RENT_TYPE_DAY) {
-                    //短短租订单未结清则无法退货
-                    if (BigDecimalUtil.compare(orderDO.getTotalOrderAmount(), orderDO.getTotalPaidOrderAmount()) > 0) {
-                        result.setErrorCode(ErrorCode.DAY_RENT_ORDER_NOT_PAY);
-                        return result;
-                    }
+//                    //短短租订单未结清则无法退货
+//                    if (BigDecimalUtil.compare(orderDO.getTotalOrderAmount(), orderDO.getTotalPaidOrderAmount()) > 0) {
+//                        result.setErrorCode(ErrorCode.DAY_RENT_ORDER_NOT_PAY);
+//                        return result;
+//                    }
                     continue;
                     // productPenaltyAmount = amountSupport.calculateRentAmount(returnTime, expectReturnTime, orderProductDO.getProductUnitAmount(), k3ReturnOrderDetailDO.getProductCount());
                 } else {

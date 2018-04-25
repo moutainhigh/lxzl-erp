@@ -213,4 +213,12 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.company.DepartmentDO">
 		update erp_department <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+
+	<select id="findByUserId" resultMap="DepartmentDO" parameterType="Integer">
+		SELECT
+		rdd.department_id,ur.user_id
+		from erp_role_department_data rdd,erp_user_role ur
+		WHERE ur.user_id = #{userId} and rdd.role_id = ur.role_id
+		limit 1
+	</select>
 </mapper>

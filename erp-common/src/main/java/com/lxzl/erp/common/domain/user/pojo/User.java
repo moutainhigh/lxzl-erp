@@ -34,7 +34,6 @@ public class User extends BasePO {
     private Integer roleId;
     private Date createTime;
     private Date updateTime;
-
     private List<Role> roleList;
 
     public Integer getUserId() {

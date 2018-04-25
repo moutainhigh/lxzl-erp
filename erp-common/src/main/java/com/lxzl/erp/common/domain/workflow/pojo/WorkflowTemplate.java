@@ -20,7 +20,6 @@ public class WorkflowTemplate extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //添加时间
     private String updateUser;   //修改人
-
     private List<WorkflowNode> workflowNodeList;    //工作流节点列表
 
     public Integer getWorkflowTemplateId() {
@@ -110,5 +109,6 @@ public class WorkflowTemplate extends BasePO {
     public void setWorkflowNodeList(List<WorkflowNode> workflowNodeList) {
         this.workflowNodeList = workflowNodeList;
     }
+
 
 }
