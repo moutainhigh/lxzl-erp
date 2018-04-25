@@ -327,4 +327,10 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO">
 		update erp_workflow_link <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+	<select id="findWorkflowReferNoList" resultType="String" parameterType="Integer">
+		SELECT ewl.workflow_refer_no
+		FROM erp_workflow_link ewl
+		INNER JOIN erp_workflow_verify_user_group ewvug ON ewvug.verify_user_group_id = ewl.verify_user_group_id
+  		WHERE ewl.workflow_type = 2 and ewl.current_verify_status =1 and ewl.data_status = 1 AND ewvug.verify_user = #{currentVerifyUser ,jdbcType=VARCHAR}
+	</select>
 </mapper>

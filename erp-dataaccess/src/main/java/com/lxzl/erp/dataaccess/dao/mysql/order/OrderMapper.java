@@ -26,4 +26,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     BigDecimal findPaidOrderAmount();
 
     List<Map<String,Object>> querySubCompanyOrderAmount(@Param("maps") Map<String, Object> paramMap);
+
+    Integer findVerifyOrderCountByParams(@Param("maps") Map<String, Object> maps);
+
+    List<OrderDO> findVerifyOrderByParams(@Param("maps") Map<String, Object> maps);
 }
