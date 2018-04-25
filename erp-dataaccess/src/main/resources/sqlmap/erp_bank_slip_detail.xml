@@ -57,9 +57,10 @@
 	</sql>
 
 	<select id="findById" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName,ek3mc.k3_customer_code AS k3CustomerNo FROM erp_bank_slip_detail ebsd
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id AND ebsc.data_status = 1
 		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
+		LEFT JOIN erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ec.customer_no
 		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1
 	</select>
 
@@ -168,6 +169,12 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
 				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
 			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
+				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipMonth != null ">
+				and ebs.slip_month = #{maps.bankSlipDetailQueryParam.slipMonth,jdbcType=TIMESTAMP}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
 			</if>
@@ -181,13 +188,13 @@
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
 			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 )
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2)))
 			</if>
 		</where>
 	</select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS localizationSubCompanyId,esc.sub_company_name AS localizationSubCompanyName FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS localizationSubCompanyId,esc.sub_company_name AS localizationSubCompanyName,ebs.bank_type AS bankSlipBankType  FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
@@ -204,6 +211,12 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
 				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
 			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
+				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipMonth != null ">
+				and ebs.slip_month = #{maps.bankSlipDetailQueryParam.slipMonth,jdbcType=TIMESTAMP}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
 			</if>
@@ -217,7 +230,7 @@
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
 			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND ebs.slip_status = 1 )
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2)))
 			</if>
 		</where>
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC

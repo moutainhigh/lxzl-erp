@@ -3,6 +3,8 @@ package com.lxzl.erp.common.domain.bank;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
 
+import java.util.Date;
+
 /**
  * @Author: your name
  * @Description：
@@ -15,6 +17,24 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     private String payerName;   //付款人名称
     private Integer loanSign;   //借贷标志,1-贷（收入），2-借（支出）
     private Integer detailStatus;   //明细状态，1-未认领，2-已认领，3-已确定，4-忽略
+    private Integer isLocalization;   //'是否已属地化,0-否，1-是[总公司时有值]',
+    private Date slipMonth;   //月份
+
+    public Date getSlipMonth() {
+        return slipMonth;
+    }
+
+    public void setSlipMonth(Date slipMonth) {
+        this.slipMonth = slipMonth;
+    }
+
+    public Integer getIsLocalization() {
+        return isLocalization;
+    }
+
+    public void setIsLocalization(Integer isLocalization) {
+        this.isLocalization = isLocalization;
+    }
 
     public Integer getBankSlipId() {
         return bankSlipId;
