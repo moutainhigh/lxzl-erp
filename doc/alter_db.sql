@@ -233,4 +233,8 @@ ALTER TABLE erp_coupon add `statement_order_detail_id` int(20) COMMENT '结算�
 ALTER TABLE erp_k3_return_order add `delivery_sub_company_id` int(20) NOT NULL COMMENT '发货分公司';
 
 
+-- erp_k3_return_order表新处理成功的状态字段
+alter table erp_k3_return_order add success_status int(11) NOT NULL DEFAULT 1 COMMENT "处理成功的状态0 未成功处理 1 处理成功"; #
+
+
 
