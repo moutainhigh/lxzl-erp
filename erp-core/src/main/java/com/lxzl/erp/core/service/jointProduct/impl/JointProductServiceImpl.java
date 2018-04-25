@@ -366,9 +366,7 @@ public class JointProductServiceImpl implements JointProductService {
         maps.put("jointProductQueryParam", jointProductQueryParam);
         Integer jointProductCount = jointProductMapper.findJointProductCountByParam(maps);
         List<JointProductDO> jointProductDOList = jointProductMapper.findJointProductByParams(maps);
-
         List<JointProduct> jointProductList = ConverterUtil.convertList(jointProductDOList, JointProduct.class);
-
         for (JointProduct jointProduct : jointProductList) {
             List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
             for (JointMaterial jointMaterial : jointMaterialList) {
