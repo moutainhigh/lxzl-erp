@@ -4,27 +4,28 @@
 
 <mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper">
     <resultMap type="com.lxzl.erp.dataaccess.domain.user.UserDO" id="userResult">
-        <id column="id" property="id" />
-        <result column="user_type" property="userType" />
-        <result column="user_name" property="userName" />
-        <result column="real_name" property="realName" />
-        <result column="password" property="password" />
-        <result column="email" property="email" />
-        <result column="email_verify_code" property="emailVerifyCode" />
-        <result column="email_verify_time" property="emailVerifyTime" />
-        <result column="phone" property="phone" />
-        <result column="phone_verify_code" property="phoneVerifyCode" />
-        <result column="phone_verify_time" property="phoneVerifyTime" />
-        <result column="is_activated" property="isActivated" />
-        <result column="is_disabled" property="isDisabled" />
-        <result column="register_time" property="registerTime" />
-        <result column="last_login_time" property="lastLoginTime" />
-        <result column="last_login_ip" property="lastLoginIp" />
-        <result column="remark" property="remark" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="create_user" jdbcType="VARCHAR" property="createUser" />
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-        <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+        <id column="id" property="id"/>
+        <result column="user_type" property="userType"/>
+        <result column="user_name" property="userName"/>
+        <result column="real_name" property="realName"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="email_verify_code" property="emailVerifyCode"/>
+        <result column="email_verify_time" property="emailVerifyTime"/>
+        <result column="phone" property="phone"/>
+        <result column="phone_verify_code" property="phoneVerifyCode"/>
+        <result column="phone_verify_time" property="phoneVerifyTime"/>
+        <result column="is_activated" property="isActivated"/>
+        <result column="is_disabled" property="isDisabled"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="dingding_user_id" jdbcType="VARCHAR" property="dingdingUserId"/>
         <collection property="roleDOList" resultMap="RoleDO"/>
     </resultMap>
 
@@ -49,7 +50,7 @@
 
     <sql id="columnList">
         u.id,u.user_type,u.user_name,u.real_name,u.password,u.email,u.email_verify_code,u.email_verify_time,u.phone,u.phone_verify_code,u.phone_verify_time,u.is_activated,u.is_disabled,u.register_time,u.last_login_time,u.last_login_ip,u.remark,
-        u.create_time,u.create_user,u.update_time,u.update_user
+        u.create_time,u.create_user,u.update_time,u.update_user,u.dingding_user_id
     </sql>
 
     <sql id="role_columnList">
@@ -108,6 +109,10 @@
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
             </if>
+            <if test="dingdingUserId != null">
+                dingding_user_id = #{dingdingUserId, jdbcType=TIMESTAMP},
+            </if>
+
         </set>
     </sql>
     <insert id="save" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
@@ -126,10 +131,13 @@
     <select id="findByUsername" resultMap="userResult" parameterType="java.lang.String">
         select a.*,<include refid="role_columnList"/>,
         ed.id as role_department_id, ed.department_name as role_department_name,
-        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as
+        role_sub_company_type
         from
-        (select <include refid="columnList"/> from erp_user u
-         where u.user_name = #{userName,jdbcType=VARCHAR}
+        (select
+        <include refid="columnList"/>
+        from erp_user u
+        where u.user_name = #{userName,jdbcType=VARCHAR}
         ) a
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
@@ -140,15 +148,16 @@
     <select id="findByUserId" resultMap="userResult">
         select a.*,<include refid="role_columnList"/>,
         ed.id as role_department_id, ed.department_name as role_department_name,
-        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as
+        role_sub_company_type
         from
         (
-            select
-            <include refid="columnList" />
-            from
-            erp_user u
-            where
-            u.id = #{userId}
+        select
+        <include refid="columnList"/>
+        from
+        erp_user u
+        where
+        u.id = #{userId}
         ) a
         left join erp_user_role tur on tur.user_id = a.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
@@ -157,7 +166,9 @@
     </select>
 
     <select id="findByUserParam" resultMap="userResult">
-        select <include refid="columnList" /> from erp_user u
+        select
+        <include refid="columnList"/>
+        from erp_user u
         <where>
             <if test="startTime != null ">
                 <![CDATA[ AND u.create_time >= #{startTime,jdbcType=TIMESTAMP} ]]>
@@ -172,21 +183,26 @@
         select count( DISTINCT user_main.id)
         from
         (
-            select <include refid="columnList"/> from erp_user u
-            <where>
-                <if test="maps.userQueryParam.userName != null &amp;&amp; maps.userQueryParam.userName != ''">
-                    and u.user_name like '%${maps.userQueryParam.userName}%'
-                </if>
-                <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
-                    and u.real_name like '%${maps.userQueryParam.realName}%'
-                </if>
-                <if test="maps.userQueryParam.isDisabled != null">
-                    and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
-                    and u.id in <foreach collection="maps.userQueryParam.userIdList" open="(" close=")" separator="," item="userId">#{userId}</foreach>
-                </if>
-            </where>
+        select
+        <include refid="columnList"/>
+        from erp_user u
+        <where>
+            <if test="maps.userQueryParam.userName != null &amp;&amp; maps.userQueryParam.userName != ''">
+                and u.user_name like '%${maps.userQueryParam.userName}%'
+            </if>
+            <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
+                and u.real_name like '%${maps.userQueryParam.realName}%'
+            </if>
+            <if test="maps.userQueryParam.isDisabled != null">
+                and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
+                and u.id in
+                <foreach collection="maps.userQueryParam.userIdList" open="(" close=")" separator="," item="userId">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
         ) user_main
         left join erp_user_role tur on tur.user_id = user_main.id and tur.data_status = 1
         left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
@@ -209,65 +225,85 @@
                 and esc.id = #{maps.userQueryParam.subCompanyId, jdbcType=INTEGER}
             </if>
             <if test="maps.userQueryParam.departmentIdList != null &amp;&amp; maps.userQueryParam.departmentIdList.size() > 0">
-                and ed.id in <foreach collection="maps.userQueryParam.departmentIdList" open="(" close=")" separator="," item="departmentId">#{departmentId}</foreach>
+                and ed.id in
+                <foreach collection="maps.userQueryParam.departmentIdList" open="(" close=")" separator=","
+                         item="departmentId">#{departmentId}
+                </foreach>
             </if>
             <if test="maps.userQueryParam.subCompanyIdList != null &amp;&amp; maps.userQueryParam.subCompanyIdList.size() > 0">
-                and esc.id in <foreach collection="maps.userQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
+                and esc.id in
+                <foreach collection="maps.userQueryParam.subCompanyIdList" open="(" close=")" separator=","
+                         item="subCompanyId">#{subCompanyId}
+                </foreach>
             </if>
         </where>
     </select>
-    <select id="listAllUser" resultMap="userResult" >
-          SELECT <include refid="columnList"/> FROM erp_user u order by id
+    <select id="listAllUser" resultMap="userResult">
+        SELECT
+        <include refid="columnList"/>
+        FROM erp_user u order by id
     </select>
     <select id="listPage" resultMap="userResult" parameterType="java.util.Map">
         SELECT LIMIT_MAIN.* FROM (
-            select user_main.*,<include refid="role_columnList"/>,
-            ed.id as role_department_id, ed.department_name as role_department_name,
-            esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as role_sub_company_type
-            from
-            (
-            select <include refid="columnList"/> from erp_user u
-            <where>
-                <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
-                    and u.real_name like '%${maps.userQueryParam.realName}%'
-                </if>
-                <if test="maps.userQueryParam.isDisabled != null">
-                    and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
-                    and u.id in <foreach collection="maps.userQueryParam.userIdList" open="(" close=")" separator="," item="userId">#{userId}</foreach>
-                </if>
-            </where>
-            order by u.register_time desc
-            ) user_main
-            left join erp_user_role tur on tur.user_id = user_main.id and tur.data_status = 1
-            left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
-            left join erp_department ed on ed.id = tr.department_id and ed.data_status = 1
-            left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
-            <where>
-                <if test="maps.userQueryParam.departmentId != null &amp;&amp; maps.userQueryParam.departmentId != ''">
-                    and ed.id = #{maps.userQueryParam.departmentId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.departmentType != null &amp;&amp; maps.userQueryParam.departmentType != ''">
-                    and ed.department_type = #{maps.userQueryParam.departmentType, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.roleId != null &amp;&amp; maps.userQueryParam.roleId != ''">
-                    and tr.id = #{maps.userQueryParam.roleId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.roleType != null &amp;&amp; maps.userQueryParam.roleType != ''">
-                    and tr.role_type = #{maps.userQueryParam.roleType, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.subCompanyId != null &amp;&amp; maps.userQueryParam.subCompanyId != ''">
-                    and esc.id = #{maps.userQueryParam.subCompanyId, jdbcType=INTEGER}
-                </if>
-                <if test="maps.userQueryParam.departmentIdList != null &amp;&amp; maps.userQueryParam.departmentIdList.size() > 0">
-                    and ed.id in <foreach collection="maps.userQueryParam.departmentIdList" open="(" close=")" separator="," item="departmentId">#{departmentId}</foreach>
-                </if>
-                <if test="maps.userQueryParam.subCompanyIdList != null &amp;&amp; maps.userQueryParam.subCompanyIdList.size() > 0">
-                    and esc.id in <foreach collection="maps.userQueryParam.subCompanyIdList" open="(" close=")" separator="," item="subCompanyId">#{subCompanyId}</foreach>
-                </if>
-            </where>
-            order by user_main.register_time desc
+        select user_main.*,<include refid="role_columnList"/>,
+        ed.id as role_department_id, ed.department_name as role_department_name,
+        esc.id as role_sub_company_id, esc.sub_company_name as role_sub_company_name, esc.sub_company_type as
+        role_sub_company_type
+        from
+        (
+        select
+        <include refid="columnList"/>
+        from erp_user u
+        <where>
+            <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
+                and u.real_name like '%${maps.userQueryParam.realName}%'
+            </if>
+            <if test="maps.userQueryParam.isDisabled != null">
+                and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.userIdList != null &amp;&amp; maps.userQueryParam.userIdList.size() > 0">
+                and u.id in
+                <foreach collection="maps.userQueryParam.userIdList" open="(" close=")" separator="," item="userId">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
+        order by u.register_time desc
+        ) user_main
+        left join erp_user_role tur on tur.user_id = user_main.id and tur.data_status = 1
+        left join erp_role tr on tur.role_id = tr.id and tr.data_status = 1
+        left join erp_department ed on ed.id = tr.department_id and ed.data_status = 1
+        left join erp_sub_company esc on esc.id = ed.sub_company_id and esc.data_status = 1
+        <where>
+            <if test="maps.userQueryParam.departmentId != null &amp;&amp; maps.userQueryParam.departmentId != ''">
+                and ed.id = #{maps.userQueryParam.departmentId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.departmentType != null &amp;&amp; maps.userQueryParam.departmentType != ''">
+                and ed.department_type = #{maps.userQueryParam.departmentType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.roleId != null &amp;&amp; maps.userQueryParam.roleId != ''">
+                and tr.id = #{maps.userQueryParam.roleId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.roleType != null &amp;&amp; maps.userQueryParam.roleType != ''">
+                and tr.role_type = #{maps.userQueryParam.roleType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.subCompanyId != null &amp;&amp; maps.userQueryParam.subCompanyId != ''">
+                and esc.id = #{maps.userQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.userQueryParam.departmentIdList != null &amp;&amp; maps.userQueryParam.departmentIdList.size() > 0">
+                and ed.id in
+                <foreach collection="maps.userQueryParam.departmentIdList" open="(" close=")" separator=","
+                         item="departmentId">#{departmentId}
+                </foreach>
+            </if>
+            <if test="maps.userQueryParam.subCompanyIdList != null &amp;&amp; maps.userQueryParam.subCompanyIdList.size() > 0">
+                and esc.id in
+                <foreach collection="maps.userQueryParam.subCompanyIdList" open="(" close=")" separator=","
+                         item="subCompanyId">#{subCompanyId}
+                </foreach>
+            </if>
+        </where>
+        order by user_main.register_time desc
         ) LIMIT_MAIN
         limit #{maps.start},#{maps.pageSize}
     </select>
@@ -290,7 +326,51 @@
         ) a LEFT JOIN erp_user u ON a.user_id = u.id WHERE id IS NOT NULL
     </select>
     <select id="findByUserRealName" parameterType="java.lang.String" resultMap="userResult">
-        SELECT <include refid="columnList" /> FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR} AND u.is_disabled = 0
+        SELECT
+        <include refid="columnList"/>
+        FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR} AND u.is_disabled = 0
+    </select>
+
+    <select id="findUsersByDingdingUsers" resultMap="userResult">
+        SELECT
+        <include refid="columnList"/>
+        FROM erp_user u
+        WHERE
+        <if test="queryParams != null">
+            (
+            u.phone IN
+            <foreach item="queryParam" index="index" collection="queryParams" open="(" separator="," close=")">
+                #{queryParam.mobile}
+            </foreach>
+            OR u.real_name IN
+            <foreach item="queryParam" index="index" collection="queryParams" open="(" separator="," close=")">
+                #{queryParam.name}
+            </foreach>
+            )
+        </if>
+        AND u.dingding_user_id IS NULL
+    </select>
+
+    <update id="updateDingdingUserIdById">
+        update erp_user
+        SET dingding_user_id =  #{user.dingdingUserId}
+        WHERE id = #{user.id }
+    </update>
+
+    <select id="findUsersByIds" resultMap="userResult">
+        SELECT
+        <include refid="columnList"/>
+        FROM erp_user u
+        WHERE
+        <if test="userIds != null">
+            (
+            u.id IN
+            <foreach item="userId" index="index" collection="userIds" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
+            )
+        </if>
+        AND u.dingding_user_id IS NOT NULL
     </select>
 
 </mapper>

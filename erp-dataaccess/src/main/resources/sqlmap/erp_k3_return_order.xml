@@ -24,6 +24,7 @@
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
         <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId"/>
         <result column="sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
+        <result column="success_status" jdbcType="INTEGER" property="successStatus"/>
         <collection property="k3ReturnOrderDetailDOList" resultMap="K3ReturnOrderDetailDO"/>
     </resultMap>
 
@@ -45,7 +46,7 @@
     </resultMap>
 
     <sql id="column_List">
-        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user,ekro.delivery_sub_company_id
+        ekro.id,ekro.return_order_no,ekro.k3_customer_no,ekro.k3_customer_name,ekro.return_time,ekro.return_address,ekro.return_contacts,ekro.return_phone,ekro.return_mode,ekro.return_order_status,ekro.logistics_amount,ekro.service_amount,ekro.return_reason_type,ekro.data_status,ekro.remark,ekro.create_time,ekro.create_user,ekro.update_time,ekro.update_user,ekro.delivery_sub_company_id,success_status
     </sql>
 
     <sql id="detail_column_List">
@@ -202,6 +203,9 @@
             </if>
             <if test="deliverySubCompanyId != null">
                 delivery_sub_company_id = #{deliverySubCompanyId,jdbcType=INTEGER},
+            </if>
+            <if test="successStatus != null">
+                success_status = #{successStatus,jdbcType=INTEGER},
             </if>
         </set>
     </sql>

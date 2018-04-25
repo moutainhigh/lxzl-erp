@@ -17,6 +17,7 @@ public class DepartmentDO  extends BaseDO {
 	private Integer dataOrder;
 	private Integer dataStatus;
 	private String remark;
+	private String dingdingDeptId;
 	private List<DepartmentDO> children;
 
 	private List<RoleDO> roleDOList;
@@ -84,6 +85,14 @@ public class DepartmentDO  extends BaseDO {
 
 	public void setRemark(String remark){
 		this.remark = remark;
+	}
+
+	public String getDingdingDeptId() {
+		return dingdingDeptId;
+	}
+
+	public void setDingdingDeptId(String dingdingDeptId) {
+		this.dingdingDeptId = dingdingDeptId;
 	}
 
 	public List<DepartmentDO> getChildren() {

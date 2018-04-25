@@ -34,7 +34,7 @@ public class User extends BasePO {
     private Integer roleId;
     private Date createTime;
     private Date updateTime;
-
+    private String dingdingUserId;
     private List<Role> roleList;
 
     public Integer getUserId() {
@@ -167,6 +167,14 @@ public class User extends BasePO {
 
     public Date getUpdateTime() {
         return updateTime;
+    }
+
+    public String getDingdingUserId() {
+        return dingdingUserId;
+    }
+
+    public void setDingdingUserId(String dingdingUserId) {
+        this.dingdingUserId = dingdingUserId;
     }
 
     public void setUpdateTime(Date updateTime) {

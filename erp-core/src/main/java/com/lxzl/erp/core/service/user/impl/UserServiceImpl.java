@@ -5,11 +5,13 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
 import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.user.UserRoleService;
@@ -69,7 +71,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, User> login(LoginParam loginParam, String ip) {
         ServiceResult<String, User> result = new ServiceResult<>();
-        userLoginLogSupport.addUserLoginLog(loginParam.getUserName(),ip,null);
+        userLoginLogSupport.addUserLoginLog(loginParam.getUserName(), ip, null);
         UserDO userDO = userMapper.findByUsername(loginParam.getUserName());
         if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NAME_NOT_FOUND);
@@ -133,10 +135,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userDO.setUpdateTime(currentTime);
         userMapper.save(userDO);
         user = ConverterUtil.convert(userDO, User.class);
-        CommonCache.userMap.put(userDO.getId(),user );
+        CommonCache.userMap.put(userDO.getId(), user);
         saveRoleMap(userDO, finalRoleIdMap, currentTime, loginUser);
 
-        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_USER, user,true);
+        webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_USER, user, true);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
         return result;
@@ -272,11 +274,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.OPERATOR_IS_NOT_YOURSELF);
             return result;
         }
-        if(StringUtil.isEmpty(user.getPassword())){
+        if (StringUtil.isEmpty(user.getPassword())) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_NOT_NULL);
             return result;
         }
-        if(!isNotSimple(user.getPassword())){
+        if (!isNotSimple(user.getPassword())) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_TOO_SIMPLE);
             return result;
         }
@@ -343,7 +345,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         String currentUserId = userSupport.getCurrentUserId().toString();
         Date currentTime = new Date();
         UserDO userDO = userMapper.findByUserId(user.getUserId());
-        if(userDO == null){
+        if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
@@ -363,7 +365,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         String currentUserId = userSupport.getCurrentUserId().toString();
         Date currentTime = new Date();
         UserDO userDO = userMapper.findByUserId(user.getUserId());
-        if(userDO == null){
+        if (userDO == null) {
             result.setErrorCode(ErrorCode.USER_NOT_EXISTS);
             return result;
         }
@@ -390,9 +392,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             result.setErrorCode(ErrorCode.USER_NOT_ACTIVATED);
         } else if (!userDO.getPassword().equals(generateMD5Password(userDO.getUserName(), updatePasswordParam.getOldPassword(), ApplicationConfig.authKey))) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_ERROR);
-        } else if(!isNotSimple(updatePasswordParam.getNewPassword())){
+        } else if (!isNotSimple(updatePasswordParam.getNewPassword())) {
             result.setErrorCode(ErrorCode.USER_PASSWORD_TOO_SIMPLE);
-        }else {
+        } else {
             userDO.setPassword(generateMD5Password(userDO.getUserName(), updatePasswordParam.getNewPassword(), ApplicationConfig.authKey));
             userDO.setUpdateUser(userDO.getId().toString());
             userDO.setUpdateTime(new Date());
@@ -402,6 +404,31 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
         return result;
     }
+
+    @Override
+    public List<User> findUsersByDingdingUsers(List<DingdingUserDTO> dingdingUserDTOS) {
+        if (CollectionUtil.isEmpty(dingdingUserDTOS)) {
+            return null;
+        }
+        List<UserDO> userDOs = userMapper.findUsersByDingdingUsers(dingdingUserDTOS);
+        if (CollectionUtil.isEmpty(userDOs)) {
+            return null;
+        }
+        return ConverterUtil.convertList(userDOs, User.class);
+    }
+
+    @Override
+    public int updateDingdingIdUsers(List<User> users) {
+        if (CollectionUtil.isEmpty(users)) {
+            return 0;
+        }
+        List<UserDO> userDOS = ConverterUtil.convertList(users, UserDO.class);
+        for (UserDO userDO : userDOS) {
+            userMapper.updateDingdingUserIdById(userDO);
+        }
+        return users.size();
+    }
+
     // 不使用正则表达式
     private static boolean isNotSimple(String s) {
         int len = s.length();
@@ -425,6 +452,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
         return Integer.bitCount(flag) >= 3;
     }
+
     private String generateMD5Password(String username, String password, String md5Key) {
         String value = MD5Util.encryptWithKey(username + password, md5Key);
         return value;

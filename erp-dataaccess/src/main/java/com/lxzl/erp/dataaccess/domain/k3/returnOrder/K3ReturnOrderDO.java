@@ -1,8 +1,10 @@
 package com.lxzl.erp.dataaccess.domain.k3.returnOrder;
 
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.springframework.data.annotation.Transient;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +30,7 @@ public class K3ReturnOrderDO  extends BaseDO {
 	private Integer deliverySubCompanyId;//配送分公司id
 	@Transient
 	private String deliverySubCompanyName;//配送分公司
-
+	private Integer successStatus;//处理成功状态---1处理成功 0 未处理成功
 	private List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList;
 
 	public Integer getReturnReasonType() {
@@ -173,5 +175,16 @@ public class K3ReturnOrderDO  extends BaseDO {
 
 	public void setDeliverySubCompanyName(String deliverySubCompanyName) {
 		this.deliverySubCompanyName = deliverySubCompanyName;
+	}
+
+	public Integer getSuccessStatus() {
+		if (successStatus == null) {
+			successStatus = CommonConstant.COMMON_CONSTANT_YES;
+		}
+		return successStatus;
+	}
+
+	public void setSuccessStatus(Integer successStatus) {
+		this.successStatus = successStatus;
 	}
 }
