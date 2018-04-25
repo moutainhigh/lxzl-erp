@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.k3.group.K3ReturnOrderCallback;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -62,6 +64,9 @@ public class K3ReturnOrder extends BasePO {
 	@Valid
 	@CollectionNotNull(message = ErrorCode.RETURN_DETAIL_LIST_NOT_NULL,groups = {K3ReturnOrderCallback.class,AddGroup.class})
 	private List<K3ReturnOrderDetail> k3ReturnOrderDetailList;
+
+	private List<OrderProduct> orderProductList;//退货关联的商品
+	private List<OrderMaterial> orderMaterialList;//退货单关联物料
 
 	public Integer getReturnReasonType() {
 		return returnReasonType;
@@ -270,4 +275,19 @@ public class K3ReturnOrder extends BasePO {
 		this.deliverySubCompanyId = Integer.parseInt(consignmentCompany);
 	}
 
+	public List<OrderProduct> getOrderProductList() {
+		return orderProductList;
+	}
+
+	public void setOrderProductList(List<OrderProduct> orderProductList) {
+		this.orderProductList = orderProductList;
+	}
+
+	public List<OrderMaterial> getOrderMaterialList() {
+		return orderMaterialList;
+	}
+
+	public void setOrderMaterialList(List<OrderMaterial> orderMaterialList) {
+		this.orderMaterialList = orderMaterialList;
+	}
 }
