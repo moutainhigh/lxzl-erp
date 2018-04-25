@@ -13,6 +13,7 @@ public class DingdingBaseDTO {
      * 审批回调url
      */
     private String callbackUrl;
+    /** 请求钉钉的url */
     private String requestDingdingUrl;
 
     @JSONField(serialize = false)
@@ -31,7 +32,7 @@ public class DingdingBaseDTO {
     public void setCallbackUrl(String callbackUrl) {
         this.callbackUrl = callbackUrl;
     }
-
+    @JSONField(serialize = false)
     public String getSecret() {
         return DingDingConfig.dingdingSecret;
     }

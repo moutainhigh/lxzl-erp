@@ -30,7 +30,7 @@ public class DingdingController extends BaseController {
     private ResultGenerator resultGenerator;
 
     /**
-     * 绑定钉钉用户列表信息
+     * 获取所有用户信息提供给钉钉的接口
      */
     @RequestMapping(value = "getAllUsersToDingding")
     public Result getAllUsersToDingding() {
