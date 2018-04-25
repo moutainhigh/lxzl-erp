@@ -1671,7 +1671,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_IS_ALL_CLAIM, "银行对公流水是全部确认状态,不能隐藏");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT_IS_FAIL, "认领金额填写有误");
         MAP.put(EXPORT_DATE_IS_FAIL, "导出数据失败");
-        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据无法认领");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据");
         MAP.put(BANK_SLIP_MONTH_IS_DIFFERENT, "派发或下推到分公司的数据有的不是同一月");
         MAP.put(COUNT_MORE_THAN_OR_EQUALITY_ZERO, "数量必须大于等于0");
         MAP.put(BANK_SLIP_DETAIL_ASSIGN_IS_NULL, "需派发数据为空");
