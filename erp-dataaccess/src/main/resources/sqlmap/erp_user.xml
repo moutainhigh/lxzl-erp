@@ -25,7 +25,6 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
-        <result column="dingding_user_id" jdbcType="VARCHAR" property="dingdingUserId"/>
         <collection property="roleDOList" resultMap="RoleDO"/>
     </resultMap>
 
@@ -50,7 +49,7 @@
 
     <sql id="columnList">
         u.id,u.user_type,u.user_name,u.real_name,u.password,u.email,u.email_verify_code,u.email_verify_time,u.phone,u.phone_verify_code,u.phone_verify_time,u.is_activated,u.is_disabled,u.register_time,u.last_login_time,u.last_login_ip,u.remark,
-        u.create_time,u.create_user,u.update_time,u.update_user,u.dingding_user_id
+        u.create_time,u.create_user,u.update_time,u.update_user
     </sql>
 
     <sql id="role_columnList">
@@ -108,9 +107,6 @@
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
-            </if>
-            <if test="dingdingUserId != null">
-                dingding_user_id = #{dingdingUserId, jdbcType=TIMESTAMP},
             </if>
 
         </set>
@@ -329,48 +325,6 @@
         SELECT
         <include refid="columnList"/>
         FROM erp_user u WHERE u.real_name = #{realName,jdbcType=VARCHAR} AND u.is_disabled = 0
-    </select>
-
-    <select id="findUsersByDingdingUsers" resultMap="userResult">
-        SELECT
-        <include refid="columnList"/>
-        FROM erp_user u
-        WHERE
-        <if test="queryParams != null">
-            (
-            u.phone IN
-            <foreach item="queryParam" index="index" collection="queryParams" open="(" separator="," close=")">
-                #{queryParam.mobile}
-            </foreach>
-            OR u.real_name IN
-            <foreach item="queryParam" index="index" collection="queryParams" open="(" separator="," close=")">
-                #{queryParam.name}
-            </foreach>
-            )
-        </if>
-        AND u.dingding_user_id IS NULL
-    </select>
-
-    <update id="updateDingdingUserIdById">
-        update erp_user
-        SET dingding_user_id =  #{user.dingdingUserId}
-        WHERE id = #{user.id }
-    </update>
-
-    <select id="findUsersByIds" resultMap="userResult">
-        SELECT
-        <include refid="columnList"/>
-        FROM erp_user u
-        WHERE
-        <if test="userIds != null">
-            (
-            u.id IN
-            <foreach item="userId" index="index" collection="userIds" open="(" separator="," close=")">
-                #{userId}
-            </foreach>
-            )
-        </if>
-        AND u.dingding_user_id IS NOT NULL
     </select>
 
 </mapper>

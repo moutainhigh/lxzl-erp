@@ -27,7 +27,6 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
-		<result column="dingding_workflow_id" jdbcType="VARCHAR" property="dingdingWorkflowId" />
 		<collection property="workflowLinkDetailDOList" resultMap="WorkflowLinkDetailDO"/>
 		<collection property="workflowVerifyUserGroupDOList" resultMap="WorkflowVerifyUserGroupDO"/>
 	</resultMap>
@@ -75,7 +74,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ewl.id,ewl.workflow_link_no,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_no,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.commit_user,ewl.current_verify_user,ewl.verify_user_group_id,ewl.verify_matters,ewl.current_verify_status,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user,dingding_workflow_id
+		ewl.id,ewl.workflow_link_no,ewl.workflow_type,ewl.workflow_template_id,ewl.workflow_refer_no,ewl.workflow_step,ewl.workflow_last_step,ewl.workflow_current_node_id,ewl.commit_user,ewl.current_verify_user,ewl.verify_user_group_id,ewl.verify_matters,ewl.current_verify_status,ewl.data_status,ewl.remark,ewl.create_time,ewl.create_user,ewl.update_time,ewl.update_user
 	</sql>
 
 	<sql id="detail_column_List">
@@ -317,9 +316,6 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
-			</if>
-			<if test="dingdingWorkflowId != null">
-				dingding_workflow_id = #{dingdingWorkflowId,jdbcType=VARCHAR},
 			</if>
 		</set>
 	</sql>
