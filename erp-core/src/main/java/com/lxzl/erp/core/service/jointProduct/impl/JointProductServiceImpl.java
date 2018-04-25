@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -371,13 +372,16 @@ public class JointProductServiceImpl implements JointProductService {
             List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
             for (JointMaterial jointMaterial : jointMaterialList) {
                 MaterialDO materialDO = materialMapper.findById(jointMaterial.getMaterialId());
-                jointMaterial.setMaterialName(materialDO.getMaterialName());
+                jointMaterial.setMaterial(ConverterUtil.convert(materialDO, Material.class));
             }
             List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
             for (JointProductSku jointProductSku : jointProductSkuList) {
-                Integer skuId = jointProductSku.getSkuId();
-                ProductSkuDO productSkuDO = productSkuMapper.findById(skuId);
-                jointProductSku.setProductName(productSkuDO.getProductName());
+                ServiceResult<String, Product> productResult = productService.queryProductBySkuId(jointProductSku.getSkuId());
+                if (!ErrorCode.SUCCESS.equals(productResult.getErrorCode())) {
+                    serviceResult.setErrorCode(productResult.getErrorCode());
+                    return serviceResult;
+                }
+                jointProductSku.setProduct(productResult.getResult());
             }
         }
 
@@ -386,7 +390,6 @@ public class JointProductServiceImpl implements JointProductService {
         serviceResult.setResult(page);
         return serviceResult;
     }
-
 
     @Autowired
     private UserSupport userSupport;
