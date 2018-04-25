@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.jointProduct.JointProductQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductSku;
+import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
@@ -371,7 +372,7 @@ public class JointProductServiceImpl implements JointProductService {
             List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
             for (JointMaterial jointMaterial : jointMaterialList) {
                 MaterialDO materialDO = materialMapper.findById(jointMaterial.getMaterialId());
-                jointMaterial.setMaterialName(materialDO.getMaterialName());
+                jointMaterial.setMaterial(ConverterUtil.convert(materialDO, Material.class));
             }
             List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
             for (JointProductSku jointProductSku : jointProductSkuList) {
