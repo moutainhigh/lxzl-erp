@@ -1661,12 +1661,12 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         //计算违约金
-        ServiceResult<String, BigDecimal> penaltyResult= penaltySupport.k3OrderPenalty(k3ReturnOrderDO.getReturnOrderNo());
-        if(!ErrorCode.SUCCESS.equals(penaltyResult.getErrorCode())){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(penaltyResult.getErrorCode());
-            return result;
-        }
+//        ServiceResult<String, BigDecimal> penaltyResult= penaltySupport.k3OrderPenalty(k3ReturnOrderDO.getReturnOrderNo());
+//        if(!ErrorCode.SUCCESS.equals(penaltyResult.getErrorCode())){
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            result.setErrorCode(penaltyResult.getErrorCode());
+//            return result;
+//        }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
