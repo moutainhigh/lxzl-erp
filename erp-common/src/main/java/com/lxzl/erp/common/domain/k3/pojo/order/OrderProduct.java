@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.k3.pojo.order;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
@@ -39,6 +40,7 @@ public class OrderProduct extends BasePO {
     private Integer rentingProductCount;        // 在租商品数
 
     private BigDecimal firstNeedPayAmount;      // 首付金额
+    private List<ProductSkuProperty> productSkuPropertyList;
 
     public Integer getOrderProductId() {
         return orderProductId;
@@ -270,5 +272,13 @@ public class OrderProduct extends BasePO {
 
     public void setRentingProductCount(Integer rentingProductCount) {
         this.rentingProductCount = rentingProductCount;
+    }
+
+    public List<ProductSkuProperty> getProductSkuPropertyList() {
+        return productSkuPropertyList;
+    }
+
+    public void setProductSkuPropertyList(List<ProductSkuProperty> productSkuPropertyList) {
+        this.productSkuPropertyList = productSkuPropertyList;
     }
 }

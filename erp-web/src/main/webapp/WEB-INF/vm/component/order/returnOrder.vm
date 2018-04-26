@@ -10,7 +10,6 @@
                 <th>退货数量</th>
                 <th>实际退货数量</th>
                 <th>备注</th>
-                <th>创建</th>
             </tr>
             </thead>
             <tbody>
@@ -24,15 +23,11 @@
                 <td>{{productCount}}</td>
                 <td>{{realProductCount}}</td>
                 <td>{{remark}}</td>
-                <td>
-                    <p class="mn">{{createUserRealName}}</p>
-                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
-                </td>
             </tr>
             {{/listData}}
             {{^listData}}
             <tr>
-                <td valign="top" colspan="8" class="text-center">无退货单</td>
+                <td valign="top" colspan="7" class="text-center">无退货单</td>
             </tr>
             {{/listData}}
             {{/dataSource}}

@@ -17,6 +17,7 @@ import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.message.MessageService;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
@@ -134,6 +135,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Autowired
     private DingdingService dingdingService;
+    @Autowired
+    private OrderService orderService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -494,6 +497,21 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL);
                 return result;
             }
+
+            //如果是订单的商务例行审核，则判断是否需要二审
+            if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==1){
+                ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowReferNo);
+                if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
+                    result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
+                    return result;
+                }
+                if(!isNeedSecondVerifyResult.getResult()){
+                    result.setErrorCode(ErrorCode.SUCCESS);
+                    return result;
+                }
+            }
+
+
             WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
             if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
                 result.setErrorCode(ErrorCode.SUCCESS);
@@ -920,9 +938,20 @@ public class WorkflowServiceImpl implements WorkflowService {
                 return result;
             }
         }
+        boolean isNeedNextVerify = true;
+        //如果是订单审核，则判断是否需要下一步审核
+        if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&
+                workflowLinkDO.getWorkflowStep()==1){
+            ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowLinkDO.getWorkflowReferNo());
+            if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
+                result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
+                return result;
+            }
+            isNeedNextVerify = isNeedSecondVerifyResult.getResult();
+        }
 
         // 如果审核通过并且下一步审核不为空的时候，判断下一步的审核人是否正确
-        if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
+        if (isNeedNextVerify&&VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
             Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo());
             if (!verifyVerifyUsers(nextWorkflowNodeDO, nextVerifyUser, subCompanyId)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
@@ -941,7 +970,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
             // 审核通过并且有下一步的情况
-            if (nextWorkflowNodeDO != null) {
+            if (isNeedNextVerify&&nextWorkflowNodeDO != null) {
 
                 WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                 workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());

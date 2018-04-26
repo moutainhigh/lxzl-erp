@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
@@ -67,6 +68,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -354,13 +356,13 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        ServiceResult<String, Boolean> isNeedVerifyResult = isNeedVerify(orderNo);
+        ServiceResult<String, Boolean> isNeedVerifyResult = isNeedSecondVerify(orderNo);
         if (!ErrorCode.SUCCESS.equals(isNeedVerifyResult.getErrorCode())) {
             result.setErrorCode(isNeedVerifyResult.getErrorCode(), isNeedVerifyResult.getFormatArgs());
             return result;
         }
-        // 是否需要审批
-        boolean isNeedVerify = isNeedVerifyResult.getResult();
+        // 是否需要二次审批
+        boolean isNeedSecondVerify = isNeedVerifyResult.getResult();
 
         String orderRemark = null;
         if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
@@ -368,26 +370,26 @@ public class OrderServiceImpl implements OrderService {
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
             orderRemark = "租赁类型：月租";
         }
-
-        if (isNeedVerify) {
-            //如果要审核，判断审核注意事项
+        String verifyMatters = null;
+        if (isNeedSecondVerify) {
+            //如果要二次审核，判断审核注意事项
             ServiceResult<String, String> verifyMattersResult = getVerifyMatters(orderDO);
             if (!ErrorCode.SUCCESS.equals(verifyMattersResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(verifyMattersResult.getErrorCode());
                 return result;
             }
-            String verifyMatters = verifyMattersResult.getResult();
-
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
-            if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(workflowCommitResult.getErrorCode());
-                return result;
-            }
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+            verifyMatters = verifyMattersResult.getResult();
+        } else {
+            verifyMatters = "例行审核";
         }
-
+        ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
+        if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(workflowCommitResult.getErrorCode());
+            return result;
+        }
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
@@ -397,14 +399,14 @@ public class OrderServiceImpl implements OrderService {
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
             customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
         }
-        if (!isNeedVerify) {
-            String code = receiveVerifyResult(true, orderDO.getOrderNo());
-            if (!ErrorCode.SUCCESS.equals(code)) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
-                return result;
-            }
-        }
+//        if (!isNeedSecondVerify) {
+//            String code = receiveVerifyResult(true, orderDO.getOrderNo());
+//            if (!ErrorCode.SUCCESS.equals(code)) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
+//                return result;
+//            }
+//        }
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -427,12 +429,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ServiceResult<String, Boolean> isNeedVerify(String orderNo) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
+        result.setResult(true);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
-        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())) {
+        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(orderDO.getOrderStatus())&&
+                !OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
@@ -949,11 +960,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> cancelOrder(String orderNo,Integer cancelOrderReasonType) {
+    public ServiceResult<String, String> cancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
-        if(cancelOrderReasonType==null){
+        if (cancelOrderReasonType == null) {
             result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
             return result;
         }
@@ -989,7 +1000,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> forceCancelOrder(String orderNo,Integer cancelOrderReasonType) {
+    public ServiceResult<String, String> forceCancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -997,7 +1008,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
             return result;
         }
-        if(cancelOrderReasonType==null){
+        if (cancelOrderReasonType == null) {
             result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
             return result;
         }
@@ -1207,33 +1218,33 @@ public class OrderServiceImpl implements OrderService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         ServiceResult<String, String> result = new ServiceResult<>();
-        if (order== null||StringUtil.isEmpty(order.getOrderNo())) {
+        if (order == null || StringUtil.isEmpty(order.getOrderNo())) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(order.getOrderNo());
-        if(orderDO==null){
+        if (orderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus())||OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())) {
+        if (OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        if(StringUtil.isEmpty(order.getRemark())){
+        if (StringUtil.isEmpty(order.getRemark())) {
             result.setErrorCode(ErrorCode.ORDER_MESSAGE_NULL);
             return result;
         }
-        OrderMessage orderMessage=new OrderMessage();
+        OrderMessage orderMessage = new OrderMessage();
         orderMessage.setCreateTime(currentTime);
         orderMessage.setUserId(loginUser.getUserId());
         orderMessage.setUserRealName(loginUser.getRealName());
         orderMessage.setContent(order.getRemark());
         List<OrderMessage> orderMessageList;
-        if(StringUtil.isNotEmpty(orderDO.getOrderMessage())){
-            orderMessageList=JSON.parseArray(orderDO.getOrderMessage(),OrderMessage.class);
-        }else {
-            orderMessageList=new ArrayList<OrderMessage>();
+        if (StringUtil.isNotEmpty(orderDO.getOrderMessage())) {
+            orderMessageList = JSON.parseArray(orderDO.getOrderMessage(), OrderMessage.class);
+        } else {
+            orderMessageList = new ArrayList<OrderMessage>();
         }
         orderMessageList.add(orderMessage);
         orderDO.setOrderMessage(JSON.toJSONString(orderMessageList));
@@ -1382,7 +1393,25 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
+        List<Order> orderList = new ArrayList<>();
+
+        List<String> orderNoList = new ArrayList<>();
+        Map<String, Order> orderDOMap = new HashMap<>();
+        for (OrderDO orderDO : orderDOList) {
+            orderNoList.add(orderDO.getOrderNo());
+            Order order = ConverterUtil.convert(orderDO, Order.class);
+            orderDOMap.put(orderDO.getOrderNo(), order);
+            orderList.add(order);
+        }
+        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+        for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
+            Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+            if (order != null) {
+                WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
+                order.setWorkflowLink(workflowLink);
+            }
+        }
+
         Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
@@ -2507,15 +2536,16 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 当前用户待审核订单分页
-     * @Author : sunzhipeng
+     *
      * @param verifyOrderQueryParam
      * @return
+     * @Author : sunzhipeng
      */
     @Override
     public ServiceResult<String, Page<Order>> queryVerifyOrder(VerifyOrderQueryParam verifyOrderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
-        Integer currentVerifyUser= userSupport.getCurrentUserId();
+        Integer currentVerifyUser = userSupport.getCurrentUserId();
         List<String> workflowReferNoList = workflowLinkMapper.findWorkflowReferNoList(currentVerifyUser);
         if (workflowReferNoList.size() == 0) {
             List<Order> orderList = new ArrayList<>();
@@ -2535,6 +2565,26 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> addReturnOrderToTimeAxis() {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        //部分退货
+        List<OrderDO> orderDOList = orderMapper.findByOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
+        if (CollectionUtil.isEmpty(orderDOList)) orderDOList = new ArrayList<OrderDO>();
+        //全部退货
+        List<OrderDO> odList = orderMapper.findByOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+        if (CollectionUtil.isNotEmpty(odList)) orderDOList.addAll(odList);
+        if (CollectionUtil.isNotEmpty(orderDOList)) {
+            Date currentTime = new Date();
+            Integer userId = userSupport.getCurrentUserId();
+            for (OrderDO orderDO : orderDOList) {
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId);
+            }
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 

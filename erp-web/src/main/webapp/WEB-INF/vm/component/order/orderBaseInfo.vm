@@ -27,8 +27,9 @@
                 <dd class="mb5" id="statementDate"></dd>
                 {{/rentTypeByMonth}}
 
-                <dt><label style="letter-spacing: 1em;">备注</label><span class="mr5">：</span></dt>
-                <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
+##                <dt><label style="letter-spacing: 1em;">备注</label><span class="mr5">：</span></dt>
+##                <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
+##                <dd class="mb5" style="float: left"><div>{{#orderMessageData}}<p style="margin-bottom: 0">{{content}}</p>{{/orderMessageData}}</div></dd>
 
 
                 <!-- <dt><label>创建时间</label><span class="mr5">：</span></dt>
