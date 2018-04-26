@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
@@ -67,6 +68,7 @@ import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -1382,13 +1384,30 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
+        List<Order> orderList = new ArrayList<>();
+
+        List<String> orderNoList = new ArrayList<>();
+        Map<String,Order> orderDOMap = new HashMap<>();
+        for(OrderDO orderDO : orderDOList){
+            orderNoList.add(orderDO.getOrderNo());
+            Order order = ConverterUtil.convert(orderDO,Order.class);
+            orderDOMap.put(orderDO.getOrderNo(),order);
+            orderList.add(order);
+        }
+        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO,orderNoList);
+        for(WorkflowLinkDO workflowLinkDO : workflowLinkDOList){
+            Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
+            if(order!=null){
+                WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO,WorkflowLink.class);
+                order.setWorkflowLink(workflowLink);
+            }
+        }
+
         Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
     }
-
     @Override
     public ServiceResult<String, Page<Order>> queryOrderByUserId(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();

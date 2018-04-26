@@ -3,6 +3,7 @@ package com.lxzl.erp.common.domain.order.pojo;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -89,6 +90,7 @@ public class Order extends BasePO {
     private BigDecimal totalMaterialFirstNeedPayAmount; //首付配件总金额
 
     private Integer cancelOrderReasonType;                      //取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符
+    private WorkflowLink workflowLink;
 
     private  List<K3ReturnOrderDetail> k3ReturnOrderDetailList; //退货单项列表
 
@@ -626,5 +628,13 @@ public class Order extends BasePO {
 
     public void setK3ReturnOrderDetailList(List<K3ReturnOrderDetail> k3ReturnOrderDetailList) {
         this.k3ReturnOrderDetailList = k3ReturnOrderDetailList;
+    }
+
+    public WorkflowLink getWorkflowLink() {
+        return workflowLink;
+    }
+
+    public void setWorkflowLink(WorkflowLink workflowLink) {
+        this.workflowLink = workflowLink;
     }
 }
