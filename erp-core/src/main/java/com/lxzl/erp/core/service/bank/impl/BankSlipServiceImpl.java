@@ -938,6 +938,10 @@ public class BankSlipServiceImpl implements BankSlipService {
                     }
                     bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(),now,bankSlipClaimDOList);
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+                    bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() -1 );
+                    if(bankSlipDO.getNeedClaimCount() ==  0 && bankSlipDO.getClaimCount() ==  0){
+                        bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                    }
                 }
             }
 
@@ -1039,6 +1043,11 @@ public class BankSlipServiceImpl implements BankSlipService {
                 }
                 bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(),now,bankSlipClaimDOList);
                 bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+                headquartersBankSlipDO.setNeedClaimCount(headquartersBankSlipDO.getNeedClaimCount() -1 );
+                if(headquartersBankSlipDO.getNeedClaimCount() ==  0 && headquartersBankSlipDO.getClaimCount() ==  0){
+                    headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                }
+
             }
         }
 
