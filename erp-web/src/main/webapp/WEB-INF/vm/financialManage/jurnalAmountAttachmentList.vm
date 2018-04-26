@@ -44,7 +44,6 @@
                                         <select name="bankType" id="bankType" class="form-control input-sm bradius"></select>
                                     </div>
                                 </div>
-                                <input type="hidden" name="slipMonth">
                                 <div class="field form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select name="slipStatus" id="slipStatus" class="form-control input-sm bradius"></select>
@@ -53,6 +52,14 @@
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
                                         <select class="form-control input-sm bradius" name="subCompanyId"  id="subCompanyName"></select>
+                                    </div>
+                                </div>
+                                <div class="field form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <label for="slipMonth" class="input-group date">
+                                            <input type="text" name="slipMonth" id="slipMonth" data-type="date" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择时间">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </label>
                                     </div>
                                 </div>
                             </form>
@@ -72,7 +79,7 @@
 ##                                    </label>
 ##                                </th>
 ##                                {{/hasCommonActionButtons}}
-                                <th>资金流水附件ID</th>
+                                <th>资金流水ID</th>
                                 <th>分公司名称</th>
                                 <th>银行类型</th>
                                 <th>月份</th>
@@ -81,6 +88,7 @@
                                 <th>需认领笔数</th>
                                 <th>已认领笔数</th>
                                 <th>已确认笔数</th>
+                                <th>属地化数量</th>
                                 <th>创建人</th>
                                 <th>备注</th>
                                 <th>单据状态</th>
@@ -110,6 +118,7 @@
                                 <td>{{needClaimCount}}</td>
                                 <td>{{claimCount}}</td>
                                 <td>{{confirmCount}}</td>
+                                <td>{{localizationCount}}</td>
                                 <td>
                                     <p class="mn">{{createUserRealName}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>

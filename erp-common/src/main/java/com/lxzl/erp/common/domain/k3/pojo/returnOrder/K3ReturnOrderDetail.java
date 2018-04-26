@@ -3,6 +3,8 @@ package com.lxzl.erp.common.domain.k3.pojo.returnOrder;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import org.hibernate.validator.constraints.NotBlank;
 import java.util.Date;
@@ -30,6 +32,8 @@ public class K3ReturnOrderDetail extends BasePO {
     private String createUser;   //添加人
     private Date updateTime;   //修改时间
     private String updateUser;   //修改人
+    private OrderProduct orderProduct;//关联订单商品
+    private OrderMaterial orderMaterial;//关联商品物料
 
 
     public Integer getK3ReturnOrderDetailId() {
@@ -158,5 +162,21 @@ public class K3ReturnOrderDetail extends BasePO {
 
     public void setReturnOrderNo(String returnOrderNo) {
         this.returnOrderNo = returnOrderNo;
+    }
+
+    public OrderProduct getOrderProduct() {
+        return orderProduct;
+    }
+
+    public void setOrderProduct(OrderProduct orderProduct) {
+        this.orderProduct = orderProduct;
+    }
+
+    public OrderMaterial getOrderMaterial() {
+        return orderMaterial;
+    }
+
+    public void setOrderMaterial(OrderMaterial orderMaterial) {
+        this.orderMaterial = orderMaterial;
     }
 }

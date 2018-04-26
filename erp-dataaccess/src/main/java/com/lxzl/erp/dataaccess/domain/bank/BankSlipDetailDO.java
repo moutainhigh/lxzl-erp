@@ -25,10 +25,12 @@ public class BankSlipDetailDO  extends BaseDO {
 	private Integer subCompanyId;
 	private String subCompanyName;
 	private Integer isLocalization;
-	private Integer localizationSubCompanyId;  //归属公司id
-	private String localizationSubCompanyName;  //归属公司名称
+	private Integer ownerSubCompanyId;  //数据归属公司id
+	private String ownerSubCompanyName;  //数据归属公司名称
+	private Integer bankSlipBankType;  //银行类型
 
 	private List<BankSlipClaimDO> bankSlipClaimDOList;
+
 
 	public List<BankSlipClaimDO> getBankSlipClaimDOList() {
 		return bankSlipClaimDOList;
@@ -42,20 +44,29 @@ public class BankSlipDetailDO  extends BaseDO {
 		return subCompanyName;
 	}
 
-	public Integer getLocalizationSubCompanyId() {
-		return localizationSubCompanyId;
+
+	public Integer getOwnerSubCompanyId() {
+		return ownerSubCompanyId;
 	}
 
-	public void setLocalizationSubCompanyId(Integer localizationSubCompanyId) {
-		this.localizationSubCompanyId = localizationSubCompanyId;
+	public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+		this.ownerSubCompanyId = ownerSubCompanyId;
 	}
 
-	public String getLocalizationSubCompanyName() {
-		return localizationSubCompanyName;
+	public String getOwnerSubCompanyName() {
+		return ownerSubCompanyName;
 	}
 
-	public void setLocalizationSubCompanyName(String localizationSubCompanyName) {
-		this.localizationSubCompanyName = localizationSubCompanyName;
+	public void setOwnerSubCompanyName(String ownerSubCompanyName) {
+		this.ownerSubCompanyName = ownerSubCompanyName;
+	}
+
+	public Integer getBankSlipBankType() {
+		return bankSlipBankType;
+	}
+
+	public void setBankSlipBankType(Integer bankSlipBankType) {
+		this.bankSlipBankType = bankSlipBankType;
 	}
 
 	public void setSubCompanyName(String subCompanyName) {

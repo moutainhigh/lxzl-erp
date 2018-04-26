@@ -66,7 +66,7 @@
                                 {{#hasCommonActionButtons}}
                                 <th>
                                     <label class="option block mn">
-                                        <input type="checkbox" name="checkAll" value="">
+                                        <input type="checkbox" name="checkAll" value="" class="checkInput">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </th>
@@ -81,10 +81,11 @@
                                 <th>优惠券状态</th>
                                 <th>客戶编号</th>
                                 <th>是否线上</th>
-                                <th>领取时间</th>
-                                <th>使用时间</th>
-                                <th>有效期起始时间</th>
-                                <th>有效期结束时间</th>
+                                <th>领取及使用时间</th>
+##                                <th>使用时间</th>
+##                                <th>有效期起始时间</th>
+##                                <th>有效期结束时间</th>
+                                <th>有效日期</th>
                                 <th>备注</th>
                                 <th>添加人</th>
                                 {{#hasRowActionButtons}}
@@ -114,10 +115,24 @@
                                 <td>{{couponStatusValue}}</td>
                                 <td>{{customerNo}}</td>
                                 <td>{{isOnLineValue}}</td>
-                                <td>{{#clockShorTime}}{{receiveTime}}{{/clockShorTime}}</td>
-                                <td>{{#clockShorTime}}{{useTime}}{{/clockShorTime}}</td>
-                                <td>{{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}</td>
-                                <td>{{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}</td>
+##                                <td>{{#clockShorTime}}{{receiveTime}}{{/clockShorTime}}</td>
+##                                <td>{{#clockShorTime}}{{useTime}}{{/clockShorTime}}</td>
+                                <td>
+                                    <p class="mn" title="">领取时间：
+                                        {{#clockShorTime}}{{receiveTime}}{{/clockShorTime}}
+                                    </p>
+                                    <p class="mn mt5" title="">结束时间：
+                                        {{#clockShorTime}}{{useTime}}{{/clockShorTime}}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mn" title="">开始：
+                                        {{#clockShorTime}}{{effectiveStartTime}}{{/clockShorTime}}
+                                    </p>
+                                    <p class="mn mt5" title="">结束：
+                                        {{#clockShorTime}}{{effectiveEndTime}}{{/clockShorTime}}
+                                    </p>
+                                </td>
                                 <td>{{remark}}</td>
                                 <td>
                                     <p class="mn">{{updateUserRealName}}</p>

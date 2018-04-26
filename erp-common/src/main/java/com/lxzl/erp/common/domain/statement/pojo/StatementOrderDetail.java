@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementOrderDetail extends BasePO {
@@ -41,6 +40,8 @@ public class StatementOrderDetail extends BasePO {
     private BigDecimal statementDetailOverduePaidAmount;
     private Integer statementDetailOverdueDays;
     private Integer statementDetailOverduePhaseCount;
+    private BigDecimal statementDetailPenaltyAmount;//违约金
+    private BigDecimal statementDetailPenaltyPaidAmount;//已付违约金
     private Integer statementDetailStatus;   //结算状态，0未结算，1已结算
     private Date statementStartTime;   //结算开始时间
     private Date statementEndTime;   //结算结束时间
@@ -425,5 +426,21 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
         this.statementCouponAmount = statementCouponAmount;
+    }
+
+    public BigDecimal getStatementDetailPenaltyAmount() {
+        return statementDetailPenaltyAmount;
+    }
+
+    public void setStatementDetailPenaltyAmount(BigDecimal statementDetailPenaltyAmount) {
+        this.statementDetailPenaltyAmount = statementDetailPenaltyAmount;
+    }
+
+    public BigDecimal getStatementDetailPenaltyPaidAmount() {
+        return statementDetailPenaltyPaidAmount;
+    }
+
+    public void setStatementDetailPenaltyPaidAmount(BigDecimal statementDetailPenaltyPaidAmount) {
+        this.statementDetailPenaltyPaidAmount = statementDetailPenaltyPaidAmount;
     }
 }

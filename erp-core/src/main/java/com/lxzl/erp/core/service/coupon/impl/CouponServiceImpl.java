@@ -595,6 +595,12 @@ public class CouponServiceImpl implements CouponService{
             serviceResult.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_ID_NOT_NULL);
             return serviceResult;
         }
+        //判断该结算单是否已经使用过结算单优惠券，如果已经使用过，不能重复使用
+        CouponDO usedCoupon = couponMapper.findByStatementOrderDetailId(statementOrderDetail.getStatementOrderDetailId());
+        if (usedCoupon != null) {
+            serviceResult.setErrorCode(ErrorCode.COUPON_USED_THIS_STATEMENT);
+            return serviceResult;
+        }
         //获取结算单对象和结算单详情对象
         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailMapper.findById(statementOrderDetail.getStatementOrderDetailId());
         if (statementOrderDetailDO == null) {
@@ -648,7 +654,7 @@ public class CouponServiceImpl implements CouponService{
         couponDO.setOrderProductId(statementOrderDetailDO.getOrderItemReferId());
         couponDO.setStatementOrderId(statementOrderDO.getId());
         couponDO.setStatementOrderNo(statementOrderDO.getStatementOrderNo());
-        couponDO.setStatementOrderDetailId(statementOrderDetailDO.getStatementOrderId());
+        couponDO.setStatementOrderDetailId(statementOrderDetailDO.getId());
         //保存抵扣金额,如果结算单租金金额大于优惠券面值，则抵扣金额为优惠卷面值（结算单优惠金额累加优惠券面值）
         if (statementOrderDetailDO.getStatementDetailRentAmount().compareTo(couponDO.getFaceValue()) == 1) {
             //判断结算单租金金额是否大于结算单抵扣金额加上优惠券面值，如果大于则抵扣金额存为结算单优惠金额累加优惠券面值

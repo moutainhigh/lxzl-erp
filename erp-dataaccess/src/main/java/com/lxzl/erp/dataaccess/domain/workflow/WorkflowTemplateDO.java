@@ -14,7 +14,6 @@ public class WorkflowTemplateDO extends BaseDO {
     private Integer workflowType;
     private Integer dataStatus;
     private String remark;
-
     @Transient
     private List<WorkflowNodeDO> workflowNodeDOList;
 

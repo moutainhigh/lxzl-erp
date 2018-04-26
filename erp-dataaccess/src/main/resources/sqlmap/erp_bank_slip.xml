@@ -283,6 +283,12 @@
             </foreach>
         </trim>
         <trim prefix=",">
+            claim_count =
+            <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+                WHEN #{item.id,jdbcType=INTEGER} THEN #{item.claimCount,jdbcType=INTEGER}
+            </foreach>
+        </trim>
+        <trim prefix=",">
             localization_count =
             <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
                 WHEN #{item.id,jdbcType=INTEGER} THEN #{item.localizationCount,jdbcType=INTEGER}

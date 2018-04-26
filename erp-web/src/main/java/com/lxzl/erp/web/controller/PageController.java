@@ -243,6 +243,11 @@ public class PageController extends BaseController {
         return "/orderManage/waiteForDeliveryOrderList";
     }
 
+    @RequestMapping("/order-manage/to-audit-list")
+    public String orderManageToAuditList() {
+        return "/orderManage/orderToAuditList";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -668,6 +673,10 @@ public class PageController extends BaseController {
     public String statementOrderDetail() {
         return "/statementOrderManage/statementOrderDetail";
     }
+    @RequestMapping("/statement-order/useCoupon")
+    public String statementOrderUseCoupon() {
+        return "/component/statementOrder/useCoupon";
+    }
     // 对账单
     @RequestMapping("/statement-monthly-order/list")
     public String monthStatementOrderList() {
@@ -982,6 +991,12 @@ public class PageController extends BaseController {
     @RequestMapping("/product/choose")
     public String manproductChoose() {
         return "/component/product/chooseModal";
+    }
+
+    //选择商品/组合商品Modal
+    @RequestMapping("/all-product/choose")
+    public String allProductChoose() {
+        return "/component/order/chooseProductModal";
     }
 
     //提交审核选择审核人及填写审核备注

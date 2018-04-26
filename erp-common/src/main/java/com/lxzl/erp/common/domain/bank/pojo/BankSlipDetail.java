@@ -34,13 +34,15 @@ public class BankSlipDetail extends BasePO {
 	private Date updateTime;   //修改时间
 	private String updateUser;   //修改人
 	private Integer bankSlipId;   //银行对公流水表id
-	private Integer subCompanyId;  //数据归属分公司ID
+	private Integer subCompanyId;  //属地化分公司ID
 	private Integer isLocalization;  //是否已属地化,0-否，1-是[总公司时有值]
-	private String subCompanyName;  //数据归属分公司名称
-	private Integer localizationSubCompanyId;  //属地化公司id
-	private String localizationSubCompanyName;  //属地化公司名称
+	private String subCompanyName;  //属地化分公司名称
+	private Integer ownerSubCompanyId;  //数据归属公司id
+	private String ownerSubCompanyName;  //数据归属公司名称
+	private Integer bankSlipBankType;  //银行类型
 
 	private List<BankSlipClaim> bankSlipClaimList;
+
 
 	public List<BankSlipClaim> getBankSlipClaimList() {
 		return bankSlipClaimList;
@@ -54,21 +56,31 @@ public class BankSlipDetail extends BasePO {
 		this.subCompanyName = subCompanyName;
 	}
 
-	public Integer getLocalizationSubCompanyId() {
-		return localizationSubCompanyId;
+	public Integer getOwnerSubCompanyId() {
+		return ownerSubCompanyId;
 	}
 
-	public void setLocalizationSubCompanyId(Integer localizationSubCompanyId) {
-		this.localizationSubCompanyId = localizationSubCompanyId;
+	public void setOwnerSubCompanyId(Integer ownerSubCompanyId) {
+		this.ownerSubCompanyId = ownerSubCompanyId;
 	}
 
-	public String getLocalizationSubCompanyName() {
-		return localizationSubCompanyName;
+	public String getOwnerSubCompanyName() {
+		return ownerSubCompanyName;
 	}
 
-	public void setLocalizationSubCompanyName(String localizationSubCompanyName) {
-		this.localizationSubCompanyName = localizationSubCompanyName;
+	public void setOwnerSubCompanyName(String ownerSubCompanyName) {
+		this.ownerSubCompanyName = ownerSubCompanyName;
 	}
+
+	public Integer getBankSlipBankType() {
+		return bankSlipBankType;
+	}
+
+	public void setBankSlipBankType(Integer bankSlipBankType) {
+		this.bankSlipBankType = bankSlipBankType;
+	}
+
+
 
 	public void setBankSlipClaimList(List<BankSlipClaim> bankSlipClaimList) {
 		this.bankSlipClaimList = bankSlipClaimList;

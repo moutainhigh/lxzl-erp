@@ -28,6 +28,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -35,6 +36,8 @@ import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
+import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
@@ -1186,6 +1189,30 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
+        //最近订单地址信息
+        OrderDO orderDO = orderMapper.findConsignByCustomerNo(customerNo);
+        if(orderDO != null){
+            StringBuilder builder = new StringBuilder();
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getProvinceName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getProvinceName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getCityName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getCityName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getDistrictName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getDistrictName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getAddress())){
+                builder.append(orderDO.getOrderConsignInfoDO().getAddress());
+            }
+            customerResult.setLastOrderAddress(builder.toString());
+            OrderConsignInfoDO orderConsignInfoDO = orderDO.getOrderConsignInfoDO();
+            if(orderConsignInfoDO!=null){
+                customerResult.setLastOrderConsigneeName(orderConsignInfoDO.getConsigneeName());
+                customerResult.setLastOrderConsigneePhone(orderConsignInfoDO.getConsigneePhone());
+            }
+        }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -3230,8 +3257,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult<String, String> setIsRisk() {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        List<Integer> idList = customerMapper.getIsRiskId();
-        customerMapper.setIsRisk(idList);
+        customerMapper.setIsRisk();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -3298,4 +3324,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private AreaProvinceMapper areaProvinceMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 }

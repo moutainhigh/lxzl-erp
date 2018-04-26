@@ -11,6 +11,8 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
+import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3HistoricalReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -394,8 +396,23 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return result;
         }
+        K3ReturnOrder k3ReturnOrder= ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class);
+        //增加退货单订单商品项和物料项
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList=k3ReturnOrder.getK3ReturnOrderDetailList();
+        if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)){
+            for(K3ReturnOrderDetail k3ReturnOrderDetail:k3ReturnOrderDetailList){
+                boolean isMaterial=productSupport.isMaterial(k3ReturnOrderDetail.getProductNo());
+                if(isMaterial){
+                    OrderMaterialDO materialDO= orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
+                    k3ReturnOrderDetail.setOrderMaterial(ConverterUtil.convert(materialDO,OrderMaterial.class));
+                }else {
+                    OrderProductDO orderProductDO=orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
+                    k3ReturnOrderDetail.setOrderProduct(ConverterUtil.convert(orderProductDO,OrderProduct.class));
+                }
+            }
+        }
 
-        result.setResult(ConverterUtil.convert(k3ReturnOrderDO, K3ReturnOrder.class));
+        result.setResult(k3ReturnOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -779,9 +796,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         // 数据过滤
         List<K3HistoricalReturnOrder> needSaveBillDatas = getNeedAddK3ReturnBills(billDatas);
         // 保存k3数据列表
-        saveBillDatas(needSaveBillDatas);
-        importResult.setResult(JSONObject.toJSONString(needSaveBillDatas));
-        return importResult;
+        return saveBillDatas(needSaveBillDatas);
     }
 
     /**
@@ -801,13 +816,14 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     /**
      * 保存k3历史退货订单数据
      */
-    private int saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas) {
-
+    private ServiceResult<String, String> saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         if (logger.isInfoEnabled()) {
             logger.info("需要保存的k3退货单数据为：" + JSONArray.toJSONString(needSaveBillDatas));
         }
         if (needSaveBillDatas == null || needSaveBillDatas.size() == 0) {
-            return 0;
+            return serviceResult;
         }
         // 保存退货订单数据
         List<K3ReturnOrderDO> k3ReturnOrderDOS = saveK3ReturnOrders(needSaveBillDatas);
@@ -823,13 +839,30 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         // 保存退货订单详情数据
         saveK3ReturnOrderDetails(needSaveBillDatas);
         // 保存k3回调接口的处理退货单数据
+        Integer notSuccessCount = doCallbackReturnOrder(needSaveBillDatas);
+        Integer successCount = needSaveBillDatas.size() - notSuccessCount;
+        serviceResult.setErrorCode(ErrorCode.K3_HISTORICAL_RETURN_CODE, successCount, notSuccessCount);
+        return serviceResult;
+    }
+
+    /**
+     * 执行保存k3回调接口的处理退货单数据
+     */
+    private int doCallbackReturnOrder(List<K3HistoricalReturnOrder> needSaveBillDatas) {
+        int notSuccessCount = 0;
         for (K3HistoricalReturnOrder k3HistoricalReturnOrder : needSaveBillDatas) {
-            ServiceResult<String, String> callBackResult = k3CallbackService.callbackReturnOrder(k3HistoricalReturnOrder.getK3ReturnOrder());
+            K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
+            ServiceResult<String, String> callBackResult = k3CallbackService.callbackReturnOrder(k3ReturnOrder);
             if (!StringUtils.equals(ErrorCode.SUCCESS, callBackResult.getErrorCode())) {
-                throw new BusinessException(ErrorCode.getMessage(callBackResult.getErrorCode()));
+                logger.info("调用回调接口失败：" + ErrorCode.getMessage(callBackResult.getErrorCode()));
+                notSuccessCount++;
+                // 不成功改变状态
+                K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+                k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
+                k3ReturnOrderMapper.update(k3ReturnOrderDO);
             }
         }
-        return needSaveBillDatas.size();
+        return notSuccessCount;
     }
 
     /**
@@ -923,6 +956,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDO.setCreateTime(new Date());
             k3ReturnOrderDO.setUpdateTime(new Date());
             k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_YES);
             k3ReturnOrderMapper.save(k3ReturnOrderDO);
         }
 
@@ -952,6 +986,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOs = ConverterUtil.convertList(k3ReturnOrderDetails, K3ReturnOrderDetailDO.class);
         for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOs) {
+            if (k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                k3ReturnOrderDetailDO.setOrderItemId(StringUtils.EMPTY);
+            }
             k3ReturnOrderDetailDO.setCreateUser(userId);
             k3ReturnOrderDetailDO.setUpdateUser(userId);
             k3ReturnOrderDetailDO.setCreateTime(new Date());

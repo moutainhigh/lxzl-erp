@@ -144,7 +144,7 @@
                                 <tbody>
                                     {{#dataSource}}
                                         {{#listData}}
-                                        <tr>
+                                        <tr class="{{trClass}}">
                                             {{#hasCommonActionButtons}}
                                             <td class="text-center">
                                                 <label class="option block mn">
@@ -182,17 +182,28 @@
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                             </td>
                                             <td>
-                                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
+                                                <p class="mn {{payStatusClass}} {{trClass}}">{{payStatusValue}}</p>
                                                 <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
                                             </td>
                                             <td>
-                                                <p class="mn nowrap {{orderStatusClass}}">
-                                                    <span class="{{orderStatusClass}}">{{orderStatusStr}}</span>
-                                                    {{#showViewWorkFlowButton}}
-                                                    <span class="ml5 mr5 {{orderStatusClass}}">/</span>
-                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton" data-orderno="{{orderNo}}">查看审核流</a>
-                                                    {{/showViewWorkFlowButton}}
+                                                <p class="mn nowrap {{orderStatusClass}} {{trClass}}">
+                                                    <span class="{{orderStatusClass}} {{trClass}}">{{orderStatusStr}}</span>
+##                                                    {{#showViewWorkFlowButton}}
+##                                                    <span class="ml5 mr5 {{orderStatusClass}} {{trClass}}">/</span>
+##                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton {{trClass}}" data-orderno="{{orderNo}}">查看审核流</a>
+##                                                    {{/showViewWorkFlowButton}}
                                                 </p>
+                                                {{#showViewWorkFlowButton}}
+                                                <p class="mn nowrap {{orderStatusClass}} {{trClass}}">
+                                                    <span class="{{orderStatusClass}} {{trClass}}">{{workflowCurrentNodeName}}-{{getCurrentVerifyUserName}}</span>
+                                                </p>
+                                                <p class="mn nowrap {{orderStatusClass}} {{trClass}}">
+##                                                    <span class="{{orderStatusClass}} {{trClass}}">{{orderStatusStr}}</span>
+
+##                                                    <span class="ml5 mr5 {{orderStatusClass}} {{trClass}}">/</span>
+                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton {{trClass}}" data-orderno="{{orderNo}}">查看审核流</a>
+                                                </p>
+                                                {{/showViewWorkFlowButton}}
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
                                             </td>
 ##                                            <td>{{buyerRemark}}</td>
