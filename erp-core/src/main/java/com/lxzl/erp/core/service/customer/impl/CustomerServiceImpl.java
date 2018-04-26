@@ -1191,7 +1191,20 @@ public class CustomerServiceImpl implements CustomerService {
         //最近订单地址信息
         OrderDO orderDO = orderMapper.findConsignByCustomerNo(customerNo);
         if(orderDO != null){
-            customerResult.setOrderAddress(orderDO.getOrderConsignInfoDO().getAddress());
+            StringBuilder builder = new StringBuilder();
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getProvinceName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getProvinceName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getCityName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getCityName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getDistrictName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getDistrictName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getAddress())){
+                builder.append(orderDO.getOrderConsignInfoDO().getAddress());
+            }
+            customerResult.setOrderAddress(builder.toString());
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
