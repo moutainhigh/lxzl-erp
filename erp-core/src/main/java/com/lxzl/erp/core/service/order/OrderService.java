@@ -192,4 +192,10 @@ public interface OrderService extends VerifyReceiver {
     void calculateOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, OrderDO orderDO);
 
     ServiceResult<String,Page<Order>> queryVerifyOrder(VerifyOrderQueryParam param);
+
+    /**
+     * 将完成的订单加入时间轴（兼容之前老数据订单完成后没加入时间轴）
+     * @return
+     */
+    ServiceResult<String,String> addReturnOrderToTimeAxis();
 }
