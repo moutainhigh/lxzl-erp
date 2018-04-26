@@ -28,6 +28,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -35,6 +36,7 @@ import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
@@ -1186,6 +1188,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
+        //最近订单地址信息
+        OrderDO orderDO = orderMapper.findConsignByCustomerNo(customerNo);
+        if(orderDO != null){
+            customerResult.setOrderAddress(orderDO.getOrderConsignInfoDO().getAddress());
+        }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -3297,4 +3305,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private AreaProvinceMapper areaProvinceMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 }

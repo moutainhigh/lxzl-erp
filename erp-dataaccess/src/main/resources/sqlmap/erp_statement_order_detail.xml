@@ -721,4 +721,13 @@
         </set>
         WHERE order_id = #{orderId, jdbcType=INTEGER} AND order_type=1 AND  data_status=1
     </update>
+
+    <select id="findByReturnReferIdAndStatementType" resultMap="StatementOrderDetailDO"
+            parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_statement_order_detail esod
+        WHERE esod.return_refer_id = #{returnReferId, jdbcType=INTEGER} AND esod.statement_detail_type =
+        #{statementDetailType, jdbcType=INTEGER} AND esod.data_status = 1
+    </select>
 </mapper>
