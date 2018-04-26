@@ -130,4 +130,12 @@ public interface BankSlipService {
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
     */
     ServiceResult<String, Page<BankSlipDetail>> exportPageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam);
+    /**
+     * 查询历史认领数据
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/4/16 21:17
+     * @param : bankSlipDetailList
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+     */
+    ServiceResult<String,List<BankSlipDetailDO>> queryBankSlipClaim(BankSlipDetail bankSlipDetail);
 }

@@ -831,6 +831,7 @@ public class ErrorCode {
     public static final String COUNT_MORE_THAN_OR_EQUALITY_ZERO = "J18000042";
     public static final String BANK_SLIP_DETAIL_ASSIGN_IS_NULL = "J18000043";
     public static final String BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000044";
+    public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000045";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1670,7 +1671,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
         MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
-        MAP.put(BANK_SLIP_CLAIM_PAY_STATUS_ERROR, "系统正在充值或已充值成功，不能重新认领");
+        MAP.put(BANK_SLIP_CLAIM_PAY_STATUS_ERROR, "系统正在充值或已充值成功，不能重新认领或派发");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
         MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
         MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
@@ -1685,7 +1686,7 @@ public class ErrorCode {
         MAP.put(COUNT_MORE_THAN_OR_EQUALITY_ZERO, "数量必须大于等于0");
         MAP.put(BANK_SLIP_DETAIL_ASSIGN_IS_NULL, "需派发数据为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
-
+        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是确认状态,");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
