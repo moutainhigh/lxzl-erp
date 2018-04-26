@@ -47,7 +47,7 @@ public class DingdingApproveDTO extends DingdingBaseDTO {
     /**
      * 工作流单号
      */
-    private String workflowLinkNo;
+    private String instanceMarking;
 
 
     @JSONField(serialize = false)
@@ -108,12 +108,12 @@ public class DingdingApproveDTO extends DingdingBaseDTO {
         this.processCode = processCode;
     }
 
-    public String getWorkflowLinkNo() {
-        return workflowLinkNo;
+    public String getInstanceMarking() {
+        return instanceMarking;
     }
 
-    public void setWorkflowLinkNo(String workflowLinkNo) {
-        this.workflowLinkNo = workflowLinkNo;
+    public void setInstanceMarking(String instanceMarking) {
+        this.instanceMarking = instanceMarking;
     }
 
     /**

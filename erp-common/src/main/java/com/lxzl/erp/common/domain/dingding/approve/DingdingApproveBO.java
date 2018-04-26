@@ -1,10 +1,6 @@
 package com.lxzl.erp.common.domain.dingding.approve;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -30,8 +26,8 @@ public class DingdingApproveBO {
         return this;
     }
     /** 构建工作流单号 */
-    public DingdingApproveBO buildWorkflowLinkNo(String workflowLinkNo) {
-        this.dingdingApproveDTO.setWorkflowLinkNo(workflowLinkNo);
+    public DingdingApproveBO buildInstanceMarking(String workflowLinkNo) {
+        this.dingdingApproveDTO.setInstanceMarking(workflowLinkNo);
         return this;
     }
 

@@ -24,8 +24,6 @@ public class WorkflowLinkDO extends BaseDO {
     private String verifyMatters;
     private Integer dataStatus;
     private String remark;
-    /** 钉钉工作流编号 */
-    private String dingdingWorkflowId;
     private List<WorkflowLinkDetailDO> workflowLinkDetailDOList;
     private List<WorkflowVerifyUserGroupDO> workflowVerifyUserGroupDOList;
 
@@ -203,14 +201,6 @@ public class WorkflowLinkDO extends BaseDO {
     public String getVerifyUserGroupId() { return verifyUserGroupId; }
 
     public void setVerifyUserGroupId(String verifyUserGroupId) { this.verifyUserGroupId = verifyUserGroupId; }
-
-    public String getDingdingWorkflowId() {
-        return dingdingWorkflowId;
-    }
-
-    public void setDingdingWorkflowId(String dingdingWorkflowId) {
-        this.dingdingWorkflowId = dingdingWorkflowId;
-    }
 
     public List<WorkflowVerifyUserGroupDO> getWorkflowVerifyUserGroupDOList() { return workflowVerifyUserGroupDOList; }
 

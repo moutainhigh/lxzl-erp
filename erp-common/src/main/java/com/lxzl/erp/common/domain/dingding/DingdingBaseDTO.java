@@ -16,7 +16,6 @@ public class DingdingBaseDTO {
     /** 请求钉钉的url */
     private String requestDingdingUrl;
 
-    @JSONField(serialize = false)
     public String getRequestDingdingUrl() {
         return requestDingdingUrl;
     }

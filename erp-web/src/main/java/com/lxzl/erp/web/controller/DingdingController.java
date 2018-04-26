@@ -79,7 +79,7 @@ public class DingdingController extends BaseController {
     @RequestMapping(value = "applyApprovingWorkflowToDingding")
     public Result applyApprovingWorkflowToDingding(@RequestParam String workflowNo) {
         User user = new User();
-        user.setUserId(500013);
+        user.setUserId(500335);
         super.getHttpServletRequest().getSession().setAttribute(CommonConstant.ERP_USER_SESSION_KEY, user);
         ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowToDingding(workflowNo);
         return resultGenerator.generate(serviceResult);

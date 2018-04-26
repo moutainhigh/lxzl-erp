@@ -3,8 +3,11 @@ package com.lxzl.erp.core.service.dingding.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.DingDingConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.dingding.DingdingBaseDTO;
 import com.lxzl.erp.common.domain.dingding.DingdingResultDTO;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
@@ -13,11 +16,16 @@ import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveDTO;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveResultDTO;
 import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.dingding.DingdingService;
+import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
+import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -28,14 +36,12 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowTemplateDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,10 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -77,6 +81,12 @@ public class DingdingServiceImpl implements DingdingService {
     private UserMapper userMapper;
     @Autowired
     private WorkflowTemplateMapper workflowTemplateMapper;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private K3ReturnOrderService k3ReturnOrderService;
+    @Autowired
+    private CustomerService customerService;
 
     @Override
     public String sendUserGroupMessage(String userGroupUrl, DingdingSendTextMessageRequest request) {
@@ -121,6 +131,9 @@ public class DingdingServiceImpl implements DingdingService {
             // 往钉钉上注册用户信息
             dingdingUserDTO.setRequestDingdingUrl(DingDingConfig.getInputMemberUrl());
             DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingUserDTO);
+            if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
+                throw new BusinessException("与钉钉网关交互失败：" + JSONObject.toJSONString(dingdingResultDTO));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
@@ -155,7 +168,6 @@ public class DingdingServiceImpl implements DingdingService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
 
 
     /**
@@ -198,7 +210,7 @@ public class DingdingServiceImpl implements DingdingService {
             // 构建表单组件信息
             dingdingApproveBO = buildFormComponentObj(dingdingApproveBO, workflowLinkDO);
             // 设置请求地址
-            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getInputMemberUrl());
+            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflowUrl());
             // 申请
             applyApprovingWorkflowToDingding(dingdingApproveBO.getDingdingApproveDTO());
         } catch (Exception e) {
@@ -214,12 +226,12 @@ public class DingdingServiceImpl implements DingdingService {
     private DingdingApproveBO buildDingdingOriginatorUserData(DingdingApproveBO dingdingApproveBO) {
         User currentUser = userSupport.getCurrentUser();
         if (currentUser.getUserId() == null) {
-            throw new BusinessException("当前用户的id为空"+ JSONObject.toJSONString(currentUser));
+            throw new BusinessException("当前用户的id为空" + JSONObject.toJSONString(currentUser));
         }
         // 1 获取当前用户的部门编号
         DepartmentDO departmentDO = departmentMapper.findByUserId(currentUser.getUserId());
         if (departmentDO == null || departmentDO.getId() == null) {
-            throw new BusinessException("当前用户对应的部门为空"+ JSONObject.toJSONString(departmentDO));
+            throw new BusinessException("当前用户对应的部门为空" + JSONObject.toJSONString(departmentDO));
         }
         dingdingApproveBO.buildDeptId(departmentDO.getId());
         dingdingApproveBO.buildOriginatorUserId(currentUser.getUserId());
@@ -249,19 +261,21 @@ public class DingdingServiceImpl implements DingdingService {
      */
     private DingdingApproveBO buildFormComponentObj(DingdingApproveBO dingdingApproveBO, WorkflowLinkDO workflowLinkDO) {
         // 构建工作流单号
-        dingdingApproveBO.buildWorkflowLinkNo(workflowLinkDO.getWorkflowLinkNo());
+        dingdingApproveBO.buildInstanceMarking(workflowLinkDO.getWorkflowLinkNo());
         // 构建模板单号
         dingdingApproveBO.buildProcessCode(String.valueOf(workflowLinkDO.getWorkflowTemplateId()));
         // 构建表单组件对象
-        dingdingApproveBO.buildFormComponentObj(new Object());
+        dingdingApproveBO.buildFormComponentObj(getFormComponentObjByTypeAndRefNO(workflowLinkDO));
         return dingdingApproveBO;
     }
 
-    /** 申请钉钉工作流 */
+    /**
+     * 申请钉钉工作流
+     */
     private DingdingApproveResultDTO applyApprovingWorkflowToDingding(DingdingApproveDTO dingdingApproveDTO) {
         dingdingApproveDTO.setCallbackUrl(DingDingConfig.applyApprovingWorkflowCallBackUrl);
         DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingApproveDTO);
-        if (!dingdingResultDTO.isSuccess()) {
+        if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
             throw new BusinessException("通过钉钉网关发起审批实例失败：" + JSONObject.toJSONString(dingdingResultDTO));
         }
         DingdingApproveResultDTO resultDTO = dingdingResultDTO.getTObj(DingdingApproveResultDTO.class);
@@ -271,7 +285,9 @@ public class DingdingServiceImpl implements DingdingService {
         return resultDTO;
     }
 
-    /** 使用post方式对钉钉网关的发送请求 */
+    /**
+     * 使用post方式对钉钉网关的发送请求
+     */
     private DingdingResultDTO postDingdingGatway(DingdingBaseDTO dingdingBaseDTO) {
         DingdingResultDTO dingdingResultDTO = null;
         String respContent = null;
@@ -296,13 +312,122 @@ public class DingdingServiceImpl implements DingdingService {
                 HttpEntity he = resp.getEntity();
                 respContent = EntityUtils.toString(he, "UTF-8");
             }
-            dingdingResultDTO = JSONObject.parseObject(respContent, DingdingResultDTO.class);
             logger.info("从钉钉网关返回的结果为：" + respContent);
+            dingdingResultDTO = JSONObject.parseObject(respContent, DingdingResultDTO.class);
         } catch (Exception e) {
             dingdingResultDTO = new DingdingResultDTO();
             dingdingResultDTO.setCode(ErrorCode.BUSINESS_EXCEPTION);
             logger.error("applyApprovingWorkflow message error,{}", e);
         }
         return dingdingResultDTO;
+    }
+
+    /**
+     * 根据工作流类型和引用编号获取表单组件对象
+     */
+    private Object getFormComponentObjByTypeAndRefNO(WorkflowLinkDO workflowLinkDO) {
+        Integer workflowType = workflowLinkDO.getWorkflowType();
+        String workflowReferNo = workflowLinkDO.getWorkflowReferNo();
+        if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
+            // 采购单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
+            // 订单信息审批
+            return getOrderByNO(workflowReferNo);
+        } else if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)) {
+            // 调配单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_CHANGE.equals(workflowType)) {
+            // 换货单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_RETURN.equals(workflowType)) {
+            // 退货单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_REPAIR.equals(workflowType)) {
+            // 维修单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_PURCHASE_APPLY_ORDER.equals(workflowType)) {
+            // 采购申请单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_TRANSFER_IN_ORDER.equals(workflowType)) {
+            // 转移单入审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_TRANSFER_OUT_ORDER.equals(workflowType)) {
+            // 转移单出审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_INTO.equals(workflowType)) {
+            // 订单信息审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_PEER_DEPLOYMENT_OUT.equals(workflowType)) {
+            // 同行调拨单出审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_STATEMENT_ORDER_CORRECT.equals(workflowType)) {
+            // 结算单冲正
+
+        } else if (WorkflowType.WORKFLOW_TYPE_K3_CHANGE.equals(workflowType)) {
+            // K3换货单审批
+
+        } else if (WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)) {
+            // K3退货单审批
+            return getK3ReturnOrderByNO(workflowReferNo);
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
+            // 客户审批流程
+            return getCustomerByNO(workflowReferNo);
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)) {
+            // 客户地址审批流程
+            return getCustomerConsignInfoByNO(workflowReferNo);
+        }
+        return null;
+    }
+
+    /**
+     * 获取订单信息
+     */
+    private Order getOrderByNO(String refNo) {
+        ServiceResult<String, Order> result = orderService.queryOrderByNo(refNo);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            throw new BusinessException(ErrorCode.getMessage(result.getErrorCode()));
+        }
+        Order order = result.getResult();
+        order.setStatementOrder(null);
+        return order;
+    }
+
+    /**
+     * 获取k3退货单信息
+     */
+    private K3ReturnOrder getK3ReturnOrderByNO(String refNo) {
+        ServiceResult<String, K3ReturnOrder> result = k3ReturnOrderService.queryReturnOrderByNo(refNo);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            throw new BusinessException(ErrorCode.getMessage(result.getErrorCode()));
+        }
+        K3ReturnOrder k3ReturnOrder = result.getResult();
+        return k3ReturnOrder;
+    }
+
+    /**
+     * 获取客户信息
+     */
+    private Customer getCustomerByNO(String refNo) {
+        ServiceResult<String, Customer> result = customerService.detailCustomer(refNo);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            throw new BusinessException(ErrorCode.getMessage(result.getErrorCode()));
+        }
+        Customer customer = result.getResult();
+        return customer;
+    }
+
+    /**
+     * 获取客户地址信息
+     */
+    private CustomerConsignInfo getCustomerConsignInfoByNO(String refNo) {
+        CustomerConsignInfo queryInfo = new CustomerConsignInfo();
+        queryInfo.setCustomerNo(refNo);
+        ServiceResult<String, CustomerConsignInfo> result = customerService.detailCustomerConsignInfo(queryInfo);
+        if (!ErrorCode.SUCCESS.equals(result.getErrorCode())) {
+            throw new BusinessException(ErrorCode.getMessage(result.getErrorCode()));
+        }
+        CustomerConsignInfo customerConsignInfo = result.getResult();
+        return customerConsignInfo;
     }
 }

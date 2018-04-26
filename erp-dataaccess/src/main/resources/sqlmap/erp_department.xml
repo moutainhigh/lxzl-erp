@@ -215,10 +215,9 @@
 	</update>
 
 	<select id="findByUserId" resultMap="DepartmentDO" parameterType="Integer">
-		SELECT
-		rdd.department_id id,ur.user_id
-		from erp_role_department_data rdd,erp_user_role ur
-		WHERE ur.user_id = #{userId} and rdd.role_id = ur.role_id
-		limit 1
+		SELECT r.department_id id,ur.user_id
+		FROM erp_role r,erp_user_role ur
+		WHERE ur.user_id = #{userId}
+		AND r.id = ur.role_id limit 1
 	</select>
 </mapper>
