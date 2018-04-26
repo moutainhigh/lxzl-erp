@@ -361,8 +361,8 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(isNeedVerifyResult.getErrorCode(), isNeedVerifyResult.getFormatArgs());
             return result;
         }
-        // 是否需要审批
-        boolean isNeedVerify = isNeedVerifyResult.getResult();
+        // 是否需要二次审批
+        boolean isNeedSecondVerify = isNeedVerifyResult.getResult();
 
         String orderRemark = null;
         if (OrderRentType.RENT_TYPE_DAY.equals(orderDO.getRentType())) {
@@ -370,26 +370,26 @@ public class OrderServiceImpl implements OrderService {
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(orderDO.getRentType())) {
             orderRemark = "租赁类型：月租";
         }
-
-        if (isNeedVerify) {
-            //如果要审核，判断审核注意事项
+        String verifyMatters = null;
+        if (isNeedSecondVerify) {
+            //如果要二次审核，判断审核注意事项
             ServiceResult<String, String> verifyMattersResult = getVerifyMatters(orderDO);
             if (!ErrorCode.SUCCESS.equals(verifyMattersResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(verifyMattersResult.getErrorCode());
                 return result;
             }
-            String verifyMatters = verifyMattersResult.getResult();
-
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
-            if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(workflowCommitResult.getErrorCode());
-                return result;
-            }
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+            verifyMatters = verifyMattersResult.getResult();
+        }else{
+            verifyMatters = "例行审核";
         }
-
+        ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
+        if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            result.setErrorCode(workflowCommitResult.getErrorCode());
+            return result;
+        }
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_VERIFYING);
         orderDO.setUpdateUser(loginUser.getUserId().toString());
         orderDO.setUpdateTime(currentTime);
@@ -399,14 +399,14 @@ public class OrderServiceImpl implements OrderService {
         if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
             customerSupport.addCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
         }
-        if (!isNeedVerify) {
-            String code = receiveVerifyResult(true, orderDO.getOrderNo());
-            if (!ErrorCode.SUCCESS.equals(code)) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
-                return result;
-            }
-        }
+//        if (!isNeedSecondVerify) {
+//            String code = receiveVerifyResult(true, orderDO.getOrderNo());
+//            if (!ErrorCode.SUCCESS.equals(code)) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
+//                return result;
+//            }
+//        }
         result.setResult(orderNo);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
