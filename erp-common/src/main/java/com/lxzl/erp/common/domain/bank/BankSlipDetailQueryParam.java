@@ -19,6 +19,15 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     private Integer detailStatus;   //明细状态，1-未认领，2-已认领，3-已确定，4-忽略
     private Integer isLocalization;   //'是否已属地化,0-否，1-是[总公司时有值]',
     private Date slipMonth;   //月份
+    private String otherSideAccountNo;   //对方账号
+
+    public String getOtherSideAccountNo() {
+        return otherSideAccountNo;
+    }
+
+    public void setOtherSideAccountNo(String otherSideAccountNo) {
+        this.otherSideAccountNo = otherSideAccountNo;
+    }
 
     public Date getSlipMonth() {
         return slipMonth;
