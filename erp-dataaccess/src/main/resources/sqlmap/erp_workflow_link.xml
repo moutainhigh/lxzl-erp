@@ -181,13 +181,19 @@
 		LEFT JOIN erp_user euc ON euc.id = ewl.commit_user
 		LEFT JOIN erp_workflow_node ewn ON ewn.id = ewl.workflow_current_node_id
 		where ewl.workflow_type = #{workflowType, jdbcType=INTEGER}
-		<if test="workflowReferNoList != null &amp;&amp; workflowReferNoList.size() > 0">
-			and ewl.workflow_refer_no in
-			<foreach item="item" index="index" collection="workflowReferNoList"
-					 open="(" separator="," close=")">
-				#{item}
-			</foreach>
-		</if> and ewl.data_status = 1
+		<choose>
+			<when test="workflowReferNoList != null &amp;&amp; workflowReferNoList.size() > 0">
+				and ewl.workflow_refer_no in
+				<foreach item="item" index="index" collection="workflowReferNoList"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and 1=2
+			</otherwise>
+		</choose>
+		and ewl.data_status = 1
 		) link left join erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
 		LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id
 		LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
