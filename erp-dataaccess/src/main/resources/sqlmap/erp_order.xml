@@ -875,4 +875,11 @@
         WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} and eo.data_status=1
         ORDER BY eo.create_time DESC LIMIT 0,1
     </select>
+
+    <select id="findByOrderStatus" resultMap="OrderDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        WHERE eo.order_status = #{orderStatus} and eo.data_status=1
+    </select>
 </mapper>
