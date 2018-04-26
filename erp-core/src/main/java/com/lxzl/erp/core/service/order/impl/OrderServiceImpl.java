@@ -949,11 +949,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> cancelOrder(String orderNo,Integer cancelOrderReasonType) {
+    public ServiceResult<String, String> cancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
-        if(cancelOrderReasonType==null){
+        if (cancelOrderReasonType == null) {
             result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
             return result;
         }
@@ -989,7 +989,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> forceCancelOrder(String orderNo,Integer cancelOrderReasonType) {
+    public ServiceResult<String, String> forceCancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
         ServiceResult<String, String> result = new ServiceResult<>();
@@ -997,7 +997,7 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
             return result;
         }
-        if(cancelOrderReasonType==null){
+        if (cancelOrderReasonType == null) {
             result.setErrorCode(ErrorCode.CANCEL_ORDER_REASON_TYPE_NULL);
             return result;
         }
@@ -1207,33 +1207,33 @@ public class OrderServiceImpl implements OrderService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         ServiceResult<String, String> result = new ServiceResult<>();
-        if (order== null||StringUtil.isEmpty(order.getOrderNo())) {
+        if (order == null || StringUtil.isEmpty(order.getOrderNo())) {
             result.setErrorCode(ErrorCode.ORDER_NO_NOT_NULL);
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(order.getOrderNo());
-        if(orderDO==null){
+        if (orderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        if (OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus())||OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())) {
+        if (OrderStatus.ORDER_STATUS_CANCEL.equals(orderDO.getOrderStatus()) || OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())) {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        if(StringUtil.isEmpty(order.getRemark())){
+        if (StringUtil.isEmpty(order.getRemark())) {
             result.setErrorCode(ErrorCode.ORDER_MESSAGE_NULL);
             return result;
         }
-        OrderMessage orderMessage=new OrderMessage();
+        OrderMessage orderMessage = new OrderMessage();
         orderMessage.setCreateTime(currentTime);
         orderMessage.setUserId(loginUser.getUserId());
         orderMessage.setUserRealName(loginUser.getRealName());
         orderMessage.setContent(order.getRemark());
         List<OrderMessage> orderMessageList;
-        if(StringUtil.isNotEmpty(orderDO.getOrderMessage())){
-            orderMessageList=JSON.parseArray(orderDO.getOrderMessage(),OrderMessage.class);
-        }else {
-            orderMessageList=new ArrayList<OrderMessage>();
+        if (StringUtil.isNotEmpty(orderDO.getOrderMessage())) {
+            orderMessageList = JSON.parseArray(orderDO.getOrderMessage(), OrderMessage.class);
+        } else {
+            orderMessageList = new ArrayList<OrderMessage>();
         }
         orderMessageList.add(orderMessage);
         orderDO.setOrderMessage(JSON.toJSONString(orderMessageList));
@@ -2507,15 +2507,16 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 当前用户待审核订单分页
-     * @Author : sunzhipeng
+     *
      * @param verifyOrderQueryParam
      * @return
+     * @Author : sunzhipeng
      */
     @Override
     public ServiceResult<String, Page<Order>> queryVerifyOrder(VerifyOrderQueryParam verifyOrderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
-        Integer currentVerifyUser= userSupport.getCurrentUserId();
+        Integer currentVerifyUser = userSupport.getCurrentUserId();
         List<String> workflowReferNoList = workflowLinkMapper.findWorkflowReferNoList(currentVerifyUser);
         if (workflowReferNoList.size() == 0) {
             List<Order> orderList = new ArrayList<>();
@@ -2535,6 +2536,26 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> page = new Page<>(orderList, totalCount, verifyOrderQueryParam.getPageNo(), verifyOrderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
+        return result;
+    }
+
+    @Override
+    public ServiceResult<String, String> addReturnOrderToTimeAxis() {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        //部分退货
+        List<OrderDO> orderDOList = orderMapper.findByOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
+        if (CollectionUtil.isEmpty(orderDOList)) orderDOList = new ArrayList<OrderDO>();
+        //全部退货
+        List<OrderDO> odList = orderMapper.findByOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+        if (CollectionUtil.isNotEmpty(odList)) orderDOList.addAll(odList);
+        if (CollectionUtil.isNotEmpty(orderDOList)) {
+            Date currentTime = new Date();
+            Integer userId = userSupport.getCurrentUserId();
+            for (OrderDO orderDO : orderDOList) {
+                orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, userId);
+            }
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
 
