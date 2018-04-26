@@ -198,4 +198,6 @@ public interface OrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> addReturnOrderToTimeAxis();
+
+    ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo);
 }

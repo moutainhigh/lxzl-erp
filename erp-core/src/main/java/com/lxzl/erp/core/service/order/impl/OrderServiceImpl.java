@@ -380,7 +380,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             verifyMatters = verifyMattersResult.getResult();
-        }else{
+        } else {
             verifyMatters = "例行审核";
         }
         ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, orderCommitParam.getImgIdList(), orderRemark);
@@ -433,7 +433,9 @@ public class OrderServiceImpl implements OrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
-    private  ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo) {
+
+    @Override
+    public ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
@@ -522,6 +524,7 @@ public class OrderServiceImpl implements OrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
+
     @Override
     public ServiceResult<String, LastRentPriceResponse> queryLastPrice(LastRentPriceRequest request) {
         ServiceResult<String, LastRentPriceResponse> result = new ServiceResult<>();
@@ -1392,18 +1395,18 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orderList = new ArrayList<>();
 
         List<String> orderNoList = new ArrayList<>();
-        Map<String,Order> orderDOMap = new HashMap<>();
-        for(OrderDO orderDO : orderDOList){
+        Map<String, Order> orderDOMap = new HashMap<>();
+        for (OrderDO orderDO : orderDOList) {
             orderNoList.add(orderDO.getOrderNo());
-            Order order = ConverterUtil.convert(orderDO,Order.class);
-            orderDOMap.put(orderDO.getOrderNo(),order);
+            Order order = ConverterUtil.convert(orderDO, Order.class);
+            orderDOMap.put(orderDO.getOrderNo(), order);
             orderList.add(order);
         }
-        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO,orderNoList);
-        for(WorkflowLinkDO workflowLinkDO : workflowLinkDOList){
+        List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
+        for (WorkflowLinkDO workflowLinkDO : workflowLinkDOList) {
             Order order = orderDOMap.get(workflowLinkDO.getWorkflowReferNo());
-            if(order!=null){
-                WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO,WorkflowLink.class);
+            if (order != null) {
+                WorkflowLink workflowLink = ConverterUtil.convert(workflowLinkDO, WorkflowLink.class);
                 order.setWorkflowLink(workflowLink);
             }
         }
@@ -1413,6 +1416,7 @@ public class OrderServiceImpl implements OrderService {
         result.setResult(page);
         return result;
     }
+
     @Override
     public ServiceResult<String, Page<Order>> queryOrderByUserId(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Page<Order>> result = new ServiceResult<>();
