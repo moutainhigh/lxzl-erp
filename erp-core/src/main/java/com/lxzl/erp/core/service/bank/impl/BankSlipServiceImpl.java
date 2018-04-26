@@ -1084,8 +1084,8 @@ public class BankSlipServiceImpl implements BankSlipService {
     }
 
     @Override
-    public ServiceResult<String, List<BankSlipDetailDO>> queryBankSlipClaim(BankSlipDetail bankSlipDetail) {
-        ServiceResult<String, List<BankSlipDetailDO>> serviceResult = new ServiceResult<>();
+    public ServiceResult<String, BankSlipDetail> queryBankSlipClaim(BankSlipDetail bankSlipDetail) {
+        ServiceResult<String, BankSlipDetail> serviceResult = new ServiceResult<>();
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
         if(bankSlipDetailDO ==  null){
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
@@ -1107,9 +1107,12 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("bankSlipDetailQueryParam", bankSlipDetailQueryParam);
         maps.put("departmentType", departmentType);
         maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
-        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findByPayerNameAndOtherSideAccountNo(maps);
+        List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailMapper.findByPayerNameAndOtherSideAccountNo(maps);
+        List<BankSlipClaim> bankSlipClaimList = ConverterUtil.convertList(bankSlipClaimDOList, BankSlipClaim.class);
+        bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipClaimList(bankSlipClaimList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(bankSlipDetailDOList);
+        serviceResult.setResult(bankSlipDetail);
         return serviceResult;
     }
 

@@ -124,7 +124,7 @@ public class BankSlipController {
 
     @RequestMapping(value = "queryBankSlipClaim", method = RequestMethod.POST)
     public Result queryBankSlipClaim(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
-        ServiceResult<String, List<BankSlipDetailDO>> serviceResult = bankSlipService.queryBankSlipClaim(bankSlipDetail);
+        ServiceResult<String, BankSlipDetail> serviceResult = bankSlipService.queryBankSlipClaim(bankSlipDetail);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 

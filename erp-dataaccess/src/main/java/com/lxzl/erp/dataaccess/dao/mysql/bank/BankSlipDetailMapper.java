@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.bank;
 
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -36,5 +37,5 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
 
     List<BankSlipDetailDO> exportBankSlipDetailDOByParams(@Param("maps")Map<String, Object> maps);
 
-    List<BankSlipDetailDO> findByPayerNameAndOtherSideAccountNo(@Param("maps")Map<String, Object> maps);
+    List<BankSlipClaimDO> findByPayerNameAndOtherSideAccountNo(@Param("maps")Map<String, Object> maps);
 }
