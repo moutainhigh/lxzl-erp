@@ -48,8 +48,8 @@
                                     <dt>商户订单号：</dt><dd class="mb5">{{merchantOrderNo}}&nbsp;</dd>
                                     <dt>对方账号：</dt><dd class="mb5">{{otherSideAccountNo}}&nbsp;</dd>
                                     <dt>明细状态：</dt><dd class="mb5">{{detailStatusValue}}&nbsp;</dd>
-##                                    <dt>数据归属公司：</dt><dd class="mb5">{{subCompanyName}}&nbsp;</dd>
-##                                    <dt>属地化分公司：</dt><dd class="mb5">{{localizationSubCompanyId}}&nbsp;</dd>
+                                    <dt>数据归属公司：</dt><dd class="mb5">{{subCompanyName}}&nbsp;</dd>
+                                    <dt>属地化分公司：</dt><dd class="mb5">{{localizationSubCompanyId}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-6">
