@@ -356,7 +356,7 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
 
-        ServiceResult<String, Boolean> isNeedVerifyResult = isNeedVerify(orderNo);
+        ServiceResult<String, Boolean> isNeedVerifyResult = isNeedSecondVerify(orderNo);
         if (!ErrorCode.SUCCESS.equals(isNeedVerifyResult.getErrorCode())) {
             result.setErrorCode(isNeedVerifyResult.getErrorCode(), isNeedVerifyResult.getFormatArgs());
             return result;
@@ -428,6 +428,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ServiceResult<String, Boolean> isNeedVerify(String orderNo) {
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        result.setResult(true);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+    private  ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         if (orderDO == null) {
@@ -516,7 +522,6 @@ public class OrderServiceImpl implements OrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
-
     @Override
     public ServiceResult<String, LastRentPriceResponse> queryLastPrice(LastRentPriceRequest request) {
         ServiceResult<String, LastRentPriceResponse> result = new ServiceResult<>();
