@@ -175,7 +175,7 @@
                             <td>{{orderNo}}</td>
                             <td>{{productNo}}</td>
                             <td>{{productName}}</td>
-                            <td>{{skuPropertiesToStr}}</td>
+                            <td>{{skuStr}}</td>
                             <td>
                                 <label class="field prepend-icon mw200">
                                     <input type="hidden" name="productNo" class="productNo" value="{{productNo}}"  />
