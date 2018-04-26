@@ -499,17 +499,17 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
 
             //如果是订单的商务例行审核，则判断是否需要二审
-            if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==1){
-                ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowReferNo);
-                if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
-                    result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
-                    return result;
-                }
-                if(!isNeedSecondVerifyResult.getResult()){
-                    result.setErrorCode(ErrorCode.SUCCESS);
-                    return result;
-                }
-            }
+//            if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==1){
+//                ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowReferNo);
+//                if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
+//                    result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
+//                    return result;
+//                }
+//                if(!isNeedSecondVerifyResult.getResult()){
+//                    result.setErrorCode(ErrorCode.SUCCESS);
+//                    return result;
+//                }
+//            }
 
 
             WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
@@ -938,20 +938,22 @@ public class WorkflowServiceImpl implements WorkflowService {
                 return result;
             }
         }
-        boolean isNeedNextVerify = true;
-        //如果是订单审核，则判断是否需要下一步审核
-        if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&
-                workflowLinkDO.getWorkflowStep()==1){
-            ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowLinkDO.getWorkflowReferNo());
-            if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
-                result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
-                return result;
-            }
-            isNeedNextVerify = isNeedSecondVerifyResult.getResult();
-        }
+//        boolean isNeedNextVerify = true;
+//        //如果是订单审核，则判断是否需要下一步审核
+//        if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&
+//                workflowLinkDO.getWorkflowStep()==1){
+//            ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowLinkDO.getWorkflowReferNo());
+//            if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
+//                result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
+//                return result;
+//            }
+//            isNeedNextVerify = isNeedSecondVerifyResult.getResult();
+//        }
 
         // 如果审核通过并且下一步审核不为空的时候，判断下一步的审核人是否正确
-        if (isNeedNextVerify&&VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
+        if (
+//                isNeedNextVerify&&
+                        VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
             Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo());
             if (!verifyVerifyUsers(nextWorkflowNodeDO, nextVerifyUser, subCompanyId)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
@@ -970,7 +972,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
 
             // 审核通过并且有下一步的情况
-            if (isNeedNextVerify&&nextWorkflowNodeDO != null) {
+            if (
+//                    isNeedNextVerify&&
+                            nextWorkflowNodeDO != null) {
 
                 WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                 workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
