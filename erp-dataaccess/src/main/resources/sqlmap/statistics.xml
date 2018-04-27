@@ -453,7 +453,7 @@
         ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NOT NULL
         ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
         WHERE  eo.create_time>=#{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}>eo.create_time AND eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
-
+        AND eop.rent_length_type = #{maps.homeRentParam.rentLengthType}
     </select>
 
     <resultMap id="StatisticsRentInfo" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsRentInfo">
@@ -543,6 +543,9 @@
         </if>
         <if test="maps.rentInfoQueryParam.salesmanName!=null&amp;&amp; maps.rentInfoQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.rentInfoQueryParam.salesmanName}','%' )
+        </if>
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
     </select>
 
@@ -643,6 +646,9 @@
         </if>
         <if test="maps.rentInfoQueryParam.salesmanName!=null&amp;&amp; maps.rentInfoQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.rentInfoQueryParam.salesmanName}','%' )
+        </if>
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
         GROUP BY eo.order_seller_id, eo.order_sub_company_id, eop.rent_length_type
         LIMIT #{maps.start},#{maps.pageSize}
