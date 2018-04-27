@@ -287,9 +287,12 @@ public class BankSlipServiceImpl implements BankSlipService {
                         headerBankSlipDetailDOList.add(bankSlipDetailDO);
                     }
                 }
-                bankSlipDetailMapper.updateSubCompanyAndIsLocalization(headerBankSlipDetailDOList);
+                if(CollectionUtil.isNotEmpty(headerBankSlipDetailDOList)){
+                    bankSlipDetailMapper.updateSubCompanyAndIsLocalization(headerBankSlipDetailDOList);
+                }
                 bankSlipDO.setLocalizationCount(localizationCount);
                 bankSlipMapper.update(bankSlipDO);
+
             }
 
         }
@@ -772,13 +775,15 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
         if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId()) && !bankSlipDO.getSubCompanyId().equals(bankSlipDetailDO.getSubCompanyId())) {
-            //调用取消属地化逻辑
-            ServiceResult<String, BankSlipDetailDO> cancelLocalizationServiceResult = cancelLocalizationBankSlipDetail(ConverterUtil.convert(bankSlipDetailDO, BankSlipDetail.class));
-            if (!ErrorCode.SUCCESS.equals(cancelLocalizationServiceResult.getErrorCode())) {
-                serviceResult.setErrorCode(cancelLocalizationServiceResult.getErrorCode());
-                return serviceResult;
+            if(CommonConstant.COMMON_CONSTANT_YES.equals(bankSlipDetailDO.getIsLocalization())){
+                //调用取消属地化逻辑
+                ServiceResult<String, BankSlipDetailDO> cancelLocalizationServiceResult = cancelLocalization(ConverterUtil.convert(bankSlipDetailDO, BankSlipDetail.class));
+                if (!ErrorCode.SUCCESS.equals(cancelLocalizationServiceResult.getErrorCode())) {
+                    serviceResult.setErrorCode(cancelLocalizationServiceResult.getErrorCode());
+                    return serviceResult;
+                }
+                bankSlipDetailDO = cancelLocalizationServiceResult.getResult();
             }
-            bankSlipDetailDO = cancelLocalizationServiceResult.getResult();
         }
         //如果是未认领状态总数需要 -1
         if (BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
@@ -893,9 +898,9 @@ public class BankSlipServiceImpl implements BankSlipService {
             }
 
 
-            //未认领和忽略状态的可以属地化
-            if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && !BankSlipDetailStatus.IGNORE.equals(bankSlipDetailDO.getDetailStatus())) {
-                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
+            //判断是否确认
+            if (BankSlipDetailStatus.CONFIRMED.equals(bankSlipDetailDO.getDetailStatus()) ){
+                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED);
                 return serviceResult;
             }
 
@@ -918,6 +923,26 @@ public class BankSlipServiceImpl implements BankSlipService {
                 if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getSubCompanyId()) && CommonConstant.HEADER_COMPANY_ID.equals(bankSlip.getLocalizationSubCompanyId())) {
                     bankSlipDO.setLocalizationCount(bankSlipDO.getLocalizationCount() - 1);
                     isLocalizationFlag = true;
+                }
+            }
+
+            //删除认领信息
+            if(BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && CommonConstant.COMMON_CONSTANT_YES.equals(bankSlipDetailDO.getIsLocalization())){
+                List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
+                if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
+                    //判断是否有充值成功记录,不允许
+                    Map<Integer, BankSlipClaimDO> bankSlipClaimDOMap = ListUtil.listToMap(bankSlipClaimDOList, "rechargeStatus");
+                    if(bankSlipClaimDOMap.containsKey(RechargeStatus.PAY_SUCCESS) || bankSlipClaimDOMap.containsKey(RechargeStatus.PAYING)){
+                        serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_PAY_STATUS_ERROR);
+                        return serviceResult;
+                    }
+                    bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(),now,bankSlipClaimDOList);
+                    bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+                    bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() -1 );
+                    bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() +1 );
+                    if(bankSlipDO.getNeedClaimCount() ==  0 && bankSlipDO.getClaimCount() ==  0){
+                        bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                    }
                 }
             }
 
@@ -951,12 +976,18 @@ public class BankSlipServiceImpl implements BankSlipService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, BankSlipDetailDO> serviceResult = new ServiceResult<>();
-        Date now = new Date();
         if (!userSupport.isHeadUser() && !userSupport.isSuperUser()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
+        serviceResult = cancelLocalization(bankSlipDetail);
+        return serviceResult;
 
+    }
+
+    private ServiceResult<String, BankSlipDetailDO> cancelLocalization(BankSlipDetail bankSlipDetail){
+        Date now = new Date();
+        ServiceResult<String, BankSlipDetailDO> serviceResult = new ServiceResult<>();
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
         if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
@@ -982,9 +1013,9 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_LOCALIZATION);
             return serviceResult;
         }
-        //判断是否认领
-        if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && !BankSlipDetailStatus.HIDE.equals(bankSlipDetailDO.getDetailStatus())) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
+        //判断是否确认
+        if (BankSlipDetailStatus.CONFIRMED.equals(bankSlipDetailDO.getDetailStatus()) ){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED);
             return serviceResult;
         }
 
@@ -993,13 +1024,37 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (headquartersBankSlipDO.getLocalizationCount() == 0 && headquartersBankSlipDO.getNeedClaimCount() == 0) {
             headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
         }
+
+
+        //删除认领信息
+        if(BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && CommonConstant.COMMON_CONSTANT_YES.equals(bankSlipDetailDO.getIsLocalization()) ){
+            List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
+            if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
+                //判断是否有充值成功记录,不允许
+                Map<Integer, BankSlipClaimDO> bankSlipClaimDOMap = ListUtil.listToMap(bankSlipClaimDOList, "rechargeStatus");
+                if(bankSlipClaimDOMap.containsKey(RechargeStatus.PAY_SUCCESS) || bankSlipClaimDOMap.containsKey(RechargeStatus.PAYING)){
+                    serviceResult.setErrorCode(ErrorCode.BANK_SLIP_CLAIM_PAY_STATUS_ERROR);
+                    return serviceResult;
+                }
+                bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(),now,bankSlipClaimDOList);
+                bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+                headquartersBankSlipDO.setClaimCount(headquartersBankSlipDO.getClaimCount() -1 );
+                headquartersBankSlipDO.setNeedClaimCount(headquartersBankSlipDO.getNeedClaimCount() +1 );
+                if(headquartersBankSlipDO.getNeedClaimCount() ==  0 && headquartersBankSlipDO.getClaimCount() ==  0){
+                    headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                }
+
+            }
+        }
+
         headquartersBankSlipDO.setUpdateTime(now);
         headquartersBankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         //跟改流水项是否属地化状态和分公司id,跟新时间和操作人
-        bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
+
         bankSlipDetailDO.setSubCompanyId(CommonConstant.HEADER_COMPANY_ID);
         bankSlipDetailDO.setUpdateTime(now);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
 
         bankSlipDetailMapper.update(bankSlipDetailDO);
         bankSlipMapper.update(headquartersBankSlipDO);
@@ -1008,6 +1063,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         serviceResult.setResult(bankSlipDetailDO);
         return serviceResult;
     }
+
 
     @Override
     public ServiceResult<String, Page<BankSlipDetail>> exportPageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
@@ -1039,6 +1095,39 @@ public class BankSlipServiceImpl implements BankSlipService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, BankSlipDetail> queryBankSlipClaim(BankSlipDetail bankSlipDetail) {
+        ServiceResult<String, BankSlipDetail> serviceResult = new ServiceResult<>();
+        BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
+        if(bankSlipDetailDO ==  null){
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
+            return serviceResult;
+        }
+        Integer departmentType = 0;
+        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
+            //财务人员类型设置为1
+            departmentType = 1;
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
+            //商务和业务员类型设置为2
+            departmentType = 2;
+        }
+
+        HashMap<String, Object> maps = new HashMap<>();
+        BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
+        bankSlipDetailQueryParam.setPayerName(bankSlipDetailDO.getPayerName());
+        bankSlipDetailQueryParam.setOtherSideAccountNo(bankSlipDetailDO.getOtherSideAccountNo());
+        maps.put("bankSlipDetailQueryParam", bankSlipDetailQueryParam);
+        maps.put("departmentType", departmentType);
+        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
+        List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailMapper.findByPayerNameAndOtherSideAccountNo(maps);
+        List<BankSlipClaim> bankSlipClaimList = ConverterUtil.convertList(bankSlipClaimDOList, BankSlipClaim.class);
+        bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipClaimList(bankSlipClaimList);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(bankSlipDetail);
+        return serviceResult;
     }
 
     private String verifyPermission(BankSlipDO bankSlipDO, BankSlipDetailDO bankSlipDetailDO) {

@@ -73,6 +73,15 @@
             </label>
         </div>
     </div>
+    <div class="section row">
+        <div class="col-md-3">
+            <label for="statementDate" class="field-label"><em class="text-danger">*</em>结算日期</label>
+            <label class="field select">
+                <select id="statementDate" name="statementDate" class="required"></select>
+                <i class="arrow"></i>
+            </label>
+        </div>
+    </div>
 
     <div class="section row">
         <div class="col-md-6">

@@ -36,6 +36,7 @@ import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
+import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
@@ -1204,7 +1205,12 @@ public class CustomerServiceImpl implements CustomerService {
             if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getAddress())){
                 builder.append(orderDO.getOrderConsignInfoDO().getAddress());
             }
-            customerResult.setOrderAddress(builder.toString());
+            customerResult.setLastOrderAddress(builder.toString());
+            OrderConsignInfoDO orderConsignInfoDO = orderDO.getOrderConsignInfoDO();
+            if(orderConsignInfoDO!=null){
+                customerResult.setLastOrderConsigneeName(orderConsignInfoDO.getConsigneeName());
+                customerResult.setLastOrderConsigneePhone(orderConsignInfoDO.getConsigneePhone());
+            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

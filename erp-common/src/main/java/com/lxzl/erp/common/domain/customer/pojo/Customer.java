@@ -71,7 +71,9 @@ public class Customer extends BasePO {
 
 	private CustomerAccount customerAccount;
 
-	private String orderAddress;
+	private String lastOrderAddress;
+	private String lastOrderConsigneeName;
+	private String lastOrderConsigneePhone;
 
 	private User customerOwnerUser;
 	private User customerUnionUser;
@@ -391,7 +393,27 @@ public class Customer extends BasePO {
 		this.isRisk = isRisk;
 	}
 
-	public String getOrderAddress() { return orderAddress; }
+	public String getLastOrderAddress() {
+		return lastOrderAddress;
+	}
 
-	public void setOrderAddress(String orderAddress) { this.orderAddress = orderAddress; }
+	public void setLastOrderAddress(String lastOrderAddress) {
+		this.lastOrderAddress = lastOrderAddress;
+	}
+
+	public String getLastOrderConsigneeName() {
+		return lastOrderConsigneeName;
+	}
+
+	public void setLastOrderConsigneeName(String lastOrderConsigneeName) {
+		this.lastOrderConsigneeName = lastOrderConsigneeName;
+	}
+
+	public String getLastOrderConsigneePhone() {
+		return lastOrderConsigneePhone;
+	}
+
+	public void setLastOrderConsigneePhone(String lastOrderConsigneePhone) {
+		this.lastOrderConsigneePhone = lastOrderConsigneePhone;
+	}
 }
