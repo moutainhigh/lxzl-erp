@@ -183,7 +183,7 @@
 				and ec.customer_no  LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
-				and ec.coupon_status IN (0,4,8)
+				and ec.coupon_status IN (0,4,6,8)
 			</if>
 			<if test="true">
 				AND ec.data_status = 1
@@ -219,7 +219,7 @@
 				and ec.customer_no  LIKE CONCAT('%','${maps.couponQueryParam.customerNo}','%' )
 			</if>
 			<if test="true">
-				and ec.coupon_status IN (0,4,8)
+				and ec.coupon_status IN (0,4,6,8)
 			</if>
 			<if test="true">
 				AND ec.data_status = 1
@@ -306,11 +306,28 @@
 			#{couponDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
-	<select id="findByCustomerNo" resultMap="CouponDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> FROM erp_coupon ec
-		WHERE ec.customer_no = #{customerNo , jdbcType=VARCHAR}
-		AND ec.data_status = 1
-		AND ec.coupon_status = 4
+	<select id="findByCustomerNo" resultMap="CouponDO">
+		SELECT <include refid="column_List"/>,ecb.coupon_type FROM erp_coupon ec
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		<where>
+			<if test="true">
+				and ec.customer_no = #{customerNo , jdbcType=VARCHAR}
+			</if>
+			<if test="orderNo != null &amp;&amp;  orderNo != ''">
+				and (ec.order_no = #{orderNo} or ec.order_no is null)
+				and ec.coupon_status IN (4,6)
+			</if>
+			<if test="orderNo == null">
+				AND ec.order_no is null
+				and ec.coupon_status = 4
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+			<if test="true">
+				AND ecb.coupon_type = 1
+			</if>
+		</where>
 	</select>
 	<select id="findCouponDOList" resultMap="CouponDO" parameterType="java.util.ArrayList">
 		SELECT <include refid="column_List"/> FROM erp_coupon ec
@@ -325,7 +342,182 @@
 		WHERE ec.coupon_batch_detail_id = #{couponBatchDetailId, jdbcType=VARCHAR}
 		AND ec.data_status = 1
 	</select>
-	<update id="updateUseList" parameterType="java.util.ArrayList">
+	<update id="cancelCoupon" >
+		update erp_coupon
+		SET update_user = #{updateUser},coupon_status = 12,update_time = #{updateTime}
+		WHERE coupon_batch_detail_id = #{couponBatchDetailId}
+	</update>
+
+	<select id="findCustomerCouponByParams" resultMap="CouponDO" parameterType="map">
+		SELECT <include refid="column_List"/>,eop.product_name
+		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
+		<where>
+			<if test="maps.customerNo != null &amp;&amp;  maps.customerNo != ''">
+				and ec.customer_no  = #{maps.customerNo}
+			</if>
+			<if test="true">
+				and ec.coupon_status IN (0,4,6,8)
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+		ORDER BY ec.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findCustomerCouponCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(ec.id)
+		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
+		<where>
+			<if test="maps.customerNo != null &amp;&amp;  maps.customerNo != ''">
+				and ec.customer_no  = #{maps.customerNo}
+			</if>
+			<if test="true">
+				and ec.coupon_status IN (0,4,6,8)
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+		</where>
+	</select>
+	<select id="findUsedCouponDoList" resultMap="CouponDO" >
+		SELECT <include refid="column_List"/>,ecb.coupon_type
+		FROM erp_coupon ec
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		WHERE ec.customer_no = #{customerNo , jdbcType=VARCHAR}
+		AND ec.order_id = #{orderId,jdbcType=INTEGER}
+		AND ec.order_product_id = #{orderProductId,jdbcType=INTEGER}
+		AND ec.data_status = 1
+		AND ec.coupon_status = 6
+		AND ec.statement_order_detail_id is NULL
+	</select>
+	<select id="findStatementCouponByCustomerNo" resultMap="CouponDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/>,ecb.coupon_type
+		FROM erp_coupon ec
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		WHERE ec.customer_no = #{customerNo , jdbcType=VARCHAR}
+		AND ec.data_status = 1
+		AND ec.coupon_status = 4
+		AND ecb.coupon_type = 2
+	</select>
+	<select id="findByStatementOrderDetailId" resultMap="CouponDO" parameterType="Integer">
+		SELECT <include refid="column_List"/>,ecb.coupon_type
+		FROM erp_coupon ec
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		WHERE ec.statement_order_detail_id = #{statementOrderDetailId , jdbcType=INTEGER}
+		AND ec.data_status = 1
+		AND ec.coupon_status = 8
+		AND ecb.coupon_type = 2
+	</select>
+
+	<select id="findLockCouponByParams" resultMap="CouponDO" parameterType="map">
+		SELECT <include refid="column_List"/>,eop.product_name
+		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		<where>
+			<if test="maps.orderNo != null &amp;&amp;  maps.orderNo != ''">
+				and ec.order_no  = #{maps.orderNo}
+			</if>
+			<if test="true">
+				and ec.coupon_status = 6
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+			<if test="true">
+				AND ecb.coupon_type = 1
+			</if>
+		</where>
+		ORDER BY ec.update_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<select id="findLockCouponCountByParams" resultType="Integer" parameterType="map">
+		SELECT count(ec.id)
+		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		<where>
+			<if test="maps.orderNo != null &amp;&amp;  maps.orderNo != ''">
+				and ec.order_no  = #{maps.orderNo}
+			</if>
+			<if test="true">
+				and ec.coupon_status = 6
+			</if>
+			<if test="true">
+				AND ec.data_status = 1
+			</if>
+			<if test="true">
+				AND ecb.coupon_type = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="findByOrderNo" resultMap="CouponDO" parameterType="String">
+		SELECT <include refid="column_List"/>
+		FROM erp_coupon ec
+		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
+		WHERE ec.order_no = #{orderNo , jdbcType=VARCHAR}
+		AND ec.data_status = 1
+		AND ec.coupon_status IN (6,8)
+		AND ecb.coupon_type = 1
+	</select>
+	<update id="updateLockList" parameterType="java.util.ArrayList">
+		update erp_coupon
+		SET
+		<trim>
+			order_id =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.orderId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_no =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.orderNo}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			order_product_id =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.orderProductId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			deduction_amount =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.deductionAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_status =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.couponStatus}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_user =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="couponDOList" index="index" item="couponDO" separator="," open="(" close=")">
+			#{couponDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+
+	<update id="updateRevertList" parameterType="java.util.ArrayList">
 		update erp_coupon
 		SET
 		<trim>
@@ -376,79 +568,27 @@
 				when #{couponDO.id} then #{couponDO.updateTime}
 			</foreach>
 		</trim>
+		<trim prefix=",">
+			statement_order_id =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.statementOrderId}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			statement_order_no =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.statementOrderNo}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			statement_order_detail_id =
+			<foreach item="couponDO" collection="couponDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponDO.id} then #{couponDO.statementOrderDetailId}
+			</foreach>
+		</trim>
 		WHERE id in
 		<foreach collection="couponDOList" index="index" item="couponDO" separator="," open="(" close=")">
 			#{couponDO.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
-	<update id="cancelCoupon" >
-		update erp_coupon
-		SET update_user = #{updateUser},coupon_status = 12,update_time = #{updateTime}
-		WHERE coupon_batch_detail_id = #{couponBatchDetailId}
-	</update>
-
-	<select id="findCustomerCouponByParams" resultMap="CouponDO" parameterType="map">
-		SELECT <include refid="column_List"/>,eop.product_name
-		FROM erp_coupon ec
-		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
-		<where>
-			<if test="maps.customerNo != null &amp;&amp;  maps.customerNo != ''">
-				and ec.customer_no  = #{maps.customerNo}
-			</if>
-			<if test="true">
-				and ec.coupon_status IN (0,4,8)
-			</if>
-			<if test="true">
-				AND ec.data_status = 1
-			</if>
-		</where>
-		ORDER BY ec.update_time DESC
-		LIMIT #{maps.start},#{maps.pageSize}
-	</select>
-
-	<select id="findCustomerCouponCountByParams" resultType="Integer" parameterType="map">
-		SELECT count(ec.id)
-		FROM erp_coupon ec
-		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
-		<where>
-			<if test="maps.customerNo != null &amp;&amp;  maps.customerNo != ''">
-				and ec.customer_no  = #{maps.customerNo}
-			</if>
-			<if test="true">
-				and ec.coupon_status IN (0,4,8)
-			</if>
-			<if test="true">
-				AND ec.data_status = 1
-			</if>
-		</where>
-	</select>
-	<select id="findUsedCouponDoList" resultMap="CouponDO" >
-		SELECT <include refid="column_List"/>,ecb.coupon_type
-		FROM erp_coupon ec
-		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
-		WHERE ec.customer_no = #{customerNo , jdbcType=VARCHAR}
-		AND ec.order_id = #{orderId,jdbcType=INTEGER}
-		AND ec.order_product_id = #{orderProductId,jdbcType=INTEGER}
-		AND ec.data_status = 1
-		AND ec.coupon_status = 8
-		AND ec.statement_order_detail_id is NULL
-	</select>
-	<select id="findStatementCouponByCustomerNo" resultMap="CouponDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/>,ecb.coupon_type
-		FROM erp_coupon ec
-		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
-		WHERE ec.customer_no = #{customerNo , jdbcType=VARCHAR}
-		AND ec.data_status = 1
-		AND ec.coupon_status = 4
-		AND ecb.coupon_type = 2
-	</select>
-	<select id="findByStatementOrderDetailId" resultMap="CouponDO" parameterType="Integer">
-		SELECT <include refid="column_List"/>,ecb.coupon_type
-		FROM erp_coupon ec
-		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
-		WHERE ec.statement_order_detail_id = #{statementOrderDetailId , jdbcType=INTEGER}
-		AND ec.data_status = 1
-		AND ec.coupon_status = 8
-		AND ecb.coupon_type = 2
-	</select>
 </mapper>

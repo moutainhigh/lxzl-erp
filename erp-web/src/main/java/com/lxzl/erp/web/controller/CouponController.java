@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -137,13 +138,13 @@ public class CouponController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
     /**
-     * 按客户编号查询该客户优惠券
-     * @param customer
+     * 订单添加，编辑页面优惠卷列表展示
+     * @param customerOrderCouponParam
      * @return
      */
     @RequestMapping(value = "findCouponByCustomerNo",method = RequestMethod.POST)
-    public Result findCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) Customer customer, BindingResult validResult){
-        ServiceResult<String,List<Coupon>> serviceResult = couponService.findCouponByCustomerNo(customer);
+    public Result findCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) CustomerOrderCouponParam customerOrderCouponParam, BindingResult validResult){
+        ServiceResult<String,List<Coupon>> serviceResult = couponService.findCouponByCustomerNo(customerOrderCouponParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
     /**
@@ -189,13 +190,13 @@ public class CouponController {
     }
     /**
      * 用于测试使用优惠券的Controller
-     * @param useCoupon
+     * @param order
      * @return
      */
     @RequestMapping(value = "useCoupon",method = RequestMethod.POST)
-    public Result useCoupon(@RequestBody UseCoupon useCoupon, BindingResult validResult){
+    public Result useCoupon(@RequestBody Order order, BindingResult validResult){
 
-        ServiceResult<String,String> serviceResult = couponService.useCoupon(useCoupon);
+        ServiceResult<String,String> serviceResult = couponService.useCoupon(order);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
     /**
@@ -217,6 +218,16 @@ public class CouponController {
     @RequestMapping(value = "findStatementCouponByCustomerNo",method = RequestMethod.POST)
     public Result findStatementCouponByCustomerNo(@RequestBody @Validated(IdGroup.class) Customer customer, BindingResult validResult){
         ServiceResult<String,List<Coupon>> serviceResult = couponService.findStatementCouponByCustomerNo(customer);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+    /**
+     * 订单详情中查询该订单使用的优惠券
+     * @param lockCouponQueryParam
+     * @return
+     */
+    @RequestMapping(value = "pageLockCouponByOrderNo",method = RequestMethod.POST)
+    public Result pageLockCouponByOrderNo(@RequestBody LockCouponQueryParam lockCouponQueryParam, BindingResult validResult){
+        ServiceResult<String,Page<Coupon>> serviceResult = couponService.pageLockCouponByOrderNo(lockCouponQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 }

@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatch;
 import com.lxzl.erp.common.domain.coupon.pojo.CouponBatchDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public interface CouponService {
 
     ServiceResult<String,String> provideCoupon(CouponProvideParam couponProvideParam);
 
-    ServiceResult<String,List<Coupon>> findCouponByCustomerNo(Customer customer);
+    ServiceResult<String,List<Coupon>> findCouponByCustomerNo(CustomerOrderCouponParam customerOrderCouponParam);
 
     ServiceResult<String,CouponBatch> findCouponBatchByID(CouponBatch couponBatch);
 
@@ -45,11 +46,13 @@ public interface CouponService {
 
     ServiceResult<String,String> cancelCouponByCouponBatch(CouponBatch couponBatch);
 
-    ServiceResult<String,String> useCoupon(UseCoupon useCoupon);
+    ServiceResult<String,String> useCoupon(Order order);
 
     ServiceResult<String,Page<Coupon>> pageCouponByCustomerNo(CustomerCouponQueryParam customerCouponQueryParam);
 
     ServiceResult<String,String> useStatementCoupon(StatementCouponParam statementCouponParam);
 
     ServiceResult<String,List<Coupon>> findStatementCouponByCustomerNo(Customer customer);
+
+    ServiceResult<String,Page<Coupon>> pageLockCouponByOrderNo(LockCouponQueryParam lockCouponQueryParam);
 }
