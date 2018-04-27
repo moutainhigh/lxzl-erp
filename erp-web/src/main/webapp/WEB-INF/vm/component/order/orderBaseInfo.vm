@@ -4,32 +4,31 @@
     <div class="row">
         <div class="col-md-4">
             <dl class="dl-horizontal dl-horizontal-rental">
-                <dt><label>所属公司</label><span class="mr5">：</span></dt>
+                <dt><label style="letter-spacing: 0.25em">所属公司</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{orderSubCompanyName}}</dd>
 
-                <dt><label  style="letter-spacing: 0.33em">创建人</label><span class="mr5">：</span></dt>
+                <dt><label  style="letter-spacing: 0.67em">创建人</label><span class="mr5">：</span></dt>
                 <dd class="mb5" >{{createUserRealName}}</dd>
 
-                <dt><label style="letter-spacing: 0.33em;">业务员</label><span class="mr5">：</span></dt>
+                <dt><label style="letter-spacing: 0.67em;">业务员</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{orderSellerName}}&nbsp;</dd>
 
-                <dt><label>发货公司</label><span class="mr5">：</span></dt>
+                <dt><label style="letter-spacing: 0.25em">发货公司</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{deliverySubCompanyName}}</dd>
 
-                <dt><label style="letter-spacing: 1em;">类型</label><span class="mr5">：</span></dt>
+                <dt><label style="letter-spacing: 1.5em;">类型</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{rentTypeValue}}&nbsp;</dd>
 
-                <dt><label style="letter-spacing: 1em;">期限</label><span class="mr5">：</span></dt>
+                <dt><label style="letter-spacing: 1.5em;">期限</label><span class="mr5">：</span></dt>
                 <dd class="mb5">{{rentTimeLength}}{{rentTypeUnit}}&nbsp;</dd>
 
                 {{#rentTypeByMonth}}
-                <dt><label style="letter-spacing: 0.33em;">结算日</label><span class="mr5">：</span></dt>
+                <dt><label style="letter-spacing: 0.67em;">结算日</label><span class="mr5">：</span></dt>
                 <dd class="mb5" id="statementDate"></dd>
                 {{/rentTypeByMonth}}
 
-##                <dt><label style="letter-spacing: 1em;">备注</label><span class="mr5">：</span></dt>
-##                <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
-##                <dd class="mb5" style="float: left"><div>{{#orderMessageData}}<p style="margin-bottom: 0">{{content}}</p>{{/orderMessageData}}</div></dd>
+                <dt><label>购买人备注</label><span class="mr5">：</span></dt>
+                <dd class="mb5">{{buyerRemark}}&nbsp;</dd>
 
 
                 <!-- <dt><label>创建时间</label><span class="mr5">：</span></dt>
