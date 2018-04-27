@@ -44,9 +44,11 @@ public interface StatisticsService extends BaseService {
 
     /**
      * 查询业务员提成数据
-     *
-     * @param salesmanPageParam
-     * @return
      */
     ServiceResult<String, StatisticsSalesman> querySalesman(StatisticsSalesmanPageParam statisticsSalesmanPageParam);
+
+    /**
+     * 长短租详细查询
+     */
+    ServiceResult<String, StatisticsRentInfo> queryRentInfo(StatisticsRentInfoPageParam statisticsRentInfoPageParam);
 }
