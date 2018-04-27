@@ -18,8 +18,10 @@
 <!-- Fixed Header Table -->
 <script type="text/javascript" src="${staticCommon}vendor/plugins/fixedHeaderTable/jquery.fixedheadertable.min.js"></script>
 
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
-<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+##<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/moment.min.js"></script>
+##<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/daterangepicker.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/version2/moment.min.js"></script>
+<script type="text/javascript" src="${staticCommon}/vendor/plugins/daterange/version2/daterangepicker.js"></script>
 
 <!-- Theme Javascript -->
 <script type="text/javascript" src="${staticCommon}assets/js/utility/utility.js?v=2017121301"></script>
