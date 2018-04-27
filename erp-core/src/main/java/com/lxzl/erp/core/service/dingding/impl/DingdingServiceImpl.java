@@ -24,6 +24,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
@@ -78,8 +79,6 @@ public class DingdingServiceImpl implements DingdingService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private WorkflowTemplateMapper workflowTemplateMapper;
-    @Autowired
     private OrderService orderService;
     @Autowired
     private K3ReturnOrderService k3ReturnOrderService;
@@ -92,8 +91,8 @@ public class DingdingServiceImpl implements DingdingService {
         try {
             HttpPost httpPost = new HttpPost(userGroupUrl);
             CloseableHttpClient client = HttpClients.createDefault();
-
-            StringEntity entity = new StringEntity(FastJsonUtil.toJSONString(request), "UTF-8");//解决中文乱码问题
+            //解决中文乱码问题
+            StringEntity entity = new StringEntity(FastJsonUtil.toJSONString(request), "UTF-8");
             entity.setContentEncoding("UTF-8");
             entity.setContentType("application/json");
             httpPost.setEntity(entity);
@@ -159,10 +158,24 @@ public class DingdingServiceImpl implements DingdingService {
         return result;
     }
 
+    /**  
+     * <pre>
+     *    1 根据工作回调的工作流编号获取erp系统的工作流信息
+     *    2 获取erp系统当前审核人是否与钉钉当前审核人一致，不一致不进行处理（记录日志）
+     *    3 钉钉和erp审核人一致 转发状态不提供服务
+     *    4 根据钉钉状态判断是同意还是拒绝调用相关接口修改工作流状态
+     *
+     * </pre>
+     * @author daiqi  
+     * @date 2018/4/27 17:31  
+     * @param  dingdingApproveCallBackDTO
+     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>  
+     */  
     @Override
     public ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
         logger.info("工作流回调接口数据是：" + JSONObject.toJSONString(dingdingApproveCallBackDTO));
         ServiceResult<String, Object> serviceResult = new ServiceResult<>();
+        
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -260,6 +273,8 @@ public class DingdingServiceImpl implements DingdingService {
     private DingdingApproveBO buildFormComponentObj(DingdingApproveBO dingdingApproveBO, WorkflowLinkDO workflowLinkDO) {
         // 构建工作流单号
         dingdingApproveBO.buildInstanceMarking(workflowLinkDO.getWorkflowLinkNo());
+        // TODO 测试随机生成单号
+        dingdingApproveBO.buildInstanceMarking(GenerateNoUtil.generateMaterialNo(new Date()));
         // 构建模板单号
         dingdingApproveBO.buildProcessCode(String.valueOf(workflowLinkDO.getWorkflowTemplateId()));
         // 构建表单组件对象
