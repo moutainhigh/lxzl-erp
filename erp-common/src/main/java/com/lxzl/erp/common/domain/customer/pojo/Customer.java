@@ -41,7 +41,7 @@ public class Customer extends BasePO {
 	private Date localizationTime;	//属地化时间
 	@Min(value=0,message = ErrorCode.SHORT_LIMIT_RECEIVABLE_AMOUNT_NOT_NULL , groups = {AddCustomerShortLimitReceivableAmountGroup.class})
 	private BigDecimal shortLimitReceivableAmount; //短租应收上限
-	@NotNull(message = ErrorCode.STATEMENT_DATE_NOT_NULL , groups = {AddCustomerStatementDateGroup.class})
+	@NotNull(message = ErrorCode.STATEMENT_DATE_NOT_NULL , groups = {AddCustomerStatementDateGroup.class,AddCustomerCompanyGroup.class,UpdateCustomerCompanyGroup.class,AddCustomerPersonGroup.class,UpdateCustomerPersonGroup.class})
 	private Integer statementDate; //结算时间（天），20和31两种情况，如果为空取系统设定
 	private String passReason; //通过原因
 	private String failReason; //拒绝原因
@@ -71,7 +71,9 @@ public class Customer extends BasePO {
 
 	private CustomerAccount customerAccount;
 
-	private String orderAddress;
+	private String lastOrderAddress;
+	private String lastOrderConsigneeName;
+	private String lastOrderConsigneePhone;
 
 	private User customerOwnerUser;
 	private User customerUnionUser;
@@ -391,7 +393,27 @@ public class Customer extends BasePO {
 		this.isRisk = isRisk;
 	}
 
-	public String getOrderAddress() { return orderAddress; }
+	public String getLastOrderAddress() {
+		return lastOrderAddress;
+	}
 
-	public void setOrderAddress(String orderAddress) { this.orderAddress = orderAddress; }
+	public void setLastOrderAddress(String lastOrderAddress) {
+		this.lastOrderAddress = lastOrderAddress;
+	}
+
+	public String getLastOrderConsigneeName() {
+		return lastOrderConsigneeName;
+	}
+
+	public void setLastOrderConsigneeName(String lastOrderConsigneeName) {
+		this.lastOrderConsigneeName = lastOrderConsigneeName;
+	}
+
+	public String getLastOrderConsigneePhone() {
+		return lastOrderConsigneePhone;
+	}
+
+	public void setLastOrderConsigneePhone(String lastOrderConsigneePhone) {
+		this.lastOrderConsigneePhone = lastOrderConsigneePhone;
+	}
 }

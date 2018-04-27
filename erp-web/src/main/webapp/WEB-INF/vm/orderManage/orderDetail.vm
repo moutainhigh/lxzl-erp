@@ -43,6 +43,27 @@
                 </div>
 
                 <div class="panel">
+                    <div class="panel-body" id="orderMessage"></div>
+                    <script type="text/html" id="orderMessageTpl">
+                        {{#order}}
+                        <div class="dark">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>备注信息</h4>
+                                    <dl class="dl-horizontal dl-horizontal-rental">
+                                        {{#orderMessageData}}
+                                        <dt><label>{{userRealName}}</label><span class="mr5">：</span></dt>
+                                        <dd class="mb5">{{content}}</dd>
+                                        {{/orderMessageData}}
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        {{/order}}
+                    </script>
+                </div>
+
+                <div class="panel">
                     #parse("component/order/orderDetailInfo.vm")
                 </div>
 
