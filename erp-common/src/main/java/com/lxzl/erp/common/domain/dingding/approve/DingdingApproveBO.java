@@ -44,8 +44,8 @@ public class DingdingApproveBO {
     /**
      * 新增钉钉表单组件数据传输对象
      */
-    public DingdingApproveBO buildFormComponentObj(Object formComponentObj) {
-        this.dingdingApproveDTO.setFormComponentObj(formComponentObj);
+    public DingdingApproveBO buildFormComponentObj(Object formComponentObjs) {
+        this.dingdingApproveDTO.setFormComponentObj(formComponentObjs);
         return this;
     }
 

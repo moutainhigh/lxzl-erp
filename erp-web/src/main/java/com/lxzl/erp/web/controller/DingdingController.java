@@ -43,10 +43,7 @@ public class DingdingController extends BaseController {
      */
     @RequestMapping(value = "registerUserToDingding")
     public Result registerUserToDingding(@RequestParam Integer userId) {
-        dingdingService.registerUserToDingding(userId);
-        ServiceResult<String, Object> serviceResult = new ServiceResult();
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(userId);
+        ServiceResult<String, Object> serviceResult = dingdingService.registerUserToDingding(userId);
         return resultGenerator.generate(serviceResult);
     }
 

@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.dingding.approve;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.dingding.DingdingBaseDTO;
@@ -84,6 +85,7 @@ public class DingdingApproveDTO extends DingdingBaseDTO {
         this.deptId = deptId;
     }
 
+    @JSONField(serialize = false)
     public Object getFormComponentObj() {
         return formComponentObj;
     }
@@ -116,6 +118,12 @@ public class DingdingApproveDTO extends DingdingBaseDTO {
         this.instanceMarking = instanceMarking;
     }
 
+    public String getFormComponentValues() {
+        if (this.formComponentObj != null) {
+            return JSONObject.toJSONString(this.formComponentObj);
+        }
+        return null;
+    }
     /**
      * 获取审批人userid列表(逗号分割)
      */
