@@ -530,7 +530,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                     statisticsRentInfoDetail.setIncreaseProductCount(statisticsRentInfoDetail.getProductCountByNewCustomer()+statisticsRentInfoDetail.getProductCountByOldCustomer()-statisticsRentInfoDetail.getReturnProductCount());
                     statisticsRentInfoDetail.setTotalOrderCount(statisticsRentInfoDetail.getOrderCountByNewCustomer()+statisticsRentInfoDetail.getOrderCountByOldCustomer());
                     statisticsRentInfoDetail.setTotalProductCount(statisticsRentInfoDetail.getProductCountByNewCustomer()+statisticsRentInfoDetail.getProductCountByOldCustomer());
-                    statisticsRentInfoDetail.setTimeNode(startTime);
                 }
             }
         }
@@ -547,7 +546,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         statisticsRentInfo.setIncreaseProductCount(statisticsRentInfo.getProductCountByNewCustomer()+statisticsRentInfo.getProductCountByOldCustomer()-statisticsRentInfo.getReturnProductCount());
         statisticsRentInfo.setTotalOrderCount(statisticsRentInfo.getOrderCountByNewCustomer()+statisticsRentInfo.getOrderCountByOldCustomer());
         statisticsRentInfo.setTotalProductCount(statisticsRentInfo.getProductCountByNewCustomer()+statisticsRentInfo.getProductCountByOldCustomer());
-        statisticsRentInfo.setTimeNode(startTime);
 
         Page<StatisticsRentInfoDetail> page = new Page<>(statisticsRentInfoDetailList, statisticsRentInfo.getTotalCount(), statisticsRentInfoPageParam.getPageNo(), statisticsRentInfoPageParam.getPageSize());
         statisticsRentInfo.setStatisticsRentInfoDetailPage(page);

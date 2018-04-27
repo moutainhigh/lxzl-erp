@@ -3,7 +3,6 @@ package com.lxzl.erp.common.domain.statistics.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Auther: huahongbin
@@ -35,8 +34,6 @@ public class StatisticsRentInfoDetail {
     private BigDecimal prepayRent = BigDecimal.ZERO;   //预付租金
     private BigDecimal otherAmount = BigDecimal.ZERO;   //其他费用
     private BigDecimal rentIncome = BigDecimal.ZERO;   //租金收入(长租时为：租金+预付租金+租金押金+设备押金-退押金)(短租时为：租金+预付租金)
-
-    private Date timeNode;   //时间节点
 
     public Integer getNewCustomerCount() {
         return newCustomerCount;
@@ -180,14 +177,6 @@ public class StatisticsRentInfoDetail {
 
     public void setRentIncome(BigDecimal rentIncome) {
         this.rentIncome = rentIncome;
-    }
-
-    public Date getTimeNode() {
-        return timeNode;
-    }
-
-    public void setTimeNode(Date timeNode) {
-        this.timeNode = timeNode;
     }
 
     public Integer getSalesmanId() {
