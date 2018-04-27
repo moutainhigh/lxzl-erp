@@ -29,6 +29,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.deploymentOrder.DeploymentOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
@@ -40,6 +41,7 @@ import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.deploymentOrder.DeploymentOrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.RoleDO;
@@ -137,6 +139,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     private DingdingService dingdingService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderMapper orderMapper;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -164,7 +168,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
             workflowLinkNo = customerCommitWorkFlow.getResult();
         } else {
-            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo);
+            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(0));
             if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
@@ -214,7 +218,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
     }
 
-    private Integer getSubCompanyId(Integer workflowType, String workflowReferNo) {
+    private Integer getSubCompanyId(Integer workflowType, String workflowReferNo,WorkflowNodeDO workflowNodeDO) {
         Integer subCompanyId = -1;
         if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)) {
             DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(workflowReferNo);
@@ -240,6 +244,15 @@ public class WorkflowServiceImpl implements WorkflowService {
                         subCompanyId = ProvinceSubCompanyCityCoverDO.getSubCompanyId();
                     }
                 }
+            }
+        }else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
+            if(CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())){
+                OrderDO orderDO = orderMapper.findByOrderNo(workflowReferNo);
+                if(orderDO != null){
+                    subCompanyId = orderDO.getDeliverySubCompanyId();
+                }
+            }else{
+                subCompanyId = userSupport.getCurrentUserCompanyId();
             }
         } else {
             subCompanyId = userSupport.getCurrentUserCompanyId();
@@ -573,7 +586,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.WORKFLOW_NODE_NOT_EXISTS);
             return result;
         }
-        Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo);
+        Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDO);
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
             subCompanyId = CommonConstant.HEAD_COMPANY_ID;
         }
@@ -954,7 +967,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (
 //                isNeedNextVerify&&
                         VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
-            Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo());
+            Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo(),nextWorkflowNodeDO);
             if (!verifyVerifyUsers(nextWorkflowNodeDO, nextVerifyUser, subCompanyId)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
@@ -1662,7 +1675,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
             }
         } else {
-            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo);
+            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(1));
             if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }

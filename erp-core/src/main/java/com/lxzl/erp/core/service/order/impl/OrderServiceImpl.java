@@ -379,6 +379,11 @@ public class OrderServiceImpl implements OrderService {
                 result.setErrorCode(verifyMattersResult.getErrorCode());
                 return result;
             }
+            //陈超说要改的需求，前端去掉必传，后端判断有要二次审核判断图片要必传
+            if(CollectionUtil.isEmpty(orderCommitParam.getImgIdList())){
+                result.setErrorCode(ErrorCode.COMMIT_ORDER_AMOUNT_IS_LOW_IMAGE_NOT_NULL);
+                return result;
+            }
             verifyMatters = verifyMattersResult.getResult();
         } else {
             verifyMatters = "例行审核";
