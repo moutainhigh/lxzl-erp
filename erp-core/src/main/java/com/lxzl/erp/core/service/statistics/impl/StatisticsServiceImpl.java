@@ -497,36 +497,33 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal otherAmount = BigDecimal.ZERO;//其他费用
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) { // 将每一个结算单计算到总计上和长短租详情列表的对应项上
+                // 1. 添加到总计上
+                rentDeposit = BigDecimalUtil.add(rentDeposit,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                deposit = BigDecimalUtil.add(deposit,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+
+                //计算查询区间内租金费用
+                BigDecimal rentAmount = calculateRentAmount(startTime, endTime, statementOrderDetailDO);
+                //计算查询区间内预付租金费用
+                BigDecimal prepayRentAmount = calculatePrepayRentAmount(endTime, statementOrderDetailDO);
+
+                returnRentDeposit = BigDecimalUtil.add(returnRentDeposit,statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                returnDeposit = BigDecimalUtil.add(returnDeposit,statementOrderDetailDO.getStatementDetailDepositReturnAmount());
+                rent = BigDecimalUtil.add(rent,rentAmount);
+                prepayRent = BigDecimalUtil.add(prepayRent,prepayRentAmount);
+                otherAmount = BigDecimalUtil.add(otherAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentIncome = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+
+                // 2. 添加到长短租详情列表的对应项上，因为是分页查询，可能有些结算单详情项没有在这一页的数据上，为null
                 String mapKey = getStatementOrderDetailKeyForRentInfo(statementOrderDetailDO);
                 StatisticsRentInfoDetail statisticsRentInfoDetail = statisticsRentInfoDetailMap.get(mapKey);
                 if (statisticsRentInfoDetail != null) {
-                    rentDeposit = BigDecimalUtil.add(rentDeposit,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
                     BigDecimalUtil.add(statisticsRentInfoDetail.getRentDeposit(),statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
-
-                    deposit = BigDecimalUtil.add(deposit,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
                     BigDecimalUtil.add(statisticsRentInfoDetail.getDeposit(),statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-
-                    //计算查询区间内租金费用
-                    BigDecimal rentAmount = calculateRentAmount(startTime, endTime, statementOrderDetailDO);
-                    //计算查询区间内预付租金费用
-                    BigDecimal prepayRentAmount = calculatePrepayRentAmount(endTime, statementOrderDetailDO);
-
-                    returnRentDeposit = BigDecimalUtil.add(returnRentDeposit,statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
                     BigDecimalUtil.add(statisticsRentInfoDetail.getReturnRentDeposit(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
-
-                    returnDeposit = BigDecimalUtil.add(returnDeposit,statementOrderDetailDO.getStatementDetailDepositReturnAmount());
                     BigDecimalUtil.add(statisticsRentInfoDetail.getRentDeposit(),statementOrderDetailDO.getStatementDetailDepositReturnAmount());
-
-                    rent = BigDecimalUtil.add(rent,rentAmount);
                     BigDecimalUtil.add(statisticsRentInfoDetail.getRent(),rentAmount);
-
-                    prepayRent = BigDecimalUtil.add(prepayRent,prepayRentAmount);
                     BigDecimalUtil.add(statisticsRentInfoDetail.getPrepayRent(),prepayRentAmount);
-
-                    otherAmount = BigDecimalUtil.add(otherAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
                     BigDecimalUtil.add(statisticsRentInfoDetail.getOtherAmount(),statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-
-                    rentIncome = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
                     BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsRentInfoDetail.getRentIncome(),statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
 
                     //净增台数(新增减退租)
@@ -563,8 +560,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     获取key为salesmanId-subCompanyId-rentLengthType
      */
     private String getStatementOrderDetailKeyForRentInfo(StatementOrderDetailDO statementOrderDetailDO) {
-        if (statementOrderDetailDO.getSubCompanyId() != null && statementOrderDetailDO.getSalesman_id() != null && statementOrderDetailDO.getRentLengthType() != null) {
-            StringBuilder sb = new StringBuilder(statementOrderDetailDO.getSalesman_id());
+        if (statementOrderDetailDO.getSubCompanyId() != null && statementOrderDetailDO.getSalesmanId() != null && statementOrderDetailDO.getRentLengthType() != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(statementOrderDetailDO.getSalesmanId());
             sb.append("-");
             sb.append(statementOrderDetailDO.getSubCompanyId());
             sb.append("-");

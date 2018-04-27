@@ -59,6 +59,10 @@
         <result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
         <result column="statement_detail_penalty_amount" jdbcType="DECIMAL" property="statementDetailPenaltyAmount" />
         <result column="statement_detail_penalty_paid_amount" jdbcType="DECIMAL" property="statementDetailPenaltyPaidAmount" />
+
+        <result column="salesman_id" jdbcType="INTEGER" property="salesmanId" />
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
     <sql id="column_List">
@@ -274,7 +278,8 @@
         eo3.order_sub_company_id sub_company_id,
         (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type
         end) rent_length_type,
-        eo3.rent_type,
+        (CASE WHEN esod.order_item_type = 1 THEN eop.rent_type WHEN esod.order_item_type = 2 THEN eom.rent_type end)
+        rent_type,
         (CASE WHEN esod.order_item_type = 1 THEN eop.product_count WHEN esod.order_item_type = 2 THEN eom.material_count
         end) goods_count,
         (CASE WHEN esod.order_item_type = 1 THEN eop.product_unit_amount WHEN esod.order_item_type = 2 THEN
@@ -290,9 +295,9 @@
         LEFT JOIN erp_user eu ON eu.id=eo3.order_seller_id
         WHERE esod.data_status = 1 AND esod.order_type = 1 AND esod.statement_detail_status=8
         <if test="maps.rentInfoQueryParam.rentLengthType!=null">
-            AND eo3.rent_length_type = #{maps.rentInfoQueryParam.rentLengthType}
+            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN
+            eom.rent_length_type end)=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
-
         <if test="maps.rentInfoQueryParam.subCompanyId!=null">
             AND eo3.order_sub_company_id = #{maps.rentInfoQueryParam.subCompanyId}
         </if>

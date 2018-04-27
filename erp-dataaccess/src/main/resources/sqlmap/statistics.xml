@@ -457,7 +457,7 @@
     </select>
 
     <resultMap id="StatisticsRentInfo" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsRentInfo">
-        <result column="total_count" jdbcType="Integer" property="totalCount" />
+        <result column="total_count" jdbcType="INTEGER" property="totalCount" />
         <result column="new_customer_count" jdbcType="INTEGER" property="newCustomerCount" />
         <result column="old_customer_count" jdbcType="INTEGER" property="oldCustomerCount" />
         <result column="order_count_by_new_customer" jdbcType="INTEGER" property="orderCountByNewCustomer" />
@@ -514,7 +514,7 @@
         LEFT JOIN
         (
         SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
-        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        AND #{maps.rentInfoQueryParam.startTime}>eo.create_time
         <if test="maps.rentInfoQueryParam.rentLengthType != null">
             and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
@@ -531,16 +531,13 @@
         LEFT JOIN
         (
         SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
-        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime}  AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        AND #{maps.rentInfoQueryParam.startTime}>eo.create_time
         <if test="maps.rentInfoQueryParam.rentLengthType != null">
             and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
         ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NOT NULL
         ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
         WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
-        <if test="maps.rentInfoQueryParam.rentLengthType != null">
-            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
-        </if>
         <if test="maps.rentInfoQueryParam.subCompanyId != null">
             AND eo.order_sub_company_id=#{maps.rentInfoQueryParam.subCompanyId}
         </if>
@@ -549,7 +546,33 @@
         </if>
     </select>
 
-    <select id="queryRentInfoDetail">
+    <resultMap id="StatisticsRentInfoDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsRentInfoDetail">
+        <result column="salesman_id" jdbcType="INTEGER" property="salesmanId" />
+        <result column="salesman_name" jdbcType="VARCHAR" property="salesmanName" />
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="new_customer_count" jdbcType="INTEGER" property="newCustomerCount" />
+        <result column="old_customer_count" jdbcType="INTEGER" property="oldCustomerCount" />
+        <result column="order_count_by_new_customer" jdbcType="INTEGER" property="orderCountByNewCustomer" />
+        <result column="order_count_by_old_customer" jdbcType="INTEGER" property="orderCountByOldCustomer" />
+        <result column="total_order_count" jdbcType="INTEGER" property="totalOrderCount" />
+        <result column="product_count_by_new_customer" jdbcType="INTEGER" property="productCountByNewCustomer" />
+        <result column="product_count_by_old_customer" jdbcType="INTEGER" property="productCountByOldCustomer" />
+        <result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+        <result column="return_product_count" jdbcType="INTEGER" property="returnProductCount" />
+        <result column="increase_product_count" jdbcType="INTEGER" property="increaseProductCount" />
+        <result column="rent_deposit" jdbcType="DECIMAL" property="rentDeposit" />
+        <result column="deposit" jdbcType="DECIMAL" property="deposit" />
+        <result column="return_deposit" jdbcType="DECIMAL" property="returnDeposit" />
+        <result column="return_rent_deposit" jdbcType="DECIMAL" property="returnRentDeposit" />
+        <result column="rent" jdbcType="DECIMAL" property="rent" />
+        <result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
+        <result column="prepay_rent" jdbcType="DECIMAL" property="prepayRent" />
+        <result column="rent_income" jdbcType="DECIMAL" property="rentIncome" />
+    </resultMap>
+
+    <select id="queryRentInfoDetail" parameterType="map" resultMap="StatisticsRentInfoDetail">
         SELECT
         eo.order_seller_id salesman_id,
         MIN(eu.real_name) salesman_name,
@@ -591,7 +614,7 @@
         LEFT JOIN
         (
         SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
-        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        AND #{maps.rentInfoQueryParam.startTime}>eo.create_time
         <if test="maps.rentInfoQueryParam.rentLengthType != null">
             and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
@@ -608,16 +631,13 @@
         LEFT JOIN
         (
         SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
-        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime}  AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        AND #{maps.rentInfoQueryParam.startTime}>eo.create_time
         <if test="maps.rentInfoQueryParam.rentLengthType != null">
             and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
         </if>
         ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NOT NULL
         ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
         WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
-        <if test="maps.rentInfoQueryParam.rentLengthType != null">
-            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
-        </if>
         <if test="maps.rentInfoQueryParam.subCompanyId != null">
             AND eo.order_sub_company_id=#{maps.rentInfoQueryParam.subCompanyId}
         </if>
