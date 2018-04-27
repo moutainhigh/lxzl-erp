@@ -400,20 +400,16 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //增加退货单订单商品项和物料项
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList=k3ReturnOrder.getK3ReturnOrderDetailList();
         if(CollectionUtil.isNotEmpty(k3ReturnOrderDetailList)){
-            List<OrderProductDO> orderProducts=new ArrayList<OrderProductDO>();
-            List<OrderMaterialDO> orderMaterials=new ArrayList<OrderMaterialDO>();
             for(K3ReturnOrderDetail k3ReturnOrderDetail:k3ReturnOrderDetailList){
                 boolean isMaterial=productSupport.isMaterial(k3ReturnOrderDetail.getProductNo());
                 if(isMaterial){
                     OrderMaterialDO materialDO= orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
-                    orderMaterials.add(materialDO);
+                    k3ReturnOrderDetail.setOrderMaterial(ConverterUtil.convert(materialDO,OrderMaterial.class));
                 }else {
                     OrderProductDO orderProductDO=orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetail.getOrderItemId()));
-                    orderProducts.add(orderProductDO);
+                    k3ReturnOrderDetail.setOrderProduct(ConverterUtil.convert(orderProductDO,OrderProduct.class));
                 }
             }
-            if(CollectionUtil.isNotEmpty(orderMaterials))k3ReturnOrder.setOrderMaterialList(ConverterUtil.convertList(orderMaterials,OrderMaterial.class));
-            if(CollectionUtil.isNotEmpty(orderProducts)) k3ReturnOrder.setOrderProductList(ConverterUtil.convertList(orderProducts,OrderProduct.class));
         }
 
         result.setResult(k3ReturnOrder);

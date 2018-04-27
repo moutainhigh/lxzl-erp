@@ -24,8 +24,8 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="bank_slip_id" jdbcType="INTEGER" property="bankSlipId" />
 		<result column="subCompanyName" jdbcType="VARCHAR" property="subCompanyName" />
-		<result column="localizationSubCompanyId" jdbcType="INTEGER" property="localizationSubCompanyId" />
-		<result column="localizationSubCompanyName" jdbcType="VARCHAR" property="localizationSubCompanyName" />
+		<result column="ownerSubCompanyId" jdbcType="INTEGER" property="ownerSubCompanyId" />
+		<result column="ownerSubCompanyName" jdbcType="VARCHAR" property="ownerSubCompanyName" />
 		<result column="bankSlipBankType" jdbcType="INTEGER" property="bankSlipBankType" />
 		<collection property="bankSlipClaimDOList" resultMap="BankSlipClaimDO" />
 	</resultMap>
@@ -57,10 +57,13 @@
 	</sql>
 
 	<select id="findById" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName,ek3mc.k3_customer_code AS k3CustomerNo FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName,ek3mc.k3_customer_code AS k3CustomerNo ,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType  FROM erp_bank_slip_detail ebsd
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id AND ebsc.data_status = 1
 		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
 		LEFT JOIN erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ec.customer_no
+		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
+		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
+		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
 		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1
 	</select>
 
@@ -194,7 +197,7 @@
 	</select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS localizationSubCompanyId,esc.sub_company_name AS localizationSubCompanyName,ebs.bank_type AS bankSlipBankType  FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType  FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
@@ -238,7 +241,7 @@
 	</select>
 
 	<select id="exportBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS localizationSubCompanyId,esc.sub_company_name AS localizationSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
@@ -441,4 +444,26 @@
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+	<select id="findByPayerNameAndOtherSideAccountNo" resultMap="BankSlipClaimDO">
+		SELECT distinct ebsc.customer_no customerNo,ec.customer_name customerName FROM erp_bank_slip_detail ebsd
+		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
+		LEFT JOIN erp_bank_slip_claim ebsc on  ebsd.id = ebsc.bank_slip_detail_id
+		LEFT JOIN erp_customer ec ON ec.customer_no = ebsc.customer_no AND ec.data_status = 1
+		<where>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
+				and ebsd.payer_name = #{maps.bankSlipDetailQueryParam.payerName,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.otherSideAccountNo != null &amp;&amp; maps.bankSlipDetailQueryParam.otherSideAccountNo != ''">
+				and ebsd.other_side_account_no = #{maps.bankSlipDetailQueryParam.otherSideAccountNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.subCompanyId != null &amp;&amp; maps.subCompanyId != 1">
+				and ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR ebs.sub_company_id = 1
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsd.data_status = 1
+			</if>
+		</where>
+
+	</select>
+
 </mapper>

@@ -129,6 +129,7 @@
                                             <th>订单编号</th>
                                             <th>商品编号</th>
                                             <th>商品名称</th>
+                                            <th>商品参数（SKU）</th>
                                             <th>退货数量</th>
                                             <th>备注</th>
                                             <th class="text-right">操作</th>
@@ -146,12 +147,9 @@
                                             <td>{{orderNo}}</td>
                                             <td>{{productNo}}</td>
                                             <td>{{productName}}</td>
-                                            <td>
-                                                {{productCount}}
-                                            </td>
-                                            <td>
-                                                {{remark}}
-                                            </td>
+                                            <td>{{propertiesToStr}}</td>
+                                            <td>{{productCount}}</td>
+                                            <td>{{remark}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
                                                     {{#rowActionButtons}}
@@ -167,7 +165,7 @@
                                         {{/listData}}
                                         {{^listData}}
                                         <tr>
-                                            <td valign="top" colspan="14" class="text-center">没有选择商品</td>
+                                            <td valign="top" colspan="7" class="text-center">没有选择商品</td>
                                         </tr>
                                         {{/listData}}
                                         </tbody>

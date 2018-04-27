@@ -36,6 +36,7 @@ import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
+import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
@@ -1191,7 +1192,25 @@ public class CustomerServiceImpl implements CustomerService {
         //最近订单地址信息
         OrderDO orderDO = orderMapper.findConsignByCustomerNo(customerNo);
         if(orderDO != null){
-            customerResult.setOrderAddress(orderDO.getOrderConsignInfoDO().getAddress());
+            StringBuilder builder = new StringBuilder();
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getProvinceName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getProvinceName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getCityName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getCityName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getDistrictName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getDistrictName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getAddress())){
+                builder.append(orderDO.getOrderConsignInfoDO().getAddress());
+            }
+            customerResult.setLastOrderAddress(builder.toString());
+            OrderConsignInfoDO orderConsignInfoDO = orderDO.getOrderConsignInfoDO();
+            if(orderConsignInfoDO!=null){
+                customerResult.setLastOrderConsigneeName(orderConsignInfoDO.getConsigneeName());
+                customerResult.setLastOrderConsigneePhone(orderConsignInfoDO.getConsigneePhone());
+            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);

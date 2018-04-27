@@ -32,4 +32,6 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     Integer findVerifyOrderCountByParams(@Param("maps") Map<String, Object> maps);
 
     OrderDO findConsignByCustomerNo(@Param("customerNo") String customerNo);
+
+    List<OrderDO> findByOrderStatus(@Param("orderStatus") Integer orderStatus);
 }

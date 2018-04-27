@@ -139,6 +139,13 @@ public class OrderController extends BaseController {
         ServiceResult<String, Page<Order>> serviceResult = orderService.queryVerifyOrder(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "addReturnOrderToTimeAxis", method = RequestMethod.POST)
+    public Result addReturnOrderToTimeAxis() {
+        ServiceResult<String, String> serviceResult = orderService.addReturnOrderToTimeAxis();
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

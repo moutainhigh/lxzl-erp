@@ -51,8 +51,19 @@
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="isLocalization" id="isLocalization"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
                                         <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
                                     </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 210px;">
+                                    <label for="slipMonth" class="input-group date">
+                                        <input type="text" name="slipMonth" id="slipMonth" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择月份">
+                                        <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                    </label>
                                 </div>
                             </form>
                         </div>
@@ -75,11 +86,12 @@
                                 <th>付款人</th>
                                 <th>商户订单号</th>
                                 <th>对方账号</th>
+                                <th>银行类型</th>
                                 <th>交易流水号</th>
                                 <th>交易金额</th>
                                 <th>交易附言</th>
-                                <th>当前流水归属</th>
-                                <th>流水总表所属公司</th>
+                                <th>数据归属公司</th>
+                                <th>属地化分公司</th>
                                 <th>是否属地化</th>
                                 <th>明细状态</th>
                                 <th>备注</th>
@@ -105,14 +117,15 @@
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>
                                 <td>{{otherSideAccountNo}}</td>
+                                <td>{{bankSlipBankTypeValue}}</td>
                                 <td>{{tradeSerialNo}}</td>
                                 <td>
                                     <p class="mn">￥{{#price}}{{tradeAmount}}{{/price}}</p>
                                     <p class="mn mt5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}</p>
                                 </td>
                                 <td>{{tradeMessage}}</td>
+                                <td>{{ownerSubCompanyName}}</td>
                                 <td>{{subCompanyName}}</td>
-                                <td>{{localizationSubCompanyName}}</td>
                                 <td>{{isLocalizationValue}}</td>
                                 <td>{{detailStatusValue}}</td>
                                 <td>{{remark}}</td>
@@ -138,7 +151,7 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="17" class="text-center">没有查询到资金流水信息</td>
+                                <td valign="top" colspan="18" class="text-center">没有查询到资金流水信息</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
@@ -163,6 +176,7 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'modal.choose.customerByAll.js',

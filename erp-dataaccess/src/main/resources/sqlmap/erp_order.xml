@@ -863,10 +863,23 @@
         <trim prefix=",">
             <include refid="consign_column_List"/>
         </trim>
+        <trim prefix=",">
+        eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+        </trim>
         FROM erp_order eo
         LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
         LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} and eo.data_status=1
         ORDER BY eo.create_time DESC LIMIT 0,1
+    </select>
+
+    <select id="findByOrderStatus" resultMap="OrderDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        WHERE eo.order_status = #{orderStatus} and eo.data_status=1
     </select>
 </mapper>
