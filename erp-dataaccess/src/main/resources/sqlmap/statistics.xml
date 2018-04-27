@@ -456,6 +456,178 @@
 
     </select>
 
+    <resultMap id="StatisticsRentInfo" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsRentInfo">
+        <result column="total_count" jdbcType="Integer" property="totalCount" />
+        <result column="new_customer_count" jdbcType="INTEGER" property="newCustomerCount" />
+        <result column="old_customer_count" jdbcType="INTEGER" property="oldCustomerCount" />
+        <result column="order_count_by_new_customer" jdbcType="INTEGER" property="orderCountByNewCustomer" />
+        <result column="order_count_by_old_customer" jdbcType="INTEGER" property="orderCountByOldCustomer" />
+        <result column="total_order_count" jdbcType="INTEGER" property="totalOrderCount" />
+        <result column="product_count_by_new_customer" jdbcType="INTEGER" property="productCountByNewCustomer" />
+        <result column="product_count_by_old_customer" jdbcType="INTEGER" property="productCountByOldCustomer" />
+        <result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+        <result column="return_product_count" jdbcType="INTEGER" property="returnProductCount" />
+        <result column="increase_product_count" jdbcType="INTEGER" property="increaseProductCount" />
+        <result column="rent_deposit" jdbcType="DECIMAL" property="rentDeposit" />
+        <result column="deposit" jdbcType="DECIMAL" property="deposit" />
+        <result column="return_deposit" jdbcType="DECIMAL" property="returnDeposit" />
+        <result column="return_rent_deposit" jdbcType="DECIMAL" property="returnRentDeposit" />
+        <result column="rent" jdbcType="DECIMAL" property="rent" />
+        <result column="other_amount" jdbcType="DECIMAL" property="otherAmount" />
+        <result column="prepay_rent" jdbcType="DECIMAL" property="prepayRent" />
+        <result column="rent_income" jdbcType="DECIMAL" property="rentIncome" />
+    </resultMap>
+
+    <select id="queryRentInfoCount" parameterType="map" resultMap="StatisticsRentInfo">
+        SELECT
+        COUNT(DISTINCT eo.order_seller_id, eo.order_sub_company_id, eop.rent_length_type) total_count,
+        COUNT(DISTINCT new_customer_table.buyer_customer_id) new_customer_count,
+        COUNT(DISTINCT old_customer_table.buyer_customer_id) old_customer_count,
+        COUNT(DISTINCT (CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_new_customer,
+        COUNT(DISTINCT (CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_old_customer,
+        IFNULL(SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL AND eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 THEN eop.product_count ELSE 0 END),0) product_count_by_new_customer,
+        IFNULL(SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL AND eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 THEN eop.product_count ELSE 0 END),0) product_count_by_old_customer,
+        (
+        SELECT COUNT(*) FROM (
+        SELECT DISTINCT(erop.id) id FROM erp_return_order_product erop
+        LEFT JOIN erp_return_order ero ON ero.id= erop.return_order_id AND  ero.data_status =1
+        LEFT JOIN erp_statement_order_detail esod_r ON esod_r.data_status=1 AND esod_r.order_type=4 AND esod_r.order_item_refer_id=erop.id
+        LEFT JOIN erp_statement_order_detail esod ON esod.data_status=1 AND esod.id=esod_r.return_refer_id AND esod.order_type=1 AND esod.order_item_type = 1
+        LEFT JOIN erp_order_product eop ON eop.data_status=1 AND eop.id=esod.order_item_refer_id
+        WHERE erop.data_status=1 AND ero.return_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>ero.return_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) long_erop_id
+        LEFT JOIN erp_return_order_product_equipment erope ON erope.return_order_product_id = long_erop_id.id
+        ) return_product_count
+        FROM erp_order_product eop
+        LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1
+        LEFT JOIN
+        (SELECT new_customer.buyer_customer_id FROM (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) new_customer
+        LEFT JOIN
+        (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NULL
+        ) new_customer_table ON new_customer_table.buyer_customer_id = eo.buyer_customer_id
+        LEFT JOIN
+        (SELECT new_customer.buyer_customer_id FROM (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) new_customer
+        LEFT JOIN
+        (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime}  AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NOT NULL
+        ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
+        WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        <if test="maps.rentInfoQueryParam.subCompanyId != null">
+            AND eo.order_sub_company_id=#{maps.rentInfoQueryParam.subCompanyId}
+        </if>
+        <if test="maps.rentInfoQueryParam.salesmanName!=null&amp;&amp; maps.rentInfoQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.rentInfoQueryParam.salesmanName}','%' )
+        </if>
+    </select>
+
+    <select id="queryRentInfoDetail">
+        SELECT
+        eo.order_seller_id salesman_id,
+        MIN(eu.real_name) salesman_name,
+        eo.order_sub_company_id sub_company_id,
+        MIN(esc.sub_company_name) sub_company_name,
+        eop.rent_length_type,
+        COUNT(DISTINCT new_customer_table.buyer_customer_id) new_customer_count,
+        COUNT(DISTINCT old_customer_table.buyer_customer_id) old_customer_count,
+        COUNT(DISTINCT (CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_new_customer,
+        COUNT(DISTINCT (CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_old_customer,
+        IFNULL(SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL AND eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 THEN eop.product_count ELSE 0 END),0) product_count_by_new_customer,
+        IFNULL(SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL AND eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 THEN eop.product_count ELSE 0 END),0) product_count_by_old_customer,
+        (
+        SELECT COUNT(*) FROM (
+        SELECT DISTINCT(erop.id) id FROM erp_return_order_product erop
+        LEFT JOIN erp_return_order ero ON ero.id= erop.return_order_id AND  ero.data_status =1
+        LEFT JOIN erp_statement_order_detail esod_r ON esod_r.data_status=1 AND esod_r.order_type=4 AND esod_r.order_item_refer_id=erop.id
+        LEFT JOIN erp_statement_order_detail esod ON esod.data_status=1 AND esod.id=esod_r.return_refer_id AND esod.order_type=1 AND esod.order_item_type = 1
+        LEFT JOIN erp_order_product eop ON eop.data_status=1 AND eop.id=esod.order_item_refer_id
+        WHERE erop.data_status=1 AND ero.return_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>ero.return_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) long_erop_id
+        LEFT JOIN erp_return_order_product_equipment erope ON erope.return_order_product_id = long_erop_id.id
+        ) return_product_count
+        FROM erp_order_product eop
+        LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1
+        LEFT JOIN erp_user eu ON eo.order_seller_id = eu.id
+        LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id AND esc.data_status = 1
+        LEFT JOIN
+        (SELECT new_customer.buyer_customer_id FROM (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) new_customer
+        LEFT JOIN
+        (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NULL
+        ) new_customer_table ON new_customer_table.buyer_customer_id = eo.buyer_customer_id
+        LEFT JOIN
+        (SELECT new_customer.buyer_customer_id FROM (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) new_customer
+        LEFT JOIN
+        (
+        SELECT DISTINCT eo.buyer_customer_id FROM erp_order_product eop LEFT JOIN erp_order eo ON eo.id=eop.order_id AND eo.data_status=1  WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28
+        AND eo.create_time>=#{maps.rentInfoQueryParam.startTime}  AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        ) old_customer ON new_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NOT NULL
+        ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
+        WHERE eo.order_status!=0 AND eo.order_status!=4 AND eo.order_status!=28 AND eo.create_time>=#{maps.rentInfoQueryParam.startTime} AND #{maps.rentInfoQueryParam.endTime}>eo.create_time
+        <if test="maps.rentInfoQueryParam.rentLengthType != null">
+            and eop.rent_length_type=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        <if test="maps.rentInfoQueryParam.subCompanyId != null">
+            AND eo.order_sub_company_id=#{maps.rentInfoQueryParam.subCompanyId}
+        </if>
+        <if test="maps.rentInfoQueryParam.salesmanName!=null&amp;&amp; maps.rentInfoQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.rentInfoQueryParam.salesmanName}','%' )
+        </if>
+        GROUP BY eo.order_seller_id, eo.order_sub_company_id, eop.rent_length_type
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+
     <resultMap id="StatisticsUnReceivableForSubCompany" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsUnReceivableForSubCompany">
         <result column="total_last_month_rent" jdbcType="DECIMAL" property="totalLastMonthRent" />
         <result column="total_un_receivable_long" jdbcType="DECIMAL" property="totalUnReceivableLong" />

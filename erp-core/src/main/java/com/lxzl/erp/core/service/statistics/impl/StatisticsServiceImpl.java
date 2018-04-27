@@ -21,6 +21,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -470,6 +471,107 @@ public class StatisticsServiceImpl implements StatisticsService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(statisticsSalesman);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, StatisticsRentInfo> queryRentInfo(StatisticsRentInfoPageParam statisticsRentInfoPageParam) {
+        ServiceResult<String, StatisticsRentInfo> serviceResult = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", statisticsRentInfoPageParam.getStart());
+        maps.put("pageSize", statisticsRentInfoPageParam.getPageSize());
+        maps.put("rentInfoQueryParam", statisticsRentInfoPageParam);
+        StatisticsRentInfo statisticsRentInfo = statisticsMapper.queryRentInfoCount(maps);
+        List<StatisticsRentInfoDetail> statisticsRentInfoDetailList = statisticsMapper.queryRentInfoDetail(maps);
+        // 转换成key为salesmanId-subCompanyId-rentLengthType的map
+        Map<String, StatisticsRentInfoDetail> statisticsRentInfoDetailMap = ListUtil.listToMap(statisticsRentInfoDetailList, "salesmanId", "subCompanyId", "rentLengthType");
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForRentInfo(maps);
+        Date startTime = statisticsRentInfoPageParam.getStartTime();
+        Date endTime = statisticsRentInfoPageParam.getEndTime();
+        BigDecimal rentDeposit = BigDecimal.ZERO;//租金押金
+        BigDecimal deposit = BigDecimal.ZERO;//设备押金
+        BigDecimal returnRentDeposit = BigDecimal.ZERO;//退租金押金
+        BigDecimal returnDeposit = BigDecimal.ZERO;//退设备押金
+        BigDecimal rent = BigDecimal.ZERO;//租金
+        BigDecimal prepayRent = BigDecimal.ZERO;//预付租金
+        BigDecimal rentIncome = BigDecimal.ZERO;//租金收入
+        BigDecimal otherAmount = BigDecimal.ZERO;//其他费用
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) { // 将每一个结算单计算到总计上和长短租详情列表的对应项上
+                String mapKey = getStatementOrderDetailKeyForRentInfo(statementOrderDetailDO);
+                StatisticsRentInfoDetail statisticsRentInfoDetail = statisticsRentInfoDetailMap.get(mapKey);
+                if (statisticsRentInfoDetail != null) {
+                    rentDeposit = BigDecimalUtil.add(rentDeposit,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getRentDeposit(),statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+
+                    deposit = BigDecimalUtil.add(deposit,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getDeposit(),statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+
+                    //计算查询区间内租金费用
+                    BigDecimal rentAmount = calculateRentAmount(startTime, endTime, statementOrderDetailDO);
+                    //计算查询区间内预付租金费用
+                    BigDecimal prepayRentAmount = calculatePrepayRentAmount(endTime, statementOrderDetailDO);
+
+                    returnRentDeposit = BigDecimalUtil.add(returnRentDeposit,statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getReturnRentDeposit(),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+
+                    returnDeposit = BigDecimalUtil.add(returnDeposit,statementOrderDetailDO.getStatementDetailDepositReturnAmount());
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getRentDeposit(),statementOrderDetailDO.getStatementDetailDepositReturnAmount());
+
+                    rent = BigDecimalUtil.add(rent,rentAmount);
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getRent(),rentAmount);
+
+                    prepayRent = BigDecimalUtil.add(prepayRent,prepayRentAmount);
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getPrepayRent(),prepayRentAmount);
+
+                    otherAmount = BigDecimalUtil.add(otherAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                    BigDecimalUtil.add(statisticsRentInfoDetail.getOtherAmount(),statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+
+                    rentIncome = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                    BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(statisticsRentInfoDetail.getRentIncome(),statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+
+                    //净增台数(新增减退租)
+                    statisticsRentInfoDetail.setIncreaseProductCount(statisticsRentInfoDetail.getProductCountByNewCustomer()+statisticsRentInfoDetail.getProductCountByOldCustomer()-statisticsRentInfoDetail.getReturnProductCount());
+                    statisticsRentInfoDetail.setTotalOrderCount(statisticsRentInfoDetail.getOrderCountByNewCustomer()+statisticsRentInfoDetail.getOrderCountByOldCustomer());
+                    statisticsRentInfoDetail.setTotalProductCount(statisticsRentInfoDetail.getProductCountByNewCustomer()+statisticsRentInfoDetail.getProductCountByOldCustomer());
+                    statisticsRentInfoDetail.setTimeNode(startTime);
+                }
+            }
+        }
+        statisticsRentInfo.setRentDeposit(rentDeposit);
+        statisticsRentInfo.setReturnRentDeposit(returnRentDeposit);
+        statisticsRentInfo.setReturnDeposit(returnDeposit);
+        statisticsRentInfo.setDeposit(deposit);
+        statisticsRentInfo.setRent(rent);
+        statisticsRentInfo.setPrepayRent(prepayRent);
+        statisticsRentInfo.setOtherAmount(otherAmount);
+        statisticsRentInfo.setRentIncome(rentIncome);
+
+        //净增台数(新增减退租)
+        statisticsRentInfo.setIncreaseProductCount(statisticsRentInfo.getProductCountByNewCustomer()+statisticsRentInfo.getProductCountByOldCustomer()-statisticsRentInfo.getReturnProductCount());
+        statisticsRentInfo.setTotalOrderCount(statisticsRentInfo.getOrderCountByNewCustomer()+statisticsRentInfo.getOrderCountByOldCustomer());
+        statisticsRentInfo.setTotalProductCount(statisticsRentInfo.getProductCountByNewCustomer()+statisticsRentInfo.getProductCountByOldCustomer());
+        statisticsRentInfo.setTimeNode(startTime);
+
+        Page<StatisticsRentInfoDetail> page = new Page<>(statisticsRentInfoDetailList, statisticsRentInfo.getTotalCount(), statisticsRentInfoPageParam.getPageNo(), statisticsRentInfoPageParam.getPageSize());
+        statisticsRentInfo.setStatisticsRentInfoDetailPage(page);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(statisticsRentInfo);
+        return serviceResult;
+    }
+
+    /*
+    获取key为salesmanId-subCompanyId-rentLengthType
+     */
+    private String getStatementOrderDetailKeyForRentInfo(StatementOrderDetailDO statementOrderDetailDO) {
+        if (statementOrderDetailDO.getSubCompanyId() != null && statementOrderDetailDO.getSalesman_id() != null && statementOrderDetailDO.getRentLengthType() != null) {
+            StringBuilder sb = new StringBuilder(statementOrderDetailDO.getSalesman_id());
+            sb.append("-");
+            sb.append(statementOrderDetailDO.getSubCompanyId());
+            sb.append("-");
+            sb.append(statementOrderDetailDO.getRentLengthType());
+            return sb.toString();
+        }
+        return StringUtil.EMPTY;
     }
 
     private BigDecimal calculateRentAmount(Date startTime, Date endTime, StatementOrderDetailDO statementOrderDetailDO) {

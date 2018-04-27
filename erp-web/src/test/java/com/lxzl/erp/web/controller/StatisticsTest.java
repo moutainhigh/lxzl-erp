@@ -153,6 +153,19 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/statistics/querySalesman", statisticsSalesmanPageParam);
     }
 
+    @Test
+    public void queryRentInfo() throws Exception {
+        StatisticsRentInfoPageParam statisticsRentInfoPageParam = new StatisticsRentInfoPageParam();
+        statisticsRentInfoPageParam.setPageNo(1);
+        statisticsRentInfoPageParam.setPageSize(10);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = sdf.parse("2018-03-01 00:00:00");
+        Date end = sdf.parse("2018-04-01 00:00:00");
+        statisticsRentInfoPageParam.setStartTime(start);
+        statisticsRentInfoPageParam.setEndTime(end);
+        TestResult testResult = getJsonTestResult("/statistics/queryRentInfo", statisticsRentInfoPageParam);
+    }
+
     private Date getFistByMonth() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, 0);
