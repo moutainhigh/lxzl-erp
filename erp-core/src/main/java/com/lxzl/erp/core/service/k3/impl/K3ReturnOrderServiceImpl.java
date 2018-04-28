@@ -376,7 +376,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("k3ReturnOrderQueryParam", k3ReturnOrderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS));
 
         Integer totalCount = k3ReturnOrderMapper.listCount(maps);
         List<K3ReturnOrderDO> orderDOList = k3ReturnOrderMapper.listPage(maps);
