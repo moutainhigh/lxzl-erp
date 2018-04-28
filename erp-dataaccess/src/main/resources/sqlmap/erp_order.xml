@@ -717,6 +717,18 @@
         </foreach>
     </update>
 
+    <!-- 根据订单号列表获取订单列表信息 -->
+    <select id="listByOrderNOs" resultMap="OrderDO">
+        SELECT <include refid="column_List"/> FROM erp_order eo
+        <where>
+            AND eo.order_no IN
+            <if test="orderNOs != null">
+                <foreach item="orderNO" index="index" collection="orderNOs" open="(" separator="," close=")">
+                    #{orderNO}
+                </foreach>
+            </if>
+        </where>
+    </select>
     <select id="findVerifyOrderByParams" resultMap="OrderDO" parameterType="map">
         SELECT
         <include refid="column_List"/>

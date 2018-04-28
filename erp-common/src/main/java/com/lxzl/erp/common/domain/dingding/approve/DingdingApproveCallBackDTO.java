@@ -30,6 +30,8 @@ public class DingdingApproveCallBackDTO extends DingdingApproveResultDTO{
     private String title;
     /** 类型---start:任务或实例开始---finish任务或实例完成 */
     private String type;
+    /** 工作流单号 */
+    private String instanceMarking;
 
     public String getEventType() {
         return eventType;
@@ -110,5 +112,13 @@ public class DingdingApproveCallBackDTO extends DingdingApproveResultDTO{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getInstanceMarking() {
+        return instanceMarking;
+    }
+
+    public void setInstanceMarking(String instanceMarking) {
+        this.instanceMarking = instanceMarking;
     }
 }
