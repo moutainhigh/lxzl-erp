@@ -458,6 +458,15 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public ServiceResult<String, StatisticsSalesman> querySalesman(StatisticsSalesmanPageParam statisticsSalesmanPageParam) {
         ServiceResult<String, StatisticsSalesman> result = new ServiceResult<>();
+        String orderBy = statisticsSalesmanPageParam.getOrderBy();
+        if (orderBy != null && !StatisticsSalesmanOrderBy.isValid(orderBy)) {
+            result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return result;
+        }
+
+        // 转换为数据库排序字段, orderType在pageQuery对象中已验证
+        statisticsSalesmanPageParam.setOrderBy(StatisticsSalesmanOrderBy.getDataFiled(orderBy));
+
         PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
