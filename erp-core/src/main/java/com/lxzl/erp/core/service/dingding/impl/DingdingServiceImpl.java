@@ -190,7 +190,7 @@ public class DingdingServiceImpl implements DingdingService {
             if (dingdingApproveCallBackBO.isDOVerifyWorkFlow()) {
                 // 审核工作流---当需要执行审核工作流才执行---校验交给erp系统来处理
                 ServiceResult<String, Integer> result = workflowService.verifyWorkFlowFromCore(workFlowNo, verifyStatus, returnType, verifyOpinion, currentVerifyUser, null, null);
-                if (StringUtils.equals(ErrorCode.SUCCESS, result.getErrorCode())) {
+                if (!StringUtils.equals(ErrorCode.SUCCESS, result.getErrorCode())) {
                     throw new BusinessException(ErrorCode.getMessage(result.getErrorCode()) +" : " + JSONObject.toJSONString(dingdingApproveCallBackDTO));
                 }
             } else {

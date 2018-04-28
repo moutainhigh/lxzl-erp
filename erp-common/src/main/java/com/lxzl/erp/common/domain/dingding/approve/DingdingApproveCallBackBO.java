@@ -22,7 +22,7 @@ public class DingdingApproveCallBackBO {
     public Integer getVerifyStatus() {
         String result = dingdingApproveCallBackDTO.getResult();
         if (StringUtils.isBlank(result)) {
-            Assert.notNull(result);
+            return null;
         }
         // 只处理通过或驳回的状态
         switch (result) {
