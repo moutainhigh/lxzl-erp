@@ -222,12 +222,12 @@ public class CouponController {
     }
     /**
      * 订单详情中查询该订单使用的优惠券
-     * @param lockCouponQueryParam
+     * @param order
      * @return
      */
-    @RequestMapping(value = "pageLockCouponByOrderNo",method = RequestMethod.POST)
-    public Result pageLockCouponByOrderNo(@RequestBody LockCouponQueryParam lockCouponQueryParam, BindingResult validResult){
-        ServiceResult<String,Page<Coupon>> serviceResult = couponService.pageLockCouponByOrderNo(lockCouponQueryParam);
+    @RequestMapping(value = "findOrderCouponByOrderNo",method = RequestMethod.POST)
+    public Result findOrderCouponByOrderNo(@RequestBody  @Validated(IdGroup.class) Order order, BindingResult validResult){
+        ServiceResult<String,List<Coupon>> serviceResult = couponService.findOrderCouponByOrderNo(order);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 }

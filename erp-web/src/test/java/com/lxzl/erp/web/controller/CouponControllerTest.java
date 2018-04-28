@@ -33,7 +33,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void updateCouponBatch() throws Exception{
         CouponBatch couponBatch = new CouponBatch();
-        couponBatch.setCouponBatchId(20);
+        couponBatch.setCouponBatchId(80);
         couponBatch.setCouponBatchName("凌雄租赁大促销");
         couponBatch.setCouponType(2);
         couponBatch.setCouponBatchDescribe("双十二特惠，租一个苹果电脑送一个苹果手机");
@@ -46,7 +46,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void deleteCouponBatch() throws Exception{
         CouponBatch couponBatch = new CouponBatch();
-        couponBatch.setCouponBatchId(1);
+        couponBatch.setCouponBatchId(80);
 
         TestResult testResult = getJsonTestResult("/coupon/deleteCouponBatch",couponBatch);
     }
@@ -55,10 +55,10 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         CouponBatchQueryParam couponBatchQueryParam = new CouponBatchQueryParam();
         couponBatchQueryParam.setPageNo(1);
         couponBatchQueryParam.setPageSize(2);
-        couponBatchQueryParam.setCouponType(1);
+        couponBatchQueryParam.setCouponType(80);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
-        couponBatchQueryParam.setCouponBatchName("十");
+//        couponBatchQueryParam.setCouponBatchName("十");
         TestResult testResult = getJsonTestResult("/coupon/pageCouponBatch", couponBatchQueryParam);
     }
     @Test
@@ -235,11 +235,9 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         TestResult testResult = getJsonTestResult("/coupon/useStatementCoupon", statementCouponParam);
     }
     @Test
-    public void pageLockCouponByOrderNo() throws Exception {
-        LockCouponQueryParam lockCouponQueryParam = new LockCouponQueryParam();
+    public void findOrderCouponByOrderNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180313-027-00818");
-        lockCouponQueryParam.setOrder(order);
-        TestResult testResult = getJsonTestResult("/coupon/pageLockCouponByOrderNo", lockCouponQueryParam);
+        order.setOrderNo("LXO-20180305-021-00030");
+        TestResult testResult = getJsonTestResult("/coupon/findOrderCouponByOrderNo", order);
     }
 }

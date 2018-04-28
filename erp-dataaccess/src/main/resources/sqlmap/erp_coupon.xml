@@ -413,53 +413,10 @@
 		AND ecb.coupon_type = 2
 	</select>
 
-	<select id="findLockCouponByParams" resultMap="CouponDO" parameterType="map">
-		SELECT <include refid="column_List"/>,eop.product_name
-		FROM erp_coupon ec
-		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
-		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
-		<where>
-			<if test="maps.orderNo != null &amp;&amp;  maps.orderNo != ''">
-				and ec.order_no  = #{maps.orderNo}
-			</if>
-			<if test="true">
-				and ec.coupon_status = 6
-			</if>
-			<if test="true">
-				AND ec.data_status = 1
-			</if>
-			<if test="true">
-				AND ecb.coupon_type = 1
-			</if>
-		</where>
-		ORDER BY ec.update_time DESC
-		LIMIT #{maps.start},#{maps.pageSize}
-	</select>
-
-	<select id="findLockCouponCountByParams" resultType="Integer" parameterType="map">
-		SELECT count(ec.id)
-		FROM erp_coupon ec
-		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
-		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
-		<where>
-			<if test="maps.orderNo != null &amp;&amp;  maps.orderNo != ''">
-				and ec.order_no  = #{maps.orderNo}
-			</if>
-			<if test="true">
-				and ec.coupon_status = 6
-			</if>
-			<if test="true">
-				AND ec.data_status = 1
-			</if>
-			<if test="true">
-				AND ecb.coupon_type = 1
-			</if>
-		</where>
-	</select>
-
 	<select id="findByOrderNo" resultMap="CouponDO" parameterType="String">
-		SELECT <include refid="column_List"/>
+		SELECT <include refid="column_List"/>,eop.product_name,ecb.coupon_type
 		FROM erp_coupon ec
+		LEFT JOIN erp_order_product eop ON eop.id = ec.order_product_id
 		LEFT JOIN erp_coupon_batch ecb ON ecb.id = ec.coupon_batch_id
 		WHERE ec.order_no = #{orderNo , jdbcType=VARCHAR}
 		AND ec.data_status = 1
