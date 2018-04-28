@@ -71,6 +71,18 @@ public class CustomerServiceImpl implements CustomerService {
 
         //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
         String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
+
+        //经过处理的简单公司名称少于6个字符，则返回错误信息："公司名称有误"
+        if (simpleCompanyName.length()<6) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NAME_TO_SHORT);
+            return serviceResult;
+        }
+        //判断输入的公司名称经过全角半角转换及去掉特殊符号后的名称是否跟个人客户中的真实姓名重复，如果重复，返回错误信息："公司名称有误"
+        CustomerPersonDO customerPersonDO = customerPersonMapper.findByRealName(simpleCompanyName);
+        if (customerPersonDO != null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME);
+            return serviceResult;
+        }
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
 
         //该公司简单名称已经存在，则返回错误代码信息

@@ -40,6 +40,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customer.setUnionUser(500003);
         customer.setRemark("记住这是客户的备注");
         customer.setDeliveryMode(0);
+        customer.setStatementDate(20);
 //        customer.setFirstApplyAmount(new BigDecimal(84000));
 //        customer.setLaterApplyAmount(new BigDecimal(50000));
         customer.setIsDefaultConsignAddress(1);
@@ -100,7 +101,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("56齐天文化-0330");
+        customerCompany.setCompanyName("戴玉聪——————————");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
