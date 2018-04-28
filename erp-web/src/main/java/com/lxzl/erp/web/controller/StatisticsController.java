@@ -136,6 +136,16 @@ public class StatisticsController extends BaseController {
         return resultGenerator.generate(statisticsService.querySalesman(statisticsSalesmanPageParam));
     }
 
+    /**
+     * 长短租详细统计
+     * @param statisticsRentInfoPageParam
+     * @return
+     */
+    @RequestMapping(value = "queryRentInfo", method = RequestMethod.POST)
+    public Result queryRentInfo(@RequestBody @Validated StatisticsRentInfoPageParam statisticsRentInfoPageParam) {
+        return resultGenerator.generate(statisticsService.queryRentInfo(statisticsRentInfoPageParam));
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

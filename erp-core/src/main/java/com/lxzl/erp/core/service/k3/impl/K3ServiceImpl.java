@@ -323,6 +323,7 @@ public class K3ServiceImpl implements K3Service {
                                 com.lxzl.erp.common.domain.order.pojo.OrderProduct dbOrderProduct = map.get(orderProduct.getOrderProductId());
                                 if (dbOrderProduct != null) {
                                     orderProduct.setProductSkuId(dbOrderProduct.getProductSkuId());
+                                    orderProduct.setProductSkuPropertyList(dbOrderProduct.getProductSkuPropertyList());
                                     orderProduct.setProductSkuName(dbOrderProduct.getProductSkuName());
                                 }
                             }

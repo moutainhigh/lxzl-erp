@@ -419,14 +419,13 @@ public class PenaltySupport {
                     return result;
                 }
                 //短短租的若提前退还，需补齐所有合同金额。若有支付部分的，需补交全部剩余租金。
-                if (orderProductDO.getRentType() == OrderRentType.RENT_TYPE_DAY) {
-                    //短短租订单未结清则无法退货
-                    if (BigDecimalUtil.compare(orderDO.getTotalOrderAmount(), orderDO.getTotalPaidOrderAmount()) > 0) {
-                        result.setErrorCode(ErrorCode.DAY_RENT_ORDER_NOT_PAY);
-                        return result;
-                    }
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())) {
+//                    //短短租订单未结清则无法退货
+//                    if (BigDecimalUtil.compare(orderDO.getTotalOrderAmount(), orderDO.getTotalPaidOrderAmount()) > 0) {
+//                        result.setErrorCode(ErrorCode.DAY_RENT_ORDER_NOT_PAY);
+//                        return result;
+//                    }
                     continue;
-                    // productPenaltyAmount = amountSupport.calculateRentAmount(returnTime, expectReturnTime, orderProductDO.getProductUnitAmount(), k3ReturnOrderDetailDO.getProductCount());
                 } else {
                     int monthGap = DateUtil.getMonthSpace(rentStartTime, returnTime);
                     if (productDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是//todo 后续增加续租商品 默认为即租即还
@@ -485,14 +484,13 @@ public class PenaltySupport {
                     return result;
                 }
                 //短短租的若提前退还，需补齐所有合同金额。若有支付部分的，需补交全部剩余租金。
-                if (orderMaterialDO.getRentType() == OrderRentType.RENT_TYPE_DAY) {
-                    //短短租未结清，则不允许退货
-                    if (BigDecimalUtil.compare(orderDO.getTotalOrderAmount(), orderDO.getTotalPaidOrderAmount()) > 0) {
-                        result.setErrorCode(ErrorCode.DAY_RENT_ORDER_NOT_PAY);
-                        return result;
-                    }
+                if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())) {
+//                    //短短租未结清，则不允许退货
+//                    if (BigDecimalUtil.compare(orderDO.getTotalOrderAmount(), orderDO.getTotalPaidOrderAmount()) > 0) {
+//                        result.setErrorCode(ErrorCode.DAY_RENT_ORDER_NOT_PAY);
+//                        return result;
+//                    }
                     continue;
-                    //productPenaltyAmount = amountSupport.calculateRentAmount(returnTime, expectReturnTime, orderMaterialDO.getMaterialUnitAmount(), k3ReturnOrderDetailDO.getProductCount());
                 } else {
                     int monthGap = DateUtil.getMonthSpace(rentStartTime, returnTime);
                     if (materialDO.getIsReturnAnyTime() == CommonConstant.NO) {//是否允许随时归还，0否1是//todo 后续增加续租商品 默认为即租即还

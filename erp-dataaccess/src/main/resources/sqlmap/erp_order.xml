@@ -729,5 +729,169 @@
             </if>
         </where>
     </select>
+    <select id="findVerifyOrderByParams" resultMap="OrderDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="consign_column_List"/>
+        </trim>
+        <trim prefix=",">
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
+            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
+            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+        </trim>
+        FROM erp_order eo
+        INNER JOIN erp_user eu ON eu.id = eo.order_seller_id
+        INNER JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        <where>
+            <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
+                and eo.buyer_customer_name like CONCAT('%','${maps.verifyOrderQueryParam.buyerRealName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneeName != null &amp;&amp; maps.verifyOrderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.verifyOrderQueryParam.consigneeName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneePhone != null &amp;&amp; maps.verifyOrderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.verifyOrderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliveryMode != null">
+                and eo.delivery_mode = #{maps.verifyOrderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.subCompanyId != null">
+                and eo.order_sub_company_id = #{maps.verifyOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliverySubCompanyId != null">
+                and eo.delivery_sub_company_id = #{maps.verifyOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderNo != null &amp;&amp; maps.verifyOrderQueryParam.orderNo != ''">
+                and eo.order_no like CONCAT('%','${maps.verifyOrderQueryParam.orderNo}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.verifyOrderQueryParam.buyerCustomerNo != ''">
+                and ec.customer_no = #{maps.verifyOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderSellerId != null">
+                and eo.order_seller_id = #{maps.verifyOrderQueryParam.orderSellerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.rentType != null">
+                and eo.rent_type = #{maps.verifyOrderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and eo.order_status = 4
+            </if>
+            <if test="maps.verifyOrderQueryParam.createStartTime != null">
+                <![CDATA[ AND eo.create_time >= #{maps.verifyOrderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.verifyOrderQueryParam.createEndTime != null ">
+                <![CDATA[ AND eo.create_time <= #{maps.verifyOrderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+            <if test="maps.workflowReferNoList != null &amp;&amp; maps.workflowReferNoList.size() > 0">
+                and eo.order_no in
+                <foreach item="workflowReferNo" index="index" collection="maps.workflowReferNoList"
+                         open="(" separator="," close=")">
+                    #{workflowReferNo,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY eo.create_time DESC
+        LIMIT #{maps.start},#{maps.pageSize}
 
+    </select>
+    <select id="findVerifyOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(eo.id)
+        FROM erp_order eo
+        INNER JOIN erp_user eu ON eu.id = eo.order_seller_id
+        INNER JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        <where>
+
+            <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
+                and eo.buyer_customer_name like CONCAT('%','${maps.verifyOrderQueryParam.buyerRealName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneeName != null &amp;&amp; maps.verifyOrderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.verifyOrderQueryParam.consigneeName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneePhone != null &amp;&amp; maps.verifyOrderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.verifyOrderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliveryMode != null">
+                and eo.delivery_mode = #{maps.verifyOrderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.subCompanyId != null">
+                and eo.order_sub_company_id = #{maps.verifyOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliverySubCompanyId != null">
+                and eo.delivery_sub_company_id = #{maps.verifyOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderNo != null &amp;&amp; maps.verifyOrderQueryParam.orderNo != ''">
+                and eo.order_no like CONCAT('%','${maps.verifyOrderQueryParam.orderNo}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.verifyOrderQueryParam.buyerCustomerNo != ''">
+                and ec.customer_no = #{maps.verifyOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderSellerId != null">
+                and eo.order_seller_id = #{maps.verifyOrderQueryParam.orderSellerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.rentType != null">
+                and eo.rent_type = #{maps.verifyOrderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and eo.order_status = 4
+            </if>
+            <if test="maps.verifyOrderQueryParam.createStartTime != null">
+                <![CDATA[ AND eo.create_time >= #{maps.verifyOrderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.verifyOrderQueryParam.createEndTime != null ">
+                <![CDATA[ AND eo.create_time <= #{maps.verifyOrderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+            <if test="maps.workflowReferNoList != null &amp;&amp; maps.workflowReferNoList.size() > 0">
+                and eo.order_no in
+                <foreach item="workflowReferNo" index="index" collection="maps.workflowReferNoList"
+                         open="(" separator="," close=")">
+                    #{workflowReferNo,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findConsignByCustomerNo" resultMap="OrderDO" parameterType="java.lang.String">
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="consign_column_List"/>
+        </trim>
+        <trim prefix=",">
+        eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+        </trim>
+        FROM erp_order eo
+        LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} and eo.data_status=1
+        ORDER BY eo.create_time DESC LIMIT 0,1
+    </select>
+
+    <select id="findByOrderStatus" resultMap="OrderDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        WHERE eo.order_status = #{orderStatus} and eo.data_status=1
+    </select>
 </mapper>
