@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveDTO;
+import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
 import com.lxzl.se.core.service.BaseService;
 
 /**
@@ -26,7 +27,7 @@ public interface DingdingService extends BaseService {
 
     /**
      * <p>
-     * 绑定钉钉用户列表接口
+     * 获取所有的用户信息提供给钉钉网关
      * </p>
      * @author daiqi
      * @date 2018/4/20 9:35
@@ -34,26 +35,10 @@ public interface DingdingService extends BaseService {
 
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    ServiceResult<String, Object> bindDingDingUsers();
+    ServiceResult<String, Object> getAllUsersToDingding();
 
-    /** 根据手机号获取钉钉id */
-    String getDingdingIdByPhone(String phone);
-
-    /**  
-     * <p>
-     * 发起审批实例
-     * </p>
-     * <pre>
-     *     所需参数示例及其说明
-     *     参数名称 : 示例值 : 说明 : 是否必须
-     * </pre>
-     * @author daiqi  
-     * @date 2018/4/20 10:56
-     * @param  
-      
-     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>  
-     */  
-    ServiceResult<String, Object> applyApprovingWorkflow(DingdingApproveDTO dingdingApproveDTO);
+    /** 注册用户到信息到钉钉网关 */
+    ServiceResult<String, Object> registerUserToDingding(Integer userId);
 
     /**
      * <p>

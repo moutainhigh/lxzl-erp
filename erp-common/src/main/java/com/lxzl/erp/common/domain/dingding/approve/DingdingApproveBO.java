@@ -1,10 +1,6 @@
 package com.lxzl.erp.common.domain.dingding.approve;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,13 +21,18 @@ public class DingdingApproveBO {
         this.dingdingApproveDTO = dingdingApproveDTO;
     }
 
-    public DingdingApproveBO buildDeptId(String depId) {
+    public DingdingApproveBO buildDeptId(Integer depId) {
         this.dingdingApproveDTO.setDeptId(depId);
         return this;
     }
+    /** 构建工作流单号 */
+    public DingdingApproveBO buildInstanceMarking(String workflowLinkNo) {
+        this.dingdingApproveDTO.setInstanceMarking(workflowLinkNo);
+        return this;
+    }
 
-    public DingdingApproveBO buildOriginatorUserId(String originatorUserId) {
-        this.dingdingApproveDTO.setOriginatorUserId(originatorUserId);
+    public DingdingApproveBO buildOriginatorUserId(Integer userId) {
+        this.dingdingApproveDTO.setOriginatorUserId(userId);
         return this;
     }
 
@@ -43,41 +44,19 @@ public class DingdingApproveBO {
     /**
      * 新增钉钉表单组件数据传输对象
      */
-    public DingdingApproveBO addDingdingFormComponentValue(DingdingFormComponentValueDTO formComponentValueDTO) {
-        List<DingdingFormComponentValueDTO> valueDTOS = getArrayListNotNull(this.dingdingApproveDTO.getFormComponentValueList());
-        valueDTOS.add(formComponentValueDTO);
-        this.dingdingApproveDTO.setFormComponentValueList(valueDTOS);
-        return this;
-    }
-
-    /**
-     * 新增钉钉表单组件数据传输对象
-     */
-    public DingdingApproveBO addDingdingFormComponentValue(String name, String value) {
-        List<DingdingFormComponentValueDTO> valueDTOS = getArrayListNotNull(this.dingdingApproveDTO.getFormComponentValueList());
-        valueDTOS.add(new DingdingFormComponentValueDTO(name, value));
-        this.dingdingApproveDTO.setFormComponentValueList(valueDTOS);
-        return this;
-    }
-
-    /**
-     * 新增钉钉表单组件数据传输对象
-     */
-    public DingdingApproveBO addDingdingFormComponentValueList(List<DingdingFormComponentValueDTO> formComponentValueDTOs) {
-        List<DingdingFormComponentValueDTO> valueDTOS = getArrayListNotNull(this.dingdingApproveDTO.getFormComponentValueList());
-        valueDTOS.addAll(formComponentValueDTOs);
-        this.dingdingApproveDTO.setFormComponentValueList(valueDTOS);
+    public DingdingApproveBO buildFormComponentObj(Object formComponentObjs) {
+        this.dingdingApproveDTO.setFormComponentObj(formComponentObjs);
         return this;
     }
 
     /**
      * add审批人用户id
      */
-    public void addApprover(String approver) {
-        if (StringUtils.isBlank(approver)) {
+    public void addApprover(Integer approver) {
+        if (approver == null) {
             return;
         }
-        Set<String> approversFromDTO = this.dingdingApproveDTO.getApproverList();
+        Set<Integer> approversFromDTO = this.dingdingApproveDTO.getApproverList();
         approversFromDTO = getLinkedHashSetNotNull(approversFromDTO);
         approversFromDTO.add(approver);
         this.dingdingApproveDTO.setApproverList(approversFromDTO);
@@ -86,11 +65,11 @@ public class DingdingApproveBO {
     /**
      * 新增审批人用户id列表
      */
-    public void addApprovers(Set<String> approvers) {
+    public void addApprovers(Set<Integer> approvers) {
         if (approvers == null) {
             return;
         }
-        Set<String> approversFromDTO = this.dingdingApproveDTO.getApproverList();
+        Set<Integer> approversFromDTO = this.dingdingApproveDTO.getApproverList();
         approversFromDTO = getLinkedHashSetNotNull(approversFromDTO);
         approversFromDTO.addAll(approvers);
         this.dingdingApproveDTO.setApproverList(approversFromDTO);
@@ -99,11 +78,11 @@ public class DingdingApproveBO {
     /**
      * add抄送人用户id
      */
-    public void addCcUserId(String ccUserId) {
-        if (StringUtils.isBlank(ccUserId)) {
+    public void addCcUserId(Integer ccUserId) {
+        if (ccUserId == null) {
             return;
         }
-        Set<String> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcUserIdsList();
+        Set<Integer> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcUserIdsList();
         ccUserIdsFromDTO = getLinkedHashSetNotNull(ccUserIdsFromDTO);
         ccUserIdsFromDTO.add(ccUserId);
         this.dingdingApproveDTO.setCcUserIdsList(ccUserIdsFromDTO);
@@ -112,21 +91,14 @@ public class DingdingApproveBO {
     /**
      * 新增抄送人列表信息
      */
-    public void addCcUserIds(Set<String> ccUserIds) {
+    public void addCcUserIds(Set<Integer> ccUserIds) {
         if (ccUserIds == null) {
             return;
         }
-        Set<String> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcUserIdsList();
+        Set<Integer> ccUserIdsFromDTO = this.dingdingApproveDTO.getCcUserIdsList();
         ccUserIdsFromDTO = getLinkedHashSetNotNull(ccUserIdsFromDTO);
         ccUserIdsFromDTO.addAll(ccUserIds);
         this.dingdingApproveDTO.setCcUserIdsList(ccUserIdsFromDTO);
-    }
-
-    private <T> List<T> getArrayListNotNull(List<T> list) {
-        if (list == null) {
-            return new ArrayList<>();
-        }
-        return list;
     }
 
     private <T> Set<T> getLinkedHashSetNotNull(Set<T> set) {
