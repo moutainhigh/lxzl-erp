@@ -21,10 +21,11 @@
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="coupon_batch_cancel_count" jdbcType="INTEGER" property="couponBatchCancelCount" />
+		<result column="coupon_batch_lock_count" jdbcType="INTEGER" property="couponBatchLockCount" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecb.id,ecb.coupon_batch_name,ecb.coupon_batch_describe,ecb.coupon_type,ecb.effective_start_time,ecb.effective_end_time,ecb.coupon_batch_total_count,ecb.coupon_batch_used_count,ecb.total_face_amount,ecb.total_used_amount,ecb.total_deduction_amount,ecb.remark,ecb.create_time,ecb.create_user,ecb.update_time,ecb.update_user,ecb.data_status,ecb.coupon_batch_cancel_count
+		ecb.id,ecb.coupon_batch_name,ecb.coupon_batch_describe,ecb.coupon_type,ecb.effective_start_time,ecb.effective_end_time,ecb.coupon_batch_total_count,ecb.coupon_batch_used_count,ecb.total_face_amount,ecb.total_used_amount,ecb.total_deduction_amount,ecb.remark,ecb.create_time,ecb.create_user,ecb.update_time,ecb.update_user,ecb.data_status,ecb.coupon_batch_cancel_count,ecb.coupon_batch_lock_count
 	</sql>
 
 	<select id="findById" resultMap="CouponBatchDO" parameterType="java.lang.Integer">
@@ -104,6 +105,9 @@
 			<if test="couponBatchCancelCount != null">
 				coupon_batch_cancel_count = #{couponBatchCancelCount,jdbcType=INTEGER},
 			</if>
+			<if test="couponBatchLockCount != null">
+				coupon_batch_lock_count = #{couponBatchLockCount,jdbcType=INTEGER},
+			</if>
 		</set>
 	</sql>
 
@@ -170,6 +174,12 @@
 			</foreach>
 		</trim>
 		<trim prefix=",">
+			coupon_batch_lock_count =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.couponBatchLockCount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
 			coupon_batch_used_count =
 			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
 				when #{couponBatchDO.id} then #{couponBatchDO.couponBatchUsedCount}
@@ -185,6 +195,32 @@
 			total_deduction_amount =
 			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
 				when #{couponBatchDO.id} then #{couponBatchDO.totalDeductionAmount}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			update_time =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.updateTime}
+			</foreach>
+		</trim>
+		WHERE id in
+		<foreach collection="couponBatchDOList" index="index" item="couponBatchDO" separator="," open="(" close=")">
+			#{couponBatchDO.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	<update id="updateLockList" parameterType="java.util.ArrayList">
+		update erp_coupon_batch
+		SET
+		<trim>
+			update_user =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.updateUser}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			coupon_batch_lock_count =
+			<foreach item="couponBatchDO" collection="couponBatchDOList"  index="index" separator=" " open="case id" close="end">
+				when #{couponBatchDO.id} then #{couponBatchDO.couponBatchLockCount}
 			</foreach>
 		</trim>
 		<trim prefix=",">

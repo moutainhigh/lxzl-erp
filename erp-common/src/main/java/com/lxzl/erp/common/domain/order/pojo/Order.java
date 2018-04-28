@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
@@ -93,6 +94,16 @@ public class Order extends BasePO {
     private WorkflowLink workflowLink;
 
     private  List<K3ReturnOrderDetail> k3ReturnOrderDetailList; //退货单项列表
+
+    private List<Coupon> couponList;//该订单使用的设备优惠券
+
+    public List<Coupon> getCouponList() {
+        return couponList;
+    }
+
+    public void setCouponList(List<Coupon> couponList) {
+        this.couponList = couponList;
+    }
 
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
