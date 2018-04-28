@@ -721,6 +721,10 @@ public class PageController extends BaseController {
     public String statisticsManageReceiveSummaryList() {
         return "/statisticsManage/awaitReceiveSummaryList";
     }
+    @RequestMapping("/statistics/salesmanDeduct-list")
+    public String statisticsManageSalesmanDeductList() {
+        return "/statisticsManage/salesmanDeduct";
+    }
 
 
     //充值记录
