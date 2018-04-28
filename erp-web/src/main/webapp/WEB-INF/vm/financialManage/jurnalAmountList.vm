@@ -28,6 +28,9 @@
                                 <a href="javascript:;" class="btn btn-primary btn-sm designateBtn" title="批量指派">
                                     <i class="fa fa-tag"></i> 批量指派
                                 </a>
+                                <a href="javascript:;" class="btn btn-primary btn-sm exportBtn" title="导出">
+                                    <i class="fa fa-tag"></i> 导出
+                                </a>
 ##                                {{/acitonCommonButtons}}
                             </script>
 
