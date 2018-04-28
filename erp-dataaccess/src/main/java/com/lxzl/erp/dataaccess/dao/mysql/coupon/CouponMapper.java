@@ -30,13 +30,11 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
 
     List<CouponDO> findByCouponStatus(@Param("couponBatchDetailId") Integer couponBatchDetailId,@Param("totalCouponProvideAmount") Integer totalCouponProvideAmount);
 
-    List<CouponDO> findByCustomerNo(@Param("customerNo") String customerNo);
+    List<CouponDO> findByCustomerNo(@Param("customerNo") String customerNo,@Param("orderNo") String orderNo);
 
     List<CouponDO> findCouponDOList(@Param("couponDOIdList") List<Integer> couponDOIdList);
 
     List<CouponDO> findByCouponBatchDetailID(@Param("couponBatchDetailId") Integer couponBatchDetailId);
-
-    void updateUseList(@Param("couponDOList") List<CouponDO> couponDOList);
 
     void cancelCoupon(@Param("couponBatchDetailId") Integer couponBatchDetailId,@Param("updateTime") Date updateTime, @Param("updateUser") String updateUser);
 
@@ -49,4 +47,14 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
     List<CouponDO> findStatementCouponByCustomerNo(@Param("customerNo") String customerNo);
 
     CouponDO findByStatementOrderDetailId(@Param("statementOrderDetailId") Integer statementOrderDetailId);
+
+    Integer findLockCouponCountByParams(@Param("maps") Map<String, Object> maps);
+
+    List<CouponDO> findLockCouponByParams(@Param("maps") Map<String, Object> maps);
+
+    List<CouponDO> findByOrderNo(@Param("orderNo") String orderNo);
+
+    void updateLockList(@Param("couponDOList") List<CouponDO> couponDOList);
+
+    void updateRevertList(@Param("couponDOList") List<CouponDO> couponDOList);
 }
