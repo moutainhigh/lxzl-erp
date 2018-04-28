@@ -901,7 +901,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 notNeedSavabillDatas.add(billData);
             }
         }
-        logger.error("k3未保存的数据为：" + JSONObject.toJSONString(notNeedSavabillDatas));
+        logger.error("k3未保存的数据为：" + JSONArray.toJSONString(notNeedSavabillDatas));
         return needSavabillDatas;
     }
 
@@ -942,7 +942,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isEmpty(k3HistoricalReturnOrders)) {
             return k3HistoricalReturnOrders;
         }
-        List<K3HistoricalReturnOrder> returnOrders = new ArrayList<>();
+        List<K3HistoricalReturnOrder> returnOrders = k3HistoricalReturnOrders;
         Set<String> orderSet = new HashSet<>() ;
         // 1 循环将订单放入set中
         for (K3HistoricalReturnOrder returnOrder : k3HistoricalReturnOrders) {
@@ -961,17 +961,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             maps.put(orderDO.getOrderNo(), orderDO);
         }
         logger.info("根据订单号列表获取的订单信息map中的数据为：" + JSONObject.toJSONString(maps));
-        // 3 匹配历史订单数据详情信息是否存在订单表中---存在即设置到需要保存的订单详情
+        // 3 匹配历史订单数据详情信息是否存在订单表中---存在即设置到需要保存的订单详情列表
         for (K3HistoricalReturnOrder returnOrder : k3HistoricalReturnOrders) {
             List<K3ReturnOrderDetail> needSaveOrderDetails = new ArrayList<>();
             for (K3ReturnOrderDetail orderDetail : returnOrder.getK3ReturnOrderDetails()) {
                 if (maps.containsKey(orderDetail.getOrderNo())) {
                     needSaveOrderDetails.add(orderDetail);
                 }
-                returnOrder.setK3ReturnOrderDetails(needSaveOrderDetails);
             }
+            returnOrder.setK3ReturnOrderDetails(needSaveOrderDetails);
         }
-        // 4 返回过滤后的历史订单信息
+        // 4 返回过滤后的k3历史退货单信息
         return returnOrders;
     }
 

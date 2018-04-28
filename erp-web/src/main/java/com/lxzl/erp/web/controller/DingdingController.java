@@ -1,7 +1,6 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -63,9 +62,6 @@ public class DingdingController extends BaseController {
      */
     @RequestMapping(value = "applyApprovingWorkflowCallBack")
     public Result applyApprovingWorkflowCallBack(@RequestBody DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
-//        String str = JSONObject.toJSONString(dataMap);
-//        System.out.println("回调的数据为：" + str);
-//        DingdingApproveCallBackDTO dingdingApproveCallBackDTO = JSONObject.parseObject(str, DingdingApproveCallBackDTO.class);
         ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowCallBack(dingdingApproveCallBackDTO);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
