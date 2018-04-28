@@ -712,24 +712,16 @@ public class CouponServiceImpl implements CouponService{
 
     /**
      * 订单详情中查询该订单使用的优惠券
-     * @param lockCouponQueryParam
+     * @param order
      * @return
      */
     @Override
-    public ServiceResult<String, Page<Coupon>> pageLockCouponByOrderNo(LockCouponQueryParam lockCouponQueryParam) {
-        ServiceResult<String,Page<Coupon>> serviceResult = new ServiceResult<>();
-        PageQuery pageQuery = new PageQuery(lockCouponQueryParam.getPageNo(), lockCouponQueryParam.getPageSize());
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", pageQuery.getStart());
-        maps.put("pageSize", pageQuery.getPageSize());
-        String orderNo = lockCouponQueryParam.getOrder().getOrderNo();
-        maps.put("orderNo", orderNo);
-        Integer totalCount = couponMapper.findLockCouponCountByParams(maps);
-        List<CouponDO> couponDOList = couponMapper.findLockCouponByParams(maps);
+    public ServiceResult<String, List<Coupon>> findOrderCouponByOrderNo(Order order) {
+        ServiceResult<String,List<Coupon>> serviceResult = new ServiceResult<>();
+        List<CouponDO> couponDOList = couponMapper.findByOrderNo(order.getOrderNo());
         List<Coupon> couponList = ConverterUtil.convertList(couponDOList, Coupon.class);
-        Page<Coupon> page = new Page<>(couponList, totalCount, lockCouponQueryParam.getPageNo(), lockCouponQueryParam.getPageSize());
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(page);
+        serviceResult.setResult(couponList);
         return serviceResult;
     }
 

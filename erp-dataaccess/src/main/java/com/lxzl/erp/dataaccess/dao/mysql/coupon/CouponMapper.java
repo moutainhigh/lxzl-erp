@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.coupon;
 
+import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -47,10 +48,6 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
     List<CouponDO> findStatementCouponByCustomerNo(@Param("customerNo") String customerNo);
 
     CouponDO findByStatementOrderDetailId(@Param("statementOrderDetailId") Integer statementOrderDetailId);
-
-    Integer findLockCouponCountByParams(@Param("maps") Map<String, Object> maps);
-
-    List<CouponDO> findLockCouponByParams(@Param("maps") Map<String, Object> maps);
 
     List<CouponDO> findByOrderNo(@Param("orderNo") String orderNo);
 

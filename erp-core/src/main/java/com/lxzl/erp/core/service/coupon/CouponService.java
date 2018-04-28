@@ -54,5 +54,5 @@ public interface CouponService {
 
     ServiceResult<String,List<Coupon>> findStatementCouponByCustomerNo(Customer customer);
 
-    ServiceResult<String,Page<Coupon>> pageLockCouponByOrderNo(LockCouponQueryParam lockCouponQueryParam);
+    ServiceResult<String,List<Coupon>> findOrderCouponByOrderNo(Order order);
 }
