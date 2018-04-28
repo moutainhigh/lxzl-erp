@@ -95,6 +95,8 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDo.setCreateUser(userSupport.getCurrentUserId().toString());
         couponBatchDo.setUpdateUser(userSupport.getCurrentUserId().toString());
         couponBatchDo.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        couponBatchDo.setCouponBatchLockCount(CommonConstant.COMMON_ZERO);
+        couponBatchDo.setCouponBatchCancelCount(CommonConstant.COMMON_ZERO);
         couponBatchMapper.save(couponBatchDo);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -229,6 +231,7 @@ public class CouponServiceImpl implements CouponService{
         couponBatchDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
         couponBatchDetailDO.setUpdateTime(date);
         couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        couponBatchDetailDO.setCouponLockCount(CommonConstant.COMMON_ZERO);
         couponBatchDetailMapper.save(couponBatchDetailDO);
 
         //更新优惠卷批次数据
@@ -314,7 +317,7 @@ public class CouponServiceImpl implements CouponService{
         // 循环判断是否有已经使用的，如果有已经使用的则返回错误信息
         for (int i = 0; i < couponDOList.size(); i++) {
             List<Integer> cancelAndReceivedList = new ArrayList<>();
-            if (couponDOList.get(i).getCouponStatus() == CouponStatus.COUPON_STATUS_USED) {
+            if (couponDOList.get(i).getCouponStatus() == CouponStatus.COUPON_STATUS_USED && couponDOList.get(i).getCouponStatus() == CouponStatus.COUPON_STATUS_LOCK) {
                 serviceResult.setErrorCode(ErrorCode.COUPON_USED);
                 return  serviceResult;
             }
@@ -433,15 +436,21 @@ public class CouponServiceImpl implements CouponService{
         return serviceResult;
     }
     /**
-     * 按客户编号查询该客户可用优惠券
-     * @param customer
+     * 订单添加，编辑页面优惠卷列表展示
+     * @param customerOrderCouponParam
      * @return
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public ServiceResult<String, List<Coupon>> findCouponByCustomerNo(Customer customer) {
+    public ServiceResult<String, List<Coupon>> findCouponByCustomerNo(CustomerOrderCouponParam customerOrderCouponParam) {
         ServiceResult<String,List<Coupon>> serviceResult = new ServiceResult<>();
-        List<CouponDO> couponDOList = couponMapper.findByCustomerNo(customer.getCustomerNo());
+        if (customerOrderCouponParam.getCustomer() == null && customerOrderCouponParam.getCustomer().getCustomerNo() == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NO_NOT_NULL);
+            return serviceResult;
+        }
+        String customerNo = customerOrderCouponParam.getCustomer().getCustomerNo();
+        String orderNo = customerOrderCouponParam.getOrder().getOrderNo();
+        List<CouponDO> couponDOList = couponMapper.findByCustomerNo(customerNo,orderNo);
         List<Coupon> couponList = ConverterUtil.convertList(couponDOList, Coupon.class);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(couponList);
@@ -539,15 +548,15 @@ public class CouponServiceImpl implements CouponService{
 
     /**
      * 使用优惠券的方法
-     * @param useCoupon
+     * @param order
      * @return
      */
     @Override
-    public ServiceResult<String, String> useCoupon( UseCoupon useCoupon) {
+    public ServiceResult<String, String> useCoupon( Order order) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
-        Order order = useCoupon.getOrder();
-        List<Coupon> couponList = useCoupon.getCouponList();
-        serviceResult.setResult(couponSupport.useCoupon(order,couponList));
+//        serviceResult.setResult(couponSupport.useCoupon(order));
+        System.out.println(order.getOrderNo());
+        serviceResult.setResult(couponSupport.revertCoupon(order.getOrderNo()));
         return serviceResult;
     }
     /**
@@ -695,6 +704,21 @@ public class CouponServiceImpl implements CouponService{
     public ServiceResult<String, List<Coupon>> findStatementCouponByCustomerNo(Customer customer) {
         ServiceResult<String,List<Coupon>> serviceResult = new ServiceResult<>();
         List<CouponDO> couponDOList = couponMapper.findStatementCouponByCustomerNo(customer.getCustomerNo());
+        List<Coupon> couponList = ConverterUtil.convertList(couponDOList, Coupon.class);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(couponList);
+        return serviceResult;
+    }
+
+    /**
+     * 订单详情中查询该订单使用的优惠券
+     * @param order
+     * @return
+     */
+    @Override
+    public ServiceResult<String, List<Coupon>> findOrderCouponByOrderNo(Order order) {
+        ServiceResult<String,List<Coupon>> serviceResult = new ServiceResult<>();
+        List<CouponDO> couponDOList = couponMapper.findByOrderNo(order.getOrderNo());
         List<Coupon> couponList = ConverterUtil.convertList(couponDOList, Coupon.class);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(couponList);

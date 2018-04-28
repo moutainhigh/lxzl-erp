@@ -26,6 +26,7 @@ import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -59,19 +60,19 @@ public class CouponSupport {
     @Autowired
     private OrderMapper orderMapper;
     /**
-     * 使用优惠券
+     * 使用设备优惠券
      * @param order
-     * @param couponList
      * @return
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String useCoupon(Order order, List<Coupon> couponList){
+    public String useCoupon(Order order){
         Date date = new Date();
         if (order == null) {
             return ErrorCode.PARAM_IS_ERROR;
         }
+        List<Coupon> couponList = order.getCouponList();
         if (CollectionUtil.isEmpty(couponList)) {
-            return ErrorCode.COUPON_LIST_IS_EMPTY;
+            return ErrorCode.SUCCESS;
         }
         List<OrderProduct> orderProductList = order.getOrderProductList();
         //订单中设备总数量
@@ -98,7 +99,11 @@ public class CouponSupport {
                 }
             }
         });
-        List<CouponDO> couponDOList = ConverterUtil.convertList(couponList, CouponDO.class);
+        List<Integer> couponIdList = new ArrayList<>();
+        for (Coupon coupon:couponList) {
+            couponIdList.add(coupon.getCouponId());
+        }
+        List<CouponDO> couponDOList = couponMapper.findCouponDOList(couponIdList);
         //按照优惠卷集合中优惠券的优惠金额进行由大到小的排序
         Collections.sort(couponDOList, new Comparator(){
             @Override
@@ -119,6 +124,7 @@ public class CouponSupport {
         int couponCount = 0;
         outterLoop:for (int i = 0; i < orderProductList.size(); i++) {
             for (int j = 0; j < orderProductList.get(i).getProductCount(); j++) {
+                //更改被锁定的优惠券状态
                 couponDOList.get(couponCount).setOrderId(orderProductList.get(i).getOrderId());
                 couponDOList.get(couponCount).setOrderNo(order.getOrderNo());
                 couponDOList.get(couponCount).setOrderProductId(orderProductList.get(i).getOrderProductId());
@@ -129,25 +135,23 @@ public class CouponSupport {
                     deductionAmount=couponDOList.get(couponCount).getFaceValue();
                 }
                 couponDOList.get(couponCount).setDeductionAmount(deductionAmount);
-                couponDOList.get(couponCount).setCouponStatus(CouponStatus.COUPON_STATUS_USED);
+                couponDOList.get(couponCount).setCouponStatus(CouponStatus.COUPON_STATUS_LOCK);
                 couponDOList.get(couponCount).setUpdateTime(date);
-                couponDOList.get(couponCount).setUseTime(date);
                 couponDOList.get(couponCount).setUpdateUser(userSupport.getCurrentUserId().toString());
                 //记录增券状态
                 if (couponBatchDetailDOMap.containsKey(couponDOList.get(couponCount).getCouponBatchDetailId())) {
                     CouponBatchDetailDO couponBatchDetailDO=couponBatchDetailDOMap.get(couponDOList.get(couponCount).getCouponBatchDetailId());
-                    couponBatchDetailDO.setCouponUsedCount(couponBatchDetailDO.getCouponUsedCount()+1);
-                    couponBatchDetailDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalUsedAmount(),couponDOList.get(couponCount).getFaceValue()));
-                    couponBatchDetailDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalDeductionAmount(),couponDOList.get(couponCount).getDeductionAmount()));
+                    couponBatchDetailDO.setCouponLockCount(couponBatchDetailDO.getCouponLockCount()+1);
+//                    couponBatchDetailDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalUsedAmount(),couponDOList.get(couponCount).getFaceValue()));
+//                    couponBatchDetailDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalDeductionAmount(),couponDOList.get(couponCount).getDeductionAmount()));
                     couponBatchDetailDO.setUpdateTime(date);
                     couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     couponBatchDetailDOMap.put(couponDOList.get(couponCount).getCouponBatchDetailId(),couponBatchDetailDO);
                 }else{
-                    CouponBatchDetailDO couponBatchDetailDO = new CouponBatchDetailDO();
-                    couponBatchDetailDO.setId(couponDOList.get(couponCount).getCouponBatchDetailId());
-                    couponBatchDetailDO.setCouponUsedCount(1);
-                    couponBatchDetailDO.setTotalUsedAmount(couponDOList.get(couponCount).getFaceValue());
-                    couponBatchDetailDO.setTotalDeductionAmount(couponDOList.get(couponCount).getDeductionAmount());
+                    CouponBatchDetailDO couponBatchDetailDO = couponBatchDetailMapper.findById(couponDOList.get(couponCount).getCouponBatchDetailId());
+                    couponBatchDetailDO.setCouponLockCount(couponBatchDetailDO.getCouponLockCount()+1);
+//                    couponBatchDetailDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalUsedAmount(),couponDOList.get(couponCount).getFaceValue()));
+//                    couponBatchDetailDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalDeductionAmount(),couponDOList.get(couponCount).getDeductionAmount()));
                     couponBatchDetailDO.setUpdateTime(date);
                     couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     couponBatchDetailDOMap.put(couponDOList.get(couponCount).getCouponBatchDetailId(),couponBatchDetailDO);
@@ -155,18 +159,17 @@ public class CouponSupport {
                 //记录批次状态
                 if (couponBatchDOMap.containsKey(couponDOList.get(couponCount).getCouponBatchId())) {
                     CouponBatchDO couponBatchDO = couponBatchDOMap.get(couponDOList.get(couponCount).getCouponBatchId());
-                    couponBatchDO.setCouponBatchUsedCount(couponBatchDO.getCouponBatchUsedCount()+1);
-                    couponBatchDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDO.getTotalUsedAmount(),couponDOList.get(couponCount).getFaceValue()));
-                    couponBatchDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDO.getTotalDeductionAmount(),deductionAmount));
+                    couponBatchDO.setCouponBatchLockCount(couponBatchDO.getCouponBatchLockCount()+1);
+//                    couponBatchDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDO.getTotalUsedAmount(),couponDOList.get(couponCount).getFaceValue()));
+//                    couponBatchDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDO.getTotalDeductionAmount(),couponDOList.get(couponCount).getDeductionAmount()));
                     couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     couponBatchDO.setUpdateTime(date);
                     couponBatchDOMap.put(couponDOList.get(couponCount).getCouponBatchId(),couponBatchDO);
                 }else{
-                    CouponBatchDO couponBatchDO = new CouponBatchDO();
-                    couponBatchDO.setId(couponDOList.get(couponCount).getCouponBatchId());
-                    couponBatchDO.setCouponBatchUsedCount(1);
-                    couponBatchDO.setTotalUsedAmount(couponDOList.get(couponCount).getFaceValue());
-                    couponBatchDO.setTotalDeductionAmount(deductionAmount);
+                    CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponDOList.get(couponCount).getCouponBatchId());
+                    couponBatchDO.setCouponBatchLockCount(couponBatchDO.getCouponBatchLockCount()+1);
+//                    couponBatchDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDO.getTotalUsedAmount(),couponDOList.get(couponCount).getFaceValue()));
+//                    couponBatchDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDO.getTotalDeductionAmount(),couponDOList.get(couponCount).getDeductionAmount()));
                     couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
                     couponBatchDO.setUpdateTime(date);
                     couponBatchDOMap.put(couponDOList.get(couponCount).getCouponBatchId(),couponBatchDO);
@@ -177,7 +180,7 @@ public class CouponSupport {
                 }
             }
         }
-        couponMapper.updateUseList(couponDOList);
+        couponMapper.updateLockList(couponDOList);
         // 获取需要更改的优惠券批次详情对象的集合
         List<CouponBatchDetailDO> couponBatchDetailDOList = new ArrayList<>();
         Iterator it = couponBatchDetailDOMap.entrySet().iterator();
@@ -186,7 +189,7 @@ public class CouponSupport {
             CouponBatchDetailDO couponBatchDetailDO = (CouponBatchDetailDO) entry.getValue();
             couponBatchDetailDOList.add(couponBatchDetailDO);
         }
-        couponBatchDetailMapper.updateUseList(couponBatchDetailDOList);
+        couponBatchDetailMapper.updateLockList(couponBatchDetailDOList);
         List<CouponBatchDO> couponBatchDOList = new ArrayList<>();
         Iterator iq = couponBatchDOMap.entrySet().iterator();
         while (iq.hasNext()) {
@@ -194,7 +197,7 @@ public class CouponSupport {
             CouponBatchDO couponBatchDO = (CouponBatchDO) entry.getValue();
             couponBatchDOList.add(couponBatchDO);
         }
-        couponBatchMapper.updateUseList(couponBatchDOList);
+        couponBatchMapper.updateLockList(couponBatchDOList);
         return ErrorCode.SUCCESS;
     }
     /**
@@ -223,7 +226,6 @@ public class CouponSupport {
              return serviceResult;
         }
         //通过客户编号，订单id,订单商品项id，查出优惠券集合(在CouponDO中添加couponType，通过优惠券批次ID进行关联查询)
-        // TODO: 2018\4\17 0017 查询时要查询结算单ID为空的优惠券列表且状态为8，已使用的
         List<CouponDO> couponDOList = couponMapper.findUsedCouponDoList(customerDO.getCustomerNo(),statementOrderDetailDO.getOrderId(),statementOrderDetailDO.getOrderItemReferId());
         if (CollectionUtil.isEmpty(couponDOList)) {
             serviceResult.setErrorCode(ErrorCode.COUPON_NOT_USED_THIS_STATEMENT);//这个结算单未使用优惠券
@@ -231,6 +233,8 @@ public class CouponSupport {
         }
         //判断优惠券类型和结算单期数，将所有优惠券抵扣金额求和
         Map<Integer,BigDecimal> couponTypeAndDeductionAmountMap = new HashMap<>();
+        Map<Integer,CouponBatchDetailDO> couponBatchDetailDOMap = new HashMap<>();
+        Map<Integer,CouponBatchDO> couponBatchDOMap = new HashMap<>();
         for (CouponDO couponDO:couponDOList) {
             if (couponTypeAndDeductionAmountMap.containsKey(couponDO.getCouponType())) {
                 couponTypeAndDeductionAmountMap.put(couponDO.getCouponType(), BigDecimalUtil.add(couponTypeAndDeductionAmountMap.get(couponDO.getCouponType()), couponDO.getDeductionAmount()));
@@ -243,9 +247,69 @@ public class CouponSupport {
                 couponDO.setStatementOrderDetailId(statementOrderDetailDO.getOrderItemReferId());
                 couponDO.setUpdateTime(date);
                 couponDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                couponDO.setCouponStatus(CouponStatus.COUPON_STATUS_USED);
+                couponDO.setUseTime(date);
+                couponDO.setStatementOrderNo(statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId()).getStatementOrderNo());
                 couponMapper.update(couponDO);
             }
+            //记录增券状态
+            if (couponBatchDetailDOMap.containsKey(couponDO.getCouponBatchDetailId())) {
+                CouponBatchDetailDO couponBatchDetailDO=couponBatchDetailDOMap.get(couponDO.getCouponBatchDetailId());
+                couponBatchDetailDO.setCouponUsedCount(couponBatchDetailDO.getCouponUsedCount()+1);
+                couponBatchDetailDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalUsedAmount(),couponDO.getFaceValue()));
+                couponBatchDetailDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalDeductionAmount(),couponDO.getDeductionAmount()));
+                couponBatchDetailDO.setUpdateTime(date);
+                couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                couponBatchDetailDO.setCouponLockCount(couponBatchDetailDO.getCouponLockCount()-1);
+                couponBatchDetailDOMap.put(couponDO.getCouponBatchDetailId(),couponBatchDetailDO);
+            }else{
+                CouponBatchDetailDO couponBatchDetailDO = couponBatchDetailMapper.findById(couponDO.getCouponBatchDetailId());
+                couponBatchDetailDO.setCouponLockCount(couponBatchDetailDO.getCouponLockCount()-1);
+                couponBatchDetailDO.setCouponUsedCount(couponBatchDetailDO.getCouponUsedCount()+1);
+                couponBatchDetailDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalUsedAmount(),couponDO.getFaceValue()));
+                couponBatchDetailDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDetailDO.getTotalDeductionAmount(),couponDO.getDeductionAmount()));
+                couponBatchDetailDO.setUpdateTime(date);
+                couponBatchDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                couponBatchDetailDOMap.put(couponDO.getCouponBatchDetailId(),couponBatchDetailDO);
+            }
+            //记录批次状态
+            if (couponBatchDOMap.containsKey(couponDO.getCouponBatchId())) {
+                CouponBatchDO couponBatchDO = couponBatchDOMap.get(couponDO.getCouponBatchId());
+                couponBatchDO.setCouponBatchLockCount(couponBatchDO.getCouponBatchLockCount()-1);
+                couponBatchDO.setCouponBatchUsedCount(couponBatchDO.getCouponBatchUsedCount()+1);
+                couponBatchDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDO.getTotalUsedAmount(),couponDO.getFaceValue()));
+                couponBatchDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDO.getTotalDeductionAmount(),couponDO.getDeductionAmount()));
+                couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                couponBatchDO.setUpdateTime(date);
+                couponBatchDOMap.put(couponDO.getCouponBatchId(),couponBatchDO);
+            }else{
+                CouponBatchDO couponBatchDO = couponBatchMapper.findById(couponDO.getCouponBatchId());
+                couponBatchDO.setCouponBatchLockCount(couponBatchDO.getCouponBatchLockCount()-1);
+                couponBatchDO.setCouponBatchUsedCount(couponBatchDO.getCouponBatchUsedCount()+1);
+                couponBatchDO.setTotalUsedAmount(BigDecimalUtil.add(couponBatchDO.getTotalUsedAmount(),couponDO.getFaceValue()));
+                couponBatchDO.setTotalDeductionAmount(BigDecimalUtil.add(couponBatchDO.getTotalDeductionAmount(),couponDO.getDeductionAmount()));
+                couponBatchDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                couponBatchDO.setUpdateTime(date);
+                couponBatchDOMap.put(couponDO.getCouponBatchId(),couponBatchDO);
+            }
         }
+        // 获取需要更改的优惠券批次详情对象的集合
+        List<CouponBatchDetailDO> couponBatchDetailDOList = new ArrayList<>();
+        Iterator it = couponBatchDetailDOMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            CouponBatchDetailDO couponBatchDetailDO = (CouponBatchDetailDO) entry.getValue();
+            couponBatchDetailDOList.add(couponBatchDetailDO);
+        }
+        couponBatchDetailMapper.updateUseList(couponBatchDetailDOList);
+        List<CouponBatchDO> couponBatchDOList = new ArrayList<>();
+        Iterator iq = couponBatchDOMap.entrySet().iterator();
+        while (iq.hasNext()) {
+            Map.Entry entry = (Map.Entry) iq.next();
+            CouponBatchDO couponBatchDO = (CouponBatchDO) entry.getValue();
+            couponBatchDOList.add(couponBatchDO);
+        }
+        couponBatchMapper.updateUseList(couponBatchDOList);
         //设备类型计算抵扣金额
         //增加结算单类型判断，设备的跟map集合中key为1的进行匹配
         //商品使用商品结算单
@@ -267,5 +331,35 @@ public class CouponSupport {
         serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
         return serviceResult;
     }
-
+    /**
+     * 还原优惠券
+     * @param orderNo
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String revertCoupon(String orderNo) {
+        Date date = new Date();
+        if (StringUtil.isEmpty(orderNo)) {
+            return ErrorCode.ORDER_NO_NOT_NULL;
+        }
+        List<CouponDO> couponDOList = couponMapper.findByOrderNo(orderNo);
+        if (CollectionUtil.isEmpty(couponDOList)) {
+            return ErrorCode.SUCCESS;
+        }
+        for (CouponDO couponDO:couponDOList) {
+            couponDO.setDeductionAmount(BigDecimal.ZERO);
+            couponDO.setCouponStatus(CouponStatus.COUPON_STATUS_USABLE);
+            couponDO.setUpdateTime(date);
+            couponDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            couponDO.setOrderId(null);
+            couponDO.setOrderNo(null);
+            couponDO.setOrderProductId(null);
+            couponDO.setStatementOrderId(null);
+            couponDO.setStatementOrderNo(null);
+            couponDO.setStatementOrderDetailId(null);
+            couponDO.setUseTime(null);
+        }
+        couponMapper.updateRevertList(couponDOList);
+        return ErrorCode.SUCCESS;
+    }
 }

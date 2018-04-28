@@ -123,14 +123,6 @@ public interface BankSlipService {
     ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail);
 
     /**
-    * 导出指派银行流水明细
-    * @Author : XiaoLuYu
-    * @Date : Created in 2018/4/16 21:17
-    * @param : bankSlipDetailList
-    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-    */
-    ServiceResult<String, Page<BankSlipDetail>> exportPageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam);
-    /**
      * 查询历史认领数据
      * @Author : XiaoLuYu
      * @Date : Created in 2018/4/16 21:17

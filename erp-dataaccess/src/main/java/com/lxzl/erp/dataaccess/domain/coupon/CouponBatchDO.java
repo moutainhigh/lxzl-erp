@@ -20,6 +20,15 @@ public class CouponBatchDO  extends BaseDO {
 	private String remark;
 	private Integer dataStatus;
 	private Integer couponBatchCancelCount;//优惠券作废总数
+	private Integer couponBatchLockCount;//优惠券锁定总数
+
+	public Integer getCouponBatchLockCount() {
+		return couponBatchLockCount;
+	}
+
+	public void setCouponBatchLockCount(Integer couponBatchLockCount) {
+		this.couponBatchLockCount = couponBatchLockCount;
+	}
 
 	public Integer getCouponBatchCancelCount() {
 		return couponBatchCancelCount;

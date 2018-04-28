@@ -197,4 +197,9 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 
 	</select>
+
+	<select id="findByRealName" resultMap="CustomerPersonDO" parameterType="String">
+		SELECT <include refid="column_List"/> FROM erp_customer_person ecp
+		WHERE ecp.real_name = #{realName, jdbcType=VARCHAR} AND ecp.data_status = 1
+	</select>
 </mapper>

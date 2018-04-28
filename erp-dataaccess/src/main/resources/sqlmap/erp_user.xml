@@ -254,6 +254,9 @@
             <if test="maps.userQueryParam.realName != null &amp;&amp; maps.userQueryParam.realName != ''">
                 and u.real_name like '%${maps.userQueryParam.realName}%'
             </if>
+            <if test="maps.userQueryParam.userName != null &amp;&amp; maps.userQueryParam.userName != ''">
+                and u.user_name like '%${maps.userQueryParam.userName}%'
+            </if>
             <if test="maps.userQueryParam.isDisabled != null">
                 and u.is_disabled = #{maps.userQueryParam.isDisabled, jdbcType=INTEGER}
             </if>
