@@ -213,7 +213,7 @@
                     <tr>
                         <td class="text-center">{{rowNum}}</td>
                         <td class="text-center">
-                            <p>{{productName}}</p>
+                            <p>{{productName}}({{isNewProductValue}})</p>
                             <p>{{propertiesToStr}}</p>
                         </td>
 ##                        <td class="text-center"></td>
@@ -277,7 +277,7 @@
                     <tr>
                         <td class="text-center">{{rowNum}}</td>
                         <td class="text-center">
-                            <p>{{materialName}}</p>
+                            <p>{{materialName}}({{isNewMaterialValue}})</p>
                             <p>{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</p>
                         </td>
 ##                        <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>

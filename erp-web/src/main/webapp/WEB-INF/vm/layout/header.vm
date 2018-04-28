@@ -5,7 +5,8 @@
 <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fixedHeaderTable/css/defaultTheme.css">
 
 <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-<link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+##<link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+<link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/version2/daterangepicker.css">
 
 <link rel="shortcut icon" href="${staticCommon}/rental/img/lxzl-favicon.png">
 

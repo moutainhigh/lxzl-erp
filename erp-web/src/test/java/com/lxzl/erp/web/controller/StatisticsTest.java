@@ -120,7 +120,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
     @Test
     public void queryLongRentByTime() throws Exception {
         HomeRentByTimeParam homeRentByTimeParam = new HomeRentByTimeParam();
-        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_MONTH);
+        homeRentByTimeParam.setTimeDimensionType(TimeDimensionType.TIME_DIMENSION_TYPE_YEAR);
         TestResult testResult = getJsonTestResult("/statistics/queryLongRentByTime", homeRentByTimeParam);
     }
 
@@ -151,6 +151,20 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsSalesmanPageParam.setSubCompanyId(3);
         statisticsSalesmanPageParam.setSalesmanName("何");
         TestResult testResult = getJsonTestResult("/statistics/querySalesman", statisticsSalesmanPageParam);
+    }
+
+    @Test
+    public void queryRentInfo() throws Exception {
+        StatisticsRentInfoPageParam statisticsRentInfoPageParam = new StatisticsRentInfoPageParam();
+        statisticsRentInfoPageParam.setPageNo(1);
+        statisticsRentInfoPageParam.setPageSize(10);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = sdf.parse("2018-03-01");
+        Date end = sdf.parse("2018-04-01");
+        statisticsRentInfoPageParam.setRentLengthType(2);
+        statisticsRentInfoPageParam.setStartTime(start);
+        statisticsRentInfoPageParam.setEndTime(end);
+        TestResult testResult = getJsonTestResult("/statistics/queryRentInfo", statisticsRentInfoPageParam);
     }
 
     private Date getFistByMonth() {

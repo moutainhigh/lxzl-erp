@@ -927,7 +927,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             }
 
             //删除认领信息
-            if(BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
+            if(BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && CommonConstant.COMMON_CONSTANT_YES.equals(bankSlipDetailDO.getIsLocalization())){
                 List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
                 if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
                     //判断是否有充值成功记录,不允许
@@ -938,6 +938,11 @@ public class BankSlipServiceImpl implements BankSlipService {
                     }
                     bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(),now,bankSlipClaimDOList);
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+                    bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() -1 );
+                    bankSlipDO.setNeedClaimCount(bankSlipDO.getNeedClaimCount() +1 );
+                    if(bankSlipDO.getNeedClaimCount() ==  0 && bankSlipDO.getClaimCount() ==  0){
+                        bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                    }
                 }
             }
 
@@ -1019,16 +1024,10 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (headquartersBankSlipDO.getLocalizationCount() == 0 && headquartersBankSlipDO.getNeedClaimCount() == 0) {
             headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
         }
-        headquartersBankSlipDO.setUpdateTime(now);
-        headquartersBankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        //跟改流水项是否属地化状态和分公司id,跟新时间和操作人
-        bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
-        bankSlipDetailDO.setSubCompanyId(CommonConstant.HEADER_COMPANY_ID);
-        bankSlipDetailDO.setUpdateTime(now);
-        bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+
 
         //删除认领信息
-        if(BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
+        if(BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus()) && CommonConstant.COMMON_CONSTANT_YES.equals(bankSlipDetailDO.getIsLocalization()) ){
             List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
             if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
                 //判断是否有充值成功记录,不允许
@@ -1039,8 +1038,23 @@ public class BankSlipServiceImpl implements BankSlipService {
                 }
                 bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(),now,bankSlipClaimDOList);
                 bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
+                headquartersBankSlipDO.setClaimCount(headquartersBankSlipDO.getClaimCount() -1 );
+                headquartersBankSlipDO.setNeedClaimCount(headquartersBankSlipDO.getNeedClaimCount() +1 );
+                if(headquartersBankSlipDO.getNeedClaimCount() ==  0 && headquartersBankSlipDO.getClaimCount() ==  0){
+                    headquartersBankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+                }
+
             }
         }
+
+        headquartersBankSlipDO.setUpdateTime(now);
+        headquartersBankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        //跟改流水项是否属地化状态和分公司id,跟新时间和操作人
+
+        bankSlipDetailDO.setSubCompanyId(CommonConstant.HEADER_COMPANY_ID);
+        bankSlipDetailDO.setUpdateTime(now);
+        bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
 
         bankSlipDetailMapper.update(bankSlipDetailDO);
         bankSlipMapper.update(headquartersBankSlipDO);
