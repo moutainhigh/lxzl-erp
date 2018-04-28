@@ -2685,7 +2685,6 @@ DROP TABLE if exists `erp_joint_product`;
 CREATE TABLE `erp_joint_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `joint_product_name` varchar(64) NOT NULL COMMENT '组合商品名称',
-  `is_new` int(11) NOT NULL COMMENT '状态：0旧；1新',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
