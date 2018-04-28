@@ -336,8 +336,6 @@
 			AND
 			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null">
 				ekro.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyIdForDelivery}
-			</if>
-			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null">
 				OR
 			</if>
 			<if test="maps.permissionParam.permissionUserIdList!= null">
