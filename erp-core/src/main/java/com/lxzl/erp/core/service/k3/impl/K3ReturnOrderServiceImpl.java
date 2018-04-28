@@ -321,13 +321,15 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
                 logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
                 dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-                result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+                //将K3返回的具体错误信息返回，不返回自己定义的K3退货失败
+                result.setErrorCode(response.getResult());
                 return result;
             } else if (response.getStatus() != 0) {
                 k3SendRecordDO.setReceiveResult(CommonConstant.COMMON_CONSTANT_NO);
                 logger.info("【PUSH DATA TO K3 RESPONSE FAIL】 ： " + JSON.toJSONString(response));
                 dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-                result.setErrorCode(ErrorCode.K3_RETURN_ORDER_FAIL);
+                //将K3返回的具体错误信息返回，不返回自己定义的K3退货失败
+                result.setErrorCode(response.getResult());
                 return result;
             } else {
 
@@ -356,7 +358,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
         } catch (Exception e) {
             dingDingSupport.dingDingSendMessage(getErrorMessage(response, k3SendRecordDO));
-            result.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            //将K3返回的具体错误信息返回，不返回自己定义的K3退货失败
+            result.setErrorCode(response.getResult());
             return result;
         }
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING);
