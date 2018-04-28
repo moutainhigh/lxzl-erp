@@ -30,7 +30,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath*:payment/test-payment.properties</value>
-				<value>classpath*:dingding/dev-dingding.properties</value>
+				<value>classpath*:dingding/test-dingding.properties</value>
 			</list>
 		</property>
 	</bean>

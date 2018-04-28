@@ -11,10 +11,7 @@ import com.lxzl.erp.common.domain.customer.pojo.CustomerConsignInfo;
 import com.lxzl.erp.common.domain.dingding.DingdingBaseDTO;
 import com.lxzl.erp.common.domain.dingding.DingdingResultDTO;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
-import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveBO;
-import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
-import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveDTO;
-import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveResultDTO;
+import com.lxzl.erp.common.domain.dingding.approve.*;
 import com.lxzl.erp.common.domain.dingding.approve.formvalue.DingdingFormComponentValueDTO;
 import com.lxzl.erp.common.domain.dingding.approve.formvalue.DingdingOrderValueDTO;
 import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
@@ -24,17 +21,15 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.GenerateNoUtil;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
 import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.core.service.user.UserService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowTemplateMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
@@ -54,8 +49,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -66,8 +65,6 @@ import java.util.*;
 @Service("dingdingService")
 public class DingdingServiceImpl implements DingdingService {
     private static final Logger logger = LoggerFactory.getLogger(DingdingServiceImpl.class);
-    @Autowired
-    private UserService userService;
     @Autowired
     private UserSupport userSupport;
     @Autowired
@@ -84,6 +81,8 @@ public class DingdingServiceImpl implements DingdingService {
     private K3ReturnOrderService k3ReturnOrderService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private WorkflowService workflowService;
 
     @Override
     public String sendUserGroupMessage(String userGroupUrl, DingdingSendTextMessageRequest request) {
@@ -173,10 +172,35 @@ public class DingdingServiceImpl implements DingdingService {
      */  
     @Override
     public ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
-        logger.info("工作流回调接口数据是：" + JSONObject.toJSONString(dingdingApproveCallBackDTO));
         ServiceResult<String, Object> serviceResult = new ServiceResult<>();
-        
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        DingdingApproveCallBackBO dingdingApproveCallBackBO = new DingdingApproveCallBackBO(dingdingApproveCallBackDTO);
+        try{
+            logger.info("工作流回调接口数据是：" + JSONObject.toJSONString(dingdingApproveCallBackDTO));
+            // 审批流单号
+            String workFlowNo = dingdingApproveCallBackDTO.getInstanceMarking();
+            // 审批状态
+            Integer verifyStatus = dingdingApproveCallBackBO.getVerifyStatus();
+            // 返回类型---只有当驳回的时候才有用
+            Integer returnType = dingdingApproveCallBackBO.getReturnType();
+            // 审批备注
+            String verifyOpinion = dingdingApproveCallBackBO.getVerifyOpinion();
+            // 当前审核的用户
+            Integer currentVerifyUser = dingdingApproveCallBackDTO.getCurrentVerifyUser();
+            if (dingdingApproveCallBackBO.isDOVerifyWorkFlow()) {
+                // 审核工作流---当需要执行审核工作流才执行---校验交给erp系统来处理
+                ServiceResult<String, Integer> result = workflowService.verifyWorkFlowFromCore(workFlowNo, verifyStatus, returnType, verifyOpinion, currentVerifyUser, null, null);
+                if (StringUtils.equals(ErrorCode.SUCCESS, result.getErrorCode())) {
+                    throw new BusinessException(ErrorCode.getMessage(result.getErrorCode()) +" : " + JSONObject.toJSONString(dingdingApproveCallBackDTO));
+                }
+            } else {
+                // 日志记录
+                logger.info("当前状态不需要执行审核工作流接口" + JSONObject.toJSONString(dingdingApproveCallBackDTO));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+        }
         return serviceResult;
     }
 
@@ -225,8 +249,24 @@ public class DingdingServiceImpl implements DingdingService {
             // 申请
             applyApprovingWorkflowToDingding(dingdingApproveBO.getDingdingApproveDTO());
         } catch (Exception e) {
-            e.printStackTrace();
             serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            e.printStackTrace();
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, Object> delApprovingWorkflow(String workflowLinkNo) {
+        ServiceResult<String, Object> serviceResult = new ServiceResult<>();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        try {
+            Assert.notNull(workflowLinkNo);
+            DingdingApproveDTO dingdingApproveDTO = new DingdingApproveDTO();
+            dingdingApproveDTO.setInstanceMarking(workflowLinkNo);
+            dingdingApproveDTO.setRequestDingdingUrl(DingDingConfig.getDelApprovingWorkflowUrl());
+            postDingdingGatway(dingdingApproveDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return serviceResult;
     }
@@ -274,7 +314,7 @@ public class DingdingServiceImpl implements DingdingService {
         // 构建工作流单号
         dingdingApproveBO.buildInstanceMarking(workflowLinkDO.getWorkflowLinkNo());
         // TODO 测试随机生成单号
-        dingdingApproveBO.buildInstanceMarking(GenerateNoUtil.generateMaterialNo(new Date()));
+//        dingdingApproveBO.buildInstanceMarking(GenerateNoUtil.generateMaterialNo(new Date()));
         // 构建模板单号
         dingdingApproveBO.buildProcessCode(String.valueOf(workflowLinkDO.getWorkflowTemplateId()));
         // 构建表单组件对象

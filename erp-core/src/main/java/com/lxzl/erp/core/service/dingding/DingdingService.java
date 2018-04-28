@@ -58,7 +58,7 @@ public interface DingdingService extends BaseService {
 
     /**
      * <p>
-     * 钉钉审批结果回调接口
+     * 向钉钉提交审批流实例
      * </p>
      * <pre>
      *     所需参数示例及其说明
@@ -71,5 +71,8 @@ public interface DingdingService extends BaseService {
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
     ServiceResult<String, Object> applyApprovingWorkflowToDingding(String workflowLinkNo);
+
+    /** 注销钉钉网关的审批工作流实例 */
+    ServiceResult<String, Object> delApprovingWorkflow(String workflowLinkNo);
 
 }
