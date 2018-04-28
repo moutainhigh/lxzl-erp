@@ -1,11 +1,14 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,6 +19,7 @@ import java.util.List;
 public class Order extends BasePO {
 
     private Integer orderId;                    // 订单号
+    @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {IdGroup.class})
     private String orderNo;                     // 订单编号
     private Integer deliveryMode;               // 发货方式，1快递，2自提，3凌雄配送
     private Integer buyerCustomerId;            // 客户ID
