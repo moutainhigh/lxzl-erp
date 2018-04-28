@@ -57,6 +57,7 @@ public class JointProductServiceImpl implements JointProductService {
         JointProductDO jointProductDO = new JointProductDO();
         jointProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         jointProductDO.setJointProductName(jointProduct.getJointProductName());
+        jointProductDO.setIsNew(jointProduct.getIsNew());
         jointProductDO.setRemark(jointProduct.getRemark());
         jointProductDO.setCreateTime(now);
         jointProductDO.setCreateUser(userSupport.getCurrentUserId().toString());
@@ -269,6 +270,7 @@ public class JointProductServiceImpl implements JointProductService {
 
 
         jointProductDO.setJointProductName(jointProduct.getJointProductName());
+        jointProductDO.setIsNew(jointProduct.getIsNew());
         jointProductDO.setRemark(jointProduct.getRemark());
         jointProductDO.setUpdateTime(now);
         jointProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
