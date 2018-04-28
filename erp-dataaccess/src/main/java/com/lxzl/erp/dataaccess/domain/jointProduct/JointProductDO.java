@@ -12,11 +12,20 @@ public class JointProductDO  extends BaseDO {
 	private String jointProductName;
 	private Integer dataStatus;
 	private String remark;
+	private Integer isNew;   //状态：1新；2旧
 	@Transient
 	private List<JointMaterialDO> jointMaterialDOList;   //组合商品物料项表
 	@Transient
 	private List<JointProductSkuDO> jointProductSkuDOList;   //组合商品sku项表
 
+
+	public Integer getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(Integer isNew) {
+		this.isNew = isNew;
+	}
 
 	public Integer getId(){
 		return id;
