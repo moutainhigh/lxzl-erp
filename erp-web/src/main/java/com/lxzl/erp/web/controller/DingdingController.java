@@ -62,7 +62,7 @@ public class DingdingController extends BaseController {
 
 
     /**
-     * 测试接口-----根据手机号获取钉钉用户编号
+     * 测试接口-----向钉钉网关注册用户
      */
     @RequestMapping(value = "registerUserToDingding")
     public Result registerUserToDingding(@RequestParam Integer userId) {
