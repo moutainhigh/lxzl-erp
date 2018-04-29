@@ -1008,11 +1008,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      */
     private List<K3ReturnOrderDO> saveK3ReturnOrders(List<K3HistoricalReturnOrder> billDatas) {
         List<K3ReturnOrderDO> k3ReturnOrderDOList = new ArrayList<>();
-        List<K3ReturnOrder> k3ReturnOrders = new ArrayList<>();
-
-        if (k3ReturnOrders == null || k3ReturnOrders.size() == 0) {
-            return null;
-        }
         User loginUser = userSupport.getCurrentUser();
         String userId = null;
         if (loginUser != null) {
