@@ -833,7 +833,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             return serviceResult;
         }
         // 保存退货订单数据
-        List<K3ReturnOrderDO> k3ReturnOrderDOS = saveK3ReturnOrders(needSaveBillDatas);
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = saveK3ReturnOrders(needSaveBillDatas);
         // 根据保存后的k3退货单列表信息设置其对应k3退货详情列表的returnOrderId的值
 //        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
 //            for (K3HistoricalReturnOrder k3HistoricalReturnOrder : needSaveBillDatas) {
@@ -844,9 +844,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 //            }
 //        }
         // 保存退货订单详情数据
-        saveK3ReturnOrderDetails(needSaveBillDatas);
+//        saveK3ReturnOrderDetails(needSaveBillDatas);
         // 保存k3回调接口的处理退货单数据
-        Integer notSuccessCount = doCallbackReturnOrder(needSaveBillDatas);
+        Integer notSuccessCount = doCallbackReturnOrder(k3ReturnOrderDOList);
         Integer successCount = needSaveBillDatas.size() - notSuccessCount;
         serviceResult.setErrorCode(ErrorCode.K3_HISTORICAL_RETURN_CODE, successCount, notSuccessCount);
         return serviceResult;
@@ -855,22 +855,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     /**
      * 执行保存k3回调接口的处理退货单数据
      */
-    private int doCallbackReturnOrder(List<K3HistoricalReturnOrder> needSaveBillDatas) {
+    private int doCallbackReturnOrder(List<K3ReturnOrderDO> k3ReturnOrderDOList) {
         int notSuccessCount = 0;
-        for (K3HistoricalReturnOrder k3HistoricalReturnOrder : needSaveBillDatas) {
-            K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
-            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
-            if(k3ReturnOrderDO==null){
-                notSuccessCount++;
-                continue;
-            }
-            if(!ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(k3ReturnOrderDO.getReturnOrderStatus())&&
-                    !ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())){
+
+        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList){
+            if(!ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())){
                 notSuccessCount++;
                 continue;
             }
             ServiceResult<String, String> callBackResult = null;
             try{
+                K3ReturnOrder k3ReturnOrder = ConverterUtil.convert(k3ReturnOrderDO,K3ReturnOrder.class);
                 callBackResult = k3CallbackService.callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
                 if (!ErrorCode.SUCCESS.equals(callBackResult.getErrorCode())) {
                     logger.info("调用回调接口失败：" + ErrorCode.getMessage(callBackResult.getErrorCode()));
@@ -879,8 +874,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }catch (Exception e){
                 notSuccessCount++;
             }
-
-
         }
         return notSuccessCount;
     }
@@ -1014,15 +1007,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      * 保存退货单列表信息
      */
     private List<K3ReturnOrderDO> saveK3ReturnOrders(List<K3HistoricalReturnOrder> billDatas) {
+        List<K3ReturnOrderDO> k3ReturnOrderDOList = new ArrayList<>();
         List<K3ReturnOrder> k3ReturnOrders = new ArrayList<>();
-        Map<String,K3HistoricalReturnOrder> map = new HashMap<>();
-        for (K3HistoricalReturnOrder historicalReturnOrder : billDatas) {
-            if (historicalReturnOrder.getK3ReturnOrder() == null) {
-                break;
-            }
-            k3ReturnOrders.add(historicalReturnOrder.getK3ReturnOrder());
-            map.put(historicalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),historicalReturnOrder);
-        }
+
         if (k3ReturnOrders == null || k3ReturnOrders.size() == 0) {
             return null;
         }
@@ -1031,9 +1018,16 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (loginUser != null) {
             userId = String.valueOf(loginUser.getUserId());
         }
+        Map<String,OrderDO> orderCache = new HashMap<>();
+        Set<String> notErpOrderNo = new HashSet<>();
 
-        List<K3ReturnOrderDO> k3ReturnOrderDOS = ConverterUtil.convertList(k3ReturnOrders, K3ReturnOrderDO.class);
-        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
+        //待保存退货单项列表 key 为退货单号
+        Map<String,List<K3ReturnOrderDetailDO>> k3ReturnOrderDetailDOMap = new HashMap<>();
+        for(K3HistoricalReturnOrder k3HistoricalReturnOrder : billDatas){
+
+            K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
+            K3ReturnOrderDO k3ReturnOrderDO = ConverterUtil.convert(k3ReturnOrder,K3ReturnOrderDO.class);
+            List<K3ReturnOrderDetail> k3ReturnOrderDetailList = k3HistoricalReturnOrder.getK3ReturnOrderDetails();
 
             K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
             if(k3MappingCustomerDO!=null){
@@ -1041,6 +1035,38 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }else{
                 continue;
             }
+            //如果全部不是我们erp系统订单，则不处理该退货单
+            boolean allNotErpOrder = true;
+            for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
+                if(orderCache.containsKey(k3ReturnOrderDetail.getOrderNo())){
+                    allNotErpOrder = false;
+                    if(k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())==null){
+                        k3ReturnOrderDetailDOMap.put(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),new ArrayList<K3ReturnOrderDetailDO>());
+                    }
+                    k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo()).add(ConverterUtil.convert(k3ReturnOrderDetail,K3ReturnOrderDetailDO.class));
+                    break;
+                }else if(notErpOrderNo.contains(k3ReturnOrderDetail.getOrderNo())){
+                    continue;
+                }else{
+                    OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                    if(orderDO==null){
+                        notErpOrderNo.add(k3ReturnOrderDetail.getOrderNo());
+                        continue;
+                    }else{
+                        orderCache.put(orderDO.getOrderNo(),orderDO);
+                        allNotErpOrder = false;
+                        if(k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())==null){
+                            k3ReturnOrderDetailDOMap.put(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),new ArrayList<K3ReturnOrderDetailDO>());
+                        }
+                        k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo()).add(ConverterUtil.convert(k3ReturnOrderDetail,K3ReturnOrderDetailDO.class));
+                        break;
+                    }
+                }
+            }
+            if(allNotErpOrder){
+                continue;
+            }
+
             k3ReturnOrderDO.setCreateUser(userId);
             k3ReturnOrderDO.setUpdateUser(userId);
             k3ReturnOrderDO.setCreateTime(new Date());
@@ -1048,11 +1074,27 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
             k3ReturnOrderMapper.save(k3ReturnOrderDO);
-            K3HistoricalReturnOrder k3HistoricalReturnOrder = map.get(k3ReturnOrderDO.getReturnOrderNo());
-            k3HistoricalReturnOrder.setReturnOrderIdToDetails(k3ReturnOrderDO.getId(),k3ReturnOrderDO.getReturnOrderNo());
-        }
 
-        return k3ReturnOrderDOS;
+            List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailDOMap.get(k3ReturnOrder.getReturnOrderNo());
+            k3ReturnOrderDO.setK3ReturnOrderDetailDOList(k3ReturnOrderDetailDOList);
+            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
+                if(ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())){
+                    k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                }else{
+                    k3ReturnOrderDetailDO.setRealProductCount(CommonConstant.COMMON_ZERO);
+                }
+                k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+                k3ReturnOrderDetailDO.setReturnOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                k3ReturnOrderDetailDO.setCreateUser(userId);
+                k3ReturnOrderDetailDO.setUpdateUser(userId);
+                k3ReturnOrderDetailDO.setCreateTime(new Date());
+                k3ReturnOrderDetailDO.setUpdateTime(new Date());
+                k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
+            }
+            k3ReturnOrderDOList.add(k3ReturnOrderDO);
+        }
+        return k3ReturnOrderDOList;
     }
 
 
