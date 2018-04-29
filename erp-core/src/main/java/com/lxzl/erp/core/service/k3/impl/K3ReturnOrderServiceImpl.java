@@ -1059,12 +1059,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                     Map<Integer,OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(),"FEntryID");
                     Integer orderItemId = null;
                     if(productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())){
-                        OrderMaterialDO orderMaterialDO  = orderMaterialDOMap.get(k3ReturnOrderDetail.getOrderEntry());
+                        OrderMaterialDO orderMaterialDO  = orderMaterialDOMap.get(Integer.parseInt(k3ReturnOrderDetail.getOrderEntry()));
                         if(orderMaterialDO!=null){
                             orderItemId = orderMaterialDO.getId();
                         }
                     }else{
-                        OrderProductDO orderProductDO  = orderProductDOMap.get(k3ReturnOrderDetail.getOrderEntry());
+                        OrderProductDO orderProductDO  = orderProductDOMap.get(Integer.parseInt(k3ReturnOrderDetail.getOrderEntry()));
                         if(orderProductDO!=null){
                             orderItemId = orderProductDO.getId();
                         }
