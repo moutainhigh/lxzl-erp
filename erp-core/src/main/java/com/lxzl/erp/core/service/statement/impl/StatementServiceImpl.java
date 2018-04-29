@@ -1678,6 +1678,11 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
+        //将退货单状态设置为已结算
+        k3ReturnOrderDO.setSuccessStatus(CommonConstant.YES);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
         //计算违约金
 //        ServiceResult<String, BigDecimal> penaltyResult= penaltySupport.k3OrderPenalty(k3ReturnOrderDO.getReturnOrderNo());
 //        if(!ErrorCode.SUCCESS.equals(penaltyResult.getErrorCode())){

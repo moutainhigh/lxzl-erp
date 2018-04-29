@@ -13,7 +13,6 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderConsignInfo;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.product.pojo.Product;
@@ -798,11 +797,6 @@ public class K3ServiceImpl implements K3Service {
     private DingDingSupport dingDingSupport;
 
     @Autowired
-    private CustomerRiskManagementMapper customerRiskManagementMapper;
-
-    @Autowired
     private SubCompanyMapper subCompanyMapper;
-    @Autowired
-    private K3ReturnOrderDetailMapper k3ReturnOrderDetailMapper;
 
 }

@@ -830,14 +830,14 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         // 保存退货订单数据
         List<K3ReturnOrderDO> k3ReturnOrderDOS = saveK3ReturnOrders(needSaveBillDatas);
         // 根据保存后的k3退货单列表信息设置其对应k3退货详情列表的returnOrderId的值
-        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
-            for (K3HistoricalReturnOrder k3HistoricalReturnOrder : needSaveBillDatas) {
-                if (k3ReturnOrderDO.getReturnOrderNo().equals(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())) {
-                    k3HistoricalReturnOrder.setReturnOrderIdToDetails(k3ReturnOrderDO.getId());
-                    break;
-                }
-            }
-        }
+//        for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
+//            for (K3HistoricalReturnOrder k3HistoricalReturnOrder : needSaveBillDatas) {
+//                if (k3ReturnOrderDO.getReturnOrderNo().equals(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())) {
+//                    k3HistoricalReturnOrder.setReturnOrderIdToDetails(k3ReturnOrderDO.getId());
+//                    break;
+//                }
+//            }
+//        }
         // 保存退货订单详情数据
         saveK3ReturnOrderDetails(needSaveBillDatas);
         // 保存k3回调接口的处理退货单数据
@@ -854,15 +854,28 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         int notSuccessCount = 0;
         for (K3HistoricalReturnOrder k3HistoricalReturnOrder : needSaveBillDatas) {
             K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
-            ServiceResult<String, String> callBackResult = k3CallbackService.callbackReturnOrder(k3ReturnOrder);
-            if (!StringUtils.equals(ErrorCode.SUCCESS, callBackResult.getErrorCode())) {
-                logger.info("调用回调接口失败：" + ErrorCode.getMessage(callBackResult.getErrorCode()));
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
+            if(k3ReturnOrderDO==null){
                 notSuccessCount++;
-                // 不成功改变状态
-                K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrder.getReturnOrderNo());
-                k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
-                k3ReturnOrderMapper.update(k3ReturnOrderDO);
+                continue;
             }
+            if(!ReturnOrderStatus.RETURN_ORDER_STATUS_PROCESSING.equals(k3ReturnOrderDO.getReturnOrderStatus())&&
+                    !ReturnOrderStatus.RETURN_ORDER_STATUS_END.equals(k3ReturnOrderDO.getReturnOrderStatus())){
+                notSuccessCount++;
+                continue;
+            }
+            ServiceResult<String, String> callBackResult = null;
+            try{
+                callBackResult = k3CallbackService.callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+                if (!ErrorCode.SUCCESS.equals(callBackResult.getErrorCode())) {
+                    logger.info("调用回调接口失败：" + ErrorCode.getMessage(callBackResult.getErrorCode()));
+                    notSuccessCount++;
+                }
+            }catch (Exception e){
+                notSuccessCount++;
+            }
+
+
         }
         return notSuccessCount;
     }
@@ -997,11 +1010,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      */
     private List<K3ReturnOrderDO> saveK3ReturnOrders(List<K3HistoricalReturnOrder> billDatas) {
         List<K3ReturnOrder> k3ReturnOrders = new ArrayList<>();
+        Map<String,K3HistoricalReturnOrder> map = new HashMap<>();
         for (K3HistoricalReturnOrder historicalReturnOrder : billDatas) {
             if (historicalReturnOrder.getK3ReturnOrder() == null) {
                 break;
             }
             k3ReturnOrders.add(historicalReturnOrder.getK3ReturnOrder());
+            map.put(historicalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),historicalReturnOrder);
         }
         if (k3ReturnOrders == null || k3ReturnOrders.size() == 0) {
             return null;
@@ -1019,8 +1034,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDO.setCreateTime(new Date());
             k3ReturnOrderDO.setUpdateTime(new Date());
             k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_YES);
+            k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
             k3ReturnOrderMapper.save(k3ReturnOrderDO);
+            K3HistoricalReturnOrder k3HistoricalReturnOrder = map.get(k3ReturnOrderDO.getReturnOrderNo());
+            k3HistoricalReturnOrder.setReturnOrderIdToDetails(k3ReturnOrderDO.getId(),k3ReturnOrderDO.getReturnOrderNo());
         }
 
         return k3ReturnOrderDOS;

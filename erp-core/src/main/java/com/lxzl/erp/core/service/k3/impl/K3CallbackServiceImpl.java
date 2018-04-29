@@ -192,6 +192,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
+
+        return callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+    }
+    @Override
+    public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder,K3ReturnOrderDO k3ReturnOrderDO){
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         String userId = null;
         if(StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())){
             UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
@@ -207,16 +213,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
             CustomerDO customerDO = null;
             if(k3MappingCustomerDO == null){
-                 customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
             }else{
                 customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
             }
-
-            customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+            if(customerDO!=null){
+                customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+            }
         }
 
         Date now = new Date();
-        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
+        Integer returnOrderStatus =  k3ReturnOrder.getReturnOrderStatus()==null?ReturnOrderStatus.RETURN_ORDER_STATUS_END:k3ReturnOrder.getReturnOrderStatus();
+        k3ReturnOrderDO.setReturnOrderStatus(returnOrderStatus);
         k3ReturnOrderDO.setUpdateTime(now);
         k3ReturnOrderDO.setUpdateUser(userId);
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
