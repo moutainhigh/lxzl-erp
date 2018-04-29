@@ -37,6 +37,8 @@ import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
@@ -44,6 +46,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
@@ -1029,6 +1034,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
         List<K3ReturnOrderDO> k3ReturnOrderDOS = ConverterUtil.convertList(k3ReturnOrders, K3ReturnOrderDO.class);
         for (K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOS) {
+
+            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+            if(k3MappingCustomerDO!=null){
+                k3ReturnOrderDO.setK3CustomerNo(k3MappingCustomerDO.getErpCustomerCode());
+            }else{
+                continue;
+            }
             k3ReturnOrderDO.setCreateUser(userId);
             k3ReturnOrderDO.setUpdateUser(userId);
             k3ReturnOrderDO.setCreateTime(new Date());
@@ -1066,6 +1078,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOs = ConverterUtil.convertList(k3ReturnOrderDetails, K3ReturnOrderDetailDO.class);
         for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOs) {
+            if(k3ReturnOrderDetailDO.getReturnOrderId()==null){
+                continue;
+            }
             if (k3ReturnOrderDetailDO.getOrderItemId() == null) {
                 k3ReturnOrderDetailDO.setOrderItemId(StringUtils.EMPTY);
             }
@@ -1141,5 +1156,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private ProductSupport productSupport;
     @Autowired
     private K3CallbackService k3CallbackService;
+    @Autowired
+    private K3MappingCustomerMapper k3MappingCustomerMapper;
 
 }
