@@ -20,6 +20,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOutStock;
@@ -1033,30 +1034,53 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             //如果全部不是我们erp系统订单，则不处理该退货单
             boolean allNotErpOrder = true;
             for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
-                if(orderCache.containsKey(k3ReturnOrderDetail.getOrderNo())){
-                    allNotErpOrder = false;
-                    if(k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())==null){
-                        k3ReturnOrderDetailDOMap.put(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),new ArrayList<K3ReturnOrderDetailDO>());
-                    }
-                    k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo()).add(ConverterUtil.convert(k3ReturnOrderDetail,K3ReturnOrderDetailDO.class));
-                    break;
-                }else if(notErpOrderNo.contains(k3ReturnOrderDetail.getOrderNo())){
+                if(notErpOrderNo.contains(k3ReturnOrderDetail.getOrderNo())){
                     continue;
-                }else{
+                }else if(!orderCache.containsKey(k3ReturnOrderDetail.getOrderNo())){
                     OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
                     if(orderDO==null){
                         notErpOrderNo.add(k3ReturnOrderDetail.getOrderNo());
                         continue;
-                    }else{
-                        orderCache.put(orderDO.getOrderNo(),orderDO);
-                        allNotErpOrder = false;
-                        if(k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())==null){
-                            k3ReturnOrderDetailDOMap.put(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),new ArrayList<K3ReturnOrderDetailDO>());
+                    }
+                    orderCache.put(orderDO.getOrderNo(),orderDO);
+                }
+
+                allNotErpOrder = false;
+                if(k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())==null){
+                    k3ReturnOrderDetailDOMap.put(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),new ArrayList<K3ReturnOrderDetailDO>());
+                }
+                OrderDO orderDO = orderCache.get(k3ReturnOrderDetail.getOrderNo());
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
+                    //如果是K3老订单则取行号
+                    if(k3ReturnOrderDetail.getOrderEntry()==null){
+                        continue;
+                    }
+                    Map<Integer,OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(),"FEntryID");
+                    Map<Integer,OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderDO.getOrderProductDOList(),"FEntryID");
+                    Integer orderItemId = null;
+                    if(productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())){
+                        OrderMaterialDO orderMaterialDO  = orderMaterialDOMap.get(k3ReturnOrderDetail.getOrderEntry());
+                        if(orderMaterialDO!=null){
+                            orderItemId = orderMaterialDO.getId();
                         }
-                        k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo()).add(ConverterUtil.convert(k3ReturnOrderDetail,K3ReturnOrderDetailDO.class));
-                        break;
+                    }else{
+                        OrderProductDO orderProductDO  = orderProductDOMap.get(k3ReturnOrderDetail.getOrderEntry());
+                        if(orderProductDO!=null){
+                            orderItemId = orderProductDO.getId();
+                        }
+                    }
+                    if(orderItemId==null){
+                        continue;
+                    }else{
+                        k3ReturnOrderDetail.setOrderItemId(orderItemId.toString());
+                    }
+                }else{
+                    //如果是erp系统订单
+                    if(k3ReturnOrderDetail.getOrderItemId()==null){
+                        continue;
                     }
                 }
+                k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo()).add(ConverterUtil.convert(k3ReturnOrderDetail,K3ReturnOrderDetailDO.class));
             }
             if(allNotErpOrder){
                 continue;
@@ -1078,6 +1102,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }else{
                     k3ReturnOrderDetailDO.setRealProductCount(CommonConstant.COMMON_ZERO);
                 }
+
                 k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setReturnOrderNo(k3ReturnOrderDO.getReturnOrderNo());
                 k3ReturnOrderDetailDO.setCreateUser(userId);
