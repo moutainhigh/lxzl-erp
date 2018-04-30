@@ -1132,7 +1132,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 K3ReturnOrderDO k3ReturnOrderDO = map4.get(key);
                 customerNoSet.add(k3ReturnOrderDO.getK3CustomerNo());
             }
-            info.append(map4.size()+"条数据客户编号错误：(退货单号)"+JSON.toJSONString(map3.keySet())+"(客户编号)"+JSON.toJSONString(customerNoSet)+"\n");
+            info.append(map4.size()+"条数据客户编号错误：(退货单号)"+JSON.toJSONString(map4.keySet())+"(客户编号)"+JSON.toJSONString(customerNoSet)+"\n");
         }
         return k3ReturnOrderDOList;
     }
