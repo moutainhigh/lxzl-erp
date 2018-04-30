@@ -109,7 +109,7 @@
         INSERT INTO erp_k3_return_order_detail(
         return_order_id,order_no,order_item_id,order_entry,product_no,product_name,product_count,real_product_count,data_status,remark,create_time,create_user,update_time,update_user) VALUES
         <foreach collection="list" item="item"  separator=",">
-            (return_order_id,order_no,order_item_id,order_entry,product_no,product_name,product_count,real_product_count,data_status,remark,create_time,create_user,update_time,update_user)
+            (#{item.returnOrderId},#{item.orderNo},#{item.orderItemId},#{item.orderEntry},#{item.productNo},#{item.productName},#{item.productCount},#{item.realProductCount},#{item.dataStatus},#{item.remark},#{item.createTime},#{item.createUser},#{item.updateTime},#{item.updateUser})
         </foreach>
     </insert>
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
