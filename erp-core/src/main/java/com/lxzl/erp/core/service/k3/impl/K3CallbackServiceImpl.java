@@ -274,6 +274,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 continue;
             }
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
+                //处理最后一件商品退还时间
+                List<K3ReturnOrderDetailDO> list = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
+                Date max = null;
+                for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : list){
+                    K3ReturnOrderDO returnOrderDO = k3ReturnOrderMapper.findByNo(k3ReturnOrderDetailDO.getReturnOrderNo());
+                    if(max==null){
+                        max = returnOrderDO.getReturnTime();
+                    }else{
+                        max = max.getTime()<returnOrderDO.getReturnTime().getTime()?returnOrderDO.getReturnTime():max;
+                    }
+                }
+                orderDO.setActualReturnTime(max);
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
                 orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                 orderDO.setUpdateTime(now);
