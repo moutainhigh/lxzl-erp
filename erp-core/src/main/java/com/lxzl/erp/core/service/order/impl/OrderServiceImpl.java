@@ -1085,44 +1085,7 @@ public class OrderServiceImpl implements OrderService {
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
                 customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
             }
-            //处理结算单
-            //缓存查询到的结算单
-            Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
-            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
-            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
-                for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
-                    StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
-                    if (statementOrderDO == null) {
-                        statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                        statementCache.put(statementOrderDO.getId(), statementOrderDO);
-                    }
-                    //处理结算单总金额
-                    statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                    //处理结算租金押金金额
-                    statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
-                    //处理结算押金金额
-                    statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
-                    //处理结算租金金额
-                    statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
-                    //处理结算单逾期金额
-                    statementOrderDO.setStatementOverdueAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDetailDO.getStatementDetailOverdueAmount()));
-                    //处理其他费用
-                    statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
-                    statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                    statementOrderDetailDO.setUpdateTime(currentTime);
-                    statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    statementOrderDetailMapper.update(statementOrderDetailDO);
-                }
-                for (Integer key : statementCache.keySet()) {
-                    StatementOrderDO statementOrderDO = statementCache.get(key);
-                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
-                        statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                    }
-                    statementOrderDO.setUpdateTime(currentTime);
-                    statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    statementOrderMapper.update(statementOrderDO);
-                }
-            }
+            statementOrderSupport.reStatement(orderDO,currentTime);
         }
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
