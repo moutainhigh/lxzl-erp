@@ -813,7 +813,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     @Override
-    public ServiceResult<String, String> batchImportK3HistoricalRefundList() {
+    public ServiceResult<String, String> batchImportK3HistoricalRefundList(Integer startPage) {
         ServiceResult<String, String> importResult = new ServiceResult<>();
         K3ReturnOrderQueryParam k3ReturnOrderQueryParam = new K3ReturnOrderQueryParam();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -827,7 +827,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         k3ReturnOrderQueryParam.setReturnEndTime(now);
         int pageSize = 200;
         k3ReturnOrderQueryParam.setPageSize(pageSize);
-        int pageNo = 1;
+        int pageNo = startPage==null||startPage==0?1:startPage;
         int totalCount = 0;
         while(pageNo>0){
             k3ReturnOrderQueryParam.setPageNo(pageNo++);
@@ -1050,8 +1050,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         Map<String,String> map5 = new HashMap<>();
         Map<String,K3ReturnOrderDO> k3ReturnOrderDOMap = new HashMap<>();
 
-        Set<String> orderNoSet = new HashSet<>();
-       
         for(K3HistoricalReturnOrder k3HistoricalReturnOrder : billDatas){
 
             K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
@@ -1140,6 +1138,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 map4.put(returnOrderNo,k3ReturnOrderDO);
                 continue;
             }
+            userId = userId==null?CommonConstant.SUPER_USER_ID.toString():userId;
             k3ReturnOrderDO.setCreateUser(userId);
             k3ReturnOrderDO.setUpdateUser(userId);
             k3ReturnOrderDO.setCreateTime(new Date());

@@ -227,8 +227,8 @@ public class K3Controller extends BaseController {
 
 
     @RequestMapping(value = "batchImportK3HistoricalRefundList", method = RequestMethod.POST)
-    public Result batchImportK3HistoricalRefundList() {
-        return resultGenerator.generate( k3ReturnOrderService.batchImportK3HistoricalRefundList());
+    public Result batchImportK3HistoricalRefundList(@RequestBody BatchImportK3HistoricalRefundListParam batchImportK3HistoricalRefundListParam) {
+        return resultGenerator.generate( k3ReturnOrderService.batchImportK3HistoricalRefundList(batchImportK3HistoricalRefundListParam.getStartPage()));
     }
     @Autowired
     private ResultGenerator resultGenerator;
