@@ -1049,6 +1049,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //map3对应的错误原因
         Map<String,String> map5 = new HashMap<>();
         Map<String,K3ReturnOrderDO> k3ReturnOrderDOMap = new HashMap<>();
+
+        Set<String> orderNoSet = new HashSet<>();
+       
         for(K3HistoricalReturnOrder k3HistoricalReturnOrder : billDatas){
 
             K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
@@ -1193,14 +1196,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         info.append("共需保存"+(billDatas.size()-map3.size())+"条数据，\n");
         info.append("由于数据错误而不保存的数据共"+(noReturnOrderNoCount+map1.size()+map2.size()+map4.size()+map5.size())+"条，\n");
 
-
-        k3ReturnOrderMapper.saveList(k3ReturnOrderDOList);
-
+        if(k3ReturnOrderDOList.size()>0){
+            k3ReturnOrderMapper.saveList(k3ReturnOrderDOList);
+        }
         for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : waitSavek3ReturnOrderDetailDOList){
             K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderDOMap.get(k3ReturnOrderDetailDO.getReturnOrderNo());
             k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
         }
-        k3ReturnOrderDetailMapper.saveList(waitSavek3ReturnOrderDetailDOList);
+        if(waitSavek3ReturnOrderDetailDOList.size()>0){
+            k3ReturnOrderDetailMapper.saveList(waitSavek3ReturnOrderDetailDOList);
+        }
+
         return k3ReturnOrderDOList;
     }
 
