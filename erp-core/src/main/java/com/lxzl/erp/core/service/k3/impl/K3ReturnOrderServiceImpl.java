@@ -1134,7 +1134,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Set<String> customerNoSet = new HashSet<>();
             for(String key : map4.keySet()){
                 K3ReturnOrderDO k3ReturnOrderDO = map4.get(key);
-                customerNoSet.add(k3ReturnOrderDO.getK3CustomerNo());
+                customerNoSet.add(k3ReturnOrderDO.getK3CustomerNo()+"（"+k3ReturnOrderDO.getK3CustomerName()+"）");
             }
             info.append(map4.size()+"条数据客户编号错误：(退货单号)"+JSON.toJSONString(map4.keySet())+"(客户编号)"+JSON.toJSONString(customerNoSet)+"\n");
         }
