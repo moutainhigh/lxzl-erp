@@ -236,6 +236,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 if(orderProductDO!=null){
                     Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                     orderProductDO.setRentingProductCount(productCount);
+                    orderProductDO.setUpdateTime(now);
                     orderProductMapper.update(orderProductDO);
                     set.add(orderProductDO.getOrderId());
                 }
@@ -248,6 +249,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 if(orderMaterialDO!=null){
                     Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
                     orderMaterialDO.setRentingMaterialCount(materialCount);
+                    orderMaterialDO.setUpdateTime(now);
                     orderMaterialMapper.update(orderMaterialDO);
                     set.add(orderMaterialDO.getOrderId());
                 }
@@ -271,9 +273,11 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                orderDO.setUpdateTime(now);
                 orderMapper.update(orderDO);
             }else if(orderDO.getTotalProductCount()>totalRentingProductCount||orderDO.getTotalMaterialCount()>totalRentingMaterialCount){//部分退货
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
+                orderDO.setUpdateTime(now);
                 orderMapper.update(orderDO);
             }
             // 记录订单时间轴
