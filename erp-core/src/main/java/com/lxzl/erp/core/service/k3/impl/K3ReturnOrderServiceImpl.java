@@ -1144,6 +1144,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
             k3ReturnOrderDOList.add(k3ReturnOrderDO);
+            k3ReturnOrderDOMap.put(k3ReturnOrderDO.getReturnOrderNo(),k3ReturnOrderDO);
 //            k3ReturnOrderMapper.save(k3ReturnOrderDO);
 
             List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailDOMap.get(k3ReturnOrder.getReturnOrderNo());
@@ -1164,8 +1165,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 waitSavek3ReturnOrderDetailDOList.add(k3ReturnOrderDetailDO);
 //                k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
             }
-            k3ReturnOrderDOList.add(k3ReturnOrderDO);
-            k3ReturnOrderDOMap.put(k3ReturnOrderDO.getReturnOrderNo(),k3ReturnOrderDO);
+
         }
         if(map3.size()!=0){
             info.append(map3.size()+"条数据单项全部不是erp系统订单，无需处理：(退货单号)"+JSON.toJSONString(map3.keySet())+"\n");
