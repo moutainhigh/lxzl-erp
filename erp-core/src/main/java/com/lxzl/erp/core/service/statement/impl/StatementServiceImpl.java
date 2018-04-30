@@ -3152,6 +3152,16 @@ public class StatementServiceImpl implements StatementService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
         ServiceResult<String, String> result = new ServiceResult<>();
+        if(PayStatus.PAY_STATUS_PAYING.equals(orderDO.getPayStatus())||PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())||
+                PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+            result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
+            return result;
+        }
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
+        if(k3ReturnOrderDetailDOList!=null&&k3ReturnOrderDetailDOList.size()>0){
+            result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
+            return result;
+        }
         statementOrderSupport.reStatement(orderDO,new Date());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
