@@ -112,5 +112,5 @@ public interface K3ReturnOrderService extends VerifyReceiver {
     ServiceResult<String, Integer> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
 
 
-    ServiceResult<String, String> batchImportK3HistoricalRefundList();
+    ServiceResult<String, String> batchImportK3HistoricalRefundList(Integer startPage);
 }
