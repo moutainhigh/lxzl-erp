@@ -221,8 +221,14 @@ public class K3Controller extends BaseController {
      */
     @RequestMapping(value = "importK3HistoricalRefundList", method = RequestMethod.POST)
     public Result importK3HistoricalRefundList(@RequestBody K3ReturnOrderQueryParam param, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = k3ReturnOrderService.importK3HistoricalRefundList(param);
+        ServiceResult<String, Integer> serviceResult = k3ReturnOrderService.importK3HistoricalRefundList(param);
         return resultGenerator.generate(serviceResult);
+    }
+
+
+    @RequestMapping(value = "batchImportK3HistoricalRefundList", method = RequestMethod.POST)
+    public Result batchImportK3HistoricalRefundList() {
+        return resultGenerator.generate( k3ReturnOrderService.batchImportK3HistoricalRefundList());
     }
     @Autowired
     private ResultGenerator resultGenerator;

@@ -38,7 +38,6 @@ import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
@@ -47,8 +46,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
@@ -71,6 +68,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -784,14 +783,15 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ServiceResult<String, String> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
+    public ServiceResult<String, Integer> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
         StringBuffer info = new StringBuffer();
-        ServiceResult<String, String> importResult = new ServiceResult<>();
-        importResult.setErrorCode(ErrorCode.SUCCESS);
+        ServiceResult<String, Integer> importResult = new ServiceResult<>();
+
         // 从k3服务器获取历史退货单信息
         ServiceResult<String, String> k3HistoricalRefundListFromK3 = k3Service.queryK3HistoricalRefundList(k3ReturnOrderQueryParam,info);
         if (!ErrorCode.SUCCESS.equals(k3HistoricalRefundListFromK3.getErrorCode())) {
-            return k3HistoricalRefundListFromK3;
+            importResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return importResult;
         }
         String k3ResultJsonStr = k3HistoricalRefundListFromK3.getResult();
         if (logger.isInfoEnabled()) {
@@ -805,7 +805,52 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         // 过滤退货单详情列表信息
 //        needSaveBillDatas = filterReturnOrderDetails(needSaveBillDatas,info);
         // 保存k3数据列表
-        return saveBillDatas(needSaveBillDatas,info);
+        saveBillDatas(needSaveBillDatas,info);
+        Integer totalCount = billDatas==null?0:billDatas.size();
+        importResult.setResult(totalCount);
+        importResult.setErrorCode(ErrorCode.SUCCESS);
+        return importResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> batchImportK3HistoricalRefundList() {
+        ServiceResult<String, String> importResult = new ServiceResult<>();
+        K3ReturnOrderQueryParam k3ReturnOrderQueryParam = new K3ReturnOrderQueryParam();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startParam = null;
+        Date now = new Date();
+        try {
+            startParam = simpleDateFormat.parse("2017-1-1 00:00:00");
+        } catch (ParseException e) {
+        }
+        k3ReturnOrderQueryParam.setReturnStartTime(startParam);
+        k3ReturnOrderQueryParam.setReturnEndTime(now);
+        int pageSize = 200;
+        k3ReturnOrderQueryParam.setPageSize(pageSize);
+        int pageNo = 1;
+        int totalCount = 0;
+        while(pageNo>0){
+            k3ReturnOrderQueryParam.setPageNo(pageNo++);
+            ServiceResult<String,Integer> result = importK3HistoricalRefundList(k3ReturnOrderQueryParam);
+            if(ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                Integer total = result.getResult();
+                totalCount = totalCount+total;
+                if(total==0){
+                    pageNo = 0;
+                }
+            }else{
+                pageNo = 0 ;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Date endTime = new Date();
+        dingDingSupport.dingDingSendMessage("共批量导入了"+totalCount+"条数据，耗时"+ ((endTime.getTime()-now.getTime())/1000)+"秒");
+        importResult.setErrorCode(ErrorCode.SUCCESS);
+        return importResult;
     }
 
     /**
@@ -825,8 +870,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     /**
      * 保存k3历史退货订单数据，并发送钉钉
      */
-    private ServiceResult<String, String> saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas,StringBuffer info) {
-        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+    private void saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas,StringBuffer info) {
         // 保存退货订单数据
         List<K3ReturnOrderDO> k3ReturnOrderDOList = saveK3ReturnOrders(needSaveBillDatas,info);
         // 保存k3回调接口的处理退货单数据
@@ -834,8 +878,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         Integer notSuccessCount = doCallbackReturnOrder(k3ReturnOrderDOList);
         info.append("订单处理成功的退货单数量:"+(k3ReturnOrderDOList.size()-notSuccessCount)+"\n");
         dingDingSupport.dingDingSendMessage(info.toString());
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return serviceResult;
     }
 
     /**
