@@ -1141,7 +1141,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if(map5.size()!=0){
             info.append(map5.size()+"订单数据错误：(退货单号)"+JSON.toJSONString(map5)+"\n");
         }
-
+        info.append("共需保存"+(billDatas.size()-map3.size())+"条数据，\n");
+        info.append("由于数据错误而不保存的数据共"+(noReturnOrderNoCount+map1.size()+map2.size()+map4.size()+map5.size())+"条，\n");
         return k3ReturnOrderDOList;
     }
 
