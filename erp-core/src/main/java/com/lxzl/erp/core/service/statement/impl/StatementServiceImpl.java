@@ -333,7 +333,8 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
-        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
+//        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
+        ServiceResult<String, String> clearResult = clearStatementOrder(orderDO);
         if (!ErrorCode.SUCCESS.equals(clearResult.getErrorCode())) {
             result.setErrorCode(clearResult.getErrorCode());
             return result;
@@ -3137,6 +3138,21 @@ public class StatementServiceImpl implements StatementService {
         orderDO.setPayTime(now);
         orderMapper.update(orderDO);
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+
+    /**
+     * 清除订单的结算单信息
+     *
+     * @param orderDO
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        statementOrderSupport.reStatement(orderDO,new Date());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
