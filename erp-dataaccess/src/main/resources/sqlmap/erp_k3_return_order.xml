@@ -215,7 +215,12 @@
         INSERT INTO erp_k3_return_order
         <include refid="set_column_sql"/>
     </insert>
-
+    <insert id="saveList" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO erp_k3_return_order(return_order_no,k3_customer_no,k3_customer_name,return_time,return_address,return_contacts,return_phone,return_mode,return_order_status,logistics_amount,service_amount,return_reason_type,data_status,remark,create_time,create_user,update_time,update_user,delivery_sub_company_id,success_status) VALUES
+        <foreach collection="list" item="item"  separator=",">
+            ( #{item.returnOrderNo},#{item.k3CustomerNo},#{item.k3CustomerName},#{item.returnTime},#{item.returnAddress},#{item.returnContacts},#{item.returnPhone},#{item.returnMode},#{item.returnOrderStatus},#{item.logisticsAmount},#{item.serviceAmount},#{item.returnReasonType},#{item.dataStatus},#{item.remark},#{item.createTime},#{item.createUser},#{item.updateTime},#{item.updateUser},#{item.deliverySubCompanyId},#{item.successStatus})
+        </foreach>
+    </insert>
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO">
         UPDATE erp_k3_return_order
         <include refid="set_column_sql"/>

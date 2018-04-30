@@ -871,8 +871,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      * 保存k3历史退货订单数据，并发送钉钉
      */
     private void saveBillDatas(List<K3HistoricalReturnOrder> needSaveBillDatas,StringBuffer info) {
-        // 保存退货订单数据
+        // 获取待保存退货订单数据
         List<K3ReturnOrderDO> k3ReturnOrderDOList = saveK3ReturnOrders(needSaveBillDatas,info);
+
         // 保存k3回调接口的处理退货单数据
         info.append("实际保存退货单数量:"+k3ReturnOrderDOList.size()+"\n");
         Integer notSuccessCount = doCallbackReturnOrder(k3ReturnOrderDOList);
@@ -1019,7 +1020,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
      * 保存退货单列表信息
      */
     private List<K3ReturnOrderDO> saveK3ReturnOrders(List<K3HistoricalReturnOrder> billDatas,StringBuffer info) {
+        //待保存的退货单列表
         List<K3ReturnOrderDO> k3ReturnOrderDOList = new ArrayList<>();
+        //待保存的退货单详情列表
+        List<K3ReturnOrderDetailDO> waitSavek3ReturnOrderDetailDOList = new ArrayList<>();
         User loginUser = userSupport.getCurrentUser();
         String userId = null;
         if (loginUser != null) {
@@ -1028,7 +1032,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         Map<String,OrderDO> orderCache = new HashMap<>();
         Set<String> notErpOrderNo = new HashSet<>();
 
-        //待保存退货单项列表 key 为退货单号
+        //退货详情缓存 key 为退货单号
         Map<String,List<K3ReturnOrderDetailDO>> k3ReturnOrderDetailDOMap = new HashMap<>();
 
         //没有退货单编号的退货单
@@ -1070,8 +1074,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }
 
                 allNotErpOrder = false;
-                if(k3ReturnOrderDetailDOMap.get(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo())==null){
-                    k3ReturnOrderDetailDOMap.put(k3HistoricalReturnOrder.getK3ReturnOrder().getReturnOrderNo(),new ArrayList<K3ReturnOrderDetailDO>());
+                if(k3ReturnOrderDetailDOMap.get(returnOrderNo)==null){
+                    k3ReturnOrderDetailDOMap.put(returnOrderNo,new ArrayList<K3ReturnOrderDetailDO>());
                 }
                 OrderDO orderDO = orderCache.get(k3ReturnOrderDetail.getOrderNo());
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
@@ -1139,7 +1143,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDO.setUpdateTime(new Date());
             k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
-            k3ReturnOrderMapper.save(k3ReturnOrderDO);
+            k3ReturnOrderDOList.add(k3ReturnOrderDO);
+//            k3ReturnOrderMapper.save(k3ReturnOrderDO);
 
             List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailDOMap.get(k3ReturnOrder.getReturnOrderNo());
             k3ReturnOrderDO.setK3ReturnOrderDetailDOList(k3ReturnOrderDetailDOList);
@@ -1149,14 +1154,16 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }else{
                     k3ReturnOrderDetailDO.setRealProductCount(CommonConstant.COMMON_ZERO);
                 }
-                k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+//                k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
                 k3ReturnOrderDetailDO.setReturnOrderNo(k3ReturnOrderDO.getReturnOrderNo());
                 k3ReturnOrderDetailDO.setCreateUser(userId);
                 k3ReturnOrderDetailDO.setUpdateUser(userId);
                 k3ReturnOrderDetailDO.setCreateTime(new Date());
                 k3ReturnOrderDetailDO.setUpdateTime(new Date());
                 k3ReturnOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
+                k3ReturnOrderDetailDOList.add(k3ReturnOrderDetailDO);
+                waitSavek3ReturnOrderDetailDOList.add(k3ReturnOrderDetailDO);
+//                k3ReturnOrderDetailMapper.save(k3ReturnOrderDetailDO);
             }
             k3ReturnOrderDOList.add(k3ReturnOrderDO);
         }
@@ -1185,6 +1192,18 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         info.append("共需保存"+(billDatas.size()-map3.size())+"条数据，\n");
         info.append("由于数据错误而不保存的数据共"+(noReturnOrderNoCount+map1.size()+map2.size()+map4.size()+map5.size())+"条，\n");
+
+
+        k3ReturnOrderMapper.saveList(k3ReturnOrderDOList);
+        Map<String,K3ReturnOrderDO> k3ReturnOrderDOMap = new HashMap<>();
+        for(K3ReturnOrderDO k3ReturnOrderDO : k3ReturnOrderDOList){
+            k3ReturnOrderDOMap.put(k3ReturnOrderDO.getReturnOrderNo(),k3ReturnOrderDO);
+        }
+        for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : waitSavek3ReturnOrderDetailDOList){
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderDOMap.get(k3ReturnOrderDetailDO.getReturnOrderNo());
+            k3ReturnOrderDetailDO.setReturnOrderId(k3ReturnOrderDO.getId());
+        }
+        k3ReturnOrderDetailMapper.saveList(waitSavek3ReturnOrderDetailDOList);
         return k3ReturnOrderDOList;
     }
 

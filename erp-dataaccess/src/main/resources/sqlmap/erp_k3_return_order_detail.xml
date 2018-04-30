@@ -105,7 +105,13 @@
         INSERT INTO erp_k3_return_order_detail
         <include refid="set_column_sql"/>
     </insert>
-
+    <insert id="saveList" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO erp_k3_return_order_detail(
+        return_order_id,order_no,order_item_id,order_entry,product_no,product_name,product_count,real_product_count,data_status,remark,create_time,create_user,update_time,update_user) VALUES
+        <foreach collection="list" item="item"  separator=",">
+            (return_order_id,order_no,order_item_id,order_entry,product_no,product_name,product_count,real_product_count,data_status,remark,create_time,create_user,update_time,update_user)
+        </foreach>
+    </insert>
     <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO">
         UPDATE erp_k3_return_order_detail
         <include refid="set_column_sql"/>
