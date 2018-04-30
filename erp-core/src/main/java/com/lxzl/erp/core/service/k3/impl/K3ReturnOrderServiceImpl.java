@@ -1115,8 +1115,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             k3ReturnOrderDOList.add(k3ReturnOrderDO);
         }
 
-        info.append(noReturnOrderNoCount+"条数据没有退货单号，\n");
-
+        if(noReturnOrderNoCount!=0){
+            info.append(noReturnOrderNoCount+"条数据没有退货单号，\n");
+        }
         if(map1.size()!=0){
             info.append(map1.size()+"条数据没有发货分公司：(退货单号)"+JSON.toJSONString(map1.keySet())+"\n");
         }
