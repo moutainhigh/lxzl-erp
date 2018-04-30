@@ -704,7 +704,7 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam) {
+    public ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam ,StringBuffer info) {
         if (k3ReturnOrderQueryParam == null) {
             k3ReturnOrderQueryParam = new K3ReturnOrderQueryParam();
             k3ReturnOrderQueryParam.setPageNo(1);
@@ -723,7 +723,7 @@ public class K3ServiceImpl implements K3Service {
             requestData.put("createEndTime", DateUtil.formatDate(k3ReturnOrderQueryParam.getReturnEndTime(), DateUtil.SHORT_DATE_FORMAT_STR));
         }
         String requestJson = JSONObject.toJSONString(requestData);
-
+        info.append("获取历史退货单请求："+requestJson+"\n");
         HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
         headerBuilder.contentType("application/json");
         try {
