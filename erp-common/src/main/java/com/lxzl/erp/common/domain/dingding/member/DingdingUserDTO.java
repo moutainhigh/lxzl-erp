@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.dingding.member;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.lxzl.erp.common.domain.dingding.DingdingBaseDTO;
+import com.lxzl.erp.common.domain.user.pojo.User;
 
 /**
  * 钉钉用户数据传输对象
@@ -8,37 +9,17 @@ import com.alibaba.fastjson.annotation.JSONField;
  * @author daiqi
  * @create 2018-04-20 13:40
  */
-public class DingdingUserDTO {
-    private String unionId;
-    private String openId;
-    private String email;
+public class DingdingUserDTO extends DingdingBaseDTO{
     private String mobile;
     private String name;
-    private String userId;
+    private Integer userId;
 
-    public String getUnionId() {
-        return unionId;
+    public DingdingUserDTO() {
+
     }
 
-    @JSONField(name = "unionid")
-    public void setUnionId(String unionId) {
-        this.unionId = unionId;
-    }
-
-    public String getOpenId() {
-        return openId;
-    }
-
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public DingdingUserDTO(User user) {
+        buildDingdingUserDataByUser(user);
     }
 
     public String getMobile() {
@@ -57,12 +38,21 @@ public class DingdingUserDTO {
         this.name = name;
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    @JSONField(name = "userid")
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public DingdingUserDTO buildDingdingUserDataByUser(User user) {
+        if (user == null) {
+            return null;
+        }
+        this.setMobile(user.getPhone());
+        this.setUserId(user.getUserId());
+        this.setName(user.getRealName());
+        return this;
     }
 }

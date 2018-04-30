@@ -192,6 +192,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
+
+        return callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
+    }
+    @Override
+    public ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder,K3ReturnOrderDO k3ReturnOrderDO){
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
         String userId = null;
         if(StringUtil.isNotBlank(k3ReturnOrder.getUpdateUserRealName())){
             UserDO userDO = userMapper.findByUserRealName(k3ReturnOrder.getUpdateUserRealName().trim());
@@ -207,16 +213,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
             CustomerDO customerDO = null;
             if(k3MappingCustomerDO == null){
-                 customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
+                customerDO = customerMapper.findByNo(k3ReturnOrderDO.getK3CustomerNo());
             }else{
                 customerDO = customerMapper.findByNo(k3MappingCustomerDO.getErpCustomerCode());
             }
-
-            customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+            if(customerDO!=null){
+                customerSupport.subCreditAmountUsed(customerDO.getId(), b);
+            }
         }
 
         Date now = new Date();
-        k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_END);
+        Integer returnOrderStatus =  k3ReturnOrder.getReturnOrderStatus()==null?ReturnOrderStatus.RETURN_ORDER_STATUS_END:k3ReturnOrder.getReturnOrderStatus();
+        k3ReturnOrderDO.setReturnOrderStatus(returnOrderStatus);
         k3ReturnOrderDO.setUpdateTime(now);
         k3ReturnOrderDO.setUpdateUser(userId);
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
@@ -228,6 +236,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 if(orderProductDO!=null){
                     Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                     orderProductDO.setRentingProductCount(productCount);
+                    orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                    orderProductDO.setUpdateTime(now);
                     orderProductMapper.update(orderProductDO);
                     set.add(orderProductDO.getOrderId());
                 }
@@ -240,6 +250,8 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 if(orderMaterialDO!=null){
                     Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
                     orderMaterialDO.setRentingMaterialCount(materialCount);
+                    orderMaterialDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                    orderMaterialDO.setUpdateTime(now);
                     orderMaterialMapper.update(orderMaterialDO);
                     set.add(orderMaterialDO.getOrderId());
                 }
@@ -263,13 +275,17 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RETURN_BACK);
+                orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                orderDO.setUpdateTime(now);
                 orderMapper.update(orderDO);
             }else if(orderDO.getTotalProductCount()>totalRentingProductCount||orderDO.getTotalMaterialCount()>totalRentingMaterialCount){//部分退货
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_PART_RETURN);
+                orderDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
+                orderDO.setUpdateTime(now);
                 orderMapper.update(orderDO);
             }
             // 记录订单时间轴
-            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, userId);
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, now, CommonConstant.SUPER_USER_ID.toString());
         }
         //调用退货单结算
 //        ServiceResult<String, BigDecimal> statementResult= statementService.createK3ReturnOrderStatement(k3ReturnOrder.getReturnOrderNo());

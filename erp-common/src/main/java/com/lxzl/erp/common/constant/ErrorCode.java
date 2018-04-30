@@ -423,7 +423,6 @@ public class ErrorCode {
     public static final String DAY_RENT_ORDER_NOT_PAY = "J400148";
     public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400049";
     public static final String HAS_RETURN_ORDER = "J400050";
-    public static final String COMMIT_ORDER_AMOUNT_IS_LOW_IMAGE_NOT_NULL = "J400149";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -586,6 +585,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
     public static final String CUSTOMER_RISK_MANAGEMENT_NOT_FULL = "J500163";
     public static final String RE_STATEMENT_BACK_AMOUNT_FAIL = "J500164";
+    public static final String CUSTOMER_COMPANY_NAME_TO_SHORT = "J500165";
+    public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -1352,7 +1353,6 @@ public class ErrorCode {
         MAP.put(DAY_RENT_ORDER_NOT_PAY, "短短租需支付所有合同金额才能退货");
         MAP.put(ORDER_PAY_STATUS_CAN_NOT_RESETTLE, "当前订单支付状态不允许重新结算");
         MAP.put(HAS_RETURN_ORDER, "订单有关联退货单不允许重算");
-        MAP.put(COMMIT_ORDER_AMOUNT_IS_LOW_IMAGE_NOT_NULL, "提交订单商品金额低于正常租价，需必传图片");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1443,6 +1443,8 @@ public class ErrorCode {
         MAP.put(NEW_PAY_MODE_NOT_NULL, "全新设备支付方式不能为空");
         MAP.put(NEW_PAY_MODE_ERROR, "全新设备支付方式填写范围超出");
         MAP.put(RE_STATEMENT_BACK_AMOUNT_FAIL, "重新结算返还已支付金额失败!");
+        MAP.put(CUSTOMER_COMPANY_NAME_TO_SHORT, "公司名称太短，请重新输入");
+        MAP.put(CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME, "公司名称有误");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

@@ -1,12 +1,11 @@
 package com.lxzl.erp.common.domain.dingding.approve;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.domain.dingding.DingdingBaseDTO;
 import com.lxzl.erp.common.util.CollectionUtil;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,15 +15,15 @@ import java.util.Set;
  * @create 2018-04-20 10:58
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DingdingApproveDTO {
+public class DingdingApproveDTO extends DingdingBaseDTO {
     /**
-     * 审批人钉钉用户id列表
+     * 审批人用户id列表
      */
-    private Set<String> approverList;
+    private Set<Integer> approverList;
     /**
-     * 抄送人钉钉用户id列表
+     * 抄送人用户id列表
      */
-    private Set<String> ccUserIdsList;
+    private Set<Integer> ccUserIdsList;
     /**
      * 抄送时间---START,FINISH,START_FINISH
      */
@@ -32,44 +31,45 @@ public class DingdingApproveDTO {
     /**
      * 发起人部门id---erp部门id
      */
-    private String deptId;
+    private Integer deptId;
     /**
-     * 审批流表单参数
+     * 审批流表单对象
      */
-    private List<DingdingFormComponentValueDTO> formComponentValueList;
+    private Object formComponentObj;
     /**
-     * 审批实例发起人的钉钉用户id
+     * 审批实例发起人的用户id
      */
-    private String originatorUserId;
+    private Integer originatorUserId;
     /**
      * 审批流的唯一码
      */
     private String processCode;
 
     /**
-     * 审批回调url
+     * 工作流单号
      */
-    private String callbackUrl;
+    private String instanceMarking;
+
 
     @JSONField(serialize = false)
-    public Set<String> getApproverList() {
+    public Set<Integer> getApproverList() {
         return approverList;
     }
 
-    public void setApproverList(Set<String> approverList) {
+    public void setApproverList(Set<Integer> approverList) {
         this.approverList = approverList;
     }
 
     @JSONField(serialize = false)
-    public Set<String> getCcUserIdsList() {
+    public Set<Integer> getCcUserIdsList() {
         return ccUserIdsList;
     }
 
-    public void setCcUserIdsList(Set<String> ccUserIdsList) {
+    public void setCcUserIdsList(Set<Integer> ccUserIdsList) {
         this.ccUserIdsList = ccUserIdsList;
     }
 
-    public String getDeptId() {
+    public Integer getDeptId() {
         return deptId;
     }
 
@@ -81,24 +81,24 @@ public class DingdingApproveDTO {
         this.ccPosition = ccPosition;
     }
 
-    public void setDeptId(String deptId) {
+    public void setDeptId(Integer deptId) {
         this.deptId = deptId;
     }
 
     @JSONField(serialize = false)
-    public List<DingdingFormComponentValueDTO> getFormComponentValueList() {
-        return formComponentValueList;
+    public Object getFormComponentObj() {
+        return formComponentObj;
     }
 
-    public void setFormComponentValueList(List<DingdingFormComponentValueDTO> formComponentValueList) {
-        this.formComponentValueList = formComponentValueList;
+    public void setFormComponentObj(Object formComponentObj) {
+        this.formComponentObj = formComponentObj;
     }
 
-    public String getOriginatorUserId() {
+    public Integer getOriginatorUserId() {
         return originatorUserId;
     }
 
-    public void setOriginatorUserId(String originatorUserId) {
+    public void setOriginatorUserId(Integer originatorUserId) {
         this.originatorUserId = originatorUserId;
     }
 
@@ -110,21 +110,20 @@ public class DingdingApproveDTO {
         this.processCode = processCode;
     }
 
-    public String getCallbackUrl() {
-        return callbackUrl;
+    public String getInstanceMarking() {
+        return instanceMarking;
     }
 
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
+    public void setInstanceMarking(String instanceMarking) {
+        this.instanceMarking = instanceMarking;
     }
 
     public String getFormComponentValues() {
-        if (CollectionUtil.isEmpty(formComponentValueList)) {
-            return null;
+        if (this.formComponentObj != null) {
+            return JSONObject.toJSONString(this.formComponentObj);
         }
-        return JSONArray.toJSONString(formComponentValueList);
+        return null;
     }
-
     /**
      * 获取审批人userid列表(逗号分割)
      */
@@ -139,13 +138,13 @@ public class DingdingApproveDTO {
         return getCommaStr(ccUserIdsList);
     }
 
-    private String getCommaStr(Set<String> list) {
+    private String getCommaStr(Set<Integer> list) {
         if (CollectionUtil.isEmpty(list)) {
             return null;
         }
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (String value : list) {
+        for (Integer value : list) {
             sb.append(value);
             if (i < list.size() - 1) {
                 sb.append(",");
