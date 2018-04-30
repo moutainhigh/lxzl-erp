@@ -1055,13 +1055,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 noReturnOrderNoCount++;
                 continue;
             }
-            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
-            if(k3MappingCustomerDO!=null){
-                k3ReturnOrderDO.setK3CustomerNo(k3MappingCustomerDO.getErpCustomerCode());
-            }else{
-                map4.put(returnOrderNo,k3ReturnOrderDO);
-                continue;
-            }
             //如果全部不是我们erp系统订单，则不处理该退货单
             boolean allNotErpOrder = true;
             for(K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetailList){
@@ -1131,6 +1124,13 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
             if(k3ReturnOrder.getEqAmount()==null){
                 map2.put(returnOrderNo,k3ReturnOrderDO);
+                continue;
+            }
+            K3MappingCustomerDO k3MappingCustomerDO = k3MappingCustomerMapper.findByK3Code(k3ReturnOrderDO.getK3CustomerNo());
+            if(k3MappingCustomerDO!=null){
+                k3ReturnOrderDO.setK3CustomerNo(k3MappingCustomerDO.getErpCustomerCode());
+            }else{
+                map4.put(returnOrderNo,k3ReturnOrderDO);
                 continue;
             }
             k3ReturnOrderDO.setCreateUser(userId);
