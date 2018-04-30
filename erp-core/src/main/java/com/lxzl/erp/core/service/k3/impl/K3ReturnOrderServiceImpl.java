@@ -1000,6 +1000,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         //客户编号错误的退货单
         Map<String,K3ReturnOrderDO> map4 = new HashMap<>();
 
+        //map3对应的错误原因
+        Map<String,String> map5 = new HashMap<>();
+
         for(K3HistoricalReturnOrder k3HistoricalReturnOrder : billDatas){
 
             K3ReturnOrder k3ReturnOrder = k3HistoricalReturnOrder.getK3ReturnOrder();
@@ -1039,7 +1042,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
                     //如果是K3老订单则取行号
                     if(k3ReturnOrderDetail.getOrderEntry()==null){
-                        map3.put(returnOrderNo,k3ReturnOrderDO);
+                        map5.put(returnOrderNo,"K3老订单未传递行号");
                         continue;
                     }
                     Map<Integer,OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderDO.getOrderMaterialDOList(),"FEntryID");
@@ -1057,7 +1060,8 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                         }
                     }
                     if(orderItemId==null){
-                        map3.put(returnOrderNo,k3ReturnOrderDO);
+                        String itemString = productSupport.isMaterial(k3ReturnOrderDetail.getProductNo())?"配件项":"商品项";
+                        map5.put(returnOrderNo,"K3老订单"+orderDO.getOrderNo()+"，"+itemString+"行号（"+k3ReturnOrderDetail.getOrderEntry()+"）没有对应的"+itemString+"ID");
                         continue;
                     }else{
                         k3ReturnOrderDetail.setOrderItemId(orderItemId.toString());
@@ -1065,7 +1069,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 }else{
                     //如果是erp系统订单
                     if(k3ReturnOrderDetail.getOrderItemId()==null){
-                        map3.put(returnOrderNo,k3ReturnOrderDO);
+                        map5.put(returnOrderNo,"erp系统订单需要orderItemId");
                         continue;
                     }
                 }
@@ -1114,7 +1118,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
             k3ReturnOrderDOList.add(k3ReturnOrderDO);
         }
-
+        if(map3.size()!=0){
+            info.append(map3.size()+"条数据单项全部不是erp系统订单，无需处理：(退货单号)"+JSON.toJSONString(map3.keySet())+"\n");
+        }
         if(noReturnOrderNoCount!=0){
             info.append(noReturnOrderNoCount+"条数据没有退货单号，\n");
         }
@@ -1124,9 +1130,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if(map2.size()!=0){
             info.append(map2.size()+"条数据没有需恢复的信用额度：(退货单号)"+JSON.toJSONString(map2.keySet())+"\n");
         }
-        if(map3.size()!=0){
-            info.append(map3.size()+"条数据不含系统订单的的退货单或行号或订单项ID错误：(退货单号)"+JSON.toJSONString(map3.keySet())+"\n");
-        }
         if(map4.size()!=0){
             Set<String> customerNoSet = new HashSet<>();
             for(String key : map4.keySet()){
@@ -1135,6 +1138,10 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             }
             info.append(map4.size()+"条数据客户编号错误：(退货单号)"+JSON.toJSONString(map4.keySet())+"(客户编号)"+JSON.toJSONString(customerNoSet)+"\n");
         }
+        if(map5.size()!=0){
+            info.append(map5.size()+"订单数据错误：(退货单号)"+JSON.toJSONString(map5)+"\n");
+        }
+
         return k3ReturnOrderDOList;
     }
 
@@ -1241,5 +1248,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private K3CallbackService k3CallbackService;
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
+
 
 }
