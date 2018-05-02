@@ -18,6 +18,8 @@ import java.util.Locale;
 public class ExcelExportConfigGroup {
 
     public static ExcelExportConfig bankSlipDetailConfig = new ExcelExportConfig();
+    public static ExcelExportConfig bankSlipConfig = new ExcelExportConfig();
+    public static ExcelExportConfig bankSlipConfig1 = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderDetailConfig = new ExcelExportConfig();
 
