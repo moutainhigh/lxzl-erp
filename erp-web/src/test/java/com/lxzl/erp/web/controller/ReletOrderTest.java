@@ -2,16 +2,12 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
-import com.lxzl.erp.common.constant.DeliveryMode;
 import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.constant.OrderRentType;
-import com.lxzl.erp.common.constant.RentLengthType;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
-import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
-import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -134,7 +130,7 @@ public class ReletOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testQueryAllReletOrder() throws Exception{
         ReletOrderQueryParam reletOrderQueryParam = new ReletOrderQueryParam();
-        reletOrderQueryParam.setBuyerCustomerId(704447);
+ //       reletOrderQueryParam.setBuyerCustomerId(704447);
 //        reletOrderQueryParam.setBuyerCustomerNo("LXO-20180305-0755-00028");
 //        reletOrderQueryParam.setBuyerRealName("湖北华天翼建设工程有限公司");
 ////        reletOrderQueryParam.setCreateEndTime();

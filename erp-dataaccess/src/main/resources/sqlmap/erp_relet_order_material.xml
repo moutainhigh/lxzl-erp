@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper">
+
+	<resultMap id="ReletOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="relet_order_id" jdbcType="INTEGER" property="reletOrderId" />
+		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="order_material_id" jdbcType="INTEGER" property="orderMaterialId" />
+		<result column="material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+		<result column="renting_material_count" jdbcType="INTEGER" property="rentingMaterialCount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		erom.id,erom.relet_order_id,erom.relet_order_no,erom.order_id,erom.order_no,erom.order_material_id,erom.material_id,erom.material_name,erom.material_count,erom.material_unit_amount,erom.material_amount,erom.material_snapshot,erom.payment_cycle,erom.pay_mode,erom.is_new_material,erom.renting_material_count,erom.data_status,erom.remark,erom.create_time,erom.create_user,erom.update_time,erom.update_user
+	</sql>
+
+	<select id="findById" resultMap="ReletOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_relet_order_material erom 
+		WHERE erom.id = #{id, jdbcType=INTEGER} AND erom.data_status = 1 
+	</select>
+
+	<select id="findByReletOrderId" resultMap="ReletOrderMaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_relet_order_material erom
+		WHERE eom.relet_order_id = #{reletOrderId, jdbcType=INTEGER} AND eom.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erom.id) FROM erp_relet_order_material erom 
+		<where>
+			<if test="true">
+				AND erom.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReletOrderMaterialDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_relet_order_material erom 
+		<where>
+			<if test="true">
+				AND erom.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="reletOrderId != null">
+				relet_order_id = #{reletOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="reletOrderNo != null">
+				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderMaterialId != null">
+				order_material_id = #{orderMaterialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialId != null">
+				material_id = #{materialId,jdbcType=INTEGER},
+			</if>
+			<if test="materialName != null">
+				material_name = #{materialName,jdbcType=VARCHAR},
+			</if>
+			<if test="materialCount != null">
+				material_count = #{materialCount,jdbcType=INTEGER},
+			</if>
+			<if test="materialUnitAmount != null">
+				material_unit_amount = #{materialUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="materialAmount != null">
+				material_amount = #{materialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="materialSnapshot != null">
+				material_snapshot = #{materialSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
+			<if test="isNewMaterial != null">
+				is_new_material = #{isNewMaterial,jdbcType=INTEGER},
+			</if>
+			<if test="rentingMaterialCount != null">
+				renting_material_count = #{rentingMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO">
+		INSERT INTO erp_relet_order_material <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO">
+		UPDATE erp_relet_order_material <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
