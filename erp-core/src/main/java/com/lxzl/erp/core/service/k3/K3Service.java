@@ -59,6 +59,6 @@ public interface K3Service {
 
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
+    ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam , StringBuffer info);
 
 }
