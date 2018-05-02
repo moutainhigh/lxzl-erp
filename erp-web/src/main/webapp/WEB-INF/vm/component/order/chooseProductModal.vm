@@ -224,7 +224,7 @@
                                                 <td>{{groupedMaterialTostr}}</td>
                                                 <td class="text-right">
                                                     <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-productid="{{productId}}">选择</a>
+                                                        <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-productid="{{jointProductId}}">选择</a>
                                                     </div>
                                                 </td>
                                             </tr>

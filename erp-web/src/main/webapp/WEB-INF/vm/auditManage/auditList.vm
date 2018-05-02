@@ -106,7 +106,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{instanceMarking}}</td>
+                                <td>{{workflowLinkNo}}</td>
                                 <td><a href="{{workflowReferUrl}}" target="_blank" class="{{#isCustomer}}workflowReferCustomer{{/isCustomer}}" data-no="{{workflowReferNo}}">{{workflowReferNo}}</a></td>
 ##                                <td>{{remark}}</td>
                                 <td>{{workflowTypeStr}}</td>
