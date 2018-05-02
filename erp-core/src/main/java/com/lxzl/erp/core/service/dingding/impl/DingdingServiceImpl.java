@@ -2,7 +2,9 @@ package com.lxzl.erp.core.service.dingding.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.VerifyStatus;
 import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.DingDingConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -34,6 +36,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.apache.commons.lang.StringUtils;
@@ -51,10 +54,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -83,7 +90,10 @@ public class DingdingServiceImpl implements DingdingService {
     private CustomerService customerService;
     @Autowired
     private WorkflowService workflowService;
-
+    // 申请审批实例的线程
+    private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10);
+    // 注册用户的线程
+    private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10);
     @Override
     public String sendUserGroupMessage(String userGroupUrl, DingdingSendTextMessageRequest request) {
         String respContent = null;
@@ -108,32 +118,38 @@ public class DingdingServiceImpl implements DingdingService {
     }
 
     @Override
-    public ServiceResult<String, Object> registerUserToDingding(Integer userId) {
-        ServiceResult<String, Object> serviceResult = new ServiceResult<>();
+    public ServiceResult<String, Object> registerUserToDingding(final Integer userId) {
+        final ServiceResult<String, Object> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        try {
-            if (userId == null) {
-                throw new BusinessException("userId为空" + userId);
+        // 异步线程执行
+        registUserThreadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (userId == null) {
+                        throw new BusinessException("userId为空" + userId);
+                    }
+                    UserDO userDO = userMapper.findByUserId(userId);
+                    if (userDO == null) {
+                        throw new BusinessException("用户对象不存在-----" + userDO);
+                    }
+                    DingdingUserDTO dingdingUserDTO = new DingdingUserDTO(ConverterUtil.convert(userDO, User.class));
+                    if (dingdingUserDTO == null) {
+                        throw new BusinessException("钉钉用户数据传输对象为空：" + JSONObject.toJSONString(dingdingUserDTO));
+                    }
+                    logger.info("注册的钉钉用户数据传输对象为：" + JSONObject.toJSONString(dingdingUserDTO));
+                    // 往钉钉上注册用户信息
+                    dingdingUserDTO.setRequestDingdingUrl(DingDingConfig.getInputMemberUrl());
+                    DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingUserDTO);
+                    if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
+                        throw new BusinessException("与钉钉网关交互失败：" + JSONObject.toJSONString(dingdingResultDTO));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                }
             }
-            UserDO userDO = userMapper.findByUserId(userId);
-            if (userDO == null) {
-                throw new BusinessException("用户对象不存在-----" + userDO);
-            }
-            DingdingUserDTO dingdingUserDTO = new DingdingUserDTO(ConverterUtil.convert(userDO, User.class));
-            if (dingdingUserDTO == null) {
-                throw new BusinessException("钉钉用户数据传输对象为空：" + JSONObject.toJSONString(dingdingUserDTO));
-            }
-            logger.info("注册的钉钉用户数据传输对象为：" + JSONObject.toJSONString(dingdingUserDTO));
-            // 往钉钉上注册用户信息
-            dingdingUserDTO.setRequestDingdingUrl(DingDingConfig.getInputMemberUrl());
-            DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingUserDTO);
-            if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
-                throw new BusinessException("与钉钉网关交互失败：" + JSONObject.toJSONString(dingdingResultDTO));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
-        }
+        });
         return serviceResult;
     }
 
@@ -171,9 +187,12 @@ public class DingdingServiceImpl implements DingdingService {
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>  
      */  
     @Override
-    public ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
+    public ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO, HttpServletRequest request) {
         ServiceResult<String, Object> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        // 根据用户编号获取用户id，并设置到session中
+        UserDO userDO = userMapper.findByUserId(dingdingApproveCallBackDTO.getCurrentVerifyUser());
+        request.getSession().setAttribute(CommonConstant.ERP_USER_SESSION_KEY, ConverterUtil.convert(userDO, User.class));
         DingdingApproveCallBackBO dingdingApproveCallBackBO = new DingdingApproveCallBackBO(dingdingApproveCallBackDTO);
         try{
             logger.info("工作流回调接口数据是：" + JSONObject.toJSONString(dingdingApproveCallBackDTO));
@@ -225,33 +244,40 @@ public class DingdingServiceImpl implements DingdingService {
      * @date 2018/4/24 9:22
      */
     @Override
-    public ServiceResult<String, Object> applyApprovingWorkflowToDingding(String workflowLinkNo) {
-        ServiceResult<String, Object> serviceResult = new ServiceResult<>();
+    public ServiceResult<String, Object> applyApprovingWorkflowToDingding(final String workflowLinkNo) {
+        final ServiceResult<String, Object> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        try {
-            if (StringUtils.isBlank(workflowLinkNo)) {
-                throw new BusinessException("提交钉钉工作流信息失败,workflowLinkNo为空" + workflowLinkNo);
+        final User currentUser = userSupport.getCurrentUser();
+        // 异步线程执行
+        approveThreadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (StringUtils.isBlank(workflowLinkNo)) {
+                        throw new BusinessException("提交钉钉工作流信息失败,workflowLinkNo为空" + workflowLinkNo);
+                    }
+                    // 获取工作流实体对象
+                    WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
+                    if (workflowLinkDO == null) {
+                        throw new BusinessException("工作流实体对象不存在：" + workflowLinkNo);
+                    }
+                    DingdingApproveBO dingdingApproveBO = new DingdingApproveBO();
+                    // 构建提交审批实例的用户的数据
+                    dingdingApproveBO = buildDingdingOriginatorUserData(dingdingApproveBO, currentUser);
+                    // 构建审批人信息
+                    dingdingApproveBO = buildDingdingApprovers(dingdingApproveBO, workflowLinkDO);
+                    // 构建表单组件信息
+                    dingdingApproveBO = buildFormComponentObj(dingdingApproveBO, workflowLinkDO);
+                    // 设置请求地址
+                    dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflowUrl());
+                    // 申请
+                    applyApprovingWorkflowToDingding(dingdingApproveBO.getDingdingApproveDTO());
+                } catch (Exception e) {
+                    serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+                    e.printStackTrace();
+                }
             }
-            // 获取工作流实体对象
-            WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
-            if (workflowLinkDO == null) {
-                throw new BusinessException("工作流实体对象不存在：" + workflowLinkNo);
-            }
-            DingdingApproveBO dingdingApproveBO = new DingdingApproveBO();
-            // 构建提交审批实例的用户的数据
-            dingdingApproveBO = buildDingdingOriginatorUserData(dingdingApproveBO);
-            // 构建审批人信息
-            dingdingApproveBO = buildDingdingApprovers(dingdingApproveBO, workflowLinkDO);
-            // 构建表单组件信息
-            dingdingApproveBO = buildFormComponentObj(dingdingApproveBO, workflowLinkDO);
-            // 设置请求地址
-            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflowUrl());
-            // 申请
-            applyApprovingWorkflowToDingding(dingdingApproveBO.getDingdingApproveDTO());
-        } catch (Exception e) {
-            serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
-            e.printStackTrace();
-        }
+        });
         return serviceResult;
     }
 
@@ -274,8 +300,7 @@ public class DingdingServiceImpl implements DingdingService {
     /**
      * 构建钉钉提交审批实例的用户的数据
      */
-    private DingdingApproveBO buildDingdingOriginatorUserData(DingdingApproveBO dingdingApproveBO) {
-        User currentUser = userSupport.getCurrentUser();
+    private DingdingApproveBO buildDingdingOriginatorUserData(DingdingApproveBO dingdingApproveBO, User currentUser) {
         if (currentUser.getUserId() == null) {
             throw new BusinessException("当前用户的id为空" + JSONObject.toJSONString(currentUser));
         }
@@ -313,8 +338,6 @@ public class DingdingServiceImpl implements DingdingService {
     private DingdingApproveBO buildFormComponentObj(DingdingApproveBO dingdingApproveBO, WorkflowLinkDO workflowLinkDO) {
         // 构建工作流单号
         dingdingApproveBO.buildInstanceMarking(workflowLinkDO.getWorkflowLinkNo());
-        // TODO 测试随机生成单号
-//        dingdingApproveBO.buildInstanceMarking(GenerateNoUtil.generateMaterialNo(new Date()));
         // 构建模板单号
         dingdingApproveBO.buildProcessCode(String.valueOf(workflowLinkDO.getWorkflowTemplateId()));
         // 构建表单组件对象

@@ -1,6 +1,5 @@
 package com.lxzl.erp.web.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
@@ -8,6 +7,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.dingding.DingdingService;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Map;
 
 /**
  * @author daiqi
@@ -56,7 +54,7 @@ public class DingdingController extends BaseController {
      */
     @RequestMapping(value = "applyApprovingWorkflowCallBack")
     public Result applyApprovingWorkflowCallBack(@RequestBody DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
-        ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowCallBack(dingdingApproveCallBackDTO);
+        ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowCallBack(dingdingApproveCallBackDTO, super.getHttpServletRequest());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

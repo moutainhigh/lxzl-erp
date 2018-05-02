@@ -8,6 +8,8 @@ import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveDTO;
 import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
 import com.lxzl.se.core.service.BaseService;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 描述: ${DESCRIPTION}
  *
@@ -54,7 +56,7 @@ public interface DingdingService extends BaseService {
 
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO);
+    ServiceResult<String, Object> applyApprovingWorkflowCallBack(DingdingApproveCallBackDTO dingdingApproveCallBackDTO, HttpServletRequest request);
 
     /**
      * <p>
@@ -70,7 +72,7 @@ public interface DingdingService extends BaseService {
 
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    ServiceResult<String, Object> applyApprovingWorkflowToDingding(String workflowLinkNo);
+    ServiceResult<String, Object> applyApprovingWorkflowToDingding(final String workflowLinkNo);
 
     /** 注销钉钉网关的审批工作流实例 */
     ServiceResult<String, Object> delApprovingWorkflow(String workflowLinkNo);
