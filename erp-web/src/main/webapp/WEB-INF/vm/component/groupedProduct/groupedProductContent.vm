@@ -14,7 +14,19 @@
                     </div>
                 </div>
                 <div class="form-group field">
-                    <label class="col-md-3 control-label">备注</label>
+                    <label class="col-md-3 control-label">是否全新：</label>
+                    <div class="col-md-9">
+                        <div class="input-group" style="width:100%; padding-top:5px;">
+                            <label class="block mn switch switch-primary">
+                                <input type="checkbox" name="isNew" id="isNew" value="1" />
+                                <label for="isNew" data-on="全新" data-off="次新"></label>
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group field">
+                    <label class="col-md-3 control-label">备注：</label>
                     <div class="col-md-9">
                         <textarea class="form-control" id="remark" rows="3"  name="remark"></textarea>
                     </div>
