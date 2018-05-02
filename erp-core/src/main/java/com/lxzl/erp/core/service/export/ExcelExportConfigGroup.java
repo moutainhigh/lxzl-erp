@@ -17,6 +17,7 @@ public class ExcelExportConfigGroup {
 
     public static ExcelExportConfig bankSlipDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig bankSlipConfig = new ExcelExportConfig();
+    public static ExcelExportConfig bankSlipConfig1 = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();

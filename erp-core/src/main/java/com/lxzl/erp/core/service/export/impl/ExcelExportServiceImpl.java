@@ -9,6 +9,7 @@ import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @Author : XiaoLuYu
@@ -27,6 +28,19 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
                 serviceResult = ExcelExportSupport.export(result.getResult().getItemList(), config, fileName, sheetName,response);
                 return serviceResult;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, String fileName, String sheetName, HttpServletResponse response) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        try {
+            //导出设计表格
+            serviceResult = ExcelExportSupport.export(list, config, fileName, sheetName,response);
+            return serviceResult;
         } catch (Exception e) {
             e.printStackTrace();
         }

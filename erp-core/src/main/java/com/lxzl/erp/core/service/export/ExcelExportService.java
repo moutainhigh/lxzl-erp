@@ -4,6 +4,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 /**
@@ -13,4 +14,5 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface ExcelExportService<T> {
     ServiceResult<String,String> export(ServiceResult<String, Page<T>> result,ExcelExportConfig config, String fileName, String sheetName,HttpServletResponse response);
+    ServiceResult<String,String> export(List<T> list, ExcelExportConfig config, String fileName, String sheetName, HttpServletResponse response);
 }
