@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.statement;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePageParam;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -20,14 +21,18 @@ public class StatementOrderQueryParam extends BasePageParam {
     private String statementOrderCustomerNo;
     private String statementOrderNo;
     private Integer statementOrderStatus;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date statementExpectPayStartTime;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date statementExpectPayEndTime;
     private Integer isNeedToPay;
     private Integer isOverdue;
     private String orderNo;
     private String returnOrderNo;
     private String changeOrderNo;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createStartTime;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createEndTime;
 
     private Integer owner;		//数据归属人，跟单员
