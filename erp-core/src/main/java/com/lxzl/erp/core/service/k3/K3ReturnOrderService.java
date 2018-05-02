@@ -109,7 +109,8 @@ public interface K3ReturnOrderService extends VerifyReceiver {
       
      * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>  
      */  
-    ServiceResult<String, String> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
+    ServiceResult<String, Integer> importK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam);
 
 
+    ServiceResult<String, String> batchImportK3HistoricalRefundList(Integer startPage);
 }
