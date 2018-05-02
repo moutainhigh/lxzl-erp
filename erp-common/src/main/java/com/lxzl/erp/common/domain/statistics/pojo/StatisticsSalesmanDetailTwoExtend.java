@@ -28,6 +28,7 @@ public class StatisticsSalesmanDetailTwoExtend {
 	private Double productCountFactor; // 商品项商品折算率
 	private Date returnTime; // 退换单退还时间
 	private Integer returnProductCount; // 退还单退还数量
+	private Integer rentLengthType; // 长租短租
 
 	public Integer getSalesmanId() {
 		return salesmanId;
@@ -179,5 +180,13 @@ public class StatisticsSalesmanDetailTwoExtend {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public Integer getRentLengthType() {
+		return rentLengthType;
+	}
+
+	public void setRentLengthType(Integer rentLengthType) {
+		this.rentLengthType = rentLengthType;
 	}
 }

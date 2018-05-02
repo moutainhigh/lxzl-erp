@@ -995,6 +995,7 @@ ORDER BY esc.data_order DESC
         <result column="deals_amount" jdbcType="DECIMAL" property="dealsAmount"/>
         <result column="await_receivable" jdbcType="DECIMAL" property="awaitReceivable"/>
         <result column="income" jdbcType="DECIMAL" property="income"/>
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
     <select id="querySalesmanDetailTwo" resultMap="SalesmanDetailTwo" parameterType="map">
@@ -1003,6 +1004,7 @@ ORDER BY esc.data_order DESC
         MIN(eu.real_name) salesman_name,
         MIN(esc.id) sub_company_id,
         MIN(esc.sub_company_name) sub_company_name,
+        eo.rent_length_type,
         SUM(CASE WHEN deal_data.id IS NOT NULL THEN 1 ELSE 0 END) deals_count,
         SUM(CASE WHEN deal_data.total_product_count IS NOT NULL THEN deal_data.total_product_count ELSE 0 END) deals_product_count,
         SUM(CASE WHEN deal_data.total_order_amount IS NOT NULL THEN deal_data.total_order_amount ELSE 0 END) deals_amount,
@@ -1028,7 +1030,7 @@ ORDER BY esc.data_order DESC
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
         </if>
-        group by eu.id, eo.order_sub_company_id
+        group by eu.id, eo.order_sub_company_id, eo.rent_length_type
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
@@ -1052,6 +1054,7 @@ ORDER BY esc.data_order DESC
         <result column="product_count_factor" jdbcType="FLOAT" property="productCountFactor" />
         <result column="return_time" jdbcType="DATE" property="returnTime" />
         <result column="return_product_count" jdbcType="INTEGER" property="returnProductCount" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
     <select id="querySalesmanDetailTwoExtend" resultMap="SalesmanDetailTwoExtend" parameterType="map">
@@ -1067,6 +1070,7 @@ ORDER BY esc.data_order DESC
         eop.product_count,
         eop.product_unit_amount,
         eop.rent_type,
+        eop.rent_length_type,
         (CASE WHEN eop.rent_type = 1 THEN eps.day_rent_price ELSE eps.month_rent_price END) rent_price,
         MIN(ec.localization_time) localization_time,
         MIN(eo.create_time) create_time,
@@ -1091,6 +1095,9 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id
         where esc.id is not null and esod.statement_detail_status = 8
         AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
+        <if test="maps.salesmanQueryParam.rentLengthType!=null">
+            AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
+        </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
             AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
         </if>

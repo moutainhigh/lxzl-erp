@@ -21,6 +21,7 @@ public class StatisticsSalesmanPageParam extends BasePageParam {
 	private Date endTime; // 查询结束时间
 	private Integer subCompanyId; //所属分公司id
 	private String salesmanName; //业务员姓名模糊查询
+	private Integer rentLengthType; // 长租短租
 
 	public Date getStartTime() {
 		return startTime;
@@ -52,5 +53,13 @@ public class StatisticsSalesmanPageParam extends BasePageParam {
 
 	public void setSalesmanName(String salesmanName) {
 		this.salesmanName = salesmanName;
+	}
+
+	public Integer getRentLengthType() {
+		return rentLengthType;
+	}
+
+	public void setRentLengthType(Integer rentLengthType) {
+		this.rentLengthType = rentLengthType;
 	}
 }
