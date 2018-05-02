@@ -80,7 +80,7 @@
                                 </label>
                             </td>
                             <td>
-##                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                                <!-- {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}} -->
                                 {{productName}}
                             </td>
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
@@ -89,7 +89,7 @@
                             <td>#*￥{{#price}}{{skuPrice}}{{/price}}*# ￥{{currentSkuPrice}}</td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right">
-                                    <input type="hidden" name="isNew" value="{{isNewProduct}}" class="isNewProduct" />
+                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
                                     <label class="field prepend-icon mw200">
@@ -158,7 +158,7 @@
                                 </label>
                             </td>
                             <td>
-##                                {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                <!-- {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}} -->
                                 {{materialName}}
                             </td>
                             <td>{{brandName}}</td>
@@ -166,7 +166,7 @@
                             <td>￥{{currentMaterialPrice}}</td>
                             <td>
                                 <div>
-                                    <input type="hidden" name="isNew" value="{{isNewMaterial}}" class="isNewMaterial" />
+                                    <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
                                     <label class="field prepend-icon mw200">
