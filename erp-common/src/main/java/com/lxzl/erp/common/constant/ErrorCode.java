@@ -859,6 +859,20 @@ public class ErrorCode {
     public static final String SWITCH_INTERFACE_URL_EXISTS = "J20000006";
     public static final String SWITCH_CLOSE = "J20000007";
 
+    public static final String RELET_ORDER_PRODUCT_LIST_NOT_NULL = "J21000001";
+    public static final String RELET_ORDER_HAVE_NO_RENT_START_TIME = "J21000002";
+    public static final String RELET_ORDER_RENT_TYPE_IS_NULL = "J21000003";
+    public static final String RELET_ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL = "J21000004";
+    public static final String RELET_ORDER_RENT_TYPE_OR_LENGTH_ERROR = "J21000005";
+    public static final String RELET_ORDER_PRODUCT_COUNT_ERROR = "J21000006";
+    public static final String RELET_ORDER_MATERIAL_COUNT_ERROR = "J21000007";
+    public static final String RELET_ORDER_MATERIAL_AMOUNT_ERROR = "J21000008";
+    public static final String RELET_ORDER_ID_NOT_NULL = "J21000009";
+    public static final String RELET_ORDER_RENTING_PRODUCT_COUNT_ERROR = "J21000010";
+    public static final String RELET_ORDER_RENTING_MATERIAL_COUNT_ERROR = "J21000011";
+    public static final String RELET_ID_NOT_NULL = "J21000012";
+
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1709,6 +1723,18 @@ public class ErrorCode {
         MAP.put(SWITCH_INTERFACE_URL_EXISTS, "已有接口URL");
         MAP.put(SWITCH_CLOSE, "此功能开关已关闭");
 
+        MAP.put(RELET_ORDER_PRODUCT_LIST_NOT_NULL, "续租订单商品与配件不能同时为空");
+        MAP.put(RELET_ORDER_HAVE_NO_RENT_START_TIME, "续租订单的起租日期不能为空");
+        MAP.put(RELET_ORDER_RENT_TYPE_IS_NULL, "续租订单的租赁类型不能为空");
+        MAP.put(RELET_ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL, "续租订单的租赁类型不能为空或小于0，租赁时长需大于0");
+        MAP.put(RELET_ORDER_RENT_TYPE_OR_LENGTH_ERROR, "续租订单租赁方式有误，请联系管理员");
+        MAP.put(RELET_ORDER_PRODUCT_COUNT_ERROR, "商品数量有误，必须大于0，请重新填写数量");
+        MAP.put(RELET_ORDER_MATERIAL_COUNT_ERROR, "设备数量有误，必须大于0，请重新填写数量");
+        MAP.put(RELET_ORDER_MATERIAL_AMOUNT_ERROR, "续租订单配件价格有误，请重新填写价格。");
+        MAP.put(RELET_ORDER_ID_NOT_NULL, "续租单中订单ID不能为空");
+        MAP.put(RELET_ORDER_RENTING_PRODUCT_COUNT_ERROR, "续租时在租商品数量有误");
+        MAP.put(RELET_ORDER_RENTING_MATERIAL_COUNT_ERROR, "续租时在租配件数量有误");
+        MAP.put(RELET_ID_NOT_NULL, "续租单ID不能为空");
     }
 
 

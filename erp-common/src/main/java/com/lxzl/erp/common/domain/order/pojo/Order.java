@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -78,6 +79,8 @@ public class Order extends BasePO {
 
     private List<OrderTimeAxis> orderTimeAxisList;
 
+    private List<ReletOrder> reletOrderList;
+
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;                                 // 审核人ID
     private String commitRemark;                                // 提交审核备注
@@ -96,6 +99,14 @@ public class Order extends BasePO {
 
     public void setOrderProductList(List<OrderProduct> orderProductList) {
         this.orderProductList = orderProductList;
+    }
+
+    public List<ReletOrder> getReletOrderList() {
+        return reletOrderList;
+    }
+
+    public void setReletOrderList(List<ReletOrder> reletOrderList) {
+        this.reletOrderList = reletOrderList;
     }
 
     public OrderConsignInfo getOrderConsignInfo() {

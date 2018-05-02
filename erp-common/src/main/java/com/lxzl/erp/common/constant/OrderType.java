@@ -12,4 +12,5 @@ public class OrderType {
     public static final Integer ORDER_TYPE_CHANGE = 3;
     public static final Integer ORDER_TYPE_RETURN = 4;
     public static final Integer ORDER_TYPE_REPAIR = 5;
+    public static final Integer ORDER_TYPE_RELET = 6;  //续租
 }
