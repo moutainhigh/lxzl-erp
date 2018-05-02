@@ -80,7 +80,7 @@
                                 </label>
                             </td>
                             <td>
-                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+##                                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
                                 {{productName}}
                             </td>
                             <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
@@ -158,7 +158,7 @@
                                 </label>
                             </td>
                             <td>
-                                {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+##                                {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
                                 {{materialName}}
                             </td>
                             <td>{{brandName}}</td>
