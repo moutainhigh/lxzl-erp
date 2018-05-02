@@ -69,7 +69,7 @@ public class ReletOrder extends BasePO {
 		this.rentType = order.getRentType();
 		this.rentTimeLength = order.getRentTimeLength();
 		this.rentLengthType = order.getRentLengthType();
-		this.rentStartTime = order.getRentStartTime();
+		this.rentStartTime = order.getExpectReturnTime(); //续租时间：订单预计归还时间
 		this.totalProductCount = order.getTotalProductCount();
 		this.totalProductAmount = order.getTotalProductAmount();
 		this.totalMaterialCount = order.getTotalMaterialCount();

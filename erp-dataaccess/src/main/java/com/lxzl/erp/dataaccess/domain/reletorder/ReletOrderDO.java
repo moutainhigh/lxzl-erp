@@ -1,12 +1,14 @@
 package com.lxzl.erp.dataaccess.domain.reletorder;
 
-import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderMaterial;
-import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
+
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReletOrderDO  extends BaseDO {
 
 	private Integer id;

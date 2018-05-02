@@ -107,7 +107,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(reletOrderDO.getOrderSubCompanyId());
         reletOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(reletOrderDO.getTotalProductAmount(), reletOrderDO.getTotalMaterialAmount()), reletOrderDO.getTotalDiscountAmount()));
-        //reletOrderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
+        reletOrderDO.setReletOrderNo(generateNoSupport.generateReletOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
 
         reletOrderDO.setOrderSellerId(customerDO.getOwner());
 
@@ -202,7 +202,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
         if (CollectionUtil.isEmpty(reletOrderDO.getReletOrderProductDOList())
                 && CollectionUtil.isEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
-            result.setErrorCode(ErrorCode.RELET_ORDER_PRODUCT_LIST_NOT_NULL);
+            result.setErrorCode(ErrorCode.RELET_ORDER_LIST_NOT_NULL);
             return result;
         }
 
@@ -694,14 +694,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             int productCount = 0;
             // 商品租赁总额
             BigDecimal productAmountTotal = new BigDecimal(0.0);
-//            // 保险总额
-//            BigDecimal totalInsuranceAmount = new BigDecimal(0.0);
-//            // 设备该交押金总额
-//            BigDecimal totalDepositAmount = new BigDecimal(0.0);
-//            // 设备信用押金总额
-//            BigDecimal totalCreditDepositAmount = new BigDecimal(0.0);
-//            // 租赁押金总额
-//            BigDecimal totalRentDepositAmount = new BigDecimal(0.0);
+
 
             for (ReletOrderProductDO reletOrderProductDO : reletOrderProductDOList) {
 
@@ -999,7 +992,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
         if ((reletOrder.getReletOrderProductList() == null || reletOrder.getReletOrderProductList().isEmpty())
                 && (reletOrder.getReletOrderMaterialList() == null || reletOrder.getReletOrderMaterialList().isEmpty())) {
-            return ErrorCode.RELET_ORDER_PRODUCT_LIST_NOT_NULL;
+            return ErrorCode.RELET_ORDER_LIST_NOT_NULL;
         }
 
         if (reletOrder.getOrderId() == null){
@@ -1018,13 +1011,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
         if (reletOrder.getRentStartTime() == null) {
-            return ErrorCode.RELET_ORDER_HAVE_NO_RENT_START_TIME;
-        }
-        try {
-            if (reletOrder.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-05 00:00:00").getTime()) {
-                return ErrorCode.RELET_ORDER_HAVE_NO_RENT_START_TIME;
-            }
-        } catch (Exception e) {
             return ErrorCode.RELET_ORDER_HAVE_NO_RENT_START_TIME;
         }
 

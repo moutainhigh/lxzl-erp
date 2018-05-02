@@ -99,7 +99,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		ero.id,ero.relet_order_no,ero.order_id,ero.order_no,ero.buyer_customer_id,ero.buyer_customer_no,ero.buyer_customer_name,ero.order_sub_company_id,ero.delivery_sub_company_id,ero.rent_type,ero.rent_time_length,ero.rent_length_type,ero.rent_start_time,ero.total_product_count,ero.total_product_amount,ero.total_material_count,ero.total_material_amount,ero.total_order_amount,ero.total_paid_order_amount,ero.order_seller_id,ero.order_union_seller_id,ero.total_discount_amount,ero.relet_order_status,ero.pay_status,ero.pay_time,ero.expect_return_time,ero.actual_return_time,ero.high_tax_rate,ero.low_tax_rate,ero.tax_rate,ero.statement_date,ero.buyer_remark,ero.product_summary,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+		ero.id,ero.relet_order_no,ero.order_id,ero.order_no,ero.buyer_customer_id,ero.buyer_customer_no,ero.buyer_customer_name,ero.order_sub_company_id,ero.delivery_sub_company_id,ero.rent_type,ero.rent_time_length,ero.rent_length_type,ero.rent_start_time,ero.total_product_count,ero.total_product_amount,ero.total_material_count,ero.total_material_amount,ero.total_order_amount,ero.total_paid_order_amount,ero.order_seller_id,ero.order_union_seller_id,ero.total_discount_amount,ero.relet_order_status,ero.pay_status,ero.pay_time,ero.expect_return_time,ero.actual_return_time,ero.high_tax_rate,ero.low_tax_rate,ero.statement_date,ero.buyer_remark,ero.product_summary,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
 	</sql>
 
 	<sql id="material_column_List">
@@ -385,9 +385,6 @@
 			</if>
 			<if test="lowTaxRate != null">
 				low_tax_rate = #{lowTaxRate,jdbcType=INTEGER},
-			</if>
-			<if test="taxRate != null">
-				tax_rate = #{taxRate,jdbcType=DOUBLE},
 			</if>
 			<if test="statementDate != null">
 				statement_date = #{statementDate,jdbcType=INTEGER},

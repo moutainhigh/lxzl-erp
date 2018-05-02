@@ -97,6 +97,32 @@ public class GenerateNoSupport {
     }
 
     /**
+     * 生成续租单编号
+     */
+    public String generateReletOrderNo(Date currentTime, String subCustomerCode) {
+        if (StringUtil.isBlank(subCustomerCode)) {
+            subCustomerCode = "1000";
+        }
+        synchronized (this) {
+            Map<String, Object> maps = new HashMap<>();
+            OrderQueryParam orderQueryParam = new OrderQueryParam();
+            orderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            orderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
+            maps.put("orderQueryParam", orderQueryParam);
+            maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
+            Integer orderCount = orderMapper.findOrderCountByParams(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXR-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
+            builder.append(subCustomerCode);
+            builder.append("-");
+            builder.append(String.format("%05d", orderCount + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
      * 生成商品编号
      */
     public String generateProductNo(String productModel) {

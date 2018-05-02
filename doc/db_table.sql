@@ -3340,7 +3340,7 @@ CREATE TABLE `erp_version_history_user` (
 DROP TABLE IF EXISTS `erp_relet_order`;
 CREATE TABLE `erp_relet_order` (
   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `relet_order_no` VARCHAR(100) DEFAULT NULL COMMENT '续租订单编号',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
@@ -3396,7 +3396,7 @@ DROP TABLE IF EXISTS `erp_relet_order_product`;
 CREATE TABLE `erp_relet_order_product` (
   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `relet_order_id` INT(20) NOT NULL COMMENT '续租订单ID',
-  `relet_order_no` VARCHAR(100) DEFAULT NULL COMMENT '续租订单编号',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `order_product_id` INT(20) NOT NULL COMMENT '订单商品项ID',
@@ -3433,7 +3433,7 @@ DROP TABLE IF EXISTS `erp_relet_order_material`;
 CREATE TABLE `erp_relet_order_material` (
   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `relet_order_id` INT(20) NOT NULL COMMENT '续租订单ID',
-  `relet_order_no` VARCHAR(100) DEFAULT NULL COMMENT '续租订单编号',
+  `relet_order_no` VARCHAR(100) NOT NULL COMMENT '续租订单编号',
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `order_material_id` INT(20) NOT NULL COMMENT '订单配件项ID',

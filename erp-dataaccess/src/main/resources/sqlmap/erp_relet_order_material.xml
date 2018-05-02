@@ -38,7 +38,7 @@
 
 	<select id="findByReletOrderId" resultMap="ReletOrderMaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_relet_order_material erom
-		WHERE eom.relet_order_id = #{reletOrderId, jdbcType=INTEGER} AND eom.data_status = 1
+		WHERE erom.relet_order_id = #{reletOrderId, jdbcType=INTEGER} AND erom.data_status = 1
 	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
