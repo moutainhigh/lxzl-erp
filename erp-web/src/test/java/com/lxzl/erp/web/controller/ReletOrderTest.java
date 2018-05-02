@@ -134,7 +134,7 @@ public class ReletOrderTest extends ERPUnTransactionalTest {
     @Test
     public void testQueryAllReletOrder() throws Exception{
         ReletOrderQueryParam reletOrderQueryParam = new ReletOrderQueryParam();
-//        reletOrderQueryParam.setBuyerCustomerId(704447);
+        reletOrderQueryParam.setBuyerCustomerId(704447);
 //        reletOrderQueryParam.setBuyerCustomerNo("LXO-20180305-0755-00028");
 //        reletOrderQueryParam.setBuyerRealName("湖北华天翼建设工程有限公司");
 ////        reletOrderQueryParam.setCreateEndTime();
