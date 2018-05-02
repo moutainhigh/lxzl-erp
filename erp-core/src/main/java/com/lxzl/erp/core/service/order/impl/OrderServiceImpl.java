@@ -22,6 +22,7 @@ import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.ERPServiceLocator;
 import com.lxzl.erp.core.k3WebServiceSdk.ErpServer.IERPService;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -94,7 +95,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    // TODO: 2018\4\25 0025 添加优惠券使用逻辑 
     public ServiceResult<String, String> createOrder(Order order) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
@@ -157,7 +157,18 @@ public class OrderServiceImpl implements OrderService {
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
 
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
-
+        // TODO: 2018\4\26 0026 使用优惠券
+        if (CollectionUtil.isEmpty(order.getCouponList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+        String rs = couponSupport.useCoupon(order);
+        if (!ErrorCode.SUCCESS.equals(rs)) {
+            result.setErrorCode(rs);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -247,7 +258,25 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
 
         updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
-
+        // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
+        String revertresult = couponSupport.revertCoupon(order.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(revertresult)) {
+            result.setErrorCode(revertresult);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        // TODO: 2018\4\26 0026  重新使用优惠券
+        if (CollectionUtil.isEmpty(order.getCouponList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+        String rs = couponSupport.useCoupon(order);
+        if (!ErrorCode.SUCCESS.equals(rs)) {
+            result.setErrorCode(rs);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -992,7 +1021,13 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orderDO);
         // 记录订单时间轴
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
-
+        // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
+        String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(revertresult)) {
+            result.setErrorCode(revertresult);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -1050,44 +1085,7 @@ public class OrderServiceImpl implements OrderService {
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
                 customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
             }
-            //处理结算单
-            //缓存查询到的结算单
-            Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
-            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
-            if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
-                for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
-                    StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
-                    if (statementOrderDO == null) {
-                        statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                        statementCache.put(statementOrderDO.getId(), statementOrderDO);
-                    }
-                    //处理结算单总金额
-                    statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
-                    //处理结算租金押金金额
-                    statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
-                    //处理结算押金金额
-                    statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
-                    //处理结算租金金额
-                    statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
-                    //处理结算单逾期金额
-                    statementOrderDO.setStatementOverdueAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDetailDO.getStatementDetailOverdueAmount()));
-                    //处理其他费用
-                    statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
-                    statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                    statementOrderDetailDO.setUpdateTime(currentTime);
-                    statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    statementOrderDetailMapper.update(statementOrderDetailDO);
-                }
-                for (Integer key : statementCache.keySet()) {
-                    StatementOrderDO statementOrderDO = statementCache.get(key);
-                    if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
-                        statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-                    }
-                    statementOrderDO.setUpdateTime(currentTime);
-                    statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                    statementOrderMapper.update(statementOrderDO);
-                }
-            }
+            statementOrderSupport.reStatement(orderDO,currentTime);
         }
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
@@ -1143,7 +1141,13 @@ public class OrderServiceImpl implements OrderService {
         } catch (RemoteException e) {
             throw new BusinessException("k3取消订单失败:", e.getMessage());
         }
-
+        // TODO: 2018\4\26 0026 清除锁定优惠券
+        String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(revertresult)) {
+            result.setErrorCode(revertresult);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -3094,4 +3098,6 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WorkflowLinkMapper workflowLinkMapper;
 
+    @Autowired
+    private CouponSupport couponSupport;
 }

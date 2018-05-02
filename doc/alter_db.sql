@@ -711,3 +711,6 @@ alter table erp_k3_return_order add success_status int(11) NOT NULL DEFAULT 1 CO
 
 alter table erp_coupon_batch add `coupon_batch_lock_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券锁定总数';
 alter table erp_coupon_batch_detail add `coupon_lock_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券锁定总数';
+
+
+alter table erp_joint_product add is_new  INT(11) NOT NULL COMMENT '是否全新：0-否，1-是';

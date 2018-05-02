@@ -233,8 +233,8 @@ public class BigDecimalUtil {
     }
 
     public static int compare(BigDecimal value1, BigDecimal value2) {
-        value1 = value1 == null ? BigDecimal.ZERO : value1.setScale(BigDecimalUtil.SCALE, BigDecimal.ROUND_HALF_UP);
-        value2 = value2 == null ? BigDecimal.ZERO : value2.setScale(BigDecimalUtil.SCALE, BigDecimal.ROUND_HALF_UP);
+        value1 = value1 == null ? BigDecimal.ZERO : value1.setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP);
+        value2 = value2 == null ? BigDecimal.ZERO : value2.setScale(BigDecimalUtil.STANDARD_SCALE, BigDecimal.ROUND_HALF_UP);
         return value1.compareTo(value2);
     }
 

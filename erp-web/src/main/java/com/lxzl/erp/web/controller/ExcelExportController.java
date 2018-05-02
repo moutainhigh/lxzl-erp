@@ -29,7 +29,7 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) {
-        ServiceResult<String,String> serviceResult = excelExportService.export(bankSlipService.exportPageBankSlipDetail(bankSlipDetailQueryParam), ExcelExportConfigGroup.bankSlipDetailConfig, "bankSlipDetail", "sheet1",response);
+        ServiceResult<String,String> serviceResult = excelExportService.export(bankSlipService.pageBankSlipDetail(bankSlipDetailQueryParam), ExcelExportConfigGroup.bankSlipDetailConfig, "bankSlipDetail", "sheet1",response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 }
