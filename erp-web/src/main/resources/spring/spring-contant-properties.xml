@@ -40,4 +40,9 @@
         <property name="paymentSystemQueryCustomerAccountLogPageURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_LOG_PAGE_URL}"/>
     </bean>
 
+    <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">
+        <property name="dingDingGatewayUrl" value="${DINGDING-GATEWAY-URL}"/>
+        <property name="dingdingSecret" value="${DINGDING-SECRET}"/>
+        <property name="applyApprovingWorkflowCallBackUrl" value="${DINGDING-APPLY-APPROVING_WORKFLOW-CALLBACK-URL}"/>
+    </bean>
 </beans>

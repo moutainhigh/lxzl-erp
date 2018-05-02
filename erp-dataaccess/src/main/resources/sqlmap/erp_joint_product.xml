@@ -11,6 +11,7 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="is_new" jdbcType="INTEGER" property="isNew"/>
         <collection property="jointMaterialDOList" resultMap="JointMaterialDO" />
         <collection property="jointProductSkuDOList" resultMap="JointProductSkuDO" />
     </resultMap>
@@ -47,7 +48,7 @@
         ejps.id AS ejps_id,ejps.joint_product_id AS ejps_jointProductId,ejps.sku_id AS ejps_skuId,ejps.sku_count AS ejps_skuCount,ejps.data_status AS ejps_dataStatus,ejps.remark AS ejps_remark,ejps.create_time AS ejps_createTime,ejps.create_user AS ejps_createUser,ejps.update_time AS ejps_updateTime,ejps.update_user AS ejps_updateUser
     </sql>
     <sql id="column_List">
-        ejp.id,ejp.joint_product_name,ejp.data_status,ejp.remark,ejp.create_time,ejp.create_user,ejp.update_time,ejp.update_user
+        ejp.id,ejp.joint_product_name,ejp.is_new,ejp.data_status,ejp.remark,ejp.create_time,ejp.create_user,ejp.update_time,ejp.update_user
     </sql>
 
     <select id="findById" resultMap="JointProductDO" parameterType="java.lang.Integer">
@@ -82,6 +83,9 @@
         <set>
             <if test="jointProductName != null">
                 joint_product_name = #{jointProductName,jdbcType=VARCHAR},
+            </if>
+            <if test="isNew != null">
+                is_new = #{isNew,jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
@@ -134,6 +138,9 @@
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductId != null">
                 and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
             </if>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.isNew != null">
+                and ejp.is_new = #{maps.jointProductQueryParam.isNew,jdbcType=INTEGER}
+            </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
                 and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
             </if>
@@ -158,6 +165,9 @@
         <where>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductId != null">
                 and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
+            </if>
+            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.isNew != null">
+                and ejp.is_new = #{maps.jointProductQueryParam.isNew,jdbcType=INTEGER}
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
                 and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )

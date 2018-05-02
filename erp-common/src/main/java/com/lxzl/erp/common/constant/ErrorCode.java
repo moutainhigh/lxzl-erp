@@ -420,6 +420,9 @@ public class ErrorCode {
     public static final String RETURN_TIME_LESS_MIN_TIME = "J400145";
     public static final String ORDER_MESSAGE_NULL = "J400146";
     public static final String CANCEL_ORDER_REASON_TYPE_NULL = "J400147";
+    public static final String DAY_RENT_ORDER_NOT_PAY = "J400148";
+    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400049";
+    public static final String HAS_RETURN_ORDER = "J400050";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -582,6 +585,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RETURN_VISIT_NOT_EXISTS = "J500162";
     public static final String CUSTOMER_RISK_MANAGEMENT_NOT_FULL = "J500163";
     public static final String RE_STATEMENT_BACK_AMOUNT_FAIL = "J500164";
+    public static final String CUSTOMER_COMPANY_NAME_TO_SHORT = "J500165";
+    public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
 
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
@@ -782,6 +787,8 @@ public class ErrorCode {
     public static final String K3_RETURN_REASON_TYPE_ERROR = "J17000029";
     public static final String DELIVERY_COMPANY_NOT_EXIT = "J17000030";
     public static final String DELIVERY_COMPANY_ID_NULL = "J17000031";
+    /** k3历史退货单响应代码 */
+    public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -826,6 +833,7 @@ public class ErrorCode {
     public static final String COUNT_MORE_THAN_OR_EQUALITY_ZERO = "J18000042";
     public static final String BANK_SLIP_DETAIL_ASSIGN_IS_NULL = "J18000043";
     public static final String BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000044";
+    public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000045";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -850,6 +858,7 @@ public class ErrorCode {
     public static final String COUPON_NOT_USED_THIS_ORDER_TYPE = "J19000021";
     public static final String COUPON_ID_NOT_NULL = "J19000022";
     public static final String COUPON_NOT_USED_THIS_STATEMENT = "J19000023";
+    public static final String COUPON_USED_THIS_STATEMENT = "J19000024";
 
     public static final String SWITCH_INTERFACE_URL_NOT_NULL = "J20000001";
     public static final String SWITCH_IS_OPEN_NOT_NULL = "J20000002";
@@ -1354,6 +1363,9 @@ public class ErrorCode {
         MAP.put(RETURN_TIME_LESS_MIN_TIME, "退货日期不能小于三月五号");
         MAP.put(ORDER_MESSAGE_NULL, "订单消息不能为空");
         MAP.put(CANCEL_ORDER_REASON_TYPE_NULL, "订单取消类型不能为空");
+        MAP.put(DAY_RENT_ORDER_NOT_PAY, "短短租需支付所有合同金额才能退货");
+        MAP.put(ORDER_PAY_STATUS_CAN_NOT_RESETTLE, "当前订单支付状态不允许重新结算");
+        MAP.put(HAS_RETURN_ORDER, "订单有关联退货单不允许重算");
 
         MAP.put(CUSTOMER_COMPANY_NOT_NULL, "企业客户信息不能为空");
         MAP.put(CUSTOMER_COMPANY_NAME_NOT_NULL, "企业公司名称不能为空");
@@ -1444,6 +1456,8 @@ public class ErrorCode {
         MAP.put(NEW_PAY_MODE_NOT_NULL, "全新设备支付方式不能为空");
         MAP.put(NEW_PAY_MODE_ERROR, "全新设备支付方式填写范围超出");
         MAP.put(RE_STATEMENT_BACK_AMOUNT_FAIL, "重新结算返还已支付金额失败!");
+        MAP.put(CUSTOMER_COMPANY_NAME_TO_SHORT, "公司名称太短，请重新输入");
+        MAP.put(CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME, "公司名称有误");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1644,6 +1658,7 @@ public class ErrorCode {
         MAP.put(K3_RETURN_REASON_TYPE_ERROR, "退货原因出错");
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
+        MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1673,7 +1688,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_HAVE_CLAIMED, "没有已认领的银行对公流水明细");
         MAP.put(CURRENT_ROLES_NOT_PERMISSION, "当前是未下推状态,当前用户角色无权操作");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CLAIMED, "没有需要认领的银行对公流水认领数据");
-        MAP.put(BANK_SLIP_CLAIM_PAY_STATUS_ERROR, "系统正在充值或已充值成功，不能重新认领");
+        MAP.put(BANK_SLIP_CLAIM_PAY_STATUS_ERROR, "系统正在充值或已充值成功，不能重新认领或派发");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
         MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
         MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
@@ -1683,12 +1698,12 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_IS_ALL_CLAIM, "银行对公流水是全部确认状态,不能隐藏");
         MAP.put(BANK_SLIP_CLAIM_AMOUNT_IS_FAIL, "认领金额填写有误");
         MAP.put(EXPORT_DATE_IS_FAIL, "导出数据失败");
-        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据无法认领");
+        MAP.put(BANK_SLIP_DETAIL_NOT_HEADER_COMPANY, "不是总公司数据");
         MAP.put(BANK_SLIP_MONTH_IS_DIFFERENT, "派发或下推到分公司的数据有的不是同一月");
         MAP.put(COUNT_MORE_THAN_OR_EQUALITY_ZERO, "数量必须大于等于0");
         MAP.put(BANK_SLIP_DETAIL_ASSIGN_IS_NULL, "需派发数据为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
-
+        MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是确认状态,");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -1713,6 +1728,7 @@ public class ErrorCode {
         MAP.put(COUPON_NOT_USED_THIS_ORDER_TYPE,"该类型结算单无法使用优惠券");
         MAP.put(COUPON_ID_NOT_NULL,"优惠卷ID不能为空");
         MAP.put(COUPON_NOT_USED_THIS_STATEMENT,"这个结算单未使用优惠券");
+        MAP.put(COUPON_USED_THIS_STATEMENT,"该结算单已使用过结算单优惠券，不能重复使用");
 
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL, "接口URL不能为空");

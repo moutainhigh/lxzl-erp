@@ -1,11 +1,14 @@
 package com.lxzl.erp.common.domain.jointProduct.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.cache.CommonCache;
+import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -20,6 +23,9 @@ public class JointProduct extends BasePO {
     private Integer jointProductId;   //唯一标识
     @NotBlank(message = ErrorCode.JOINT_PRODUCT_NAME_IS_NULL, groups = {AddGroup.class,UpdateGroup.class})
     private String jointProductName;   //组合商品名称
+    @In(value = {CommonConstant.NO,CommonConstant.YES},message = ErrorCode.IS_NEW_VALUE_ERROR, groups = {AddGroup.class,UpdateGroup.class})
+    @NotNull(message = ErrorCode.IS_NEW_NOT_NULL ,groups = {AddGroup.class,UpdateGroup.class})
+    private Integer isNew;   //状态：0旧；1新
     private Integer dataStatus;   //状态：0不可用；1可用；2删除
     private String remark;   //备注
     private Date createTime;   //添加时间
@@ -31,6 +37,14 @@ public class JointProduct extends BasePO {
     private List<JointMaterial> jointMaterialList;   //组合商品物料项表
     @Valid
     private List<JointProductSku> jointProductSkuList;   //组合商品sku项表
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
+    }
 
     public Integer getJointProductId() {
         return jointProductId;

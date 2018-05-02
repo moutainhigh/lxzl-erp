@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.coupon;
 
+import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.dataaccess.domain.coupon.CouponDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -30,13 +31,11 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
 
     List<CouponDO> findByCouponStatus(@Param("couponBatchDetailId") Integer couponBatchDetailId,@Param("totalCouponProvideAmount") Integer totalCouponProvideAmount);
 
-    List<CouponDO> findByCustomerNo(@Param("customerNo") String customerNo);
+    List<CouponDO> findByCustomerNo(@Param("customerNo") String customerNo,@Param("orderNo") String orderNo);
 
     List<CouponDO> findCouponDOList(@Param("couponDOIdList") List<Integer> couponDOIdList);
 
     List<CouponDO> findByCouponBatchDetailID(@Param("couponBatchDetailId") Integer couponBatchDetailId);
-
-    void updateUseList(@Param("couponDOList") List<CouponDO> couponDOList);
 
     void cancelCoupon(@Param("couponBatchDetailId") Integer couponBatchDetailId,@Param("updateTime") Date updateTime, @Param("updateUser") String updateUser);
 
@@ -47,4 +46,12 @@ public interface CouponMapper extends BaseMysqlDAO<CouponDO> {
     List<CouponDO> findUsedCouponDoList(@Param("customerNo") String customerNo,@Param("orderId") Integer orderId,@Param("orderProductId") Integer orderProductId);
 
     List<CouponDO> findStatementCouponByCustomerNo(@Param("customerNo") String customerNo);
+
+    CouponDO findByStatementOrderDetailId(@Param("statementOrderDetailId") Integer statementOrderDetailId);
+
+    List<CouponDO> findByOrderNo(@Param("orderNo") String orderNo);
+
+    void updateLockList(@Param("couponDOList") List<CouponDO> couponDOList);
+
+    void updateRevertList(@Param("couponDOList") List<CouponDO> couponDOList);
 }

@@ -178,15 +178,12 @@
 						 separator="," close=")">
 					#{item}
 				</foreach>
-				OR ewl.verify_user_group_id in
-				<if test="maps.currentUserGroupList!=null">
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewl.verify_user_group_id in
 					<foreach item="item" index="index" collection="maps.currentUserGroupList"
 							 open="(" separator="," close=")">
 						#{item}
 					</foreach>
-				</if>
-				<if test="maps.currentUserGroupList==null">
-					('-1')
 				</if>
 				)
 			</if>
@@ -337,13 +334,18 @@
 	<sql id="k3_return_order_control">
 		<if test="maps.permissionParam!=null">
 			AND
-			<if test="maps.permissionParam.permissionUserIdList!= null" >
-				ekro.create_user in
+			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null">
+				ekro.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyIdForDelivery}
+				OR
+			</if>
+			<if test="maps.permissionParam.permissionUserIdList!= null">
+				 ekro.create_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
+
 		</if>
 	</sql>
 </mapper>

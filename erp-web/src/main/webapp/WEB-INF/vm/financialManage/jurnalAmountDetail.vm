@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>凌雄ERP-结算单管理-对账单-详细</title>
+    <title>凌雄ERP-财务管理-资金流水-详细</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
 </head>
@@ -27,13 +27,11 @@
                             </div>
                             <div class="col-md-8 text-right">
                                 <script type="text/html" id="actionButtonsTpl">
-                                    {{#acitonButtons}}
-                                    {{#showButton}}
-                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-no="{{no}}">
+                                    {{#actionButtons}}
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{menuName}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankslipdetailid}}" data-status="{{detailStatus}}">
                                         <i class="{{iClass}}"></i> {{text}}
                                     </a>
-                                    {{/showButton}}
-                                    {{/acitonButtons}}
+                                    {{/actionButtons}}
                                 </script>
                                 <div class="btn-group" id="actionButtons"></div>
                             </div>
@@ -50,12 +48,16 @@
                                     <dt>商户订单号：</dt><dd class="mb5">{{merchantOrderNo}}&nbsp;</dd>
                                     <dt>对方账号：</dt><dd class="mb5">{{otherSideAccountNo}}&nbsp;</dd>
                                     <dt>明细状态：</dt><dd class="mb5">{{detailStatusValue}}&nbsp;</dd>
-                                    <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
-                                    <dt>创建时间：</dt><dd class="mb5">{{#clockTime}}{{createTime}}{{/clockTime}}&nbsp;</dd>
+                                    <dt>是否属地化：</dt><dd class="mb5">{{isLocalizationValue}}&nbsp;</dd>
+                                    <dt>数据归属公司：</dt><dd class="mb5">{{ownerSubCompanyName}}&nbsp;</dd>
+                                    <dt>属地化分公司：</dt><dd class="mb5">{{subCompanyName}}&nbsp;</dd>
                                 </dl>
                             </div>
                             <div class="col-md-6">
                                 <dl class="dl-horizontal">
+                                    <dt>创建人：</dt><dd class="mb5">{{createUserRealName}}&nbsp;</dd>
+                                    <dt>创建时间：</dt><dd class="mb5">{{#clockTime}}{{createTime}}{{/clockTime}}&nbsp;</dd>
+                                    <dt>银行类型：</dt><dd class="mb5">{{bankSlipBankTypeValue}}&nbsp;</dd>
                                     <dt>交易流水号：</dt><dd class="mb5">{{tradeSerialNo}}&nbsp;</dd>
                                     <dt>交易金额：</dt><dd class="mb5">￥{{#price}}{{tradeAmount}}{{/price}}&nbsp;</dd>
                                     <dt>交易日期：</dt><dd class="mb5">{{#clockShorTime}}{{tradeTime}}{{/clockShorTime}}&nbsp;</dd>
@@ -74,7 +76,9 @@
                                 <thead>
                                 <tr class="bg-light">
                                     <th>资金流水明细ID</th>
+                                    <th>客户名称</th>
                                     <th>客户编码</th>
+                                    <th>K3客户编码</th>
                                     <th>对方账号</th>
                                     <th>状态</th>
                                     <th>认领流水号</th>
@@ -89,7 +93,9 @@
                                 {{#listData}}
                                 <tr>
                                     <td>{{bankSlipDetailId}}</td>
+                                    <td>{{customerName}}</td>
                                     <td>{{customerNo}}</td>
+                                    <td>{{k3CustomerNo}}</td>
                                     <td>{{otherSideAccountNo}}</td>
                                     <td>{{dataStatusValue}}</td>
                                     <td>{{claimSerialNo}}</td>
@@ -104,7 +110,7 @@
                                 {{/listData}}
                                 {{^listData}}
                                 <tr>
-                                    <td valign="top" colspan="10" class="text-center">无资金流水明细数据</td>
+                                    <td valign="top" colspan="11" class="text-center">无资金流水明细数据</td>
                                 </tr>
                                 {{/listData}}
                                 {{/dataSource}}
@@ -126,7 +132,12 @@
 </div>
     #parse("layout/footer.vm")
 <script type="text/javascript">
-    management_load_script('${staticManagement}/js', 'manage.jurnal.amount.detail.js');
+    management_load_script('${staticManagement}/js', 
+        'modal.choose.customerByAll.js',
+        'modal.choose.company.js',
+        'manage.jurnal.amount.trade.modal.js',
+        'manage.jurnal.amount.handle.mixin.js', 
+        'manage.jurnal.amount.detail.js');
 </script>
 <script type="text/javascript">
     //功能事件初始化

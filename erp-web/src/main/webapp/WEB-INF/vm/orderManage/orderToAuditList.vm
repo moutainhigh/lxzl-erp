@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-订单管理-待审核订单列表</title>
+    #parse("layout/header.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+    #parse("layout/theme.vm")
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+
+                #parse("component/loading.vm")
+
+                <div class="panel panel-primary panel-border top">
+                    <div class="panel-menu p12">
+                        <div class="row">
+                            <div class="pull-left pl10">
+                                <script type="text/html" id="actionCommonButtonsTpl">
+                                    <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
+                                    {{#acitonCommonButtons}}
+                                    <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm {{class}}" title="{{menuName}}">
+                                        <i class="{{iClass}}"></i> {{text}}
+                                    </a>
+                                    {{/acitonCommonButtons}}
+                                </script>
+
+                                <div class="btn-group" id="actionCommonButtons"></div>
+                            </div>
+                            <div class="text-right pull-right pr10">
+                                <form id="searchForm" class="form-horizontal">
+                                    <div class="pull-right">
+                                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                        <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="consigneePhone" id="consigneePhone" class="form-control input-sm bradius" autocomplete="off" placeholder="收货人手机号">
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="consigneeName" id="consigneeName" class="form-control input-sm bradius" autocomplete="off" placeholder="收货人姓名">
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="buyerCustomerNo" id="buyerCustomerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
+                                    </div>
+                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                        <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                    </div>
+##                                    <div class="form-group pull-right mn mr10">
+##                                        <div class="input-group">
+##                                            <select class="form-control input-sm bradius" name="deliveryMode" id="deliveryMode">
+##                                                <option value="">请选择</option>
+##                                            </select>
+##                                        </div>
+##                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="rentType" id="rentType">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10">
+                                        <div class="input-group">
+                                            <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group pull-right mn mr10" style="width: 210px;">
+                                        <input type="hidden" name="createStartTime" id="createStartTime" />
+                                        <input type="hidden" name="createEndTime" id="createEndTime" />
+                                        <div class="input-group date" id="createTimePicker">
+                                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
+                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-body pn">
+                        <div class="table-responsive">
+                            <script type="text/html" id="dataListTpl">
+                                <thead>
+                                    <tr class="bg-light">
+                                        {{#hasCommonActionButtons}}
+                                        <th class="text-center">
+                                            <label class="option block mn">
+                                                <input type="checkbox" name="orders" value="">
+                                                <span class="checkbox mn"></span>
+                                            </label>
+                                        </th>
+                                        {{/hasCommonActionButtons}}
+                                        <th>订单编号</th>
+                                        <th>订单归属公司</th>
+                                        <th>客户名称</th>
+                                        <th>收货人信息</th>
+                                        <th>类型/期限</th>
+                                        <th>商品名称</th>
+                                        <th>订单金额</th>
+                                        <th>发货公司</th>
+                                        <th>送货日期</th>
+                                        <th>业务员</th>
+                                        <th>创建人</th>
+                                        <th>支付状态</th>
+                                        {{#hasRowActionButtons}}
+                                        <th class="text-right">操作</th>
+                                        {{/hasRowActionButtons}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            {{#hasCommonActionButtons}}
+                                            <td class="text-center">
+                                                <label class="option block mn">
+                                                    <input type="checkbox" name="mobileos" value="FR">
+                                                    <span class="checkbox mn"></span>
+                                                </label>
+                                            </td>
+                                            {{/hasCommonActionButtons}}
+                                            <td>
+                                                {{#isK3Order}}
+                                                <span class="label label-dark" title="K3订单">K3</span>
+                                                {{/isK3Order}}
+                                                {{orderNo}}
+                                            </td>
+                                            <td>{{orderSubCompanyName}}</td>
+                                            <td>{{buyerCustomerName}}</td>
+                                            <td>
+                                                <p class="mn">{{orderConsignInfo.consigneeName}}</p>
+                                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
+                                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn" style="white-space: nowrap;">{{rentTypeValue}}</p>
+                                                <p class="mn mt5" style="white-space: nowrap;">{{rentTimeLength}}{{rentTypeUnit}}</p>
+                                            </td>
+                                            <td>
+                                                {{productSummary}}
+                                            </td>
+                                            <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                                            <td>{{deliverySubCompanyName}}</td>
+                                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
+                                            <td>{{orderSellerName}}</td>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
+                                            </td>
+                                            {{#hasRowActionButtons}}
+                                            <td class="text-right">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">操作<span class="caret ml5"></span></button>
+                                                    <ul class="dropdown-menu pull-right" role="menu">
+                                                        {{#rowActionButtons}}
+                                                        <li>
+                                                            <a {{#blank}}target="_blank"{{/blank}} href="${ctx}{{menuUrl}}?no={{orderNo}}" class="{{class}}" data-orderno="{{orderNo}}">{{text}}</a>
+                                                        </li>
+                                                        {{/rowActionButtons}}
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            {{/hasRowActionButtons}}
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="14" class="text-center">无数据</td>
+                                        </tr>
+                                        {{/listData}}
+                                    {{/dataSource}}
+                                </tbody>
+                            </script>
+                            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                #parse("component/pager.vm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js',
+                'manage.order.handle.mixin.js',
+                'modal.input.js',
+                'modal.submit.audit.js',
+                'manage.order.to.audit.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        OrderToAuditManage.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+    </script>
+
+</body>
+</html>

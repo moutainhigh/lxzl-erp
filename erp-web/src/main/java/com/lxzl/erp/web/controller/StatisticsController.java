@@ -125,6 +125,27 @@ public class StatisticsController extends BaseController {
     public Result queryStatisticsAwaitReceivable(@RequestBody StatisticsAwaitReceivablePageParam statisticsAwaitReceivablePageParam) {
         return resultGenerator.generate(statisticsService.queryStatisticsAwaitReceivable(statisticsAwaitReceivablePageParam));
     }
+
+    /**
+     * 业务员提成数据查询
+     * @param statisticsSalesmanPageParam
+     * @return
+     */
+    @RequestMapping(value = "querySalesman", method = RequestMethod.POST)
+    public Result querySalesman(@RequestBody @Validated StatisticsSalesmanPageParam statisticsSalesmanPageParam) {
+        return resultGenerator.generate(statisticsService.querySalesman(statisticsSalesmanPageParam));
+    }
+
+    /**
+     * 长短租详细统计
+     * @param statisticsRentInfoPageParam
+     * @return
+     */
+    @RequestMapping(value = "queryRentInfo", method = RequestMethod.POST)
+    public Result queryRentInfo(@RequestBody @Validated StatisticsRentInfoPageParam statisticsRentInfoPageParam) {
+        return resultGenerator.generate(statisticsService.queryRentInfo(statisticsRentInfoPageParam));
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

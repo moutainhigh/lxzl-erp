@@ -104,6 +104,8 @@
         <result column="product_create_time" property="createTime"/>
         <result column="product_update_user" property="updateUser"/>
         <result column="product_update_time" property="updateTime"/>
+        <result column="product_FEntry_id" property="FEntryID"/>
+        <result column="product_product_number" property="productNumber"/>
     </resultMap>
 
     <resultMap id="OrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO">
@@ -133,6 +135,8 @@
         <result column="material_create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="material_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="material_FEntry_id" property="FEntryID"/>
+        <result column="material_product_number" property="productNumber"/>
     </resultMap>
 
 
@@ -220,7 +224,7 @@
     </sql>
 
     <sql id="product_column_List">
-        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.rent_length_type as product_rent_length_type,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.rent_deposit_amount as product_rent_deposit_amount,eop.deposit_amount as product_deposit_amount,eop.credit_deposit_amount as product_credit_deposit_amount,eop.insurance_amount as product_insurance_amount, eop.product_sku_snapshot as product_product_sku_snapshot,eop.deposit_cycle as product_deposit_cycle,eop.payment_cycle as product_payment_cycle,eop.pay_mode as product_pay_mode,eop.is_new_product as product_is_new_product,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user,eop.renting_product_count as product_renting_product_count
+        eop.id as order_product_id,eop.order_id as product_order_id,eop.rent_type as product_rent_type,eop.rent_time_length as product_rent_time_length,eop.rent_length_type as product_rent_length_type,eop.product_id as product_product_id,eop.product_name as product_product_name,eop.product_sku_id as product_product_sku_id,eop.product_sku_name as product_product_sku_name,eop.product_count as product_product_count,eop.product_unit_amount as product_product_unit_amount,eop.product_amount as product_product_amount,eop.rent_deposit_amount as product_rent_deposit_amount,eop.deposit_amount as product_deposit_amount,eop.credit_deposit_amount as product_credit_deposit_amount,eop.insurance_amount as product_insurance_amount, eop.product_sku_snapshot as product_product_sku_snapshot,eop.deposit_cycle as product_deposit_cycle,eop.payment_cycle as product_payment_cycle,eop.pay_mode as product_pay_mode,eop.is_new_product as product_is_new_product,eop.data_status as product_data_status,eop.remark as product_remark,eop.create_time as product_create_time,eop.create_user as product_create_user,eop.update_time as product_update_time,eop.update_user as product_update_user,eop.renting_product_count as product_renting_product_count,eop.product_number as product_product_number,eop.FEntry_id as product_FEntry_id
     </sql>
 
     <sql id="consign_column_List">
@@ -228,7 +232,7 @@
     </sql>
 
     <sql id="material_column_List">
-        eom.id as material_id,eom.order_id as material_order_id,eom.rent_type as material_rent_type,eom.rent_time_length as material_rent_time_length,eom.rent_length_type as material_rent_length_type,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.rent_deposit_amount as material_rent_deposit_amount,eom.deposit_cycle as material_deposit_cycle,eom.payment_cycle as material_payment_cycle,eom.pay_mode as material_pay_mode,eom.is_new_material as material_is_new_material,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user,eom.renting_material_count as material_renting_material_count
+        eom.id as material_id,eom.order_id as material_order_id,eom.rent_type as material_rent_type,eom.rent_time_length as material_rent_time_length,eom.rent_length_type as material_rent_length_type,eom.material_id as material_material_id,eom.material_name as material_material_name,eom.material_count as material_material_count,eom.material_unit_amount as material_material_unit_amount,eom.material_amount as material_material_amount,eom.deposit_amount as material_deposit_amount,eom.credit_deposit_amount as material_credit_deposit_amount,eom.insurance_amount as material_insurance_amount,eom.material_snapshot as material_material_snapshot,eom.rent_deposit_amount as material_rent_deposit_amount,eom.deposit_cycle as material_deposit_cycle,eom.payment_cycle as material_payment_cycle,eom.pay_mode as material_pay_mode,eom.is_new_material as material_is_new_material,eom.data_status as material_data_status,eom.remark as material_remark,eom.create_time as material_create_time,eom.create_user as material_create_user,eom.update_time as material_update_time,eom.update_user as material_update_user,eom.renting_material_count as material_renting_material_count,eom.product_number as material_product_number,eom.FEntry_id as material_FEntry_id
     </sql>
 
     <sql id="time_axis_column_List">
@@ -771,4 +775,182 @@
             #{orderDO.id,jdbcType=INTEGER}
         </foreach>
     </update>
+
+    <!-- 根据订单号列表获取订单列表信息 -->
+    <select id="listByOrderNOs" resultMap="OrderDO">
+        SELECT <include refid="column_List"/> FROM erp_order eo
+        <where>
+            AND eo.order_no IN
+            <if test="orderNOs != null">
+                <foreach item="orderNO" index="index" collection="orderNOs" open="(" separator="," close=")">
+                    #{orderNO}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="findVerifyOrderByParams" resultMap="OrderDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="consign_column_List"/>
+        </trim>
+        <trim prefix=",">
+            eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
+            eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
+            delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+        </trim>
+        FROM erp_order eo
+        INNER JOIN erp_user eu ON eu.id = eo.order_seller_id
+        INNER JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        <where>
+            <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
+                and eo.buyer_customer_name like CONCAT('%','${maps.verifyOrderQueryParam.buyerRealName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneeName != null &amp;&amp; maps.verifyOrderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.verifyOrderQueryParam.consigneeName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneePhone != null &amp;&amp; maps.verifyOrderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.verifyOrderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliveryMode != null">
+                and eo.delivery_mode = #{maps.verifyOrderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.subCompanyId != null">
+                and eo.order_sub_company_id = #{maps.verifyOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliverySubCompanyId != null">
+                and eo.delivery_sub_company_id = #{maps.verifyOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderNo != null &amp;&amp; maps.verifyOrderQueryParam.orderNo != ''">
+                and eo.order_no like CONCAT('%','${maps.verifyOrderQueryParam.orderNo}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.verifyOrderQueryParam.buyerCustomerNo != ''">
+                and ec.customer_no = #{maps.verifyOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderSellerId != null">
+                and eo.order_seller_id = #{maps.verifyOrderQueryParam.orderSellerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.rentType != null">
+                and eo.rent_type = #{maps.verifyOrderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and eo.order_status = 4
+            </if>
+            <if test="maps.verifyOrderQueryParam.createStartTime != null">
+                <![CDATA[ AND eo.create_time >= #{maps.verifyOrderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.verifyOrderQueryParam.createEndTime != null ">
+                <![CDATA[ AND eo.create_time <= #{maps.verifyOrderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+            <if test="maps.workflowReferNoList != null &amp;&amp; maps.workflowReferNoList.size() > 0">
+                and eo.order_no in
+                <foreach item="workflowReferNo" index="index" collection="maps.workflowReferNoList"
+                         open="(" separator="," close=")">
+                    #{workflowReferNo,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY eo.create_time DESC
+        LIMIT #{maps.start},#{maps.pageSize}
+
+    </select>
+    <select id="findVerifyOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(eo.id)
+        FROM erp_order eo
+        INNER JOIN erp_user eu ON eu.id = eo.order_seller_id
+        INNER JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
+        LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        <where>
+
+            <if test="maps.verifyOrderQueryParam.buyerRealName != null &amp;&amp; maps.verifyOrderQueryParam.buyerRealName != ''">
+                and eo.buyer_customer_name like CONCAT('%','${maps.verifyOrderQueryParam.buyerRealName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneeName != null &amp;&amp; maps.verifyOrderQueryParam.consigneeName != ''">
+                and eoci.consignee_name like CONCAT('%','${maps.verifyOrderQueryParam.consigneeName}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.consigneePhone != null &amp;&amp; maps.verifyOrderQueryParam.consigneePhone != ''">
+                and eoci.consignee_phone = #{maps.verifyOrderQueryParam.consigneePhone, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliveryMode != null">
+                and eo.delivery_mode = #{maps.verifyOrderQueryParam.deliveryMode, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.subCompanyId != null">
+                and eo.order_sub_company_id = #{maps.verifyOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.deliverySubCompanyId != null">
+                and eo.delivery_sub_company_id = #{maps.verifyOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderNo != null &amp;&amp; maps.verifyOrderQueryParam.orderNo != ''">
+                and eo.order_no like CONCAT('%','${maps.verifyOrderQueryParam.orderNo}','%' )
+            </if>
+            <if test="maps.verifyOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.verifyOrderQueryParam.buyerCustomerNo != ''">
+                and ec.customer_no = #{maps.verifyOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.verifyOrderQueryParam.orderSellerId != null">
+                and eo.order_seller_id = #{maps.verifyOrderQueryParam.orderSellerId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.verifyOrderQueryParam.rentType != null">
+                and eo.rent_type = #{maps.verifyOrderQueryParam.rentType, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and eo.order_status = 4
+            </if>
+            <if test="maps.verifyOrderQueryParam.createStartTime != null">
+                <![CDATA[ AND eo.create_time >= #{maps.verifyOrderQueryParam.createStartTime} ]]>
+            </if>
+            <if test="maps.verifyOrderQueryParam.createEndTime != null ">
+                <![CDATA[ AND eo.create_time <= #{maps.verifyOrderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+            </if>
+            <if test="maps.workflowReferNoList != null &amp;&amp; maps.workflowReferNoList.size() > 0">
+                and eo.order_no in
+                <foreach item="workflowReferNo" index="index" collection="maps.workflowReferNoList"
+                         open="(" separator="," close=")">
+                    #{workflowReferNo,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findConsignByCustomerNo" resultMap="OrderDO" parameterType="java.lang.String">
+        SELECT
+        <include refid="column_List"/>
+        <trim prefix=",">
+            <include refid="consign_column_List"/>
+        </trim>
+        <trim prefix=",">
+        eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name
+        </trim>
+        FROM erp_order eo
+        LEFT JOIN erp_order_consign_info eoci ON eo.id = eoci.order_id and eoci.data_status = 1
+        LEFT JOIN erp_area_province eap ON eap.id = eoci.province
+        LEFT JOIN erp_area_city eac ON eac.id = eoci.city
+        LEFT JOIN erp_area_district ead ON ead.id = eoci.district
+        LEFT JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
+        WHERE ec.customer_no = #{customerNo, jdbcType=VARCHAR} and eo.data_status=1
+        ORDER BY eo.create_time DESC LIMIT 0,1
+    </select>
+
+    <select id="findByOrderStatus" resultMap="OrderDO" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        WHERE eo.order_status = #{orderStatus} and eo.data_status=1
+    </select>
 </mapper>

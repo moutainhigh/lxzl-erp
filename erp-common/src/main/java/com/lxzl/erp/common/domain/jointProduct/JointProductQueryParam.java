@@ -8,6 +8,7 @@ import java.util.Date;
 public class JointProductQueryParam extends BasePageParam {
 
     private Integer jointProductId;  //组合商品id
+    private Integer isNew;  //'状态：1新；2旧'
     private String jointProductName;  //组合商品名称
     private Date startDate;  //起始时间
     private Date endDate;  //结束时间
@@ -18,6 +19,14 @@ public class JointProductQueryParam extends BasePageParam {
 
     public void setJointProductId(Integer jointProductId) {
         this.jointProductId = jointProductId;
+    }
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
     }
 
     public String getJointProductName() {

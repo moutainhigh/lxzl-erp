@@ -593,15 +593,15 @@ CREATE TABLE `erp_workflow_node` (
   `workflow_step` int(20) NOT NULL COMMENT '流程步骤',
   `workflow_previous_node_id` int(20) COMMENT '上节点ID',
   `workflow_next_node_id` int(20) COMMENT '下节点ID',
-  `workflow_department_type` int(20) COMMENT '可审核的部门类型，如果没有指定部门，则由本公司的该部门审核',
-  `workflow_department` int(20) COMMENT '本步骤可审批部门',
+
   `workflow_role_type` int(20) COMMENT '本步骤可审批角色类型',
   `workflow_role` int(20) COMMENT '本步骤可审批角色',
   `workflow_user` int(20) COMMENT '本步骤可审批人员',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
-  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `create_user` varchar(20  `workflow_department_type` int(20) COMMENT '可审核的部门类型，如果没有指定部门，则由本公司的该部门审核',
+  `workflow_department` int(20) COMMENT '本步骤可审批部门',) NOT NULL DEFAULT '' COMMENT '添加人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
@@ -2685,6 +2685,7 @@ DROP TABLE if exists `erp_joint_product`;
 CREATE TABLE `erp_joint_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `joint_product_name` varchar(64) NOT NULL COMMENT '组合商品名称',
+  `is_new` INT(11) NOT NULL COMMENT '是否全新：0-否，1-是',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3166,6 +3167,7 @@ CREATE TABLE `erp_coupon_batch` (
   `effective_end_time` datetime DEFAULT NULL COMMENT '有效期结束时间',
   `coupon_batch_total_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券总数',
   `coupon_batch_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `coupon_batch_lock_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券锁定总数',
   `coupon_batch_cancel_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券作废总数',
   `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
   `total_used_amount` decimal(15,5) NOT NULL DEFAULT 0  COMMENT '已使用总面值',
@@ -3187,6 +3189,7 @@ CREATE TABLE `erp_coupon_batch_detail` (
   `coupon_can_received_count` int(11) NOT NULL DEFAULT 0 COMMENT '优惠券可领取总数',
   `coupon_received_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已领取总数',
   `coupon_used_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券已使用总数',
+  `coupon_lock_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券锁定总数',
   `coupon_cancel_count` int(11) NOT NULL  DEFAULT 0 COMMENT '优惠券作废总数',
   `face_value` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券面值',
   `total_face_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '优惠券总面值',
@@ -3341,7 +3344,7 @@ CREATE TABLE `erp_relet_order` (
   `order_id` INT(20) NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(100) NOT NULL COMMENT '订单编号',
   `buyer_customer_id` INT(20) NOT NULL COMMENT '购买人ID',
-  `buyer_customer_no` INT(20) NOT NULL COMMENT '购买人编号',
+  `buyer_customer_no` VARCHAR(100) NOT NULL COMMENT '购买人编号',
   `buyer_customer_name` VARCHAR(64) NOT NULL COMMENT '客户名称',
   `order_sub_company_id` INT(20) DEFAULT NULL COMMENT '订单所属分公司',
   `delivery_sub_company_id` INT(20) NOT NULL COMMENT '订单发货分公司',
@@ -3458,6 +3461,19 @@ CREATE TABLE `erp_relet_order_material` (
   INDEX index_order_material_id ( `order_material_id` ),
   INDEX index_material_id ( `material_id` )
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
+
+DROP TABLE IF EXISTS `erp_business_commission_config`;
+CREATE TABLE `erp_business_commission_config` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `role_id` INT(20) NOT NULL COMMENT '角色ID',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成角色表';
 
 
 

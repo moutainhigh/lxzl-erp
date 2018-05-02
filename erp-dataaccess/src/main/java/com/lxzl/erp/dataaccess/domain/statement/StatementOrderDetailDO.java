@@ -35,6 +35,8 @@ public class StatementOrderDetailDO extends BaseDO {
     private Date statementDetailPaidTime;
     private BigDecimal statementDetailOverdueAmount;
     private BigDecimal statementDetailOverduePaidAmount;
+    private BigDecimal statementDetailPenaltyAmount;
+    private BigDecimal statementDetailPenaltyPaidAmount;
     private Integer statementDetailOverdueDays;
     private Integer statementDetailOverduePhaseCount;
     private Integer statementDetailStatus;
@@ -51,6 +53,13 @@ public class StatementOrderDetailDO extends BaseDO {
     private Integer goodsCount;
     @Transient
     private BigDecimal goodsUnitAmount;
+
+    @Transient
+    private Integer salesmanId;
+    @Transient
+    private Integer subCompanyId;
+    @Transient
+    private Integer rentLengthType;
 
     private String itemName;
     private Integer itemIsNew;
@@ -381,5 +390,45 @@ public class StatementOrderDetailDO extends BaseDO {
 
     public void setStatementCouponAmount(BigDecimal statementCouponAmount) {
         this.statementCouponAmount = statementCouponAmount;
+    }
+
+    public BigDecimal getStatementDetailPenaltyAmount() {
+        return statementDetailPenaltyAmount;
+    }
+
+    public void setStatementDetailPenaltyAmount(BigDecimal statementDetailPenaltyAmount) {
+        this.statementDetailPenaltyAmount = statementDetailPenaltyAmount;
+    }
+
+    public BigDecimal getStatementDetailPenaltyPaidAmount() {
+        return statementDetailPenaltyPaidAmount;
+    }
+
+    public void setStatementDetailPenaltyPaidAmount(BigDecimal statementDetailPenaltyPaidAmount) {
+        this.statementDetailPenaltyPaidAmount = statementDetailPenaltyPaidAmount;
+    }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
+    }
+
+    public Integer getSalesmanId() {
+        return salesmanId;
+    }
+
+    public void setSalesmanId(Integer salesmanId) {
+        this.salesmanId = salesmanId;
     }
 }

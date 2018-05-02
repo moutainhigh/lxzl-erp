@@ -8,7 +8,7 @@
                 <div class="section row">
                     <div class="col-md-12">
                         <label class="field select">
-                            <select id="cancelReason" name="cancelReason" class="required">
+                            <select id="cancelOrderReasonType" name="cancelOrderReasonType" class="required">
                                 <option value="">请选择取消原因</option>
                             </select>
                             <i class="arrow"></i>

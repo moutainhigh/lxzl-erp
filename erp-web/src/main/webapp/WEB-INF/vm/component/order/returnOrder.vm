@@ -1,0 +1,38 @@
+<div id="returnOrderList" class="tab-pane tab-pane-order">
+    <div class="table-responsive">
+        <script type="text/html" id="returnOrderTpl">
+            <thead>
+            <tr class="bg-light">
+                <th>退货单号</th>
+                <th>订单号</th>
+                <th>商品名称</th>
+                <th>商品代码</th>
+                <th>退货数量</th>
+                <th>实际退货数量</th>
+                <th>备注</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#dataSource}}
+            {{#listData}}
+            <tr>
+                <td>{{returnOrderNo}}</td>
+                <td>{{orderNo}}</td>
+                <td>{{productName}}</td>
+                <td>{{productNo}}</td>
+                <td>{{productCount}}</td>
+                <td>{{realProductCount}}</td>
+                <td>{{remark}}</td>
+            </tr>
+            {{/listData}}
+            {{^listData}}
+            <tr>
+                <td valign="top" colspan="7" class="text-center">无退货单</td>
+            </tr>
+            {{/listData}}
+            {{/dataSource}}
+            </tbody>
+        </script>
+        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="returnOrderTable"></table>
+    </div>
+</div>

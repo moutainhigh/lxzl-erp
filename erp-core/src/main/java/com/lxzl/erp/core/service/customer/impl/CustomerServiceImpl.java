@@ -28,6 +28,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.area.AreaProvinceMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.*;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
@@ -35,6 +36,8 @@ import com.lxzl.erp.dataaccess.domain.area.AreaProvinceDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.*;
+import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
@@ -68,6 +71,18 @@ public class CustomerServiceImpl implements CustomerService {
 
         //将公司客户名称中所有除了中文，英文字母（大小写）的字符全部去掉
         String simpleCompanyName = StrReplaceUtil.nameToSimple(customerCompany.getCompanyName());
+
+        //经过处理的简单公司名称少于6个字符，则返回错误信息："公司名称有误"
+        if (simpleCompanyName.length()<6) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NAME_TO_SHORT);
+            return serviceResult;
+        }
+        //判断输入的公司名称经过全角半角转换及去掉特殊符号后的名称是否跟个人客户中的真实姓名重复，如果重复，返回错误信息："公司名称有误"
+        CustomerPersonDO customerPersonDO = customerPersonMapper.findByRealName(simpleCompanyName);
+        if (customerPersonDO != null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME);
+            return serviceResult;
+        }
         CustomerCompanyDO ccdo = customerCompanyMapper.findBySimpleCompanyName(simpleCompanyName);
 
         //该公司简单名称已经存在，则返回错误代码信息
@@ -627,6 +642,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setRemark(customer.getRemark());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setStatementDate(customer.getStatementDate());
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -1186,6 +1202,30 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerResult.getUnionUser() != null) {
             customerResult.setCustomerUnionUser(CommonCache.userMap.get(customerResult.getUnionUser()));
         }
+        //最近订单地址信息
+        OrderDO orderDO = orderMapper.findConsignByCustomerNo(customerNo);
+        if(orderDO != null){
+            StringBuilder builder = new StringBuilder();
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getProvinceName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getProvinceName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getCityName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getCityName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getDistrictName())){
+                builder.append(orderDO.getOrderConsignInfoDO().getDistrictName());
+            }
+            if(StringUtil.isNotBlank(orderDO.getOrderConsignInfoDO().getAddress())){
+                builder.append(orderDO.getOrderConsignInfoDO().getAddress());
+            }
+            customerResult.setLastOrderAddress(builder.toString());
+            OrderConsignInfoDO orderConsignInfoDO = orderDO.getOrderConsignInfoDO();
+            if(orderConsignInfoDO!=null){
+                customerResult.setLastOrderConsigneeName(orderConsignInfoDO.getConsigneeName());
+                customerResult.setLastOrderConsigneePhone(orderConsignInfoDO.getConsigneePhone());
+            }
+        }
+
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerResult);
         return serviceResult;
@@ -3297,4 +3337,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private AreaProvinceMapper areaProvinceMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 }

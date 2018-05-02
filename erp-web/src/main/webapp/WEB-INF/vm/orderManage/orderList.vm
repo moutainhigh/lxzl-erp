@@ -41,7 +41,7 @@
                                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                         <button type="reset" class="btn btn-default btn-sm">重置</button>
                                         <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
-                                        <input type="hidden" name="isRecycleBin" id="isRecycleBin">
+                                        <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
                                     </div>
                                     <div class="form-group pull-right mn mr10" style="width: 120px;">
                                         <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
@@ -135,6 +135,7 @@
                                         <th>创建人</th>
                                         <th>支付状态</th>
                                         <th>订单状态</th>
+##                                        <th>备注</th>
                                         {{#hasRowActionButtons}}
                                         <th class="text-right">操作</th>
                                         {{/hasRowActionButtons}}
@@ -143,7 +144,7 @@
                                 <tbody>
                                     {{#dataSource}}
                                         {{#listData}}
-                                        <tr>
+                                        <tr class="{{trClass}}">
                                             {{#hasCommonActionButtons}}
                                             <td class="text-center">
                                                 <label class="option block mn">
@@ -181,19 +182,31 @@
                                                 <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
                                             </td>
                                             <td>
-                                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
+                                                <p class="mn {{payStatusClass}} {{trClass}}">{{payStatusValue}}</p>
                                                 <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
                                             </td>
                                             <td>
-                                                <p class="mn nowrap {{orderStatusClass}}">
-                                                    <span class="{{orderStatusClass}}">{{orderStatusStr}}</span>
-                                                    {{#showViewWorkFlowButton}}
-                                                    <span class="ml5 mr5 {{orderStatusClass}}">/</span>
-                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton" data-orderno="{{orderNo}}">查看审核流</a>
-                                                    {{/showViewWorkFlowButton}}
+                                                <p class="mn nowrap {{orderStatusClass}} {{trClass}}">
+                                                    <span class="{{orderStatusClass}} {{trClass}}">{{orderStatusStr}}</span>
+##                                                    {{#showViewWorkFlowButton}}
+##                                                    <span class="ml5 mr5 {{orderStatusClass}} {{trClass}}">/</span>
+##                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton {{trClass}}" data-orderno="{{orderNo}}">查看审核流</a>
+##                                                    {{/showViewWorkFlowButton}}
                                                 </p>
+                                                {{#showViewWorkFlowButton}}
+                                                <p class="mn nowrap {{orderStatusClass}} {{trClass}}">
+                                                    <span class="{{orderStatusClass}} {{trClass}}">{{workflowCurrentNodeName}}-{{getCurrentVerifyUserName}}</span>
+                                                </p>
+                                                <p class="mn nowrap {{orderStatusClass}} {{trClass}}">
+##                                                    <span class="{{orderStatusClass}} {{trClass}}">{{orderStatusStr}}</span>
+
+##                                                    <span class="ml5 mr5 {{orderStatusClass}} {{trClass}}">/</span>
+                                                    <a href="javascript:void(0)" class="{{orderStatusClass}} viewWorkFlowButton {{trClass}}" data-orderno="{{orderNo}}">查看审核流</a>
+                                                </p>
+                                                {{/showViewWorkFlowButton}}
                                                 <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
                                             </td>
+##                                            <td>{{buyerRemark}}</td>
                                             {{#hasRowActionButtons}}
                                             <td class="text-right">
                                                 <div class="btn-group">

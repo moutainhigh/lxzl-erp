@@ -121,4 +121,13 @@ public interface BankSlipService {
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
     */
     ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail);
+
+    /**
+     * 查询历史认领数据
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/4/16 21:17
+     * @param : bankSlipDetailList
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+     */
+    ServiceResult<String,BankSlipDetail> queryBankSlipClaim(BankSlipDetail bankSlipDetail);
 }

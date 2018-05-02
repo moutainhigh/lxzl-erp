@@ -26,6 +26,7 @@
     #parse("layout/footer.vm")
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
+            'api.data.js',
             'manage.k3.return.order.mixin.js',
             'manage.k3.order.item.choose.modal.js',
             'modal.choose.customer.js',

@@ -3,8 +3,6 @@ package com.lxzl.erp.core.service.user;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.company.pojo.Department;
-import com.lxzl.erp.common.domain.user.DepartmentQueryParam;
 import com.lxzl.erp.common.domain.user.LoginParam;
 import com.lxzl.erp.common.domain.user.UpdatePasswordParam;
 import com.lxzl.erp.common.domain.user.UserQueryParam;
@@ -74,22 +72,26 @@ public interface UserService extends BaseService {
 
     /**
      * 修改用户禁用
+     *
      * @param user
      * @return
      */
-    ServiceResult<String,Integer> disabledUser(User user);
+    ServiceResult<String, Integer> disabledUser(User user);
 
     /**
      * 修改用户不禁用
+     *
      * @param user
      * @return
      */
-    ServiceResult<String,Integer> enableUser(User user);
+    ServiceResult<String, Integer> enableUser(User user);
 
     /**
      * 未登录状态下修改密码
+     *
      * @param updatePasswordParam
      * @return
      */
-    ServiceResult<String,Integer> updatePasswordForNoLogin(UpdatePasswordParam updatePasswordParam);
+    ServiceResult<String, Integer> updatePasswordForNoLogin(UpdatePasswordParam updatePasswordParam);
+
 }

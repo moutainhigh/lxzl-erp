@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 @Repository
 public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
@@ -26,4 +27,14 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     BigDecimal findPaidOrderAmount();
 
     List<Map<String,Object>> querySubCompanyOrderAmount(@Param("maps") Map<String, Object> paramMap);
+    /** 根据订单号列表获取订单信息 */
+    List<OrderDO> listByOrderNOs(@Param("orderNOs")Set<String> orderNOs);
+
+    List<OrderDO> findVerifyOrderByParams(@Param("maps") Map<String, Object> maps);
+
+    Integer findVerifyOrderCountByParams(@Param("maps") Map<String, Object> maps);
+
+    OrderDO findConsignByCustomerNo(@Param("customerNo") String customerNo);
+
+    List<OrderDO> findByOrderStatus(@Param("orderStatus") Integer orderStatus);
 }
