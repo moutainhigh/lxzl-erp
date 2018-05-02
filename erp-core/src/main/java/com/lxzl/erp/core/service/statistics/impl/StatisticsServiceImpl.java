@@ -506,6 +506,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 计算应收 = 待收 + 实收
         for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
             statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
+            statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
         }
 
         // 装换为salesmanId-subCompnayId为key的map
@@ -516,11 +517,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中
         for (StatisticsSalesmanDetailTwoExtend statisticsSalesmanDetailTwoExtend : statisticsSalesmanDetailTwoExtendList) {
-            String key = statisticsSalesmanDetailTwoExtend.getSalesmanId() + "-" + statisticsSalesmanDetailTwoExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailTwoExtend.getRentLengthType();
-            BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailTwoExtend);
-            StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
-            if (statisticsSalesmanDetailTwo != null) {
-                statisticsSalesmanDetailTwo.setPureIncrease(statisticsSalesmanDetailTwo.getPureIncrease().add(increaseProduct));
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwoExtend.getRentLengthType()) {
+                String key = statisticsSalesmanDetailTwoExtend.getSalesmanId() + "-" + statisticsSalesmanDetailTwoExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailTwoExtend.getRentLengthType();
+                BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailTwoExtend);
+                StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetailTwo != null) {
+                    statisticsSalesmanDetailTwo.setPureIncrease(statisticsSalesmanDetailTwo.getPureIncrease().add(increaseProduct));
+                }
             }
         }
 
@@ -548,8 +551,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             performance = BigDecimal.valueOf(0.7);
         }
 
-
         BigDecimal returnProduct = BigDecimal.valueOf(0);
+
         // 4.计算实际退租台数
         if (statisticsSalesmanDetailTwoExtend.getReturnProductCount() != null && statisticsSalesmanDetailTwoExtend.getReturnTime() != null
                 && OrderRentType.RENT_TYPE_MONTH.equals(statisticsSalesmanDetailTwoExtend.getRentType())) {
