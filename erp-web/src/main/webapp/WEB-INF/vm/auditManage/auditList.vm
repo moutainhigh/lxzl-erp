@@ -75,7 +75,6 @@
                                 {{/hasCommonActionButtons}}
                                 <th>工作流编号</th>
                                 <th>关联编号</th>
-##                                <th>工作流说明</th>
                                 <th>类型</th>
 ##                                <th>模板名</th>
                                 <th>审核事项</th>
@@ -108,7 +107,6 @@
                                 {{/hasCommonActionButtons}}
                                 <td>{{instanceMarking}}</td>
                                 <td><a href="{{workflowReferUrl}}" target="_blank" class="{{#isCustomer}}workflowReferCustomer{{/isCustomer}}" data-no="{{workflowReferNo}}">{{workflowReferNo}}</a></td>
-##                                <td>{{remark}}</td>
                                 <td>{{workflowTypeStr}}</td>
 ##                                <td>{{workflowTemplateName}}</td>
                                 <td>
@@ -134,7 +132,7 @@
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
                                         {{#buttons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{instanceMarking}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{instanceMarking}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{workflowLinkNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{instanceMarking}}">{{text}}</a>
                                         {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
