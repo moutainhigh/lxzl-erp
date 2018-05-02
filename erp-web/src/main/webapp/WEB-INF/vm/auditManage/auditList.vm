@@ -106,7 +106,7 @@
                                     </label>
                                 </td>
                                 {{/hasCommonActionButtons}}
-                                <td>{{instanceMarking}}</td>
+                                <td>{{workflowLinkNo}}</td>
                                 <td><a href="{{workflowReferUrl}}" target="_blank" class="{{#isCustomer}}workflowReferCustomer{{/isCustomer}}" data-no="{{workflowReferNo}}">{{workflowReferNo}}</a></td>
 ##                                <td>{{remark}}</td>
                                 <td>{{workflowTypeStr}}</td>
@@ -134,7 +134,7 @@
                                     <div class="btn-group text-right">
                                         {{#rowActionButtons}}
                                         {{#buttons}}
-                                        <a href="${ctx}{{menuUrl}}?no={{instanceMarking}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{instanceMarking}}">{{text}}</a>
+                                        <a href="${ctx}{{menuUrl}}?no={{workflowLinkNo}}" type="button" class="btn btn-default btn-xs {{class}}" data-workflowlinkid="{{workflowLinkId}}" data-workflowlinkno="{{workflowLinkNo}}">{{text}}</a>
                                         {{/buttons}}
                                         {{/rowActionButtons}}
                                     </div>
