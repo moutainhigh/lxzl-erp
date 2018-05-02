@@ -307,7 +307,8 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
+//        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
+        ServiceResult<String, String> clearResult = clearStatementOrder(orderDO);
         if (!ErrorCode.SUCCESS.equals(clearResult.getErrorCode())) {
             result.setErrorCode(clearResult.getErrorCode());
             return result;
@@ -318,27 +319,6 @@ public class StatementServiceImpl implements StatementService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
         }
         return createResult;
-    }
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, BigDecimal> reCreateK3OrderStatement(Order order) {
-        ServiceResult<String, BigDecimal> result = new ServiceResult<>();
-        if (order == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
-        if (orderDO == null) {
-            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-            return result;
-        }
-        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
-        if (!ErrorCode.SUCCESS.equals(clearResult.getErrorCode())) {
-            result.setErrorCode(clearResult.getErrorCode());
-            return result;
-        }
-        return createK3OrderStatement(order);
     }
 
     private List<StatementOrderDetailDO> generateStatementDetailList(OrderDO orderDO, Date currentTime, Integer statementDays, Integer loginUserId) {
@@ -1486,7 +1466,8 @@ public class StatementServiceImpl implements StatementService {
                         // 正常全额退
                         BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            if (DateUtil.isSameDay(otherStatementTime, returnTime) || DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) < 0) {
+                            //运费结算时间放到最接近退货单日期的结算日（大于等于退货日）
+                            if (DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) <= 0&&DateUtil.daysBetween(returnTime, statementOrderDetailDO.getStatementExpectPayTime()) >= 0) {
                                 otherStatementTime = statementOrderDetailDO.getStatementExpectPayTime();
                             }
                         }
@@ -1622,7 +1603,7 @@ public class StatementServiceImpl implements StatementService {
 
                         BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-                            if (DateUtil.isSameDay(otherStatementTime, returnTime) || DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) < 0) {
+                            if (DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) <= 0&&DateUtil.daysBetween(returnTime, statementOrderDetailDO.getStatementExpectPayTime()) >= 0) {
                                 otherStatementTime = statementOrderDetailDO.getStatementExpectPayTime();
                             }
                         }
@@ -1677,6 +1658,11 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
+        //将退货单状态设置为已结算
+        k3ReturnOrderDO.setSuccessStatus(CommonConstant.YES);
+        k3ReturnOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        k3ReturnOrderDO.setUpdateTime(currentTime);
+        k3ReturnOrderMapper.update(k3ReturnOrderDO);
         //计算违约金
 //        ServiceResult<String, BigDecimal> penaltyResult= penaltySupport.k3OrderPenalty(k3ReturnOrderDO.getReturnOrderNo());
 //        if(!ErrorCode.SUCCESS.equals(penaltyResult.getErrorCode())){
@@ -3131,6 +3117,31 @@ public class StatementServiceImpl implements StatementService {
         orderDO.setPayTime(now);
         orderMapper.update(orderDO);
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+
+    /**
+     * 清除订单的结算单信息
+     *
+     * @param orderDO
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+//        if(PayStatus.PAY_STATUS_PAYING.equals(orderDO.getPayStatus())||PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())||
+//                PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+//            result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
+//            return result;
+//        }
+//        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
+//        if(k3ReturnOrderDetailDOList!=null&&k3ReturnOrderDetailDOList.size()>0){
+//            result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
+//            return result;
+//        }
+        statementOrderSupport.reStatement(orderDO,new Date());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }

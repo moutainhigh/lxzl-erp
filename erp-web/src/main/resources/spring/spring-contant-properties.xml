@@ -42,6 +42,7 @@
 
     <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">
         <property name="dingDingGatewayUrl" value="${DINGDING-GATEWAY-URL}"/>
+        <property name="dingdingSecret" value="${DINGDING-SECRET}"/>
         <property name="applyApprovingWorkflowCallBackUrl" value="${DINGDING-APPLY-APPROVING_WORKFLOW-CALLBACK-URL}"/>
     </bean>
 </beans>

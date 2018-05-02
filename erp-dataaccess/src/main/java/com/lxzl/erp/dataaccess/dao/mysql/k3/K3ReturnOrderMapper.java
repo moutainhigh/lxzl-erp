@@ -1,15 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.k3;
 
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
-import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
+import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -26,4 +22,5 @@ public interface K3ReturnOrderMapper extends BaseMysqlDAO<K3ReturnOrderDO> {
     /** 根据退货单列表获取退货单列表信息 */
     List<K3ReturnOrderDO> listByReturnOrderNos(@Param("returnOrderNos") List<String> returnOrderNos);
 
+    void saveList(List<K3ReturnOrderDO> k3ReturnOrderDOList);
 }

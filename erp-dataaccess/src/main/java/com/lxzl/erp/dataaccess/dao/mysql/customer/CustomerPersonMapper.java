@@ -18,4 +18,6 @@ public interface CustomerPersonMapper extends BaseMysqlDAO<CustomerPersonDO> {
 	List<CustomerPersonDO> findCustomerPersonByParams(@Param("maps") Map<String, Object> paramMap);
 
 	Integer findCustomerPersonCountByParams(@Param("maps") Map<String, Object> paramMap);
+
+	CustomerPersonDO findByRealName(@Param("realName") String realName);
 }

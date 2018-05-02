@@ -1,7 +1,12 @@
 package com.lxzl.erp.common.domain.dingding.approve;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lxzl.erp.common.constant.VerifyStatus;
+import com.lxzl.se.common.exception.BusinessException;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.Assert;
 
 /**
  * 钉钉工作流回调数据传输对象
@@ -24,12 +29,18 @@ public class DingdingApproveCallBackDTO extends DingdingApproveResultDTO{
     private String processCode;
     /** 审批结果 */
     private String result;
-    /** 职员id---钉钉的用户id */
+    /** 职员id---根据钉钉网关约定的协议---目前为erp系统的用户id */
     private String staffId;
     /** 主题 */
     private String title;
     /** 类型---start:任务或实例开始---finish任务或实例完成 */
     private String type;
+    /** 工作流单号 */
+    private String instanceMarking;
+    /** 同意或者拒绝理由---当eventType为bpms_task_change时将能获取到 */
+    private String remark;
+    /** 用户编号---当前审核人的用户编号 */
+    private Integer currentVerifyUser;
 
     public String getEventType() {
         return eventType;
@@ -110,5 +121,32 @@ public class DingdingApproveCallBackDTO extends DingdingApproveResultDTO{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getInstanceMarking() {
+        return instanceMarking;
+    }
+
+    public void setInstanceMarking(String instanceMarking) {
+        this.instanceMarking = instanceMarking;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public Integer getCurrentVerifyUser() {
+        if (StringUtils.isNotBlank(staffId) && StringUtils.isNumeric(staffId)) {
+            this.currentVerifyUser = Integer.parseInt(staffId);
+        }
+        return currentVerifyUser;
+    }
+
+    public void setCurrentVerifyUser(Integer currentVerifyUser) {
+        this.currentVerifyUser = currentVerifyUser;
     }
 }

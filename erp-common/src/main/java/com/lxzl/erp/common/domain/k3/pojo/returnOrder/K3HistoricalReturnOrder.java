@@ -33,10 +33,11 @@ public class K3HistoricalReturnOrder {
         this.k3ReturnOrderDetails = k3ReturnOrderDetails;
     }
 
-    public void setReturnOrderIdToDetails(int returnOrderId) {
+    public void setReturnOrderIdToDetails(int returnOrderId,String returnOrderNo) {
         if (k3ReturnOrderDetails != null) {
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrderDetails) {
                 k3ReturnOrderDetail.setReturnOrderId(returnOrderId);
+                k3ReturnOrderDetail.setReturnOrderNo(returnOrderNo);
             }
         }
     }
