@@ -37,7 +37,7 @@
                                         <input type="hidden" name="bankSlipId" value="">
                                         <input type="hidden" name="isLocalization" value="">
                                         <input type="hidden" name="detailStatus" value="">
-                                        <input type="hidden" name="slipMonth" value="2018-01-02 12:00:00">
+                                        <input type="hidden" name="slipMonth" value="">
                                         <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
                                     </form>
                                     <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
