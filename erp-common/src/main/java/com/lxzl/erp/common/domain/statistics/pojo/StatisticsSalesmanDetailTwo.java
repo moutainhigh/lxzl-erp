@@ -18,6 +18,7 @@ public class StatisticsSalesmanDetailTwo {
 	private BigDecimal dealsAmount; // 成交金额
 	private BigDecimal awaitReceivable; // 待收
 	private BigDecimal income; // 本期回款（已收）
+	private Integer rentLengthType; // 长租短租
 
 	private BigDecimal receive; // 应收 = 待收 + 本期回款
 	private BigDecimal pureIncrease; // 净增
@@ -116,5 +117,13 @@ public class StatisticsSalesmanDetailTwo {
 
 	public void setPureIncrease(BigDecimal pureIncrease) {
 		this.pureIncrease = pureIncrease;
+	}
+
+	public Integer getRentLengthType() {
+		return rentLengthType;
+	}
+
+	public void setRentLengthType(Integer rentLengthType) {
+		this.rentLengthType = rentLengthType;
 	}
 }

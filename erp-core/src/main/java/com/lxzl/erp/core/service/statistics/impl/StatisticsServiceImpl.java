@@ -509,14 +509,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         // 装换为salesmanId-subCompnayId为key的map
-        Map<String, StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailTwoList, "salesmanId", "subCompanyId");
+        Map<String, StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailTwoList, "salesmanId", "subCompanyId", "rentLengthType");
 
         // 查询扩展数据来计算净增台数
         List<StatisticsSalesmanDetailTwoExtend> statisticsSalesmanDetailTwoExtendList = statisticsMapper.querySalesmanDetailTwoExtend(maps);
 
         // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中
         for (StatisticsSalesmanDetailTwoExtend statisticsSalesmanDetailTwoExtend : statisticsSalesmanDetailTwoExtendList) {
-            String key = statisticsSalesmanDetailTwoExtend.getSalesmanId() + "-" + statisticsSalesmanDetailTwoExtend.getSubCompanyId();
+            String key = statisticsSalesmanDetailTwoExtend.getSalesmanId() + "-" + statisticsSalesmanDetailTwoExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailTwoExtend.getRentLengthType();
             BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailTwoExtend);
             StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
             if (statisticsSalesmanDetailTwo != null) {
