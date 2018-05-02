@@ -22,7 +22,7 @@ public class StatisticsSalesmanDetailTwoExtend {
 	private Integer rentType; // 租赁类型，月租还是天租
 	private BigDecimal rentPrice; // 商品订单租赁单价
 	private Date localizationTime; // 属地化时间
-	private Date confirmDeliveryTime; // 商品项关联订单确认收货时间
+	private Date createTime; // 商品项关联订单确认收货时间
 	private Date rentStartTime; // 租赁开始时间
 	private Integer rentTimeLength; // 租赁时间长度
 	private Double productCountFactor; // 商品项商品折算率
@@ -133,14 +133,6 @@ public class StatisticsSalesmanDetailTwoExtend {
 		this.localizationTime = localizationTime;
 	}
 
-	public Date getConfirmDeliveryTime() {
-		return confirmDeliveryTime;
-	}
-
-	public void setConfirmDeliveryTime(Date confirmDeliveryTime) {
-		this.confirmDeliveryTime = confirmDeliveryTime;
-	}
-
 	public Date getRentStartTime() {
 		return rentStartTime;
 	}
@@ -179,5 +171,13 @@ public class StatisticsSalesmanDetailTwoExtend {
 
 	public void setReturnProductCount(Integer returnProductCount) {
 		this.returnProductCount = returnProductCount;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 }

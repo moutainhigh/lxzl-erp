@@ -1009,7 +1009,8 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) await_receivable,
         SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) income
         FROM erp_business_commission_config ebcc
-        LEFT JOIN erp_user_role eur on ebcc.role_id = eur.role_id
+        LEFT JOIN erp_role er on er.role_type = ebcc.role_id
+        LEFT JOIN erp_user_role eur on er.id = eur.role_id
         LEFT JOIN erp_user eu on eur.user_id = eu.id
         LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
@@ -1018,7 +1019,7 @@ ORDER BY esc.data_order DESC
         (
         select eo.id, eo.order_seller_id, eo.order_sub_company_id, eo.total_product_count, eo.total_order_amount
         from erp_order eo
-        where eo.data_status = 1 AND eo.confirm_delivery_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.confirm_delivery_time
+        where eo.data_status = 1 AND eo.create_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.create_time
         ) deal_data ON deal_data.id = eo.id
         where esc.id is not null
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
@@ -1045,7 +1046,7 @@ ORDER BY esc.data_order DESC
         <result column="rent_type" jdbcType="INTEGER" property="rentType" />
         <result column="rent_price" jdbcType="DECIMAL" property="rentPrice" />
         <result column="localization_time" jdbcType="DATE" property="localizationTime" />
-        <result column="confirm_delivery_time" jdbcType="DATE" property="confirmDeliveryTime" />
+        <result column="create_time" jdbcType="DATE" property="createTime" />
         <result column="rent_start_time" jdbcType="DATE" property="rentStartTime" />
         <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
         <result column="product_count_factor" jdbcType="FLOAT" property="productCountFactor" />
@@ -1068,14 +1069,15 @@ ORDER BY esc.data_order DESC
         eop.rent_type,
         (CASE WHEN eop.rent_type = 1 THEN eps.day_rent_price ELSE eps.month_rent_price END) rent_price,
         MIN(ec.localization_time) localization_time,
-        MIN(eo.confirm_delivery_time) confirm_delivery_time,
+        MIN(eo.create_time) create_time,
         MIN(eo.rent_start_time) rent_start_time,
         MIN(eo.rent_time_length) rent_time_length,
-        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor,
+        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor,
         MIN(k3ro.return_time) return_time,
         MIN(k3rod.product_count) return_product_count
         FROM erp_business_commission_config ebcc
-        LEFT JOIN erp_user_role eur on ebcc.role_id = eur.role_id
+        LEFT JOIN erp_role er on er.role_type = ebcc.role_id
+        LEFT JOIN erp_user_role eur on er.id = eur.role_id
         LEFT JOIN erp_user eu on eur.user_id = eu.id
         LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id and esc.data_status = 1

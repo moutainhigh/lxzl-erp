@@ -539,10 +539,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 3. 计算属地化
         BigDecimal performance;
         Date localizationTime = statisticsSalesmanDetailTwoExtend.getLocalizationTime();
-        Date confirmDeliveryTime = statisticsSalesmanDetailTwoExtend.getConfirmDeliveryTime();
-        if (localizationTime == null || confirmDeliveryTime == null) {
+        Date createTime = statisticsSalesmanDetailTwoExtend.getCreateTime();
+        if (localizationTime == null || createTime == null) {
             performance = BigDecimal.valueOf(1);
-        } else if (DateUtil.getMonthSpace(localizationTime, confirmDeliveryTime) <=3 ) {
+        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <=3 ) {
             performance = BigDecimal.valueOf(0.3);
         } else {
             performance = BigDecimal.valueOf(0.7);
