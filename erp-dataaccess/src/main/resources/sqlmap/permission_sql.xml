@@ -334,13 +334,18 @@
 	<sql id="k3_return_order_control">
 		<if test="maps.permissionParam!=null">
 			AND
-			<if test="maps.permissionParam.permissionUserIdList!= null" >
-				ekro.create_user in
+			<if test="maps.permissionParam.permissionSubCompanyIdForDelivery!= null">
+				ekro.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyIdForDelivery}
+				OR
+			</if>
+			<if test="maps.permissionParam.permissionUserIdList!= null">
+				 ekro.create_user in
 				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
 						 separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
+
 		</if>
 	</sql>
 </mapper>

@@ -957,6 +957,8 @@ ORDER BY esc.data_order DESC
     </resultMap>
 
     <select id="querySalesman" resultMap="SalesmanDetail" parameterType="map">
+        select rs.salesman_id, rs.salesman_name, rs.sub_company_id, rs.sub_company_name, rs.deals_count, rs.deals_product_count, rs.deals_product_count, rs.await_receivable, rs.income
+        from (
         select
         eu.id salesman_id,
         MIN(eu.real_name) salesman_name,
@@ -982,6 +984,13 @@ ORDER BY esc.data_order DESC
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
         </if>
         group by eu.id, eo.order_sub_company_id
+        ) rs
+        <if test="maps.salesmanQueryParam.orderBy!=null&amp;&amp; maps.salesmanQueryParam.orderBy != ''">
+            order by ${maps.salesmanQueryParam.orderBy}
+        </if>
+        <if test="maps.salesmanQueryParam.orderBy!=null&amp;&amp; maps.salesmanQueryParam.orderBy!='' &amp;&amp; maps.salesmanQueryParam.orderType!=null &amp;&amp; maps.salesmanQueryParam.orderType!=''">
+            ${maps.salesmanQueryParam.orderType}
+        </if>
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 </mapper>

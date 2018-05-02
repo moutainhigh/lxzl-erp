@@ -9,6 +9,7 @@ import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statement.StatementService;
@@ -18,6 +19,7 @@ import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -125,14 +127,9 @@ public class StatementController extends BaseController {
     }
 
     @RequestMapping(value = "reCreateOrderStatement", method = RequestMethod.POST)
-    public Result reCreateOrderStatement(@RequestBody StatementOrderQueryParam param) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(param.getOrderNo());
+    public Result reCreateOrderStatement(@RequestBody @Validated(IdGroup.class)Order order) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(order.getOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "reCreateK3OrderStatement", method = RequestMethod.POST)
-    public Result reCreateK3OrderStatement(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateK3OrderStatement(order);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 }

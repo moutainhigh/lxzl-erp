@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.pojo.K3ChangeOrder;
 import com.lxzl.erp.common.domain.k3.pojo.callback.K3DeliveryOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.se.core.service.BaseService;
 
 /**
@@ -21,4 +22,6 @@ public interface K3CallbackService extends BaseService {
     ServiceResult<String, String> callbackCancelOrder(String orderNo,Integer cancelOrderReasonType);
 
     ServiceResult<String,String> callbackReturnOrder(K3ReturnOrder k3ReturnOrder);
+
+    ServiceResult<String, String> callbackReturnDetail(K3ReturnOrder k3ReturnOrder,K3ReturnOrderDO k3ReturnOrderDO);
 }
