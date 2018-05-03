@@ -48,6 +48,11 @@ public interface StatisticsService extends BaseService {
     ServiceResult<String, StatisticsSalesman> querySalesman(StatisticsSalesmanPageParam statisticsSalesmanPageParam);
 
     /**
+     * 查询业务员提成数据（包括净增台数）
+     */
+    ServiceResult<String, List<StatisticsSalesmanDetailTwo>> querySalesmanTwo(StatisticsSalesmanPageParam statisticsSalesmanPageParam);
+
+    /**
      * 长短租详细查询
      */
     ServiceResult<String, StatisticsRentInfo> queryRentInfo(StatisticsRentInfoPageParam statisticsRentInfoPageParam);

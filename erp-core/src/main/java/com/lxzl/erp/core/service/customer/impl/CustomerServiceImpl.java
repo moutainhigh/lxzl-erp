@@ -642,6 +642,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDO.setRemark(customer.getRemark());
         customerDO.setUpdateTime(now);
         customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerDO.setStatementDate(customer.getStatementDate());
         customerMapper.update(customerDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
