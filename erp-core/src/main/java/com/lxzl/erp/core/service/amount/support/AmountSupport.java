@@ -167,4 +167,10 @@ public class AmountSupport {
         cost = new BigDecimal(100);
         return cost;
     }
+
+    public static void  main(String[] args) {
+        AmountSupport amountSupport = new AmountSupport();
+        BigDecimal result = amountSupport.calculateRentAmount(DateUtil.parse("2018-02-05", "yyyy-MM-dd"),DateUtil.parse("2018-04-02", "yyyy-MM-dd"), BigDecimal.valueOf(1));
+        System.out.println(result);
+    }
 }
