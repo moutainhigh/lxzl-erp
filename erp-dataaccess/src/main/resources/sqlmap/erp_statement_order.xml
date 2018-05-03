@@ -273,6 +273,12 @@
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
 		<where>
+			<if test="maps.statementOrderIdList != null">
+				AND eso.id IN
+				<foreach item="statementOrderId" index="index" collection="maps.statementOrderIdList" open="(" separator="," close=")">
+					#{statementOrderId}
+				</foreach>
+			</if>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != null &amp;&amp; maps.statementOrderQueryParam.statementOrderCustomerName != ''">
 				and ec.customer_name like CONCAT('%','${maps.statementOrderQueryParam.statementOrderCustomerName}','%' )
 			</if>
@@ -333,6 +339,12 @@
 		INNER JOIN erp_customer ec on eso.customer_id = ec.id
 		INNER JOIN  erp_user owner_user on ec.owner = owner_user.id
 		<where>
+			<if test="maps.statementOrderIdList != null">
+				AND eso.id IN
+				<foreach item="statementOrderId" index="index" collection="maps.statementOrderIdList" open="(" separator="," close=")">
+					#{statementOrderId}
+				</foreach>
+			</if>
 			<if test="maps.statementOrderQueryParam != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != null &amp;&amp; maps.statementOrderQueryParam.statementOrderNo != ''">
 				and eso.statement_order_no like CONCAT('%','${maps.statementOrderQueryParam.statementOrderNo}','%' )
 			</if>

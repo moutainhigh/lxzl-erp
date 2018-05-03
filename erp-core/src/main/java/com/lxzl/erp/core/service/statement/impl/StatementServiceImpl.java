@@ -71,6 +71,7 @@ import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrec
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import org.apache.ibatis.mapping.StatementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -973,6 +974,28 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
+        if (StringUtil.isNotEmpty(statementOrderQueryParam.getOrderNo())) {
+            OrderDO orderDO = orderMapper.findByOrderNo(statementOrderQueryParam.getOrderNo());
+            Page<StatementOrder> pageEmpty = new Page<>(new ArrayList<StatementOrder>(), 0, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+            if (orderDO == null) {
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(pageEmpty);
+                return result;
+            }
+            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+            if (CollectionUtil.isEmpty(statementOrderDetailDOList)) {
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(pageEmpty);
+                return result;
+            }
+            List<Integer> statementOrderIdList = new ArrayList<>();
+            for (StatementOrderDetailDO statementOrderDetailDO:statementOrderDetailDOList){
+                statementOrderIdList.add(statementOrderDetailDO.getStatementOrderId());
+            }
+            maps.put("statementOrderIdList", statementOrderIdList);
+        }
+
+
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderQueryParam", statementOrderQueryParam);
