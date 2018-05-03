@@ -517,7 +517,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         Page<StatisticsSalesmanDetailTwo> page = new Page<>(statisticsSalesmanDetailTwoList, statisticsSalesman.getTotalCount(), statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
-        statisticsSalesman.setStatisticsSalesmanDetailTwoPage(page);
+        statisticsSalesman.setStatisticsSalesmanDetailPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(statisticsSalesman);
         return result;

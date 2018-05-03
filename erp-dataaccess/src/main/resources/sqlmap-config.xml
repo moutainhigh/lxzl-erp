@@ -164,6 +164,10 @@
 
         <mapper resource="sqlmap/erp_switch.xml" />
 
+        <mapper resource="sqlmap/erp_relet_order_material.xml" />
+        <mapper resource="sqlmap/erp_relet_order_product.xml" />
+        <mapper resource="sqlmap/erp_relet_order.xml" />
+
     </mappers>
 
 </configuration>
