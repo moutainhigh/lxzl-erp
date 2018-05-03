@@ -72,6 +72,7 @@
         <collection property="orderMaterialDOList" resultMap="OrderMaterialDO"/>
         <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO"/>
         <collection property="orderTimeAxisDOList" resultMap="OrderTimeAxisDO"/>
+        <collection property="reletOrderDOList" resultMap="ReletOrderDO"/>
     </resultMap>
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderProductDO" id="OrderProductDO">
@@ -174,6 +175,50 @@
         <result column="time_axis_update_user" jdbcType="VARCHAR" property="updateUser"/>
     </resultMap>
 
+
+    <resultMap id="ReletOrderDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO">
+        <id column="relet_id" jdbcType="INTEGER" property="id" />
+        <result column="relet_no" jdbcType="VARCHAR" property="reletOrderNo" />
+        <result column="relet_order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="relet_order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="relet_buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
+        <result column="relet_buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo" />
+        <result column="relet_buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
+        <result column="relet_order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
+        <result column="relet_delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId" />
+        <result column="relet_rent_type" jdbcType="INTEGER" property="rentType" />
+        <result column="relet_rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="relet_rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="relet_rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
+        <result column="relet_total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+        <result column="relet_total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
+        <result column="relet_total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
+        <result column="relet_total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
+        <result column="relet_total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
+        <result column="relet_total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
+        <result column="relet_order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+        <result column="relet_order_union_seller_id" jdbcType="INTEGER" property="orderUnionSellerId" />
+        <result column="relet_total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
+        <result column="relet_relet_order_status" jdbcType="INTEGER" property="reletOrderStatus" />
+        <result column="relet_pay_status" jdbcType="INTEGER" property="payStatus" />
+        <result column="relet_pay_time" jdbcType="TIMESTAMP" property="payTime" />
+        <result column="relet_expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+        <result column="relet_actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
+        <result column="relet_high_tax_rate" jdbcType="INTEGER" property="highTaxRate" />
+        <result column="relet_low_tax_rate" jdbcType="INTEGER" property="lowTaxRate" />
+        <result column="relet_statement_date" jdbcType="INTEGER" property="statementDate" />
+        <result column="relet_buyer_remark" jdbcType="VARCHAR" property="buyerRemark" />
+        <result column="relet_product_summary" jdbcType="VARCHAR" property="productSummary" />
+        <result column="relet_data_status" jdbcType="INTEGER" property="dataStatus" />
+        <result column="relet_remark" jdbcType="VARCHAR" property="remark" />
+        <result column="relet_owner" jdbcType="INTEGER" property="owner" />
+        <result column="relet_create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="relet_create_user" jdbcType="VARCHAR" property="createUser" />
+        <result column="relet_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="relet_update_user" jdbcType="VARCHAR" property="updateUser" />
+    </resultMap>
+
+
     <sql id="column_List">
         eo.id as id,eo.order_no as order_no,eo.buyer_customer_id as buyer_customer_id,eo.buyer_customer_name as buyer_customer_name,eo.delivery_mode as delivery_mode,eo.rent_start_time as rent_start_time,eo.rent_type as rent_type,eo.rent_time_length as rent_time_length,eo.rent_length_type as rent_length_type,eo.expect_delivery_time as expect_delivery_time,eo.total_deposit_amount as total_deposit_amount,eo.total_must_deposit_amount as total_must_deposit_amount,eo.total_credit_deposit_amount as total_credit_deposit_amount,eo.total_insurance_amount as total_insurance_amount,eo.total_rent_deposit_amount,eo.total_product_count as total_product_count,eo.total_product_amount as total_product_amount,eo.total_product_deposit_amount as total_product_deposit_amount,eo.total_product_credit_deposit_amount as total_product_credit_deposit_amount,eo.total_product_rent_deposit_amount as total_product_rent_deposit_amount,eo.total_material_count as total_material_count,eo.total_material_amount as total_material_amount,eo.total_material_deposit_amount as total_material_deposit_amount,eo.total_material_credit_deposit_amount as total_material_credit_deposit_amount,eo.total_material_rent_deposit_amount as total_material_rent_deposit_amount,eo.total_order_amount as total_order_amount,eo.total_paid_order_amount as total_paid_order_amount,eo.total_discount_amount as total_discount_amount,eo.logistics_amount as logistics_amount,eo.order_seller_id as order_seller_id,eo.order_sub_company_id as order_sub_company_id,eo.order_status as order_status, eo.first_need_pay_amount as first_need_pay_amount,eo.pay_status as pay_status,eo.is_peer as is_peer,eo.pay_time as pay_time,eo.delivery_time as delivery_time,eo.confirm_delivery_time as confirm_delivery_time,eo.expect_return_time as expect_return_time,eo.actual_return_time as actual_return_time,eo.high_tax_rate as high_tax_rate,eo.low_tax_rate as low_tax_rate,eo.buyer_remark as buyer_remark,eo.product_summary as product_summary,eo.is_k3_order as is_k3_order,eo.data_status as data_status,eo.remark as remark,eo.owner as owner,eo.create_time as create_time,eo.create_user as create_user,eo.update_time as update_time,eo.update_user as update_user,eo.delivery_sub_company_id as delivery_sub_company_id,eo.statement_date as statement_date,eo.order_message as order_message,eo.cancel_order_reason_type as cancel_order_reason_type
     </sql>
@@ -193,6 +238,12 @@
     <sql id="time_axis_column_List">
         eota.id as time_axis_id,eota.order_id as time_axis_order_id,eota.order_status as time_axis_order_status,eota.generation_time as time_axis_generation_time,eota.order_snapshot as time_axis_order_snapshot,eota.data_status as time_axis_data_status,eota.remark as time_axis_remark,eota.create_time as time_axis_create_time,eota.create_user as time_axis_create_user,eota.update_time as time_axis_update_time,eota.update_user as time_axis_update_user
     </sql>
+
+
+    <sql id="relet_column_List">
+        ero.id as relet_id,ero.relet_order_no as relet_no,ero.order_id as relet_order_id,ero.order_no as relet_order_no,ero.buyer_customer_id as relet_buyer_customer_id,ero.buyer_customer_no as relet_buyer_customer_no,ero.buyer_customer_name as relet_buyer_customer_name,ero.order_sub_company_id as relet_order_sub_company_id,ero.delivery_sub_company_id as relet_delivery_sub_company_id,ero.rent_type as relet_rent_type,ero.rent_time_length as relet_rent_time_length,ero.rent_length_type as relet_rent_length_type,ero.rent_start_time as relet_rent_start_time,ero.total_product_count as relet_total_product_count,ero.total_product_amount as relet_total_product_amount,ero.total_material_count as relet_total_material_count,ero.total_material_amount as relet_total_material_amount,ero.total_order_amount as relet_total_order_amount,ero.total_paid_order_amount as relet_total_paid_order_amount,ero.order_seller_id as relet_order_seller_id,ero.order_union_seller_id as relet_order_union_seller_id,ero.total_discount_amount as relet_total_discount_amount,ero.relet_order_status as relet_relet_order_status,ero.pay_status as relet_pay_status,ero.pay_time as relet_pay_time,ero.expect_return_time as relet_expect_return_time,ero.actual_return_time as relet_actual_return_time,ero.high_tax_rate as relet_high_tax_rate,ero.low_tax_rate as relet_low_tax_rate,ero.statement_date as relet_statement_date,ero.buyer_remark as relet_buyer_remark,ero.product_summary as relet_product_summary,ero.data_status as relet_data_status,ero.remark as relet_remark,ero.owner as relet_owner,ero.create_time as relet_create_time,ero.create_user as relet_create_user,ero.update_time as relet_update_time,ero.update_user as relet_update_user
+    </sql>
+
 
     <select id="findById" resultMap="OrderDO" parameterType="java.lang.Integer">
         select
@@ -257,6 +308,9 @@
         <trim prefix=",">
             <include refid="material_column_List"/>
         </trim>
+        <trim prefix=",">
+            <include refid="relet_column_List"/>
+        </trim>
         FROM (
         SELECT
         <include refid="column_List"/>
@@ -281,6 +335,7 @@
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
+        LEFT JOIN erp_relet_order ero ON m_order.id = ero.order_id and ero.data_status = 1
     </select>
 
     <select id="findByCustomerId" resultMap="OrderDO" parameterType="java.lang.Integer">

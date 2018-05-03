@@ -3,14 +3,13 @@ package com.lxzl.erp.core.service.statement;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
-import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
-import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.math.BigDecimal;
@@ -42,6 +41,17 @@ public interface StatementService extends BaseService {
      */
     ServiceResult<String, BigDecimal> createOrderStatement(String orderNo);
     ServiceResult<String, BigDecimal> createK3OrderStatement(Order order);
+
+    /**
+     * 创建续租单的 结算单
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/4/25 15:57
+     * @param   reletOrderDo 续租单的 订单编号
+     * @return
+     */
+    ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDo);
+
 
     /**
      * 重新创建结算单
