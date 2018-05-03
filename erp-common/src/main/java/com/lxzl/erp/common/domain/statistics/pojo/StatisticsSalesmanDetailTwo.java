@@ -16,11 +16,11 @@ public class StatisticsSalesmanDetailTwo {
 	private Integer dealsCount; // 成交单数
 	private Integer dealsProductCount; // 成交台数
 	private BigDecimal dealsAmount; // 成交金额
-	private BigDecimal awaitReceivable; // 待收
-	private BigDecimal income; // 本期回款（已收）
+	private BigDecimal awaitReceivable = BigDecimal.valueOf(0); // 待收
+	private BigDecimal income = BigDecimal.valueOf(0); // 本期回款（已收）
 	private Integer rentLengthType; // 长租短租
 
-	private BigDecimal receive; // 应收 = 待收 + 本期回款
+	private BigDecimal receive = BigDecimal.valueOf(0); // 应收 = 待收 + 本期回款
 	private BigDecimal pureIncrease; // 净增
 
 	public Integer getId() {

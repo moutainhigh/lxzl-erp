@@ -32,7 +32,5 @@ public class StatisticsServiceTest extends BaseUnTransactionalTest {
 		Date end = sdf.parse(" 2028-07-10 19:20:00 ");
 		statisticsSalesmanPageParam.setStartTime(start);
 //		statisticsSalesmanPageParam.setSalesmanName("刘君诚");
-		ServiceResult<String, List<StatisticsSalesmanDetailTwo>>  result = statisticsService.querySalesmanTwo(statisticsSalesmanPageParam);
-		System.out.println(result.getResult());
 	}
 }
