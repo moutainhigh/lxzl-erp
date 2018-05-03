@@ -974,22 +974,25 @@ public class StatementServiceImpl implements StatementService {
         ServiceResult<String, Page<StatementOrder>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
-        if (statementOrderQueryParam.getOrderNo()!= null) {
-            OrderDO byOrderNo = orderMapper.findByOrderNo(statementOrderQueryParam.getOrderNo());
-            if (byOrderNo == null) {
-                Page<StatementOrder> page = new Page<>(new ArrayList<StatementOrder>(), 0, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+        if (StringUtil.isNotEmpty(statementOrderQueryParam.getOrderNo())) {
+            OrderDO orderDO = orderMapper.findByOrderNo(statementOrderQueryParam.getOrderNo());
+            Page<StatementOrder> pageEmpty = new Page<>(new ArrayList<StatementOrder>(), 0, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+            if (orderDO == null) {
                 result.setErrorCode(ErrorCode.SUCCESS);
-                result.setResult(page);
+                result.setResult(pageEmpty);
                 return result;
             }
-            List<StatementOrderDetailDO> byOrderId = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,byOrderNo.getId());
-            if (CollectionUtil.isEmpty(byOrderId)) {
-                Page<StatementOrder> page = new Page<>(new ArrayList<StatementOrder>(), 0, statementOrderQueryParam.getPageNo(), statementOrderQueryParam.getPageSize());
+            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+            if (CollectionUtil.isEmpty(statementOrderDetailDOList)) {
                 result.setErrorCode(ErrorCode.SUCCESS);
-                result.setResult(page);
+                result.setResult(pageEmpty);
                 return result;
             }
-            maps.put("statementOrderId", byOrderId.get(0).getStatementOrderId());
+            List<Integer> statementOrderIdList = new ArrayList<>();
+            for (StatementOrderDetailDO statementOrderDetailDO:statementOrderDetailDOList){
+                statementOrderIdList.add(statementOrderDetailDO.getStatementOrderId());
+            }
+            maps.put("statementOrderIdList", statementOrderIdList);
         }
 
 
