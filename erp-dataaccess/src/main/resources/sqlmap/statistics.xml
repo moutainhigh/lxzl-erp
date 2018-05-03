@@ -1088,7 +1088,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id and esc.data_status = 1
         LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id and esod.order_type = 1 and esod.data_status = 1
         LEFT JOIN erp_order_product eop on esod.order_item_refer_id = eop.id and esod.order_item_type = 1
-        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id and eps.data_status = 1
+        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id
         LEFT JOIN erp_product ep on eps.product_id = ep.id and ep.data_status = 1
         LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
         LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id and ec.data_status = 1
@@ -1133,7 +1133,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id and esc.data_status = 1
         LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
         LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id and ec.data_status = 1
-        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id and eps.data_status = 1
+        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id
         LEFT JOIN erp_product ep on eps.product_id = ep.id and ep.data_status = 1
         LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
         where k3rod.data_status = 1 and eop.rent_length_type = 2
