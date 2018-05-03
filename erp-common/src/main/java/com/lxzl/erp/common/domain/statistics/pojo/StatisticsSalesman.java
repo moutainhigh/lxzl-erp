@@ -21,7 +21,7 @@ public class StatisticsSalesman implements Serializable {
 	private BigDecimal totalReceive = BigDecimal.valueOf(0); // 总应收
 	private BigDecimal totalIncome = BigDecimal.valueOf(0); // 本期回款（查询期间内的结算收入）
 
-	private Page<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoPage; // 统计项分页
+	private Page<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailPage; // 统计项分页
 
 	public Integer getTotalCount() {
 		return totalCount;
@@ -71,19 +71,19 @@ public class StatisticsSalesman implements Serializable {
 		this.totalDealsAmount = totalDealsAmount;
 	}
 
-	public Page<StatisticsSalesmanDetailTwo> getStatisticsSalesmanDetailTwoPage() {
-		return statisticsSalesmanDetailTwoPage;
-	}
-
-	public void setStatisticsSalesmanDetailTwoPage(Page<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoPage) {
-		this.statisticsSalesmanDetailTwoPage = statisticsSalesmanDetailTwoPage;
-	}
-
 	public BigDecimal getTotalReceive() {
 		return totalReceive;
 	}
 
 	public void setTotalReceive(BigDecimal totalReceive) {
 		this.totalReceive = totalReceive;
+	}
+
+	public Page<StatisticsSalesmanDetailTwo> getStatisticsSalesmanDetailPage() {
+		return statisticsSalesmanDetailPage;
+	}
+
+	public void setStatisticsSalesmanDetailPage(Page<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailPage) {
+		this.statisticsSalesmanDetailPage = statisticsSalesmanDetailPage;
 	}
 }
