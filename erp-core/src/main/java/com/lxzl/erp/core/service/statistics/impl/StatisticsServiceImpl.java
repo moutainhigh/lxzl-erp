@@ -512,8 +512,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
         for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
-            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
-            statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwo.getRentLengthType()) {
+                statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+            }
         }
 
         // 查询扩展数据来计算净增台数
