@@ -1087,7 +1087,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id and esc.data_status = 1
         LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id and esod.order_type = 1 and esod.data_status = 1
-        LEFT JOIN erp_order_product eop on esod.order_item_refer_id = eop.id and esod.order_item_type = 1 and eop.data_status = 1
+        LEFT JOIN erp_order_product eop on esod.order_item_refer_id = eop.id and esod.order_item_type = 1
         LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id and eps.data_status = 1
         LEFT JOIN erp_product ep on eps.product_id = ep.id and ep.data_status = 1
         LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
@@ -1127,7 +1127,7 @@ ORDER BY esc.data_order DESC
         CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
         from erp_k3_return_order_detail k3rod
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
-        LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id and eop.data_status = 1
+        LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id
         LEFT JOIN erp_statement_order_detail esod on esod.order_item_refer_id = eop.id and esod.order_item_type = 1 and esod.data_status = 1
         LEFT JOIN erp_order eo on eo.id = eop.order_id AND eo.data_status = 1
         LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id and esc.data_status = 1
