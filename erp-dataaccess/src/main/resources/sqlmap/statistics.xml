@@ -923,11 +923,11 @@ ORDER BY esc.data_order DESC
     <select id="querySalesmanCount" resultMap="StatisticsSalesman" parameterType="map">
         select
         count(distinct eu.id) total_count,
-        SUM(CASE WHEN deal_data.id IS NOT NULL THEN 1 ELSE 0 END) deals_count,
-        SUM(CASE WHEN deal_data.total_product_count IS NOT NULL THEN deal_data.total_product_count ELSE 0 END) deals_product_count,
-        SUM(CASE WHEN deal_data.total_order_amount IS NOT NULL THEN deal_data.total_order_amount ELSE 0 END) deals_amount,
-        SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) await_receivable,
-        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) income
+        SUM(CASE WHEN deal_data.id IS NOT NULL THEN 1 ELSE 0 END) total_deals_count,
+        SUM(CASE WHEN deal_data.total_product_count IS NOT NULL THEN deal_data.total_product_count ELSE 0 END) total_deals_product_count,
+        SUM(CASE WHEN deal_data.total_order_amount IS NOT NULL THEN deal_data.total_order_amount ELSE 0 END) total_deals_amount,
+        SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) total_await_receivable,
+        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) total_income
         FROM erp_business_commission_config ebcc
         LEFT JOIN erp_role er on er.role_type = ebcc.role_id
         LEFT JOIN erp_user_role eur on er.id = eur.role_id
