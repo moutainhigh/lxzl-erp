@@ -126,4 +126,23 @@ public class StatisticsSalesmanDetailTwo {
 	public void setRentLengthType(Integer rentLengthType) {
 		this.rentLengthType = rentLengthType;
 	}
+
+	@Override
+	public String toString() {
+		return "StatisticsSalesmanDetailTwo{" +
+				"id=" + id +
+				", salesmanId=" + salesmanId +
+				", salesmanName='" + salesmanName + '\'' +
+				", subCompanyId=" + subCompanyId +
+				", subCompanyName='" + subCompanyName + '\'' +
+				", dealsCount=" + dealsCount +
+				", dealsProductCount=" + dealsProductCount +
+				", dealsAmount=" + dealsAmount +
+				", awaitReceivable=" + awaitReceivable +
+				", income=" + income +
+				", rentLengthType=" + rentLengthType +
+				", receive=" + receive +
+				", pureIncrease=" + pureIncrease +
+				'}';
+	}
 }
