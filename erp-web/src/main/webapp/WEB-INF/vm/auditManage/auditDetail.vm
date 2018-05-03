@@ -19,7 +19,7 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <h5>工作流编号：<small id="instanceMarking"></small></h5>
+                                <h5>工作流编号：<small id="workflowLinkNo"></small></h5>
                             </div>
                             <div class="col-md-8"></div>
                         </div>

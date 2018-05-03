@@ -54,16 +54,19 @@
                                 </div>
                                 <div class="form-group pull-right mn mr10">
                                     <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="rentLengthType" id="rentLengthType"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
                                         <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId"></select>
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <input type="hidden" name="startTime" id="startTime" />
-                                    <input type="hidden" name="endTime" id="endTime" />
-                                    <div class="input-group date" id="timePicker">
-                                        <input type="text" name="timePickerInput" id="timePickerInput" class="nopram form-control input-sm bradiusL" autocomplete="off" placeholder="请选择时间范围">
+                                    <label for="startTime" class="input-group date">
+                                        <input type="text" name="startTime" id="startTime" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择月份">
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                    </div>
+                                    </label>
                                 </div>
                             </form>
                         </div>
@@ -80,8 +83,10 @@
                                 <th>成交单数</th>
                                 <th>成交台数</th>
                                 <th>成交金额</th>
-                                <th>待收</th>
+                                <th>应收</th>
                                 <th>本期回款</th>
+                                <th>长短租类型</th>
+                                <th>净增</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -94,25 +99,27 @@
                                 <td>{{dealsCount}}</td>
                                 <td>{{dealsProductCount}}</td>
                                 <td>{{#price}}{{dealsAmount}}{{/price}}</td>
-                                <td>{{#price}}{{awaitReceivable}}{{/price}}</td>
+                                <td>{{#price}}{{receive}}{{/price}}</td>
                                 <td>{{#price}}{{income}}{{/price}}</td>
+                                <td>{{rentLengthTypeValue}}</td>
+                                <td>{{pureIncrease}}</td>
                             </tr>
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="8" class="text-center">无数据</td>
+                                <td valign="top" colspan="10" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
                             {{#hasTotalData}}
                             {{#deductData}}
                             <tr>
                                 <td>总计</td>
-                                <td colspan="2" class="text-danger">总条数:{{totalCount}}</td>
+                                <td colspan="3" class="text-danger">总条数:{{totalCount}}</td>
                                 <td class="text-danger">{{totalDealsCount}}</td>
                                 <td class="text-danger">{{totalDealsProductCount}}</td>
-                                <td class="text-danger">{{#price}}{{income}}{{/price}}</td>
-                                <td class="text-danger">{{#price}}{{income}}{{/price}}</td>
-                                <td class="text-danger">{{#price}}{{income}}{{/price}}</td>
+                                <td class="text-danger">{{#price}}{{totalDealsAmount}}{{/price}}</td>
+                                <td class="text-danger">{{#price}}{{totalReceive}}{{/price}}</td>
+                                <td colspan="3" class="text-danger">{{#price}}{{totalIncome}}{{/price}}</td>
                             </tr>
                             {{/deductData}}
                             {{/hasTotalData}}
@@ -136,6 +143,7 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+<script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js', 'manage.statistics.salesman.deduct.js');
 </script>

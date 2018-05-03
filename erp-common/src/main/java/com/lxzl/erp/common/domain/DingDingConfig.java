@@ -15,31 +15,35 @@ public class DingDingConfig {
      * 钉钉网关的secret
      */
     public static String dingdingSecret;
-
+    
+    /**  
+     * <p>
+     * 审批回调URL
+     * </p>
+     * @author daiqi
+     * @date 2018/4/28 16:12  
+     * @param  null
+     * @return
+     */  
     public static String applyApprovingWorkflowCallBackUrl;
 
-
-    public static String CC_POSITION_START = "START";
-    public static String CC_POSITION_FINISH = "FINISH";
-    public static String CC_POSITION_START_FINISH = "START_FINISH";
-    /**
-     * 接口---根据部门编号获取人员列表信息
-     */
-    private static String interfaceGetMemberListbyDepartment = "getMemberListbyDepartment";
     /**
      * 接口---发起审批实例
      */
     private static String interfaceApplyApprovingWorkflow = "applyApprovingWorkflow";
     /**
-     * 接口---绑定钉钉用户id到钉钉网关的接口
+     * 接口---往钉钉网关上注册erp系统的userId接口
      */
     private static String interfaceInputMember = "inputMember";
-
     /**
-     * 获取根据部门编号获取人员列表信息的url
+     * 接口---注销钉钉网关工作流接口
      */
-    public static String getGetMemberListbyDepartmentUrl() {
-        return dingDingGatewayUrl + "/" + interfaceGetMemberListbyDepartment;
+    private static String delApprovingWorkflow = "delApprovingWorkflow";
+    /**
+     * 获取注销钉钉网关工作流接口的url
+     */
+    public static String getDelApprovingWorkflowUrl() {
+        return dingDingGatewayUrl + "/" + delApprovingWorkflow;
     }
 
     /**
