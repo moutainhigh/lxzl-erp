@@ -31,7 +31,6 @@ public class StatisticsTest extends ERPUnTransactionalTest {
 		Date start = sdf.parse(" 2008-07-10 19:20:00 ");
 		Date end = sdf.parse(" 2028-07-10 19:20:00 ");
 		statisticsSalesmanPageParam.setStartTime(start);
-		statisticsSalesmanPageParam.setEndTime(end);
 		PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
 		Map<String, Object> maps = new HashMap<>();
 		maps.put("start", pageQuery.getStart());
@@ -49,7 +48,6 @@ public class StatisticsTest extends ERPUnTransactionalTest {
 		Date start = sdf.parse(" 2008-07-10 19:20:00 ");
 		Date end = sdf.parse(" 2028-07-10 19:20:00 ");
 		statisticsSalesmanPageParam.setStartTime(start);
-		statisticsSalesmanPageParam.setEndTime(end);
 		PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
 		Map<String, Object> maps = new HashMap<>();
 		maps.put("start", pageQuery.getStart());

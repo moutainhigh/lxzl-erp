@@ -459,13 +459,25 @@ public class StatisticsServiceImpl implements StatisticsService {
     public ServiceResult<String, StatisticsSalesman> querySalesman(StatisticsSalesmanPageParam statisticsSalesmanPageParam) {
         ServiceResult<String, StatisticsSalesman> result = new ServiceResult<>();
         String orderBy = statisticsSalesmanPageParam.getOrderBy();
-        if (orderBy != null && !StatisticsSalesmanOrderBy.isValid(orderBy)) {
+        if (StringUtil.isNotBlank(orderBy) && !StatisticsSalesmanOrderBy.isValid(orderBy)) {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
 
         // 转换为数据库排序字段, orderType在pageQuery对象中已验证
         statisticsSalesmanPageParam.setOrderBy(StatisticsSalesmanOrderBy.getDataFiled(orderBy));
+
+        // 格式化查询时间
+        Date startTime = statisticsSalesmanPageParam.getStartTime();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(startTime);// someDate 为你要获取的那个月的时间
+        ca.set(Calendar.DAY_OF_MONTH, 1);
+        Date start = ca.getTime(); // 当月第一天
+        ca.add(Calendar.MONTH, 1);
+        ca.add(Calendar.DAY_OF_MONTH, -1);
+        Date end = ca.getTime(); // 当月最后一天
+        statisticsSalesmanPageParam.setStartTime(start);
+        statisticsSalesmanPageParam.setEndTime(end);
 
         PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();
@@ -474,9 +486,38 @@ public class StatisticsServiceImpl implements StatisticsService {
         maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
 
         StatisticsSalesman statisticsSalesman = statisticsMapper.querySalesmanCount(maps);
-        List<StatisticsSalesmanDetail> statisticsSalesmanDetailList = statisticsMapper.querySalesman(maps);
-        Page<StatisticsSalesmanDetail> page = new Page<>(statisticsSalesmanDetailList, statisticsSalesman.getTotalCount(), statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
-        statisticsSalesman.setStatisticsSalesmanDetailPage(page);
+        // 计算总应收
+        statisticsSalesman.setTotalReceive(statisticsSalesman.getTotalAwaitReceivable().add(statisticsSalesman.getTotalIncome()));
+
+        // 查询以业务员，分公司分组的初步数据
+        List<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoList = statisticsMapper.querySalesmanDetailTwo(maps);
+
+        // 计算应收 = 待收 + 实收
+        for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
+            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
+            statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+        }
+
+        // 装换为salesmanId-subCompnayId为key的map
+        Map<String, StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailTwoList, "salesmanId", "subCompanyId", "rentLengthType");
+
+        // 查询扩展数据来计算净增台数
+        List<StatisticsSalesmanDetailTwoExtend> statisticsSalesmanDetailTwoExtendList = statisticsMapper.querySalesmanDetailTwoExtend(maps);
+
+        // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中
+        for (StatisticsSalesmanDetailTwoExtend statisticsSalesmanDetailTwoExtend : statisticsSalesmanDetailTwoExtendList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwoExtend.getRentLengthType()) {
+                String key = statisticsSalesmanDetailTwoExtend.getSalesmanId() + "-" + statisticsSalesmanDetailTwoExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailTwoExtend.getRentLengthType();
+                BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailTwoExtend);
+                StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetailTwo != null) {
+                    statisticsSalesmanDetailTwo.setPureIncrease(statisticsSalesmanDetailTwo.getPureIncrease().add(increaseProduct));
+                }
+            }
+        }
+
+        Page<StatisticsSalesmanDetailTwo> page = new Page<>(statisticsSalesmanDetailTwoList, statisticsSalesman.getTotalCount(), statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
+        statisticsSalesman.setStatisticsSalesmanDetailTwoPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(statisticsSalesman);
         return result;
@@ -486,13 +527,24 @@ public class StatisticsServiceImpl implements StatisticsService {
     public ServiceResult<String, List<StatisticsSalesmanDetailTwo>> querySalesmanTwo(StatisticsSalesmanPageParam statisticsSalesmanPageParam) {
         ServiceResult<String, List<StatisticsSalesmanDetailTwo>> result = new ServiceResult<>();
         String orderBy = statisticsSalesmanPageParam.getOrderBy();
-        if (orderBy != null && !StatisticsSalesmanOrderBy.isValid(orderBy)) {
+        if (StringUtil.isNotBlank(orderBy) && !StatisticsSalesmanOrderBy.isValid(orderBy)) {
             result.setErrorCode(ErrorCode.PARAM_IS_ERROR);
             return result;
         }
 
         // 转换为数据库排序字段, orderType在pageQuery对象中已验证
         statisticsSalesmanPageParam.setOrderBy(StatisticsSalesmanOrderBy.getDataFiled(orderBy));
+
+        // 格式化查询时间
+        Date startTime = statisticsSalesmanPageParam.getStartTime();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(startTime);
+        ca.set(Calendar.DAY_OF_MONTH,0);
+        Date start = ca.getTime(); // 当月第一天
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date end = ca.getTime(); // 当月最后一天
+        statisticsSalesmanPageParam.setStartTime(start);
+        statisticsSalesmanPageParam.setEndTime(end);
 
         PageQuery pageQuery = new PageQuery(statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
         Map<String, Object> maps = new HashMap<>();

@@ -144,11 +144,10 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsSalesmanPageParam.setPageNo(1);
         statisticsSalesmanPageParam.setPageSize(10);
         SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
-        Date start = sdf.parse(" 2008-07-10 19:20:00 ");
+        Date start = sdf.parse(" 2018-04-10 19:20:00 ");
         Date end = sdf.parse(" 2028-07-10 19:20:00 ");
         statisticsSalesmanPageParam.setStartTime(start);
-        statisticsSalesmanPageParam.setEndTime(end);
-        statisticsSalesmanPageParam.setOrderBy("await_receivable");
+        statisticsSalesmanPageParam.setOrderBy("awaitReceivable");
         statisticsSalesmanPageParam.setOrderType("DESC");
 //        statisticsSalesmanPageParam.setSubCompanyId(3);
 //        statisticsSalesmanPageParam.setSalesmanName("何");
