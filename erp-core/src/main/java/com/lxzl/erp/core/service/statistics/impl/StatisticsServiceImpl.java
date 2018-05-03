@@ -590,6 +590,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         Double productCount = statisticsSalesmanDetailTwoExtend.getProductCount() * statisticsSalesmanDetailTwoExtend.getProductCountFactor();
         // 2. 计算折扣系数，并算法订单净增数
         BigDecimal dis = statisticsSalesmanDetailTwoExtend.getRentPrice().divide(statisticsSalesmanDetailTwoExtend.getProductUnitAmount(), 5);
+        // 折扣系数最大为1
+        if (dis.compareTo(BigDecimal.valueOf(1)) > 0) {
+            dis = BigDecimal.valueOf(1);
+        }
         BigDecimal orderIncreaseProduce = dis.multiply(BigDecimal.valueOf(productCount));
         // 3. 计算属地化
         BigDecimal performance;
