@@ -13,6 +13,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -576,6 +577,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     // 计算每一退货订单项的台数
     private BigDecimal calcPureReturn(StatisticsSalesmanReturnOrder statisticsSalesmanReturnOrder) {
+        // 不计算配件
+        if (productSupport.isMaterial(statisticsSalesmanReturnOrder.getProductNo())) {
+            return BigDecimal.valueOf(0);
+        }
+
         // 1. 计算属地化
         BigDecimal performance;
         Date localizationTime = statisticsSalesmanReturnOrder.getLocalizationTime();
@@ -759,4 +765,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     private AmountSupport amountSupport;
     @Autowired
     private SubCompanyMapper subCompanyMapper;
+    @Autowired
+    private ProductSupport productSupport;
 }
