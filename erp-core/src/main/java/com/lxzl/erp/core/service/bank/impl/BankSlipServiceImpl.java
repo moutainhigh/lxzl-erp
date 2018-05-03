@@ -304,6 +304,9 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Page<BankSlipDetail>> pageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
         ServiceResult<String, Page<BankSlipDetail>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
+        if(bankSlipDetailQueryParam.getSlipMonth() != null){
+            bankSlipDetailQueryParam.setSlipMonth(DateUtil.getMonthByOffset(bankSlipDetailQueryParam.getSlipMonth(), CommonConstant.COMMON_ZERO));
+        }
 
         Integer departmentType = 0;
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
