@@ -12,6 +12,8 @@
 		<result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
 		<result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
 		<result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId" />
+		<result column="order_sub_company_name" jdbcType="VARCHAR" property="orderSubCompanyName"/>
+		<result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
 		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
 		<result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
 		<result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
@@ -23,6 +25,7 @@
 		<result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
 		<result column="total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
 		<result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+		<result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName"/>
 		<result column="order_union_seller_id" jdbcType="INTEGER" property="orderUnionSellerId" />
 		<result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
 		<result column="relet_order_status" jdbcType="INTEGER" property="reletOrderStatus" />

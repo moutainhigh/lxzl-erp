@@ -58,6 +58,13 @@ public class ReletOrder extends BasePO {
 	private List<ReletOrderProduct> reletOrderProductList;  //续租订单商品项
 	private List<ReletOrderMaterial> reletOrderMaterialList;   //续租订单配件项
 
+	private String orderSellerName;    // 业务员姓名
+
+	private String orderSubCompanyName;
+
+	private String deliverySubCompanyName;    // 发货所属分公司名称
+
+
 	public ReletOrder(Order order){
 		this.orderId = order.getOrderId();
 		this.orderNo = order.getOrderNo();
@@ -440,5 +447,26 @@ public class ReletOrder extends BasePO {
 	public void setUpdateUser(String updateUser){
 		this.updateUser = updateUser;
 	}
+
+
+	public String getOrderSellerName() {
+		return orderSellerName;
+	}
+
+	public void setOrderSellerName(String orderSellerName) {
+		this.orderSellerName = orderSellerName;
+	}
+
+	public String getOrderSubCompanyName() {
+		return orderSubCompanyName;
+	}
+
+	public void setOrderSubCompanyName(String orderSubCompanyName) {
+		this.orderSubCompanyName = orderSubCompanyName;
+	}
+
+	public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
+
+	public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
 
 }
