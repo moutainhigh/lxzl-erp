@@ -24,11 +24,25 @@
                         <div class="pull-left ml10">
                             <script type="text/html" id="actionCommonButtonsTpl">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-##                                {{#acitonCommonButtons}}
+                                {{#acitonCommonButtons}}
                                 <a href="javascript:;" class="btn btn-primary btn-sm designateBtn" title="批量指派">
                                     <i class="fa fa-tag"></i> 批量指派
                                 </a>
-##                                {{/acitonCommonButtons}}
+                                <div style="display: inline-block">
+                                    <form action="${ctx}{{menuUrl}}exportExcel/exportPageBankSlipDetail" method="post" id="exportForm" target="exportFrame">
+                                        <input type="hidden" name="pageSize" value="1000000000">
+                                        <input type="hidden" name="pageNo" value="1">
+                                        <input type="hidden" name="loanSign" value="1">
+                                        <input type="hidden" class="payerName" name="payerName" value="">
+                                        <input type="hidden" class="bankSlipId" name="bankSlipId" value="">
+                                        <input type="hidden" class="isLocalization" name="isLocalization" value="">
+                                        <input type="hidden" class="detailStatus" name="detailStatus" value="">
+                                        <input type="hidden" class="slipMonth" name="slipMonth" value="">
+                                        <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
+                                    </form>
+                                    <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
+                                </div>
+                                {{/acitonCommonButtons}}
                             </script>
 
                             <div class="btn-group" id="actionCommonButtons"></div>

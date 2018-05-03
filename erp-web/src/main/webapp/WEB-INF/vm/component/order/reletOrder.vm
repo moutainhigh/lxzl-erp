@@ -1,22 +1,4 @@
-<div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
-    <script type="text/html" id="pickingProductButtonsTpl">
-        {{#hasActionButtons}}
-        <div class="panel-menu p12 br-n br-b">
-            <div class="row">
-                <div class="pull-right ml10">
-                    <div class="btn-group actionCommonButtons" >
-                        {{#acitonButtons}}
-                        <a href="${ctx}{{menuUrl}}" class="btn btn-primary btn-sm ml5 bradius {{class}}" title="{{text}}" data-orderno="{{orderNo}}">
-                            <i class="{{iClass}}"></i> {{text}}
-                        </a>
-                        {{/acitonButtons}}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{/hasActionButtons}}
-    </script>
-    <div id="pickingProductButtons"></div>
+<div id="reletOrderList" class="tab-pane tab-pane-order">
     <div class="table-responsive mb30">
         <script type="text/html" id="dataListTpl">
             <thead>
@@ -24,7 +6,6 @@
                 <th>类别</th>
                 <th>品牌</th>
                 <th>商品名称</th>
-##              <th>商品K3编号</th>
                 <th>商品参数（SKU）</th>
                 <th>商品保值价</th>
                 <th>单价</th>
@@ -44,8 +25,7 @@
             <tr class="productRow" productRowKey="{{productId}}">
                 <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
                 <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
-                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
-##               <td>{{k3ProductNo}}</td>
+                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>          
                 <td>{{propertiesToStr}}</td>
                 <td>￥{{currentSkuPrice}}</td>
                 <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
