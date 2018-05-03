@@ -39,8 +39,8 @@ public class ReletOrderProduct extends BasePO {
 
 	}
 
-	public ReletOrderProduct(OrderProduct orderProduct, String reletOrderNo){
-		this.orderNo = reletOrderNo;
+	public ReletOrderProduct(OrderProduct orderProduct, String orderNo){
+		this.orderNo = orderNo;
 		this.orderId = orderProduct.getOrderId();
 		this.orderProductId = orderProduct.getOrderProductId();
 		this.productId = orderProduct.getProductId();

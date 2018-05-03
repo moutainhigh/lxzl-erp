@@ -7,10 +7,10 @@ import com.lxzl.erp.common.domain.reletorder.ReletOrderCommitParam;
 import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.core.service.VerifyReceiver;
+import com.lxzl.se.core.service.BaseService;
 
 
-
-public interface ReletOrderService extends VerifyReceiver {
+public interface ReletOrderService extends BaseService {
 
     /**
      * 创建续租单
@@ -44,26 +44,6 @@ public interface ReletOrderService extends VerifyReceiver {
      */
     ServiceResult<String, ReletOrder> queryReletOrderDetailById(Integer reletOrderId);
 
-    /**
-     * 提交续租单
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/4/25 9:57
-     * @param   orderCommitParam 提交参数
-     * @return   续租单
-     */
-    ServiceResult<String, String> commitReletOrder(ReletOrderCommitParam orderCommitParam);
-
-
-    /**
-     * 订单是否需要审批
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/4/25 11:42
-     * @param   reletOrderNo 续租单编号
-     * @return   true是false否
-     */
-    ServiceResult<String, Boolean> isNeedVerify(String reletOrderNo);
 
 
 

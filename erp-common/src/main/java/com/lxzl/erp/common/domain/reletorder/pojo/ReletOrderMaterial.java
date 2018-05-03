@@ -37,8 +37,8 @@ public class ReletOrderMaterial extends BasePO {
 
 	}
 
-	public ReletOrderMaterial(OrderMaterial orderMaterial, String reletOrderNo){
-		this.orderNo = reletOrderNo;
+	public ReletOrderMaterial(OrderMaterial orderMaterial, String orderNo){
+		this.orderNo = orderNo;
 		this.orderId = orderMaterial.getOrderId();
 		this.orderMaterialId = orderMaterial.getOrderMaterialId();
 		this.materialId = orderMaterial.getMaterialId();

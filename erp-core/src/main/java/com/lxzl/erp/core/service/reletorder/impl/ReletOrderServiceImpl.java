@@ -5,6 +5,8 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
+import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.reletorder.ReletOrderCommitParam;
@@ -74,22 +76,30 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
 
+        if (order == null) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        if (order.getOrderNo() == null){
+            result.setErrorCode(ErrorCode.RELET_ORDER_NO_NOT_NULL);
+            return result;
+        }
         //查询订单信息
         ServiceResult<String, Order> orderServiceResult = orderService.queryOrderByNo(order.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(orderServiceResult.getErrorCode())) {
             result.setErrorCode(orderServiceResult.getErrorCode());
             return result;
         }
-        ReletOrder reletOrder = new ReletOrder(orderServiceResult.getResult());
-
-
-        String verifyCreateOrderCode = verifyOperateOrder(reletOrder);
+        //合法性
+        String verifyCreateOrderCode = verifyOperateOrder(orderServiceResult.getResult());
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
             result.setErrorCode(verifyCreateOrderCode);
             return result;
         }
 
-        CustomerDO customerDO = customerMapper.findByNo(reletOrder.getBuyerCustomerNo());
+        ReletOrder reletOrder = new ReletOrder(orderServiceResult.getResult());
+
+        //CustomerDO customerDO = customerMapper.findByNo(reletOrder.getBuyerCustomerNo());
         ReletOrderDO reletOrderDO = ConverterUtil.convert(reletOrder, ReletOrderDO.class);
 
         // 校验客户风控信息
@@ -102,32 +112,29 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
             return result;
         }
-        reletOrderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
-        reletOrderDO.setDeliverySubCompanyId(reletOrder.getDeliverySubCompanyId());
 
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(reletOrderDO.getOrderSubCompanyId());
         reletOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(reletOrderDO.getTotalProductAmount(), reletOrderDO.getTotalMaterialAmount()), reletOrderDO.getTotalDiscountAmount()));
         reletOrderDO.setReletOrderNo(generateNoSupport.generateReletOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
 
-        reletOrderDO.setOrderSellerId(customerDO.getOwner());
+        //reletOrderDO.setOrderSellerId(customerDO.getOwner());
+        //reletOrderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         //添加客户的结算时间（天）
         Date rentStartTime = reletOrder.getRentStartTime();
-        Integer statementDate = customerDO.getStatementDate();
+        Integer statementDate = reletOrder.getStatementDate();//customerDO.getStatementDate();
 
         //计算结算时间
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
 
         //获取
         reletOrderDO.setStatementDate(statementDays);
-        reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELET);
+        reletOrderDO.setReletOrderStatus(OrderStatus.ORDER_STATUS_RELET);
         reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         reletOrderDO.setCreateUser(loginUser.getUserId().toString());
         reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
         reletOrderDO.setCreateTime(currentTime);
         reletOrderDO.setUpdateTime(currentTime);
-        //添加当前客户名称
-        reletOrderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         Date expectReturnTime = generateExpectReturnTime(reletOrderDO);
         reletOrderDO.setExpectReturnTime(expectReturnTime);
@@ -173,12 +180,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
+
     @Override
     public ServiceResult<String, ReletOrder> queryReletOrderDetailById(Integer reletOrderId){
         ServiceResult<String, ReletOrder> result = new ServiceResult<>();
 
         if (null == reletOrderId){
-            result.setErrorCode(ErrorCode.RELET_ID_NOT_NULL);
+            result.setErrorCode(ErrorCode.RELET_ORDER_QUERY_ID_NOT_NULL);
             return result;
         }
         ReletOrderDO reletOrderDO = reletOrderMapper.findDetailByReletOrderId(reletOrderId);
@@ -188,361 +196,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
-
-    //region 续租单提交以及审核流程
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> commitReletOrder(ReletOrderCommitParam reletOrderCommitParam){
-        ServiceResult<String, String> result = new ServiceResult<>();
-        Date currentTime = new Date();
-        User loginUser = userSupport.getCurrentUser();
-        String reletOrderNo = reletOrderCommitParam.getReletOrderNo();
-        Integer verifyUser = reletOrderCommitParam.getVerifyUser();
-        String commitRemark = reletOrderCommitParam.getCommitRemark();
-        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
-        if (CollectionUtil.isEmpty(reletOrderDO.getReletOrderProductDOList())
-                && CollectionUtil.isEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
-            result.setErrorCode(ErrorCode.RELET_ORDER_LIST_NOT_NULL);
-            return result;
-        }
-
-        //只有创建订单本人可以提交
-        if (!reletOrderDO.getCreateUser().equals(loginUser.getUserId().toString())) {
-            result.setErrorCode(ErrorCode.COMMIT_ONLY_SELF);
-            return result;
-        }
-
-        CustomerDO customerDO = customerMapper.findByNo(reletOrderDO.getBuyerCustomerNo());
-        if (customerDO == null) {
-            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
-            return result;
-        }
-
-        String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, reletOrderDO);
-        if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
-            result.setErrorCode(verifyOrderShortRentReceivableResult);
-            return result;
-        }
-
-
-//        ServiceResult<String, Boolean> isNeedVerifyResult = isNeedVerify(reletOrderNo);
-//        if (!ErrorCode.SUCCESS.equals(isNeedVerifyResult.getErrorCode())) {
-//            result.setErrorCode(isNeedVerifyResult.getErrorCode(), isNeedVerifyResult.getFormatArgs());
-//            return result;
-//        }
-//
-//        // 是否需要审批
-//        boolean isNeedVerify = isNeedVerifyResult.getResult();
-//
-//        String orderRemark = null;
-//        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-//            orderRemark = "租赁类型：天租";
-//        } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-//            orderRemark = "租赁类型：月租";
-//        }
-//
-//        if (isNeedVerify) {
-//            //如果要审核，判断审核注意事项
-//            ServiceResult<String, String> verifyMattersResult = getVerifyMatters(reletOrderDO);
-//            if (!ErrorCode.SUCCESS.equals(verifyMattersResult.getErrorCode())) {
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//                result.setErrorCode(verifyMattersResult.getErrorCode());
-//                return result;
-//            }
-//            String verifyMatters = verifyMattersResult.getResult();
-//
-//            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getOrderNo(), verifyUser, verifyMatters, commitRemark, reletOrderCommitParam.getImgIdList(), orderRemark);
-//            if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//                result.setErrorCode(workflowCommitResult.getErrorCode());
-//                return result;
-//            }
-//            orderTimeAxisSupport.addOrderTimeAxis(reletOrderDO.getId(), reletOrderDO.getReletOrderStatus(), null, currentTime, loginUser.getUserId());
-//        }
-        //TODO 审批流程 & 续租时间轴
-
-
-        //审核通过
-        String code = receiveVerifyResult(true, reletOrderDO.getOrderNo());
-        if (!ErrorCode.SUCCESS.equals(code)) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(ErrorCode.SYSTEM_EXCEPTION);
-            return result;
-        }
-
-        reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELET);
-        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        reletOrderDO.setUpdateTime(currentTime);
-        reletOrderMapper.update(reletOrderDO);
-
-        result.setResult(reletOrderNo);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-
-    @Override
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public String receiveVerifyResult(boolean verifyResult, String businessNo) {
-        try {
-            Date currentTime = new Date();
-            User loginUser = userSupport.getCurrentUser();
-            ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(businessNo);
-            if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_VERIFYING.equals(reletOrderDO.getReletOrderStatus())) {
-                return ErrorCode.BUSINESS_EXCEPTION;
-            }
-            if (verifyResult) {
-                CustomerDO customerDO = customerMapper.findById(reletOrderDO.getBuyerCustomerId());
-                // 审核通过时，对当前订单做短租应收额度校验
-                String verifyOrderShortRentReceivableResult = verifyOrderShortRentReceivable(customerDO, reletOrderDO);
-                if (!ErrorCode.SUCCESS.equals(verifyOrderShortRentReceivableResult)) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return verifyOrderShortRentReceivableResult;
-                }
-
-                reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELET);
-                // 续租单生成结算单 ，使用订单Id
-                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(reletOrderDO);
-                if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return createStatementOrderResult.getErrorCode();
-                }
-                //reletOrderDO.setFirstNeedPayAmount(createStatementOrderResult.getResult());
-                //orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
-                //TODO 续租单时间轴
-
-                reletOrderDO.setUpdateTime(currentTime);
-                reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-                reletOrderMapper.update(reletOrderDO);
-                //获取订单详细信息，发送给k3
-                //Order order = queryOrderByNo(orderDO.getOrderNo()).getResult();
-                //webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_ADD, PostK3Type.POST_K3_TYPE_ORDER, order, true);
-            } else {
-                reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT);
-                //TODO 续租单时间轴
-
-                //orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_REJECT, null, currentTime, loginUser.getUserId());
-                reletOrderDO.setUpdateTime(currentTime);
-                reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-                reletOrderMapper.update(reletOrderDO);
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("审批订单通知失败： {} {}", businessNo, e.toString());
-            return ErrorCode.BUSINESS_EXCEPTION;
-        }
-        return ErrorCode.SUCCESS;
-    }
-
-
-    /**
-     * 审核注意事项
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/4/25 13:39
-     * @param   reletOrderDO
-     * @return
-     */
-    private ServiceResult<String, String> getVerifyMatters(ReletOrderDO reletOrderDO) {
-        ServiceResult<String, String> result = new ServiceResult<>();
-
-        String verifyProduct = null;
-        BigDecimal productPrice = null;
-        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
-            Integer count = 1;
-            ReletOrderProductDO reletOrderProductDO;
-            for (int i = 0; i < reletOrderDO.getReletOrderProductDOList().size(); i++) {
-                reletOrderProductDO = reletOrderDO.getReletOrderProductDOList().get(i);
-                ProductSkuDO productSkuDO = productSkuMapper.findById(reletOrderProductDO.getProductSkuId());
-                if (productSkuDO == null) {
-                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
-                    return result;
-                }
-                //得到
-                if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                    productPrice = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ? productSkuDO.getNewDayRentPrice() : productSkuDO.getDayRentPrice();
-                } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-                    productPrice = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ? productSkuDO.getNewMonthRentPrice() : productSkuDO.getMonthRentPrice();
-                }
-                // 订单价格低于商品租赁价
-                if (BigDecimalUtil.compare(reletOrderProductDO.getProductUnitAmount(), productPrice) < 0) {
-                    if (verifyProduct == null) {
-                        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：天租，全新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。" :
-                                    "商品项：" + count + "；租赁方式：天租，次新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。";
-                        } else {
-                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：月租，全新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。" :
-                                    "商品项：" + count + "；租赁方式：月租，次新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。";
-                        }
-                    } else {
-                        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ?
-                                    "商品项：" + count + "；租赁方式：天租，全新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。" :
-                                    "商品项：" + count + "；租赁方式：天租，次新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。";
-                        } else {
-                            verifyProduct = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ?
-                                    verifyProduct + count + "；租赁方式：月租，全新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。" :
-                                    verifyProduct + count + "；租赁方式：月租，次新。商品名称：【" + reletOrderProductDO.getProductName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(productPrice) + "。";
-                        }
-                    }
-                    count++;
-                }
-            }
-        }
-
-        String verifyMaterial = null;
-        BigDecimal materialPrice = null;
-        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
-            Integer count = 1;
-            ReletOrderMaterialDO reletOrderMaterialDO;
-            for (int i = 0; i < reletOrderDO.getReletOrderMaterialDOList().size(); i++) {
-                reletOrderMaterialDO = reletOrderDO.getReletOrderMaterialDOList().get(i);
-                MaterialDO materialDO = materialMapper.findById(reletOrderMaterialDO.getMaterialId());
-                if (materialDO == null) {
-                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
-                    return result;
-                }
-                if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                    materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ? materialDO.getNewDayRentPrice() : materialDO.getDayRentPrice();
-                } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-                    materialPrice = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ? materialDO.getNewMonthRentPrice() : materialDO.getMonthRentPrice();
-                }
-                // 订单价格低于商品租赁价
-                if (BigDecimalUtil.compare(reletOrderMaterialDO.getMaterialUnitAmount(), materialPrice) < 0) {
-                    if (verifyMaterial == null) {
-                        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ?
-                                    "配件项：" + count + "；租赁方式：天租，全新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。" :
-                                    "配件项：" + count + "；租赁方式：天租，次新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。";
-                        } else {
-                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ?
-                                    "配件项：" + count + "；租赁方式：月租，全新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。" :
-                                    "配件项：" + count + "；租赁方式：月租，次新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。";
-                        }
-                    } else {
-                        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ?
-                                    verifyMaterial + count + "；租赁方式：天租，全新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。" :
-                                    verifyMaterial + count + "；租赁方式：天租，次新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。";
-                        } else {
-                            verifyMaterial = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ?
-                                    verifyMaterial + count + "；租赁方式：月租，全新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。" :
-                                    verifyMaterial + count + "；租赁方式：月租，次新。【配件名称：" + reletOrderMaterialDO.getMaterialName() + "】，订单租赁价格：" + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "，预设租赁价格：" + AmountUtil.getCommaFormat(materialPrice) + "。";
-                        }
-                    }
-                    count++;
-                }
-            }
-        }
-        String verifyMatters;
-        if (verifyProduct == null) {
-            verifyMatters = verifyMaterial;
-        } else if (verifyMaterial == null) {
-            verifyMatters = verifyProduct;
-        } else {
-            verifyMatters = verifyProduct + verifyMaterial;
-        }
-
-        result.setResult(verifyMatters);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-
-    @Override
-    public ServiceResult<String, Boolean> isNeedVerify(String reletOrderNo) {
-        ServiceResult<String, Boolean> result = new ServiceResult<>();
-        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
-        if (reletOrderDO == null) {
-            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
-            return result;
-        }
-        if (!ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
-            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
-            return result;
-        }
-
-        Boolean isNeedVerify = false;
-        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
-            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
-                ServiceResult<String, Product> productServiceResult = productService.queryProductBySkuId(reletOrderProductDO.getProductSkuId());
-                if (!ErrorCode.SUCCESS.equals(productServiceResult.getErrorCode())) {
-                    result.setErrorCode(productServiceResult.getErrorCode());
-                    return result;
-                }
-                Product product = productServiceResult.getResult();
-                if (product == null) {
-                    result.setErrorCode(ErrorCode.PRODUCT_IS_NULL_OR_NOT_EXISTS);
-                    return result;
-                }
-                ProductSku thisProductSku = CollectionUtil.isNotEmpty(product.getProductSkuList()) ? product.getProductSkuList().get(0) : null;
-                if (thisProductSku == null) {
-                    result.setErrorCode(ErrorCode.PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS);
-                    return result;
-                }
-
-                BigDecimal productUnitAmount = null;
-                if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ? thisProductSku.getNewDayRentPrice() : thisProductSku.getDayRentPrice();
-                } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-                    productUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderProductDO.getIsNewProduct()) ? thisProductSku.getNewMonthRentPrice() : thisProductSku.getMonthRentPrice();
-                }
-                // 订单价格低于商品租赁价，需要商务审批
-                if (BigDecimalUtil.compare(reletOrderProductDO.getProductUnitAmount(), productUnitAmount) < 0) {
-                    isNeedVerify = true;
-                    break;
-                }
-            }
-        }
-
-        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
-            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
-                ServiceResult<String, Material> materialServiceResult = materialService.queryMaterialById(reletOrderMaterialDO.getMaterialId());
-                if (!ErrorCode.SUCCESS.equals(materialServiceResult.getErrorCode())) {
-                    result.setErrorCode(materialServiceResult.getErrorCode());
-                    return result;
-                }
-                Material material = materialServiceResult.getResult();
-                if (material == null) {
-                    result.setErrorCode(ErrorCode.MATERIAL_NOT_EXISTS);
-                    return result;
-                }
-
-                BigDecimal materialUnitAmount = null;
-                if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                    materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ? material.getNewDayRentPrice() : material.getDayRentPrice();
-                } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-                    materialUnitAmount = CommonConstant.COMMON_CONSTANT_YES.equals(reletOrderMaterialDO.getIsNewMaterial()) ? material.getNewMonthRentPrice() : material.getMonthRentPrice();
-                }
-                // 订单价格低于商品租赁价，需要商务审批
-                if (BigDecimalUtil.compare(reletOrderMaterialDO.getMaterialUnitAmount(), materialUnitAmount) < 0) {
-                    isNeedVerify = true;
-                    break;
-                }
-            }
-        }
-
-        // 检查是否需要审批流程
-        if (isNeedVerify) {
-            ServiceResult<String, Boolean> isMeedVerifyResult = workflowService.isNeedVerify(WorkflowType.WORKFLOW_TYPE_ORDER_INFO);
-            if (!ErrorCode.SUCCESS.equals(isMeedVerifyResult.getErrorCode())) {
-                result.setErrorCode(isMeedVerifyResult.getErrorCode());
-                return result;
-            }
-            if (!isMeedVerifyResult.getResult()) {
-                result.setErrorCode(ErrorCode.WORKFLOW_HAVE_NO_CONFIG);
-                return result;
-            }
-        }
-
-        result.setResult(isNeedVerify);
-        result.setErrorCode(ErrorCode.SUCCESS);
-        return result;
-    }
-    //endregion
 
 
     private void saveReletOrderProductInfo(List<ReletOrderProductDO> reletOrderProductDOList, Integer reletOrderId, User loginUser, Date currentTime) {
@@ -986,48 +639,63 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
 
-    private String verifyOperateOrder(ReletOrder reletOrder) {
-        if (reletOrder == null) {
+    private String verifyOperateOrder(Order order) {
+        if (order == null) {
             return ErrorCode.PARAM_IS_NOT_NULL;
         }
-        if ((reletOrder.getReletOrderProductList() == null || reletOrder.getReletOrderProductList().isEmpty())
-                && (reletOrder.getReletOrderMaterialList() == null || reletOrder.getReletOrderMaterialList().isEmpty())) {
-            return ErrorCode.RELET_ORDER_LIST_NOT_NULL;
-        }
 
-        if (reletOrder.getOrderId() == null){
+        if (order.getOrderId() == null){
 
             return ErrorCode.RELET_ORDER_ID_NOT_NULL;
         }
 
-        CustomerDO customerDO = customerMapper.findByNo(reletOrder.getBuyerCustomerNo());
+        if ((order.getOrderProductList() == null || order.getOrderProductList().isEmpty())
+                && (order.getOrderMaterialList() == null || order.getOrderMaterialList().isEmpty())) {
+            return ErrorCode.RELET_ORDER_LIST_NOT_NULL;
+        }
+
+
+        if (order.getBuyerCustomerId() == null){
+            return ErrorCode.RELET_ORDER_BUYER_CUSTOMER_ID_NOT_NULL;
+        }
+
+        CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
         if (customerDO == null) {
             return ErrorCode.CUSTOMER_NOT_EXISTS;
         }
-        reletOrder.setBuyerCustomerId(customerDO.getId());
 
         // 判断逾期情况，如果客户存在未支付的逾期的结算单，不能产生新订单
         List<StatementOrderDO> overdueStatementOrderList = statementOrderSupport.getOverdueStatementOrderList(customerDO.getId());
 
 
-        if (reletOrder.getRentStartTime() == null) {
+        if (order.getDeliverySubCompanyId() == null){
+            return ErrorCode.RELET_ORDER_DELIVERY_SUB_COMPANY_ID_NOT_NULL;
+        }
+
+        if (order.getRentStartTime() == null) {
             return ErrorCode.RELET_ORDER_HAVE_NO_RENT_START_TIME;
         }
 
-        if (reletOrder.getRentType() == null) {
-            return ErrorCode.RELET_ORDER_RENT_TYPE_IS_NULL;
+        if (order.getRentType() == null) {
+            return ErrorCode.RELET_ORDER_RENT_TYPE_NOT_NULL;
         }
-        if (reletOrder.getRentTimeLength() == null || reletOrder.getRentTimeLength() <= 0) {
+        if (order.getRentTimeLength() == null || order.getRentTimeLength() <= 0) {
             return ErrorCode.RELET_ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL;
         }
-        if (!OrderRentType.inThisScope(reletOrder.getRentType())) {
+        if (order.getRentLengthType() == null){
+            return ErrorCode.RELET_ORDER_RENT_LENGTH_TYPE_NOT_NULL;
+        }
+        if (!OrderRentType.inThisScope(order.getRentType())) {
             return ErrorCode.RELET_ORDER_RENT_TYPE_OR_LENGTH_ERROR;
         }
-        reletOrder.setRentLengthType(OrderRentType.RENT_TYPE_MONTH.equals(reletOrder.getRentType()) && reletOrder.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT);
 
-        if (CollectionUtil.isNotEmpty(reletOrder.getReletOrderProductList())) {
+        if (order.getOrderSellerId() == null){
+            return ErrorCode.RELET_ORDER_SELLER_ID_NOT_NULL;
+        }
 
-            for (ReletOrderProduct reletOrderProduct : reletOrder.getReletOrderProductList()) {
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+
+            for (OrderProduct reletOrderProduct : order.getOrderProductList()) {
 
                 if (reletOrderProduct.getProductCount() == null || reletOrderProduct.getProductCount() <= 0) {
                     return ErrorCode.RELET_ORDER_PRODUCT_COUNT_ERROR;
@@ -1050,7 +718,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
-                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(reletOrder.getRentType()) && reletOrder.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
+                Integer rentLengthType = OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && order.getRentTimeLength() >= CommonConstant.ORDER_RENT_TYPE_LONG_MIN ? OrderRentLengthType.RENT_LENGTH_TYPE_LONG : OrderRentLengthType.RENT_LENGTH_TYPE_SHORT;
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(rentLengthType)
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
@@ -1058,9 +726,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             }
         }
 
-        if (CollectionUtil.isNotEmpty(reletOrder.getReletOrderMaterialList())) {
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
 
-            for (ReletOrderMaterial reletOrderMaterial : reletOrder.getReletOrderMaterialList()) {
+            for (OrderMaterial reletOrderMaterial : order.getOrderMaterialList()) {
 
                 if (reletOrderMaterial.getMaterialCount() == null || reletOrderMaterial.getMaterialCount() <= 0) {
                     return ErrorCode.RELET_ORDER_MATERIAL_COUNT_ERROR;
@@ -1083,16 +751,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 }
 
 
-                Material material = materialServiceResult.getResult();
-
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
-                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(reletOrder.getRentLengthType())
+                if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(order.getRentLengthType())
                         && CollectionUtil.isNotEmpty(overdueStatementOrderList)) {
                     return ErrorCode.CUSTOMER_HAVE_OVERDUE_STATEMENT_ORDER;
                 }
             }
         }
-        return verifyOrderShortRentReceivable(customerDO, ConverterUtil.convert(reletOrder, ReletOrderDO.class));
+        return verifyOrderShortRentReceivable(customerDO, ConverterUtil.convert(order, ReletOrderDO.class));
     }
 
 

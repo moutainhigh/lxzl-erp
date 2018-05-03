@@ -3221,15 +3221,7 @@ public class StatementServiceImpl implements StatementService {
                 rentStartTimeCalendar.setTime(rentStartTime);
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPaymentCycle(), reletOrderProductDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
-                // 无论什么时候交租金，押金必须当天缴纳
-//                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, orderProductDO.getRentDepositAmount(), orderProductDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId);
-//                if (depositDetail != null) {
-//                    depositDetail.setItemName(orderProductDO.getProductName() + orderProductDO.getProductSkuName());
-//                    depositDetail.setItemIsNew(orderProductDO.getIsNewProduct());
-//                    depositDetail.setStatementDetailPhase(0);
-//                    depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
-//                    addStatementOrderDetailDOList.add(depositDetail);
-//                }
+
                 if (statementMonthCount == 1) {
                     StatementOrderDetailDO statementOrderDetailDO = calculateOneStatementOrderDetail(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderProductDO.getPayMode(), rentStartTime, itemAllAmount, buyerCustomerId, orderId, OrderItemType.ORDER_ITEM_TYPE_PRODUCT, reletOrderProductDO.getId(), currentTime, loginUserId);
                     if (statementOrderDetailDO != null) {
@@ -3313,15 +3305,7 @@ public class StatementServiceImpl implements StatementService {
 //                }
                 Calendar rentStartTimeCalendar = Calendar.getInstance();
                 rentStartTimeCalendar.setTime(rentStartTime);
-//                // 无论什么时候交租金，押金必须当天缴纳
-//                StatementOrderDetailDO depositDetail = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderId, OrderItemType.ORDER_ITEM_TYPE_MATERIAL, reletOrderMaterialDO.getId(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, reletOrderMaterialDO.getRentDepositAmount(), orderMaterialDO.getDepositAmount(), BigDecimal.ZERO, currentTime, loginUserId);
-//                if (depositDetail != null) {
-//                    depositDetail.setItemName(orderMaterialDO.getMaterialName());
-//                    depositDetail.setItemIsNew(orderMaterialDO.getIsNewMaterial());
-//                    depositDetail.setStatementDetailPhase(0);
-//                    depositDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT);
-//                    addStatementOrderDetailDOList.add(depositDetail);
-//                }
+
                 // 先确定订单需要结算几期
                 Integer statementMonthCount = calculateStatementMonthCount(reletOrderDO.getRentType(), reletOrderDO.getRentTimeLength(), reletOrderMaterialDO.getPaymentCycle(), reletOrderMaterialDO.getPayMode(), rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH), statementDays);
                 if (statementMonthCount == 1) {
@@ -3378,17 +3362,6 @@ public class StatementServiceImpl implements StatementService {
             }
         }
 
-//        // 其他费用，包括运费、等费用
-//        BigDecimal otherAmount = orderDO.getLogisticsAmount();
-//
-//        if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
-//            // 其他费用统一结算
-//            StatementOrderDetailDO thisStatementOrderDetailDO = buildStatementOrderDetailDO(buyerCustomerId, OrderType.ORDER_TYPE_ORDER, orderDO.getId(), OrderItemType.ORDER_ITEM_TYPE_OTHER, BigInteger.ZERO.intValue(), rentStartTime, rentStartTime, rentStartTime, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, otherAmount, currentTime, loginUserId);
-//            if (thisStatementOrderDetailDO != null) {
-//                thisStatementOrderDetailDO.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OTHER);
-//                addStatementOrderDetailDOList.add(thisStatementOrderDetailDO);
-//            }
-//        }
         return addStatementOrderDetailDOList;
     }
 
