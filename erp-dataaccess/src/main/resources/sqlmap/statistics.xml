@@ -834,9 +834,7 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_short,
         SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_long,
         SUM(CASE WHEN esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable
-
         from (
-
         SELECT esod.id,
         esod.statement_detail_amount,
         esod.statement_expect_pay_time,
@@ -880,7 +878,6 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable_long,
         SUM(CASE WHEN esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable
         from (
-
         SELECT esod.id,
         esod.statement_detail_amount,
         esod.statement_expect_pay_time,

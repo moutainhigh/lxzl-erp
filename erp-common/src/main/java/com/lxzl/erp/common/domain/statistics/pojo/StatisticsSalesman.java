@@ -13,13 +13,13 @@ import java.math.BigDecimal;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatisticsSalesman implements Serializable {
-	private Integer totalCount;	// 总条数
-	private Integer totalDealsCount; // 总成交单数
-	private Integer totalDealsProductCount; // 总成交台数
-	private BigDecimal totalDealsAmount; // 总成交金额
-	private BigDecimal totalAwaitReceivable; // 总待收
-	private BigDecimal totalReceive; // 总应收
-	private BigDecimal totalIncome; // 本期回款（查询期间内的结算收入）
+	private Integer totalCount = 0;	// 总条数
+	private Integer totalDealsCount = 0; // 总成交单数
+	private Integer totalDealsProductCount = 0; // 总成交台数
+	private BigDecimal totalDealsAmount = BigDecimal.valueOf(0); // 总成交金额
+	private BigDecimal totalAwaitReceivable = BigDecimal.valueOf(0); // 总待收
+	private BigDecimal totalReceive = BigDecimal.valueOf(0); // 总应收
+	private BigDecimal totalIncome = BigDecimal.valueOf(0); // 本期回款（查询期间内的结算收入）
 
 	private Page<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoPage; // 统计项分页
 
