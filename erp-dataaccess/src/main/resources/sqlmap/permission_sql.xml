@@ -348,4 +348,12 @@
 
 		</if>
 	</sql>
+	<sql id="statement_order_correct_control">
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND esoc.create_user in
+			<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
 </mapper>
