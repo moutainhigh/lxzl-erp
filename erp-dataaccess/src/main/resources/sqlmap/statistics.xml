@@ -834,9 +834,7 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_short,
         SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_long,
         SUM(CASE WHEN esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable
-
         from (
-
         SELECT esod.id,
         esod.statement_detail_amount,
         esod.statement_expect_pay_time,
@@ -880,7 +878,6 @@ ORDER BY esc.data_order DESC
         SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable_long,
         SUM(CASE WHEN esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable
         from (
-
         SELECT esod.id,
         esod.statement_detail_amount,
         esod.statement_expect_pay_time,
@@ -1058,7 +1055,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id and ec.data_status = 1
         LEFT JOIN erp_k3_return_order_detail k3rod on k3rod.order_no = eo.order_no and k3rod.order_item_id = eop.id and k3rod.data_status = 1
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id
-        where esc.id is not null AND eop.id is not null and esod.statement_detail_status = 8
+        where esc.id is not null AND eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
         AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}

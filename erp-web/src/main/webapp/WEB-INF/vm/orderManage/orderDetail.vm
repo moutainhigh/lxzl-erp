@@ -83,6 +83,9 @@
                                 <li>
                                     <a href="#returnOrderList" data-toggle="tab">退货单</a>
                                 </li>
+                                <li>
+                                    <a href="#reletOrderList" data-toggle="tab">续租</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
