@@ -981,7 +981,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo on esod.order_id = eo.id
         group by eo.order_seller_id, eo.order_sub_company_id, eo.rent_length_type
         ) deal_income on deal_income.eu_id = eu.id and deal_income.esc_id = esc.id and deal_income.rent_length_type = rlt.rent_length_type
-        where esc.id is not null and eu.id is not null and ed.department_type = 300010
+        where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config)
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND rlt.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
         </if>
@@ -1065,7 +1065,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo on esod.order_id = eo.id
         group by eo.order_seller_id, eo.order_sub_company_id, eo.rent_length_type
         ) deal_income on deal_income.eu_id = eu.id and deal_income.esc_id = esc.id and deal_income.rent_length_type = rlt.rent_length_type
-        where esc.id is not null and eu.id is not null and ed.department_type = 300010
+        where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config)
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND rlt.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
         </if>

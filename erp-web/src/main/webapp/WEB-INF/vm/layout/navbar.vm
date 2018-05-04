@@ -69,6 +69,8 @@
             <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown" style="line-height: 30px;">
                 #*<img src="${staticCommon}/rental/img/avatar.png" alt="头像" class="mw30 br64 mr15">*#
                 <i class="fa fa-user mw30 br64 mr15" style="font-size: 30px;float: left;"></i>
+                <span id="userSubCompany" class="mr5"></span>
+                <span id="userDepartment" class="mr5"></span>
                 <span id="navbarSpanUserName"></span>
                 <span class="caret caret-tp hidden-xs"></span>
             </a>
