@@ -380,6 +380,8 @@ CREATE TABLE `erp_customer_update_log` (
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `owner` int(20) COMMENT '数据归属人，跟单员',
   `union_user` int(20) COMMENT '联合开发人',
+  `is_owner_update_flag` int(11)  COMMENT '是否变更了归属人，0否1是',
+  `is_union_user_update_flag` int(11)  COMMENT '是否变更了联合开发人，0否1是',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
