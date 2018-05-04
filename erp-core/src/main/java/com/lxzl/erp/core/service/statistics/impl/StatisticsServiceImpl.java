@@ -496,19 +496,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         // 查询以业务员，分公司分组的初步数据(主数据)
         List<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoList = statisticsMapper.querySalesmanDetailTwo(maps);
+        for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
+            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
+        }
         // 装换为salesmanId-subCompnayId为key的map
         Map<String, StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailTwoList, "salesmanId", "subCompanyId", "rentLengthType");
-
-        // 计算应收 = 待收 + 实收
-        List<StatisticsSalesmanDetailIncome> statisticsSalesmanDetailIncomeList = statisticsMapper.querySalesmanDetailIncome(maps);
-        for (StatisticsSalesmanDetailIncome statisticsSalesmanDetailIncome : statisticsSalesmanDetailIncomeList) {
-            String key = statisticsSalesmanDetailIncome.getSalesmanId() + "-" + statisticsSalesmanDetailIncome.getSubCompanyId() + "-" + statisticsSalesmanDetailIncome.getRentLengthType();
-            StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
-            if (statisticsSalesmanDetailTwo != null) {
-                statisticsSalesmanDetailTwo.setIncome(statisticsSalesmanDetailTwo.getIncome().add(statisticsSalesmanDetailIncome.getIncome()));
-                statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getReceive().add(statisticsSalesmanDetailIncome.getAwaitReceivable()).add(statisticsSalesmanDetailIncome.getIncome()));
-            }
-        }
 
 
         for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
