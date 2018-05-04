@@ -995,7 +995,7 @@ ORDER BY esc.data_order DESC
         ) distinct_data
     </select>
 
-    <resultMap id="SalesmanDetailTwo" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailTwo">
+    <resultMap id="SalesmanDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetail">
         <result column="salesman_id" jdbcType="INTEGER" property="salesmanId"/>
         <result column="salesman_name" jdbcType="VARCHAR" property="salesmanName"/>
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
@@ -1008,7 +1008,7 @@ ORDER BY esc.data_order DESC
         <result column="income" jdbcType="DECIMAL" property="income"/>
     </resultMap>
 
-    <select id="querySalesmanDetailTwo" resultMap="SalesmanDetailTwo" parameterType="map">
+    <select id="querySalesmanDetail" resultMap="SalesmanDetail" parameterType="map">
         select
         eu.id salesman_id,
         eu.real_name salesman_name,
@@ -1079,7 +1079,7 @@ ORDER BY esc.data_order DESC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <resultMap id="SalesmanDetailTwoExtend" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailTwoExtend">
+    <resultMap id="SalesmanDetailExtend" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailExtend">
         <result column="salesman_id" jdbcType="INTEGER" property="salesmanId"/>
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
         <result column="eop_id" jdbcType="INTEGER" property="eopId" />
@@ -1095,7 +1095,7 @@ ORDER BY esc.data_order DESC
         <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
-    <select id="querySalesmanDetailTwoExtend" resultMap="SalesmanDetailTwoExtend" parameterType="map">
+    <select id="querySalesmanDetailExtend" resultMap="SalesmanDetailExtend" parameterType="map">
         select
         eo.order_seller_id salesman_id,
         eo.order_sub_company_id sub_company_id,

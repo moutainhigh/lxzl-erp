@@ -8,7 +8,7 @@ import java.util.Date;
  * @Date: 2018/5/2 19:04
  * @Description: 业务提成统计其他参数
  */
-public class StatisticsSalesmanDetailTwoExtend {
+public class StatisticsSalesmanDetailExtend {
 	private Integer salesmanId;
 	private String salesmanName;
 	private Integer subCompanyId;
@@ -174,7 +174,7 @@ public class StatisticsSalesmanDetailTwoExtend {
 
 	@Override
 	public String toString() {
-		return "StatisticsSalesmanDetailTwoExtend{" +
+		return "StatisticsSalesmanDetailExtend{" +
 				"salesmanId=" + salesmanId +
 				", salesmanName='" + salesmanName + '\'' +
 				", subCompanyId=" + subCompanyId +
