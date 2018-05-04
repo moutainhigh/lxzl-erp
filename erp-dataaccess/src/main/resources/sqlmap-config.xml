@@ -168,6 +168,8 @@
         <mapper resource="sqlmap/erp_relet_order_product.xml" />
         <mapper resource="sqlmap/erp_relet_order.xml" />
 
+        <mapper resource="sqlmap/erp_print_log.xml" />
+
     </mappers>
 
 </configuration>

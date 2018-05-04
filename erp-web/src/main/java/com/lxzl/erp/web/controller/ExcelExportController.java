@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,17 +45,25 @@ public class ExcelExportController {
     private StatisticsService statisticsService;
 
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
-    public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) {
+    public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
+        if(bankSlipDetailQueryParam.getPayerName() != null){
+            bankSlipDetailQueryParam.setPayerName(URLDecoder.decode(bankSlipDetailQueryParam.getPayerName(), "UTF-8"));
+        }
         ServiceResult<String, Page<BankSlipDetail>> stringPageServiceResult = bankSlipService.pageBankSlipDetail(bankSlipDetailQueryParam);
         ServiceResult<String, String> serviceResult = excelExportService.export(stringPageServiceResult, ExcelExportConfigGroup.bankSlipDetailConfig, "bankSlipDetail", "sheet1", response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
     @RequestMapping(value = "exportStatementOrderPage", method = RequestMethod.POST)
-    public Result exportStatementOrderPage(StatementOrderQueryParam statementOrderQueryParam, HttpServletResponse response) {
+    public Result exportStatementOrderPage(StatementOrderQueryParam statementOrderQueryParam, HttpServletResponse response) throws Exception {
+        if(statementOrderQueryParam.getStatementOrderCustomerName() != null){
+            statementOrderQueryParam.setStatementOrderCustomerName(URLDecoder.decode(statementOrderQueryParam.getStatementOrderCustomerName(), "UTF-8"));
+        }
+        if(statementOrderQueryParam.getOwnerName() != null){
+            statementOrderQueryParam.setOwnerName(URLDecoder.decode(statementOrderQueryParam.getOwnerName(), "UTF-8"));
+        }
         ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
         ServiceResult<String, HSSFWorkbook> result = excelExportService.getHSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
-
         List<StatementOrder> statementOrderList = serviceResult.getResult().getItemList();
         List<StatementOrderDetail> statementOrderDetailList = new ArrayList<>();
         for (StatementOrder statementOrder : statementOrderList) {
@@ -68,9 +76,11 @@ public class ExcelExportController {
     }
 
     @RequestMapping(value = "exportStatisticsSalesmanDetail", method = RequestMethod.POST)
-    public Result exportStatisticsSalesmanDetail(StatisticsSalesmanPageParam statisticsSalesmanPageParam, HttpServletResponse response) throws ParseException {
+    public Result exportStatisticsSalesmanDetail(StatisticsSalesmanPageParam statisticsSalesmanPageParam, HttpServletResponse response) throws Exception {
 
-
+        if(statisticsSalesmanPageParam.getSalesmanName() != null){
+            statisticsSalesmanPageParam.setSalesmanName(URLDecoder.decode(statisticsSalesmanPageParam.getSalesmanName(), "UTF-8"));
+        }
         ServiceResult<String, StatisticsSalesman> result = statisticsService.querySalesman(statisticsSalesmanPageParam);
         ServiceResult<String, String> serviceResult = excelExportService.export(result.getResult().getStatisticsSalesmanDetailPage().getItemList(), ExcelExportConfigGroup.statisticsSalesmanDetailConfig, "statisticsSalesmanDetail", "sheet1", response);
         return resultGenerator.generate(serviceResult.getErrorCode());

@@ -886,6 +886,11 @@ public class ErrorCode {
     public static final String RELET_ORDER_QUERY_ID_NOT_NULL = "J210000016";
     public static final String RELET_ORDER_NO_NOT_NULL = "J210000017";
 
+    public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
+    public static final String PRINT_LOG_REFER_TYPE_NOT_NULL = "J220000002";
+    public static final String PRINT_LOG_NOT_EXISTS = "J220000003";
+    public static final String PRINT_LOG_REFER_TYPE_ERROR = "J220000004";
+
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1761,6 +1766,11 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_SELLER_ID_NOT_NULL, "续租时订单销售员不能为空");
         MAP.put(RELET_ORDER_QUERY_ID_NOT_NULL, "通过ID查询续租单时ID不能为空");
         MAP.put(RELET_ORDER_NO_NOT_NULL, "续租时订单编号不能为空");
+
+        MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
+        MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
+        MAP.put(PRINT_LOG_NOT_EXISTS, "打印记录不存在");
+        MAP.put(PRINT_LOG_REFER_TYPE_ERROR, "关联项类型出错");
     }
 
 
