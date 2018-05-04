@@ -919,32 +919,80 @@ ORDER BY esc.data_order DESC
 
     <select id="querySalesmanCount" resultMap="StatisticsSalesman" parameterType="map">
         select
-        count(distinct eu.id) total_count,
-        SUM(CASE WHEN deal_data.id IS NOT NULL THEN 1 ELSE 0 END) total_deals_count,
-        SUM(CASE WHEN deal_data.total_product_count IS NOT NULL THEN deal_data.total_product_count ELSE 0 END) total_deals_product_count,
-        SUM(CASE WHEN deal_data.total_order_amount IS NOT NULL THEN deal_data.total_order_amount ELSE 0 END) total_deals_amount,
-        SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) total_await_receivable,
-        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) total_income
-        FROM erp_business_commission_config ebcc
-        LEFT JOIN erp_role er on er.role_type = ebcc.role_id
-        LEFT JOIN erp_user_role eur on er.id = eur.role_id
-        LEFT JOIN erp_user eu on eur.user_id = eu.id
-        LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1
-        LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
-        LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id and esod.order_type = 1 and esod.data_status = 1
+        count(distinct distinct_data.eu_id, distinct_data.esc_id, distinct_data.rent_length_type) total_count,
+        SUM(distinct_data.deals_count) total_deals_count,
+        SUM(distinct_data.deals_product_count) total_deals_product_count,
+        SUM(distinct_data.deals_amount) total_deals_amount,
+        SUM(distinct_data.await_receivable) total_await_receivable,
+        SUM(distinct_data.income) total_income
+        from
+        (
+        select
+        eu.id eu_id,
+        esc.id esc_id,
+        rlt.rent_length_type,
+        MIN(deal_data.deals_count) deals_count,
+        MIN(deal_data.deals_product_count) deals_product_count,
+        MIN(deal_data.deals_amount) deals_amount,
+        MIN(deal_income.await_receivable) await_receivable,
+        MIN(deal_income.income) income
+        from erp_department ed
+        LEFT JOIN erp_role er on er.department_id = ed.id
+        LEFT JOIN erp_user_role eur on eur.role_id = er.id
+        LEFT JOIN erp_user eu on eu.id = eur.user_id
+        LEFT JOIN erp_sub_company esc ON ed.sub_company_id = esc.id
         LEFT JOIN
         (
-        select eo.id, eo.order_seller_id, eo.order_sub_company_id, eo.total_product_count, eo.total_order_amount
-        from erp_order eo
-        where eo.data_status = 1 AND eo.create_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.create_time
-        ) deal_data ON deal_data.id = eo.id
-        where esc.id is not null
+        select 1 rent_length_type UNION select 2 rent_length_type
+        ) rlt on 1 = 1
+        LEFT JOIN
+        (
+        select
+        eu.id eu_id,
+        eo.order_sub_company_id esc_id,
+        eo.rent_length_type,
+        SUM(CASE WHEN eo.id IS NOT NULL THEN 1 ELSE 0 END) deals_count,
+        SUM(CASE WHEN eo.total_product_count IS NOT NULL THEN eo.total_product_count ELSE 0 END) deals_product_count,
+        SUM(CASE WHEN eo.total_order_amount IS NOT NULL THEN eo.total_order_amount ELSE 0 END) deals_amount
+        FROM erp_order eo
+        LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
+        LEFT JOIN
+        (
+        select
+        eo.id,
+        count(esod.id) esod_ok_count
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order eo on esod.order_id = eo.id
+        where esod.statement_detail_status = 8 and esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
+        group by eo.id
+        ) deal_esod on deal_esod.id = eo.id
+        where deal_esod.esod_ok_count > 0
+        group by eu.id, eo.order_sub_company_id, eo.rent_length_type
+        ) deal_data on deal_data.eu_id = eu.id and deal_data.esc_id = esc.id and deal_data.rent_length_type = rlt.rent_length_type
+        LEFT JOIN
+        (
+        select
+        eo.order_seller_id eu_id,
+        eo.order_sub_company_id esc_id,
+        eo.rent_length_type,
+        SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) await_receivable,
+        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) income
+        from erp_statement_order_detail esod
+        LEFT JOIN erp_order eo on esod.order_id = eo.id
+        group by eo.order_seller_id, eo.order_sub_company_id, eo.rent_length_type
+        ) deal_income on deal_income.eu_id = eu.id and deal_income.esc_id = esc.id and deal_income.rent_length_type = rlt.rent_length_type
+        where esc.id is not null and eu.id is not null and ed.department_type = 300010
+        <if test="maps.salesmanQueryParam.rentLengthType!=null">
+            AND rlt.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
+        </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+            AND esc.id = #{maps.incomeQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
         </if>
+        group by eu.id, esc.id, rlt.rent_length_type
+        ) distinct_data
     </select>
 
     <resultMap id="SalesmanDetailTwo" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailTwo">
@@ -952,59 +1000,89 @@ ORDER BY esc.data_order DESC
         <result column="salesman_name" jdbcType="VARCHAR" property="salesmanName"/>
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
         <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
         <result column="deals_count" jdbcType="INTEGER" property="dealsCount"/>
         <result column="deals_product_count" jdbcType="INTEGER" property="dealsProductCount"/>
         <result column="deals_amount" jdbcType="DECIMAL" property="dealsAmount"/>
         <result column="await_receivable" jdbcType="DECIMAL" property="awaitReceivable"/>
         <result column="income" jdbcType="DECIMAL" property="income"/>
-        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
     <select id="querySalesmanDetailTwo" resultMap="SalesmanDetailTwo" parameterType="map">
         select
         eu.id salesman_id,
-        MIN(eu.real_name) salesman_name,
-        MIN(esc.id) sub_company_id,
-        MIN(esc.sub_company_name) sub_company_name,
-        eo.rent_length_type,
-        SUM(CASE WHEN deal_data.id IS NOT NULL THEN 1 ELSE 0 END) deals_count,
-        SUM(CASE WHEN deal_data.total_product_count IS NOT NULL THEN deal_data.total_product_count ELSE 0 END) deals_product_count,
-        SUM(CASE WHEN deal_data.total_order_amount IS NOT NULL THEN deal_data.total_order_amount ELSE 0 END) deals_amount,
-        SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) await_receivable,
-        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) income
-        FROM erp_business_commission_config ebcc
-        LEFT JOIN erp_role er on er.role_type = ebcc.role_id
-        LEFT JOIN erp_user_role eur on er.id = eur.role_id
-        LEFT JOIN erp_user eu on eur.user_id = eu.id
-        LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1
-        LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id
-        LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id and esod.order_type = 1 and esod.data_status = 1
+        eu.real_name salesman_name,
+        esc.id sub_company_id,
+        esc.sub_company_name sub_company_name,
+        rlt.rent_length_type,
+        MIN(deal_data.deals_count) deals_count,
+        MIN(deal_data.deals_product_count) deals_product_count,
+        MIN(deal_data.deals_amount) deals_amount,
+        MIN(deal_income.await_receivable) await_receivable,
+        MIN(deal_income.income) income
+        from erp_department ed
+        LEFT JOIN erp_role er on er.department_id = ed.id
+        LEFT JOIN erp_user_role eur on eur.role_id = er.id
+        LEFT JOIN erp_user eu on eu.id = eur.user_id
+        LEFT JOIN erp_sub_company esc ON ed.sub_company_id = esc.id
         LEFT JOIN
         (
-        select eo.id, eo.order_seller_id, eo.order_sub_company_id, eo.total_product_count, eo.total_order_amount
-        from erp_order eo
-        where eo.data_status = 1 AND eo.create_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > eo.create_time
-        ) deal_data ON deal_data.id = eo.id
-        where esc.id is not null
+        select 1 rent_length_type UNION select 2 rent_length_type
+        ) rlt on 1 = 1
+        LEFT JOIN
+        (
+        select
+        eu.id eu_id,
+        eo.order_sub_company_id esc_id,
+        eo.rent_length_type,
+        SUM(CASE WHEN eo.id IS NOT NULL THEN 1 ELSE 0 END) deals_count,
+        SUM(CASE WHEN eo.total_product_count IS NOT NULL THEN eo.total_product_count ELSE 0 END) deals_product_count,
+        SUM(CASE WHEN eo.total_order_amount IS NOT NULL THEN eo.total_order_amount ELSE 0 END) deals_amount
+        FROM erp_order eo
+        LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
+        LEFT JOIN
+        (
+        select
+        eo.id,
+        count(esod.id) esod_ok_count
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order eo on esod.order_id = eo.id
+        where esod.statement_detail_status = 8 and esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
+        group by eo.id
+        ) deal_esod on deal_esod.id = eo.id
+        where deal_esod.esod_ok_count > 0
+        group by eu.id, eo.order_sub_company_id, eo.rent_length_type
+        ) deal_data on deal_data.eu_id = eu.id and deal_data.esc_id = esc.id and deal_data.rent_length_type = rlt.rent_length_type
+        LEFT JOIN
+        (
+        select
+        eo.order_seller_id eu_id,
+        eo.order_sub_company_id esc_id,
+        eo.rent_length_type,
+        SUM(CASE WHEN (esod.statement_detail_status = 0 AND #{maps.salesmanQueryParam.endTime} > esod.statement_expect_pay_time ) THEN esod.statement_detail_rent_amount ELSE 0 END ) await_receivable,
+        SUM(CASE WHEN (esod.statement_detail_status = 8 AND esod.statement_detail_paid_time>= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time) THEN esod.statement_detail_rent_amount ELSE 0 END) income
+        from erp_statement_order_detail esod
+        LEFT JOIN erp_order eo on esod.order_id = eo.id
+        group by eo.order_seller_id, eo.order_sub_company_id, eo.rent_length_type
+        ) deal_income on deal_income.eu_id = eu.id and deal_income.esc_id = esc.id and deal_income.rent_length_type = rlt.rent_length_type
+        where esc.id is not null and eu.id is not null and ed.department_type = 300010
+        <if test="maps.salesmanQueryParam.rentLengthType!=null">
+            AND rlt.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
+        </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+            AND esc.id = #{maps.incomeQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
         </if>
-        group by eu.id, eo.order_sub_company_id, eo.rent_length_type
+        group by eu.id, esc.id, rlt.rent_length_type
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
     <resultMap id="SalesmanDetailTwoExtend" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailTwoExtend">
         <result column="salesman_id" jdbcType="INTEGER" property="salesmanId"/>
-        <result column="salesman_name" jdbcType="VARCHAR" property="salesmanName"/>
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
-        <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
-        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
-        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
         <result column="eop_id" jdbcType="INTEGER" property="eopId" />
-        <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
         <result column="product_count" jdbcType="INTEGER" property="productCount" />
         <result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
         <result column="rent_type" jdbcType="INTEGER" property="rentType" />
@@ -1014,48 +1092,33 @@ ORDER BY esc.data_order DESC
         <result column="rent_start_time" jdbcType="DATE" property="rentStartTime" />
         <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
         <result column="product_count_factor" jdbcType="FLOAT" property="productCountFactor" />
-        <result column="return_time" jdbcType="DATE" property="returnTime" />
-        <result column="return_product_count" jdbcType="INTEGER" property="returnProductCount" />
         <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
     <select id="querySalesmanDetailTwoExtend" resultMap="SalesmanDetailTwoExtend" parameterType="map">
         select
-        MIN(eu.id) salesman_id,
-        MIN(eo.id) order_id,
-        MIN(eo.order_no) order_no,
-        MIN(eu.real_name) salesman_name,
-        MIN(esc.id) sub_company_id,
-        MIN(esc.sub_company_name) sub_company_name,
+        eo.order_seller_id salesman_id,
+        eo.order_sub_company_id sub_company_id,
         eop.id eop_id,
-        epc.category_name,
         eop.product_count,
         eop.product_unit_amount,
         eop.rent_type,
         eop.rent_length_type,
         (CASE WHEN eop.rent_type = 1 THEN eps.day_rent_price ELSE eps.month_rent_price END) rent_price,
-        MIN(ec.localization_time) localization_time,
-        MIN(eo.create_time) create_time,
-        MIN(eo.rent_start_time) rent_start_time,
-        MIN(eo.rent_time_length) rent_time_length,
-        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor,
-        MIN(k3ro.return_time) return_time,
-        MIN(k3rod.product_count) return_product_count
-        FROM erp_business_commission_config ebcc
-        LEFT JOIN erp_role er on er.role_type = ebcc.role_id
-        LEFT JOIN erp_user_role eur on er.id = eur.role_id
-        LEFT JOIN erp_user eu on eur.user_id = eu.id
-        LEFT JOIN erp_order eo on eo.order_seller_id = eu.id AND eo.data_status = 1
-        LEFT JOIN erp_sub_company esc on eo.order_sub_company_id = esc.id and esc.data_status = 1
-        LEFT JOIN erp_statement_order_detail esod on esod.order_id = eo.id and esod.order_type = 1 and esod.data_status = 1
-        LEFT JOIN erp_order_product eop on esod.order_item_refer_id = eop.id and esod.order_item_type = 1 and eop.data_status = 1
-        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id and eps.data_status = 1
+        ec.localization_time localization_time,
+        eo.create_time create_time,
+        eo.rent_start_time rent_start_time,
+        eo.rent_time_length rent_time_length,
+        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
+        from erp_statement_order_detail esod
+        LEFT JOIN erp_order_product eop on esod.order_item_refer_id = eop.id and esod.order_item_type = 1
+        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id
         LEFT JOIN erp_product ep on eps.product_id = ep.id and ep.data_status = 1
         LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
-        LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id and ec.data_status = 1
-        LEFT JOIN erp_k3_return_order_detail k3rod on k3rod.order_no = eo.order_no and k3rod.order_item_id = eop.id and k3rod.data_status = 1
-        LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id
-        where esc.id is not null AND eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
+        LEFT JOIN erp_order eo on eo.id = eop.order_id
+        LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id
+        LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
+        where eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
         AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
@@ -1066,7 +1129,63 @@ ORDER BY esc.data_order DESC
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
         </if>
-        group by eop.id
     </select>
+
+    <resultMap id="SalesmanReturnOrder" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanReturnOrder">
+        <result column="eop_id" jdbcType="INTEGER" property="eopId"/>
+        <result column="eu_id" jdbcType="INTEGER" property="euId" />
+        <result column="esc_id" jdbcType="INTEGER" property="escId" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+        <result column="return_time" jdbcType="DATE" property="returnTime"/>
+        <result column="product_count" jdbcType="INTEGER" property="productCount"/>
+        <result column="product_no" jdbcType="VARCHAR" property="productNo"/>
+        <result column="create_time" jdbcType="DATE" property="createTime" />
+        <result column="localization_time" jdbcType="DATE" property="localizationTime" />
+        <result column="return_type" jdbcType="INTEGER" property="returnType" />
+        <result column="rent_start_time" jdbcType="DATE" property="rentStartTime" />
+        <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="product_count_factor" jdbcType="DOUBLE" property="productCountFactor" />
+    </resultMap>
+
+    <select id="querySalesmanReturnOrder" resultMap="SalesmanReturnOrder" parameterType="map">
+        select
+        eop.id eop_id,
+        eo.order_seller_id eu_id,
+        eo.order_sub_company_id esc_id,
+        eop.rent_length_type,
+        k3ro.return_time,
+        k3rod.product_count,
+        k3rod.product_no,
+        eop.create_time,
+        ec.localization_time,
+        eop.rent_type,
+        eo.rent_start_time,
+        eo.rent_time_length,
+        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
+        from erp_k3_return_order_detail k3rod
+        LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
+        LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id
+        LEFT JOIN erp_statement_order_detail esod on esod.order_item_refer_id = eop.id and esod.order_item_type = 1 and esod.data_status = 1
+        LEFT JOIN erp_order eo on eo.id = eop.order_id AND eo.data_status = 1
+        LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id and ec.data_status = 1
+        LEFT JOIN erp_product_sku eps on eop.product_sku_id = eps.id
+        LEFT JOIN erp_product ep on eps.product_id = ep.id and ep.data_status = 1
+        LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
+        LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
+        where k3rod.data_status = 1 and eop.rent_length_type = 2
+        and eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
+        AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
+        <if test="maps.salesmanQueryParam.rentLengthType!=null">
+            AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
+        </if>
+        <if test="maps.salesmanQueryParam.subCompanyId!=null">
+            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+        </if>
+        <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
+        </if>
+        group by k3rod.id
+    </select>
+
 
 </mapper>

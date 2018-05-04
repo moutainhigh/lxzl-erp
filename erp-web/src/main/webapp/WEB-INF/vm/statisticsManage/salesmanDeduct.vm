@@ -77,9 +77,8 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                <th>业务员ID</th>
                                 <th>业务员姓名</th>
-                                <th>分公司</th>
+                                <th>归属公司</th>
                                 <th>成交单数</th>
                                 <th>成交台数</th>
                                 <th>成交金额</th>
@@ -93,7 +92,6 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                <td>{{salesmanId}}</td>
                                 <td>{{salesmanName}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{dealsCount}}</td>
@@ -107,13 +105,13 @@
                             {{/listData}}
                             {{^listData}}
                             <tr>
-                                <td valign="top" colspan="10" class="text-center">无数据</td>
+                                <td valign="top" colspan="9" class="text-center">无数据</td>
                             </tr>
                             {{/listData}}
                             {{/dataSource}}
                             <tr class="hide" id="totalInfo">
                                 <td>总计</td>
-                                <td id="totalCount" colspan="2" class="text-danger"></td>
+                                <td id="totalCount" class="text-danger"></td>
                                 <td id="totalDealsCount" class="text-danger"></td>
                                 <td id="totalDealsProductCount" class="text-danger"></td>
                                 <td id="totalDealsAmount" class="text-danger"></td>
