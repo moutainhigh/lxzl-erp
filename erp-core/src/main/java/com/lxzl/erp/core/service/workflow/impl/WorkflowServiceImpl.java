@@ -706,9 +706,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         //只有创建人与相关审核人查看自己数据
         if (!userSupport.isSuperUser()) {
             paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
+            List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
+            paramMap.put("currentUserGroupList",currentUserGroupList );
         }
-        List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
-        paramMap.put("currentUserGroupList",currentUserGroupList );
         if(workflowLinkQueryParam.getCurrentVerifyUser()!=null){
             List<String> groupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(workflowLinkQueryParam.getCurrentVerifyUser());
             paramMap.put("groupIdList",groupList );

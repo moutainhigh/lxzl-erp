@@ -238,17 +238,16 @@
 				and ewl.data_status = 1
 			</if>
 			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND (ewl.create_user = #{maps.verifyUserId}
+				AND ewl.create_user = #{maps.verifyUserId}
 				OR ewl.update_user = #{maps.verifyUserId}
 				OR ewl.current_verify_user = #{maps.verifyUserId}
-				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
-					OR ewl.verify_user_group_id in
-					<foreach item="item" index="index" collection="maps.currentUserGroupList"
-							 open="(" separator="," close=")">
-						#{item}
-					</foreach>
-				</if>
-				)
+			</if>
+			<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+				OR ewl.verify_user_group_id in
+				<foreach item="item" index="index" collection="maps.currentUserGroupList"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
 			</if>
 		</where>
 	</select>
@@ -296,18 +295,18 @@
 				and ewl.data_status = 1
 			</if>
 			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND (ewl.create_user = #{maps.verifyUserId}
+				AND ewl.create_user = #{maps.verifyUserId}
 				OR ewl.update_user = #{maps.verifyUserId}
 				OR ewl.current_verify_user = #{maps.verifyUserId}
-				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
-					OR ewl.verify_user_group_id in
-					<foreach item="item" index="index" collection="maps.currentUserGroupList"
-							 open="(" separator="," close=")">
-						#{item}
-					</foreach>
-				</if>
-				)
 			</if>
+			<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+				OR ewl.verify_user_group_id in
+				<foreach item="item" index="index" collection="maps.currentUserGroupList"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+
 		</where>
 		order by ewl.id DESC
 		LIMIT #{maps.start},#{maps.pageSize}
