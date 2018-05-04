@@ -133,8 +133,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         reletOrderDO.setExpectReturnTime(expectReturnTime);
         //保存续租单 商品项 配件项
         reletOrderMapper.save(reletOrderDO);
-        saveReletOrderProductInfo(reletOrderDO.getReletOrderProductDOList(), reletOrderDO.getId(), loginUser, currentTime);
-        saveReletOrderMaterialInfo(reletOrderDO.getReletOrderMaterialDOList(), reletOrderDO.getId(), loginUser, currentTime);
+        saveReletOrderProductInfo(reletOrderDO, loginUser, currentTime);
+        saveReletOrderMaterialInfo(reletOrderDO, loginUser, currentTime);
 
         // 续租单生成结算单 ，使用订单Id
         ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(reletOrderDO);
@@ -191,14 +191,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
 
-    private void saveReletOrderProductInfo(List<ReletOrderProductDO> reletOrderProductDOList, Integer reletOrderId, User loginUser, Date currentTime) {
+    private void saveReletOrderProductInfo(ReletOrderDO reletOrderDO, User loginUser, Date currentTime) {
 
         List<ReletOrderProductDO> saveOrderProductDOList = new ArrayList<>();
         Map<Integer, ReletOrderProductDO> updateOrderProductDOMap = new HashMap<>();
-        List<ReletOrderProductDO> dbOrderProductDOList = reletOrderProductMapper.findByReletOrderId(reletOrderId);
+        List<ReletOrderProductDO> dbOrderProductDOList = reletOrderProductMapper.findByReletOrderId(reletOrderDO.getId());
         Map<Integer, ReletOrderProductDO> dbOrderProductDOMap = ListUtil.listToMap(dbOrderProductDOList, "id");
-        if (CollectionUtil.isNotEmpty(reletOrderProductDOList)) {
-            for (ReletOrderProductDO orderProductDO : reletOrderProductDOList) {
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+            for (ReletOrderProductDO orderProductDO : reletOrderDO.getReletOrderProductDOList()) {
 
                 ReletOrderProductDO dbOrderProductDO = dbOrderProductDOMap.get(orderProductDO.getId());
                 if (dbOrderProductDO != null) {
@@ -213,7 +213,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         if (saveOrderProductDOList.size() > 0) {
             for (ReletOrderProductDO orderProductDO : saveOrderProductDOList) {
-                orderProductDO.setReletOrderId(reletOrderId);
+                orderProductDO.setReletOrderId(reletOrderDO.getId());
+                orderProductDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductDO.setCreateUser(loginUser.getUserId().toString());
                 orderProductDO.setUpdateUser(loginUser.getUserId().toString());
@@ -226,7 +227,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         if (updateOrderProductDOMap.size() > 0) {
             for (Map.Entry<Integer, ReletOrderProductDO> entry : updateOrderProductDOMap.entrySet()) {
                 ReletOrderProductDO orderProductDO = entry.getValue();
-                orderProductDO.setReletOrderId(reletOrderId);
+                orderProductDO.setReletOrderId(reletOrderDO.getId());
+                orderProductDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 orderProductDO.setUpdateTime(currentTime);
@@ -237,7 +239,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         if (dbOrderProductDOMap.size() > 0) {
             for (Map.Entry<Integer, ReletOrderProductDO> entry : dbOrderProductDOMap.entrySet()) {
                 ReletOrderProductDO orderProductDO = entry.getValue();
-                orderProductDO.setReletOrderId(reletOrderId);
+                orderProductDO.setReletOrderId(reletOrderDO.getId());
+                orderProductDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 orderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 orderProductDO.setUpdateTime(currentTime);
@@ -246,14 +249,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
     }
 
-    private void saveReletOrderMaterialInfo(List<ReletOrderMaterialDO> reletOrderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
+    private void saveReletOrderMaterialInfo(ReletOrderDO reletOrderDO, User loginUser, Date currentTime) {
 
         List<ReletOrderMaterialDO> saveOrderMaterialDOList = new ArrayList<>();
         Map<Integer, ReletOrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
-        List<ReletOrderMaterialDO> dbOrderMaterialDOList = reletOrderMaterialMapper.findByReletOrderId(orderId);
+        List<ReletOrderMaterialDO> dbOrderMaterialDOList = reletOrderMaterialMapper.findByReletOrderId(reletOrderDO.getId());
         Map<Integer, ReletOrderMaterialDO> dbOrderMaterialDOMap = ListUtil.listToMap(dbOrderMaterialDOList, "id");
-        if (CollectionUtil.isNotEmpty(reletOrderMaterialDOList)) {
-            for (ReletOrderMaterialDO orderMaterialDO : reletOrderMaterialDOList) {
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+            for (ReletOrderMaterialDO orderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
                 ReletOrderMaterialDO dbOrderMaterialDO = dbOrderMaterialDOMap.get(orderMaterialDO.getId());
                 if (dbOrderMaterialDO != null) {
                     orderMaterialDO.setId(dbOrderMaterialDO.getId());
@@ -267,7 +270,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         if (saveOrderMaterialDOList.size() > 0) {
             for (ReletOrderMaterialDO orderMaterialDO : saveOrderMaterialDOList) {
-                orderMaterialDO.setReletOrderId(orderId);
+                orderMaterialDO.setReletOrderId(reletOrderDO.getId());
+                orderMaterialDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialDO.setCreateUser(loginUser.getUserId().toString());
                 orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
@@ -280,7 +284,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         if (updateOrderMaterialDOMap.size() > 0) {
             for (Map.Entry<Integer, ReletOrderMaterialDO> entry : updateOrderMaterialDOMap.entrySet()) {
                 ReletOrderMaterialDO orderMaterialDO = entry.getValue();
-                orderMaterialDO.setReletOrderId(orderId);
+                orderMaterialDO.setReletOrderId(reletOrderDO.getId());
+                orderMaterialDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMaterialDO.setUpdateTime(currentTime);
@@ -291,7 +296,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         if (dbOrderMaterialDOMap.size() > 0) {
             for (Map.Entry<Integer, ReletOrderMaterialDO> entry : dbOrderMaterialDOMap.entrySet()) {
                 ReletOrderMaterialDO orderMaterialDO = entry.getValue();
-                orderMaterialDO.setReletOrderId(orderId);
+                orderMaterialDO.setReletOrderId(reletOrderDO.getId());
+                orderMaterialDO.setReletOrderNo(reletOrderDO.getReletOrderNo());
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMaterialDO.setUpdateTime(currentTime);

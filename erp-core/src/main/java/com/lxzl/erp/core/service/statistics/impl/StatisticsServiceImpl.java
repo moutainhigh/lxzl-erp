@@ -487,33 +487,21 @@ public class StatisticsServiceImpl implements StatisticsService {
         maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
 
         StatisticsSalesman statisticsSalesman = statisticsMapper.querySalesmanCount(maps);
-        StatisticsSalesmanIncome statisticsSalesmanIncome = statisticsMapper.querySalesmanIncomeCount(maps);
-        // 计算总应收
-        if (statisticsSalesmanIncome != null) {
-            statisticsSalesman.setTotalIncome(statisticsSalesmanIncome.getTotalIncome());
-            statisticsSalesman.setTotalReceive(statisticsSalesmanIncome.getTotalAwaitReceivable().add(statisticsSalesmanIncome.getTotalIncome()));
-        }
+        statisticsSalesman.setTotalReceive(statisticsSalesman.getTotalAwaitReceivable().add(statisticsSalesman.getTotalIncome()));
 
         // 查询以业务员，分公司分组的初步数据(主数据)
         List<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoList = statisticsMapper.querySalesmanDetailTwo(maps);
+        for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
+            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
+        }
         // 装换为salesmanId-subCompnayId为key的map
         Map<String, StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailTwoList, "salesmanId", "subCompanyId", "rentLengthType");
 
-        // 计算应收 = 待收 + 实收
-        List<StatisticsSalesmanDetailIncome> statisticsSalesmanDetailIncomeList = statisticsMapper.querySalesmanDetailIncome(maps);
-        for (StatisticsSalesmanDetailIncome statisticsSalesmanDetailIncome : statisticsSalesmanDetailIncomeList) {
-            String key = statisticsSalesmanDetailIncome.getSalesmanId() + "-" + statisticsSalesmanDetailIncome.getSubCompanyId() + "-" + statisticsSalesmanDetailIncome.getRentLengthType();
-            StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
-            if (statisticsSalesmanDetailTwo != null) {
-                statisticsSalesmanDetailTwo.setIncome(statisticsSalesmanDetailTwo.getIncome().add(statisticsSalesmanDetailIncome.getIncome()));
-                statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getReceive().add(statisticsSalesmanDetailIncome.getAwaitReceivable()).add(statisticsSalesmanDetailIncome.getIncome()));
-            }
-        }
-
 
         for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
-            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
-            statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwo.getRentLengthType()) {
+                statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+            }
         }
 
         // 查询扩展数据来计算净增台数

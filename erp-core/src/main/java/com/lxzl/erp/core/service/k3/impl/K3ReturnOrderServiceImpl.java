@@ -1262,17 +1262,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     }
 
     private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
-        String type = null;
-        if ("erp-prod".equals(ApplicationConfig.application)) {
-            type = "【线上环境】";
-        } else if ("erp-dev".equals(ApplicationConfig.application)) {
-            type = "【开发环境】";
-        } else if ("erp-adv".equals(ApplicationConfig.application)) {
-            type = "【预发环境】";
-        } else if ("erp-test".equals(ApplicationConfig.application)) {
-            type = "【测试环境】";
-        }
-        StringBuffer sb = new StringBuffer(type);
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
         sb.append("向K3推送【退货-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         sb.append(JSON.toJSONString(response));
         return sb.toString();
