@@ -17,7 +17,11 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,7 +69,7 @@ public class ExcelExportSupport<T> {
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         hssfWorkbook.write(outputStream);
@@ -163,6 +167,30 @@ public class ExcelExportSupport<T> {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
+    /**
+    * 乱码转换
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/4 17:46
+    * @param : param
+    * @Return : java.lang.String
+    */
+    public static String decode(String param){
+        if(param != null){
+            try {
+                return URLDecoder.decode(param, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
 
+
+    public static String formatFileName(String fileName){
+        Date date = new Date();
+        String now = new SimpleDateFormat("yyyyMMdd").format(date);
+        return fileName+"__"+now;
+    }
 
 }

@@ -14,6 +14,7 @@ import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;
+import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.se.common.domain.Result;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,22 +46,16 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
-        if(bankSlipDetailQueryParam.getPayerName() != null){
-            bankSlipDetailQueryParam.setPayerName(URLDecoder.decode(bankSlipDetailQueryParam.getPayerName(), "UTF-8"));
-        }
+        bankSlipDetailQueryParam.setPayerName(ExcelExportSupport.decode(bankSlipDetailQueryParam.getPayerName()));
         ServiceResult<String, Page<BankSlipDetail>> stringPageServiceResult = bankSlipService.pageBankSlipDetail(bankSlipDetailQueryParam);
-        ServiceResult<String, String> serviceResult = excelExportService.export(stringPageServiceResult, ExcelExportConfigGroup.bankSlipDetailConfig, "bankSlipDetail", "sheet1", response);
+        ServiceResult<String, String> serviceResult = excelExportService.export(stringPageServiceResult, ExcelExportConfigGroup.bankSlipDetailConfig, ExcelExportSupport.formatFileName("资金流水记录"), "sheet1", response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
     @RequestMapping(value = "exportStatementOrderPage", method = RequestMethod.POST)
     public Result exportStatementOrderPage(StatementOrderQueryParam statementOrderQueryParam, HttpServletResponse response) throws Exception {
-        if(statementOrderQueryParam.getStatementOrderCustomerName() != null){
-            statementOrderQueryParam.setStatementOrderCustomerName(URLDecoder.decode(statementOrderQueryParam.getStatementOrderCustomerName(), "UTF-8"));
-        }
-        if(statementOrderQueryParam.getOwnerName() != null){
-            statementOrderQueryParam.setOwnerName(URLDecoder.decode(statementOrderQueryParam.getOwnerName(), "UTF-8"));
-        }
+        statementOrderQueryParam.setStatementOrderCustomerName(ExcelExportSupport.decode(statementOrderQueryParam.getStatementOrderCustomerName()));
+        statementOrderQueryParam.setOwnerName(ExcelExportSupport.decode(statementOrderQueryParam.getOwnerName()));
         ServiceResult<String, Page<StatementOrder>> serviceResult = statementService.queryStatementOrder(statementOrderQueryParam);
         ServiceResult<String, HSSFWorkbook> result = excelExportService.getHSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
         List<StatementOrder> statementOrderList = serviceResult.getResult().getItemList();
@@ -71,18 +65,16 @@ public class ExcelExportController {
             statementOrderDetailList.addAll(serviceResult1.getResult().getStatementOrderDetailList());
         }
 
-        ServiceResult<String, String> serviceResult1 = excelExportService.export(statementOrderDetailList, ExcelExportConfigGroup.statementOrderDetailConfig, response, result.getResult(), "statementOrder", "sheet1", serviceResult.getResult().getItemList().size()+1);
+        ServiceResult<String, String> serviceResult1 = excelExportService.export(statementOrderDetailList, ExcelExportConfigGroup.statementOrderDetailConfig, response, result.getResult(), ExcelExportSupport.formatFileName("结算单详情"), "sheet1", serviceResult.getResult().getItemList().size() + 1);
         return resultGenerator.generate(serviceResult1.getErrorCode(), serviceResult1.getResult());
     }
 
     @RequestMapping(value = "exportStatisticsSalesmanDetail", method = RequestMethod.POST)
     public Result exportStatisticsSalesmanDetail(StatisticsSalesmanPageParam statisticsSalesmanPageParam, HttpServletResponse response) throws Exception {
 
-        if(statisticsSalesmanPageParam.getSalesmanName() != null){
-            statisticsSalesmanPageParam.setSalesmanName(URLDecoder.decode(statisticsSalesmanPageParam.getSalesmanName(), "UTF-8"));
-        }
+        statisticsSalesmanPageParam.setSalesmanName(ExcelExportSupport.decode(statisticsSalesmanPageParam.getSalesmanName()));
         ServiceResult<String, StatisticsSalesman> result = statisticsService.querySalesman(statisticsSalesmanPageParam);
-        ServiceResult<String, String> serviceResult = excelExportService.export(result.getResult().getStatisticsSalesmanDetailPage().getItemList(), ExcelExportConfigGroup.statisticsSalesmanDetailConfig, "statisticsSalesmanDetail", "sheet1", response);
+        ServiceResult<String, String> serviceResult = excelExportService.export(result.getResult().getStatisticsSalesmanDetailPage().getItemList(), ExcelExportConfigGroup.statisticsSalesmanDetailConfig, ExcelExportSupport.formatFileName("销售统计详情"), "sheet1", response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
