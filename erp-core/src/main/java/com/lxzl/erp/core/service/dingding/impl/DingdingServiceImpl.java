@@ -90,9 +90,9 @@ public class DingdingServiceImpl implements DingdingService {
     private CustomerService customerService;
     @Autowired
     private WorkflowService workflowService;
-    // 申请审批实例的线程
+    /** 申请审批实例的线程 */
     private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10);
-    // 注册用户的线程
+    /** 注册用户的线程 */
     private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10);
     @Override
     public String sendUserGroupMessage(String userGroupUrl, DingdingSendTextMessageRequest request) {
@@ -266,7 +266,7 @@ public class DingdingServiceImpl implements DingdingService {
             // 构建表单组件信息
             dingdingApproveBO = buildFormComponentObj(dingdingApproveBO, workflowLinkDO);
             // 设置请求地址
-            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflowUrl());
+            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflokwUrl());
             final DingdingApproveBO dingdingApproveBOThread = dingdingApproveBO;
             // 申请
             // 异步线程执行
