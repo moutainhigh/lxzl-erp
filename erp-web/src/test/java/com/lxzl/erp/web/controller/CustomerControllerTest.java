@@ -4,7 +4,6 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.CustomerStatus;
 import com.lxzl.erp.common.constant.CustomerType;
-import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.*;
 import com.lxzl.erp.common.domain.customer.pojo.*;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -12,12 +11,7 @@ import com.lxzl.erp.common.domain.payment.ManualDeductParam;
 import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
-import com.lxzl.erp.core.service.customer.impl.CustomerServiceImpl;
-import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyCityCoverMapper;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyCityCoverDO;
-import com.lxzl.se.common.domain.Result;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -101,7 +95,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("戴玉聪——————————");
+        customerCompany.setCompanyName("戴玉聪公司名称测试");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
