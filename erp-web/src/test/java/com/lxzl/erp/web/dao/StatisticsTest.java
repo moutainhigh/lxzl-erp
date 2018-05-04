@@ -38,7 +38,7 @@ public class StatisticsTest extends ERPUnTransactionalTest {
 		maps.put("start", pageQuery.getStart());
 		maps.put("pageSize", pageQuery.getPageSize());
 		maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
-		statisticsMapper.querySalesmanDetailTwo(maps);
+		statisticsMapper.querySalesmanDetail(maps);
 	}
 
 	@Test
@@ -55,6 +55,6 @@ public class StatisticsTest extends ERPUnTransactionalTest {
 		maps.put("start", pageQuery.getStart());
 		maps.put("pageSize", pageQuery.getPageSize());
 		maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
-		statisticsMapper.querySalesmanDetailTwoExtend(maps);
+		statisticsMapper.querySalesmanDetailExtend(maps);
 	}
 }
