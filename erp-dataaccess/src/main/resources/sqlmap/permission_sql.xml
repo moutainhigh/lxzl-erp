@@ -160,10 +160,24 @@
 	</sql>
 
 	<sql id="workflow_control">
-		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam != ''">
-			AND (ewl.create_user = #{maps.permissionParam}
-			  OR ewl.update_user = #{maps.permissionParam}
-			  OR ewl.current_verify_user = #{maps.permissionParam}
+		<if test="maps.permissionParam!=null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ewl.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ewl.update_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+				OR ewl.current_verify_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
 				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
 					OR ewl.verify_user_group_id in
 					<foreach item="item" index="index" collection="maps.currentUserGroupList"
@@ -171,7 +185,8 @@
 						#{item}
 					</foreach>
 				</if>
-			  )
+				)
+			</if>
 		</if>
 	</sql>
 
