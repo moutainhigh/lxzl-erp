@@ -18,6 +18,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3CallbackService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
@@ -235,6 +236,10 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 if(orderProductDO!=null){
                     Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
+                    if(productCount<0){
+                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"订单ID["+orderProductDO.getOrderId()+"]商品项ID["+orderProductDO.getId()+")]退货后数量为"+(productCount)+"台");
+                    }
+                    productCount = productCount<0?0:productCount;
                     orderProductDO.setRentingProductCount(productCount);
                     orderProductDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                     orderProductDO.setUpdateTime(now);
@@ -249,6 +254,10 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 if(orderMaterialDO!=null){
                     Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
+                    if(materialCount<0){
+                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"订单ID["+orderMaterialDO.getOrderId()+"]商品项ID["+orderMaterialDO.getId()+")]退货后数量为"+(materialCount)+"台");
+                    }
+                    materialCount = materialCount<0?0:materialCount;
                     orderMaterialDO.setRentingMaterialCount(materialCount);
                     orderMaterialDO.setUpdateUser(CommonConstant.SUPER_USER_ID.toString());
                     orderMaterialDO.setUpdateTime(now);
@@ -354,7 +363,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     @Autowired
     private CustomerSupport customerSupport;
     @Autowired
-    private StatementService statementService;
+    private DingDingSupport dingDingSupport;
     @Autowired
     private ProductSupport productSupport;
 }
