@@ -703,13 +703,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         paramMap.put("start", pageQuery.getStart());
         paramMap.put("pageSize", pageQuery.getPageSize());
         paramMap.put("workflowQueryParam", workflowLinkQueryParam);
-        //只有创建人与审核人查看自己数据
-        paramMap.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
-        List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
-        paramMap.put("currentUserGroupList",currentUserGroupList );
-        if(workflowLinkQueryParam.getCurrentVerifyUser()!=null){
-            List<String> groupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(workflowLinkQueryParam.getCurrentVerifyUser());
-            paramMap.put("groupIdList",groupList );
+        //只有创建人与相关审核人查看自己数据
+        if (!userSupport.isSuperUser()) {
+            paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
+            List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
+            paramMap.put("currentUserGroupList",currentUserGroupList );
         }
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);

@@ -20,6 +20,7 @@ public class StatisticsSalesmanReturnOrder {
 	private Integer returnType; // 月租日租
 	private Date rentStartTime; // 订单起租时间
 	private Integer rentTimeLength; // 租赁月数
+	private Date customerUpdateTime; // 退货单关联的最新的客户变更时间，如无则为null
 	private Double productCountFactor; // 商品折扣系数
 
 	public Integer getEopId() {
@@ -124,5 +125,13 @@ public class StatisticsSalesmanReturnOrder {
 
 	public void setProductCountFactor(Double productCountFactor) {
 		this.productCountFactor = productCountFactor;
+	}
+
+	public Date getCustomerUpdateTime() {
+		return customerUpdateTime;
+	}
+
+	public void setCustomerUpdateTime(Date customerUpdateTime) {
+		this.customerUpdateTime = customerUpdateTime;
 	}
 }

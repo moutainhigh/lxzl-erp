@@ -546,16 +546,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         BigDecimal orderIncreaseProduce = dis.multiply(BigDecimal.valueOf(productCount));
         // 3. 计算属地化
-        BigDecimal performance;
         Date localizationTime = statisticsSalesmanDetailExtend.getLocalizationTime();
         Date createTime = statisticsSalesmanDetailExtend.getCreateTime();
-        if (localizationTime == null || createTime == null) {
-            performance = BigDecimal.valueOf(1);
-        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <=3 ) {
-            performance = BigDecimal.valueOf(0.3);
-        } else {
-            performance = BigDecimal.valueOf(0.7);
-        }
+        BigDecimal performance = caculateLocalizationFactor(localizationTime, createTime);
 
         // 4. 计算订单净增和属地化
         BigDecimal result = performance.multiply(orderIncreaseProduce);
@@ -569,17 +562,18 @@ public class StatisticsServiceImpl implements StatisticsService {
             return BigDecimal.valueOf(0);
         }
 
+        // 如果有客户变更记录，且在退货时间3个月内，则不计算此退货单
+        if (statisticsSalesmanReturnOrder.getCustomerUpdateTime() != null && statisticsSalesmanReturnOrder.getReturnTime() != null) {
+            int months = DateUtil.getMonthSpace(statisticsSalesmanReturnOrder.getCustomerUpdateTime(), statisticsSalesmanReturnOrder.getReturnTime());
+            if (months < 3) { // 3个月以内
+                return BigDecimal.valueOf(0);
+            }
+        }
+
         // 1. 计算属地化
-        BigDecimal performance;
         Date localizationTime = statisticsSalesmanReturnOrder.getLocalizationTime();
         Date createTime = statisticsSalesmanReturnOrder.getCreateTime();
-        if (localizationTime == null || createTime == null) {
-            performance = BigDecimal.valueOf(1);
-        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <=3 ) {
-            performance = BigDecimal.valueOf(0.3);
-        } else {
-            performance = BigDecimal.valueOf(0.7);
-        }
+        BigDecimal performance = caculateLocalizationFactor(localizationTime, createTime);
 
         BigDecimal returnProduct = BigDecimal.valueOf(0);
 
@@ -605,6 +599,19 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 4. 计算订单净增和属地化
         BigDecimal result = performance.multiply(returnProduct);
         return result;
+    }
+
+    // 计算业务员提成净增台数的属地化系数
+    private BigDecimal caculateLocalizationFactor(Date localizationTime, Date createTime) {
+        BigDecimal performance;
+        if (localizationTime == null || createTime == null) {
+            performance = BigDecimal.valueOf(1);
+        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <3 ) {
+            performance = BigDecimal.valueOf(0.3);
+        } else {
+            performance = BigDecimal.valueOf(0.7);
+        }
+        return performance;
     }
 
     @Override
