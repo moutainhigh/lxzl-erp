@@ -487,12 +487,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
 
         StatisticsSalesman statisticsSalesman = statisticsMapper.querySalesmanCount(maps);
-        StatisticsSalesmanIncome statisticsSalesmanIncome = statisticsMapper.querySalesmanIncomeCount(maps);
-        // 计算总应收
-        if (statisticsSalesmanIncome != null) {
-            statisticsSalesman.setTotalIncome(statisticsSalesmanIncome.getTotalIncome());
-            statisticsSalesman.setTotalReceive(statisticsSalesmanIncome.getTotalAwaitReceivable().add(statisticsSalesmanIncome.getTotalIncome()));
-        }
+        statisticsSalesman.setTotalReceive(statisticsSalesman.getTotalAwaitReceivable().add(statisticsSalesman.getTotalIncome()));
 
         // 查询以业务员，分公司分组的初步数据(主数据)
         List<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoList = statisticsMapper.querySalesmanDetailTwo(maps);
