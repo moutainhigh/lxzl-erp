@@ -156,7 +156,7 @@ public class ExcelExportSupport<T> {
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         hssfWorkbook.write(outputStream);
