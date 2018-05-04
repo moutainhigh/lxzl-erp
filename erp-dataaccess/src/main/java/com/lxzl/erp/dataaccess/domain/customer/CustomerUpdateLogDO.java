@@ -13,6 +13,8 @@ public class CustomerUpdateLogDO  extends BaseDO {
 	private String remark;
 	private Integer isOwnerUpdateFlag; // 是否变更了开发人
 	private Integer isUnionUserUpdateFlag; // 是否变更了联合开发员
+	private Integer oldOwner;
+	private Integer oldUnionUser;
 
 	public Integer getId(){
 		return id;
@@ -76,5 +78,21 @@ public class CustomerUpdateLogDO  extends BaseDO {
 
 	public void setIsUnionUserUpdateFlag(Integer isUnionUserUpdateFlag) {
 		this.isUnionUserUpdateFlag = isUnionUserUpdateFlag;
+	}
+
+	public Integer getOldOwner() {
+		return oldOwner;
+	}
+
+	public void setOldOwner(Integer oldOwner) {
+		this.oldOwner = oldOwner;
+	}
+
+	public Integer getOldUnionUser() {
+		return oldUnionUser;
+	}
+
+	public void setOldUnionUser(Integer oldUnionUser) {
+		this.oldUnionUser = oldUnionUser;
 	}
 }

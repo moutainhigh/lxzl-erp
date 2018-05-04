@@ -245,7 +245,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         // 添加客户变更记录
-        createCustomerUpdateLog(customer.getCustomerId(), customer.getOwner(), customer.getUnionUser(), now, 0, 0);
+        createCustomerUpdateLog(customer.getCustomerId(), customer.getOwner(), customer.getUnionUser(), now, 0, 0, null, null);
 
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -258,9 +258,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, String> addPerson(Customer customer) {
+
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-
         CustomerDO dbCustomerDO = customerMapper.findByName(customer.getCustomerPerson().getRealName());
         if (dbCustomerDO != null) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_PERSON_IS_EXISTS);
@@ -321,7 +321,7 @@ public class CustomerServiceImpl implements CustomerService {
 //        }
 
         // 添加客户变更记录
-        createCustomerUpdateLog(customer.getCustomerId(), customer.getOwner(), customer.getUnionUser(), now, 0, 0);
+        createCustomerUpdateLog(customer.getCustomerId(), customer.getOwner(), customer.getUnionUser(), now, 0, 0, null, null);
 
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -2458,14 +2458,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         // 有变更，则添加变更记录
         if (isOwnerUpdateFlag == 1 || isUnionUserUpdateFlag == 1) {
-            createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now, isOwnerUpdateFlag, isUnionUserUpdateFlag);
+            createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now, isOwnerUpdateFlag, isUnionUserUpdateFlag, userDOOwner, userDOUnion);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
-    private void createCustomerUpdateLog(Integer customerId, Integer owner, Integer unionUser, Date now, Integer isOwnerUpdateFlag, Integer isUnionUserUpdateFlag) {
+    private void createCustomerUpdateLog(Integer customerId, Integer owner, Integer unionUser, Date now, Integer isOwnerUpdateFlag, Integer isUnionUserUpdateFlag, Integer oldOwner, Integer oldUnionUser) {
         CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
         customerUpdateLogDO.setCustomerId(customerId);
         customerUpdateLogDO.setOwner(owner);
@@ -2475,6 +2475,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerUpdateLogDO.setCreateTime(now);
         customerUpdateLogDO.setIsOwnerUpdateFlag(isOwnerUpdateFlag);
         customerUpdateLogDO.setIsUnionUserUpdateFlag(isUnionUserUpdateFlag);
+        customerUpdateLogDO.setOldOwner(oldOwner);
+        customerUpdateLogDO.setOldUnionUser(oldUnionUser);
         customerUpdateLogMapper.save(customerUpdateLogDO);
     }
 

@@ -13,10 +13,12 @@
 		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
 		<result column="is_owner_update_flag" jdbcType="INTEGER" property="isOwnerUpdateFlag" />
 		<result column="is_union_user_update_flag" jdbcType="INTEGER" property="isUnionUserUpdateFlag" />
+		<result column="old_owner" jdbcType="INTEGER" property="oldOwner" />
+		<result column="old_union_user" jdbcType="INTEGER" property="oldUnionUser" />
 	</resultMap>
 
 	<sql id="column_List">
-		ecul.id,ecul.customer_id,ecul.owner,ecul.union_user,ecul.data_status,ecul.remark,ecul.create_time,ecul.create_user,ecul.is_owner_update_flag,ecul.is_union_user_update_flag
+		ecul.id,ecul.customer_id,ecul.owner,ecul.union_user,ecul.data_status,ecul.remark,ecul.create_time,ecul.create_user,ecul.is_owner_update_flag,ecul.is_union_user_update_flag,ecul.old_owner,ecul.old_union_user
 	</sql>
 
 	<select id="findById" resultMap="CustomerUpdateLogDO" parameterType="java.lang.Integer">
@@ -71,6 +73,12 @@
 			</if>
 			<if test="isUnionUserUpdateFlag != null">
 				is_union_user_update_flag = #{isUnionUserUpdateFlag,jdbcType=INTEGER},
+			</if>
+			<if test="oldOwner != null">
+				old_owner = #{oldOwner,jdbcType=INTEGER},
+			</if>
+			<if test="oldUnionUser != null">
+				old_union_user = #{oldUnionUser,jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>
