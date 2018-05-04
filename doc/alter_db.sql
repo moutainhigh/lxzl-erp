@@ -729,3 +729,20 @@ CREATE TABLE `erp_print_log` (
   `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='打印记录表';
+
+DROP TABLE IF EXISTS `erp_business_commission_config`;
+CREATE TABLE `erp_business_commission_config` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `department_type` INT(11) NOT NULL COMMENT '部门类型',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成配置表';
+
+insert into erp_business_commission_config(department_type, data_status, create_time, create_user, update_time, update_user) values(300010, 1, NOW(), 500001, NOW(), 500001)
+ALTER TABLE erp_customer_update_log add `is_owner_update_flag` int(11)  COMMENT '是否变更了归属人，0否1是';
+ALTER TABLE erp_customer_update_log add `is_union_user_update_flag` int(11)  COMMENT '是否变更了联合开发人，0否1是';

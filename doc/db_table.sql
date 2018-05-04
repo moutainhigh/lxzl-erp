@@ -380,6 +380,8 @@ CREATE TABLE `erp_customer_update_log` (
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `owner` int(20) COMMENT '数据归属人，跟单员',
   `union_user` int(20) COMMENT '联合开发人',
+  `is_owner_update_flag` int(11)  COMMENT '是否变更了归属人，0否1是',
+  `is_union_user_update_flag` int(11)  COMMENT '是否变更了联合开发人，0否1是',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3462,20 +3464,6 @@ CREATE TABLE `erp_relet_order_material` (
   INDEX index_material_id ( `material_id` )
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
 
-DROP TABLE IF EXISTS `erp_business_commission_config`;
-CREATE TABLE `erp_business_commission_config` (
-  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `role_id` INT(20) NOT NULL COMMENT '角色ID',
-  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
-  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
-  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
-  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
-  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
-  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
-  PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成角色表';
-
-
 DROP TABLE IF EXISTS `erp_print_log`;
 CREATE TABLE `erp_print_log` (
   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -3490,6 +3478,19 @@ CREATE TABLE `erp_print_log` (
   `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='打印记录表';
+
+DROP TABLE IF EXISTS `erp_business_commission_config`;
+CREATE TABLE `erp_business_commission_config` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `department_type` INT(11) NOT NULL COMMENT '部门类型',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成配置表';
 
 
 
