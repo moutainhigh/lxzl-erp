@@ -42,6 +42,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseReceiveOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchaseApply.PurchaseApplyOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
@@ -108,16 +109,16 @@ public class GenerateNoSupport {
             OrderQueryParam orderQueryParam = new OrderQueryParam();
             orderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
             orderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
-            maps.put("orderQueryParam", orderQueryParam);
+            maps.put("reletOrderQueryParam", orderQueryParam);
             maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
-            Integer orderCount = orderMapper.findOrderCountByParams(maps);
+            Integer reletOrderCount = reletOrderMapper.findReletOrderCountByParams(maps);
             StringBuilder builder = new StringBuilder();
             builder.append("LXR-");
             builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
             builder.append("-");
             builder.append(subCustomerCode);
             builder.append("-");
-            builder.append(String.format("%05d", orderCount + 1));
+            builder.append(String.format("%05d", reletOrderCount + 1));
             return builder.toString();
         }
     }
@@ -945,6 +946,8 @@ public class GenerateNoSupport {
     private SupplierMapper supplierMapper;
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private ReletOrderMapper reletOrderMapper;
     @Autowired
     private WarehouseMapper warehouseMapper;
     @Autowired
