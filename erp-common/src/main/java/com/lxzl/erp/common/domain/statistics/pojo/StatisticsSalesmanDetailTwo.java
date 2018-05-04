@@ -13,9 +13,9 @@ public class StatisticsSalesmanDetailTwo {
 	private String salesmanName; // 业务员姓名
 	private Integer subCompanyId; // 分公司id
 	private String subCompanyName; // 分公司名
-	private Integer dealsCount; // 成交单数
-	private Integer dealsProductCount; // 成交台数
-	private BigDecimal dealsAmount; // 成交金额
+	private Integer dealsCount = 0; // 成交单数
+	private Integer dealsProductCount = 0; // 成交台数
+	private BigDecimal dealsAmount = BigDecimal.valueOf(0); // 成交金额
 	private BigDecimal awaitReceivable = BigDecimal.valueOf(0); // 待收
 	private BigDecimal income = BigDecimal.valueOf(0); // 本期回款（已收）
 	private Integer rentLengthType; // 长租短租
