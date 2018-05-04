@@ -746,3 +746,5 @@ CREATE TABLE `erp_business_commission_config` (
 insert into erp_business_commission_config(department_type, data_status, create_time, create_user, update_time, update_user) values(300010, 1, NOW(), 500001, NOW(), 500001)
 ALTER TABLE erp_customer_update_log add `is_owner_update_flag` int(11)  COMMENT '是否变更了归属人，0否1是';
 ALTER TABLE erp_customer_update_log add `is_union_user_update_flag` int(11)  COMMENT '是否变更了联合开发人，0否1是';
+ALTER TABLE erp_customer_update_log add `old_owner` int(20)  COMMENT '变更之前的开发人';
+ALTER TABLE erp_customer_update_log add `old_union_user` int(20)  COMMENT '变更之前的联合开发人';
