@@ -1,4 +1,5 @@
 <div id="reletOrderList" class="tab-pane tab-pane-order">
+<<<<<<< HEAD
     <div class="table-responsive" style="overflow-x: scroll;">
         <script type="text/html" id="reletOrderTpl">
             <thead>
@@ -70,11 +71,98 @@
             </tr>
             <tr class="bg-light affixTr" style="height: 0;">
                 <td colspan="25" class="pn br-n" style="height:0;">
+=======
+    <div class="table-responsive mb30" style="overflow-x: scroll;">
+        <script type="text/html" id="dataListTpl">
+            <thead>
+            <tr class="bg-light">
+                <th>客户编号</th>
+                <th>客户名称</th>
+                <th>订单编号</th>
+                <th>订单销售员</th>
+                <th>订单所属分公司</th>
+                <th>订单状态</th>
+                <th>发货分公司</th>
+                <th>租赁类型</th>
+                <th>租赁时长</th>
+                <th>商品总数</th>
+                <th>商品总价</th>
+                <th>配件总数</th>
+                <th>配件总价</th>
+                <th>订单总价</th>
+                <th>已经支付金额</th>
+                <th>支付状态</th>
+                <th>结算时间</th>
+                <th class="text-right">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#listData}}
+            <tr class="reletOrderRow" productRowKey="{{reletOrderId}}">
+                <td class="nowrap">{{buyerCustomerNo}}</td>
+                <td class="nowrap">{{buyerCustomerName}}</td>
+                <td class="nowrap">{{orderNo}}</td>
+                <td class="nowrap">{{orderSellerId}}</td>
+                <td class="nowrap">￥{{currentSkuPrice}}</td>
+                <td class="nowrap">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                <td class="nowrap">{{productCount}}</td>
+                <td class="nowrap">{{rentingProductCount}}</td>
+                <td class="nowrap"></td>
+                <td class="nowrap">￥{{#price}}{{productAmount}}{{/price}}</td>
+                <td class="nowrap"></td>
+                <td class="nowrap"></td>
+                <td class="nowrap">￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}</td>
+                <td class="nowrap">￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                <td class="text-right nowrap">
+                    <div class="btn-group text-right">
+                        <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看</a>
+                    </div>
+                </td>
+            </tr>
+            <tr class="bg-light affixTr" style="height: 0;">
+                <td colspan="14" class="pn br-n" style="height:0;">
+                    <div class="panel m15 affixPanel"  style="display: none;">
+                        <div class="panel-heading pn ph10">
+                            <span>已配设备：共配 {{orderProductEquipmentListCount}} 件</span>
+                        </div>
+                        <div class="panel-body pn">
+                            <table class="table">
+                                <thead>
+                                    <th>设备编号</th>
+                                    <th>预计归还时间</th>
+                                    <th>实际归还时间</th>
+                                </thead>
+                                {{#orderProductEquipmentListData}}
+                                <tbody>
+                                    {{#list}}
+                                    <tr>
+                                        <td>{{equipmentNo}}</td>
+                                        <td>{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</td>
+                                        <td>{{#time}}{{actualReturnTime}}{{/time}}</td>
+                                    </tr>
+                                    {{/list}}
+                                    {{^list}}
+                                    <tr>
+                                        <td class="br-r" colspan="3">无配货信息</td>
+                                    </tr>
+                                    {{/list}}
+                                </tbody>
+                                {{/orderProductEquipmentListData}}
+                            </table>
+                        </div>
+                        <div class="panel-footer pn pv5 ph15">
+                            <div class="row">
+                                <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                            </div>
+                        </div>
+                    </div>
+>>>>>>> develop_v1.0.1
                 </td>
             </tr>
             {{/listData}}
             {{^listData}}
             <tr>
+<<<<<<< HEAD
                 <td valign="top" colspan="20" class="text-center">无续租单信息</td>
             </tr>
             {{/listData}}
@@ -173,6 +261,132 @@
                                     </table>
                                 </div>
                             </div>
+=======
+                <td valign="top" colspan="15" class="text-center">没有选择商品</td>
+            </tr>
+            {{/listData}}
+            <tr id="totalProductFirstNeedPay" class="text-danger hide">
+                <td colspan="11"></td>
+                <td colspan="3">
+                    <span class="txt">首付总额：</span>
+                    <span class="num"></span>
+                </td>
+            </tr>
+            </tbody>
+        </script>
+        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+    </div>
+
+    <div class="panel">
+        <div class="panel-heading">
+            <div class="row">
+                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                    <li class="active">
+                        <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                    </li>
+                    <li>
+                        <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-body light pn">
+            <div class="tab-content pn br-n">
+
+                <!-- 商品项 -->
+                #parse("component/order/orderProduct.vm")
+
+                <!-- 配件项 -->
+                #parse("component/order/orderMaterial.vm")
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive mb30">
+        <script type="text/html" id="dataListTpl">
+            <thead>
+            <tr class="bg-light">
+                <th>类别</th>
+                <th>品牌</th>
+                <th>商品名称</th>
+                <th>商品参数（SKU）</th>
+                <th>商品保值价</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>在租数量</th>
+                <th>类型/期限</th>
+                <th>商品总价</th>
+                <th>支付方式</th>
+                <th>设备押金</th>
+                <th>首付金额</th>
+                <th>首付押金</th>
+                <th class="text-right">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#listData}}
+            <tr class="productRow" productRowKey="{{productId}}">
+                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>          
+                <td>{{propertiesToStr}}</td>
+                <td>￥{{currentSkuPrice}}</td>
+                <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                <td>{{productCount}}</td>
+                <td>{{rentingProductCount}}</td>
+                <td>
+                    <p>{{rentTypeValue}}</p>
+                    <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
+                </td>
+                <td>￥{{#price}}{{productAmount}}{{/price}}</td>
+                <td>
+                    <p>{{payModeValue}}</p>
+                    {{#isRentTypeByMonth}}
+                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                    {{/isRentTypeByMonth}}
+                </td>
+                <td>
+                    ￥{{#price}}{{depositAmount}}{{/price}}
+                </td>
+
+                <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                <td class="text-right">
+                    <div class="btn-group text-right">
+                        <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
+                    </div>
+                </td>
+            </tr>
+            <tr class="bg-light affixTr" style="height: 0;">
+                <td colspan="14" class="pn br-n" style="height:0;">
+                    <div class="panel m15 affixPanel"  style="display: none;">
+                        <div class="panel-heading pn ph10">
+                            <span>已配设备：共配 {{orderProductEquipmentListCount}} 件</span>
+                        </div>
+                        <div class="panel-body pn">
+                            <table class="table">
+                                <thead>
+                                    <th>设备编号</th>
+                                    <th>预计归还时间</th>
+                                    <th>实际归还时间</th>
+                                </thead>
+                                {{#orderProductEquipmentListData}}
+                                <tbody>
+                                    {{#list}}
+                                    <tr>
+                                        <td>{{equipmentNo}}</td>
+                                        <td>{{#shortTime}}{{expectReturnTime}}{{/shortTime}}</td>
+                                        <td>{{#time}}{{actualReturnTime}}{{/time}}</td>
+                                    </tr>
+                                    {{/list}}
+                                    {{^list}}
+                                    <tr>
+                                        <td class="br-r" colspan="3">无配货信息</td>
+                                    </tr>
+                                    {{/list}}
+                                </tbody>
+                                {{/orderProductEquipmentListData}}
+                            </table>
                         </div>
                         <div class="panel-footer pn pv5 ph15">
                             <div class="row">
@@ -193,5 +407,26 @@
         <div class="col-xs-12 col-md-12 text-right mt10 mb10">
             #parse("component/pager.vm")
         </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {{/listData}}
+            {{^listData}}
+            <tr>
+                <td valign="top" colspan="15" class="text-center">没有选择商品</td>
+            </tr>
+            {{/listData}}
+            <tr id="totalProductFirstNeedPay" class="text-danger hide">
+                <td colspan="11"></td>
+                <td colspan="3">
+                    <span class="txt">首付总额：</span>
+                    <span class="num"></span>
+                </td>
+            </tr>
+            </tbody>
+        </script>
+        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
     </div>
 </div>

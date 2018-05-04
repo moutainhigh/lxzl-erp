@@ -26,8 +26,6 @@ public class StatisticsSalesmanDetailTwoExtend {
 	private Date rentStartTime; // 租赁开始时间
 	private Integer rentTimeLength; // 租赁时间长度
 	private Double productCountFactor; // 商品项商品折算率
-	private Date returnTime; // 退换单退还时间
-	private Integer returnProductCount; // 退还单退还数量
 	private Integer rentLengthType; // 长租短租
 
 	public Integer getSalesmanId() {
@@ -158,22 +156,6 @@ public class StatisticsSalesmanDetailTwoExtend {
 		this.productCountFactor = productCountFactor;
 	}
 
-	public Date getReturnTime() {
-		return returnTime;
-	}
-
-	public void setReturnTime(Date returnTime) {
-		this.returnTime = returnTime;
-	}
-
-	public Integer getReturnProductCount() {
-		return returnProductCount;
-	}
-
-	public void setReturnProductCount(Integer returnProductCount) {
-		this.returnProductCount = returnProductCount;
-	}
-
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -210,8 +192,6 @@ public class StatisticsSalesmanDetailTwoExtend {
 				", rentStartTime=" + rentStartTime +
 				", rentTimeLength=" + rentTimeLength +
 				", productCountFactor=" + productCountFactor +
-				", returnTime=" + returnTime +
-				", returnProductCount=" + returnProductCount +
 				", rentLengthType=" + rentLengthType +
 				'}';
 	}

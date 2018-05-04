@@ -98,7 +98,7 @@
                                     {{/list}}
                                     {{^list}}
                                     <tr>
-                                        <td class="br-r">无配货信息</td>
+                                        <td class="br-r" colspan="3">无配货信息</td>
                                     </tr>
                                     {{/list}}
                                 </tbody>

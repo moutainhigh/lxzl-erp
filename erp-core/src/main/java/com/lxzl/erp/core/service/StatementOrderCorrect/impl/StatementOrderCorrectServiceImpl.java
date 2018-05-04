@@ -11,6 +11,7 @@ import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.StatementOrderCorrect.StatementOrderCorrectService;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
@@ -338,6 +339,8 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("statementOrderCorrectQueryParam", statementOrderCorrectQueryParam);
+        //增加冲正单查看权限
+        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_USER));
         Integer statementOrderCorrectCount = statementOrderCorrectMapper.listCount(maps);
         List<StatementOrderCorrectDO> statementOrderCorrectDOList = statementOrderCorrectMapper.findStatementOrderCorrectAndStatementOrderByQueryParam(maps);
         List<StatementOrderCorrect> statementOrderCorrectList = ConverterUtil.convertList(statementOrderCorrectDOList, StatementOrderCorrect.class);
@@ -821,4 +824,6 @@ public class StatementOrderCorrectServiceImpl implements StatementOrderCorrectSe
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PermissionSupport permissionSupport;
 }

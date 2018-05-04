@@ -3,6 +3,7 @@ package com.lxzl.erp.dataaccess.domain.reletorder;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 import java.math.BigDecimal;
@@ -46,6 +47,13 @@ public class ReletOrderDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 	private Integer owner;
+
+	@Transient
+	private String orderSellerName;
+	@Transient
+	private String orderSubCompanyName;
+	@Transient
+	private String deliverySubCompanyName;                         // 发货所属分公司名称
 
 	private List<ReletOrderProductDO> reletOrderProductDOList;  //续租订单商品项
 	private List<ReletOrderMaterialDO> reletOrderMaterialDOList;   //续租订单配件项
@@ -347,5 +355,25 @@ public class ReletOrderDO  extends BaseDO {
 	public void setOwner(Integer owner){
 		this.owner = owner;
 	}
+
+	public String getOrderSellerName() {
+		return orderSellerName;
+	}
+
+	public void setOrderSellerName(String orderSellerName) {
+		this.orderSellerName = orderSellerName;
+	}
+
+	public String getOrderSubCompanyName() {
+		return orderSubCompanyName;
+	}
+
+	public void setOrderSubCompanyName(String orderSubCompanyName) {
+		this.orderSubCompanyName = orderSubCompanyName;
+	}
+
+	public String getDeliverySubCompanyName() { return deliverySubCompanyName; }
+
+	public void setDeliverySubCompanyName(String deliverySubCompanyName) { this.deliverySubCompanyName = deliverySubCompanyName; }
 
 }
