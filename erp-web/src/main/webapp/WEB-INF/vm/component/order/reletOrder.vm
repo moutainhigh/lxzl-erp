@@ -108,33 +108,35 @@
                                     <table class="table">
                                         <thead>
                                         <tr class="bg-light">
-                                            <th class="nowrap">商品项ID</th>
+##                                            <th class="nowrap">商品项ID</th>
+                                            <th class="nowrap">商品名称</th>
+                                            <th class="nowrap">商品sku名称</th>
                                             <th class="nowrap">订单编号</th>
                                             <th class="nowrap">支付方式</th>
                                             <th class="nowrap">付款期数</th>
                                             <th class="nowrap">商品价格</th>
                                             <th class="nowrap">商品总数</th>
-                                            <th class="nowrap">商品名称冗余</th>
-                                            <th class="nowrap">商品sku名称</th>
                                             <th class="nowrap">商品单价</th>
                                             <th class="nowrap">在租商品数量</th>
-                                            <th class="nowrap">是否全新机</th>
+##                                            <th class="nowrap">是否全新机</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {{#reletProductList}}
                                         <tr>
-                                            <td class="nowrap">{{reletOrderProductId}}</td>
+##                                            <td class="nowrap">{{reletOrderProductId}}</td>
+                                            <td class="nowrap">
+                                                <span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{productName}}
+                                            </td>
+                                            <td class="nowrap">{{productSkuName}}</td>
                                             <td class="nowrap">{{orderNo}}</td>
                                             <td class="nowrap">{{payModeValue}}</td>
                                             <td class="nowrap">{{paymentCycle}}</td>
                                             <td class="nowrap">￥{{#price}}{{productAmount}}{{/price}}</td>
                                             <td class="nowrap">{{productCount}}</td>
-                                            <td class="nowrap">{{productName}}</td>
-                                            <td class="nowrap">{{productSkuName}}</td>
                                             <td class="nowrap">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                                             <td class="nowrap">{{rentingProductCount}}</td>
-                                            <td class="nowrap">{{isNewProductValue}}</td>
+##                                            <td class="nowrap">{{isNewProductValue}}</td>
                                         </tr>
                                         {{/reletProductList}}
                                         {{^reletProductList}}
@@ -149,31 +151,31 @@
                                     <table class="table">
                                         <thead>
                                         <tr class="bg-light">
-                                            <th class="nowrap">配件项ID</th>
+##                                            <th class="nowrap">配件项ID</th>
+                                            <th class="nowrap">配件名称</th>
                                             <th class="nowrap">订单编号</th>
                                             <th class="nowrap">支付方式</th>
                                             <th class="nowrap">付款期数</th>
                                             <th class="nowrap">配件价格</th>
                                             <th class="nowrap">配件总数</th>
-                                            <th class="nowrap">配件名称冗余</th>
                                             <th class="nowrap">配件单价</th>
                                             <th class="nowrap">在租商品数量</th>
-                                            <th class="nowrap">是否全新机</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {{#reletMeterialList}}
                                         <tr>
-                                            <td class="nowrap">{{reletOrderMaterialId}}</td>
+##                                            <td class="nowrap">{{reletOrderMaterialId}}</td>
+                                            <td class="nowrap">
+                                                <span class="badge {{isNewProductBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialName}}
+                                            </td>
                                             <td class="nowrap">{{orderNo}}</td>
                                             <td class="nowrap">{{payModeValue}}</td>
                                             <td class="nowrap">{{paymentCycle}}</td>
                                             <td class="nowrap">￥{{#price}}{{materialAmount}}{{/price}}</td>
                                             <td class="nowrap">{{materialCount}}</td>
-                                            <td class="nowrap">{{materialName}}</td>
                                             <td class="nowrap">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
                                             <td class="nowrap">{{rentingMaterialCount}}</td>
-                                            <td class="nowrap">{{isNewMaterialValue}}</td>
                                         </tr>
                                         {{/reletMeterialList}}
                                         {{^reletMeterialList}}
