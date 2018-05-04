@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.export;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,16 +19,84 @@ import java.util.Locale;
 public class ExcelExportConfigGroup {
 
     public static ExcelExportConfig bankSlipDetailConfig = new ExcelExportConfig();
-    public static ExcelExportConfig bankSlipConfig = new ExcelExportConfig();
-    public static ExcelExportConfig bankSlipConfig1 = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderDetailConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statisticsSalesmanDetailConfig = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();
         initStatementOrderConfig();
         initStatementOrderDetailConfig();
+        initStatisticsSalesmanDetailConfig();
     }
+
+
+    public static void initStatisticsSalesmanDetailConfig() {
+        statisticsSalesmanDetailConfig.addConfig(new ColConfig("salesmanId","业务员id",8000))
+                .addConfig(new ColConfig("salesmanName","业务员姓名",8000))
+                .addConfig(new ColConfig("rentLengthType", "长租短租", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if(o != null){
+                            Integer rentLengthType = (Integer) o;
+                            if(RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType){
+                                return "短租";
+                            }else if(RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType){
+                                return "长租";
+                            }
+                        }
+                        return null;
+                    }
+                }))
+                .addConfig(new ColConfig("subCompanyName","分公司名",8000))
+                .addConfig(new ColConfig("dealsCount","成交单数"))
+                .addConfig(new ColConfig("dealsProductCount","成交台数"))
+                .addConfig(new ColConfig("dealsAmount","成交金额", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if(o != null){
+                            BigDecimal receive = (BigDecimal) o;
+                            receive = receive.setScale(2);
+                            return receive;
+                        }
+                        return "";
+                    }
+                }))
+                .addConfig(new ColConfig("income","本期回款（已收）", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if(o != null){
+                            BigDecimal receive = new BigDecimal(o.toString());
+                            receive = receive.setScale(2,BigDecimal.ROUND_UP);
+                            return receive;
+                        }
+                        return "";
+                    }
+                }))
+                .addConfig(new ColConfig("receive", "应收", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if(o != null){
+                            BigDecimal receive = new BigDecimal(o.toString());
+                            receive = receive.setScale(2,BigDecimal.ROUND_UP );
+                            return receive;
+                        }
+                        return "";
+                    }
+                }))
+                .addConfig(new ColConfig("pureIncrease","净增台数", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if(o != null){
+                            BigDecimal receive = new BigDecimal(o.toString());
+                            receive = receive.setScale(2,BigDecimal.ROUND_UP);
+                            return receive;
+                        }
+                        return "";
+                    }
+                }));
+    }
+
 
     public static void initStatementOrderDetailConfig() {
         statementOrderDetailConfig.addConfig(new ColConfig("orderType", "类型", new ExcelExportView() {
@@ -240,16 +309,16 @@ public class ExcelExportConfigGroup {
                 return "";
             }
         }))
-                .addConfig(new ColConfig("tradeTime", "交易日期", new ExcelExportView() {
+                .addConfig(new ColConfig("tradeTime", "交易日期",10000, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         Object date = formatDate(o);
                         return date;
                     }
                 }))
-                .addConfig(new ColConfig("payerName", "付款人名称"))
-                .addConfig(new ColConfig("tradeAmount", "交易金额"))
-                .addConfig(new ColConfig("merchantOrderNo", "商户订单号"))
+                .addConfig(new ColConfig("payerName", "付款人名称",10000))
+                .addConfig(new ColConfig("tradeAmount", "交易金额",10000))
+                .addConfig(new ColConfig("merchantOrderNo", "商户订单号",10000))
                 .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码", new ExcelExportView() {
                     @Override
                     public Object view(Object o) {

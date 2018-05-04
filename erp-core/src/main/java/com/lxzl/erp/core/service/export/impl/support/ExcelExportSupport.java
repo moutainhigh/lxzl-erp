@@ -7,10 +7,10 @@ import com.lxzl.erp.core.service.export.ColConfig;
 import com.lxzl.erp.core.service.export.ExcelExportConfig;
 import com.lxzl.erp.core.service.export.impl.ExcelExportServiceImpl;
 import com.lxzl.se.common.util.StringUtil;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,17 +38,19 @@ public class ExcelExportSupport<T> {
      */
     public static <T> ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, String fileName, String sheetName, HttpServletResponse response) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-        XSSFSheet xssSheet = xssfWorkbook.createSheet(sheetName);
-        XSSFRow xssfRow = xssSheet.createRow(0);
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
+        HSSFRow hssfRow = hssSheet.createRow(0);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
-        for (ColConfig colConfig : colConfigList) {
-            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
+        for (int i = 0; i < colConfigList.size(); i++) {
+            ColConfig colConfig = colConfigList.get(i);
+            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            hssSheet.setColumnWidth(i, colConfig.getWidth());
         }
 
         for (int i = 0; i < list.size(); i++) {
-            XSSFRow newXssfRow = xssSheet.createRow(i + 1);
+            HSSFRow newXssfRow = hssSheet.createRow(i + 1);
             Object o = list.get(i);
             for (int j = 0; j < colConfigList.size(); j++) {
                 ColConfig colConfig = colConfigList.get(j);
@@ -56,23 +58,21 @@ public class ExcelExportSupport<T> {
                 String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
                 Method method = o.getClass().getMethod(methodName);
                 Object value = method.invoke(o);
-                if (j == 0) {
-                    xssSheet.setColumnWidth(j, colConfig.getWidth());
-                }
+                hssSheet.setColumnWidth(j, colConfig.getWidth());
                 Cell cell = newXssfRow.createCell(j);
                 cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
             }
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        xssfWorkbook.write(outputStream);
+        hssfWorkbook.write(outputStream);
         OutputStream stream = response.getOutputStream();
         outputStream.flush();
         outputStream.close();
-        xssfWorkbook.write(stream);
+        hssfWorkbook.write(stream);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -86,18 +86,20 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> XSSFWorkbook getXSSFWorkbook(List<T> list, ExcelExportConfig config, String sheetName) throws Exception {
-        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-        XSSFSheet xssSheet = xssfWorkbook.createSheet(sheetName);
-        XSSFRow xssfRow = xssSheet.createRow(0);
+    public static <T> HSSFWorkbook getXSSFWorkbook(List<T> list, ExcelExportConfig config, String sheetName) throws Exception {
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
+        HSSFRow hssfRow = hssSheet.createRow(0);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
-        for (ColConfig colConfig : colConfigList) {
-            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
+        for (int i = 0; i < colConfigList.size(); i++) {
+            ColConfig colConfig = colConfigList.get(i);
+            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            hssSheet.setColumnWidth(i, colConfig.getWidth());
         }
 
         for (int i = 0; i < list.size(); i++) {
-            XSSFRow newXssfRow = xssSheet.createRow(i + 1);
+            HSSFRow newXssfRow = hssSheet.createRow(i + 1);
             Object o = list.get(i);
             for (int j = 0; j < colConfigList.size(); j++) {
                 ColConfig colConfig = colConfigList.get(j);
@@ -105,14 +107,12 @@ public class ExcelExportSupport<T> {
                 String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
                 Method method = o.getClass().getMethod(methodName);
                 Object value = method.invoke(o);
-                if (j == 0) {
-                    xssSheet.setColumnWidth(j, colConfig.getWidth());
-                }
+                hssSheet.setColumnWidth(j, colConfig.getWidth());
                 Cell cell = newXssfRow.createCell(j);
                 cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
             }
         }
-        return xssfWorkbook;
+        return hssfWorkbook;
     }
 
     /**
@@ -123,18 +123,18 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, HttpServletResponse response, XSSFWorkbook xssfWorkbook, String fileName, String sheetName, Integer row) throws Exception {
+    public static <T> ServiceResult<String, String> export(List<T> list, ExcelExportConfig config, HttpServletResponse response, HSSFWorkbook hssfWorkbook, String fileName, String sheetName, Integer row) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-        XSSFSheet xssSheet = xssfWorkbook.getSheet(sheetName);
-        XSSFRow xssfRow = xssSheet.createRow(row + 5);
+        HSSFSheet hssSheet = hssfWorkbook.getSheet(sheetName);
+        HSSFRow hssfRow = hssSheet.createRow(row);
         int count = 0;
         List<ColConfig> colConfigList = config.getConfigList();
         for (ColConfig colConfig : colConfigList) {
-            xssfRow.createCell(count++).setCellValue(colConfig.getColName());
+            hssfRow.createCell(count++).setCellValue(colConfig.getColName());
         }
         if (CollectionUtil.isNotEmpty(list)) {
             for (int i = 0; i < list.size(); i++) {
-                XSSFRow newXssfRow = xssSheet.createRow(i + row + 6);
+                HSSFRow newHssfRow = hssSheet.createRow(i + row + 1);
                 Object o = list.get(i);
                 for (int j = 0; j < colConfigList.size(); j++) {
                     ColConfig colConfig = colConfigList.get(j);
@@ -143,28 +143,26 @@ public class ExcelExportSupport<T> {
                     Method method = o.getClass().getMethod(methodName);
                     Object value = method.invoke(o);
                     if (j == 0) {
-                        xssSheet.setColumnWidth(j, colConfig.getWidth());
+                        hssSheet.setColumnWidth(j, colConfig.getWidth());
                     }
-                    Cell cell = newXssfRow.createCell(j);
+                    Cell cell = newHssfRow.createCell(j);
                     cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
                 }
             }
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        xssfWorkbook.write(outputStream);
+        hssfWorkbook.write(outputStream);
         OutputStream stream = response.getOutputStream();
         outputStream.flush();
         outputStream.close();
-        xssfWorkbook.write(stream);
+        hssfWorkbook.write(stream);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
-
-
 
 
 }
