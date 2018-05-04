@@ -1118,7 +1118,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo on eo.id = eop.order_id
         LEFT JOIN erp_customer ec on eo.buyer_customer_id = ec.id
         LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
-        where esod.statement_detail_status = 8 and esod.statement_detail_phase =1
+        where eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
         AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
@@ -1173,7 +1173,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
         LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
         where k3rod.data_status = 1 and eop.rent_length_type = 2
-        and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
+        and eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
         AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
