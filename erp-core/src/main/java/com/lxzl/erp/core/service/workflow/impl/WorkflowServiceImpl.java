@@ -709,10 +709,6 @@ public class WorkflowServiceImpl implements WorkflowService {
             List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
             paramMap.put("currentUserGroupList",currentUserGroupList );
         }
-        if(workflowLinkQueryParam.getCurrentVerifyUser()!=null){
-            List<String> groupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(workflowLinkQueryParam.getCurrentVerifyUser());
-            paramMap.put("groupIdList",groupList );
-        }
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
         Page<WorkflowLink> page = new Page<>(ConverterUtil.convertList(dataList, WorkflowLink.class), dataCount, workflowLinkQueryParam.getPageNo(), workflowLinkQueryParam.getPageSize());

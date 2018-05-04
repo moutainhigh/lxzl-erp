@@ -218,13 +218,6 @@
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
 				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 			</if>
-			<if test="maps.groupIdList != null &amp;&amp;maps.groupIdList.size() != 0">
-				and ewl.verify_user_group_id in
-				<foreach item="item" index="index" collection="maps.groupIdList"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
 			</if>
@@ -238,16 +231,17 @@
 				and ewl.data_status = 1
 			</if>
 			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND ewl.create_user = #{maps.verifyUserId}
+				AND (ewl.create_user = #{maps.verifyUserId}
 				OR ewl.update_user = #{maps.verifyUserId}
 				OR ewl.current_verify_user = #{maps.verifyUserId}
-			</if>
-			<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
-				OR ewl.verify_user_group_id in
-				<foreach item="item" index="index" collection="maps.currentUserGroupList"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewl.verify_user_group_id in
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
 			</if>
 		</where>
 	</select>
@@ -274,14 +268,6 @@
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
 				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
 			</if>
-			<if test="maps.groupIdList != null &amp;&amp;maps.groupIdList.size() != 0">
-				and ewl.verify_user_group_id in
-				<foreach item="item" index="index" collection="maps.groupIdList"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
-
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
 				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
 			</if>
@@ -295,18 +281,18 @@
 				and ewl.data_status = 1
 			</if>
 			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND ewl.create_user = #{maps.verifyUserId}
+				AND (ewl.create_user = #{maps.verifyUserId}
 				OR ewl.update_user = #{maps.verifyUserId}
 				OR ewl.current_verify_user = #{maps.verifyUserId}
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewl.verify_user_group_id in
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
 			</if>
-			<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
-				OR ewl.verify_user_group_id in
-				<foreach item="item" index="index" collection="maps.currentUserGroupList"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
-
 		</where>
 		order by ewl.id DESC
 		LIMIT #{maps.start},#{maps.pageSize}
