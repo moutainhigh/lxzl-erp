@@ -244,6 +244,9 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult1;
         }
 
+        // 添加客户变更记录
+        createCustomerUpdateLog(customer.getCustomerId(), customer.getOwner(), customer.getUnionUser(), now, 0, 0);
+
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
@@ -316,6 +319,10 @@ public class CustomerServiceImpl implements CustomerService {
 //        if (CommonConstant.COMMON_CONSTANT_YES.equals(customer.getIsDefaultConsignAddress())) {
 //            saveCustomerPersonConsignInfo(customerDO,customerPersonDO,now,userSupport.getCurrentUserId());
 //        }
+
+        // 添加客户变更记录
+        createCustomerUpdateLog(customer.getCustomerId(), customer.getOwner(), customer.getUnionUser(), now, 0, 0);
+
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
@@ -2429,28 +2436,36 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         //创建客户变更记录
+        int isOwnerUpdateFlag = 0; // 是否变更了开发员
+        int isUnionUserUpdateFlag = 0; // 是否变更了联合开发员
+
         //如果开发员改变
         if (!userDOOwner.equals(userOwner)) {
             //如果传入联合开发员为null或者不为null，都可以以传入的联合开发员为传递值
-            createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
+            isOwnerUpdateFlag = 1;
         }
 
         //如果开发员未改变
         if (userDOOwner.equals(userOwner)) {
             //联合开发员本来为空同时传入的联合开发员不为空
             if (userDOUnion == null && (userUnion != null)) {
-                createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
+                isUnionUserUpdateFlag = 1;
             } else if (userDOUnion != null && !userDOUnion.equals(userUnion)) {
                 //联合开发员不为空，只有传入的联合开发员不同时，传入为null，也视为不同
-                createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now);
+                isUnionUserUpdateFlag = 1;
             }
+        }
+
+        // 有变更，则添加变更记录
+        if (isOwnerUpdateFlag == 1 || isUnionUserUpdateFlag == 1) {
+            createCustomerUpdateLog(customerDO.getId(), userOwner, userUnion, now, isOwnerUpdateFlag, isUnionUserUpdateFlag);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 
-    private void createCustomerUpdateLog(Integer customerId, Integer owner, Integer unionUser, Date now) {
+    private void createCustomerUpdateLog(Integer customerId, Integer owner, Integer unionUser, Date now, Integer isOwnerUpdateFlag, Integer isUnionUserUpdateFlag) {
         CustomerUpdateLogDO customerUpdateLogDO = new CustomerUpdateLogDO();
         customerUpdateLogDO.setCustomerId(customerId);
         customerUpdateLogDO.setOwner(owner);
@@ -2458,6 +2473,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerUpdateLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         customerUpdateLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
         customerUpdateLogDO.setCreateTime(now);
+        customerUpdateLogDO.setIsOwnerUpdateFlag(isOwnerUpdateFlag);
+        customerUpdateLogDO.setIsUnionUserUpdateFlag(isUnionUserUpdateFlag);
         customerUpdateLogMapper.save(customerUpdateLogDO);
     }
 
