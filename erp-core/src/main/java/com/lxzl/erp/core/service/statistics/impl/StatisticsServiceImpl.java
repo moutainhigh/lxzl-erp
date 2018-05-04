@@ -487,8 +487,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         maps.put("salesmanQueryParam", statisticsSalesmanPageParam);
 
         StatisticsSalesman statisticsSalesman = statisticsMapper.querySalesmanCount(maps);
+        StatisticsSalesmanIncome statisticsSalesmanIncome = statisticsMapper.querySalesmanIncomeCount(maps);
         // 计算总应收
-        statisticsSalesman.setTotalReceive(statisticsSalesman.getTotalAwaitReceivable().add(statisticsSalesman.getTotalIncome()));
+        if (statisticsSalesmanIncome != null) {
+            statisticsSalesman.setTotalIncome(statisticsSalesmanIncome.getTotalIncome());
+            statisticsSalesman.setTotalReceive(statisticsSalesmanIncome.getTotalAwaitReceivable().add(statisticsSalesmanIncome.getTotalIncome()));
+        }
 
         // 查询以业务员，分公司分组的初步数据(主数据)
         List<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoList = statisticsMapper.querySalesmanDetailTwo(maps);
@@ -508,8 +512,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
         for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
-            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
-            statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwo.getRentLengthType()) {
+                statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+            }
         }
 
         // 查询扩展数据来计算净增台数
@@ -552,7 +557,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 1. 按商品类型折算为实际台数
         Double productCount = statisticsSalesmanDetailTwoExtend.getProductCount() * statisticsSalesmanDetailTwoExtend.getProductCountFactor();
         // 2. 计算折扣系数，并算法订单净增数
-        BigDecimal dis = statisticsSalesmanDetailTwoExtend.getRentPrice().divide(statisticsSalesmanDetailTwoExtend.getProductUnitAmount(), 5);
+        BigDecimal dis = statisticsSalesmanDetailTwoExtend.getProductUnitAmount().divide(statisticsSalesmanDetailTwoExtend.getRentPrice(), 5);
         // 折扣系数最大为1
         if (dis.compareTo(BigDecimal.valueOf(1)) > 0) {
             dis = BigDecimal.valueOf(1);
@@ -601,10 +606,16 @@ public class StatisticsServiceImpl implements StatisticsService {
                 && statisticsSalesmanReturnOrder.getReturnTime() != null
                 && OrderRentType.RENT_TYPE_MONTH.equals(statisticsSalesmanReturnOrder.getReturnType())) {
             // 计算已租月数
-            Integer months = DateUtil.getMonthSpace(statisticsSalesmanReturnOrder.getRentStartTime(), statisticsSalesmanReturnOrder.getReturnTime());
+            BigDecimal months = amountSupport.calculateRentAmount(statisticsSalesmanReturnOrder.getRentStartTime(), statisticsSalesmanReturnOrder.getReturnTime(), BigDecimal.valueOf(1));
             Integer rentTimeLength = statisticsSalesmanReturnOrder.getRentTimeLength();
-            if (rentTimeLength != null && rentTimeLength > months) {
-                returnProduct = BigDecimal.valueOf(rentTimeLength - months).divide(BigDecimal.valueOf(rentTimeLength), 5);
+            if (rentTimeLength != null && BigDecimal.valueOf(rentTimeLength).compareTo(months) > 0) {
+                // 退租月数
+                BigDecimal returnMonths = BigDecimal.valueOf(rentTimeLength).subtract(months);
+                // 退租月数百分比
+                BigDecimal returnProductFactor = returnMonths.divide(BigDecimal.valueOf(rentTimeLength), 5);
+                // 退租台数
+                returnProduct = returnProductFactor.multiply(BigDecimal.valueOf(statisticsSalesmanReturnOrder.getProductCount()));
+                // 退租台数按商品类别系数折算
                 returnProduct = returnProduct.multiply(BigDecimal.valueOf(statisticsSalesmanReturnOrder.getProductCountFactor()));
             }
         }
