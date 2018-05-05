@@ -2945,7 +2945,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderProduct orderProduct;
                 for (int i = 0; i < order.getOrderProductList().size(); i++) {
                     orderProduct = order.getOrderProductList().get(i);
-                    String ItemName = orderProduct.getProductName() + orderProduct.getProductSkuName() + "-" + orderProduct.getIsNewProduct() + "-" + orderProduct.getOrderProductId() + "-" + orderProduct.getOrderId();
+                    String ItemName = orderProduct.getProductName() + orderProduct.getProductSkuName() + "-" + orderProduct.getIsNewProduct() + "-" + orderProduct.getOrderProductId() + "-" + orderProduct.getOrderId() + "-" + orderProduct.getSerialNumber();
 
                     orderProduct.setFirstNeedPayAmount(map.get(ItemName));
                     orderProduct.setFirstNeedPayRentAmount(map.get(ItemName));
@@ -2962,7 +2962,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderMaterial orderMaterial;
                 for (int i = 0; i < order.getOrderMaterialList().size(); i++) {
                     orderMaterial = order.getOrderMaterialList().get(i);
-                    String ItemName = orderMaterial.getMaterialName() + "-" + orderMaterial.getIsNewMaterial() + "-" + orderMaterial.getOrderMaterialId() + "-" + orderMaterial.getOrderId();
+                    String ItemName = orderMaterial.getMaterialName() + "-" + orderMaterial.getIsNewMaterial() + "-" + orderMaterial.getOrderMaterialId() + "-" + orderMaterial.getOrderId() + "-" + orderMaterial.getSerialNumber();
 
                     order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(ItemName));
                     order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(ItemName));

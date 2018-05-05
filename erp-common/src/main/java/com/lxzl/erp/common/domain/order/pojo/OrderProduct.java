@@ -41,6 +41,8 @@ public class OrderProduct extends BasePO {
     private BigDecimal firstNeedPayRentAmount;      // 首付租金金额
     private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
+    private Integer serialNumber;        // 序号
+
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
@@ -286,4 +288,8 @@ public class OrderProduct extends BasePO {
     public void setProductNumber(String productNumber) {
         this.productNumber = productNumber;
     }
+
+    public Integer getSerialNumber() { return serialNumber; }
+
+    public void setSerialNumber(Integer serialNumber) { this.serialNumber = serialNumber; }
 }

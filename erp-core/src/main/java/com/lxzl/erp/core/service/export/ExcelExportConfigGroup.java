@@ -6,7 +6,6 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -318,7 +317,15 @@ public class ExcelExportConfigGroup {
                 }))
                 .addConfig(new ColConfig("payerName", "付款人名称",10000))
                 .addConfig(new ColConfig("tradeAmount", "交易金额",10000))
-                .addConfig(new ColConfig("merchantOrderNo", "商户订单号",10000))
+                .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 10000, new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        if(o != null){
+                            return o;
+                        }
+                        return "";
+                    }
+                }))
                 .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码", new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
