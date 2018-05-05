@@ -34,7 +34,7 @@ public class OrderProductDO extends BaseDO {
     private Integer isNewProduct;
     private Integer rentingProductCount;        // 在租商品总数
 
-    private Integer serialNumber;        // 序号
+    private String serialNumber;        // 序号
 
     // 以下为K3的数据字段
     private Integer FEntryID;
@@ -248,7 +248,7 @@ public class OrderProductDO extends BaseDO {
         this.productNumber = productNumber;
     }
 
-    public Integer getSerialNumber() { return serialNumber; }
+    public String getSerialNumber() { return serialNumber; }
 
-    public void setSerialNumber(Integer serialNumber) { this.serialNumber = serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 }

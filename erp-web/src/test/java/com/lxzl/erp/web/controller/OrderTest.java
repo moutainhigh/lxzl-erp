@@ -403,7 +403,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setSerialNumber(1);
+        orderProduct.setSerialNumber("1");
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT);
         orderProduct.setProductSkuId(40);
         orderProduct.setIsNewProduct(1);
@@ -416,7 +416,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProductList.add(orderProduct);
 
         OrderProduct orderProduct2 = new OrderProduct();
-        orderProduct2.setSerialNumber(2);
+        orderProduct2.setSerialNumber("2");
         orderProduct2.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT);
         orderProduct2.setProductSkuId(40);
         orderProduct2.setIsNewProduct(1);
@@ -432,7 +432,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
         OrderMaterial orderMaterial = new OrderMaterial();
-        orderMaterial.setSerialNumber(1);
+        orderMaterial.setSerialNumber("1");
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderMaterial.setMaterialId(12);
         orderMaterial.setIsNewMaterial(1);
@@ -445,7 +445,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterialList.add(orderMaterial);
 
         OrderMaterial orderMaterial2 = new OrderMaterial();
-        orderMaterial2.setSerialNumber(2);
+        orderMaterial2.setSerialNumber("2");
         orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderMaterial2.setMaterialId(12);
         orderMaterial2.setIsNewMaterial(1);
