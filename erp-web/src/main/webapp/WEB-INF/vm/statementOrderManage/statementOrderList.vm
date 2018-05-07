@@ -31,27 +31,6 @@
                                     {{/acitonCommonButtons}}
                                 </script>
                                 <div class="btn-group" id="actionCommonButtons"></div>
-
-                                <script type="text/html" id="exportButtonsTpl">
-                                    {{#exportButtons}}
-                                    <div style="display: inline-block">
-                                        <form action="${ctx}{{menuUrl}}exportExcel/exportStatementOrderPage" method="post" id="exportForm" target="exportFrame">
-                                            <input type="hidden" name="pageSize" value="1000000000">
-                                            <input type="hidden" name="pageNo" value="1">
-                                            <input type="hidden" name="statementOrderNo" value="">
-                                            <input type="hidden" name="orderNo" value="">
-                                            <input type="hidden" name="ownerName" value="">
-                                            <input type="hidden" name="statementOrderCustomerName" value="">
-                                            <input type="hidden" name="statementOrderStatus" value="">
-                                            <input type="hidden" name="statementExpectPayStartTime" value="">
-                                            <input type="hidden" name="statementExpectPayEndTime" value="">
-                                            <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
-                                        </form>
-                                        <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
-                                    </div>
-                                    {{/exportButtons}}
-                                </script>
-                                <div class="btn-group" id="exportButton"></div>
                             </div>
                             <div class="col-md-9 text-right">
                                 <form id="searchForm" class="form-horizontal">
