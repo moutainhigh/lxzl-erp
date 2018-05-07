@@ -56,6 +56,7 @@
                         <th>送货日期</th>
                         <th>客户</th>
                         <th>商品名</th>
+                        <th>在租数量</th>
                         <th>订单总价</th>
                         <th>支付状态</th>
                         <th>订单状态</th>
@@ -80,9 +81,8 @@
                         <td>{{orderSubCompanyName}}</td>
                         <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                         <td>{{buyerCustomerName}}</td>
-                        <td>
-                            {{orderItemName}}
-                        </td>
+                        <td>{{orderItemName}}</td>
+                        <td>{{rentingProductCount}}</td>
                         <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                         <td>
                             <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
