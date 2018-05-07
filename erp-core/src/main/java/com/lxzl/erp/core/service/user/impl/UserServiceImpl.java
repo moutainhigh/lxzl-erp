@@ -13,6 +13,7 @@ import com.lxzl.erp.common.domain.user.pojo.Role;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.UserService;
@@ -66,6 +67,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Autowired
     private WebServiceHelper webServiceHelper;
+
+    @Autowired
+    private DingdingService dingdingService;
 
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -141,6 +145,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_USER, user, true);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
+        // 往钉钉网关上注册用户
+        dingdingService.registerUserToDingding(userDO.getId());
         return result;
     }
 
