@@ -51,7 +51,7 @@ public class ExcelExportController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
-    @RequestMapping(value = "exportStatementOrderPage", method = RequestMethod.POST)
+    @RequestMapping(value = "exportStatementOrderDetail", method = RequestMethod.POST)
     public Result exportStatementOrderDetail(StatementOrderQueryParam statementOrderQueryParam, HttpServletResponse response) throws Exception {
         ServiceResult<String, StatementOrder> serviceResult = statementService.queryStatementOrderDetail(statementOrderQueryParam.getStatementOrderNo());
         ServiceResult<String, HSSFWorkbook> result = excelExportService.getHSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
