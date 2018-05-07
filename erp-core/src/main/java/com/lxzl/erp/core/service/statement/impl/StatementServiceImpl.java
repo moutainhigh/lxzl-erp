@@ -323,6 +323,11 @@ public class StatementServiceImpl implements StatementService {
         if (!ErrorCode.SUCCESS.equals(createResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
         }
+        //更新订单首次需支付金额
+        orderDO.setFirstNeedPayAmount(createResult.getResult());
+        orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        orderDO.setUpdateTime(new Date());
+        orderMapper.update(orderDO);
         return createResult;
     }
 
