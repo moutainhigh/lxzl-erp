@@ -96,7 +96,7 @@ public class ExcelExportConfigGroup {
                 return "";
             }
         }))
-                .addConfig(new ColConfig("orderNo", "订单编号",10000))
+                .addConfig(new ColConfig("orderNo", "订单编号"))
                 .addConfig(new ColConfig("orderItemType", "订单项类型", new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
@@ -104,7 +104,7 @@ public class ExcelExportConfigGroup {
                         if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(orderItemType)) {
                             return "商品";
                         } else if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(orderItemType)) {
-                            return "物料";
+                            return "配件";
                         }
                         return "";
                     }
@@ -262,7 +262,7 @@ public class ExcelExportConfigGroup {
     }
 
     public static void initStatementOrderConfig() {
-        statementOrderConfig.addConfig(new ColConfig("statementOrderNo", "结算单编号",10000))
+        statementOrderConfig.addConfig(new ColConfig("statementOrderNo", "结算单编号"))
                 .addConfig(new ColConfig("statementStatus", "状态", new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
@@ -466,7 +466,7 @@ public class ExcelExportConfigGroup {
             receive = receive.setScale(2,BigDecimal.ROUND_UP );
             return receive;
         }
-        return "";
+        return "0.00";
     }
     private static Object transitionDate(Object o) {
         if(o != null){
