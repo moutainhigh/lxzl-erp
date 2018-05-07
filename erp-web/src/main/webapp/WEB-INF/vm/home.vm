@@ -59,7 +59,12 @@
 				</script>
 				<div id="statistics"></div>
 
-                <div class="panel" id="pchart3">
+                <div class="panel" id="pchart3"  style="position: relative;">
+                    <div id="statisticsUnReceivableForSubCompanyLoading" class="bg-loading hide" style="position: absolute;">
+                        <div class="box-loading">
+                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                        </div>
+                    </div>
                     <div class="panel-heading">
                         <span class="panel-title text-info fw700"><i class="fa fa-pencil hidden"></i>未收汇总</span>
                     </div>
@@ -106,12 +111,16 @@
                                 </tbody>
                             </table>
                         </script>
-
                         <div class="p15 pt5 mt15 bg-light br-t" id="statisticsUnReceivableContainer"></div>
                     </div>
                 </div>
 
-                <div class="panel">
+                <div class="panel" style="position: relative;">
+                    <div id="longRentByTimeLoading" class="bg-loading hide" style="position: absolute;">
+                        <div class="box-loading">
+                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                        </div>
+                    </div>
                     <div class="panel-heading">
                         <span class="panel-title text-info fw700"><i class="fa fa-pencil hidden"></i>长租统计</span>
                     </div>
@@ -126,7 +135,12 @@
                     </div>
                 </div>
 
-                <div class="panel">
+                <div class="panel" style="position:relative;">
+                    <div id="shortRentByTimeLoading" class="bg-loading hide" style="position: absolute;">
+                        <div class="box-loading">
+                            <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
+                        </div>
+                    </div>
                     <div class="panel-heading">
                         <span class="panel-title text-info fw700"><i class="fa fa-pencil hidden"></i>短租统计</span>
                     </div>
