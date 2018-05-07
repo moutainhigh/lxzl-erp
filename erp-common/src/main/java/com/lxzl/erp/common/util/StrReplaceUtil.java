@@ -5,6 +5,9 @@ import com.lxzl.se.common.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @创建人 liuzy
  * @创建日期 2018/3/23
@@ -99,5 +102,23 @@ public class StrReplaceUtil {
         }
         return interfaceUrl;
     }
+    /**
+     *@描述 校验姓名
+     *@参数  [str]
+     *@返回值  boolean
+     *@创建人  sunzp
+     *@创建时间  2018/5/5
+     *@修改人和其它信息
+     */
+    public static boolean checkRealName(String str){
+        String reg = "([\u4E00-\u9FA5]{2,7}|[a-zA-Z\\s]+)";
+        // 编译正则表达式
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(str);
+        // 字符串是否与正则表达式相匹配
+        boolean rs = matcher.matches();
+        return rs;
+    }
+
 
 }
