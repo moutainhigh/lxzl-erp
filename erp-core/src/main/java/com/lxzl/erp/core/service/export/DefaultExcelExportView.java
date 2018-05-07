@@ -15,7 +15,7 @@ public class DefaultExcelExportView implements ExcelExportView {
     private static DefaultExcelExportView defaultExcelExportView = null;
     @Override
     public Object view(Object o) {
-        return o;
+        return o == null?"":o;
     }
 
     private DefaultExcelExportView(){}
