@@ -182,6 +182,56 @@ public class K3ControllerTest extends ERPTransactionalTest {
 //        k3ReturnOrder.setReturnReason("修改的退货原因1");
         k3ReturnOrder.setReturnMode(1);
 
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = new ArrayList<>();
+
+        K3ReturnOrderDetail k3ReturnOrderDetail1 = new K3ReturnOrderDetail();
+        k3ReturnOrderDetail1.setOrderNo("LXO-20180315-020-01207");
+        k3ReturnOrderDetail1.setOrderItemId("1826");
+        k3ReturnOrderDetail1.setOrderEntry("1");
+
+        ProductDO product = productMapper.findById(2000435);
+        K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+        K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+        String number = "";
+        if(StringUtil.isNotEmpty(product.getK3ProductNo())){
+            number = product.getK3ProductNo();
+        }else {
+            number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+        }
+        k3ReturnOrderDetail1.setProductNo(number);
+        k3ReturnOrderDetail1.setProductName(product.getProductName());
+        k3ReturnOrderDetail1.setProductCount(1);
+
+//        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
+//        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");
+//        k3ReturnOrderDetail2.setOrderItemId("3644");
+//        k3ReturnOrderDetail2.setOrderEntry("2");
+
+//        ProductDO product2 = productMapper.findById(2000064);
+//        K3MappingCategoryDO k3MappingCategoryDO2 = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
+//        K3MappingBrandDO k3MappingBrandDO2 = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+//        String number2 = "";
+//        if(StringUtil.isNotEmpty(product2.getK3ProductNo())){
+//            number2 = product2.getK3ProductNo();
+//        }else {
+//            number2 = "10." + k3MappingCategoryDO2.getK3CategoryCode() + "." + k3MappingBrandDO2.getK3BrandCode() + "." + product2.getProductModel();
+//        }
+//        k3ReturnOrderDetail2.setProductNo(number2);
+//        k3ReturnOrderDetail2.setProductName(product2.getProductName());
+//        k3ReturnOrderDetail2.setProductCount(1);
+
+
+        k3ReturnOrderDetailList.add(k3ReturnOrderDetail1);
+//        k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
+
+//        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
+//        k3ReturnOrderDetail2.setOrderNo("LXSE2018020716");
+//        k3ReturnOrderDetail2.setOrderEntry("4");
+//        k3ReturnOrderDetail2.setProductNo("20.MOU.XX.PCMOU");
+//        k3ReturnOrderDetail2.setProductCount(2);
+//        k3ReturnOrderDetailList.add(k3ReturnOrderDetail2);
+        k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
         TestResult testResult = getJsonTestResult("/k3/updateReturnOrder", k3ReturnOrder);
     }
 
@@ -230,6 +280,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrder", param);
     }
+
 
     @Test
     public void queryReturnOrderByNo() throws Exception {
@@ -472,5 +523,11 @@ public class K3ControllerTest extends ERPTransactionalTest {
         Thread.sleep(1000);
     }
 
+    @Test
+    public void queryOrderForReturn() throws Exception {
+        OrderForReturnQueryParam param = new OrderForReturnQueryParam();
+//        param.setCustomerNo("LXCC-0755-20180112-00048");
+        TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
+    }
 
 }

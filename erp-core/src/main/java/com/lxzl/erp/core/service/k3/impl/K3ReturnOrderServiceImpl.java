@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.k3.K3ReturnOrderCommitParam;
+import com.lxzl.erp.common.domain.k3.OrderForReturnQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
@@ -147,15 +148,19 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             Map<String, Order> orderCatch = new HashMap<String, Order>();
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
-                    ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-                        result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                        return result;
-                    }
-                    Order order = serviceResult.getResult();
+                    // TODO: 2018\5\7 0007 改成从erp里查询订单
+//                    ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
+
+//                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+//                        result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+//                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                        return result;
+//                    }
+//                    Order order = serviceResult.getResult();
                     //退货日期不能大于起租日期
-                    if (order.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
+                    OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                    Order order = ConverterUtil.convert(orderDO, Order.class);
+                    if (orderDO.getRentStartTime().compareTo(k3ReturnOrderDO.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
                         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                         return result;
@@ -476,12 +481,15 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(orderDetailList)) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetail : orderDetailList) {
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
-                    ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
-                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
-                        result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
-                        return result;
-                    }
-                    Order order = serviceResult.getResult();
+                    // TODO: 2018\5\7 0007 改成从erp里查询订单
+                    OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetail.getOrderNo());
+                    Order order = ConverterUtil.convert(orderDO, Order.class);
+//                    ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
+//                    if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+//                        result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+//                        return result;
+//                    }
+//                    Order order = serviceResult.getResult();
                     if (order.getRentStartTime().compareTo(k3ReturnOrder.getReturnTime()) > 0) {
                         result.setErrorCode(ErrorCode.RETURN_TIME_LESS_RENT_TIME);
                         return result;
@@ -864,6 +872,30 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         dingDingSupport.dingDingSendMessage("共批量导入了"+totalCount+"条数据，耗时"+ ((endTime.getTime()-now.getTime())/1000)+"秒");
         importResult.setErrorCode(ErrorCode.SUCCESS);
         return importResult;
+    }
+
+    /**
+     * 创建退货单时查询erp订单列表展示
+     * @param param
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Order>> queryOrderForReturn(OrderForReturnQueryParam param) {
+        ServiceResult<String, Page<Order>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(param.getPageNo(), param.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("orderForReturnQueryParam", param);
+
+        Integer totalCount = orderMapper.findOrderForReturnCountParam(maps);
+        List<OrderDO> orderDOList =orderMapper.findOrderForReturnParam(maps);
+        List<Order> orderList = ConverterUtil.convertList(orderDOList, Order.class);
+        Page<Order> page = new Page<>(orderList, totalCount, param.getPageNo(), param.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     /**
