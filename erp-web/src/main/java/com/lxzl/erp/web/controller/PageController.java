@@ -265,7 +265,7 @@ public class PageController extends BaseController {
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
-    @RequestMapping(value = "/order-return-manage/print")
+    @RequestMapping(value = "/return-order-k3/print")
     public String returnOrderManagePrint() {
         return "/returnOrderManage/returnOrderPrint";
     }
