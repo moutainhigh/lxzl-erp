@@ -95,7 +95,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 
         CustomerCompany customerCompany = new CustomerCompany();
         customerCompany.setCustomerOrigin(1);
-        customerCompany.setCompanyName("戴玉聪公司名称测试");
+        customerCompany.setCompanyName("麻辣小龙虾shi八号");
         customerCompany.setIndustry("2");
         customerCompany.setIsLegalPersonApple(1);
         customerCompany.setProvince(2);
@@ -160,18 +160,21 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         customer.setIsDefaultConsignAddress(1);
         customer.setFirstApplyAmount(new BigDecimal(0));
         customer.setLaterApplyAmount(new BigDecimal(0));
+        customer.setStatementDate(20);
+//        customer.setCustomerId(3);
 
         CustomerPerson customerPerson = new CustomerPerson();
         customerPerson.setPersonNo("35052119870503651X");
         customerPerson.setConnectRealName("cd");
         customerPerson.setConnectPhone("18171408870");
-        customerPerson.setRealName("cc");
+        customerPerson.setRealName("李Oli");
         customerPerson.setPhone("18171408871");
         customerPerson.setEmail("1234567@qq.com");
         customerPerson.setProvince(17);
         customerPerson.setCity(172);
         customerPerson.setDistrict(1687);
         customerPerson.setAddress("老地方烧烤摊儿");
+
 
         customer.setCustomerPerson(customerPerson);
         TestResult result = getJsonTestResult("/customer/addPerson", customer);
@@ -426,8 +429,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     public void pageCustomerCompany() throws Exception {
         CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
 //        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
-//          customerCompanyQueryParam.setCompanyName("广东尚云信息技术有限公司");
-          customerCompanyQueryParam.setIsRisk(1);
+          customerCompanyQueryParam.setCompanyName("a");
+//          customerCompanyQueryParam.setIsRisk(1);
 //        customerCompanyQueryParam.setProductPurpose("测试");
 //        customerCompanyQueryParam.setIsDisabled(0);
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
@@ -441,6 +444,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
         customerPersonQueryParam.setPageNo(1);
         customerPersonQueryParam.setPageSize(5);
+        customerPersonQueryParam.setRealName("a");
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
 //        customerPersonQueryParam.setOwnerSubCompanyId(2);

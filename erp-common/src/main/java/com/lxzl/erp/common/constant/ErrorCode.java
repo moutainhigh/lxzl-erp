@@ -587,7 +587,7 @@ public class ErrorCode {
     public static final String RE_STATEMENT_BACK_AMOUNT_FAIL = "J500164";
     public static final String CUSTOMER_COMPANY_NAME_TO_SHORT = "J500165";
     public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
-
+    public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1468,6 +1468,7 @@ public class ErrorCode {
         MAP.put(RE_STATEMENT_BACK_AMOUNT_FAIL, "重新结算返还已支付金额失败!");
         MAP.put(CUSTOMER_COMPANY_NAME_TO_SHORT, "公司名称太短，请重新输入");
         MAP.put(CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME, "公司名称有误");
+        MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

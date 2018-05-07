@@ -53,7 +53,7 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         try {
             if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                 //导出设计表格
-                HSSFWorkbook hssfWorkbook = ExcelExportSupport.getXSSFWorkbook(result.getResult().getItemList(), config,sheetName);
+                HSSFWorkbook hssfWorkbook = ExcelExportSupport.getXSSFWorkbook(result.getResult(), config,sheetName);
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
                 serviceResult.setResult(hssfWorkbook);
             }
