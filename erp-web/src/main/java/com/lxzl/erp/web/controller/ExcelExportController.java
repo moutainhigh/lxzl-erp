@@ -52,7 +52,7 @@ public class ExcelExportController {
     }
 
     @RequestMapping(value = "exportStatementOrderPage", method = RequestMethod.POST)
-    public Result exportStatementOrderPage(StatementOrderQueryParam statementOrderQueryParam, HttpServletResponse response) throws Exception {
+    public Result exportStatementOrderDetail(StatementOrderQueryParam statementOrderQueryParam, HttpServletResponse response) throws Exception {
         ServiceResult<String, StatementOrder> serviceResult = statementService.queryStatementOrderDetail(statementOrderQueryParam.getStatementOrderNo());
         ServiceResult<String, HSSFWorkbook> result = excelExportService.getHSSFWorkbook(serviceResult, ExcelExportConfigGroup.statementOrderConfig, "sheet1");
         List<StatementOrderDetail> statementOrderDetailList = serviceResult.getResult().getStatementOrderDetailList();
