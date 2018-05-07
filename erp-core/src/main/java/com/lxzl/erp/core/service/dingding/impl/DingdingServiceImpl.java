@@ -266,7 +266,7 @@ public class DingdingServiceImpl implements DingdingService {
             // 构建表单组件信息
             dingdingApproveBO = buildFormComponentObj(dingdingApproveBO, workflowLinkDO);
             // 设置请求地址
-            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflokwUrl());
+            dingdingApproveBO.getDingdingApproveDTO().setRequestDingdingUrl(DingDingConfig.getApplyApprovingWorkflowUrl());
             final DingdingApproveBO dingdingApproveBOThread = dingdingApproveBO;
             // 申请
             // 异步线程执行
