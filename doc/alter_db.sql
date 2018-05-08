@@ -748,3 +748,23 @@ ALTER TABLE erp_customer_update_log add `is_owner_update_flag` int(11)  COMMENT 
 ALTER TABLE erp_customer_update_log add `is_union_user_update_flag` int(11)  COMMENT '是否变更了联合开发人，0否1是';
 ALTER TABLE erp_customer_update_log add `old_owner` int(20)  COMMENT '变更之前的开发人';
 ALTER TABLE erp_customer_update_log add `old_union_user` int(20)  COMMENT '变更之前的联合开发人';
+
+DROP TABLE IF EXISTS `erp_order_split_detail`;
+CREATE TABLE `erp_order_split_detail` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`order_no` varchar(100) NOT NULL COMMENT '订单号',
+	`order_id` int(20) NOT NULL COMMENT '订单ID',
+	`order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为配件',
+	`order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
+	`split_count` int(20) NOT NULL DEFAULT 0 COMMENT '拆分数量',
+	`is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是',
+	`delivery_sub_company_id` INT(20) COMMENT '发货分公司id[非同行调拨时必填]',
+	`delivery_sub_company_name` varchar(50) DEFAULT '' COMMENT '发货分公司名称',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
