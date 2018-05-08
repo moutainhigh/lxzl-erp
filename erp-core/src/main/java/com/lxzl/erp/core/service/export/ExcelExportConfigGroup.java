@@ -216,23 +216,35 @@ public class ExcelExportConfigGroup {
                 return "";
             }
         }))
-                .addConfig(new ColConfig("tradeTime", "交易日期",10000,DateExcelExportView.getInstance()))
-                .addConfig(new ColConfig("payerName", "付款人名称",10000))
-                .addConfig(new ColConfig("tradeAmount", "交易金额",10000))
+                .addConfig(new ColConfig("tradeTime", "交易日期",5000,DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("payerName", "付款人名称",8000))
+                .addConfig(new ColConfig("tradeAmount", "交易金额(元)"))
                 .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 10000))
-                .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码", new ExcelExportView() {
+                .addConfig(new ColConfig("bankSlipClaimList", "K3客户编码",10000, new ExcelExportView() {
                     @Override
                     public Object view(Object o) {
                         List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
-                        String k3CustomerNo = "";
+                        StringBuffer k3CustomerNo = new StringBuffer("");
                         for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
                             String dbK3CustomerNo = bankSlipClaim.getK3CustomerNo();
-                            k3CustomerNo = k3CustomerNo + "\r\n" + dbK3CustomerNo;
+                            k3CustomerNo.append(dbK3CustomerNo + "\r\n");
                         }
                         return k3CustomerNo;
                     }
                 }))
-                .addConfig(new ColConfig("payerName", "对应公司名称"))
+                .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称",10000, new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
+                        StringBuffer customerName = new StringBuffer("");
+                        for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
+                            String dbCustomerName = bankSlipClaim.getCustomerName();
+                            String claimAmount = String.valueOf(AmountExcelExportView.getInstance().view(bankSlipClaim.getClaimAmount()));
+                            customerName.append(dbCustomerName + "("+claimAmount+"元)"+"\r\n");
+                        }
+                        return customerName;
+                    }
+                }))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
                 .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
     }

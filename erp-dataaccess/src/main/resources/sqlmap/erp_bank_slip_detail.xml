@@ -169,8 +169,8 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null">
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
-				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != ''">
+				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
@@ -197,12 +197,13 @@
 	</select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo  FROM erp_bank_slip_detail ebsd
+		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo,ec.customer_name AS customerName FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
 		LEFT JOIN  erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
 		LEFT JOIN  erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no
+		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
 		<where>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != null &amp;&amp; maps.bankSlipDetailQueryParam.payerName != ''">
 				and ebsd.payer_name like CONCAT('%','${maps.bankSlipDetailQueryParam.payerName}','%' )
@@ -213,8 +214,8 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null ">
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
-				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != ''">
+				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
