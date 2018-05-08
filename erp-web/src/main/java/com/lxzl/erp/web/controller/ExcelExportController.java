@@ -49,19 +49,6 @@ public class ExcelExportController {
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
         bankSlipDetailQueryParam.setPayerName(ExcelExportSupport.decode(bankSlipDetailQueryParam.getPayerName()));
         ServiceResult<String, Page<BankSlipDetail>> stringPageServiceResult = bankSlipService.pageBankSlipDetail(bankSlipDetailQueryParam);
-        List<BankSlipDetail> bankSlipDetailList = stringPageServiceResult.getResult().getItemList();
-        if(CollectionUtil.isNotEmpty(bankSlipDetailList)){
-            for (BankSlipDetail bankSlipDetail : bankSlipDetailList) {
-                List<BankSlipClaim> bankSlipClaimList = bankSlipDetail.getBankSlipClaimList();
-                StringBuffer stringBuffer = new StringBuffer("");
-                if(CollectionUtil.isNotEmpty(bankSlipClaimList)){
-                    for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
-                        stringBuffer.append(bankSlipClaim.getCustomerName()+"\r\n");
-                    }
-                }
-                bankSlipDetail.setAllCustomerName(String.valueOf(stringBuffer));
-            }
-        }
         ServiceResult<String, String> serviceResult = excelExportService.export(stringPageServiceResult, ExcelExportConfigGroup.bankSlipDetailConfig, ExcelExportSupport.formatFileName("资金流水记录"), "sheet1", response);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }

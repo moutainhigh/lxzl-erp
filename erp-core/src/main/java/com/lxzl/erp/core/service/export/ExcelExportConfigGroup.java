@@ -224,15 +224,27 @@ public class ExcelExportConfigGroup {
                     @Override
                     public Object view(Object o) {
                         List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
-                        String k3CustomerNo = "";
+                        StringBuffer k3CustomerNo = new StringBuffer("");
                         for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
                             String dbK3CustomerNo = bankSlipClaim.getK3CustomerNo();
-                            k3CustomerNo = k3CustomerNo + "\r\n" + dbK3CustomerNo;
+                            k3CustomerNo.append(dbK3CustomerNo + "\r\n");
                         }
                         return k3CustomerNo;
                     }
                 }))
-                .addConfig(new ColConfig("allCustomerName", "对应公司名称"))
+                .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称", new ExcelExportView() {
+                    @Override
+                    public Object view(Object o) {
+                        List<BankSlipClaim> bankSlipClaimList = (List<BankSlipClaim>) o;
+                        StringBuffer customerName = new StringBuffer("");
+                        for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
+                            String dbCustomerName = bankSlipClaim.getCustomerName();
+                            String claimAmount = String.valueOf(AmountExcelExportView.getInstance().view(bankSlipClaim.getClaimAmount()));
+                            customerName.append(dbCustomerName + "("+claimAmount+")"+"\r\n");
+                        }
+                        return customerName;
+                    }
+                }))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
                 .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
     }
