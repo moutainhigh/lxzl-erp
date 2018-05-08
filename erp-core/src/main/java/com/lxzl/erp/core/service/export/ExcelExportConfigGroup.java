@@ -240,7 +240,7 @@ public class ExcelExportConfigGroup {
                         for (BankSlipClaim bankSlipClaim : bankSlipClaimList) {
                             String dbCustomerName = bankSlipClaim.getCustomerName();
                             String claimAmount = String.valueOf(AmountExcelExportView.getInstance().view(bankSlipClaim.getClaimAmount()));
-                            customerName.append(dbCustomerName + "("+claimAmount+")"+"\r\n");
+                            customerName.append(dbCustomerName + "("+claimAmount+"元)"+"\r\n");
                         }
                         return customerName;
                     }
