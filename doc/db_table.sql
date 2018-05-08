@@ -3504,7 +3504,7 @@ CREATE TABLE `erp_order_split_detail` (
 	`order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
 	`split_count` int(20) NOT NULL DEFAULT 0 COMMENT '拆分数量',
 	`is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是',
-	`delivery_sub_company_id` INT(20) COMMENT '发货分公司id[非同行调拨时必填]'
+	`delivery_sub_company_id` INT(20) COMMENT '发货分公司id[非同行调拨时必填]',
 	`delivery_sub_company_name` varchar(50) DEFAULT '' COMMENT '发货分公司名称',
 	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
 	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
