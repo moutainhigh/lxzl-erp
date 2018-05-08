@@ -155,7 +155,7 @@
     <script type="text/html" id="orderBaseInfoTpl">
         {{#order}}
         <div class="row p10">
-            <div class="col-xs-4">
+            <div class="col-xs-5">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>客户名称</label><span class="mr5">：</span></dt>
                     <dd>{{buyerCustomerName}}&nbsp;</dd>
@@ -179,7 +179,7 @@
                     <dd>{{buyerRemark}}&nbsp;</dd>
                 </dl>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-3">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>配送方式</label><span class="mr5">：</span></dt>
                     <dd>{{deliveryModeValue}}&nbsp;</dd>
@@ -417,7 +417,7 @@
             </tr>
             <tr>
                 <td class="bg-light"><b>订单总价:</b></td><td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                <td class="bg-light"><b>其它费用:</b></td><td>运费：￥{{#price}}{{logisticsAmount}}{{/price}}</td>
+                <td class="bg-light"><b>其它费用:</b></td><td>￥{{#price}}{{logisticsAmount}}{{/price}}</td>
                 <td class="bg-light"><b>首付金额:</b></td><td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
             </tr>
             </tbody>
