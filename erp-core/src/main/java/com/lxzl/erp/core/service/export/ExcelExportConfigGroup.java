@@ -3,11 +3,7 @@ package com.lxzl.erp.core.service.export;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @Author : XiaoLuYu
@@ -238,24 +234,8 @@ public class ExcelExportConfigGroup {
                 }))
                 .addConfig(new ColConfig("payerName", "对应公司名称"))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
-                .addConfig(new ColConfig("tradeSerialNo", "交易流水号"))
-        ;
+                .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
     }
-
-    public static Object formatDate(Object o) {
-        if (o != null) {
-            SimpleDateFormat sdf1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                return sdf2.format(sdf1.parse(o.toString()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-
 
 
 }
