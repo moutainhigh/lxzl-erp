@@ -48,7 +48,7 @@
                     ￥{{#price}}{{depositAmount}}{{/price}}
                 </td>
                 <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-                <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                 <td class="text-right">
                     <div class="btn-group text-right">
                         {{#rowActionButtons}}
