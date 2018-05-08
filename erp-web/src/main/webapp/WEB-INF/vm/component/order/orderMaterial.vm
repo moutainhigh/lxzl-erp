@@ -48,7 +48,7 @@
                     ￥{{#price}}{{depositAmount}}{{/price}}
                 </td>
                 <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-                <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                 <td class="text-right">
                     <div class="btn-group text-right">
                         {{#rowActionButtons}}
@@ -65,7 +65,7 @@
                 </td>
             </tr>
             <tr class="bg-light affixTr" style="height: 0;">
-                <td colspan="13" class="pn br-n" style="height:0;">
+                <td colspan="14" class="pn br-n" style="height:0;">
                     <div class="panel m15 affixPanel"  style="display: none;">
                         {{#orderMaterialBulkListData}}
                         <div class="panel-heading pn ph8">

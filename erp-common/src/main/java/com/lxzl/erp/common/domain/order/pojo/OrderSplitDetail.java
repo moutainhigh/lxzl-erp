@@ -1,7 +1,6 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderItemType;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
@@ -16,7 +15,7 @@ public class OrderSplitDetail extends BasePO {
     private Integer orderSplitDetailId;
     private Integer orderId;
     private String orderNo;
-    @In(value = {OrderItemType.ORDER_ITEM_TYPE_PRODUCT, OrderItemType.ORDER_ITEM_TYPE_MATERIAL}, message = ErrorCode.ORDER_SPLIT_ORDER_ITEM_TYPE_NOT_NULL)
+    @In(value = {1, 2}, message = ErrorCode.ORDER_SPLIT_ORDER_ITEM_TYPE_NOT_NULL)
     private Integer orderItemType;
     @NotNull(message = ErrorCode.ORDER_SPLIT_ORDER_ITEM_REFER_ID_NOT_NULL)
     private Integer orderItemReferId;

@@ -80,9 +80,7 @@
                         <td>{{orderSubCompanyName}}</td>
                         <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                         <td>{{buyerCustomerName}}</td>
-                        <td>
-                            {{orderItemName}}
-                        </td>
+                        <td>{{orderItemName}}</td>
                         <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                         <td>
                             <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
@@ -153,6 +151,7 @@
                                                     <th>编号</th>
                                                     <th>商品参数（SKU）</th>
                                                     <th>数量</th>
+                                                    <th>在租数量</th>
                                                     <th>选择数量</th>
                                                     <th>备注</th>
                                                 </tr>
@@ -170,10 +169,12 @@
                                                     <td>{{productNumber}}</td>
                                                     <td>{{propertiesToStr}}</td>
                                                     <td>{{productCount}}</td>
+                                                    <td>{{rentingProductCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
+                                                        <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
                                                         <label class="field prepend-icon mw200">
-                                                            <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                            <input type="text" name="productCount-{{rowKey}}" value="{{rentingProductCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
                                                         </label>
                                                     </td>
                                                     <td>
@@ -186,7 +187,7 @@
                                                 {{/productList}}
                                                 {{^productList}}
                                                 <tr >
-                                                    <td colspan="5" class="text-center">无商品项</td>
+                                                    <td colspan="8" class="text-center">无商品项</td>
                                                 </tr>
                                                 {{/productList}}
                                                 </tbody>
@@ -204,6 +205,8 @@
                                                     <th>配件参数（SKU）</th>
                                                     <th>编号</th>
                                                     <th>数量</th>
+                                                    <th>在租数量</th>
+                                                    <th>选择数量</th>
                                                     <th>备注</th>
                                                 </tr>
                                                 </thead>
@@ -220,10 +223,12 @@
                                                     <td>{{propertiesToStr}}</td>
                                                     <td>{{fNumber}}</td>
                                                     <td>{{materialCount}}</td>
+                                                    <td>{{rentingMaterialCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
+                                                        <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
                                                         <label class="field prepend-icon mw200">
-                                                            <input type="text" name="materialCount-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
+                                                            <input type="text" name="materialCount-{{rowKey}}" value="{{rentingMaterialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
                                                         </label>
                                                     </td>
                                                     <td>
@@ -236,7 +241,7 @@
                                                 {{/materialList}}
                                                 {{^materialList}}
                                                 <tr>
-                                                    <td colspan="5" class="text-center">无配件项</td>
+                                                    <td colspan="8" class="text-center">无配件项</td>
                                                 </tr>
                                                 {{/materialList}}
                                                 </tbody>
