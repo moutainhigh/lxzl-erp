@@ -169,8 +169,8 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null">
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
-				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != ''">
+				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
@@ -214,8 +214,8 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.detailStatus != null ">
 				and ebsd.detail_status = #{maps.bankSlipDetailQueryParam.detailStatus,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.bankSlipId != null ">
-				and ebsd.bank_slip_id = #{maps.bankSlipDetailQueryParam.bankSlipId,jdbcType=INTEGER}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != null &amp;&amp; maps.bankSlipDetailQueryParam.tradeSerialNo != ''">
+				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}

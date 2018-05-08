@@ -41,7 +41,7 @@ public class BankSlipDetail extends BasePO {
 	private Integer bankSlipBankType;  //银行类型
 
 	private List<BankSlipClaim> bankSlipClaimList;
-	
+
 	public List<BankSlipClaim> getBankSlipClaimList() {
 		return bankSlipClaimList;
 	}
