@@ -1043,7 +1043,10 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
-        if (!userSupport.isSuperUser()&&(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
+        if (
+//                !userSupport.isSuperUser()&&
+
+                (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1381,7 +1384,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
-        orderDO.setStatementDate(customerDO.getStatementDate());
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
