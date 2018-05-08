@@ -1,0 +1,209 @@
+<div id="reletOrderList" class="tab-pane tab-pane-order">
+    <div class="table-responsive" style="overflow-x: scroll;">
+        <script type="text/html" id="reletOrderTpl">
+            <thead>
+            <tr class="bg-light">
+                <th class="nowrap">客户名称</th>
+                <th class="nowrap">客户编号</th>
+                <th class="nowrap">客户备注</th>
+                <th class="nowrap">发货分公司</th>
+                <th class="nowrap">预计归还时间</th>
+                <th class="nowrap">最高税率</th>
+                <th class="nowrap">最低税率</th>
+
+                <th class="nowrap">订单编号</th>
+                <th class="nowrap">订单销售员</th>
+                <th class="nowrap">订单所属分公司</th>
+                <th class="nowrap">支付状态</th>
+                <th class="nowrap">商品摘要</th>
+
+                <th class="nowrap">订单状态</th>
+                <th class="nowrap">起租时间</th>
+##                <th class="nowrap">租赁</th>
+                <th class="nowrap">租赁类型/时长</th>
+                <th class="nowrap">结算时间</th>
+                <th class="nowrap">共计优惠金额</th>
+
+                <th class="nowrap">配件总价</th>
+                <th class="nowrap">配件总数</th>
+                <th class="nowrap">订单总价</th>
+                <th class="nowrap">已支付金额</th>
+                <th class="nowrap">商品总价</th>
+                <th class="nowrap">商品总数</th>
+                <th class="nowrap">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#dataSource}}
+            {{#listData}}
+            <tr>
+                <td class="nowrap">{{buyerCustomerName}}</td>
+                <td class="nowrap">{{buyerCustomerNo}}</td>
+                <td class="nowrap">{{buyerRemark}}</td>
+                <td class="nowrap">{{deliverySubCompanyName}}</td>
+                <td class="nowrap">{{#clockShorTime}}{{expectReturnTime}}{{/clockShorTime}}</td>
+                <td class="nowrap">{{highTaxRate}}</td>
+                <td class="nowrap">{{lowTaxRate}}</td>
+
+                <td class="nowrap">{{orderNo}}</td>
+                <td class="nowrap">{{orderSellerId}}</td>
+                <td class="nowrap">{{orderSubCompanyName}}</td>
+                <td class="nowrap">{{payStatusValue}}</td>
+                <td class="nowrap">{{productSummary}}</td>
+
+                <td class="nowrap">{{orderStatusValue}}</td>
+                <td class="nowrap">{{#clockShorTime}}{{rentStartTime}}{{/clockShorTime}}</td>
+##                <td class="nowrap"></td>
+                <td class="nowrap">
+                    <p>{{rentLengthTypeValue}}</p>
+                    <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
+                </td>
+                <td class="nowrap">{{statementDate}}</td>
+                <td class="nowrap">￥{{#price}}{{totalDiscountAmount}}{{/price}}</td>
+
+                <td class="nowrap">￥{{#price}}{{totalMaterialAmount}}{{/price}}</td>
+                <td class="nowrap">{{totalMaterialCount}}</td>
+                <td class="nowrap">￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                <td class="nowrap">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</td>
+                <td class="nowrap">￥{{#price}}{{totalProductAmount}}{{/price}}</td>
+                <td class="nowrap">{{totalProductCount}}</td>
+                <td class="nowrap">
+                    <a href="javacript:void(0);" class="btn btn-default btn-xs viewReletOrderBUtton" data-reletOrderId="{{reletOrderId}}">查看</a>
+                </td>
+            </tr>
+            <tr class="bg-light affixTr" style="height: 0;">
+                <td colspan="25" class="pn br-n" style="height:0;">
+                </td>
+            </tr>
+            {{/listData}}
+            {{^listData}}
+            <tr>
+                <td valign="top" colspan="25" class="text-center">没有查询到续租单</td>
+            </tr>
+            {{/listData}}
+            {{/dataSource}}
+            </tbody>
+        </script>
+        <script type="text/html"  id="reletOrderProductDetailTpl">
+            {{#reletOrderProduct}}
+            <div class="productDetial row p15 affixPanel" data-product="{{productJSONString}}">
+                {{#reletOrderListSource}}
+                <div  class="row ph15">
+                    <div class="panel m15">
+                        <div class="panel-heading" style="overflow: inherit;">
+                            <div class="row">
+                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                                    <li class="active">
+                                        <a href="#product" data-toggle="tab">续租单商品项</a>
+                                    </li>
+                                    <li>
+                                        <a href="#meterial" data-toggle="tab">续租单配件项</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body light pn">
+                            <div class="tab-content pn br-n">
+                                <div class="tab-pane tab-pane-order active" id="product">
+                                    <table class="table">
+                                        <thead>
+                                        <tr class="bg-light">
+##                                            <th class="nowrap">商品项ID</th>
+                                            <th class="nowrap">商品名称</th>
+                                            <th class="nowrap">商品sku名称</th>
+                                            <th class="nowrap">订单编号</th>
+                                            <th class="nowrap">支付方式</th>
+                                            <th class="nowrap">付款期数</th>
+                                            <th class="nowrap">商品价格</th>
+                                            <th class="nowrap">商品总数</th>
+                                            <th class="nowrap">商品单价</th>
+                                            <th class="nowrap">在租商品数量</th>
+##                                            <th class="nowrap">是否全新机</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#reletProductList}}
+                                        <tr>
+##                                            <td class="nowrap">{{reletOrderProductId}}</td>
+                                            <td class="nowrap">
+                                                <span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{productName}}
+                                            </td>
+                                            <td class="nowrap">{{productSkuName}}</td>
+                                            <td class="nowrap">{{orderNo}}</td>
+                                            <td class="nowrap">{{payModeValue}}</td>
+                                            <td class="nowrap">{{paymentCycle}}</td>
+                                            <td class="nowrap">￥{{#price}}{{productAmount}}{{/price}}</td>
+                                            <td class="nowrap">{{productCount}}</td>
+                                            <td class="nowrap">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                                            <td class="nowrap">{{rentingProductCount}}</td>
+##                                            <td class="nowrap">{{isNewProductValue}}</td>
+                                        </tr>
+                                        {{/reletProductList}}
+                                        {{^reletProductList}}
+                                        <tr>
+                                            <td valign="top" colspan="6" class="text-center">没有查询到续租单商品项</td>
+                                        </tr>
+                                        {{/reletProductList}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane tab-pane-order" id="meterial">
+                                    <table class="table">
+                                        <thead>
+                                        <tr class="bg-light">
+##                                            <th class="nowrap">配件项ID</th>
+                                            <th class="nowrap">配件名称</th>
+                                            <th class="nowrap">订单编号</th>
+                                            <th class="nowrap">支付方式</th>
+                                            <th class="nowrap">付款期数</th>
+                                            <th class="nowrap">配件价格</th>
+                                            <th class="nowrap">配件总数</th>
+                                            <th class="nowrap">配件单价</th>
+                                            <th class="nowrap">在租商品数量</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#reletMeterialList}}
+                                        <tr>
+##                                            <td class="nowrap">{{reletOrderMaterialId}}</td>
+                                            <td class="nowrap">
+                                                <span class="badge {{isNewProductBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialName}}
+                                            </td>
+                                            <td class="nowrap">{{orderNo}}</td>
+                                            <td class="nowrap">{{payModeValue}}</td>
+                                            <td class="nowrap">{{paymentCycle}}</td>
+                                            <td class="nowrap">￥{{#price}}{{materialAmount}}{{/price}}</td>
+                                            <td class="nowrap">{{materialCount}}</td>
+                                            <td class="nowrap">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                                            <td class="nowrap">{{rentingMaterialCount}}</td>
+                                        </tr>
+                                        {{/reletMeterialList}}
+                                        {{^reletMeterialList}}
+                                        <tr>
+                                            <td valign="top" colspan="6" class="text-center">没有查询到续租单配件项</td>
+                                        </tr>
+                                        {{/reletMeterialList}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer pn pv5 ph15">
+                            <div class="row">
+                                <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/reletOrderListSource}}
+            </div>
+            {{/reletOrderProduct}}
+            </tbody>
+        </script>
+        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="reletOrderTable"></table>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+            #parse("component/pager.vm")
+        </div>
+    </div>

@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.dingding.DingdingService;
+import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,6 @@ public class DingdingController extends BaseController {
     }
 
     /**
-     * 测试接口-----根据手机号获取钉钉用户编号
-     */
-    @RequestMapping(value = "registerUserToDingding")
-    public Result registerUserToDingding(@RequestParam Integer userId) {
-        ServiceResult<String, Object> serviceResult = dingdingService.registerUserToDingding(userId);
-        return resultGenerator.generate(serviceResult);
-    }
-
-    /**
      * <p>
      * 钉钉审批结果回调接口
      * </p>
@@ -62,12 +54,22 @@ public class DingdingController extends BaseController {
      */
     @RequestMapping(value = "applyApprovingWorkflowCallBack")
     public Result applyApprovingWorkflowCallBack(@RequestBody DingdingApproveCallBackDTO dingdingApproveCallBackDTO) {
-        ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowCallBack(dingdingApproveCallBackDTO);
+        ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowCallBack(dingdingApproveCallBackDTO, super.getHttpServletRequest());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+
     /**
-     * 绑定钉钉用户列表信息---测试接口
+     * 测试接口-----向钉钉网关注册用户
+     */
+    @RequestMapping(value = "registerUserToDingding")
+    public Result registerUserToDingding(@RequestParam Integer userId) {
+        ServiceResult<String, Object> serviceResult = dingdingService.registerUserToDingding(userId);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 测试接口---提交审核工作流到钉钉
      */
     @RequestMapping(value = "applyApprovingWorkflowToDingding")
     public Result applyApprovingWorkflowToDingding(@RequestParam String workflowNo) {
@@ -75,6 +77,15 @@ public class DingdingController extends BaseController {
         user.setUserId(500335);
         super.getHttpServletRequest().getSession().setAttribute(CommonConstant.ERP_USER_SESSION_KEY, user);
         ServiceResult<String, Object> serviceResult = dingdingService.applyApprovingWorkflowToDingding(workflowNo);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 测试接口---注销钉钉网关的审批工作流实例
+     */
+    @RequestMapping(value = "delApprovingWorkflow")
+    public Result delApprovingWorkflow(@RequestParam String workflowNo) {
+        ServiceResult<String, Object> serviceResult = dingdingService.delApprovingWorkflow(workflowNo);
         return resultGenerator.generate(serviceResult);
     }
 }

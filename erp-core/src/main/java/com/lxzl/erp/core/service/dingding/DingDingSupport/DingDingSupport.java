@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.dingding.DingDingSupport;
 
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageContent;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
 import com.lxzl.erp.common.util.DingdingPropertiesUtil;
@@ -42,5 +43,20 @@ public class DingDingSupport {
         request.setText(content);
         dingdingService.sendUserGroupMessage(DingdingPropertiesUtil.DINGDING_USER_GROUP_DEPARTMENT_DEVELOPER, request);
     }
+
+    public String getEnvironmentString(){
+        String type = null;
+        if ("erp-prod".equals(ApplicationConfig.application)) {
+            type = "【线上环境】";
+        } else if ("erp-dev".equals(ApplicationConfig.application)) {
+            type = "【开发环境】";
+        } else if ("erp-adv".equals(ApplicationConfig.application)) {
+            type = "【预发环境】";
+        } else if ("erp-test".equals(ApplicationConfig.application)) {
+            type = "【测试环境】";
+        }
+        return type;
+    }
+
 
 }

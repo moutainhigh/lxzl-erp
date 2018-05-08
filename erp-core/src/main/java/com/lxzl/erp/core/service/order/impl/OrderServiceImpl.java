@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
+import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -31,6 +32,7 @@ import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
@@ -128,14 +130,10 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setOrderSellerId(customerDO.getOwner());
 
         //添加客户的结算时间（天）
-        Date rentStartTime = order.getRentStartTime();
-        Integer statementDate = customerDO.getStatementDate();
-
-        //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
+//        Date rentStartTime = order.getRentStartTime();
 
         //获取
-        orderDO.setStatementDate(statementDays);
+        orderDO.setStatementDate(customerDO.getStatementDate());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
@@ -240,12 +238,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         //添加客户的结算时间（天）
-        Date rentStartTime = order.getRentStartTime();
-        Integer statementDate = customerDO.getStatementDate();
-
-        //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
-        orderDO.setStatementDate(statementDays);
+//        Date rentStartTime = order.getRentStartTime();
+        orderDO.setStatementDate(customerDO.getStatementDate());
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
@@ -1048,7 +1042,11 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+        //非超级管理员，不能处理已支付的订单
+        if (
+//                !userSupport.isSuperUser()&&
+
+                (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1087,6 +1085,48 @@ public class OrderServiceImpl implements OrderService {
             }
             statementOrderSupport.reStatement(orderDO,currentTime);
         }
+        //超级管理员处理已支付的订单
+
+
+        //已付设备押金
+        BigDecimal depositPaidAmount = BigDecimal.ZERO;
+        //已付其他费用
+        BigDecimal otherPaidAmount = BigDecimal.ZERO;
+        // 已付租金
+        BigDecimal rentPaidAmount = BigDecimal.ZERO;
+        //已付逾期费用
+        BigDecimal overduePaidAmount = BigDecimal.ZERO;
+        //已付违约金
+        BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+        //已付租金押金
+        BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+
+        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+            }
+//            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
+//                //该笔金额加款到客户余额
+//                ManualChargeParam manualChargeParam = new ManualChargeParam();
+//                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
+//                manualChargeParam.setChargeAmount(paidAmount);
+//                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+//                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
+//                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    result.setErrorCode(rechargeResult.getErrorCode());
+//                    return result;
+//                }
+//            }
+        }
+
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
@@ -1344,7 +1384,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
-
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
@@ -1368,17 +1407,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
-        String type = null;
-        if ("erp-prod".equals(ApplicationConfig.application)) {
-            type = "【线上环境】";
-        } else if ("erp-dev".equals(ApplicationConfig.application)) {
-            type = "【开发环境】";
-        } else if ("erp-adv".equals(ApplicationConfig.application)) {
-            type = "【预发环境】";
-        } else if ("erp-test".equals(ApplicationConfig.application)) {
-            type = "【测试环境】";
-        }
-        StringBuffer sb = new StringBuffer(type);
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
         sb.append("向K3推送【取消订单-").append(k3SendRecordDO.getRecordReferId()).append("】数据失败：");
         sb.append(JSON.toJSONString(response));
         return sb.toString();
@@ -2955,7 +2984,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderProduct orderProduct;
                 for (int i = 0; i < order.getOrderProductList().size(); i++) {
                     orderProduct = order.getOrderProductList().get(i);
-                    String ItemName = orderProduct.getProductName() + orderProduct.getProductSkuName() + "-" + orderProduct.getIsNewProduct() + "-" + orderProduct.getOrderProductId() + "-" + orderProduct.getOrderId();
+                    String ItemName = orderProduct.getProductName() + orderProduct.getProductSkuName() + "-" + orderProduct.getIsNewProduct() + "-" + orderProduct.getOrderProductId() + "-" + orderProduct.getOrderId() + "-" + orderProduct.getSerialNumber();
 
                     orderProduct.setFirstNeedPayAmount(map.get(ItemName));
                     orderProduct.setFirstNeedPayRentAmount(map.get(ItemName));
@@ -2972,7 +3001,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderMaterial orderMaterial;
                 for (int i = 0; i < order.getOrderMaterialList().size(); i++) {
                     orderMaterial = order.getOrderMaterialList().get(i);
-                    String ItemName = orderMaterial.getMaterialName() + "-" + orderMaterial.getIsNewMaterial() + "-" + orderMaterial.getOrderMaterialId() + "-" + orderMaterial.getOrderId();
+                    String ItemName = orderMaterial.getMaterialName() + "-" + orderMaterial.getIsNewMaterial() + "-" + orderMaterial.getOrderMaterialId() + "-" + orderMaterial.getOrderId() + "-" + orderMaterial.getSerialNumber();
 
                     order.getOrderMaterialList().get(i).setFirstNeedPayAmount(map.get(ItemName));
                     order.getOrderMaterialList().get(i).setFirstNeedPayRentAmount(map.get(ItemName));
@@ -3100,4 +3129,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CouponSupport couponSupport;
+
+    @Autowired
+    private PaymentService paymentService;
 }

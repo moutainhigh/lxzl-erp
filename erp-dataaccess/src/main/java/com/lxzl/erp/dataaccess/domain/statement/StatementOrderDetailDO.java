@@ -61,6 +61,7 @@ public class StatementOrderDetailDO extends BaseDO {
     @Transient
     private Integer rentLengthType;
 
+    private String serialNumber;        // 序号
     private String itemName;
     private Integer itemIsNew;
 
@@ -431,4 +432,8 @@ public class StatementOrderDetailDO extends BaseDO {
     public void setSalesmanId(Integer salesmanId) {
         this.salesmanId = salesmanId;
     }
+
+    public String getSerialNumber() { return serialNumber; }
+
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 }

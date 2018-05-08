@@ -214,7 +214,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        bankSlipQueryParam.setSlipStatus();
 //        bankSlipDetailQueryParam.setPayerName("武汉智寻天下科技有限公司");
 //        bankSlipDetailQueryParam.setIsLocalization(1);
-//        bankSlipDetailQueryParam.setSlipMonth(new SimpleDateFormat("yyyy-MM-dd").parse("2016-04-01"));
+        bankSlipDetailQueryParam.setSlipMonth(new SimpleDateFormat("yyyy-MM-dd").parse("2016-04-01"));
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 

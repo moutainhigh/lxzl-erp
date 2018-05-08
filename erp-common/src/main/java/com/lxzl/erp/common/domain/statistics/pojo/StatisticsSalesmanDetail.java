@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 /**
  * @Auther: huahongbin
- * @Date: 2018/4/23 13:53
- * @Description:
+ * @Date: 2018/5/2 19:01
+ * @Description: 业务提成统计
  */
 public class StatisticsSalesmanDetail {
 	private Integer id; // 唯一标识
@@ -13,11 +13,15 @@ public class StatisticsSalesmanDetail {
 	private String salesmanName; // 业务员姓名
 	private Integer subCompanyId; // 分公司id
 	private String subCompanyName; // 分公司名
-	private Integer dealsCount; // 成交单数
-	private Integer dealsProductCount; // 成交台数
-	private BigDecimal dealsAmount; // 成交金额
-	private BigDecimal awaitReceivable; // 待收
-	private BigDecimal income; // 本期回款
+	private Integer dealsCount = 0; // 成交单数
+	private Integer dealsProductCount = 0; // 成交台数
+	private BigDecimal dealsAmount = BigDecimal.valueOf(0); // 成交金额
+	private BigDecimal awaitReceivable = BigDecimal.valueOf(0); // 待收
+	private BigDecimal income = BigDecimal.valueOf(0); // 本期回款（已收）
+	private Integer rentLengthType; // 长租短租
+
+	private BigDecimal receive = BigDecimal.valueOf(0); // 应收 = 待收 + 本期回款
+	private BigDecimal pureIncrease; // 净增
 
 	public Integer getId() {
 		return id;
@@ -97,5 +101,48 @@ public class StatisticsSalesmanDetail {
 
 	public void setIncome(BigDecimal income) {
 		this.income = income;
+	}
+
+	public BigDecimal getReceive() {
+		return receive;
+	}
+
+	public void setReceive(BigDecimal receive) {
+		this.receive = receive;
+	}
+
+	public BigDecimal getPureIncrease() {
+		return pureIncrease;
+	}
+
+	public void setPureIncrease(BigDecimal pureIncrease) {
+		this.pureIncrease = pureIncrease;
+	}
+
+	public Integer getRentLengthType() {
+		return rentLengthType;
+	}
+
+	public void setRentLengthType(Integer rentLengthType) {
+		this.rentLengthType = rentLengthType;
+	}
+
+	@Override
+	public String toString() {
+		return "StatisticsSalesmanDetail{" +
+				"id=" + id +
+				", salesmanId=" + salesmanId +
+				", salesmanName='" + salesmanName + '\'' +
+				", subCompanyId=" + subCompanyId +
+				", subCompanyName='" + subCompanyName + '\'' +
+				", dealsCount=" + dealsCount +
+				", dealsProductCount=" + dealsProductCount +
+				", dealsAmount=" + dealsAmount +
+				", awaitReceivable=" + awaitReceivable +
+				", income=" + income +
+				", rentLengthType=" + rentLengthType +
+				", receive=" + receive +
+				", pureIncrease=" + pureIncrease +
+				'}';
 	}
 }

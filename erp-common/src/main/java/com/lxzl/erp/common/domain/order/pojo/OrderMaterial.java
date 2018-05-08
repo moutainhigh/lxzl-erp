@@ -44,6 +44,8 @@ public class OrderMaterial extends BasePO {
 	private BigDecimal firstNeedPayRentAmount;
 	private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
+	private String serialNumber;        // 序号
+
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
@@ -297,4 +299,8 @@ public class OrderMaterial extends BasePO {
 	public void setProductNumber(String productNumber) {
 		this.productNumber = productNumber;
 	}
+
+	public String getSerialNumber() { return serialNumber; }
+
+	public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 }

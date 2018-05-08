@@ -587,7 +587,7 @@ public class ErrorCode {
     public static final String RE_STATEMENT_BACK_AMOUNT_FAIL = "J500164";
     public static final String CUSTOMER_COMPANY_NAME_TO_SHORT = "J500165";
     public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
-
+    public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -867,6 +867,29 @@ public class ErrorCode {
     public static final String SWITCH_IS_OPEN_IS_FAIL = "J20000005";
     public static final String SWITCH_INTERFACE_URL_EXISTS = "J20000006";
     public static final String SWITCH_CLOSE = "J20000007";
+
+    public static final String RELET_ORDER_LIST_NOT_NULL = "J21000001";
+    public static final String RELET_ORDER_HAVE_NO_RENT_START_TIME = "J21000002";
+    public static final String RELET_ORDER_RENT_TYPE_NOT_NULL = "J21000003";
+    public static final String RELET_ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL = "J21000004";
+    public static final String RELET_ORDER_RENT_TYPE_OR_LENGTH_ERROR = "J21000005";
+    public static final String RELET_ORDER_PRODUCT_COUNT_ERROR = "J21000006";
+    public static final String RELET_ORDER_MATERIAL_COUNT_ERROR = "J21000007";
+    public static final String RELET_ORDER_MATERIAL_AMOUNT_ERROR = "J21000008";
+    public static final String RELET_ORDER_ID_NOT_NULL = "J21000009";
+    public static final String RELET_ORDER_RENTING_PRODUCT_COUNT_ERROR = "J21000010";
+    public static final String RELET_ORDER_RENTING_MATERIAL_COUNT_ERROR = "J21000011";
+    public static final String RELET_ORDER_BUYER_CUSTOMER_ID_NOT_NULL = "J21000012";
+    public static final String RELET_ORDER_DELIVERY_SUB_COMPANY_ID_NOT_NULL = "J21000013";
+    public static final String RELET_ORDER_RENT_LENGTH_TYPE_NOT_NULL = "J21000014";
+    public static final String RELET_ORDER_SELLER_ID_NOT_NULL = "J21000015";
+    public static final String RELET_ORDER_QUERY_ID_NOT_NULL = "J210000016";
+    public static final String RELET_ORDER_NO_NOT_NULL = "J210000017";
+
+    public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
+    public static final String PRINT_LOG_REFER_TYPE_NOT_NULL = "J220000002";
+    public static final String PRINT_LOG_NOT_EXISTS = "J220000003";
+    public static final String PRINT_LOG_REFER_TYPE_ERROR = "J220000004";
 
 
     static {
@@ -1445,6 +1468,7 @@ public class ErrorCode {
         MAP.put(RE_STATEMENT_BACK_AMOUNT_FAIL, "重新结算返还已支付金额失败!");
         MAP.put(CUSTOMER_COMPANY_NAME_TO_SHORT, "公司名称太短，请重新输入");
         MAP.put(CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME, "公司名称有误");
+        MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1726,6 +1750,28 @@ public class ErrorCode {
         MAP.put(SWITCH_INTERFACE_URL_EXISTS, "已有接口URL");
         MAP.put(SWITCH_CLOSE, "此功能开关已关闭");
 
+        MAP.put(RELET_ORDER_LIST_NOT_NULL, "没有需要续租的商品与配件");
+        MAP.put(RELET_ORDER_HAVE_NO_RENT_START_TIME, "续租时起始时间不合法无法续租");
+        MAP.put(RELET_ORDER_RENT_TYPE_NOT_NULL, "续租时租赁类型不能为空");
+        MAP.put(RELET_ORDER_RENT_TIME_LENGTH_IS_ZERO_OR_IS_NULL, "续租时租赁类型不能为空或小于0，租赁时长需大于0");
+        MAP.put(RELET_ORDER_RENT_TYPE_OR_LENGTH_ERROR, "续租订单租赁方式有误，无法续租");
+        MAP.put(RELET_ORDER_PRODUCT_COUNT_ERROR, "商品数量有误，无法续租");
+        MAP.put(RELET_ORDER_MATERIAL_COUNT_ERROR, "设备数量有误，无法续租");
+        MAP.put(RELET_ORDER_MATERIAL_AMOUNT_ERROR, "续租时配件价格有误，无法续租");
+        MAP.put(RELET_ORDER_ID_NOT_NULL, "续租时订单ID不能为空");
+        MAP.put(RELET_ORDER_RENTING_PRODUCT_COUNT_ERROR, "续租时在租商品数量有误，无法续租");
+        MAP.put(RELET_ORDER_RENTING_MATERIAL_COUNT_ERROR, "续租时在租配件数量有误，无法续租");
+        MAP.put(RELET_ORDER_BUYER_CUSTOMER_ID_NOT_NULL, "续租时购买人ID不能为空");
+        MAP.put(RELET_ORDER_DELIVERY_SUB_COMPANY_ID_NOT_NULL, "续租时订单发货分公司ID不能为空");
+        MAP.put(RELET_ORDER_RENT_LENGTH_TYPE_NOT_NULL, "续租时租赁时长类型不能为空");
+        MAP.put(RELET_ORDER_SELLER_ID_NOT_NULL, "续租时订单销售员不能为空");
+        MAP.put(RELET_ORDER_QUERY_ID_NOT_NULL, "通过ID查询续租单时ID不能为空");
+        MAP.put(RELET_ORDER_NO_NOT_NULL, "续租时订单编号不能为空");
+
+        MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
+        MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
+        MAP.put(PRINT_LOG_NOT_EXISTS, "打印记录不存在");
+        MAP.put(PRINT_LOG_REFER_TYPE_ERROR, "关联项类型出错");
     }
 
 

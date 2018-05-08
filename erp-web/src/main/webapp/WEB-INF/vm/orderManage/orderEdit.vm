@@ -31,7 +31,7 @@
             'api.data.js',
             'manage.order.mixin.js',
             'manage.order.edit.js',
-            'modal.choose.product.js',
+            'modal.choose.product.group.js',
             'modal.choose.material.js',
             'modal.choose.customer.js',
             'modal.choose.customer.business.js',

@@ -29,6 +29,8 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer dataStatus;
 	private String remark;
 
+	private String serialNumber;        // 序号
+
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
@@ -224,4 +226,8 @@ public class OrderMaterialDO  extends BaseDO {
 	public void setProductNumber(String productNumber) {
 		this.productNumber = productNumber;
 	}
+
+	public String getSerialNumber() { return serialNumber; }
+
+	public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 }

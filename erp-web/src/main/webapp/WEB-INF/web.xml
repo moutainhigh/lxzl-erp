@@ -45,7 +45,7 @@
         <filter-class>com.lxzl.erp.web.filter.SessionFilter</filter-class>
         <init-param>
             <param-name>excludedPages</param-name>
-            <param-value>/WEB-INF/*,/js/*,/img/*,/login,/user/login,/static/*,/interface/*,/example/*,/QRCode/*,/user/updatePasswordForNoLogin,/uppwd,/callback/*,/k3Callback/*,/dingding/bindDingDingUsers</param-value>
+            <param-value>/WEB-INF/*,/js/*,/img/*,/login,/user/login,/static/*,/interface/*,/example/*,/QRCode/*,/user/updatePasswordForNoLogin,/uppwd,/callback/*,/k3Callback/*,/dingding/applyApprovingWorkflowCallBack,/dingding/getAllUsersToDingding</param-value>
         </init-param>
     </filter>
     <filter-mapping>

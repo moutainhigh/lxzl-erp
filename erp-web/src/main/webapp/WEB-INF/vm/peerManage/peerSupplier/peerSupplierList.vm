@@ -65,14 +65,6 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <th>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="checkAll" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                {{/hasCommonActionButtons}}
                                 <th>编号</th>
                                 <th>同行名称</th>
                                 <th>自定义编码</th>
@@ -88,14 +80,6 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <td>
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="checkItem" value="{{peerNo}}">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </td>
-                                {{/hasCommonActionButtons}}
                                 <td>{{peerNo}}</td>
                                 <td>{{peerName}}</td>
                                 <td>{{peerCode}}</td>

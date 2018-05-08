@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
@@ -85,6 +86,8 @@ public class Order extends BasePO {
 
     private List<OrderTimeAxis> orderTimeAxisList;
 
+    private List<ReletOrder> reletOrderList;
+
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;                                 // 审核人ID
     private String commitRemark;                                // 提交审核备注
@@ -115,6 +118,14 @@ public class Order extends BasePO {
 
     public void setOrderProductList(List<OrderProduct> orderProductList) {
         this.orderProductList = orderProductList;
+    }
+
+    public List<ReletOrder> getReletOrderList() {
+        return reletOrderList;
+    }
+
+    public void setReletOrderList(List<ReletOrder> reletOrderList) {
+        this.reletOrderList = reletOrderList;
     }
 
     public OrderConsignInfo getOrderConsignInfo() {

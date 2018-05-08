@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper">
+
+	<resultMap id="ReletOrderProductDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="relet_order_id" jdbcType="INTEGER" property="reletOrderId" />
+		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="product_sku_snapshot" jdbcType="VARCHAR" property="productSkuSnapshot" />
+		<result column="payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+		<result column="renting_product_count" jdbcType="INTEGER" property="rentingProductCount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		erop.id,erop.relet_order_id,erop.relet_order_no,erop.order_id,erop.order_no,erop.order_product_id,erop.product_id,erop.product_name,erop.product_sku_id,erop.product_sku_name,erop.product_count,erop.product_unit_amount,erop.product_amount,erop.product_sku_snapshot,erop.payment_cycle,erop.pay_mode,erop.is_new_product,erop.renting_product_count,erop.data_status,erop.remark,erop.create_time,erop.create_user,erop.update_time,erop.update_user
+	</sql>
+
+	<select id="findById" resultMap="ReletOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_relet_order_product erop 
+		WHERE erop.id = #{id, jdbcType=INTEGER} AND erop.data_status = 1 
+	</select>
+
+	<select id="findByReletOrderId" resultMap="ReletOrderProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_relet_order_product erop
+		WHERE erop.relet_order_id = #{reletOrderId, jdbcType=INTEGER} AND erop.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(erop.id) FROM erp_relet_order_product erop 
+		<where>
+			<if test="true">
+				AND erop.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReletOrderProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_relet_order_product erop 
+		<where>
+			<if test="true">
+				AND erop.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="reletOrderId != null">
+				relet_order_id = #{reletOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="reletOrderNo != null">
+				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderProductId != null">
+				order_product_id = #{orderProductId,jdbcType=INTEGER},
+			</if>
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productName != null">
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="productSkuId != null">
+				product_sku_id = #{productSkuId,jdbcType=INTEGER},
+			</if>
+			<if test="productSkuName != null">
+				product_sku_name = #{productSkuName,jdbcType=VARCHAR},
+			</if>
+			<if test="productCount != null">
+				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="productUnitAmount != null">
+				product_unit_amount = #{productUnitAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="productAmount != null">
+				product_amount = #{productAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="productSkuSnapshot != null">
+				product_sku_snapshot = #{productSkuSnapshot,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentCycle != null">
+				payment_cycle = #{paymentCycle,jdbcType=INTEGER},
+			</if>
+			<if test="payMode != null">
+				pay_mode = #{payMode,jdbcType=INTEGER},
+			</if>
+			<if test="isNewProduct != null">
+				is_new_product = #{isNewProduct,jdbcType=INTEGER},
+			</if>
+			<if test="rentingProductCount != null">
+				renting_product_count = #{rentingProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO">
+		INSERT INTO erp_relet_order_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO">
+		UPDATE erp_relet_order_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
