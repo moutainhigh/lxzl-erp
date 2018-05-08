@@ -172,6 +172,7 @@
                                                     <td>{{rentingProductCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
+                                                        <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
                                                         <label class="field prepend-icon mw200">
                                                             <input type="text" name="productCount-{{rowKey}}" value="{{productCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
                                                         </label>
@@ -224,6 +225,7 @@
                                                     <td>{{rentingMaterialCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
+                                                        <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
                                                         <label class="field prepend-icon mw200">
                                                             <input type="text" name="materialCount-{{rowKey}}" value="{{materialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
                                                         </label>
