@@ -339,7 +339,8 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderNo("LXO-20180307-1000-00014");
 //        param.setDeliverySubCompanyId(2);
 //        param.setOrderStatus(16);
-        param.setPayStatus(24);
+        param.setEndRentStratTime(new Date());
+//        param.setPayStatus(24);
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
     @Test
