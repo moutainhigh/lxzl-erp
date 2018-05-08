@@ -466,6 +466,12 @@
             <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
             </if>
+            <if test="maps.orderQueryParam.startRentStratTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStratTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endRentStratTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
+            </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
             </if>
@@ -568,6 +574,12 @@
             </if>
             <if test="maps.orderQueryParam.createEndTime != null ">
                 <![CDATA[ AND eo.create_time <= #{maps.orderQueryParam.createEndTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.startRentStratTime != null">
+                <![CDATA[ AND eo.rent_start_time >= #{maps.orderQueryParam.startRentStratTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endRentStratTime != null ">
+                <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1
