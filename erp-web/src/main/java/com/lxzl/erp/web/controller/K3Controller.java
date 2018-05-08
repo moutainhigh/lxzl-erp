@@ -60,6 +60,28 @@ public class K3Controller extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 创建退货单时从ERP获取订单数据
+     * @param k3ReturnOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "createReturnOrderFromERP", method = RequestMethod.POST)
+    public Result createReturnOrderFromERP(@RequestBody @Validated(AddGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3ReturnOrderService.createReturnOrderFromERP(k3ReturnOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+    /**
+     * 修改退货单时从ERP获取订单数据
+     * @param k3ReturnOrder
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "updateReturnOrderFromERP", method = RequestMethod.POST)
+    public Result updateReturnOrderFromERP(@RequestBody @Validated(UpdateGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = k3ReturnOrderService.updateReturnOrderFromERP(k3ReturnOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
     @RequestMapping(value = "createReturnOrder", method = RequestMethod.POST)
     public Result createReturnOrder(@RequestBody @Validated(AddGroup.class) K3ReturnOrder k3ReturnOrder, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = k3ReturnOrderService.createReturnOrder(k3ReturnOrder);

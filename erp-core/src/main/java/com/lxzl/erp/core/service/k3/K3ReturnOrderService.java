@@ -123,4 +123,16 @@ public interface K3ReturnOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,Page<Order>> queryOrderForReturn(OrderForReturnQueryParam param);
+    /**
+     * 创建退货单时从ERP获取订单数据
+     * @param k3ReturnOrder
+     * @return
+     */
+    ServiceResult<String,String> createReturnOrderFromERP(K3ReturnOrder k3ReturnOrder);
+    /**
+     * 修改退货单时从ERP获取订单数据
+     * @param k3ReturnOrder
+     * @return
+     */
+    ServiceResult<String,String> updateReturnOrderFromERP(K3ReturnOrder k3ReturnOrder);
 }
