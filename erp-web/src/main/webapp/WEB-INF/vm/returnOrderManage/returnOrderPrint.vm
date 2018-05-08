@@ -7,12 +7,16 @@
 
     <style>
         body {
-            font-size: 6pt;
+            font-size: 12px;
+        }
+        p {
+            padding:0px;
+            margin:0px;
         }
         .page {
             width:100%;
             width: 21cm;
-            min-height: 27.9cm;
+            min-height: 25.9cm;
             padding: 1cm 0.5cm;
             margin: 1cm auto;
             border: 1px #D3D3D3 solid;
@@ -35,7 +39,7 @@
         .subpage {
             padding: 0cm;
             border: 2px #666 solid;
-            height: 260mm;
+            height: 240mm;
             position: relative;
         }
 
@@ -44,7 +48,7 @@
         }
 
         @page {
-            size: A4;
+            size: 21cm 27.9cm;
             margin: 0;
         }
 
@@ -63,22 +67,39 @@
             .table .bg-light {
                 background-color:#FAFAFA !important;
             }
+            .table-bordered > tbody > tr > td, .table>thead>tr>th {
+                border: 1px solid #666 !important;
+                padding: 2px 0px;
+            }
+            .table>thead>tr>th:first-child,
+            .table-bordered > tbody > tr > td:first-child {
+                border-left:0 !important;
+            }
+
+            .table>thead>tr>th:last-child,
+            .table-bordered > tbody > tr > td:last-child {
+                border-right:0 !important;
+            }
+
+            .table tbody>tr>td:first-child, .table>thead>tr>th:first-child {
+                padding: 0 !important;
+            }
         }
 
         .printH1 {
             font-size: 2em;
         }
         .printH2 {
-            font-size: 1.5em;
+            font-size: 1.2em;
         }
 
         .qrcodeCanvas {
-            height:1.2cm;
-            width: 1.2cm;
+            height:0.8cm;
+            width:0.8cm;
             float: right;
             position: absolute;
             right: 0.5cm;
-            top:0.2cm;
+            top:0.5cm;
         }
 
         .returnOrderNo {
@@ -88,13 +109,44 @@
             padding: 0;
             right: 0.5cm;
         }
+
+        .table .bg-light {
+            background-color:#FAFAFA !important;
+        }
+
+        .table .customerSign {
+            width: 160px;
+            position: absolute;
+            right: 5px;
+            bottom: 10px;
+            font-size: 12px;
+        }
+
+        .table-bordered > tbody > tr > td, .table>thead>tr>th {
+            border: 1px solid #666;
+            padding: 2px 0px;
+        }
+        .table>thead>tr>th:first-child,
+        .table-bordered > tbody > tr > td:first-child {
+            border-left:0;
+        }
+
+        .table tbody>tr>td:first-child, .table>thead>tr>th:first-child {
+            padding: 0;
+        }
+
+        .table>thead>tr>th:last-child,
+        .table-bordered > tbody > tr > td:last-child {
+            border-right:0;
+            padding-right:0 ;
+        }
     </style>
 
 </head>
 <body style="height: auto;">
     <div class="panel">
     <div class="panel-heading">
-        <span class="panel-title"><span class="glyphicon glyphicon-print"></span>打印退货单（请使用IE浏览器打印）</span>
+        <span class="panel-title text-danger"><span class="glyphicon glyphicon-print"></span>打印退货单（创建21cm*27.9cm规格：控制面板=>设备和打印机=>选中当前打印机=>调整打印选项=>用户自定义打印纸），打印时候选择创建的规格，并调整打印机。</span>
         <div class="panel-header-menu pull-right mr10">
             <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>
@@ -103,43 +155,34 @@
 
     <script type="text/html" id="orderBaseInfoTpl">
         {{#order}}
-        <div class="row p15">
+        <div class="row p10">
             <div class="col-xs-4">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>客户名称</label><span class="mr5">：</span></dt>
                     <dd class="mb5">{{k3CustomerName}}&nbsp;</dd>
-
-                    <dt><label>联系人</label><span class="mr5">：</span></dt>
-                    <dd class="mb5">{{returnContacts}}&nbsp;</dd>
                 </dl>
             </div>
             <div class="col-xs-4">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
-                    <dt><label>退货日期</label><span class="mr5">：</span></dt>
+                    <dt><label>联系人/电话</label><span class="mr5">：</span></dt>
+                    <dd class="mb5">{{returnContacts}}&nbsp;{{returnPhone}}&nbsp;</dd>
+                </dl>
+            </div>
+            <div class="col-xs-4">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>退租日期</label><span class="mr5">：</span></dt>
                     <dd class="mb5">{{#shortTime}}{{returnTime}}{{/shortTime}}&nbsp;</dd>
-
-                    <dt><label>联系方式</label><span class="mr5">：</span></dt>
-                    <dd class="mb5">{{returnPhone}}&nbsp;</dd>
                 </dl>
             </div>
             <div class="col-xs-4">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
-                    <dt><label>退货方式</label><span class="mr5">：</span></dt>
+                    <dt><label>退租方式</label><span class="mr5">：</span></dt>
                     <dd class="mb5">{{returnModeValue}}&nbsp;</dd>
-
-                    <dt><label>备注信息</label><span class="mr5">：</span></dt>
-                    <dd class="over-ellipsis">{{remark}}&nbsp;</dd>
                 </dl>
             </div>
-            <div class="col-xs-12">
+            <div class="col-xs-8">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
-                    <dt><label>退货原因</label><span class="mr5">：</span></dt>
-                    <dd>{{returnReasonValue}}&nbsp;</dd>
-                </dl>
-            </div>
-            <div class="col-xs-12">
-                <dl class="dl-horizontal dl-horizontal-rental mbn">
-                    <dt><label>地址</label><span class="mr5">：</span></dt>
+                    <dt><label>退货地址</label><span class="mr5">：</span></dt>
                     <dd>{{returnAddress}}&nbsp;</dd>
                 </dl>
             </div>
@@ -154,14 +197,14 @@
                 <table class="table table-bordered mbn">
                     <thead>
                     <tr class="bg-light">
-                        <th colspan="5" class="text-center printH2">退货单明细</th>
+                        <th colspan="5" class="text-center printH2" style="border-top: 1px solid #666;padding: 5px 0px;">商品信息</th>
                     </tr>
                     <tr class="bg-light">
-                        <th class="text-center" style="white-space: nowrap;">序号</th>
-                        <th class="text-center">商品编号</th>
+                        <th class="text-center" style="white-space: nowrap; width:50px;">序号</th>
                         <th class="text-center">商品名称</th>
-                        <th class="text-center" style="white-space: nowrap;">数量</th>
-                        <th class="text-center">备注</th>
+                        <th class="text-center">商品参数</th>
+                        <th class="text-center" style="width:130px;">商品价值</th>
+                        <th class="text-center" style="white-space: nowrap; width:60px;">数量</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -169,10 +212,46 @@
                     {{#listData}}
                     <tr>
                         <td class="text-center">{{rowNum}}</td>
-                        <td class="text-center">{{productNo}}</td>
                         <td class="text-center">{{productName}}</td>
+                        <td class="text-center">{{propertiesToStr}}</td>
+                        <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
                         <td class="text-center">{{productCount}}</td>
-                        <td class="text-center">{{remark}}</td>
+                    </tr>
+                    {{/listData}}
+                    {{/dataSource}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{/hasListData}}
+    </script>
+
+    <script type="text/html" id="materialDataListTpl">
+        {{#hasListData}}
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered mbn">
+                    <thead>
+                    <tr class="bg-light">
+                        <th colspan="12" class="text-center printH2" style="padding: 5px 0px;">配件信息</th>
+                    </tr>
+                    <tr class="bg-light">
+                        <th class="text-center" style="white-space: nowrap; width:50px;">序号</th>
+                        <th class="text-center">配件名称</th>
+                        <th class="text-center">配件参数</th>
+                        <th class="text-center" style="width:130px;">配件价值</th>
+                        <th class="text-center" style="white-space: nowrap; width:60px;">数量</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#dataSource}}
+                    {{#listData}}
+                    <tr>
+                        <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
+                        <td class="text-center">{{materialName}}({{isNewMaterialValue}})</td>
+                        <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
+                        <td class="text-center">￥{{#price}}{{materialPrice}}{{/price}}</td>
+                        <td class="text-center">{{materialCount}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -253,21 +332,49 @@
     <div id="totalInfo" class="hide">
         <div class="row">
             <div class="col-md-12">
-                <div id="orderAmountInfo">
-                    <div class="bg-light" style="padding:9px 11px; border-bottom:1px solid #e5e5e5;">
-                        <b>退货商品数量总计:</b>
-                        <span id="totalCount" style="display:inline-block;margin-left:10px;"></span>
-                    </div>
-                </div>
+                <table class="table table-bordered mbn">
+                    <tbody>
+##                    {{#listData}}
+                    <tr>
+                        <td class="text-center" style="width:125px; height:35px;">合计金额</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center" style="width:125px; height:90px; vertical-align:middle;">
+                            <p>异常情况说明</p>
+                            <p>（外勤填写）</p>
+                        </td>
+                        <td style="position:relative;">
+                            <dl class="dl-horizontal dl-horizontal-rental mbn customerSign">
+                                <dt><label>客户确认签字</label><span>：</span></dt>
+                                <dd class="mb5 print-under-line" style="margin-left: 7em !important;"></dd>
+                            </dl>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center" style="width:125px; height:35px;">备注</td>
+                        <td></td>
+                    </tr>
+##                    {{/listData}}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <div id="signature" class="hide">
+        <div class="row p15 pbn">
+            <div class="col-md-12">
+                <dl class="dl-horizontal dl-horizontal-rental mbn">
+                    <dt><label>业务员/联系方式</label><span>：</span></dt>
+                    <dd class="customerOwnerUser"></dd>
+                </dl>
+            </div>
+        </div>
         <div class=" row p15 pbn">
             <div class="section col-md-12 mb15"><p class="printH2"><b>以下请用正楷书写</b></p></div>
 
-            <div class="row section mb40">
+            <div class="row section mb10">
                 <div class="col-xs-12">
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
@@ -283,17 +390,17 @@
                     </div>
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
-                            <dt><label>退货日期</label><span>：</span></dt>
-                            <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
+                            <dt><label>日期</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 3em !important;"></dd>
                         </dl>
                     </div>
                 </div>
             </div>
-            <div class="row section mb15">
+            <div class="row section mb10">
                 <div class="col-xs-12">
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
-                            <dt><label>接收人</label><span>：</span></dt>
+                            <dt><label>收货人</label><span>：</span></dt>
                             <dd class="mb5 print-under-line" style="margin-left: 4em !important;"></dd>
                         </dl>
                     </div>
@@ -305,14 +412,33 @@
                     </div>
                     <div class="col-xs-4">
                         <dl class="dl-horizontal dl-horizontal-rental mbn">
-                            <dt><label>接收日期</label><span>：</span></dt>
-                            <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
+                            <dt><label>日期</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 3em !important;"></dd>
                         </dl>
                     </div>
                 </div>
             </div>
-            <div class="section">
-                <div class="col-xs-12"><p>温馨提示：签收时应当对设备进行验收及清点，签字后视同货物合格</p></div>
+            <div class="row section mb10">
+                <div class="col-xs-12">
+                    <div class="col-xs-4">
+                        <dl class="dl-horizontal dl-horizontal-rental mbn">
+                            <dt><label>入库收货人</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 6em !important;"></dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-4">
+                        <dl class="dl-horizontal dl-horizontal-rental mbn">
+                            <dt><label>入库复核</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 5em !important;"></dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-4">
+                        <dl class="dl-horizontal dl-horizontal-rental mbn">
+                            <dt><label>日期</label><span>：</span></dt>
+                            <dd class="mb5 print-under-line" style="margin-left: 3em !important;"></dd>
+                        </dl>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -323,6 +449,7 @@
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',
+                'manage.return.order.print.mixin.js',
                 'manage.return.order.print.js');
     </script>
     <script type="text/javascript">
