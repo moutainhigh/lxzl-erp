@@ -309,19 +309,19 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
 
         Integer departmentType = 0;
-        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
+//        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
-            //商务和业务员类型设置为2
-            departmentType = 2;
-        }
+//        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
+//            //商务和业务员类型设置为2
+//            departmentType = 2;
+//        }
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("bankSlipDetailQueryParam", bankSlipDetailQueryParam);
         maps.put("departmentType", departmentType);
-        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
+        maps.put("subCompanyId", 1);
 
         Integer totalCount = bankSlipDetailMapper.findBankSlipDetailDOCountByParams(maps);
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailDOByParams(maps);

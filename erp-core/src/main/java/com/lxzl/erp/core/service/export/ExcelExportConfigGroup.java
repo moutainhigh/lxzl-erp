@@ -229,7 +229,7 @@ public class ExcelExportConfigGroup {
                             String dbK3CustomerNo = bankSlipClaim.getK3CustomerNo();
                             k3CustomerNo.append(dbK3CustomerNo + "\r\n");
                         }
-                        return k3CustomerNo;
+                        return k3CustomerNo.toString().trim();
                     }
                 }))
                 .addConfig(new ColConfig("bankSlipClaimList", "对应公司名称",10000, new ExcelExportView() {
@@ -242,7 +242,7 @@ public class ExcelExportConfigGroup {
                             String claimAmount = String.valueOf(AmountExcelExportView.getInstance().view(bankSlipClaim.getClaimAmount()));
                             customerName.append(dbCustomerName + "("+claimAmount+"元)"+"\r\n");
                         }
-                        return customerName;
+                        return customerName.toString().trim();
                     }
                 }))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
