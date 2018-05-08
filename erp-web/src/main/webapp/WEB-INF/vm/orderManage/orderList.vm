@@ -114,14 +114,6 @@
                             <script type="text/html" id="dataListTpl">
                                 <thead>
                                     <tr class="bg-light">
-                                        {{#hasCommonActionButtons}}
-                                        <th class="text-center">
-                                            <label class="option block mn">
-                                                <input type="checkbox" name="orders" value="">
-                                                <span class="checkbox mn"></span>
-                                            </label>
-                                        </th>
-                                        {{/hasCommonActionButtons}}
                                         <th>编号</th>
                                         <th>订单归属公司</th>
                                         <th>客户名称</th>
@@ -145,14 +137,6 @@
                                     {{#dataSource}}
                                         {{#listData}}
                                         <tr class="{{trClass}}">
-                                            {{#hasCommonActionButtons}}
-                                            <td class="text-center">
-                                                <label class="option block mn">
-                                                    <input type="checkbox" name="mobileos" value="FR">
-                                                    <span class="checkbox mn"></span>
-                                                </label>
-                                            </td>
-                                            {{/hasCommonActionButtons}}
                                             <td>
                                                 {{#isK3Order}}
                                                 <span class="label label-dark" title="K3订单">K3</span>

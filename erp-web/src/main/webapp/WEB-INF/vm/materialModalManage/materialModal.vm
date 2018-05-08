@@ -60,14 +60,6 @@
                             <script type="text/html" id="dataListTpl">
                                 <thead>
                                 <tr>
-                                    {{#hasCommonActionButtons}}
-                                    <th>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="checkAll" value="">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </th>
-                                    {{/hasCommonActionButtons}}
                                     <th>配件类型ID</th>
                                     <th>配件类型</th>
                                     <th>型号名称</th>
@@ -81,14 +73,6 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr>
-                                    {{#hasCommonActionButtons}}
-                                    <td>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="checkItem" value="{{materialNo}}">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </td>
-                                    {{/hasCommonActionButtons}}
                                     <td>{{materialModelId}}</td>
                                     <td>{{materialTypeStr}}</td>
                                     <td>{{modelName}}</td>

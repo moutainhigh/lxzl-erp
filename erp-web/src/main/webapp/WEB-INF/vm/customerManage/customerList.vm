@@ -85,14 +85,6 @@
                             <script type="text/html" id="dataListTpl">
                                 <thead>
                                 <tr>
-                                    {{#hasCommonActionButtons}}
-                                    <th>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="checkAll" value="">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </th>
-                                    {{/hasCommonActionButtons}}
                                     <th>客户编号</th>
                                     <th>真实姓名</th>
                                     <th>联系方式</th>
@@ -112,14 +104,6 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr data-rowdata="{{rowData}}">
-                                    {{#hasCommonActionButtons}}
-                                    <td>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="checkItem" value="{{productId}}">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </td>
-                                    {{/hasCommonActionButtons}}
                                     <td>{{customerNo}}</td>
                                     <td>{{customerPerson.realName}}</td>
                                     <td>
