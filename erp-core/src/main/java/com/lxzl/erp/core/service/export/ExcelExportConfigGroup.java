@@ -232,7 +232,7 @@ public class ExcelExportConfigGroup {
                         return k3CustomerNo;
                     }
                 }))
-                .addConfig(new ColConfig("payerName", "对应公司名称"))
+                .addConfig(new ColConfig("allCustomerName", "对应公司名称"))
                 .addConfig(new ColConfig("subCompanyName", "客户归属地"))
                 .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
     }

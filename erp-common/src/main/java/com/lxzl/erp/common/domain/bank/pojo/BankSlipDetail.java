@@ -3,7 +3,6 @@ package com.lxzl.erp.common.domain.bank.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.bank.AssignGroup;
 
@@ -40,12 +39,21 @@ public class BankSlipDetail extends BasePO {
 	private Integer ownerSubCompanyId;  //数据归属公司id
 	private String ownerSubCompanyName;  //数据归属公司名称
 	private Integer bankSlipBankType;  //银行类型
+	private String allCustomerName;  //银行类型
 
 	private List<BankSlipClaim> bankSlipClaimList;
 
 
 	public List<BankSlipClaim> getBankSlipClaimList() {
 		return bankSlipClaimList;
+	}
+
+	public String getAllCustomerName() {
+		return allCustomerName;
+	}
+
+	public void setAllCustomerName(String allCustomerName) {
+		this.allCustomerName = allCustomerName;
 	}
 
 	public String getSubCompanyName() {
