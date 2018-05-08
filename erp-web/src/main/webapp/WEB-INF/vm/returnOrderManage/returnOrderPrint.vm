@@ -214,7 +214,7 @@
                         <td class="text-center">{{rowNum}}</td>
                         <td class="text-center">{{productName}}</td>
                         <td class="text-center">{{propertiesToStr}}</td>
-                        <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                        <td class="text-center">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                         <td class="text-center">{{productCount}}</td>
                     </tr>
                     {{/listData}}
@@ -250,7 +250,7 @@
                         <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
                         <td class="text-center">{{materialName}}({{isNewMaterialValue}})</td>
                         <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
-                        <td class="text-center">￥{{#price}}{{materialPrice}}{{/price}}</td>
+                        <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
                         <td class="text-center">{{materialCount}}</td>
                     </tr>
                     {{/listData}}

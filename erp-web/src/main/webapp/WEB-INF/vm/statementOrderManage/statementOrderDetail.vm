@@ -16,7 +16,7 @@
         #parse("layout/topbar.vm")
         <section id="content" class="animated fadeIn">
             <section id="content" class="animated fadeIn">
-                <form class="" id="statementOrderDetailForm">
+                <div class="" id="statementOrderDetailForm">
                     <div class="panel panel-primary panel-border top mb15">
                         <div class="panel-body">
                             <div class="row">
@@ -34,6 +34,19 @@
                                         {{/acitonButtons}}
                                     </script>
                                     <div class="btn-group" id="actionButtons"></div>
+
+                                    <script type="text/html" id="exportButtonsTpl">
+                                        {{#exportButtons}}
+                                        <div style="display: inline-block">
+                                            <form action="${ctx}{{menuUrl}}exportExcel/exportStatementOrderDetail" method="post" id="exportForm" target="exportFrame">
+                                                <input type="hidden" name="statementOrderNo" value="{{statementOrderNo}}">
+                                                <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
+                                            </form>
+                                            <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
+                                        </div>
+                                        {{/exportButtons}}
+                                    </script>
+                                    <div class="btn-group" id="exportButton"></div>
                                 </div>
                             </div>
                         </div>
@@ -206,7 +219,7 @@
                         </div>
                     </div>
 
-                </form>
+                </div>
             </section>
         </section>
     </section>

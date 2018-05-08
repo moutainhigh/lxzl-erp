@@ -65,7 +65,7 @@
                 </td>
             </tr>
             <tr class="bg-light affixTr" style="height: 0;">
-                <td colspan="13" class="pn br-n" style="height:0;">
+                <td colspan="14" class="pn br-n" style="height:0;">
                     <div class="panel m15 affixPanel"  style="display: none;">
                         {{#orderMaterialBulkListData}}
                         <div class="panel-heading pn ph8">
