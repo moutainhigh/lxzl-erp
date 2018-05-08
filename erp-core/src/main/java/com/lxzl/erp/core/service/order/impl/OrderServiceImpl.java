@@ -128,14 +128,10 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setOrderSellerId(customerDO.getOwner());
 
         //添加客户的结算时间（天）
-        Date rentStartTime = order.getRentStartTime();
-        Integer statementDate = customerDO.getStatementDate();
-
-        //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
+//        Date rentStartTime = order.getRentStartTime();
 
         //获取
-        orderDO.setStatementDate(statementDays);
+        orderDO.setStatementDate(customerDO.getStatementDate());
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
         orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         orderDO.setCreateUser(loginUser.getUserId().toString());
@@ -240,12 +236,8 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         //添加客户的结算时间（天）
-        Date rentStartTime = order.getRentStartTime();
-        Integer statementDate = customerDO.getStatementDate();
-
-        //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
-        orderDO.setStatementDate(statementDays);
+//        Date rentStartTime = order.getRentStartTime();
+        orderDO.setStatementDate(customerDO.getStatementDate());
 
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
