@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
+import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -31,6 +32,7 @@ import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
+import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
@@ -1040,7 +1042,8 @@ public class OrderServiceImpl implements OrderService {
             return result;
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
-        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+        //非超级管理员，不能处理已支付的订单
+        if (!userSupport.isSuperUser()&&(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1079,6 +1082,33 @@ public class OrderServiceImpl implements OrderService {
             }
             statementOrderSupport.reStatement(orderDO,currentTime);
         }
+        //超级管理员处理已支付的订单
+        BigDecimal paidAmount = BigDecimal.ZERO;
+        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                //计算所有已支付金额
+                paidAmount = BigDecimalUtil.addAll(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailOtherPaidAmount(),
+                        statementOrderDetailDO.getStatementDetailRentPaidAmount(),statementOrderDetailDO.getStatementDetailOverduePaidAmount(),
+                        statementOrderDetailDO.getStatementDetailPenaltyPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+                //减去已冲正金额
+                paidAmount = BigDecimalUtil.sub(paidAmount,statementOrderDetailDO.getStatementDetailCorrectAmount());
+            }
+            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
+                //该笔金额加款到客户余额
+                ManualChargeParam manualChargeParam = new ManualChargeParam();
+                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
+                manualChargeParam.setChargeAmount(paidAmount);
+                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
+                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    result.setErrorCode(rechargeResult.getErrorCode());
+                    return result;
+                } 
+            }
+        }
+
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
@@ -3082,4 +3112,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CouponSupport couponSupport;
+
+    @Autowired
+    private PaymentService paymentService;
 }
