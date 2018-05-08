@@ -56,7 +56,6 @@
                         <th>送货日期</th>
                         <th>客户</th>
                         <th>商品名</th>
-                        <th>在租数量</th>
                         <th>订单总价</th>
                         <th>支付状态</th>
                         <th>订单状态</th>
@@ -82,7 +81,6 @@
                         <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
                         <td>{{buyerCustomerName}}</td>
                         <td>{{orderItemName}}</td>
-                        <td>{{rentingProductCount}}</td>
                         <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                         <td>
                             <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
@@ -153,6 +151,7 @@
                                                     <th>编号</th>
                                                     <th>商品参数（SKU）</th>
                                                     <th>数量</th>
+                                                    <th>在租数量</th>
                                                     <th>选择数量</th>
                                                     <th>备注</th>
                                                 </tr>
@@ -170,6 +169,7 @@
                                                     <td>{{productNumber}}</td>
                                                     <td>{{propertiesToStr}}</td>
                                                     <td>{{productCount}}</td>
+                                                    <td>{{rentingProductCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
                                                         <label class="field prepend-icon mw200">
@@ -186,7 +186,7 @@
                                                 {{/productList}}
                                                 {{^productList}}
                                                 <tr >
-                                                    <td colspan="5" class="text-center">无商品项</td>
+                                                    <td colspan="8" class="text-center">无商品项</td>
                                                 </tr>
                                                 {{/productList}}
                                                 </tbody>
@@ -204,6 +204,7 @@
                                                     <th>配件参数（SKU）</th>
                                                     <th>编号</th>
                                                     <th>数量</th>
+                                                    <th>在租数量</th>
                                                     <th>备注</th>
                                                 </tr>
                                                 </thead>
@@ -220,6 +221,7 @@
                                                     <td>{{propertiesToStr}}</td>
                                                     <td>{{fNumber}}</td>
                                                     <td>{{materialCount}}</td>
+                                                    <td>{{rentingMaterialCount}}</td>
                                                     <td>
                                                         <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
                                                         <label class="field prepend-icon mw200">
@@ -236,7 +238,7 @@
                                                 {{/materialList}}
                                                 {{^materialList}}
                                                 <tr>
-                                                    <td colspan="5" class="text-center">无配件项</td>
+                                                    <td colspan="7" class="text-center">无配件项</td>
                                                 </tr>
                                                 {{/materialList}}
                                                 </tbody>
