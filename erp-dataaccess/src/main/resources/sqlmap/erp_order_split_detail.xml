@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.order.OrderSplitDetailMapper">
+
+    <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderSplitDetailDO" id="OrderSplitDetailDO">
+        <id column="id" property="id"/>
+        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="order_item_type" jdbcType="INTEGER" property="orderItemType" />
+        <result column="order_item_refer_id" jdbcType="INTEGER" property="orderItemReferId" />
+        <result column="split_count" jdbcType="INTEGER" property="splitCount" />
+        <result column="is_peer" jdbcType="INTEGER" property="isPeer" />
+        <result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId" />
+        <result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName" />
+        <result column="data_status" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+    </resultMap>
+
+    <sql id="column_List">
+        eosd.id as id, eosd.order_id as order_id, eosd.order_no as order_no, eosd.order_item_type as order_item_type, eosd.order_item_refer_id as order_item_refer_id,
+        eosd.split_count as split_count, eosd.is_peer as is_peer, eosd.delivery_sub_company_id as delivery_sub_company_id, eosd.delivery_sub_company_name as delivery_sub_company_name,
+        eosd.data_status as data_status, eosd.remark as remark, eosd.create_time as create_time, eosd.create_user as create_user, eosd.update_time as update_time, eosd.update_user as update_user
+    </sql>
+
+    <select id="findById" resultMap="OrderSplitDetailDO" parameterType="java.lang.Integer">
+        select <include refid="column_List"/> from erp_order_split_detail as eosd where id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <sql id="set_column_sql">
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId, jdbcType=INTEGER},
+            </if>
+            <if test="orderNo != null">
+                order_no = #{orderNo, jdbcType=VARCHAR},
+            </if>
+            <if test="orderItemType != null">
+                order_item_type = #{orderItemType, jdbcType=INTEGER},
+            </if>
+            <if test="orderItemReferId != null">
+                order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER},
+            </if>
+            <if test="splitCount != null">
+                split_count = #{splitCount, jdbcType=INTEGER},
+            </if>
+            <if test="isPeer != null">
+                is_peer = #{isPeer, jdbcType=INTEGER},
+            </if>
+            <if test="deliverySubCompanyId != null">
+                delivery_sub_company_id = #{deliverySubCompanyId, jdbcType=INTEGER},
+            </if>
+            <if test="deliverySubCompanyName != null">
+                delivery_sub_company_name = #{deliverySubCompanyName, jdbcType=VARCHAR},
+            </if>
+            <if test="dataStatus != null">
+                data_status = #{dataStatus, jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser, jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser, jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderSplitDetailDO">
+        update erp_order_split_detail
+        <include refid="set_column_sql"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+    <insert id="save" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.lxzl.erp.dataaccess.domain.order.OrderSplitDetailDO">
+        INSERT INTO erp_order_split_detail
+        <include refid="set_column_sql"/>
+    </insert>
+
+    <select id="findOrderSplitDetailCountByParams" resultType="java.lang.Integer" parameterType="map">
+        select count(eop.id)
+        from erp_order_split_detail eosd
+        <where>
+            <if test="maps.orderSplitQueryParam.orderId != null">
+                and eosd.order_id = #{maps.orderSplitQueryParam.orderId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderSplitQueryParam.orderNo != null">
+                and eosd.order_no = #{maps.orderSplitQueryParam.orderNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.orderSplitQueryParam.orderItemType != null">
+                and eosd.order_item_type = #{maps.orderSplitQueryParam.orderItemType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderSplitQueryParam.orderItemReferId != null">
+                and eosd.order_item_refer_id = #{maps.orderSplitQueryParam.orderItemReferId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and eosd.data_status = 1
+            </if>
+        </where>
+    </select>
+    <select id="findOrderSplitDetailByParams" resultMap="OrderSplitDetailDO" parameterType="map">
+        select
+        <include refid="column_List"/>
+        from erp_order_split_detail eosd
+        <where>
+            <if test="maps.orderSplitQueryParam.orderId != null">
+                and eosd.order_id = #{maps.orderSplitQueryParam.orderId, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderSplitQueryParam.orderNo != null">
+                and eosd.order_no = #{maps.orderSplitQueryParam.orderNo, jdbcType=VARCHAR}
+            </if>
+            <if test="maps.orderSplitQueryParam.orderItemType != null">
+                and eosd.order_item_type = #{maps.orderSplitQueryParam.orderItemType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderSplitQueryParam.orderItemReferId != null">
+                and eosd.order_item_refer_id = #{maps.orderSplitQueryParam.orderItemReferId, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                and eosd.data_status = 1
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
+    </select>
+</mapper>
