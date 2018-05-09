@@ -2847,6 +2847,35 @@ public class StatementServiceImpl implements StatementService {
             }
             firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, unitAmount, itemCount);
         }
+        //如果是自然日结算，并且是按月算的
+        if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementDays)&&
+                OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
+            //获取2月1号
+            Calendar c = Calendar.getInstance();
+            c.setTime(rentStartTime);
+            c.set(Calendar.MONTH,1);
+            c.set(Calendar.DAY_OF_MONTH,1);
+            //如果是闰年
+            if(DateUtil.isLeapYesr(rentStartTime)){
+                //1.30 ,1.31日不要钱，例如1.30-2.29日按一个月算钱
+                if(rentStartTimeCalendar.get(Calendar.MONTH)==0){
+                    if(rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH)==30||rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH)==31){
+                        firstPhaseAmount = amountSupport.calculateRentAmount(c.getTime(), statementEndTime, unitAmount, itemCount);
+                    }
+                }
+            }else{
+                //如果不是闰年
+                //1.29 ,1.30 ,1.31日不要钱，例如1.29-2.28日按一个月算钱
+                if(rentStartTimeCalendar.get(Calendar.MONTH)==0){
+                    if(rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH)==29||rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH)==30||rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH)==31){
+                        firstPhaseAmount = amountSupport.calculateRentAmount(c.getTime(), statementEndTime, unitAmount, itemCount);
+                    }
+                }
+            }
+
+        }
+
+
         firstPhaseAmount = BigDecimalUtil.round(firstPhaseAmount, 0);
         // 先不考虑保险
         /*BigDecimal insuranceTotalAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, BigDecimalUtil.mul(insuranceAmount, new BigDecimal(itemCount)));
