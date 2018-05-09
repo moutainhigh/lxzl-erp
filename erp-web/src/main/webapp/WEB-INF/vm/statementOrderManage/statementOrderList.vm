@@ -30,7 +30,6 @@
                                     </a>
                                     {{/acitonCommonButtons}}
                                 </script>
-
                                 <div class="btn-group" id="actionCommonButtons"></div>
                             </div>
                             <div class="col-md-9 text-right">

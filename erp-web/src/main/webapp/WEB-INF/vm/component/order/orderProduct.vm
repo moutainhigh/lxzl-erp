@@ -67,7 +67,7 @@
                 </td>
 
                 <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-                <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                 <td class="text-right">
                     <div class="btn-group text-right">
                         <a href="#" type="button" class="btn btn-default btn-xs viewAffix" >查看配货信息</a>
@@ -75,7 +75,7 @@
                 </td>
             </tr>
             <tr class="bg-light affixTr" style="height: 0;">
-                <td colspan="14" class="pn br-n" style="height:0;">
+                <td colspan="15" class="pn br-n" style="height:0;">
                     <div class="panel m15 affixPanel"  style="display: none;">
                         <div class="panel-heading pn ph10">
                             <span>已配设备：共配 {{orderProductEquipmentListCount}} 件</span>

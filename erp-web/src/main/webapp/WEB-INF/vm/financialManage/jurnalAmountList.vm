@@ -28,6 +28,12 @@
                                 <a href="javascript:;" class="btn btn-primary btn-sm designateBtn" title="批量指派">
                                     <i class="fa fa-tag"></i> 批量指派
                                 </a>
+                                {{/acitonCommonButtons}}
+                            </script>
+                            <div class="btn-group" id="actionCommonButtons"></div>
+
+                            <script type="text/html" id="exportButtonsTpl">
+                                {{#exportButtons}}
                                 <div style="display: inline-block">
                                     <form action="${ctx}{{menuUrl}}exportExcel/exportPageBankSlipDetail" method="post" id="exportForm" target="exportFrame">
                                         <input type="hidden" name="pageSize" value="1000000000">
@@ -42,10 +48,9 @@
                                     </form>
                                     <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
                                 </div>
-                                {{/acitonCommonButtons}}
+                                {{/exportButtons}}
                             </script>
-
-                            <div class="btn-group" id="actionCommonButtons"></div>
+                            <div class="btn-group" id="exportButton"></div>
                         </div>
                         <div class="pull-right mr10 text-right">
                             <form id="searchForm" class="form-horizontal">
@@ -58,9 +63,14 @@
                                         <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
                                     </div>
                                 </div>
+                                <div class="field form-group pull-right">
+                                    <div class="input-group">
+                                        <input type="hidden" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                    </div>
+                                </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                        <input type="text" name="tradeSerialNo" id="tradeSerialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="交易流水号">
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10">
@@ -88,14 +98,14 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-##                                {{#hasCommonActionButtons}}
+                                {{#hasCommonActionButtons}}
                                 <th>
                                     <label class="option block mn">
                                         <input type="checkbox" name="checkAll" value="">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </th>
-##                                {{/hasCommonActionButtons}}
+                               {{/hasCommonActionButtons}}
                                 <th>资金流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
@@ -119,14 +129,14 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-##                                {{#hasCommonActionButtons}}
+                                {{#hasCommonActionButtons}}
                                 <td>
                                     <label class="option block mn">
                                         <input type="checkbox" name="checkItem" value="{{bankSlipDetailId}}">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </td>
-##                                {{/hasCommonActionButtons}}
+                                {{/hasCommonActionButtons}}
                                 <td>{{bankSlipId}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>

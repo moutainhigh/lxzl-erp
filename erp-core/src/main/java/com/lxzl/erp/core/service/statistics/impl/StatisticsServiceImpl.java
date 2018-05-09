@@ -470,13 +470,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         // 格式化查询时间
         Date startTime = statisticsSalesmanPageParam.getStartTime();
-        Calendar ca = Calendar.getInstance();
-        ca.setTime(startTime);// someDate 为你要获取的那个月的时间
-        ca.set(Calendar.DAY_OF_MONTH, 1);
-        Date start = ca.getTime(); // 当月第一天
-        ca.add(Calendar.MONTH, 1);
-        ca.add(Calendar.DAY_OF_MONTH, -1);
-        Date end = ca.getTime(); // 当月最后一天
+        Date start = DateUtil.getStartMonthDate(startTime);
+        Date end = DateUtil.getEndMonthDate(startTime);
         statisticsSalesmanPageParam.setStartTime(start);
         statisticsSalesmanPageParam.setEndTime(end);
 
@@ -490,32 +485,32 @@ public class StatisticsServiceImpl implements StatisticsService {
         statisticsSalesman.setTotalReceive(statisticsSalesman.getTotalAwaitReceivable().add(statisticsSalesman.getTotalIncome()));
 
         // 查询以业务员，分公司分组的初步数据(主数据)
-        List<StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoList = statisticsMapper.querySalesmanDetailTwo(maps);
-        for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
-            statisticsSalesmanDetailTwo.setReceive(statisticsSalesmanDetailTwo.getAwaitReceivable().add(statisticsSalesmanDetailTwo.getIncome()));
+        List<StatisticsSalesmanDetail> statisticsSalesmanDetailList = statisticsMapper.querySalesmanDetail(maps);
+        for (StatisticsSalesmanDetail statisticsSalesmanDetail : statisticsSalesmanDetailList) {
+            statisticsSalesmanDetail.setReceive(statisticsSalesmanDetail.getAwaitReceivable().add(statisticsSalesmanDetail.getIncome()));
         }
         // 装换为salesmanId-subCompnayId为key的map
-        Map<String, StatisticsSalesmanDetailTwo> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailTwoList, "salesmanId", "subCompanyId", "rentLengthType");
+        Map<String, StatisticsSalesmanDetail> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailList, "salesmanId", "subCompanyId", "rentLengthType");
 
 
-        for (StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo : statisticsSalesmanDetailTwoList) {
-            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwo.getRentLengthType()) {
-                statisticsSalesmanDetailTwo.setPureIncrease(BigDecimal.valueOf(0));
+        for (StatisticsSalesmanDetail statisticsSalesmanDetail : statisticsSalesmanDetailList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetail.getRentLengthType()) {
+                statisticsSalesmanDetail.setPureIncrease(BigDecimal.valueOf(0));
             }
         }
 
         // 查询扩展数据来计算净增台数
-        List<StatisticsSalesmanDetailTwoExtend> statisticsSalesmanDetailTwoExtendList = statisticsMapper.querySalesmanDetailTwoExtend(maps);
+        List<StatisticsSalesmanDetailExtend> statisticsSalesmanDetailExtendList = statisticsMapper.querySalesmanDetailExtend(maps);
         List<StatisticsSalesmanReturnOrder> statisticsSalesmanReturnOrderList = statisticsMapper.querySalesmanReturnOrder(maps);
 
         // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中，只算长租
-        for (StatisticsSalesmanDetailTwoExtend statisticsSalesmanDetailTwoExtend : statisticsSalesmanDetailTwoExtendList) {
-            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailTwoExtend.getRentLengthType()) {
-                String key = statisticsSalesmanDetailTwoExtend.getSalesmanId() + "-" + statisticsSalesmanDetailTwoExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailTwoExtend.getRentLengthType();
-                StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
-                if (statisticsSalesmanDetailTwo != null) {
-                    BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailTwoExtend);
-                    statisticsSalesmanDetailTwo.setPureIncrease(statisticsSalesmanDetailTwo.getPureIncrease().add(increaseProduct));
+        for (StatisticsSalesmanDetailExtend statisticsSalesmanDetailExtend : statisticsSalesmanDetailExtendList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailExtend.getRentLengthType()) {
+                String key = statisticsSalesmanDetailExtend.getSalesmanId() + "-" + statisticsSalesmanDetailExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailExtend.getRentLengthType();
+                StatisticsSalesmanDetail statisticsSalesmanDetail = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetail != null) {
+                    BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailExtend);
+                    statisticsSalesmanDetail.setPureIncrease(statisticsSalesmanDetail.getPureIncrease().add(increaseProduct));
                 }
             }
         }
@@ -524,15 +519,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         for (StatisticsSalesmanReturnOrder statisticsSalesmanReturnOrder : statisticsSalesmanReturnOrderList) {
             if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanReturnOrder.getRentLengthType()) {
                 String key = statisticsSalesmanReturnOrder.getEuId() + "-" + statisticsSalesmanReturnOrder.getEscId() + "-" + statisticsSalesmanReturnOrder.getRentLengthType();
-                StatisticsSalesmanDetailTwo statisticsSalesmanDetailTwo = statisticsSalesmanDetailTwoMap.get(key);
-                if (statisticsSalesmanDetailTwo != null) {
+                StatisticsSalesmanDetail statisticsSalesmanDetail = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetail != null) {
                     BigDecimal returnProduct = calcPureReturn(statisticsSalesmanReturnOrder);
-                    statisticsSalesmanDetailTwo.setPureIncrease(statisticsSalesmanDetailTwo.getPureIncrease().subtract(returnProduct));
+                    statisticsSalesmanDetail.setPureIncrease(statisticsSalesmanDetail.getPureIncrease().subtract(returnProduct));
                 }
             }
         }
 
-        Page<StatisticsSalesmanDetailTwo> page = new Page<>(statisticsSalesmanDetailTwoList, statisticsSalesman.getTotalCount(), statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
+        Page<StatisticsSalesmanDetail> page = new Page<>(statisticsSalesmanDetailList, statisticsSalesman.getTotalCount(), statisticsSalesmanPageParam.getPageNo(), statisticsSalesmanPageParam.getPageSize());
         statisticsSalesman.setStatisticsSalesmanDetailPage(page);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(statisticsSalesman);
@@ -540,27 +535,20 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     // 计算每一订单项的净增台数
-    private BigDecimal calcPureIncrease(StatisticsSalesmanDetailTwoExtend statisticsSalesmanDetailTwoExtend) {
+    private BigDecimal calcPureIncrease(StatisticsSalesmanDetailExtend statisticsSalesmanDetailExtend) {
         // 1. 按商品类型折算为实际台数
-        Double productCount = statisticsSalesmanDetailTwoExtend.getProductCount() * statisticsSalesmanDetailTwoExtend.getProductCountFactor();
+        Double productCount = statisticsSalesmanDetailExtend.getProductCount() * statisticsSalesmanDetailExtend.getProductCountFactor();
         // 2. 计算折扣系数，并算法订单净增数
-        BigDecimal dis = statisticsSalesmanDetailTwoExtend.getProductUnitAmount().divide(statisticsSalesmanDetailTwoExtend.getRentPrice(), 5);
+        BigDecimal dis = statisticsSalesmanDetailExtend.getProductUnitAmount().divide(statisticsSalesmanDetailExtend.getRentPrice(), 5);
         // 折扣系数最大为1
         if (dis.compareTo(BigDecimal.valueOf(1)) > 0) {
             dis = BigDecimal.valueOf(1);
         }
         BigDecimal orderIncreaseProduce = dis.multiply(BigDecimal.valueOf(productCount));
         // 3. 计算属地化
-        BigDecimal performance;
-        Date localizationTime = statisticsSalesmanDetailTwoExtend.getLocalizationTime();
-        Date createTime = statisticsSalesmanDetailTwoExtend.getCreateTime();
-        if (localizationTime == null || createTime == null) {
-            performance = BigDecimal.valueOf(1);
-        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <=3 ) {
-            performance = BigDecimal.valueOf(0.3);
-        } else {
-            performance = BigDecimal.valueOf(0.7);
-        }
+        Date localizationTime = statisticsSalesmanDetailExtend.getLocalizationTime();
+        Date createTime = statisticsSalesmanDetailExtend.getCreateTime();
+        BigDecimal performance = caculateLocalizationFactor(localizationTime, createTime);
 
         // 4. 计算订单净增和属地化
         BigDecimal result = performance.multiply(orderIncreaseProduce);
@@ -574,17 +562,18 @@ public class StatisticsServiceImpl implements StatisticsService {
             return BigDecimal.valueOf(0);
         }
 
+        // 如果有客户变更记录，且在退货时间3个月内，则不计算此退货单
+        if (statisticsSalesmanReturnOrder.getCustomerUpdateTime() != null && statisticsSalesmanReturnOrder.getReturnTime() != null) {
+            int months = DateUtil.getMonthSpace(statisticsSalesmanReturnOrder.getCustomerUpdateTime(), statisticsSalesmanReturnOrder.getReturnTime());
+            if (months < 3) { // 3个月以内
+                return BigDecimal.valueOf(0);
+            }
+        }
+
         // 1. 计算属地化
-        BigDecimal performance;
         Date localizationTime = statisticsSalesmanReturnOrder.getLocalizationTime();
         Date createTime = statisticsSalesmanReturnOrder.getCreateTime();
-        if (localizationTime == null || createTime == null) {
-            performance = BigDecimal.valueOf(1);
-        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <=3 ) {
-            performance = BigDecimal.valueOf(0.3);
-        } else {
-            performance = BigDecimal.valueOf(0.7);
-        }
+        BigDecimal performance = caculateLocalizationFactor(localizationTime, createTime);
 
         BigDecimal returnProduct = BigDecimal.valueOf(0);
 
@@ -610,6 +599,19 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 4. 计算订单净增和属地化
         BigDecimal result = performance.multiply(returnProduct);
         return result;
+    }
+
+    // 计算业务员提成净增台数的属地化系数
+    private BigDecimal caculateLocalizationFactor(Date localizationTime, Date createTime) {
+        BigDecimal performance;
+        if (localizationTime == null || createTime == null) {
+            performance = BigDecimal.valueOf(1);
+        } else if (DateUtil.getMonthSpace(localizationTime, createTime) <3 ) {
+            performance = BigDecimal.valueOf(0.3);
+        } else {
+            performance = BigDecimal.valueOf(0.7);
+        }
+        return performance;
     }
 
     @Override

@@ -17,7 +17,11 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,7 +69,7 @@ public class ExcelExportSupport<T> {
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         hssfWorkbook.write(outputStream);
@@ -86,7 +90,7 @@ public class ExcelExportSupport<T> {
      * @Date : Created in 2018/4/14 17:55
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
      */
-    public static <T> HSSFWorkbook getXSSFWorkbook(List<T> list, ExcelExportConfig config, String sheetName) throws Exception {
+    public static <T> HSSFWorkbook getXSSFWorkbook(T t, ExcelExportConfig config, String sheetName) throws Exception {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
         HSSFRow hssfRow = hssSheet.createRow(0);
@@ -98,19 +102,16 @@ public class ExcelExportSupport<T> {
             hssSheet.setColumnWidth(i, colConfig.getWidth());
         }
 
-        for (int i = 0; i < list.size(); i++) {
-            HSSFRow newXssfRow = hssSheet.createRow(i + 1);
-            Object o = list.get(i);
-            for (int j = 0; j < colConfigList.size(); j++) {
-                ColConfig colConfig = colConfigList.get(j);
-                //开始set值到表里面
-                String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
-                Method method = o.getClass().getMethod(methodName);
-                Object value = method.invoke(o);
-                hssSheet.setColumnWidth(j, colConfig.getWidth());
-                Cell cell = newXssfRow.createCell(j);
-                cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
-            }
+        HSSFRow newXssfRow = hssSheet.createRow(1);
+        for (int j = 0; j < colConfigList.size(); j++) {
+            ColConfig colConfig = colConfigList.get(j);
+            //开始set值到表里面
+            String methodName = "get" + StringUtil.toUpperCaseFirstChar(colConfig.getFieldName());
+            Method method = t.getClass().getMethod(methodName);
+            Object value = method.invoke(t);
+            hssSheet.setColumnWidth(j, colConfig.getWidth());
+            Cell cell = newXssfRow.createCell(j);
+            cell.setCellValue(String.valueOf(colConfig.getExcelExportView().view(value)));  //"充值订单id"
         }
         return hssfWorkbook;
     }
@@ -152,7 +153,7 @@ public class ExcelExportSupport<T> {
         }
 
         response.reset();
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xls");
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
         response.setContentType("application/json;charset=utf-8");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         hssfWorkbook.write(outputStream);
@@ -164,5 +165,31 @@ public class ExcelExportSupport<T> {
         return serviceResult;
     }
 
+    /**
+     * 乱码转换
+     *
+     * @param : param
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/5/4 17:46
+     * @Return : java.lang.String
+     */
+    public static String decode(String param) {
+        if (param != null) {
+            try {
+                return URLDecoder.decode(param, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
+
+
+    public static String formatFileName(String fileName) {
+        Date date = new Date();
+        String now = new SimpleDateFormat("yyyyMMdd").format(date);
+        return fileName + "__" + now;
+    }
 
 }

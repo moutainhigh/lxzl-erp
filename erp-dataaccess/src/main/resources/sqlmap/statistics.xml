@@ -963,7 +963,7 @@ ORDER BY esc.data_order DESC
         count(esod.id) esod_ok_count
         FROM erp_statement_order_detail esod
         LEFT JOIN erp_order eo on esod.order_id = eo.id
-        where esod.statement_detail_status = 8 and esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
+        where esod.statement_detail_status = 8 and esod.statement_detail_phase = 1 and esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
         group by eo.id
         ) deal_esod on deal_esod.id = eo.id
         where deal_esod.esod_ok_count > 0
@@ -981,12 +981,12 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo on esod.order_id = eo.id
         group by eo.order_seller_id, eo.order_sub_company_id, eo.rent_length_type
         ) deal_income on deal_income.eu_id = eu.id and deal_income.esc_id = esc.id and deal_income.rent_length_type = rlt.rent_length_type
-        where esc.id is not null and eu.id is not null and ed.department_type = 300010
+        where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config)
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND rlt.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
         </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND esc.id = #{maps.incomeQueryParam.subCompanyId}
+            AND esc.id = #{maps.salesmanQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
@@ -995,7 +995,7 @@ ORDER BY esc.data_order DESC
         ) distinct_data
     </select>
 
-    <resultMap id="SalesmanDetailTwo" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailTwo">
+    <resultMap id="SalesmanDetail" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetail">
         <result column="salesman_id" jdbcType="INTEGER" property="salesmanId"/>
         <result column="salesman_name" jdbcType="VARCHAR" property="salesmanName"/>
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
@@ -1008,7 +1008,7 @@ ORDER BY esc.data_order DESC
         <result column="income" jdbcType="DECIMAL" property="income"/>
     </resultMap>
 
-    <select id="querySalesmanDetailTwo" resultMap="SalesmanDetailTwo" parameterType="map">
+    <select id="querySalesmanDetail" resultMap="SalesmanDetail" parameterType="map">
         select
         eu.id salesman_id,
         eu.real_name salesman_name,
@@ -1047,7 +1047,7 @@ ORDER BY esc.data_order DESC
         count(esod.id) esod_ok_count
         FROM erp_statement_order_detail esod
         LEFT JOIN erp_order eo on esod.order_id = eo.id
-        where esod.statement_detail_status = 8 and esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
+        where esod.statement_detail_status = 8 and esod.statement_detail_phase = 1 and esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
         group by eo.id
         ) deal_esod on deal_esod.id = eo.id
         where deal_esod.esod_ok_count > 0
@@ -1065,12 +1065,12 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo on esod.order_id = eo.id
         group by eo.order_seller_id, eo.order_sub_company_id, eo.rent_length_type
         ) deal_income on deal_income.eu_id = eu.id and deal_income.esc_id = esc.id and deal_income.rent_length_type = rlt.rent_length_type
-        where esc.id is not null and eu.id is not null and ed.department_type = 300010
+        where esc.id is not null and eu.id is not null and ed.department_type in (select department_type from erp_business_commission_config)
         <if test="maps.salesmanQueryParam.rentLengthType!=null">
             AND rlt.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
         </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND esc.id = #{maps.incomeQueryParam.subCompanyId}
+            AND esc.id = #{maps.salesmanQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
@@ -1079,7 +1079,7 @@ ORDER BY esc.data_order DESC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <resultMap id="SalesmanDetailTwoExtend" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailTwoExtend">
+    <resultMap id="SalesmanDetailExtend" type="com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanDetailExtend">
         <result column="salesman_id" jdbcType="INTEGER" property="salesmanId"/>
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
         <result column="eop_id" jdbcType="INTEGER" property="eopId" />
@@ -1095,7 +1095,7 @@ ORDER BY esc.data_order DESC
         <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
-    <select id="querySalesmanDetailTwoExtend" resultMap="SalesmanDetailTwoExtend" parameterType="map">
+    <select id="querySalesmanDetailExtend" resultMap="SalesmanDetailExtend" parameterType="map">
         select
         eo.order_seller_id salesman_id,
         eo.order_sub_company_id sub_company_id,
@@ -1124,7 +1124,7 @@ ORDER BY esc.data_order DESC
             AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
         </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.salesmanQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )
@@ -1144,6 +1144,7 @@ ORDER BY esc.data_order DESC
         <result column="return_type" jdbcType="INTEGER" property="returnType" />
         <result column="rent_start_time" jdbcType="DATE" property="rentStartTime" />
         <result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+        <result column="customer_update_time" jdbcType="DATE" property="customerUpdateTime" />
         <result column="product_count_factor" jdbcType="DOUBLE" property="productCountFactor" />
     </resultMap>
 
@@ -1161,6 +1162,7 @@ ORDER BY esc.data_order DESC
         eop.rent_type,
         eo.rent_start_time,
         eo.rent_time_length,
+        MAX(ecul.create_time) customer_update_time,
         CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
         from erp_k3_return_order_detail k3rod
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
@@ -1172,14 +1174,12 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_product ep on eps.product_id = ep.id and ep.data_status = 1
         LEFT JOIN erp_product_category epc on ep.category_id = epc.id and epc.data_status = 1
         LEFT JOIN erp_user eu on eo.order_seller_id = eu.id
+        LEFT JOIN erp_customer_update_log ecul on eo.buyer_customer_id = ecul.customer_id and eo.order_seller_id = ecul.`owner` and ecul.is_owner_update_flag = 1
         where k3rod.data_status = 1 and eop.rent_length_type = 2
         and eop.id is not null and esod.statement_detail_status = 8 and esod.statement_detail_phase =1
         AND esod.statement_detail_paid_time >= #{maps.salesmanQueryParam.startTime} AND #{maps.salesmanQueryParam.endTime} > esod.statement_detail_paid_time
-        <if test="maps.salesmanQueryParam.rentLengthType!=null">
-            AND eop.rent_length_type = #{maps.salesmanQueryParam.rentLengthType}
-        </if>
         <if test="maps.salesmanQueryParam.subCompanyId!=null">
-            AND eo.order_sub_company_id = #{maps.incomeQueryParam.subCompanyId}
+            AND eo.order_sub_company_id = #{maps.salesmanQueryParam.subCompanyId}
         </if>
         <if test="maps.salesmanQueryParam.salesmanName!=null&amp;&amp; maps.salesmanQueryParam.salesmanName != ''">
             AND eu.real_name LIKE CONCAT('%','${maps.salesmanQueryParam.salesmanName}','%' )

@@ -22,6 +22,23 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date slipMonth;   //月份
     private String otherSideAccountNo;   //对方账号
+    private String tradeSerialNo;   //交易流水号
+
+    public Integer getBankSlipId() {
+        return bankSlipId;
+    }
+
+    public void setBankSlipId(Integer bankSlipId) {
+        this.bankSlipId = bankSlipId;
+    }
+
+    public String getTradeSerialNo() {
+        return tradeSerialNo;
+    }
+
+    public void setTradeSerialNo(String tradeSerialNo) {
+        this.tradeSerialNo = tradeSerialNo;
+    }
 
     public String getOtherSideAccountNo() {
         return otherSideAccountNo;
@@ -45,14 +62,6 @@ public class BankSlipDetailQueryParam extends BasePageParam {
 
     public void setIsLocalization(Integer isLocalization) {
         this.isLocalization = isLocalization;
-    }
-
-    public Integer getBankSlipId() {
-        return bankSlipId;
-    }
-
-    public void setBankSlipId(Integer bankSlipId) {
-        this.bankSlipId = bankSlipId;
     }
 
     public String getPayerName() {

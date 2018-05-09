@@ -23,6 +23,8 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
+    private Date startRentStratTime;
+    private Date endRentStratTime;
 
 
     private List<Integer> passiveUserIdList;
@@ -197,5 +199,21 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
 
     public void setIsRecycleBin(Integer isRecycleBin) {
         this.isRecycleBin = isRecycleBin;
+    }
+
+    public Date getStartRentStratTime() {
+        return startRentStratTime;
+    }
+
+    public void setStartRentStratTime(Date startRentStratTime) {
+        this.startRentStratTime = startRentStratTime;
+    }
+
+    public Date getEndRentStratTime() {
+        return endRentStratTime;
+    }
+
+    public void setEndRentStratTime(Date endRentStratTime) {
+        this.endRentStratTime = endRentStratTime;
     }
 }

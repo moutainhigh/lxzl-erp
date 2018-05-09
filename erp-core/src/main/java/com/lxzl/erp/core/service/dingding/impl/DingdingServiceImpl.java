@@ -90,9 +90,9 @@ public class DingdingServiceImpl implements DingdingService {
     private CustomerService customerService;
     @Autowired
     private WorkflowService workflowService;
-    // 申请审批实例的线程
+    /** 申请审批实例的线程 */
     private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10);
-    // 注册用户的线程
+    /** 注册用户的线程 */
     private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10);
     @Override
     public String sendUserGroupMessage(String userGroupUrl, DingdingSendTextMessageRequest request) {
