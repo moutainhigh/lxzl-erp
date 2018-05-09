@@ -2814,10 +2814,7 @@ public class StatementServiceImpl implements StatementService {
         Calendar rentStartTimeCalendar = Calendar.getInstance();
         rentStartTimeCalendar.setTime(rentStartTime);
         // 如果结算日为31日，并且租期在10日前，交到前一个月的即可
-        if(statementMode==null){
-            statementMode = StatementMode.STATEMENT_MONTH_END;
-        }
-        if (StatementMode.STATEMENT_MONTH_END.equals(statementMode) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
+        if (StatementMode.STATEMENT_MONTH_END.equals(statementDays) && rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH) <= 10) {
             paymentCycle--;
         }
         Date statementEndTime = com.lxzl.se.common.util.date.DateUtil.monthInterval(rentStartTime, paymentCycle);
@@ -2854,6 +2851,9 @@ public class StatementServiceImpl implements StatementService {
             firstPhaseAmount = amountSupport.calculateRentAmount(rentStartTime, statementEndTime, unitAmount, itemCount);
         }
         //如果是自然日结算，并且是按月算的
+        if(statementMode==null){
+            statementMode = StatementMode.STATEMENT_MONTH_END;
+        }
         if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementMode)&&
                 OrderRentType.RENT_TYPE_MONTH.equals(rentType)) {
             //获取2月1号
