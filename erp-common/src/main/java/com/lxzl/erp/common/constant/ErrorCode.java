@@ -891,6 +891,12 @@ public class ErrorCode {
     public static final String PRINT_LOG_NOT_EXISTS = "J220000003";
     public static final String PRINT_LOG_REFER_TYPE_ERROR = "J220000004";
 
+    public static final String ORDER_SPLIT_ORDER_ITEM_TYPE_NOT_NULL = "J230000001";
+    public static final String ORDER_SPLIT_ORDER_ITEM_REFER_ID_NOT_NULL = "J230000002";
+    public static final String ORDER_SPLIT_SPLIT_COUNT_NOT_NULL = "J230000003";
+    public static final String ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST = "J230000004";
+    public static final String ORDER_SPLIT_ORDER_ID_NOT_EXIST = "J230000005";
+    public static final String ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST = "J230000006";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1772,6 +1778,13 @@ public class ErrorCode {
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
         MAP.put(PRINT_LOG_NOT_EXISTS, "打印记录不存在");
         MAP.put(PRINT_LOG_REFER_TYPE_ERROR, "关联项类型出错");
+
+        MAP.put(ORDER_SPLIT_ORDER_ITEM_TYPE_NOT_NULL, "订单项商品类型不能为空");
+        MAP.put(ORDER_SPLIT_ORDER_ITEM_REFER_ID_NOT_NULL, "订单项ID不能为空");
+        MAP.put(ORDER_SPLIT_SPLIT_COUNT_NOT_NULL, "订单拆单商品数量不能为空");
+        MAP.put(ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST, "同行调拨或者分公司调拨只能选择一项");
+        MAP.put(ORDER_SPLIT_ORDER_ID_NOT_EXIST, "订单项ID或类型填写错误，无法找到关联订单");
+        MAP.put(ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST, "分公司不存在");
     }
 
 

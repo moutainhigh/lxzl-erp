@@ -966,6 +966,18 @@
         WHERE eo.order_status = #{orderStatus} and eo.data_status=1
     </select>
 
+    <select id="findByOrderItemTypeAndOrderItemReferId" resultMap="OrderDO">
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        <if test="orderItemType == 1">
+            WHERE eo.id = (select order_id from erp_order_product eop where eop.id = #{orderItemReferId, jdbcType=INTEGER})
+        </if>
+        <if test="orderItemType == 2">
+            WHERE eo.id = (select order_id from erp_order_material eom where eom.id = #{orderItemReferId, jdbcType=INTEGER})
+        </if>
+    </select>
+
     <select id="findOrderForReturnCountParam" resultType="java.lang.Integer" parameterType="map">
         SELECT count(eo.id)
         FROM erp_order eo
@@ -1030,6 +1042,5 @@
         </where>
         ORDER BY eo.create_time DESC
         LIMIT #{maps.start},#{maps.pageSize}
-
     </select>
 </mapper>
