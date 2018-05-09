@@ -969,13 +969,23 @@
     <select id="findByOrderItemTypeAndOrderItemReferId" resultMap="OrderDO">
         SELECT
         <include refid="column_List"/>
+        ,<include refid="product_column_List"/>
+        ,<include refid="material_column_List"/>
         FROM erp_order eo
-        <if test="orderItemType == 1">
-            WHERE eo.id = (select order_id from erp_order_product eop where eop.id = #{orderItemReferId, jdbcType=INTEGER})
-        </if>
-        <if test="orderItemType == 2">
-            WHERE eo.id = (select order_id from erp_order_material eom where eom.id = #{orderItemReferId, jdbcType=INTEGER})
-        </if>
+        LEFT JOIN erp_order_product eop on eop.order_id = eo.id
+        LEFT JOIN erp_order_material eom on eom.order_id = eo.id
+        WHERE 1 = 1
+        <choose>
+            <when test="orderItemType == 1">
+                AND eop.id = #{orderItemReferId, jdbcType=INTEGER}
+            </when>
+            <when test="orderItemType == 2">
+                AND eom.id = #{orderItemReferId, jdbcType=INTEGER}
+            </when>
+            <otherwise>
+                AND 1 = 2
+            </otherwise>
+        </choose>
     </select>
 
     <select id="findOrderForReturnCountParam" resultType="java.lang.Integer" parameterType="map">

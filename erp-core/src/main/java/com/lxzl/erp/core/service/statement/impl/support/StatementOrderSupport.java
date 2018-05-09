@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
@@ -128,27 +129,23 @@ public class StatementOrderSupport {
      * @return
      */
     public Integer getCustomerStatementDate(Integer statementDate,Date rentStartTime) {
-        Integer statementDays;
         if (statementDate == null){
             DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-            if (dataDictionaryDO == null) {
-                statementDays = StatementMode.STATEMENT_MONTH_END;
-            } else {
-                statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
-            }
-        }else{
-            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementDate)) {
-                // 如果结算日为按月结算，那么就要自然日来结算
-                Calendar rentStartTimeCalendar = Calendar.getInstance();
-                rentStartTimeCalendar.setTime(rentStartTime);
+            statementDate = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+        }
+        if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementDate)) {
+            // 如果结算日为按月结算，那么就要自然日来结算
+            Calendar rentStartTimeCalendar = Calendar.getInstance();
+            rentStartTimeCalendar.setTime(rentStartTime);
+            //如果是当月第一天
+            if(DateUtil.isSameDay(rentStartTimeCalendar.getTime(),DateUtil.getStartMonthDate(rentStartTimeCalendar.getTime()))){
+                statementDate = StatementMode.STATEMENT_MONTH_END;
+            }else{
                 rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
-                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
-            } else {
-                statementDays = statementDate;
+                statementDate = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
             }
         }
-
-        return statementDays;
+        return statementDate;
     }
 
     /**

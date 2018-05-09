@@ -134,25 +134,10 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
             return null;
         }
-        Integer statementDays;
-        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-        if (dataDictionaryDO == null) {
-            statementDays = StatementMode.STATEMENT_MONTH_END;
-        } else {
-            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
-        }
-        if (customerDO.getStatementDate() != null) {
-            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(customerDO.getStatementDate())) {
-                // 如果结算日为按月结算，那么就要自然日来结算
-                Calendar rentStartTimeCalendar = Calendar.getInstance();
-                rentStartTimeCalendar.setTime(rentStartTime);
-                rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
-                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
-            } else {
-                statementDays = customerDO.getStatementDate();
-            }
-        }
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId());
+
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), rentStartTime);
+        Integer loginUserId =  loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUserId);
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
@@ -215,8 +200,9 @@ public class StatementServiceImpl implements StatementService {
         }
         //统一拿订单结算日
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), rentStartTime);
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
-        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
+        Integer loginUserId =  loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays,loginUserId);
+        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUserId);
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
@@ -262,11 +248,8 @@ public class StatementServiceImpl implements StatementService {
             orderDO.setBuyerCustomerNo(customerDO.getCustomerNo());
         }
         //统一拿订单结算日
-        Integer statementDays = orderDO.getStatementDate();
-        if (statementDays == null) {
-            statementDays = statementOrderSupport.getCustomerStatementDate(customerDO.getStatementDate(), rentStartTime);
-        }
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), rentStartTime);
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId());
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
@@ -3189,7 +3172,6 @@ public class StatementServiceImpl implements StatementService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDO) {
         ServiceResult<String, BigDecimal> result = new ServiceResult<>();
-        //ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
         if (reletOrderDO == null) {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
@@ -3211,11 +3193,9 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         //统一拿订单结算日
-        Integer statementDays = reletOrderDO.getStatementDate();
-        if (statementDays == null) {
-            statementDays = statementOrderSupport.getCustomerStatementDate(customerDO.getStatementDate(), rentStartTime);
-        }
-        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, statementDays, loginUser.getUserId());
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(reletOrderDO.getStatementDate(), rentStartTime);
+        Integer loginUserId =  loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
+        List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateReletStatementDetailList(reletOrderDO, currentTime, statementDays, loginUserId);
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
         // 生成单子后，本次需要付款的金额
