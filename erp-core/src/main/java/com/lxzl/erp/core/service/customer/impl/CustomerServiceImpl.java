@@ -246,7 +246,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         // 添加客户变更记录
         createCustomerUpdateLog(customerDO.getId(), customerDO.getOwner(), customerDO.getUnionUser(), now, 0, 0, null, null);
-
+        paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
@@ -327,7 +327,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         // 添加客户变更记录
         createCustomerUpdateLog(customerDO.getId(), customerDO.getOwner(), customerDO.getUnionUser(), now, 0, 0, null, null);
-
+        paymentService.queryCustomerAccount(customerDO.getCustomerNo());
         webServiceHelper.post(PostK3OperatorType.POST_K3_OPERATOR_TYPE_NULL, PostK3Type.POST_K3_TYPE_CUSTOMER, ConverterUtil.convert(customerDO, Customer.class), true);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(customerDO.getCustomerNo());
