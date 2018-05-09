@@ -48,6 +48,11 @@
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="k3CustomerName" id="k3CustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="K3客户名称">
                                 </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="returnOrderStatus" id="returnOrderStatus"></select>
+                                    </div>
+                                </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
                                     <input type="hidden" name="returnStartTime" id="returnStartTime" />
                                     <input type="hidden" name="returnEndTime" id="returnEndTime" />

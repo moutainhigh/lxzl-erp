@@ -216,7 +216,7 @@ public class ExcelExportConfigGroup {
                 return "";
             }
         }))
-                .addConfig(new ColConfig("tradeTime", "交易日期",5000,DateExcelExportView.getInstance()))
+                .addConfig(new ColConfig("tradeTime", "交易日期",3000,DateExcelExportView.getInstance()))
                 .addConfig(new ColConfig("payerName", "付款人名称",8000))
                 .addConfig(new ColConfig("tradeAmount", "交易金额(元)"))
                 .addConfig(new ColConfig("merchantOrderNo", "商户订单号", 10000))

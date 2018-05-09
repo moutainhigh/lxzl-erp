@@ -40,7 +40,7 @@ public class DateExcelExportView implements ExcelExportView {
     private Object formatDate(Object o) {
         if (o != null) {
             SimpleDateFormat sdf1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy/MM/dd");
             try {
                 return sdf2.format(sdf1.parse(o.toString()));
             } catch (ParseException e) {

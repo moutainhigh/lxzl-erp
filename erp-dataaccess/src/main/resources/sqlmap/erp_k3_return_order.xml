@@ -95,6 +95,9 @@
             <if test="maps.k3ReturnOrderQueryParam.k3CustomerName != null &amp;&amp; maps.k3ReturnOrderQueryParam.k3CustomerName != ''">
                 and ekro.k3_customer_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.k3CustomerName}','%' )
             </if>
+            <if test="maps.k3ReturnOrderQueryParam.returnOrderStatus != null">
+                and ekro.return_order_status = #{maps.k3ReturnOrderQueryParam.returnOrderStatus}
+            </if>
             <if test="maps.k3ReturnOrderQueryParam.returnStartTime != null">
                 <![CDATA[ AND ekro.return_time >= #{maps.k3ReturnOrderQueryParam.returnStartTime} ]]>
             </if>
@@ -126,6 +129,9 @@
             </if>
             <if test="maps.k3ReturnOrderQueryParam.k3CustomerName != null &amp;&amp; maps.k3ReturnOrderQueryParam.k3CustomerName != ''">
                 and ekro.k3_customer_name like CONCAT('%','${maps.k3ReturnOrderQueryParam.k3CustomerName}','%' )
+            </if>
+            <if test="maps.k3ReturnOrderQueryParam.returnOrderStatus != null">
+                and ekro.return_order_status = #{maps.k3ReturnOrderQueryParam.returnOrderStatus}
             </if>
             <if test="maps.k3ReturnOrderQueryParam.returnStartTime != null">
                 <![CDATA[ AND ekro.return_time >= #{maps.k3ReturnOrderQueryParam.returnStartTime} ]]>

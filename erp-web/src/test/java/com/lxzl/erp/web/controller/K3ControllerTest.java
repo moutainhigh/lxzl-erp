@@ -278,6 +278,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryReturnOrder() throws Exception {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
+        param.setReturnOrderStatus(4);
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrder", param);
     }
 
