@@ -23,7 +23,7 @@ public class OrderSplitDetailServiceTest extends BaseUnTransactionalTest {
 	public void testAddOrderSplitDetail() {
 		OrderSplitDetail orderSplitDetail = new OrderSplitDetail();
 		orderSplitDetail.setOrderItemType(1);
-		orderSplitDetail.setOrderItemReferId(26);
+		orderSplitDetail.setOrderItemReferId(2600000);
 		orderSplitDetail.setIsPeer(0);
 		orderSplitDetail.setDeliverySubCompanyId(3);
 		orderSplitDetail.setSplitCount(3);

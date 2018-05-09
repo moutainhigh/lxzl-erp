@@ -1,6 +1,7 @@
 package com.lxzl.erp.core.service.order.impl;
 
 import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.OrderItemType;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.OrderSplitQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.OrderSplitDetail;
@@ -13,6 +14,8 @@ import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderSplitDetailMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderSplitDetailDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +62,23 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
         if (orderDO == null) {
             serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_ORDER_ID_NOT_EXIST);
             return serviceResult;
+        }
+
+        // 校验拆分数量不能大于订单项数量
+        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(orderItemType)) {
+            List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+            OrderProductDO orderProductDO = orderProductDOList.get(0);
+            if (orderProductDO.getProductCount() != null && orderSplitDetail.getSplitCount().compareTo(orderProductDO.getProductCount()) > 0) {
+                serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_SPLIT_COUNT_EXCEED);
+                return serviceResult;
+            }
+        } else if(OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(orderItemType)) {
+            List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+            OrderMaterialDO orderMaterialDO = orderMaterialDOList.get(0);
+            if (orderMaterialDO.getMaterialCount() != null && orderSplitDetail.getSplitCount().compareTo(orderMaterialDO.getMaterialCount()) > 0) {
+                serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_SPLIT_COUNT_EXCEED);
+                return serviceResult;
+            }
         }
         orderSplitDetail.setOrderId(orderDO.getId());
         orderSplitDetail.setOrderNo(orderDO.getOrderNo());

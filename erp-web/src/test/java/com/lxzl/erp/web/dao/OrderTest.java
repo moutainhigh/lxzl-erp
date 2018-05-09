@@ -18,7 +18,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
 	@Test
 	public void testFindByOrderItemTypeAndOrderItemReferId() {
-		OrderDO orderDO = orderMapper.findByOrderItemTypeAndOrderItemReferId(2, 28);
+		OrderDO orderDO = orderMapper.findByOrderItemTypeAndOrderItemReferId(1, 270000000);
 		System.out.println(orderDO);
 	}
 }
