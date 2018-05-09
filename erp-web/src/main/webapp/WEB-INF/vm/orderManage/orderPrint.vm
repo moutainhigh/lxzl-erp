@@ -147,7 +147,6 @@
         <span class="panel-title" style="color:red;"><span class="glyphicon glyphicon-print"></span>打印订单（创建21cm*27.9cm规格：控制面板=>设备和打印机=>选中当前打印机=>调整打印选项=>用户自定义打印纸），打印时候选择创建的规格，并调整打印机。</span>
         <div class="panel-header-menu pull-right mr10">
             <a href="javascript:window.print()" id="printButton" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
-            <a href="javascript:;" id="printButton" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>
     </div>
 </div>
