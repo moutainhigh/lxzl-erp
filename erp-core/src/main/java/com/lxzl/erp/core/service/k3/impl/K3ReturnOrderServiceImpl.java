@@ -728,7 +728,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             } else {
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
-        } catch (Exception e) {
+        } catch (BusinessException e) {
+            throw e;
+        }catch (Exception e) {
             if (k3ReturnOrderDO != null) {
                 logger.error("【K3退货单审核后，业务处理异常】", e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
