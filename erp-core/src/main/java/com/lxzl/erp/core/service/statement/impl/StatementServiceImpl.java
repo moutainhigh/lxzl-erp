@@ -895,8 +895,8 @@ public class StatementServiceImpl implements StatementService {
                 if (BigDecimalUtil.compare(noPaidStatementDetailOtherPayAmount, BigDecimal.ZERO) > 0) {
                     BigDecimal needStatementDetailOtherPayAmount = BigDecimalUtil.sub(noPaidStatementDetailOtherPayAmount, correctBusinessAmount);
                     if (BigDecimalUtil.compare(needStatementDetailOtherPayAmount, totalPaidAmount) > 0) {
-                        totalPaidAmount = BigDecimal.ZERO;
                         needStatementDetailOtherPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailOtherPayAmount);
                     }
@@ -908,8 +908,8 @@ public class StatementServiceImpl implements StatementService {
                 if (BigDecimalUtil.compare(noPaidStatementDetailRentPayAmount, BigDecimal.ZERO) > 0) {
                     needStatementDetailRentPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentPayAmount, correctBusinessAmount);
                     if (BigDecimalUtil.compare(needStatementDetailRentPayAmount, totalPaidAmount) > 0) {
-                        totalPaidAmount = BigDecimal.ZERO;
                         needStatementDetailRentPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailRentPayAmount);
                     }
@@ -920,8 +920,8 @@ public class StatementServiceImpl implements StatementService {
                 if (BigDecimalUtil.compare(noPaidStatementDetailRentDepositPayAmount, BigDecimal.ZERO) > 0) {
                     BigDecimal needStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentDepositPayAmount, correctBusinessAmount);
                     if (BigDecimalUtil.compare(needStatementDetailRentDepositPayAmount, totalPaidAmount) > 0) {
-                        totalPaidAmount = BigDecimal.ZERO;
                         needStatementDetailRentDepositPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailRentDepositPayAmount);
                     }
@@ -932,8 +932,8 @@ public class StatementServiceImpl implements StatementService {
                 if (BigDecimalUtil.compare(noPaidStatementDetailDepositPayAmount, BigDecimal.ZERO) > 0) {
                     BigDecimal needStatementDetailDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailDepositPayAmount, correctBusinessAmount);
                     if (BigDecimalUtil.compare(needStatementDetailDepositPayAmount, totalPaidAmount) > 0) {
-                        totalPaidAmount = BigDecimal.ZERO;
                         needStatementDetailDepositPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailDepositPayAmount);
                     }
