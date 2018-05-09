@@ -424,6 +424,7 @@ public class ErrorCode {
     public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400049";
     public static final String HAS_RETURN_ORDER = "J400050";
     public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400051";
+    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400052";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -1469,6 +1470,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME, "公司名称有误");
         MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
         MAP.put(RETURN_ORDER_ALREADY_SUCCESS, "该退货单已有结算单");
+        MAP.put(RETURN_ORDER_CAN_NOT_CREATE_STATEMENT, "该退货单尚未完成退货，不能生成结算单");
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
