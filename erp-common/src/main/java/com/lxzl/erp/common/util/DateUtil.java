@@ -68,7 +68,16 @@ public class DateUtil {
 
         return Integer.parseInt(String.valueOf(between_days));
     }
-
+    public static boolean isLeapYesr(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        Integer year = calendar.get(Calendar.YEAR);
+        if(year%4==0&&year%100!=0||year%400==0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      * 获取下月指定日期当天开始时间

@@ -123,6 +123,13 @@
 		WHERE ero.relet_order_no = #{reletOrderNo, jdbcType=VARCHAR} AND ero.data_status = 1
 	</select>
 
+	<select id="findRecentlyReletOrderByOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">
+		SELECT  <include refid="column_List"/> FROM erp_relet_order ero
+		WHERE ero.order_no = #{orderNo, jdbcType=VARCHAR} AND ero.data_status = 1
+		ORDER  BY ero.create_time DESC
+		LIMIT 0,1
+	</select>
+
 
 	<select id="findDetailByReletOrderId" resultMap="ReletOrderDO" parameterType="java.lang.Integer">
 		SELECT m_order.*

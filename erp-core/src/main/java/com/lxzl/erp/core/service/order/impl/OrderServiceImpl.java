@@ -1396,7 +1396,7 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setBuyerCustomerName(customerDO.getCustomerName());
         Date expectReturnTime = generateExpectReturnTime(orderDO);
         orderDO.setExpectReturnTime(expectReturnTime);
-
+        orderDO.setStatementDate(customerDO.getStatementDate());
         order = ConverterUtil.convert(orderDO, Order.class);
 
         orderFirstNeedPayAmount(order, orderDO);

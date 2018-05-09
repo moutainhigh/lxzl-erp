@@ -136,6 +136,7 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
 
         k3ReturnOrderDO.setReturnOrderNo("LXK3RO" + DateUtil.formatDate(currentTime, "yyyyMMddHHmmssSSS"));
         k3ReturnOrderDO.setReturnOrderStatus(ReturnOrderStatus.RETURN_ORDER_STATUS_WAIT_COMMIT);
+        k3ReturnOrderDO.setSuccessStatus(CommonConstant.COMMON_CONSTANT_NO);
         k3ReturnOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         k3ReturnOrderDO.setCreateTime(currentTime);
         k3ReturnOrderDO.setCreateUser(loginUser.getUserId().toString());
@@ -728,7 +729,9 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
             } else {
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
-        } catch (Exception e) {
+        } catch (BusinessException e) {
+            throw e;
+        }catch (Exception e) {
             if (k3ReturnOrderDO != null) {
                 logger.error("【K3退货单审核后，业务处理异常】", e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
