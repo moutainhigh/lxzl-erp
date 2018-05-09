@@ -1043,7 +1043,10 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
-        if (!userSupport.isSuperUser()&&(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
+        if (
+//                !userSupport.isSuperUser()&&
+
+                (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1083,30 +1086,45 @@ public class OrderServiceImpl implements OrderService {
             statementOrderSupport.reStatement(orderDO,currentTime);
         }
         //超级管理员处理已支付的订单
-        BigDecimal paidAmount = BigDecimal.ZERO;
+
+
+        //已付设备押金
+        BigDecimal depositPaidAmount = BigDecimal.ZERO;
+        //已付其他费用
+        BigDecimal otherPaidAmount = BigDecimal.ZERO;
+        // 已付租金
+        BigDecimal rentPaidAmount = BigDecimal.ZERO;
+        //已付逾期费用
+        BigDecimal overduePaidAmount = BigDecimal.ZERO;
+        //已付违约金
+        BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+        //已付租金押金
+        BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+
         if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
             for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
-                //计算所有已支付金额
-                paidAmount = BigDecimalUtil.addAll(statementOrderDetailDO.getStatementDetailDepositPaidAmount(),statementOrderDetailDO.getStatementDetailOtherPaidAmount(),
-                        statementOrderDetailDO.getStatementDetailRentPaidAmount(),statementOrderDetailDO.getStatementDetailOverduePaidAmount(),
-                        statementOrderDetailDO.getStatementDetailPenaltyPaidAmount(),statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
-                //减去已冲正金额
-                paidAmount = BigDecimalUtil.sub(paidAmount,statementOrderDetailDO.getStatementDetailCorrectAmount());
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
-            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
-                //该笔金额加款到客户余额
-                ManualChargeParam manualChargeParam = new ManualChargeParam();
-                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
-                manualChargeParam.setChargeAmount(paidAmount);
-                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
-                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
-                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    result.setErrorCode(rechargeResult.getErrorCode());
-                    return result;
-                } 
-            }
+//            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
+//                //该笔金额加款到客户余额
+//                ManualChargeParam manualChargeParam = new ManualChargeParam();
+//                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
+//                manualChargeParam.setChargeAmount(paidAmount);
+//                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+//                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
+//                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    result.setErrorCode(rechargeResult.getErrorCode());
+//                    return result;
+//                }
+//            }
         }
 
 
@@ -1366,7 +1384,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
-
         // 校验客户风控信息
         verifyCustomerRiskInfo(orderDO);
         calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);

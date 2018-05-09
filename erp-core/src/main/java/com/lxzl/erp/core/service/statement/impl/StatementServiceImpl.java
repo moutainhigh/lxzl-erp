@@ -213,25 +213,8 @@ public class StatementServiceImpl implements StatementService {
                 return result;
             }
         }
-        Integer statementDays;
-        DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-        if (dataDictionaryDO == null) {
-            statementDays = StatementMode.STATEMENT_MONTH_END;
-        } else {
-            statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
-        }
-        if (orderDO.getStatementDate() != null) {
-            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(orderDO.getStatementDate())) {
-                // 如果结算日为按月结算，那么就要自然日来结算
-                Calendar rentStartTimeCalendar = Calendar.getInstance();
-                rentStartTimeCalendar.setTime(rentStartTime);
-                rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
-                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
-            } else {
-                statementDays = orderDO.getStatementDate();
-            }
-        }
-
+        //统一拿订单结算日
+        Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), rentStartTime);
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUser.getUserId());
         saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUser.getUserId());
 
