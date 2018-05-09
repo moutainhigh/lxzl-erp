@@ -68,7 +68,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ServiceResult<String, Integer> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
-        Date reletStartTime;
+        Date returnTime;
 
         if (order == null) {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
@@ -87,24 +87,19 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //查询最近一次续租信息
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
         if (recentlyReletOrderInDB == null){
-            //第一次续租
-            Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
-            if (dayCount < -10 || dayCount > 3){  //订单到期 前10天 至 后3天 可续租
-                result.setErrorCode(ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE);
-                return result;
-            }
-            //续租起始时间 = 订单的归还时间
-            reletStartTime = order.getExpectReturnTime();
+            //到期时间=订单的归还时间(第一次续租)
+            returnTime = order.getExpectReturnTime();
         }
         else {
-            Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(recentlyReletOrderInDB.getExpectReturnTime(), currentTime);
-            if (dayCount < -10 || dayCount > 3){
-                result.setErrorCode(ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE);
-                return result;
-            }
-            //续租起始时间 = 最近一次续租归还时间
-            reletStartTime = recentlyReletOrderInDB.getExpectReturnTime();
+            //到期时间=最近一次续租归还时间
+            returnTime = recentlyReletOrderInDB.getExpectReturnTime();
         }
+        String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime);
+        if (!ErrorCode.SUCCESS.equals(validReletTimeRangeCode)) {
+            result.setErrorCode(validReletTimeRangeCode);
+            return result;
+        }
+
         //合法性
         String verifyCreateOrderCode = verifyOperateOrder(orderServiceResult.getResult());
         if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
@@ -114,7 +109,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ReletOrder reletOrder = new ReletOrder(orderServiceResult.getResult());
 
-        reletOrder.setRentStartTime(reletStartTime);//更新起租时间
+        reletOrder.setRentStartTime(returnTime);//更新起租时间
 
         //CustomerDO customerDO = customerMapper.findByNo(reletOrder.getBuyerCustomerNo());
         ReletOrderDO reletOrderDO = ConverterUtil.convert(reletOrder, ReletOrderDO.class);
@@ -144,7 +139,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //计算结算时间
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
 
-
         //获取
         reletOrderDO.setStatementDate(statementDays);
         reletOrderDO.setReletOrderStatus(OrderStatus.ORDER_STATUS_RELET);
@@ -168,7 +162,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(createStatementOrderResult.getErrorCode());
             return result;
         }
-
 
         //TODO 续租时间轴
 
@@ -662,6 +655,22 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return false;
     }
 
+
+    /**
+     * 验证续租时间是否在合法续租范围
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/5/9 15:16
+     * @param   returnTime 到期时间
+     * @return
+     */
+    private String validReletTimeRange(Date returnTime,Date currentTime){
+        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, currentTime);
+        if (dayCount < -10 || dayCount > 2){  //订单到期 前10天 至 后2天 可续租
+            return ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE;
+        }
+        return ErrorCode.SUCCESS;
+    }
 
     private String verifyOperateOrder(Order order) {
         Integer intRentIngCount = 0;
