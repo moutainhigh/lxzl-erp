@@ -874,6 +874,8 @@ public class StatementServiceImpl implements StatementService {
         statementOrderMapper.update(statementOrderDO);
         Map<Integer, BigDecimal> orderPaidMap = new HashMap<>();
 
+        BigDecimal totalPaidAmount = statementOrderDO.getStatementPaidAmount();
+
         for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDO.getStatementOrderDetailDOList()) {
             if (StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT.equals(statementOrderDetailDO.getStatementDetailStatus())) {
                 statementOrderDetailDO.setStatementDetailStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
@@ -889,29 +891,53 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
 
+                BigDecimal noPaidStatementDetailOtherPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOtherAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                if (BigDecimalUtil.compare(noPaidStatementDetailOtherPayAmount, BigDecimal.ZERO) > 0) {
+                    BigDecimal needStatementDetailOtherPayAmount = BigDecimalUtil.sub(noPaidStatementDetailOtherPayAmount, correctBusinessAmount);
+                    if (BigDecimalUtil.compare(needStatementDetailOtherPayAmount, totalPaidAmount) > 0) {
+                        needStatementDetailOtherPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
+                    } else {
+                        totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailOtherPayAmount);
+                    }
+                    statementOrderDetailDO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), needStatementDetailOtherPayAmount));
+                }
+
                 BigDecimal noPaidStatementDetailRentPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentAmount(), statementOrderDetailDO.getStatementDetailRentPaidAmount());
                 BigDecimal needStatementDetailRentPayAmount = BigDecimal.ZERO;
                 if (BigDecimalUtil.compare(noPaidStatementDetailRentPayAmount, BigDecimal.ZERO) > 0) {
                     needStatementDetailRentPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentPayAmount, correctBusinessAmount);
+                    if (BigDecimalUtil.compare(needStatementDetailRentPayAmount, totalPaidAmount) > 0) {
+                        needStatementDetailRentPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
+                    } else {
+                        totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailRentPayAmount);
+                    }
                     statementOrderDetailDO.setStatementDetailRentPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(), needStatementDetailRentPayAmount));
                 }
 
                 BigDecimal noPaidStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
                 if (BigDecimalUtil.compare(noPaidStatementDetailRentDepositPayAmount, BigDecimal.ZERO) > 0) {
                     BigDecimal needStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailRentDepositPayAmount, correctBusinessAmount);
+                    if (BigDecimalUtil.compare(needStatementDetailRentDepositPayAmount, totalPaidAmount) > 0) {
+                        needStatementDetailRentDepositPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
+                    } else {
+                        totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailRentDepositPayAmount);
+                    }
                     statementOrderDetailDO.setStatementDetailRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), needStatementDetailRentDepositPayAmount));
                 }
 
                 BigDecimal noPaidStatementDetailDepositPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailDepositAmount(), statementOrderDetailDO.getStatementDetailDepositPaidAmount());
                 if (BigDecimalUtil.compare(noPaidStatementDetailDepositPayAmount, BigDecimal.ZERO) > 0) {
                     BigDecimal needStatementDetailDepositPayAmount = BigDecimalUtil.sub(noPaidStatementDetailDepositPayAmount, correctBusinessAmount);
+                    if (BigDecimalUtil.compare(needStatementDetailDepositPayAmount, totalPaidAmount) > 0) {
+                        needStatementDetailDepositPayAmount = totalPaidAmount;
+                        totalPaidAmount = BigDecimal.ZERO;
+                    } else {
+                        totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailDepositPayAmount);
+                    }
                     statementOrderDetailDO.setStatementDetailDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), needStatementDetailDepositPayAmount));
-                }
-
-                BigDecimal noPaidStatementDetailOtherPayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOtherAmount(), statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                if (BigDecimalUtil.compare(noPaidStatementDetailOtherPayAmount, BigDecimal.ZERO) > 0) {
-                    BigDecimal needStatementDetailOtherPayAmount = BigDecimalUtil.sub(noPaidStatementDetailOtherPayAmount, correctBusinessAmount);
-                    statementOrderDetailDO.setStatementDetailOtherPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailOtherPaidAmount(), needStatementDetailOtherPayAmount));
                 }
 
                 BigDecimal noPaidStatementDetailOverduePayAmount = BigDecimalUtil.sub(statementOrderDetailDO.getStatementDetailOverdueAmount(), statementOrderDetailDO.getStatementDetailOverduePaidAmount());
