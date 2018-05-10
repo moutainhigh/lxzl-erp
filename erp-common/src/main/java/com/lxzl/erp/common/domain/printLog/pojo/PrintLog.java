@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.PrintLogReferType;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.domain.validGroup.QueryGroup;
-import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
+import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -18,10 +16,10 @@ import java.util.Date;
 public class PrintLog extends BasePO {
 
 	private Integer printLogId;   //唯一标识
-	@NotBlank(message = ErrorCode.PRINT_LOG_REFER_NO_NOT_NULL,groups = {UpdateGroup.class,QueryGroup.class})
+	@NotBlank(message = ErrorCode.PRINT_LOG_REFER_NO_NOT_NULL,groups = {AddGroup.class})
 	private String referNo;   //关联NO
-	@NotNull(message = ErrorCode.PRINT_LOG_REFER_TYPE_NOT_NULL,groups = {UpdateGroup.class, QueryGroup.class})
-	@In(value = {PrintLogReferType.ORDER_TYPE_CHANGE,PrintLogReferType.ORDER_TYPE_RETURN},message = ErrorCode.PRINT_LOG_REFER_TYPE_ERROR,groups = {UpdateGroup.class, QueryGroup.class})
+	@NotNull(message = ErrorCode.PRINT_LOG_REFER_TYPE_NOT_NULL,groups = {AddGroup.class})
+	@In(value = {PrintLogReferType.ORDER_TYPE_CHANGE,PrintLogReferType.ORDER_TYPE_RETURN},message = ErrorCode.PRINT_LOG_REFER_TYPE_ERROR,groups = {AddGroup.class})
 	private Integer referType;   //关联项类型，1-交货单,2-退货单
 	private Integer printCount;   //打印次数
 	private Integer dataStatus;   //状态：0不可用；1可用；2删除
