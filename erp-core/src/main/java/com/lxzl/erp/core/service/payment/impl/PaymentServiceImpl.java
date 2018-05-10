@@ -101,12 +101,17 @@ public class PaymentServiceImpl implements PaymentService {
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
         Integer operateUser = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
         param.setBusinessOperateUser(operateUser.toString());
+        param.setBusinessReturnDepositAmount(businessReturnDepositAmount);
+        param.setBusinessReturnOtherAmount(businessReturnOtherAmount);
+        param.setBusinessReturnRentAmount(businessReturnRentAmount);
+        param.setBusinessReturnRentDepositAmount(businessReturnRentDepositAmount);
+        param.setRemark(remark);
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String requestJson = FastJsonUtil.toJSONString(param);
-            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryCustomerAccountURL, requestJson, headerBuilder, "UTF-8");
-            logger.info("query customer account response:", response);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemReturnDepositExpandURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("returnDepositExpand response:", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if(paymentResult==null){
                 throw new BusinessException("支付网关没有响应，强制取消订单退还已支付金额");
@@ -116,6 +121,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
             return ErrorCode.SUCCESS;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
     }
