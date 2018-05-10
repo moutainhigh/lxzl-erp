@@ -82,6 +82,15 @@
 		) material_main LEFT JOIN erp_material_img emi ON material_main.id = emi.material_id AND emi.data_status = 1
 	</select>
 
+	<select id="findByIds" resultMap="MaterialDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>
+		from erp_material em
+		where em.data_status = 1 and em.id IN
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
 	<select id="findByMaterialParam" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/> FROM erp_material em
 		<where>

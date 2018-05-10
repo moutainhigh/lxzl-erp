@@ -20,11 +20,13 @@ import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointMaterialDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductDO;
 import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.se.dataaccess.mongo.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -370,21 +372,44 @@ public class JointProductServiceImpl implements JointProductService {
         Integer jointProductCount = jointProductMapper.findJointProductCountByParam(maps);
         List<JointProductDO> jointProductDOList = jointProductMapper.findJointProductByParams(maps);
         List<JointProduct> jointProductList = ConverterUtil.convertList(jointProductDOList, JointProduct.class);
+        List<JointMaterial> jointMaterialList = new ArrayList<>();
+        List<JointProductSku> jointProductSkuList = new ArrayList<>();
+        Set<Integer> materiaIdList = new HashSet<>();
+        Set<Integer> productSkuIdList = new HashSet<>();
         for (JointProduct jointProduct : jointProductList) {
-            List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
-            for (JointMaterial jointMaterial : jointMaterialList) {
-                MaterialDO materialDO = materialMapper.findById(jointMaterial.getMaterialId());
+            jointMaterialList.addAll(jointProduct.getJointMaterialList());
+            for (JointMaterial jointMaterial : jointProduct.getJointMaterialList()) {
+                materiaIdList.add(jointMaterial.getMaterialId());
+            }
+
+            jointProductSkuList.addAll(jointProduct.getJointProductSkuList());
+            for (JointProductSku jointProductSku : jointProduct.getJointProductSkuList()) {
+                productSkuIdList.add(jointProductSku.getSkuId());
+            }
+        }
+
+        // 根据materiaIdList查询
+        List<MaterialDO> materialDOList = materialMapper.findByIds(materiaIdList);
+        Map<Integer, MaterialDO> materialDOMap = ListUtil.listToMap(materialDOList, "id");
+        for(JointMaterial jointMaterial : jointMaterialList) {
+            MaterialDO materialDO = materialDOMap.get(jointMaterial.getMaterialId());
+            if (materialDO != null) {
                 jointMaterial.setMaterial(ConverterUtil.convert(materialDO, Material.class));
             }
-            List<JointProductSku> jointProductSkuList = jointProduct.getJointProductSkuList();
-            for (JointProductSku jointProductSku : jointProductSkuList) {
-                ServiceResult<String, Product> productResult = productService.queryProductBySkuId(jointProductSku.getSkuId());
-                if (!ErrorCode.SUCCESS.equals(productResult.getErrorCode())) {
-                    serviceResult.setErrorCode(productResult.getErrorCode());
-                    return serviceResult;
-                }
-                jointProductSku.setProduct(productResult.getResult());
+        }
+
+        // 根据productSkuIdList查询
+        List<ProductDO> productDOList = productMapper.findByProductSkuIds(productSkuIdList);
+        // 将查到的Product转换为skuId到Product的映射
+        Map<Integer, ProductDO> skuId2Product = new HashMap<>();
+        for (ProductDO productDO : productDOList) {
+            for(ProductSkuDO productSkuDO : productDO.getProductSkuDOList()) {
+                skuId2Product.put(productSkuDO.getId(), productDO);
             }
+        }
+        for(JointProductSku jointProductSku : jointProductSkuList) {
+            ProductDO productDO = skuId2Product.get(jointProductSku.getSkuId());
+            jointProductSku.setProduct(ConverterUtil.convert(productDO, Product.class));
         }
 
         Page<JointProduct> page = new Page<>(jointProductList, jointProductCount, jointProductQueryParam.getPageNo(), jointProductQueryParam.getPageSize());
@@ -410,7 +435,11 @@ public class JointProductServiceImpl implements JointProductService {
 
     @Autowired
     private MaterialMapper materialMapper;
+
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductMapper productMapper;
 
 }

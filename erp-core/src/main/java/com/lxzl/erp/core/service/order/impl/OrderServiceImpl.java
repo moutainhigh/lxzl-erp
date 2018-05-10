@@ -1071,19 +1071,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
-            //恢复信用额度
-            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-            }
-            statementOrderSupport.reStatement(orderDO,currentTime);
-        }
         //超级管理员处理已支付的订单
-
 
         //已付设备押金
         BigDecimal depositPaidAmount = BigDecimal.ZERO;
@@ -1111,12 +1099,24 @@ public class OrderServiceImpl implements OrderService {
             }
 
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
-            ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+                    ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
             if(!ErrorCode.SUCCESS.equals(returnCode)){
                 result.setErrorCode(returnCode);
                 return result;
             }
         }
+        //审核中或者待发货订单，处理风控额度及结算单
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
+            //恢复信用额度
+            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+            }
+            statementOrderSupport.reStatement(orderDO,currentTime);
+        }
+
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
