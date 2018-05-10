@@ -85,10 +85,13 @@
 	<select id="findByIds" resultMap="MaterialDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>
 		from erp_material em
-		where em.data_status = 1 and em.id IN
-		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
-			#{item}
-		</foreach>
+		where em.data_status = 1
+		<if test="ids != null &amp;&amp; ids.size>0">
+			and em.id IN
+			<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 	</select>
 
 	<select id="findByMaterialParam" resultMap="MaterialDO" parameterType="java.lang.Integer">
