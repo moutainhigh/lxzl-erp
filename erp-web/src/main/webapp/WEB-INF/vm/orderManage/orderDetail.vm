@@ -87,7 +87,7 @@
                                     <a href="#reletOrderList" data-toggle="tab" aria-expanded="true">续租单</a>
                                 </li>
                                 <li>
-                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">续租单</a>
+                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">打印记录（共<span id="printRecordCount">0</span>次）</a>
                                 </li>
                             </ul>
                         </div>
@@ -134,6 +134,7 @@
                 'manage.order.util.js',
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
+                'manage.order.print.record.js',
                 'modal.input.js');
     </script>
     <script type="text/javascript">
