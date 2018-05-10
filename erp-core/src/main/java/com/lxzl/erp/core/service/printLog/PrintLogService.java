@@ -3,7 +3,7 @@ package com.lxzl.erp.core.service.printLog;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.printLog.PrintLogPageParam;
-import com.lxzl.erp.common.domain.printLog.PrintLogResponseValue;
+import com.lxzl.erp.common.domain.printLog.PrintLogResponse;
 import com.lxzl.erp.common.domain.printLog.pojo.PrintLog;
 
 /**
@@ -36,5 +36,5 @@ public interface PrintLogService {
      * @param : printLog
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.printLog.pojo.PrintLog>
      */
-    ServiceResult<String,PrintLogResponseValue> queryPrintLogCount(PrintLogPageParam printLogPageParam);
+    ServiceResult<String,PrintLogResponse> queryPrintLogCount(PrintLogPageParam printLogPageParam);
 }

@@ -5,7 +5,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.printLog.PrintLogPageParam;
-import com.lxzl.erp.common.domain.printLog.PrintLogResponseValue;
+import com.lxzl.erp.common.domain.printLog.PrintLogResponse;
 import com.lxzl.erp.common.domain.printLog.pojo.PrintLog;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.printLog.PrintLogService;
@@ -55,13 +55,13 @@ public class PrintLogServiceImpl implements PrintLogService {
     }
 
     @Override
-    public ServiceResult<String,PrintLogResponseValue> queryPrintLogCount(PrintLogPageParam printLogPageParam) {
+    public ServiceResult<String,PrintLogResponse> queryPrintLogCount(PrintLogPageParam printLogPageParam) {
 
-        ServiceResult<String, PrintLogResponseValue> serviceResult = new ServiceResult<>();
+        ServiceResult<String, PrintLogResponse> serviceResult = new ServiceResult<>();
         Map<String, Object> maps = new HashMap<>();
         maps.put("printLogPageParam", printLogPageParam);
         Integer count = printLogMapper.findBankSlipCountByParams(maps);
-        PrintLogResponseValue printLogResponseValue = new PrintLogResponseValue();
+        PrintLogResponse printLogResponseValue = new PrintLogResponse();
         printLogResponseValue.setPrintLogCount(count);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(printLogResponseValue);

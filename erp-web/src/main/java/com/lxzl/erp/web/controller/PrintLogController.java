@@ -3,7 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.printLog.PrintLogPageParam;
-import com.lxzl.erp.common.domain.printLog.PrintLogResponseValue;
+import com.lxzl.erp.common.domain.printLog.PrintLogResponse;
 import com.lxzl.erp.common.domain.printLog.pojo.PrintLog;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.QueryGroup;
@@ -42,7 +42,7 @@ public class PrintLogController {
 
     @RequestMapping(value = "queryPrintLogCount",method = RequestMethod.POST)
     public Result queryPrintLogCount(@RequestBody @Validated(QueryGroup.class) PrintLogPageParam printLogPageParam, BindingResult validResult){
-        ServiceResult<String,PrintLogResponseValue> serviceResult = printLogService.queryPrintLogCount(printLogPageParam);
+        ServiceResult<String,PrintLogResponse> serviceResult = printLogService.queryPrintLogCount(printLogPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

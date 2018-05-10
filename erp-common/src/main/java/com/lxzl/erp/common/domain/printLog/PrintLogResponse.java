@@ -5,7 +5,7 @@ package com.lxzl.erp.common.domain.printLog;
  * @Date : Created in 2018/5/10
  * @Time : Created in 13:56
  */
-public class PrintLogResponseValue {
+public class PrintLogResponse {
 
     private Integer printLogCount;
 
