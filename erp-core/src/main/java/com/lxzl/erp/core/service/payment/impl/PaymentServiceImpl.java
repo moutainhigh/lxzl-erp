@@ -114,7 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
             logger.info("returnDepositExpand response:", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if(paymentResult==null){
-                throw new BusinessException("支付网关没有响应，强制取消订单退还已支付金额");
+                throw new BusinessException("支付网关没有响应，强制取消已支付订单失败");
             }
             if(!ErrorCode.SUCCESS.equals(paymentResult.getCode())){
                 throw new BusinessException(paymentResult.getDescription());
