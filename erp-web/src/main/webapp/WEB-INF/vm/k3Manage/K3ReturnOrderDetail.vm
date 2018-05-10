@@ -80,6 +80,9 @@
                                 <li class="active">
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                 </li>
+                                <li>
+                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -173,6 +176,8 @@
                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
                                 </div>
                             </div>
+
+                            #parse("component/order/orderPrintRecord.vm")
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
@@ -191,6 +196,7 @@
             'manage.k3.return.order.mixin.js',
             'manage.k3.return.order.handle.mixin.js',
             'manage.k3.order.item.choose.modal.js',
+            'manage.order.print.record.js',
             'manage.k3.return.order.detail.js');
 </script>
 <script type="text/javascript">
