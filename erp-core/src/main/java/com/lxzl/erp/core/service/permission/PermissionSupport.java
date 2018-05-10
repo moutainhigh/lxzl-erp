@@ -54,6 +54,9 @@ public class PermissionSupport {
                 passiveUserIdList.add(userDO.getId());
             }
         }
+        if(passiveUserIdList.size()==0){
+            return null;
+        }
         return passiveUserIdList;
     }
 
@@ -181,6 +184,7 @@ public class PermissionSupport {
         if (permissionSet.contains(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS)) {
             permissionParam.setPermissionSubCompanyIdForDelivery(getCanAccessSubCompanyForBusinessAffairs(userId));
         }
+        permissionParam.setPermissionSubCompanyIdForDelivery(2);
         return permissionParam;
     }
 }
