@@ -1,280 +1,281 @@
 <div class="popup-basic popup-xl admin-form mfp-with-anim theme-primary " id="chooseOrderProductModal">
-        <div class="panel">
-            <div class="panel-heading">
-                <span class="panel-title"><i class="fa fa-search"></i>选择订单商品</span>
-            </div>
-            <div class="panel-menu p12">
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <form id="searchForm" class="form-horizontal">
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                <button type="reset" class="btn btn-default btn-sm">重置</button>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-search"></i>选择订单商品</span>
+        </div>
+        <div class="panel-menu p12">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <form id="searchForm" class="form-horizontal">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                        </div>
+                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                            <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                        </div>
+
+                    ##                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                    ##                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                    ##                        </div>
+
+                        <div class="form-group pull-right mn mr10">
+                            <div class="input-group">
+                                <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
                             </div>
-                            <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
+                        </div>
+
+                        <div class="form-group pull-right mn mr10" style="width: 210px;">
+                            <input type="hidden" name="createStartTime" id="createStartTime" />
+                            <input type="hidden" name="createEndTime" id="createEndTime" />
+                            <div class="input-group date" id="createTimePicker">
+                                <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
+                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                             </div>
-    
-    ##                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
-    ##                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
-    ##                        </div>
-    
-                            <div class="form-group pull-right mn mr10">
-                                <div class="input-group">
-                                    <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
-                                </div>
-                            </div>
-    
-                            <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                <input type="hidden" name="createStartTime" id="createStartTime" />
-                                <input type="hidden" name="createEndTime" id="createEndTime" />
-                                <div class="input-group date" id="createTimePicker">
-                                    <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
-                                    <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
-    
             </div>
-            <div class="panel-body pn">
-                <div class="table-responsive">
-                    <script type="text/html" id="dataListTpl">
-                        <thead>
-                        <tr class="bg-light">
-                            {{#hasCommonActionButtons}}
-                            <th class="text-center">
-                                <label class="option block mn">
-                                    <input type="checkbox" name="orders" value="">
-                                    <span class="checkbox mn"></span>
-                                </label>
-                            </th>
-                            {{/hasCommonActionButtons}}
-                            <th>订单编号</th>
-                            <th>订单归属</th>
-                            <th>送货日期</th>
-                            <th>客户</th>
-                            <th>商品名</th>
-                            <th>订单总价</th>
-                            <th>支付状态</th>
-                            <th>订单状态</th>
-                            <th>收货人</th>
-                            <th>创建人</th>
-                            <th class="text-right">操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {{#dataSource}}
-                        {{#listData}}
-                        <tr class="trOrder">
-                            {{#hasCommonActionButtons}}
-                            <td class="text-center">
-                                <label class="option block mn">
-                                    <input type="checkbox" name="mobileos" value="FR">
-                                    <span class="checkbox mn"></span>
-                                </label>
-                            </td>
-                            {{/hasCommonActionButtons}}
-                            <td>{{orderNo}}</td>
-                            <td>{{orderSubCompanyName}}</td>
-                            <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
-                            <td>{{buyerCustomerName}}</td>
-                            <td>{{orderItemName}}</td>
-                            <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                            <td>
-                                <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
-                                <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
-                            </td>
-                            <td>
-                                <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
-                                <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
-                            </td>
-                            <td>
-                                <p class="mn">{{orderConsignInfo.consigneeName}}</p>
-                                <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
-                                <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
-                            </td>
-                            <td>
-                                <p class="mn">{{createUserRealName}}</p>
-                                <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
-                            </td>
-                            <td class="text-right">
-                                <div class="btn-group text-right">
-                                    <a href="#" class="btn btn-default btn-xs chooseOrderItems" data-orderno="{{orderNo}}">选择</a>
+
+        </div>
+        <div class="panel-body pn">
+            <div class="table-responsive">
+                <script type="text/html" id="dataListTpl">
+                    <thead>
+                    <tr class="bg-light">
+                        {{#hasCommonActionButtons}}
+                        <th class="text-center">
+                            <label class="option block mn">
+                                <input type="checkbox" name="orders" value="">
+                                <span class="checkbox mn"></span>
+                            </label>
+                        </th>
+                        {{/hasCommonActionButtons}}
+                        <th>订单编号</th>
+                        <th>订单归属</th>
+                        <th>送货日期</th>
+                        <th>客户</th>
+                        <th>商品名</th>
+                        <th>订单总价</th>
+                        <th>支付状态</th>
+                        <th>订单状态</th>
+                        <th>收货人</th>
+                        <th>创建人</th>
+                        <th class="text-right">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#dataSource}}
+                    {{#listData}}
+                    <tr class="trOrder">
+                        {{#hasCommonActionButtons}}
+                        <td class="text-center">
+                            <label class="option block mn">
+                                <input type="checkbox" name="mobileos" value="FR">
+                                <span class="checkbox mn"></span>
+                            </label>
+                        </td>
+                        {{/hasCommonActionButtons}}
+                        <td>{{orderNo}}</td>
+                        <td>{{orderSubCompanyName}}</td>
+                        <td>{{#shortTime}}{{expectDeliveryTime}}{{/shortTime}}</td>
+                        <td>{{buyerCustomerName}}</td>
+                        <td>{{orderItemName}}</td>
+                        <td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
+                        <td>
+                            <p class="mn {{payStatusClass}}">{{payStatusValue}}</p>
+                            <p class="mn mt5">{{#clockTime}}{{payTime}}{{/clockTime}}</p>
+                        </td>
+                        <td>
+                            <p class="mn {{orderStatusClass}}">{{orderStatusStr}}</p>
+                            <p class="mn mt5">{{#clockShorTime}}{{confirmDeliveryTime}}{{/clockShorTime}}</p>
+                        </td>
+                        <td>
+                            <p class="mn">{{orderConsignInfo.consigneeName}}</p>
+                            <p class="mn mt5 mn"><i class="fa fa-mobile mr5"></i>{{orderConsignInfo.consigneePhone}}</p>
+                            <p class="mn mt5 mw200"><i class="fa fa-map-marker mr5"></i>{{orderConsignInfo.provinceName}}{{orderConsignInfo.cityName}}{{orderConsignInfo.districtName}}{{orderConsignInfo.address}}</p>
+                        </td>
+                        <td>
+                            <p class="mn">{{createUserRealName}}</p>
+                            <p class="mn mt5">{{#clockShorTime}}{{createTime}}{{/clockShorTime}}</p>
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group text-right">
+                                <a href="#" class="btn btn-default btn-xs chooseOrderItems" data-orderno="{{orderNo}}">选择</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="trOrderItmes" style="height: 0; padding: 0;">
+                        <td colspan="12" style="height: 0; padding: 0; border-top: none;"></td>
+                    </tr>
+                    {{/listData}}
+                    {{^listData}}
+                    <tr>
+                        <td valign="top" colspan="14" class="text-center">无数据</td>
+                    </tr>
+                    {{/listData}}
+                    {{/dataSource}}
+                    </tbody>
+                </script>
+
+                <script type="text/html"  id="orderProductListTpl">
+                    {{#order}}
+                    <div class="orderItmesContainer row p5" data-order="{{orderJSONString}}">
+                        <div  class="row">
+                            <div class="panel m15">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                                            <li class="tab-menu active">
+                                                <a href="#ordeProductItems-{{orderNo}}" data-toggle="tab">商品项
+                                                ##                                                    （共<span id="orderItemProductCount">{{orderProductListCount}}</span>件）
+                                                </a>
+                                            </li>
+                                            <li class="tab-menu">
+                                                <a href="#orderMaterialItems-{{orderNo}}" data-toggle="tab">配件项
+                                                ##                                                    （共<span id="orderItemMaterialCount">{{orderMaterialListCount}}</span>件）
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr class="trOrderItmes" style="height: 0; padding: 0;">
-                            <td colspan="12" style="height: 0; padding: 0; border-top: none;"></td>
-                        </tr>
-                        {{/listData}}
-                        {{^listData}}
-                        <tr>
-                            <td valign="top" colspan="14" class="text-center">无数据</td>
-                        </tr>
-                        {{/listData}}
-                        {{/dataSource}}
-                        </tbody>
-                    </script>
-    
-                    <script type="text/html"  id="orderProductListTpl">
-                        {{#order}}
-                        <div class="orderItmesContainer row p5" data-order="{{orderJSONString}}">
-                            <div  class="row">
-                                <div class="panel m15">
-                                    <div class="panel-heading">
-                                        <div class="row">
-                                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
-                                                <li class="tab-menu active">
-                                                    <a href="#ordeProductItems-{{orderNo}}" data-toggle="tab">商品项
-    ##                                                    （共<span id="orderItemProductCount">{{orderProductListCount}}</span>件）
-                                                    </a>
-                                                </li>
-                                                <li class="tab-menu">
-                                                    <a href="#orderMaterialItems-{{orderNo}}" data-toggle="tab">配件项
-    ##                                                    （共<span id="orderItemMaterialCount">{{orderMaterialListCount}}</span>件）
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                <div class="panel-body light pn">
+                                    <div class="tab-content pn br-n">
+                                        {{#orderProductData}}
+                                        <div id="ordeProductItems-{{orderNo}}" class="tab-pane tab-pane-order active">
+                                            <table class="table">
+                                                <thead>
+                                                <tr class="bg-light" data-skulist="">
+                                                    <th></th>
+                                                    <th>商品名称</th>
+                                                    <th>编号</th>
+                                                    <th>商品参数（SKU）</th>
+                                                    <th>数量</th>
+                                                    <th>在租数量</th>
+                                                    <th>选择数量</th>
+                                                    <th>备注</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#productList}}
+                                                <tr class="productTr" data-skulist="{{propertiesToStr}}" data-skuinfo="{{skuInfo}}">
+                                                    <td>
+                                                        <label class="option block mn">
+                                                            <input type="checkbox" name="productNo" value="{{productNumber}}">
+                                                            <span class="checkbox mn"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>{{productName}}</td>
+                                                    <td>{{productNumber}}</td>
+                                                    <td>{{propertiesToStr}}</td>
+                                                    <td>{{productCount}}</td>
+                                                    <td>{{rentingProductCount}}</td>
+                                                    <td>
+                                                        <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
+                                                        <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
+                                                        <label class="field prepend-icon mw200">
+                                                            <input type="text" name="productCount-{{rowKey}}" value="{{rentingProductCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="field prepend-icon mw200">
+                                                            <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                            <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                {{/productList}}
+                                                {{^productList}}
+                                                <tr >
+                                                    <td colspan="8" class="text-center">无商品项</td>
+                                                </tr>
+                                                {{/productList}}
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>
-                                    <div class="panel-body light pn">
-                                        <div class="tab-content pn br-n">
-                                            {{#orderProductData}}
-                                            <div id="ordeProductItems-{{orderNo}}" class="tab-pane tab-pane-order active">
-                                                <table class="table">
-                                                    <thead>
-                                                    <tr class="bg-light" data-skulist="">
-                                                        <th></th>
-                                                        <th>商品名称</th>
-                                                        <th>编号</th>
-                                                        <th>商品参数（SKU）</th>
-                                                        <th>数量</th>
-                                                        <th>在租数量</th>
-                                                        <th>选择数量</th>
-                                                        <th>备注</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {{#productList}}
-                                                    <tr class="productTr" data-skulist="{{propertiesToStr}}" data-skuinfo="{{skuInfo}}">
-                                                        <td>
-                                                            <label class="option block mn">
-                                                                <input type="checkbox" name="productNo" value="{{productNumber}}">
-                                                                <span class="checkbox mn"></span>
-                                                            </label>
-                                                        </td>
-                                                        <td>{{productName}}</td>
-                                                        <td>{{productNumber}}</td>
-                                                        <td>{{propertiesToStr}}</td>
-                                                        <td>{{productCount}}</td>
-                                                        <td>{{rentingProductCount}}</td>
-                                                        <td>
-                                                            <input type="hidden" name="orderItemId" value="{{orderProductId}}" class="orderItemId" />
-                                                            <label class="field prepend-icon mw200">
-                                                                <input type="text" name="productCount-{{rowKey}}" value="{{rentingProductCount}}" class="productCount form-control required number pl10" placeholder="输入退货数量" />
-                                                            </label>
-                                                        </td>
-                                                        <td>
-                                                            <label class="field prepend-icon mw200">
-                                                                <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
-                                                                <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
-                                                            </label>
-                                                        </td>
-                                                    </tr>
-                                                    {{/productList}}
-                                                    {{^productList}}
-                                                    <tr >
-                                                        <td colspan="8" class="text-center">无商品项</td>
-                                                    </tr>
-                                                    {{/productList}}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            {{/orderProductData}}
-    
-                                            {{#orderMaterialData}}
-                                            <div id="orderMaterialItems-{{orderNo}}" class="tab-pane tab-pane-order">
-                                                <table class="table">
-                                                    <thead>
-                                                    <tr class="bg-light">
-                                                        <th></th>
-                                                        <th>配件名称</th>
-                                                        <th>配件参数（SKU）</th>
-                                                        <th>编号</th>
-                                                        <th>数量</th>
-                                                        <th>在租数量</th>
-                                                        <th>选择数量</th>
-                                                        <th>备注</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {{#materialList}}
-                                                    <tr class="materialTr" data-skulist="{{propertiesToStr}}" data-skuinfo="{{skuInfo}}">
-                                                        <td>
-                                                            <label class="option block mn">
-                                                                <input type="checkbox" name="fNumber" value="{{fNumber}}">
-                                                                <span class="checkbox mn"></span>
-                                                            </label>
-                                                        </td>
-                                                        <td>{{materialName}}</td>
-                                                        <td>{{propertiesToStr}}</td>
-                                                        <td>{{fNumber}}</td>
-                                                        <td>{{materialCount}}</td>
-                                                        <td>{{rentingMaterialCount}}</td>
-                                                        <td>
-                                                            <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
-                                                            <label class="field prepend-icon mw200">
-                                                                <input type="text" name="materialCount-{{rowKey}}" value="{{rentingMaterialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
-                                                            </label>
-                                                        </td>
-                                                        <td>
-                                                            <label class="field prepend-icon mw200">
-                                                                <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
-                                                                <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
-                                                            </label>
-                                                        </td>
-                                                    </tr>
-                                                    {{/materialList}}
-                                                    {{^materialList}}
-                                                    <tr>
-                                                        <td colspan="8" class="text-center">无配件项</td>
-                                                    </tr>
-                                                    {{/materialList}}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            {{/orderMaterialData}}
+                                        {{/orderProductData}}
+
+                                        {{#orderMaterialData}}
+                                        <div id="orderMaterialItems-{{orderNo}}" class="tab-pane tab-pane-order">
+                                            <table class="table">
+                                                <thead>
+                                                <tr class="bg-light">
+                                                    <th></th>
+                                                    <th>配件名称</th>
+                                                    <th>配件参数（SKU）</th>
+                                                    <th>编号</th>
+                                                    <th>数量</th>
+                                                    <th>在租数量</th>
+                                                    <th>选择数量</th>
+                                                    <th>备注</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#materialList}}
+                                                <tr class="materialTr" data-skulist="{{propertiesToStr}}" data-skuinfo="{{skuInfo}}">
+                                                    <td>
+                                                        <label class="option block mn">
+                                                            <input type="checkbox" name="fNumber" value="{{fNumber}}">
+                                                            <span class="checkbox mn"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>{{materialName}}</td>
+                                                    <td>{{propertiesToStr}}</td>
+                                                    <td>{{fNumber}}</td>
+                                                    <td>{{materialCount}}</td>
+                                                    <td>{{rentingMaterialCount}}</td>
+                                                    <td>
+                                                        <input type="hidden" name="orderItemId" value="{{orderMaterialId}}" class="orderItemId" />
+                                                        <input type="hidden" name="fEntryID" value="{{fEntryID}}" class="fEntryID" />
+                                                        <label class="field prepend-icon mw200">
+                                                            <input type="text" name="materialCount-{{rowKey}}" value="{{rentingMaterialCount}}" class="materialCount form-control required number pl10" placeholder="输入退货数量" />
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="field prepend-icon mw200">
+                                                            <textarea class="gui-textarea remark" id="remark" name="remark" placeholder="输入备注"  style="height: 39px;"></textarea>
+                                                            <label for="comment" class="field-icon"><i class="fa fa-comments"></i></label>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                {{/materialList}}
+                                                {{^materialList}}
+                                                <tr>
+                                                    <td colspan="8" class="text-center">无配件项</td>
+                                                </tr>
+                                                {{/materialList}}
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        {{/orderMaterialData}}
                                     </div>
-                                    <div class="panel-footer pn pv5 ph15">
-                                        <div class="row">
-                                            <div class="form-group mn pull-right">
-                                                <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
-                                                <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
-                                            </div>
+                                </div>
+                                <div class="panel-footer pn pv5 ph15">
+                                    <div class="row">
+                                        <div class="form-group mn pull-right">
+                                            <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
+                                            <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {{/order}}
-                    </script>
-    
-                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
-                </div>
-            </div>
-            <div class="panel-footer">
-                <div class="row">
-                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
-                        #parse("component/pager.vm")
                     </div>
+                    {{/order}}
+                </script>
+
+                <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                    #parse("component/pager.vm")
                 </div>
             </div>
         </div>
     </div>
-    
-    
-    
-    
+</div>
+
+
+
