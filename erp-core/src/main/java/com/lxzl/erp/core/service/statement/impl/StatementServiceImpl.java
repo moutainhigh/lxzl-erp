@@ -933,7 +933,7 @@ public class StatementServiceImpl implements StatementService {
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailRentPayAmount);
                     }
-                    needStatementDetailRentPayAmount = BigDecimalUtil.sub(needStatementDetailRentPayAmount, returnStatementRentAmount);
+                    needStatementDetailRentPayAmount = BigDecimalUtil.add(needStatementDetailRentPayAmount, returnStatementRentAmount);
                     statementOrderDetailDO.setStatementDetailRentPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentPaidAmount(), needStatementDetailRentPayAmount));
                 }
 
@@ -946,7 +946,7 @@ public class StatementServiceImpl implements StatementService {
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailRentDepositPayAmount);
                     }
-                    needStatementDetailRentDepositPayAmount = BigDecimalUtil.sub(needStatementDetailRentDepositPayAmount, returnStatementRentDepositAmount);
+                    needStatementDetailRentDepositPayAmount = BigDecimalUtil.add(needStatementDetailRentDepositPayAmount, returnStatementRentDepositAmount);
                     statementOrderDetailDO.setStatementDetailRentDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailRentDepositPaidAmount(), needStatementDetailRentDepositPayAmount));
                 }
 
@@ -959,7 +959,7 @@ public class StatementServiceImpl implements StatementService {
                     } else {
                         totalPaidAmount = BigDecimalUtil.sub(totalPaidAmount, needStatementDetailDepositPayAmount);
                     }
-                    needStatementDetailDepositPayAmount = BigDecimalUtil.sub(needStatementDetailDepositPayAmount, returnStatementDepositAmount);
+                    needStatementDetailDepositPayAmount = BigDecimalUtil.add(needStatementDetailDepositPayAmount, returnStatementDepositAmount);
                     statementOrderDetailDO.setStatementDetailDepositPaidAmount(BigDecimalUtil.add(statementOrderDetailDO.getStatementDetailDepositPaidAmount(), needStatementDetailDepositPayAmount));
                 }
 
