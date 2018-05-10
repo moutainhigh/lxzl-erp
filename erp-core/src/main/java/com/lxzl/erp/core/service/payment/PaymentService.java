@@ -131,4 +131,17 @@ public interface PaymentService extends BaseService {
      * @return
      */
     ServiceResult<String, Map<String,Object>> weixinQueryCustomerAccountLogPage(InterfaceCustomerAccountLogParam param);
+
+    /**
+     * 客户余额退款拓展接口
+     * @param customerNo
+     * @param businessReturnRentAmount
+     * @param businessReturnOtherAmount
+     * @param businessReturnRentDepositAmount
+     * @param businessReturnDepositAmount
+     * @param remark
+     * @return
+     */
+    String returnDepositExpand(String customerNo,BigDecimal businessReturnRentAmount,BigDecimal businessReturnOtherAmount,BigDecimal businessReturnRentDepositAmount,
+                               BigDecimal businessReturnDepositAmount,String remark) ;
 }
