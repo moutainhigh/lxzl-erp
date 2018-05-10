@@ -1,9 +1,11 @@
 package com.lxzl.erp.dataaccess.dao.mysql.printLog;
 
+import com.lxzl.erp.dataaccess.domain.printLog.PrintLogDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
-import com.lxzl.erp.dataaccess.domain.printLog.PrintLogDO;import org.apache.ibatis.annotations.Param;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -13,5 +15,7 @@ public interface PrintLogMapper extends BaseMysqlDAO<PrintLogDO> {
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
-    PrintLogDO findByNoAndType(@Param("referNo") String referNo,@Param("referType") Integer referType);
+	List<PrintLogDO> findBankSlipByParams(@Param("maps") Map<String, Object> paramMap);
+
+    Integer findBankSlipCountByParams(@Param("maps") Map<String, Object> paramMap);
 }
