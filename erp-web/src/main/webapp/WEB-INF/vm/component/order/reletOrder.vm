@@ -19,7 +19,6 @@
 
                 <th class="nowrap">订单状态</th>
                 <th class="nowrap">起租时间</th>
-##                <th class="nowrap">租赁</th>
                 <th class="nowrap">租赁类型/时长</th>
                 <th class="nowrap">结算时间</th>
                 <th class="nowrap">共计优惠金额</th>
@@ -53,7 +52,6 @@
 
                 <td class="nowrap">{{orderStatusValue}}</td>
                 <td class="nowrap">{{#clockShorTime}}{{rentStartTime}}{{/clockShorTime}}</td>
-##                <td class="nowrap"></td>
                 <td class="nowrap">
                     <p>{{rentLengthTypeValue}}</p>
                     <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
@@ -108,7 +106,6 @@
                                     <table class="table">
                                         <thead>
                                         <tr class="bg-light">
-##                                            <th class="nowrap">商品项ID</th>
                                             <th class="nowrap">商品名称</th>
                                             <th class="nowrap">商品sku名称</th>
                                             <th class="nowrap">订单编号</th>
@@ -118,13 +115,11 @@
                                             <th class="nowrap">商品总数</th>
                                             <th class="nowrap">商品单价</th>
                                             <th class="nowrap">在租商品数量</th>
-##                                            <th class="nowrap">是否全新机</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {{#reletProductList}}
                                         <tr>
-##                                            <td class="nowrap">{{reletOrderProductId}}</td>
                                             <td class="nowrap">
                                                 <span class="badge {{isNewProductBadgeClass}} mr5">{{isNewProductValue}}</span>{{productName}}
                                             </td>
@@ -136,7 +131,6 @@
                                             <td class="nowrap">{{productCount}}</td>
                                             <td class="nowrap">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                                             <td class="nowrap">{{rentingProductCount}}</td>
-##                                            <td class="nowrap">{{isNewProductValue}}</td>
                                         </tr>
                                         {{/reletProductList}}
                                         {{^reletProductList}}
@@ -151,7 +145,6 @@
                                     <table class="table">
                                         <thead>
                                         <tr class="bg-light">
-##                                            <th class="nowrap">配件项ID</th>
                                             <th class="nowrap">配件名称</th>
                                             <th class="nowrap">订单编号</th>
                                             <th class="nowrap">支付方式</th>
@@ -165,7 +158,6 @@
                                         <tbody>
                                         {{#reletMeterialList}}
                                         <tr>
-##                                            <td class="nowrap">{{reletOrderMaterialId}}</td>
                                             <td class="nowrap">
                                                 <span class="badge {{isNewProductBadgeClass}} mr5">{{isNewMaterialValue}}</span>{{materialName}}
                                             </td>
@@ -207,3 +199,4 @@
             #parse("component/pager.vm")
         </div>
     </div>
+</div>

@@ -83,8 +83,36 @@
 		UPDATE erp_print_log <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
 
-	<select id="findByNoAndType" resultMap="PrintLogDO">
+	<select id="findBankSlipByParams" resultMap="PrintLogDO" parameterType="map">
 		SELECT <include refid="column_List"/> FROM erp_print_log epl
-		WHERE epl.refer_no = #{referNo, jdbcType=VARCHAR} AND epl.refer_type = #{referType, jdbcType=INTEGER} AND epl.data_status = 1
+		<where>
+			<if test="maps.printLogPageParam != null &amp;&amp; maps.printLogPageParam.referNo != null &amp;&amp; maps.printLogPageParam.referNo != ''">
+				and epl.refer_no = #{maps.printLogPageParam.referNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.printLogPageParam != null &amp;&amp; maps.printLogPageParam.referType != null">
+				and epl.refer_type = #{maps.printLogPageParam.referType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and epl.data_status = 1
+			</if>
+		</where>
+
+		LIMIT #{maps.start},#{maps.pageSize}
 	</select>
+
+	<select id="findBankSlipCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1) FROM erp_print_log epl
+		<where>
+			<if test="maps.printLogPageParam != null &amp;&amp; maps.printLogPageParam.referNo != null &amp;&amp; maps.printLogPageParam.referNo != ''">
+				and epl.refer_no = #{maps.printLogPageParam.referNo,jdbcType=VARCHAR}
+			</if>
+			<if test="maps.printLogPageParam != null &amp;&amp; maps.printLogPageParam.referType != null">
+				and epl.refer_type = #{maps.printLogPageParam.referType,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and epl.data_status = 1
+			</if>
+		</where>
+	</select>
+
 </mapper>

@@ -1043,10 +1043,7 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
-        if (
-//                !userSupport.isSuperUser()&&
-
-                (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
+        if (!userSupport.isSuperUser()&&(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1074,19 +1071,7 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
-            //恢复信用额度
-            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-            }
-            statementOrderSupport.reStatement(orderDO,currentTime);
-        }
         //超级管理员处理已支付的订单
-
 
         //已付设备押金
         BigDecimal depositPaidAmount = BigDecimal.ZERO;
@@ -1112,19 +1097,24 @@ public class OrderServiceImpl implements OrderService {
                 penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
                 rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
-//            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
-//                //该笔金额加款到客户余额
-//                ManualChargeParam manualChargeParam = new ManualChargeParam();
-//                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
-//                manualChargeParam.setChargeAmount(paidAmount);
-//                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
-//                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
-//                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                    result.setErrorCode(rechargeResult.getErrorCode());
-//                    return result;
-//                }
-//            }
+
+            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
+                    ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+            if(!ErrorCode.SUCCESS.equals(returnCode)){
+                result.setErrorCode(returnCode);
+                return result;
+            }
+        }
+        //审核中或者待发货订单，处理风控额度及结算单
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
+            //恢复信用额度
+            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+            }
+            statementOrderSupport.reStatement(orderDO,currentTime);
         }
 
 

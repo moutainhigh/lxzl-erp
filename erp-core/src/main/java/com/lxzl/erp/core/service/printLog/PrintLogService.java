@@ -1,8 +1,10 @@
 package com.lxzl.erp.core.service.printLog;
 
+import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.printLog.PrintLogPageParam;
+import com.lxzl.erp.common.domain.printLog.PrintLogResponse;
 import com.lxzl.erp.common.domain.printLog.pojo.PrintLog;
-import com.lxzl.erp.dataaccess.domain.printLog.PrintLogDO;
 
 /**
  * @Author : XiaoLuYu
@@ -17,7 +19,7 @@ public interface PrintLogService {
     * @param : printLog
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
     */
-    ServiceResult<String,Integer> updatePrintLog(PrintLog printLog);
+    ServiceResult<String,Integer> savePrintLog(PrintLog printLog);
     /**
     * 条件查询
     * @Author : XiaoLuYu
@@ -25,5 +27,14 @@ public interface PrintLogService {
     * @param : printLog
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.printLog.pojo.PrintLog>
     */
-    ServiceResult<String,PrintLogDO> queryPrintLog(PrintLog printLog);
+    ServiceResult<String,Page<PrintLog>> pagePrintLog(PrintLogPageParam printLogPageParam);
+
+    /**
+     * 条件查询
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/5/4 14:04
+     * @param : printLog
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.printLog.pojo.PrintLog>
+     */
+    ServiceResult<String,PrintLogResponse> queryPrintLogCount(PrintLogPageParam printLogPageParam);
 }
