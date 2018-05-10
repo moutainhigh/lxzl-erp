@@ -11,19 +11,15 @@
                             <button type="submit" class="btn btn-primary btn-sm">查询</button>
                             <button type="reset" class="btn btn-default btn-sm">重置</button>
                         </div>
-                        <div class="form-group pull-right mn mr10" style="width: 120px;">
-                            <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
-                        </div>
-
-##                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
-##                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+##                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+##                            <input type="text" name="customerNo" id="customerNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户编号">
 ##                        </div>
 
-                        <div class="form-group pull-right mn mr10">
-                            <div class="input-group">
-                                <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
-                            </div>
-                        </div>
+##                        <div class="form-group pull-right mn mr10">
+##                            <div class="input-group">
+##                                <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus"></select>
+##                            </div>
+##                        </div>
 
                         <div class="form-group pull-right mn mr10" style="width: 210px;">
                             <input type="hidden" name="createStartTime" id="createStartTime" />
