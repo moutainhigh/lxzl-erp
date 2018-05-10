@@ -145,13 +145,13 @@
 </head>
 <body style="height: auto;">
     <div class="panel">
-    <div class="panel-heading">
-        <span class="panel-title text-danger"><span class="glyphicon glyphicon-print"></span>打印退货单（创建21cm*27.9cm规格：控制面板=>设备和打印机=>选中当前打印机=>调整打印选项=>用户自定义打印纸），打印时候选择创建的规格，并调整打印机。</span>
-        <div class="panel-header-menu pull-right mr10">
-            <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
+        <div class="panel-heading">
+            <span class="panel-title text-danger"><span class="glyphicon glyphicon-print"></span>打印退货单（创建21cm*27.9cm规格：控制面板=>设备和打印机=>选中当前打印机=>调整打印选项=>用户自定义打印纸），打印时候选择创建的规格，并调整打印机。</span>
+            <div class="panel-header-menu pull-right mr10">
+                <a href="javascript:;" id="printButton" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
+            </div>
         </div>
     </div>
-</div>
 
     <script type="text/html" id="orderBaseInfoTpl">
         {{#order}}
@@ -212,7 +212,7 @@
                     {{#listData}}
                     <tr>
                         <td class="text-center">{{rowNum}}</td>
-                        <td class="text-center">{{productName}}</td>
+                        <td class="text-center">{{productName}} ({{isNewProductValue}})</td>
                         <td class="text-center">{{propertiesToStr}}</td>
                         <td class="text-center">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                         <td class="text-center">{{productCount}}</td>
@@ -248,7 +248,7 @@
                     {{#listData}}
                     <tr>
                         <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
-                        <td class="text-center">{{materialName}}({{isNewMaterialValue}})</td>
+                        <td class="text-center">{{materialName}} ({{isNewMaterialValue}})</td>
                         <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
                         <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
                         <td class="text-center">{{materialCount}}</td>

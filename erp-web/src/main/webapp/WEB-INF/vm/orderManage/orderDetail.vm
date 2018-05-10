@@ -86,6 +86,9 @@
                                 <li>
                                     <a href="#reletOrderList" data-toggle="tab" aria-expanded="true">续租单</a>
                                 </li>
+                                <li>
+                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">续租单</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -106,6 +109,9 @@
 
                             <!-- 续租单 -->
                             #parse("component/order/reletOrder.vm")
+
+                            <!-- 打印记录 -->
+                            #parse("component/order/orderPrintRecord.vm")
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
