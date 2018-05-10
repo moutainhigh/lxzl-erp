@@ -1043,10 +1043,7 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
-        if (
-//                !userSupport.isSuperUser()&&
-
-                (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
+        if (!userSupport.isSuperUser()&&(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1112,21 +1109,14 @@ public class OrderServiceImpl implements OrderService {
                 penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
                 rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
-//            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
-//                //该笔金额加款到客户余额
-//                ManualChargeParam manualChargeParam = new ManualChargeParam();
-//                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
-//                manualChargeParam.setChargeAmount(paidAmount);
-//                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
-//                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
-//                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                    result.setErrorCode(rechargeResult.getErrorCode());
-//                    return result;
-//                }
-//            }
-        }
 
+            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
+            ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+            if(!ErrorCode.SUCCESS.equals(returnCode)){
+                result.setErrorCode(returnCode);
+                return result;
+            }
+        }
 
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
