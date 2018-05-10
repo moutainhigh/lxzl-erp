@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 @Repository
 public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     ProductDO findByProductId(@Param("productId") Integer productId);
@@ -17,6 +19,7 @@ public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     List<ProductDO> findProductByParams(@Param("maps") Map<String, Object> paramMap);
     Integer findProductCountByParams(@Param("maps") Map<String, Object> paramMap);
 
+    List<ProductDO> findByProductSkuIds(@Param("productSkuIds") Set<Integer> productSkuIds);
 
     List<ProductSkuDO> findSkuRentByCustomerId(@Param("customerId") Integer customerId);
 
