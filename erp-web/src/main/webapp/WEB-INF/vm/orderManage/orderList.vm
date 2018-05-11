@@ -3,8 +3,8 @@
 <head>
     <title>凌雄ERP-订单管理-订单列表</title>
     #parse("layout/header.vm")
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
+##    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+##    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/daterange/daterangepicker.css">
     #parse("layout/theme.vm")
 </head>
 <body class="blank-page">
@@ -100,7 +100,7 @@
                                         <input type="hidden" name="startRentStratTime" id="startRentStratTime" />
                                         <input type="hidden" name="endRentStratTime" id="endRentStratTime" />
                                         <div class="input-group date" id="rentTimePicker">
-                                            <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择租赁时间">
+                                            <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
                                             <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                                         </div>
                                     </div>
