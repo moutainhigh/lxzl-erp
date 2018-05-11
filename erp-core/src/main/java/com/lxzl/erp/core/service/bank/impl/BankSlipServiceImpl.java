@@ -312,7 +312,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()  || userSupport.isElectric()) {
             //商务和业务员类型设置为2
             departmentType = 2;
         }
