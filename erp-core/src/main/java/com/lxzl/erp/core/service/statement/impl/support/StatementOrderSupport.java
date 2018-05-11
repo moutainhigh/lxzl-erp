@@ -147,14 +147,14 @@ public class StatementOrderSupport {
 
     /**
      * 恢复结算单
-     * @param orderDO
      * @param currentTime
+     * @param statementOrderDetailDOList
      */
-    public void reStatement(OrderDO orderDO , Date currentTime){
+    public void reStatement( Date currentTime , List<StatementOrderDetailDO> statementOrderDetailDOList){
         //处理结算单
         //缓存查询到的结算单
         Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
+
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
@@ -194,13 +194,11 @@ public class StatementOrderSupport {
     }
     /**
      * 恢复结算单已支付金额
-     * @param orderDO
      */
-    public void reStatementPaid(OrderDO orderDO){
+    public void reStatementPaid(List<StatementOrderDetailDO> statementOrderDetailDOList){
         //处理结算单
         //缓存查询到的结算单
         Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
-        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(orderDO.getId());
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());

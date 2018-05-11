@@ -3306,7 +3306,8 @@ public class StatementServiceImpl implements StatementService {
 //            result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
 //            return result;
 //        }
-        statementOrderSupport.reStatement(orderDO, new Date());
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+        statementOrderSupport.reStatement(new Date(),statementOrderDetailDOList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
