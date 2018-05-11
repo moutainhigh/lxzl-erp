@@ -389,27 +389,31 @@ public class JointProductServiceImpl implements JointProductService {
         }
 
         // 根据materiaIdList查询
-        List<MaterialDO> materialDOList = materialMapper.findByIds(materiaIdList);
-        Map<Integer, MaterialDO> materialDOMap = ListUtil.listToMap(materialDOList, "id");
-        for(JointMaterial jointMaterial : jointMaterialList) {
-            MaterialDO materialDO = materialDOMap.get(jointMaterial.getMaterialId());
-            if (materialDO != null) {
-                jointMaterial.setMaterial(ConverterUtil.convert(materialDO, Material.class));
+        if (CollectionUtil.isNotEmpty(materiaIdList)) {
+            List<MaterialDO> materialDOList = materialMapper.findByIds(materiaIdList);
+            Map<Integer, MaterialDO> materialDOMap = ListUtil.listToMap(materialDOList, "id");
+            for(JointMaterial jointMaterial : jointMaterialList) {
+                MaterialDO materialDO = materialDOMap.get(jointMaterial.getMaterialId());
+                if (materialDO != null) {
+                    jointMaterial.setMaterial(ConverterUtil.convert(materialDO, Material.class));
+                }
             }
         }
 
         // 根据productSkuIdList查询
-        List<ProductDO> productDOList = productMapper.findByProductSkuIds(productSkuIdList);
-        // 将查到的Product转换为skuId到Product的映射
-        Map<Integer, ProductDO> skuId2Product = new HashMap<>();
-        for (ProductDO productDO : productDOList) {
-            for(ProductSkuDO productSkuDO : productDO.getProductSkuDOList()) {
-                skuId2Product.put(productSkuDO.getId(), productDO);
+        if (CollectionUtil.isNotEmpty(productSkuIdList)) {
+            List<ProductDO> productDOList = productMapper.findByProductSkuIds(productSkuIdList);
+            // 将查到的Product转换为skuId到Product的映射
+            Map<Integer, ProductDO> skuId2Product = new HashMap<>();
+            for (ProductDO productDO : productDOList) {
+                for(ProductSkuDO productSkuDO : productDO.getProductSkuDOList()) {
+                    skuId2Product.put(productSkuDO.getId(), productDO);
+                }
             }
-        }
-        for(JointProductSku jointProductSku : jointProductSkuList) {
-            ProductDO productDO = skuId2Product.get(jointProductSku.getSkuId());
-            jointProductSku.setProduct(ConverterUtil.convert(productDO, Product.class));
+            for(JointProductSku jointProductSku : jointProductSkuList) {
+                ProductDO productDO = skuId2Product.get(jointProductSku.getSkuId());
+                jointProductSku.setProduct(ConverterUtil.convert(productDO, Product.class));
+            }
         }
 
         Page<JointProduct> page = new Page<>(jointProductList, jointProductCount, jointProductQueryParam.getPageNo(), jointProductQueryParam.getPageSize());
