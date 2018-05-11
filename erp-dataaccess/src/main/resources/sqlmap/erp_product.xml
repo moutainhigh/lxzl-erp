@@ -282,14 +282,18 @@
         </trim>
         from erp_product ep
         LEFT JOIN erp_product_sku eps on eps.product_id = ep.id
-        where 1=1
-        <if test="productSkuIds != null &amp;&amp; productSkuIds.size() > 0">
-            and eps.id IN
-            <foreach collection="productSkuIds" index="index" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-
+        where 1 = 1
+        <choose>
+            <when test="productSkuIds != null &amp;&amp; productSkuIds.size() > 0">
+                and eps.id IN
+                <foreach collection="productSkuIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </when>
+            <otherwise>
+                and 1 = 2
+            </otherwise>
+        </choose>
     </select>
 
     <select id="findByProductParam" resultMap="ProductDO" parameterType="java.lang.Integer">

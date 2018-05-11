@@ -389,7 +389,7 @@ public class JointProductServiceImpl implements JointProductService {
         }
 
         // 根据materiaIdList查询
-        if (materiaIdList.size() > 0) {
+        if (CollectionUtil.isNotEmpty(materiaIdList)) {
             List<MaterialDO> materialDOList = materialMapper.findByIds(materiaIdList);
             Map<Integer, MaterialDO> materialDOMap = ListUtil.listToMap(materialDOList, "id");
             for(JointMaterial jointMaterial : jointMaterialList) {
@@ -401,7 +401,7 @@ public class JointProductServiceImpl implements JointProductService {
         }
 
         // 根据productSkuIdList查询
-        if (productSkuIdList.size() > 0) {
+        if (CollectionUtil.isNotEmpty(productSkuIdList)) {
             List<ProductDO> productDOList = productMapper.findByProductSkuIds(productSkuIdList);
             // 将查到的Product转换为skuId到Product的映射
             Map<Integer, ProductDO> skuId2Product = new HashMap<>();
