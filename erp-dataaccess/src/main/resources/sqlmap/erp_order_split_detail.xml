@@ -52,12 +52,6 @@
             <if test="isPeer != null">
                 is_peer = #{isPeer, jdbcType=INTEGER},
             </if>
-            <if test="deliverySubCompanyId != null">
-                delivery_sub_company_id = #{deliverySubCompanyId, jdbcType=INTEGER},
-            </if>
-            <if test="deliverySubCompanyName != null">
-                delivery_sub_company_name = #{deliverySubCompanyName, jdbcType=VARCHAR},
-            </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus, jdbcType=INTEGER},
             </if>
@@ -76,6 +70,9 @@
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
             </if>
+
+            delivery_sub_company_id = #{deliverySubCompanyId, jdbcType=INTEGER},
+            delivery_sub_company_name = #{deliverySubCompanyName, jdbcType=VARCHAR},
         </set>
     </sql>
 
@@ -117,6 +114,15 @@
         WHERE order_item_type = #{orderItemType, jdbcType=INTEGER}
         AND order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
     </update>
+
+    <select id="findByItemTypeAndItemId" resultMap="OrderSplitDetailDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_order_split_detail eosd
+        WHERE order_item_type = #{orderItemType, jdbcType=INTEGER}
+        AND order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
+        AND data_status = 1
+    </select>
 
     <select id="findOrderSplitDetailCountByParams" resultType="java.lang.Integer" parameterType="map">
         select count(eop.id)

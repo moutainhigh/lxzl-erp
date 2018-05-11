@@ -21,4 +21,6 @@ public interface OrderSplitDetailMapper extends BaseMysqlDAO<OrderSplitDetailDO>
     Integer deleteByIds(@Param("ids") List<Integer> ids);
 
     Integer deleteByItemTypeAndItemId(@Param("orderItemType") Integer orderItemType, @Param("orderItemReferId") Integer orderItemReferId);
+
+    List<OrderSplitDetailDO> findByItemTypeAndItemId(@Param("orderItemType") Integer orderItemType, @Param("orderItemReferId") Integer orderItemReferId);
 }
