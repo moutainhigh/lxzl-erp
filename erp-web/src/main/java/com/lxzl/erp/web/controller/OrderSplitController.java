@@ -2,7 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.OrderSplitQueryParam;
-import com.lxzl.erp.common.domain.order.pojo.OrderSplitDetail;
+import com.lxzl.erp.common.domain.order.pojo.OrderSplit;
 import com.lxzl.erp.common.domain.validGroup.order.OrderSplitQueryByTypeAndIdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -31,14 +31,26 @@ import java.util.List;
 public class OrderSplitController extends BaseController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Result add(@RequestBody @Validated OrderSplitDetail orderSplitDetail, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = orderSplitDetailService.addOrderSplitDetail(orderSplitDetail);
+    public Result add(@RequestBody @Validated OrderSplit orderSplit, BindingResult validResult) {
+        ServiceResult<String, List<Integer>> serviceResult = orderSplitDetailService.addOrderSplitDetail(orderSplit);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "queryByTypeAndId", method = RequestMethod.POST)
     public Result findByItemTypeAndItemId(@RequestBody @Validated({OrderSplitQueryByTypeAndIdGroup.class}) OrderSplitQueryParam orderSplitQueryParam, BindingResult validResult) {
-        ServiceResult<String, List<OrderSplitDetail>> serviceResult = orderSplitDetailService.queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(orderSplitQueryParam.getOrderItemType(), orderSplitQueryParam.getOrderItemReferId());
+        ServiceResult<String, List<OrderSplit>> serviceResult = orderSplitDetailService.queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(orderSplitQueryParam.getOrderItemType(), orderSplitQueryParam.getOrderItemReferId());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody OrderSplit orderSplit, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = orderSplitDetailService.updateOrderSplit(orderSplit);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public Result delete(@RequestBody OrderSplitQueryParam orderSplitQueryParam, BindingResult validResult) {
+        ServiceResult<String, Integer> serviceResult = orderSplitDetailService.deleteOrderSplit(orderSplitQueryParam.getOrderItemType(), orderSplitQueryParam.getOrderItemReferId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
