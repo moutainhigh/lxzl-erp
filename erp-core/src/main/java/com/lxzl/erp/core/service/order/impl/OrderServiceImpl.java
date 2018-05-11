@@ -1043,7 +1043,11 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
-        if (!userSupport.isSuperUser()&&(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
+        boolean paid = false;
+        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+            paid = true;
+        }
+        if (!userSupport.isSuperUser()&&paid) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1086,7 +1090,7 @@ public class OrderServiceImpl implements OrderService {
         //已付租金押金
         BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
 
-        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+        if (paid) {
             List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
             for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
                 //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
@@ -1097,11 +1101,13 @@ public class OrderServiceImpl implements OrderService {
                 penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
                 rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
-
+            //处理结算单总状态及已支付金额
+            statementOrderSupport.reStatementPaid(orderDO);
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
                     ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
             if(!ErrorCode.SUCCESS.equals(returnCode)){
                 result.setErrorCode(returnCode);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
                 return result;
             }
         }
@@ -1116,8 +1122,6 @@ public class OrderServiceImpl implements OrderService {
             }
             statementOrderSupport.reStatement(orderDO,currentTime);
         }
-
-
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
         orderDO.setUpdateTime(currentTime);
