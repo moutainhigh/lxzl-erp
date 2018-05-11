@@ -10,6 +10,7 @@ import com.lxzl.erp.common.domain.order.pojo.OrderSplitDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.common.util.validate.constraints.In;
 import com.lxzl.erp.core.service.order.OrderSplitDetailService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -44,34 +45,31 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     public ServiceResult<String, List<Integer>> addOrderSplitDetail(OrderSplit orderSplit) {
         ServiceResult<String, List<Integer>> serviceResult = new ServiceResult<>();
 
+        // 更新集合不能为空
         List<OrderSplitDetail> orderSplitDetailList = orderSplit.getSplitDetailList();
-        if (CollectionUtil.isEmpty(orderSplitDetailList)) { // 更新集合不能为空
+        if (CollectionUtil.isEmpty(orderSplitDetailList)) {
             serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return serviceResult;
         }
 
         List<Integer> ids = new ArrayList<>();
+        Integer peerCount = 0; // 同行调拨只能有一个
         Integer totalSplitCount = 0;
 
         Integer orderItemType = orderSplit.getOrderItemType();
         Integer orderItemReferId = orderSplit.getOrderItemReferId();
-
         List<OrderSplitDetailDO> addOrderSplitDetailDOList = new ArrayList<>();
 
         // 根据订单项id和类型查询已有的订单拆单
-        OrderSplitQueryParam orderSplitQueryParam = new OrderSplitQueryParam();
-        orderSplitQueryParam.setOrderItemType(orderItemType);
-        orderSplitQueryParam.setOrderItemReferId(orderItemReferId);
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("orderSplitQueryParam", orderSplitQueryParam);
-        List<OrderSplitDetailDO> orderSplitDetailDOList = orderSplitDetailMapper.findOrderSplitDetailByParams(maps);
+        List<OrderSplitDetailDO> oldOrderSplitDetailDOList = orderSplitDetailMapper.findByItemTypeAndItemId(orderItemType, orderItemReferId);
 
         // 加上已有的订单拆单数量
-        if (CollectionUtil.isNotEmpty(orderSplitDetailDOList)) {
-            for (OrderSplitDetailDO orderSplitDetailDO : orderSplitDetailDOList) {
+        if (CollectionUtil.isNotEmpty(oldOrderSplitDetailDOList)) {
+            for (OrderSplitDetailDO orderSplitDetailDO : oldOrderSplitDetailDOList) {
                 totalSplitCount = totalSplitCount + orderSplitDetailDO.getSplitCount();
+                if (orderSplitDetailDO.getIsPeer().equals(1)) {
+                    peerCount = peerCount + 1;
+                }
             }
         }
 
@@ -93,6 +91,15 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
             totalSplitCount = totalSplitCount + orderSplitDetail.getSplitCount();
             OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail);
             addOrderSplitDetailDOList.add(orderSplitDetailDO);
+
+            if (orderSplitDetail.getIsPeer().equals(1)) {
+                peerCount = peerCount + 1;
+            }
+        }
+
+        if (peerCount.compareTo(1) > 0) {
+            serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_PEER_COUNT_EXCEED);
+            return serviceResult;
         }
 
         // 校验拆分数量总数不能大于订单项数量
@@ -128,14 +135,7 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     @Override
     public ServiceResult<String, List<OrderSplit>> queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(Integer orderItemType, Integer orderItemReferId) {
         ServiceResult<String, List<OrderSplit>> serviceResult = new ServiceResult();
-        OrderSplitQueryParam orderSplitQueryParam = new OrderSplitQueryParam();
-        orderSplitQueryParam.setOrderItemType(orderItemType);
-        orderSplitQueryParam.setOrderItemReferId(orderItemReferId);
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("orderSplitQueryParam", orderSplitQueryParam);
-        List<OrderSplitDetailDO> orderSplitDetailDOList = orderSplitDetailMapper.findOrderSplitDetailByParams(maps);
+        List<OrderSplitDetailDO> orderSplitDetailDOList = orderSplitDetailMapper.findByItemTypeAndItemId(orderItemType, orderItemReferId);
         List<OrderSplit> orderSplitList = new ArrayList<>();
         if (orderSplitDetailDOList != null && !orderSplitDetailDOList.isEmpty()) {
             orderSplitList = ConverterUtil.convertList(orderSplitDetailDOList, OrderSplit.class);
@@ -177,16 +177,10 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
 
         // 更新后的拆单总数量
         Integer totalCount = 0;
+        Integer peerCount = 0; // 同行调拨拆单不能超过1
 
         // 查询旧的拆单数据
-        OrderSplitQueryParam orderSplitQueryParam = new OrderSplitQueryParam();
-        orderSplitQueryParam.setOrderItemType(orderItemType);
-        orderSplitQueryParam.setOrderItemReferId(orderItemReferId);
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
-        maps.put("orderSplitQueryParam", orderSplitQueryParam);
-        List<OrderSplitDetailDO> oldOrderSplitDetailDOList = orderSplitDetailMapper.findOrderSplitDetailByParams(maps);
+        List<OrderSplitDetailDO> oldOrderSplitDetailDOList = orderSplitDetailMapper.findByItemTypeAndItemId(orderItemType, orderItemReferId);
         List<Integer> updateIds = new ArrayList<>(); // 要修改的拆单id列表
         List<Integer> deleteIds = new ArrayList<>(); // 要删除的拆单id列表
 
@@ -198,7 +192,6 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
             if (orderSplitDetail.getOrderSplitDetailId() == null) {
                 OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail);
                 addOrderSplitDetailDO.add(orderSplitDetailDO);
-
                 totalCount = totalCount + orderSplitDetailDO.getSplitCount(); // 加上新增的拆单数量
             } else {
                 updateIds.add(orderSplitDetail.getOrderSplitDetailId());
@@ -206,6 +199,15 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
                 updateOrderSplitDetailDO.add(orderSplitDetailDO);
                 totalCount = totalCount  + orderSplitDetailDO.getSplitCount(); // 加上更新后的拆单数量
             }
+
+            if (orderSplitDetail.getIsPeer().equals(1)) { // 计算修改后的同行调拨数量
+                peerCount = peerCount + 1;
+            }
+        }
+
+        if (peerCount.compareTo(1) > 0) {
+            serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_PEER_COUNT_EXCEED);
+            return serviceResult;
         }
 
         // 查找要删除的拆单

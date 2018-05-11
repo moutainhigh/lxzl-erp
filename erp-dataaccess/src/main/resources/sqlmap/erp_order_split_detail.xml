@@ -115,6 +115,15 @@
         AND order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
     </update>
 
+    <select id="findByItemTypeAndItemId" resultMap="OrderSplitDetailDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_order_split_detail eosd
+        WHERE order_item_type = #{orderItemType, jdbcType=INTEGER}
+        AND order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
+        AND data_status = 1
+    </select>
+
     <select id="findOrderSplitDetailCountByParams" resultType="java.lang.Integer" parameterType="map">
         select count(eop.id)
         from erp_order_split_detail eosd
