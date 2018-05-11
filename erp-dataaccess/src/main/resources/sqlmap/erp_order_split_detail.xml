@@ -52,12 +52,6 @@
             <if test="isPeer != null">
                 is_peer = #{isPeer, jdbcType=INTEGER},
             </if>
-            <if test="deliverySubCompanyId != null">
-                delivery_sub_company_id = #{deliverySubCompanyId, jdbcType=INTEGER},
-            </if>
-            <if test="deliverySubCompanyName != null">
-                delivery_sub_company_name = #{deliverySubCompanyName, jdbcType=VARCHAR},
-            </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus, jdbcType=INTEGER},
             </if>
@@ -76,6 +70,9 @@
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
             </if>
+
+            delivery_sub_company_id = #{deliverySubCompanyId, jdbcType=INTEGER},
+            delivery_sub_company_name = #{deliverySubCompanyName, jdbcType=VARCHAR},
         </set>
     </sql>
 
@@ -84,11 +81,48 @@
         <include refid="set_column_sql"/>
         WHERE id = #{id, jdbcType=INTEGER}
     </update>
+
     <insert id="save" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.lxzl.erp.dataaccess.domain.order.OrderSplitDetailDO">
         INSERT INTO erp_order_split_detail
         <include refid="set_column_sql"/>
     </insert>
+
+    <update id="deleteByIds" parameterType="java.lang.Integer">
+        update erp_order_split_detail
+        <set>
+            data_status = 2
+        </set>
+        WHERE id IN
+        <choose>
+            <when test="ids != null &amp;&amp; ids.size>0">
+                <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </when>
+            <otherwise>
+                and 1 = 2
+            </otherwise>
+        </choose>
+    </update>
+
+    <update id="deleteByItemTypeAndItemId" parameterType="java.lang.Integer">
+        update erp_order_split_detail
+        <set>
+            data_status = 2
+        </set>
+        WHERE order_item_type = #{orderItemType, jdbcType=INTEGER}
+        AND order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
+    </update>
+
+    <select id="findByItemTypeAndItemId" resultMap="OrderSplitDetailDO" parameterType="java.lang.Integer">
+        select
+        <include refid="column_List"/>
+        from erp_order_split_detail eosd
+        WHERE order_item_type = #{orderItemType, jdbcType=INTEGER}
+        AND order_item_refer_id = #{orderItemReferId, jdbcType=INTEGER}
+        AND data_status = 1
+    </select>
 
     <select id="findOrderSplitDetailCountByParams" resultType="java.lang.Integer" parameterType="map">
         select count(eop.id)
