@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
+import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -1319,42 +1320,58 @@ public class StatementServiceImpl implements StatementService {
             if (returnReferStatementOrderDetail != null) {
                 orderDO = orderMapper.findByOrderId(returnReferStatementOrderDetail.getOrderId());
             }
-            ReturnOrderDO returnOrderDO = returnOrderMapper.findById(statementOrderDetail.getOrderId());
-            if (returnOrderDO != null) {
-                statementOrderDetail.setOrderNo(returnOrderDO.getReturnOrderNo());
-                if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderProductDOList())) {
-                    for (ReturnOrderProductDO returnOrderProductDO : returnOrderDO.getReturnOrderProductDOList()) {
-                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderProductDO.getId())) {
-                            Product product = FastJsonUtil.toBean(returnOrderProductDO.getReturnProductSkuSnapshot(), Product.class);
+            //获取退货单
+            K3ReturnOrderDO k3ReturnOrderDO = k3ReturnOrderMapper.findById(statementOrderDetail.getOrderId());
+//            ReturnOrderDO returnOrderDO = returnOrderMapper.findById();
+            if (k3ReturnOrderDO != null) {
+                //存入退货单编号
+                statementOrderDetail.setOrderNo(k3ReturnOrderDO.getReturnOrderNo());
+                //如果退货单详情不为空
+                if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
+                    //循环退货单详情
+                    for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(k3ReturnOrderDetailDO.getId())) {
+                            OrderProductDO orderProductDO = orderProductMapper.findById(Integer.valueOf(k3ReturnOrderDetailDO.getOrderItemId()));
+                            //获取商品（使用：退还商品SKU快照）
+                            Product product = FastJsonUtil.toBean(orderProductDO.getProductSkuSnapshot(), Product.class);
+                            //存入商品名称
                             if (CollectionUtil.isNotEmpty(product.getProductSkuList())) {
                                 statementOrderDetail.setItemName(product.getProductName() + product.getProductSkuList().get(0).getSkuName());
                             }
+                            //存入结算单明细类型：3-抵消租金（退租）
                             statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                            statementOrderDetail.setItemCount(returnOrderProductDO.getRealReturnProductSkuCount());
+                            //存入实际退还商品数量
+                            statementOrderDetail.setItemCount(k3ReturnOrderDetailDO.getRealProductCount());
                             if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())) {
-                                for (OrderProductDO orderProductDO : orderDO.getOrderProductDOList()) {
-                                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderProductDO.getId())) {
-                                        statementOrderDetail.setUnitAmount(orderProductDO.getProductUnitAmount());
-                                        statementOrderDetail.setItemRentType(orderProductDO.getRentType());
+                                //遍历商品项列表
+                                for (OrderProductDO productDO : orderDO.getOrderProductDOList()) {
+                                    if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(productDO.getId())) {
+                                        //存入商品单价
+                                        statementOrderDetail.setUnitAmount(productDO.getProductUnitAmount());
+                                        //存入租赁方式，1按天租，2按月租
+                                        statementOrderDetail.setItemRentType(productDO.getRentType());
                                         break;
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                if (CollectionUtil.isNotEmpty(returnOrderDO.getReturnOrderMaterialDOList())) {
-                    for (ReturnOrderMaterialDO returnOrderMaterialDO : returnOrderDO.getReturnOrderMaterialDOList()) {
-                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(returnOrderMaterialDO.getId())) {
-                            Material material = FastJsonUtil.toBean(returnOrderMaterialDO.getReturnMaterialSnapshot(), Material.class);
+                        //如果是退换配件
+                        if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType()) && statementOrderDetail.getOrderItemReferId().equals(k3ReturnOrderDetailDO.getId())) {
+                            OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.valueOf(k3ReturnOrderDetailDO.getOrderItemId()));
+                            //获取配件（使用：退还配件快照）
+                            Material material = FastJsonUtil.toBean(orderMaterialDO.getMaterialSnapshot(), Material.class);
                             statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                            //保存配件名
                             statementOrderDetail.setItemName(material.getMaterialName());
-                            statementOrderDetail.setItemCount(returnOrderMaterialDO.getRealReturnMaterialCount());
+                            //保存退货数量
+                            statementOrderDetail.setItemCount(k3ReturnOrderDetailDO.getRealProductCount());
                             if (orderDO != null && CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())) {
-                                for (OrderMaterialDO orderMaterialDO : orderDO.getOrderMaterialDOList()) {
-                                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(orderMaterialDO.getId())) {
-                                        statementOrderDetail.setUnitAmount(orderMaterialDO.getMaterialUnitAmount());
-                                        statementOrderDetail.setItemRentType(orderMaterialDO.getRentType());
+                                for (OrderMaterialDO materialDO : orderDO.getOrderMaterialDOList()) {
+                                    if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(returnReferStatementOrderDetail.getOrderItemType()) && returnReferStatementOrderDetail.getOrderItemReferId().equals(materialDO.getId())) {
+                                        //保存配件单价
+                                        statementOrderDetail.setUnitAmount(materialDO.getMaterialUnitAmount());
+                                        //保存租赁方式，1按天租，2按月租
+                                        statementOrderDetail.setItemRentType(materialDO.getRentType());
                                         break;
                                     }
                                 }
@@ -3571,5 +3588,6 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private ReletOrderMapper reletOrderMapper;
+
 
 }
