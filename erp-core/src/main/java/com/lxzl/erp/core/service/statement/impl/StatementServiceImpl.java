@@ -353,7 +353,7 @@ public class StatementServiceImpl implements StatementService {
             for(String orderNo : orderNoSet){
                 try{
                     ServiceResult<String, BigDecimal> result = reCreateOrderStatement(orderNo);
-                    if(!ErrorCode.SUCCESS.equals(result)){
+                    if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
                         String json = JSON.toJSONString(resultGenerator.generate(result.getErrorCode()));
                         dingDingSupport.dingDingSendMessage("重算订单结算单【失败】：订单号["+orderNo+"]   "+json);
                     }else{
