@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.statement.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -17,9 +18,11 @@ import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
+import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
+import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -285,6 +288,7 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
             return result;
         }
+
         //有退货单不允许重算
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
@@ -309,6 +313,58 @@ public class StatementServiceImpl implements StatementService {
         orderDO.setUpdateTime(new Date());
         orderMapper.update(orderDO);
         return createResult;
+    }
+
+    @Override
+    public String batchReCreateOrderStatement(List<String> orderNoList, List<String> customerNoList) {
+
+        Set<String> orderNoSet = new HashSet<>();
+        for(String orderNo : orderNoList){
+            orderNoSet.add(orderNo);
+        }
+//        待发货、已发货、确认收货，部分归还，全部归还，完成 状态可重算
+        if(CollectionUtil.isNotEmpty(customerNoList)){
+            for(String customerNo : customerNoList){
+                CustomerDO customerDO = customerMapper.findByNo(customerNo);
+                if(customerDO==null){
+                    dingDingSupport.dingDingSendMessage("客户编号:"+customerNo +"有误");
+                    continue;
+                }
+                List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
+                for(OrderDO orderDO : orderDOList){
+                    if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
+                        continue;
+                    }
+                    if(!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_PART_RETURN.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_RETURN_BACK.equals(orderDO.getOrderStatus())&&
+                        !OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())
+                        ){
+                        continue;
+                    }
+                    orderNoSet.add(orderDO.getOrderNo());
+                }
+            }
+        }
+        if(CollectionUtil.isNotEmpty(orderNoSet)){
+            for(String orderNo : orderNoSet){
+                try{
+                    ServiceResult<String, BigDecimal> result = reCreateOrderStatement(orderNo);
+                    if(!ErrorCode.SUCCESS.equals(result)){
+                        String json = JSON.toJSONString(resultGenerator.generate(result.getErrorCode()));
+                        dingDingSupport.dingDingSendMessage("重算订单结算单【失败】：订单号["+orderNo+"]   "+json);
+                    }else{
+                        dingDingSupport.dingDingSendMessage("成功重算订单：订单号["+orderNo+"]");
+                    }
+                }catch (Exception e){
+                    logger.error("重算订单失败：订单号"+orderNo,e);
+                    dingDingSupport.dingDingSendMessage("重算订单系统【错误】：订单号["+orderNo+"]");
+                }
+            }
+        }
+        return ErrorCode.SUCCESS;
     }
 
     private List<StatementOrderDetailDO> generateStatementDetailList(OrderDO orderDO, Date currentTime, Integer statementDays, Integer loginUserId) {
@@ -3567,9 +3623,8 @@ public class StatementServiceImpl implements StatementService {
     @Autowired
     private CouponSupport couponSupport;
     @Autowired
-    private PenaltySupport penaltySupport;
-
+    private DingDingSupport dingDingSupport;
     @Autowired
-    private ReletOrderMapper reletOrderMapper;
+    private ResultGenerator resultGenerator;
 
 }
