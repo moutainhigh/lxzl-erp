@@ -43,6 +43,13 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, List<Integer>> addOrderSplitDetail(OrderSplit orderSplit) {
         ServiceResult<String, List<Integer>> serviceResult = new ServiceResult<>();
+
+        List<OrderSplitDetail> orderSplitDetailList = orderSplit.getSplitDetailList();
+        if (CollectionUtil.isEmpty(orderSplitDetailList)) { // 更新集合不能为空
+            serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return serviceResult;
+        }
+
         List<Integer> ids = new ArrayList<>();
         Integer totalSplitCount = 0;
 
@@ -74,8 +81,6 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
             serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_ORDER_ID_NOT_EXIST);
             return serviceResult;
         }
-
-        List<OrderSplitDetail> orderSplitDetailList = orderSplit.getSplitDetailList();
 
         // 校验OrderSplitDetail中的参数
         ServiceResult<String, Integer> checkResult = verifySplitDetailParam(orderSplitDetailList);
