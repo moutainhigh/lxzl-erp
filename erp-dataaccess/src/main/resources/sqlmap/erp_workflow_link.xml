@@ -254,7 +254,7 @@
 		</trim>
 		from
 		(
-		select <include refid="column_List"/>
+		select DISTINCT <include refid="column_List"/>
 		from erp_workflow_link ewl
 		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
 		<where>
