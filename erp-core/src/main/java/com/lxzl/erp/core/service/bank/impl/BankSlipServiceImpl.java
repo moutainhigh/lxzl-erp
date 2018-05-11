@@ -447,7 +447,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
 
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && userSupport.isElectric()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
@@ -746,7 +746,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //是否有权下推
-        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser()) {
+        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1077,7 +1077,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
         Integer departmentType = 0;
-        if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
+        if (userSupport.isFinancePerson() || userSupport.isSuperUser() || userSupport.isElectric()) {
             //财务人员类型设置为1
             departmentType = 1;
         } else if (userSupport.isBusinessAffairsPerson() || userSupport.isBusinessPerson()) {
