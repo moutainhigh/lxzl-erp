@@ -1,10 +1,6 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
-import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
-import com.lxzl.erp.common.util.validate.constraints.In;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @Auther: huahongbin
@@ -13,9 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 public class OrderSplitDetail extends BasePO {
     private Integer orderSplitDetailId;
-    @NotNull(message = ErrorCode.ORDER_SPLIT_SPLIT_COUNT_NOT_NULL)
     private Integer splitCount;
-    @In(value = {0, 1}, message = ErrorCode.ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST)
     private Integer isPeer;
     private Integer deliverySubCompanyId;
     private String remark;
