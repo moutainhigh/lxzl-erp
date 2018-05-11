@@ -1067,68 +1067,6 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //审核中的订单，处理工作流
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
-            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo());
-            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
-                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
-                return result;
-            }
-        }
-        //超级管理员处理已支付的订单
-
-        //已付设备押金
-        BigDecimal depositPaidAmount = BigDecimal.ZERO;
-        //已付其他费用
-        BigDecimal otherPaidAmount = BigDecimal.ZERO;
-        // 已付租金
-        BigDecimal rentPaidAmount = BigDecimal.ZERO;
-        //已付逾期费用
-        BigDecimal overduePaidAmount = BigDecimal.ZERO;
-        //已付违约金
-        BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
-        //已付租金押金
-        BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
-
-        if (paid) {
-            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
-            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
-                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
-                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
-            }
-            //处理结算单总状态及已支付金额
-            statementOrderSupport.reStatementPaid(orderDO);
-            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
-                    ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
-            if(!ErrorCode.SUCCESS.equals(returnCode)){
-                result.setErrorCode(returnCode);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                return result;
-            }
-        }
-        //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
-            //恢复信用额度
-            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-            }
-            statementOrderSupport.reStatement(orderDO,currentTime);
-        }
-        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
-        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
-        orderDO.setUpdateTime(currentTime);
-        orderDO.setUpdateUser(loginUser.getUserId().toString());
-        orderMapper.update(orderDO);
-        // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         IERPService service = null;
         try {
             K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDO.getId(), PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
@@ -1175,6 +1113,36 @@ public class OrderServiceImpl implements OrderService {
         } catch (RemoteException e) {
             throw new BusinessException("k3取消订单失败:", e.getMessage());
         }
+
+        //审核中的订单，处理工作流
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
+            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo());
+            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
+                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
+                return result;
+            }
+        }
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+        //审核中或者待发货订单，处理风控额度及结算单
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
+            //恢复信用额度
+            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+            }
+            statementOrderSupport.reStatement(currentTime,statementOrderDetailDOList);
+        }
+        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+
+
         // TODO: 2018\4\26 0026 清除锁定优惠券
         String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(revertresult)) {
@@ -1182,6 +1150,43 @@ public class OrderServiceImpl implements OrderService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
+
+
+        //超级管理员处理已支付的订单
+        //已付设备押金
+        BigDecimal depositPaidAmount = BigDecimal.ZERO;
+        //已付其他费用
+        BigDecimal otherPaidAmount = BigDecimal.ZERO;
+        // 已付租金
+        BigDecimal rentPaidAmount = BigDecimal.ZERO;
+        //已付逾期费用
+        BigDecimal overduePaidAmount = BigDecimal.ZERO;
+        //已付违约金
+        BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+        //已付租金押金
+        BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+
+        if (paid) {
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+            }
+            //处理结算单总状态及已支付金额
+            statementOrderSupport.reStatementPaid(statementOrderDetailDOList);
+            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
+                    ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+            if(!ErrorCode.SUCCESS.equals(returnCode)){
+                result.setErrorCode(returnCode);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
+        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
