@@ -211,12 +211,7 @@ public class StatementOrderSupport {
                 BigDecimal statementDetailDepositPaidAmount = statementOrderDetailDO.getStatementDetailDepositPaidAmount();
                 BigDecimal statementDetailRentPaidAmount = statementOrderDetailDO.getStatementDetailRentPaidAmount();
                 BigDecimal statementDetailOverduePaidAmount = statementOrderDetailDO.getStatementDetailOverduePaidAmount();
-                BigDecimal statementDetailPenaltyPaidAmount = statementOrderDetailDO.getStatementDetailPenaltyPaidAmount();
-                BigDecimal allPaid = BigDecimalUtil.addAll(statementDetailOtherPaidAmount,statementDetailRentDepositPaidAmount,statementDetailDepositPaidAmount,
-                        statementDetailRentPaidAmount,statementDetailOverduePaidAmount,statementDetailPenaltyPaidAmount);
 
-                //处理结算单已支付总金额
-                statementOrderDO.setStatementPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementPaidAmount(),allPaid));
                 //处理结算单已支付租金押金金额
                 statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositPaidAmount(), statementDetailRentDepositPaidAmount));
                 //处理结算单已支付押金金额
