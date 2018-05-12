@@ -43,13 +43,13 @@ public class OrderSplitController extends BaseController {
     }
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public Result update(@RequestBody OrderSplit orderSplit, BindingResult validResult) {
+    public Result update(@RequestBody @Validated OrderSplit orderSplit, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = orderSplitDetailService.updateOrderSplit(orderSplit);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public Result delete(@RequestBody OrderSplitQueryParam orderSplitQueryParam, BindingResult validResult) {
+    public Result delete(@RequestBody @Validated OrderSplitQueryParam orderSplitQueryParam, BindingResult validResult) {
         ServiceResult<String, Integer> serviceResult = orderSplitDetailService.deleteOrderSplit(orderSplitQueryParam.getOrderItemType(), orderSplitQueryParam.getOrderItemReferId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }

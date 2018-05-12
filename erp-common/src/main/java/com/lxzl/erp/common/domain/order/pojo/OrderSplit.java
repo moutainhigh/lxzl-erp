@@ -4,6 +4,7 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.util.validate.constraints.In;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class OrderSplit extends BasePO {
     private String deliverySubCompanyName;
     private String remark;
 
+    @Valid
     private List<OrderSplitDetail> splitDetailList;
 
     public Integer getOrderSplitId() {
