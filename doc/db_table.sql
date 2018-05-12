@@ -3145,6 +3145,18 @@ CREATE TABLE `erp_bank_slip_claim` (
   INDEX index_other_side_account_no ( `other_side_account_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
 
+CREATE table `erp_bank_slip_detail_operation_log`(
+		`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+		`bank_slip_detail_id` INT(20) NOT NULL COMMENT '银行对公流水明细ID',
+		`operation_type` INT(11) NOT NULL COMMENT '1-下推，2-属地化，3-自动属地化，4-属地化，5-取消属地化，6-隐藏,7-取消隐藏，8-自动认领，9-认领，10-确认',
+		`operation_content` TEXT  COMMENT '操作内容',
+		`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+		`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+		`create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+		 PRIMARY KEY(`id`),
+		 INDEX index_bank_slip_detail_id ( `bank_slip_detail_id` )
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行流水明细操作记录表'
+
 
 DROP TABLE if exists `erp_return_visit`;
 CREATE TABLE `erp_return_visit` (
@@ -3514,6 +3526,8 @@ CREATE TABLE `erp_order_split_detail` (
 	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
 	PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
+
+
 
 
 
