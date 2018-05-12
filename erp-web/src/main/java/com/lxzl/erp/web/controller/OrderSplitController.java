@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.OrderSplitQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.OrderSplit;
+import com.lxzl.erp.common.domain.order.pojo.OrderSplitDetail;
 import com.lxzl.erp.common.domain.validGroup.order.OrderSplitQueryByTypeAndIdGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -38,7 +39,7 @@ public class OrderSplitController extends BaseController {
 
     @RequestMapping(value = "queryByTypeAndId", method = RequestMethod.POST)
     public Result findByItemTypeAndItemId(@RequestBody @Validated({OrderSplitQueryByTypeAndIdGroup.class}) OrderSplitQueryParam orderSplitQueryParam, BindingResult validResult) {
-        ServiceResult<String, List<OrderSplit>> serviceResult = orderSplitDetailService.queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(orderSplitQueryParam.getOrderItemType(), orderSplitQueryParam.getOrderItemReferId());
+        ServiceResult<String, List<OrderSplitDetail>> serviceResult = orderSplitDetailService.queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(orderSplitQueryParam.getOrderItemType(), orderSplitQueryParam.getOrderItemReferId());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
