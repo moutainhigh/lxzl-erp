@@ -891,6 +891,7 @@ public class ErrorCode {
     public static final String ORDER_SPLIT_ORDER_ID_NOT_EXIST = "J230000005";
     public static final String ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST = "J230000006";
     public static final String ORDER_SPLIT_SPLIT_COUNT_EXCEED = "J230000006";
+    public static final String ORDER_SPLIT_PEER_COUNT_EXCEED = "J230000007";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1767,10 +1768,11 @@ public class ErrorCode {
         MAP.put(ORDER_SPLIT_ORDER_ITEM_TYPE_NOT_NULL, "订单项商品类型不能为空");
         MAP.put(ORDER_SPLIT_ORDER_ITEM_REFER_ID_NOT_NULL, "订单项ID不能为空");
         MAP.put(ORDER_SPLIT_SPLIT_COUNT_NOT_NULL, "订单拆单商品数量不能为空");
-        MAP.put(ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST, "同行调拨或者分公司调拨只能选择一项");
+        MAP.put(ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST, "同行调拨或者分公司拆单只能选择一项");
         MAP.put(ORDER_SPLIT_ORDER_ID_NOT_EXIST, "订单项ID或类型填写错误，无法找到关联订单");
         MAP.put(ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST, "分公司不存在");
         MAP.put(ORDER_SPLIT_SPLIT_COUNT_EXCEED, "拆单数量不能大于订单项总数");
+        MAP.put(ORDER_SPLIT_PEER_COUNT_EXCEED, "同行调拨超过限制");
     }
 
 
