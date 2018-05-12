@@ -43,6 +43,7 @@
         <result column="detail_create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="detail_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="detail_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="detail_real_product_count" jdbcType="INTEGER" property="realProductCount"/>
     </resultMap>
 
     <sql id="column_List">
@@ -50,7 +51,7 @@
     </sql>
 
     <sql id="detail_column_List">
-        ekrod.id as detail_id,ekrod.return_order_id as detail_return_order_id,ekrod.order_no as detail_order_no,ekrod.order_item_id as detail_order_item_id,ekrod.order_entry as detail_order_entry,ekrod.product_no as detail_product_no,ekrod.product_name as detail_product_name,ekrod.product_count as detail_product_count,ekrod.data_status as detail_data_status,ekrod.remark as detail_remark,ekrod.create_time as detail_create_time,ekrod.create_user as detail_create_user,ekrod.update_time as detail_update_time,ekrod.update_user as detail_update_user
+        ekrod.id as detail_id,ekrod.return_order_id as detail_return_order_id,ekrod.order_no as detail_order_no,ekrod.order_item_id as detail_order_item_id,ekrod.order_entry as detail_order_entry,ekrod.product_no as detail_product_no,ekrod.product_name as detail_product_name,ekrod.product_count as detail_product_count,ekrod.data_status as detail_data_status,ekrod.remark as detail_remark,ekrod.create_time as detail_create_time,ekrod.create_user as detail_create_user,ekrod.update_time as detail_update_time,ekrod.update_user as detail_update_user,ekrod.real_product_count as detail_real_product_count
     </sql>
 
     <select id="findById" resultMap="K3ReturnOrderDO" parameterType="java.lang.Integer">
