@@ -19,6 +19,9 @@ public class OrderSplitDetail extends BasePO {
     private Integer isPeer;
     private Integer deliverySubCompanyId;
     private String remark;
+    private String deliverySubCompanyName;
+    private Integer orderId;
+    private String orderNo;
 
     public Integer getSplitCount() {
         return splitCount;
@@ -58,5 +61,29 @@ public class OrderSplitDetail extends BasePO {
 
     public void setOrderSplitDetailId(Integer orderSplitDetailId) {
         this.orderSplitDetailId = orderSplitDetailId;
+    }
+
+    public String getDeliverySubCompanyName() {
+        return deliverySubCompanyName;
+    }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) {
+        this.deliverySubCompanyName = deliverySubCompanyName;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

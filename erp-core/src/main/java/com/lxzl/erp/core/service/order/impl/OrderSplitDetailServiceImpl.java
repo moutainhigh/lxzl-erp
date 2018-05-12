@@ -138,12 +138,12 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     }
 
     @Override
-    public ServiceResult<String, List<OrderSplit>> queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(Integer orderItemType, Integer orderItemReferId) {
-        ServiceResult<String, List<OrderSplit>> serviceResult = new ServiceResult();
+    public ServiceResult<String, List<OrderSplitDetail>> queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(Integer orderItemType, Integer orderItemReferId) {
+        ServiceResult<String, List<OrderSplitDetail>> serviceResult = new ServiceResult();
         List<OrderSplitDetailDO> orderSplitDetailDOList = orderSplitDetailMapper.findByItemTypeAndItemId(orderItemType, orderItemReferId);
-        List<OrderSplit> orderSplitList = new ArrayList<>();
+        List<OrderSplitDetail> orderSplitList = new ArrayList<>();
         if (orderSplitDetailDOList != null && !orderSplitDetailDOList.isEmpty()) {
-            orderSplitList = ConverterUtil.convertList(orderSplitDetailDOList, OrderSplit.class);
+            orderSplitList = ConverterUtil.convertList(orderSplitDetailDOList, OrderSplitDetail.class);
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
