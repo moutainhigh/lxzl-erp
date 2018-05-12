@@ -4,13 +4,12 @@ import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.constant.OrderItemType;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.order.OrderSplitQueryParam;
 import com.lxzl.erp.common.domain.order.pojo.OrderSplit;
 import com.lxzl.erp.common.domain.order.pojo.OrderSplitDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.validate.constraints.In;
+import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.core.service.order.OrderSplitDetailService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
@@ -29,7 +28,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: huahongbin
@@ -48,7 +50,7 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
         // 更新集合不能为空
         List<OrderSplitDetail> orderSplitDetailList = orderSplit.getSplitDetailList();
         if (CollectionUtil.isEmpty(orderSplitDetailList)) {
-            serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -80,16 +82,19 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
             return serviceResult;
         }
 
-        // 校验OrderSplitDetail中的参数
-        ServiceResult<String, Integer> checkResult = verifySplitDetailParam(orderSplitDetailList);
-        if (!ErrorCode.SUCCESS.equals(checkResult.getErrorCode())) {
-            serviceResult.setErrorCode(checkResult.getErrorCode());
-            return serviceResult;
-        }
-
         for (OrderSplitDetail orderSplitDetail : orderSplitDetailList) {
+            Integer isPeer = orderSplitDetail.getIsPeer();
+            // 非同行调拨时，分公司ID必填
+            if (isPeer.equals(0)) {
+                if (orderSplitDetail.getDeliverySubCompanyId() == null) {
+                    serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST);
+                    return serviceResult;
+                }
+            }
+
             totalSplitCount = totalSplitCount + orderSplitDetail.getSplitCount();
-            OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail);
+
+            OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail, true);
             addOrderSplitDetailDOList.add(orderSplitDetailDO);
 
             if (orderSplitDetail.getIsPeer().equals(1)) {
@@ -154,14 +159,7 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
 
         // 更新时，拆单项数量不能为空
         if (CollectionUtil.isEmpty(orderSplitDetailList)) {
-            serviceResult.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
-            return serviceResult;
-        }
-
-        // 校验OrderSplitDetail中的参数
-        ServiceResult<String, Integer> checkResult = verifySplitDetailParam(orderSplitDetailList);
-        if (!ErrorCode.SUCCESS.equals(checkResult.getErrorCode())) {
-            serviceResult.setErrorCode(checkResult.getErrorCode());
+            serviceResult.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
             return serviceResult;
         }
 
@@ -181,21 +179,28 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
 
         // 查询旧的拆单数据
         List<OrderSplitDetailDO> oldOrderSplitDetailDOList = orderSplitDetailMapper.findByItemTypeAndItemId(orderItemType, orderItemReferId);
-        List<Integer> updateIds = new ArrayList<>(); // 要修改的拆单id列表
-        List<Integer> deleteIds = new ArrayList<>(); // 要删除的拆单id列表
-
+        Map<Integer, OrderSplitDetailDO> deleteOrderSplitDetailDOMap = ListUtil.listToMap(oldOrderSplitDetailDOList, "id");
         List<OrderSplitDetailDO> addOrderSplitDetailDO = new ArrayList<>();
         List<OrderSplitDetailDO> updateOrderSplitDetailDO = new ArrayList<>();
 
         // 查找新增拆单
         for (OrderSplitDetail orderSplitDetail : orderSplitDetailList) {
+            Integer isPeer = orderSplitDetail.getIsPeer();
+            // 非同行调拨时，分公司ID必填
+            if (isPeer.equals(0)) {
+                if (orderSplitDetail.getDeliverySubCompanyId() == null) {
+                    serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST);
+                    return serviceResult;
+                }
+            }
+
             if (orderSplitDetail.getOrderSplitDetailId() == null) {
-                OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail);
+                OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail, true);
                 addOrderSplitDetailDO.add(orderSplitDetailDO);
                 totalCount = totalCount + orderSplitDetailDO.getSplitCount(); // 加上新增的拆单数量
             } else {
-                updateIds.add(orderSplitDetail.getOrderSplitDetailId());
-                OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail);
+                OrderSplitDetailDO orderSplitDetailDO = combineOrderSplitDetailDO(orderItemType, orderItemReferId, orderSplitDetail, false);
+                deleteOrderSplitDetailDOMap.remove(orderSplitDetailDO.getId()); // 删除要更新的，剩下的为要删除的
                 updateOrderSplitDetailDO.add(orderSplitDetailDO);
                 totalCount = totalCount  + orderSplitDetailDO.getSplitCount(); // 加上更新后的拆单数量
             }
@@ -208,17 +213,6 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
         if (peerCount.compareTo(1) > 0) {
             serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_PEER_COUNT_EXCEED);
             return serviceResult;
-        }
-
-        // 查找要删除的拆单
-        if (CollectionUtil.isEmpty(updateIds)) {
-            deleteIds.addAll(updateIds);
-        } else {
-            for (OrderSplitDetailDO orderSplitDetailDO : oldOrderSplitDetailDOList) {
-                if (!updateIds.contains(orderSplitDetailDO.getId())) {
-                    deleteIds.add(orderSplitDetailDO.getId());
-                }
-            }
         }
 
         // 校验拆分数量总数不能大于订单项数量
@@ -253,8 +247,14 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
         }
 
         // 删除拆单
-        if (CollectionUtil.isNotEmpty(deleteIds)) {
-            orderSplitDetailMapper.deleteByIds(deleteIds);
+        if (deleteOrderSplitDetailDOMap.size() > 0) {
+            for (Integer id : deleteOrderSplitDetailDOMap.keySet()) {
+                OrderSplitDetailDO orderSplitDetailDO = deleteOrderSplitDetailDOMap.get(id);
+                orderSplitDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                orderSplitDetailDO.setUpdateTime(new Date());
+                orderSplitDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                orderSplitDetailMapper.update(orderSplitDetailDO);
+            }
         }
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
@@ -266,14 +266,27 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, Integer> deleteOrderSplit(Integer orderItemType, Integer orderItemReferId) {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
-        Integer result = orderSplitDetailMapper.deleteByItemTypeAndItemId(orderItemType, orderItemReferId);
+        Integer result = 0;
+
+        // 查询旧的拆单数据
+        List<OrderSplitDetailDO> orderSplitDetailDOList = orderSplitDetailMapper.findByItemTypeAndItemId(orderItemType, orderItemReferId);
+        if (CollectionUtil.isNotEmpty(orderSplitDetailDOList)) {
+            for (OrderSplitDetailDO orderSplitDetailDO : orderSplitDetailDOList) {
+                orderSplitDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                orderSplitDetailDO.setUpdateTime(new Date());
+                orderSplitDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                orderSplitDetailMapper.update(orderSplitDetailDO);
+
+                result = result + 1;
+            }
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(result);
         return serviceResult;
     }
 
     // 组合OrderSplitDetailDO
-    private OrderSplitDetailDO combineOrderSplitDetailDO(Integer orderItemType, Integer orderItemReferId, OrderSplitDetail orderSplitDetail) {
+    private OrderSplitDetailDO combineOrderSplitDetailDO(Integer orderItemType, Integer orderItemReferId, OrderSplitDetail orderSplitDetail, boolean isNew) {
         OrderSplitDetailDO orderSplitDetailDO = new OrderSplitDetailDO();
         Date now = new Date();
         Integer isPeer = orderSplitDetail.getIsPeer();
@@ -293,13 +306,16 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
         orderSplitDetailDO.setSplitCount(orderSplitDetail.getSplitCount());
         orderSplitDetailDO.setIsPeer(orderSplitDetail.getIsPeer());
         orderSplitDetailDO.setDeliverySubCompanyId(orderSplitDetail.getDeliverySubCompanyId());
-        orderSplitDetailDO.setCreateTime(now);
-        orderSplitDetailDO.setUpdateTime(now);
         orderSplitDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
 
         User loginUser = userSupport.getCurrentUser();
         if (loginUser != null) {
-            orderSplitDetailDO.setCreateUser(loginUser.getUserId().toString());
+            if (isNew) {
+                orderSplitDetailDO.setCreateTime(now);
+                orderSplitDetailDO.setCreateUser(loginUser.getUserId().toString());
+            }
+
+            orderSplitDetailDO.setUpdateTime(now);
             orderSplitDetailDO.setUpdateUser(loginUser.getUserId().toString());
         }
 
@@ -308,40 +324,6 @@ public class OrderSplitDetailServiceImpl implements OrderSplitDetailService {
         }
 
         return orderSplitDetailDO;
-    }
-
-    private ServiceResult<String, Integer> verifySplitDetailParam(List<OrderSplitDetail> orderSplitDetails) {
-        ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
-        for (OrderSplitDetail orderSplitDetail : orderSplitDetails) {
-            Integer isPeer = orderSplitDetail.getIsPeer();
-            Integer splitCount = orderSplitDetail.getSplitCount();
-
-            if (isPeer == null) {
-                serviceResult.setErrorCode(ErrorCode.PARAM_IS_ERROR);
-                return serviceResult;
-            }
-
-            if (isPeer != null && !(isPeer.equals(1) || isPeer.equals(0))) {
-                serviceResult.setErrorCode(ErrorCode.PARAM_IS_ERROR);
-                return serviceResult;
-            }
-
-            if (splitCount == null) {
-                serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_SPLIT_COUNT_NOT_NULL);
-                return  serviceResult;
-            }
-
-            // 非同行调拨时，分公司ID必填
-            if (isPeer != null && isPeer.equals(0)) {
-                if (orderSplitDetail.getDeliverySubCompanyId() == null) {
-                    serviceResult.setErrorCode(ErrorCode.ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST);
-                    return serviceResult;
-                }
-            }
-        }
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        return  serviceResult;
     }
 
     @Autowired
