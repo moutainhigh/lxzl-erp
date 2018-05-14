@@ -133,7 +133,8 @@
                                             <th>商品编号</th>
                                             <th>商品名称</th>
                                             <th>商品参数（SKU）</th>
-                                            <th>退货数量</th>
+                                            <th>预计退货数量</th>
+                                            <th>实际退货数量</th>
                                             <th>备注</th>
                                             <th class="text-right">操作</th>
                                         </tr>
@@ -152,6 +153,7 @@
                                             <td>{{productName}}</td>
                                             <td>{{propertiesToStr}}</td>
                                             <td>{{productCount}}</td>
+                                            <td>{{realProductCount}}</td>
                                             <td>{{remark}}</td>
                                             <td class="text-right">
                                                 <div class="btn-group text-right">
