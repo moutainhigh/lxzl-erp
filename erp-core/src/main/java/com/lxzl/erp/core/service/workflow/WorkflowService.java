@@ -151,4 +151,7 @@ public interface WorkflowService extends BaseService {
      * @return
      */
     ServiceResult<String, String> workflowImportData();
+
+
+    ServiceResult<String, String> channelCustomerCommitWorkFlow(String workflowReferNo);
 }

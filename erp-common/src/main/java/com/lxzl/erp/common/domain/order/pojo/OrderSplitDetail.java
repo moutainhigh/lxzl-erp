@@ -1,6 +1,10 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.util.validate.constraints.In;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @Auther: huahongbin
@@ -9,10 +13,15 @@ import com.lxzl.erp.common.domain.base.BasePO;
  */
 public class OrderSplitDetail extends BasePO {
     private Integer orderSplitDetailId;
+    @NotNull(message = ErrorCode.ORDER_SPLIT_SPLIT_COUNT_NOT_NULL)
     private Integer splitCount;
+    @In(value = {0, 1}, message = ErrorCode.ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST)
     private Integer isPeer;
     private Integer deliverySubCompanyId;
     private String remark;
+    private String deliverySubCompanyName;
+    private Integer orderId;
+    private String orderNo;
 
     public Integer getSplitCount() {
         return splitCount;
@@ -52,5 +61,29 @@ public class OrderSplitDetail extends BasePO {
 
     public void setOrderSplitDetailId(Integer orderSplitDetailId) {
         this.orderSplitDetailId = orderSplitDetailId;
+    }
+
+    public String getDeliverySubCompanyName() {
+        return deliverySubCompanyName;
+    }
+
+    public void setDeliverySubCompanyName(String deliverySubCompanyName) {
+        this.deliverySubCompanyName = deliverySubCompanyName;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }
