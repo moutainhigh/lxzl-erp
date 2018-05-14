@@ -1976,7 +1976,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailDO.setCreateTime(currentTime);
             workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
-            messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), null);
+            messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), loginUser.getUserId());
             workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         }
 
