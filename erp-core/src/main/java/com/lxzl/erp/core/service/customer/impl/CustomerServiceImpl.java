@@ -1415,8 +1415,13 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_IS_PASS_CAN_REJECT);
             return result;
         }
-
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
+        String userId = customerDO.getCreateUser();
+        Integer workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
+        UserDO userDO = userMapper.findByUserId(Integer.parseInt(userId));
+        if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
+            workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
+        }
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(workflowType, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
         if (!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())) {
             result.setErrorCode(rejectPassResult.getErrorCode());
             return result;
