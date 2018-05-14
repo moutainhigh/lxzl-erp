@@ -129,6 +129,16 @@ public class UserSupport {
         }
         return flag;
     }
+    private boolean checkRoleListHaveChannelCompany(List<Role> userRoleList) {
+        boolean flag = false;
+        for (Role role : userRoleList) {
+            //如果是总公司角色
+            if (SubCompanyType.SUB_COMPANY_TYPE_CHANNEL.equals(role.getSubCompanyType())) {
+                return true;
+            }
+        }
+        return flag;
+    }
 
     /**
      * 判断当前用户是否可以使用该仓库
@@ -177,6 +187,14 @@ public class UserSupport {
             }
         }
         return false;
+    }
+
+    /**
+     * 是否属于渠道分公司
+     */
+    public boolean isChannelSubCompany() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        return checkRoleListHaveChannelCompany(userRoleList);
     }
 
     /**
