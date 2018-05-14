@@ -265,27 +265,4 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
-    /**
-     * 查询禁用的公司客户
-     *
-     * @param customerCompanyQueryParam
-     * @return
-     */
-    @RequestMapping(value = "pageDisabledCustomerCompany", method = RequestMethod.POST)
-    public Result pageDisabledCustomerCompany(@RequestBody CustomerCompanyQueryParam customerCompanyQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<Customer>> serviceResult = customerService.pageDisabledCustomerCompany(customerCompanyQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
-
-    /**
-     * 查询禁用的个人客户
-     *
-     * @param customerPersonQueryParam
-     * @return
-     */
-    @RequestMapping(value = "pageDisabledCustomerPerson", method = RequestMethod.POST)
-    public Result pageDisabledCustomerPerson(@RequestBody CustomerPersonQueryParam customerPersonQueryParam, BindingResult validResult) {
-        ServiceResult<String, Page<Customer>> serviceResult = customerService.pageDisabledCustomerPerson(customerPersonQueryParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
-    }
 }
