@@ -10,7 +10,7 @@ public class BankSlipDetailStatus {
     public static final Integer UN_CLAIMED = 1;  //1-未认领
     public static final Integer CLAIMED = 2;  //2-已认领
     public static final Integer CONFIRMED = 3;  //3-已确定
-    public static final Integer IGNORE = 4;  //4-忽略
+    public static final Integer UNKNOWN = 4;  //4-未知
     public static final Integer HIDE = 5;  //5-隐藏
 
 }

@@ -44,15 +44,7 @@ public interface BankSlipService {
      */
     ServiceResult<String, Integer> pushDownBankSlip(BankSlip bankSlip);
 
-    /**
-     * 忽略流水项
-     *
-     * @param : bankSlipDetail
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/3/22 16:13
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
-    ServiceResult<String, Integer> ignoreBankSlipDetail(BankSlipDetail bankSlipDetail);
+
 
     /**
      * 认领流水项
@@ -130,4 +122,12 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     ServiceResult<String,BankSlipDetail> queryBankSlipClaim(BankSlipDetail bankSlipDetail);
+    /**
+    * 未知银行流水详情
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/12 14:42
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String,String> unknownBankSlipDetail(BankSlipDetail bankSlipDetail);
 }

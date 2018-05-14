@@ -67,6 +67,42 @@
 		WHERE ebsd.id = #{id, jdbcType=INTEGER} AND ebsd.data_status = 1
 	</select>
 
+	<select id="findBankSlipDetail" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName,ek3mc.k3_customer_code AS k3CustomerNo ,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType  FROM erp_bank_slip_detail ebsd
+		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id AND ebsc.data_status = 1
+		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
+		LEFT JOIN erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ec.customer_no
+		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
+		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
+		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
+		WHERE ebsd.id = #{maps.bankSlipDetailId, jdbcType=INTEGER} AND ebsd.data_status = 1
+		<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+			and 1=2
+		</if>
+		<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+			and 1=1
+		</if>
+		<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
+			and ebs.slip_status !=0 AND ebsd.detail_status != 5
+		</if>
+		<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+			AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ebsd.detail_status = 4 or (CASE WHEN ebsd.detail_status = 3 AND(
+			ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+			or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+			or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+			or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ))
+		</if>
+		<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+			and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
+			(CASE WHEN ebsd.detail_status = 3 AND(
+			ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+			or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+			or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+			or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )
+			)
+		</if>
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ebsd.id) FROM erp_bank_slip_detail ebsd
 		<where>
@@ -196,14 +232,27 @@
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ebsd.detail_status = 4 or (CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ))
+			</if>
 			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5))
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
+				(CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )
+				)
 			</if>
 		</where>
 	</select>
 
 	<select id="findBankSlipDetailDOByParams" resultMap="BankSlipDetailDO" parameterType="map">
-		SELECT <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo,ec.customer_name AS customerName FROM erp_bank_slip_detail ebsd
+		SELECT  <include refid="column_List"/>,esc1.sub_company_name AS subCompanyName,ebs.sub_company_id AS ownerSubCompanyId,esc.sub_company_name AS ownerSubCompanyName,ebs.bank_type AS bankSlipBankType,<include refid="claim_column_List"/>,ek3mc.k3_customer_code AS k3CustomerNo,ec.customer_name AS customerName FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
@@ -247,8 +296,21 @@
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ebsd.detail_status = 4 or (CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ))
+			</if>
 			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
-				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5))
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
+				(CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )
+				)
 			</if>
 		</where>
 		ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
@@ -257,9 +319,10 @@
 
 
 	<select id="findClaimedByBankSlipId" resultMap="BankSlipDetailDO" parameterType="java.lang.Integer">
-		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>
+		SELECT <include refid="column_List"/>,<include refid="claim_column_List"/>,ec.customer_name as customerName
 		FROM erp_bank_slip_detail ebsd
 		LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.data_status = 1 AND ebsd.id = ebsc.bank_slip_detail_id
+		LEFT JOIN erp_customer ec ON ebsc.customer_no = ec.customer_no AND ec.data_status = 1
 		WHERE ebsd.detail_status = 2 AND ebsd.data_status = 1 AND ebsd.bank_slip_id = #{bankSlipId,jdbcType=INTEGER}
 	</select>
 
@@ -319,27 +382,45 @@
 	</insert>
 
 	<insert id="deleteByBankSlipId" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List" >
-		update erp_bank_slip_detail
+		update erp_bank_slip_detail ebsd INNER JOIN erp_bank_slip_claim ebsc
 		SET
 		<trim>
-			data_status =
-			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+			ebsd.data_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case ebsd.id" close="end">
 				when #{item.id,jdbcType=INTEGER} then #{item.dataStatus,jdbcType=INTEGER}
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			update_time =
-			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+			ebsd.update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case ebsd.id" close="end">
 				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
 			</foreach>
 		</trim>
 		<trim prefix=",">
-			update_user =
-			<foreach collection="list" item="item"  index="index" separator=" " open="case id" close="end">
+			ebsd.update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case ebsd.id" close="end">
 				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
 			</foreach>
 		</trim>
-		WHERE id in
+		<trim prefix=",">
+			ebsc.data_status =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case ebsc.bank_slip_detail_id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.dataStatus,jdbcType=INTEGER}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			ebsc.update_time =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case ebsc.bank_slip_detail_id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateTime,jdbcType=TIMESTAMP}
+			</foreach>
+		</trim>
+		<trim prefix=",">
+			ebsc.update_user =
+			<foreach collection="list" item="item"  index="index" separator=" " open="case ebsc.bank_slip_detail_id" close="end">
+				when #{item.id,jdbcType=INTEGER} then #{item.updateUser,jdbcType=VARCHAR}
+			</foreach>
+		</trim>
+		WHERE ebsd.id in
 		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
@@ -441,5 +522,4 @@
 		</where>
 
 	</select>
-
 </mapper>

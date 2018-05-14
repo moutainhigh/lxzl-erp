@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.bankSlipDetailOperationLog.BankSlipDetailOperationLogMapper">
+
+	<resultMap id="BankSlipDetailOperationLogDO" type="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="bank_slip_detail_id" jdbcType="INTEGER" property="bankSlipDetailId" />
+		<result column="operation_type" jdbcType="INTEGER" property="operationType" />
+		<result column="operation_content" jdbcType="VARCHAR" property="operationContent" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ebsdol.id,ebsdol.bank_slip_detail_id,ebsdol.operation_type,ebsdol.operation_content,ebsdol.data_status,ebsdol.create_time,ebsdol.create_user
+	</sql>
+
+	<select id="findById" resultMap="BankSlipDetailOperationLogDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail_operation_log ebsdol 
+		WHERE ebsdol.id = #{id, jdbcType=INTEGER} AND ebsdol.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ebsdol.id) FROM erp_bank_slip_detail_operation_log ebsdol 
+		<where>
+			<if test="true">
+				AND ebsdol.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="BankSlipDetailOperationLogDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail_operation_log ebsdol 
+		<where>
+			<if test="true">
+				AND ebsdol.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="bankSlipDetailId != null">
+				bank_slip_detail_id = #{bankSlipDetailId,jdbcType=INTEGER},
+			</if>
+			<if test="operationType != null">
+				operation_type = #{operationType,jdbcType=INTEGER},
+			</if>
+			<if test="operationContent != null">
+				operation_content = #{operationContent,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO">
+		INSERT INTO erp_bank_slip_detail_operation_log <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveBankSlipDetailOperationLogDOList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+		INSERT INTO erp_bank_slip_detail_operation_log (id,bank_slip_detail_id,operation_type,operation_content,data_status,create_time,create_user)
+		VALUES
+		<foreach collection="list" separator="," item="bankSlipDetailOperationLogDO" index="index">
+			(
+			#{bankSlipDetailOperationLogDO.id,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.bankSlipDetailId,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.operationType,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.operationContent,jdbcType=VARCHAR},
+			#{bankSlipDetailOperationLogDO.dataStatus,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.createTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailOperationLogDO.createUser,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO">
+		UPDATE erp_bank_slip_detail_operation_log <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>
