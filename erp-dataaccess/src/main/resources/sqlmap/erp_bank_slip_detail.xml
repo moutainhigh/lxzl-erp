@@ -178,8 +178,11 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipMonth != null ">
-				and ebs.slip_month = #{maps.bankSlipDetailQueryParam.slipMonth,jdbcType=TIMESTAMP}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
+				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=DATE} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
+				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=DATE} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -226,8 +229,11 @@
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.isLocalization != null ">
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
 			</if>
-			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipMonth != null ">
-				and ebs.slip_month = #{maps.bankSlipDetailQueryParam.slipMonth,jdbcType=TIMESTAMP}
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
+				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=DATE} ]]>
+			</if>
+			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
+				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=DATE} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1

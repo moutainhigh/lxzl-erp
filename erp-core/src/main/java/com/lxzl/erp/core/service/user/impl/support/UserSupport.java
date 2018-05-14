@@ -212,7 +212,21 @@ public class UserSupport {
         }
         return false;
     }
-
+    /**
+     * 是否是电销人员
+     */
+    public boolean isElectric() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_ELECTRIC.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * 是否是风控人员
      */
