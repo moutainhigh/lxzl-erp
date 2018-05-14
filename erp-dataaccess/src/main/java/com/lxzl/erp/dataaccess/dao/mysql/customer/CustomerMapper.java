@@ -35,4 +35,11 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 
     void setIsRisk();
 
+    Integer findDisabledCustomerCompanyCountByParams(@Param("maps") Map<String, Object> maps);
+
+	List<CustomerDO> findDisabledCustomerCompanyByParams(@Param("maps") Map<String, Object> maps);
+
+	Integer findDisabledCustomerPersonCountByParams(@Param("maps") Map<String, Object> maps);
+
+	List<CustomerDO> findDisabledCustomerPersonByParams(@Param("maps") Map<String, Object> maps);
 }

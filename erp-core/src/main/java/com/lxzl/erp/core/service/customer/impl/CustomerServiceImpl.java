@@ -2433,6 +2433,16 @@ public class CustomerServiceImpl implements CustomerService {
                 //设置客户的属地化时间
                 customerDO.setLocalizationTime(now);
             }
+            //如果客户开发人不是渠道大客户业务员，并且修改后的开发人是渠道大客户业务员
+            if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
+                return serviceResult;
+            }
+            //如果客户开发人是渠道大客户业务员,并且修改后的开发人不是渠道大客户业务员
+            if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+                //设置客户的属地化时间
+                customerDO.setLocalizationTime(now);
+            }
             customerDO.setOwner(customer.getOwner());
         }
 
@@ -2447,6 +2457,11 @@ public class CustomerServiceImpl implements CustomerService {
                     //如果联合开发员不是电销，并且修改后联合开发员是电销
                     if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
                         serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
+                        return serviceResult;
+                    }
+                    //如果联合开发员不是渠道大客户业务员，并且修改后联合开发员是渠道大客户业务员
+                    if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
                         return serviceResult;
                     }
                     customerDO.setUnionUser(customer.getUnionUser());
@@ -3315,6 +3330,74 @@ public class CustomerServiceImpl implements CustomerService {
         customerMapper.setIsRisk();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
+    }
+
+    /**
+     * 查询禁用的公司客户
+     *
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Customer>> pageDisabledCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam) {
+        ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        if (customerCompanyQueryParam.getCompanyName()!=null) {
+            //将公司客户名带括号的，全角中文，半角中文，英文括号，统一转为（这种括号格式
+            customerCompanyQueryParam.setCompanyName(StrReplaceUtil.nameToSimple(customerCompanyQueryParam.getCompanyName()));
+        }
+
+        maps.put("customerCompanyQueryParam", customerCompanyQueryParam);
+        Integer totalCount = customerMapper.findDisabledCustomerCompanyCountByParams(maps);
+        List<CustomerDO> customerDOList = customerMapper.findDisabledCustomerCompanyByParams(maps);
+        if (CollectionUtil.isNotEmpty(customerDOList)) {
+            for (CustomerDO customerDO : customerDOList) {
+                //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+                processCustomerPhone(customerDO);
+            }
+        }
+
+        List<Customer> customerList = ConverterUtil.convertList(customerDOList, Customer.class);
+        Page<Customer> page = new Page<>(customerList, totalCount, customerCompanyQueryParam.getPageNo(), customerCompanyQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
+    }
+
+    /**
+     * 查询禁用的个人客户
+     *
+     * @param customerPersonQueryParam
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Page<Customer>> pageDisabledCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam) {
+        ServiceResult<String, Page<Customer>> result = new ServiceResult<>();
+        PageQuery pageQuery = new PageQuery(customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
+        maps.put("customerPersonQueryParam", customerPersonQueryParam);
+
+        Integer totalCount = customerMapper.findDisabledCustomerPersonCountByParams(maps);
+        List<CustomerDO> customerDOList = customerMapper.findDisabledCustomerPersonByParams(maps);
+        if (CollectionUtil.isNotEmpty(customerDOList)) {
+            for (CustomerDO customerDO : customerDOList) {
+                //如果当前用户不是跟单员  并且 用户不是联合开发人 并且用户不是创建人,屏蔽手机，座机字段
+                processCustomerPhone(customerDO);
+            }
+        }
+        List<Customer> customerPersonList = ConverterUtil.convertList(customerDOList, Customer.class);
+        Page<Customer> page = new Page<>(customerPersonList, totalCount, customerPersonQueryParam.getPageNo(), customerPersonQueryParam.getPageSize());
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(page);
+        return result;
     }
 
     @Autowired

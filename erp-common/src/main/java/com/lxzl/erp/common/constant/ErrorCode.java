@@ -590,6 +590,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NAME_TO_SHORT = "J500165";
     public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
     public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
+    public static final String CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY = "J500168";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1472,6 +1473,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
         MAP.put(RETURN_ORDER_ALREADY_SUCCESS, "该退货单已有结算单");
         MAP.put(RETURN_ORDER_CAN_NOT_CREATE_STATEMENT, "该退货单尚未完成退货，不能生成结算单");
+        MAP.put(CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY, "客户的业务员不能由地方分公司转为渠道大客户业务员");
+
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");

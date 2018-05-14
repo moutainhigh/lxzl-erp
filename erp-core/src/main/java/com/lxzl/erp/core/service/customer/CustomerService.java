@@ -217,4 +217,20 @@ public interface CustomerService extends VerifyReceiver {
      *将已授信的公司的erp_customer表中的is_risk字段设置为1
      */
     ServiceResult<String,String> setIsRisk();
+
+    /**
+     * 查询禁用的公司客户
+     *
+     * @param customerCompanyQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<Customer>> pageDisabledCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam);
+
+    /**
+     * 查询禁用的个人客户
+     *
+     * @param customerPersonQueryParam
+     * @return
+     */
+    ServiceResult<String,Page<Customer>> pageDisabledCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
 }

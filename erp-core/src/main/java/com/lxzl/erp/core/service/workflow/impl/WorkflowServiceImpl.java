@@ -487,6 +487,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
+        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+            if(userSupport.isChannelSubCompany()){
+                workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
+            }
+        }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         WorkflowNodeDO workflowNodeDO = null;
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
