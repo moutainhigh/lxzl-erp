@@ -17,7 +17,6 @@ public class CustomerPersonQueryParam extends BasePageParam {
     private String connectRealName;//紧急联系人姓名'
     private String connectPhone;//紧急联系人电话'
     private Integer customerStatus; //客户的状态，0初始化，1资料提交，2审核通过，3资料驳回
-    private Integer isDisabled;   //是否禁用，1不可用；0可用
     private Integer ownerSubCompanyId; //业务员所在分公司
     private String ownerName; //业务员姓名
     private Integer isRisk; //是否授信
@@ -110,14 +109,6 @@ public class CustomerPersonQueryParam extends BasePageParam {
 
     public void setConnectPhone(String connectPhone) {
         this.connectPhone = connectPhone;
-    }
-
-    public Integer getIsDisabled() {
-        return isDisabled;
-    }
-
-    public void setIsDisabled(Integer isDisabled) {
-        this.isDisabled = isDisabled;
     }
 
     public Integer getCustomerStatus() {
