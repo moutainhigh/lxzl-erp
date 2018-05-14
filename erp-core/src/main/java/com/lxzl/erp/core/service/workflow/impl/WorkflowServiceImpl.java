@@ -932,7 +932,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                         workflowVerifyUserGroupDOIng.setUpdateUser(currentVerifyUser.toString());
                         workflowVerifyUserGroupMapper.update(workflowVerifyUserGroupDOIng);
                     }
-                    if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
+                    if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
+                            WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
                         CustomerDO customerDO = customerMapper.findByNo(workflowLinkDO.getWorkflowReferNo());
                         if (customerDO == null) {
                             result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
