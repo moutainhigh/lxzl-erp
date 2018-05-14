@@ -1634,58 +1634,29 @@ public class WorkflowServiceImpl implements WorkflowService {
             WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
             WorkflowNodeDO lastWorkflowNodeDO = workflowNodeDOList.get(workflowNodeDOList.size() - 1);
 
-            if (workflowLinkDO == null) {
-                WorkflowLinkDO newWorkflowLinkDO = new WorkflowLinkDO();
-                newWorkflowLinkDO.setWorkflowLinkNo(generateNoSupport.generateWorkflowLinkNo(currentTime, loginUser.getUserId()));
-                newWorkflowLinkDO.setWorkflowType(workflowTemplateDO.getWorkflowType());
-                newWorkflowLinkDO.setWorkflowTemplateId(workflowTemplateDO.getId());
-                newWorkflowLinkDO.setWorkflowReferNo(workflowReferNo);
-                newWorkflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
-                newWorkflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
-                newWorkflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
-                newWorkflowLinkDO.setCommitUser(loginUser.getUserId());
-                newWorkflowLinkDO.setCurrentVerifyUser(verifyUser);
-                newWorkflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
-                newWorkflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-                newWorkflowLinkDO.setVerifyMatters(verifyMatters);
-                newWorkflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                newWorkflowLinkDO.setCreateUser(loginUser.getUserId().toString());
-                newWorkflowLinkDO.setCreateTime(currentTime);
-                newWorkflowLinkDO.setRemark(orderRemark);
-                workflowLinkMapper.save(newWorkflowLinkDO);
 
-                saveWorkflowLink(newWorkflowLinkDO, workflowReferNo, thisWorkflowNodeDO, loginUser.getUserId(), commitRemark, currentTime, imgIdList, verifyUser, verifyUserList, workflowNodeDOList, verifyUserGroupId);
-                workflowLinkNo = newWorkflowLinkDO.getWorkflowLinkNo();
-
-            } else {
-                List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
-                if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
-                    result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
-                    return result;
-                }
-
-                WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
-                if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
-                    result.setErrorCode(ErrorCode.WORKFLOW_LINK_STATUS_ERROR);
-                    return result;
-                }
-
-                workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
-                workflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
-                workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
-                workflowLinkDO.setCurrentVerifyUser(verifyUser);
-                workflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
-                workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
-                workflowLinkDO.setVerifyMatters(verifyMatters);
-                workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
-                workflowLinkDO.setUpdateTime(currentTime);
-                workflowLinkDO.setRemark(orderRemark);
-                workflowLinkMapper.update(workflowLinkDO);
-
-                saveWorkflowLink(workflowLinkDO, workflowReferNo, thisWorkflowNodeDO, loginUser.getUserId(), commitRemark, currentTime, imgIdList, verifyUser, verifyUserList, workflowNodeDOList, verifyUserGroupId);
-                workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
+            List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
+            if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+                return result;
             }
+            WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
+            if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_STATUS_ERROR);
+                return result;
+            }
+
+            workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+            workflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
+            workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+            workflowLinkDO.setCurrentVerifyUser(verifyUser);
+            workflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
+            workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+            workflowLinkDO.setUpdateTime(currentTime);
+            workflowLinkMapper.update(workflowLinkDO);
+
+            saveWorkflowLink(workflowLinkDO, workflowReferNo, thisWorkflowNodeDO, loginUser.getUserId(), commitRemark, currentTime, imgIdList, verifyUser, verifyUserList, workflowNodeDOList, verifyUserGroupId);
+            workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         } else {
             Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(1));
             if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
@@ -1771,6 +1742,241 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkDetailMapper.save(workflowLinkDetailDO);
 
             messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), verifyUser);
+            workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(workflowLinkNo);
+        return result;
+    }
+
+
+    public ServiceResult<String, String> channelCustomerCommitWorkFlow(String workflowReferNo) {
+        WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER);
+        List<WorkflowNodeDO> workflowNodeDOList = workflowTemplateDO.getWorkflowNodeDOList();
+        Date currentTime = new Date();
+        Integer workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+
+        CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+        if (customerDO == null) {
+            result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return result;
+        }
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerCompanyByNo(workflowReferNo);
+        } else if (CustomerType.CUSTOMER_TYPE_PERSON.equals(customerDO.getCustomerType())) {
+            customerDO = customerMapper.findCustomerPersonByNo(workflowReferNo);
+        }
+
+        List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findByCustomerId(customerDO.getId());
+        if (CollectionUtil.isEmpty(customerConsignInfoDOList)) {
+            result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_NOT_EXISTS);
+            return result;
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        List<Integer> verifyUserList = new ArrayList<>();
+        String verifyUserGroupId = generateNoSupport.generateVerifyUserGroupId();
+
+        SubCompanyCityCoverDO subCompanyCityCoverDO;
+        if (CustomerType.CUSTOMER_TYPE_COMPANY.equals(customerDO.getCustomerType())) {
+            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())
+                    || CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerDO.getCustomerCompanyDO().getAddressVerifyStatus())) {
+                //判断经营地址
+                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerDO.getCustomerCompanyDO().getCity());
+                if (subCompanyCityCoverDO == null) {
+                    subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerDO.getCustomerCompanyDO().getProvince());
+                    if (subCompanyCityCoverDO == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_COMPANY_NOT_CITY_AND_PROVINCE_IS_NULL);
+                        return result;
+                    }
+                }
+                map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
+
+                customerDO.getCustomerCompanyDO().setAddressVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
+                customerDO.getCustomerCompanyDO().setUpdateTime(currentTime);
+                customerDO.getCustomerCompanyDO().setUpdateUser(loginUser.getUserId().toString());
+                customerCompanyMapper.update(customerDO.getCustomerCompanyDO());
+            }
+        }
+
+        //判断收货地址
+        for (CustomerConsignInfoDO customerConsignInfoDO : customerConsignInfoDOList) {
+            if (CustomerConsignVerifyStatus.VERIFY_STATUS_PENDING.equals(customerConsignInfoDO.getVerifyStatus())
+                    || CustomerConsignVerifyStatus.VERIFY_STATUS_BACK.equals(customerConsignInfoDO.getVerifyStatus())) {
+                subCompanyCityCoverDO = subCompanyCityCoverMapper.findByCityId(customerConsignInfoDO.getCity());
+                if (subCompanyCityCoverDO == null) {
+                    subCompanyCityCoverDO = subCompanyCityCoverMapper.findByProvinceId(customerConsignInfoDO.getProvince());
+                    if (subCompanyCityCoverDO == null) {
+                        result.setErrorCode(ErrorCode.CUSTOMER_CONSIGN_INFO_NOT_CITY_AND_PROVINCE_IS_NULL);
+                        return result;
+                    }
+                }
+                map.put(subCompanyCityCoverDO.getSubCompanyId(), subCompanyCityCoverDO.getSubCompanyId());
+
+                customerConsignInfoDO.setVerifyStatus(CustomerConsignVerifyStatus.VERIFY_STATUS_COMMIT);
+                customerConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+                customerConsignInfoDO.setUpdateTime(currentTime);
+                customerConsignInfoDO.setWorkflowType(WorkflowType.WORKFLOW_TYPE_CUSTOMER);
+                customerConsignInfoMapper.update(customerConsignInfoDO);
+            }
+        }
+        String workflowLinkNo = null;
+        if (map.size() > 0) {
+            for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+                UserQueryParam userQueryParam = new UserQueryParam();
+                userQueryParam.setRoleType(workflowNodeDOList.get(0).getWorkflowRoleType());
+                userQueryParam.setSubCompanyId(entry.getValue());
+                userQueryParam.setIsDisabled(CommonConstant.COMMON_CONSTANT_NO);
+                ServiceResult<String, List<User>> userResult = userService.getUserListByParam(userQueryParam);
+                if (ErrorCode.SUCCESS.equals(userResult.getErrorCode())) {
+                    if (CollectionUtil.isEmpty(userResult.getResult())) {
+                        result.setErrorCode(ErrorCode.WORKFLOW_CONFIG_ERROR);
+                        return result;
+                    }
+                    for (User user : userResult.getResult()) {
+                        WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+                        workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
+                        workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THE_SAME_GROUP_ALL_PASS);
+                        workflowVerifyUserGroupDO.setVerifyUser(user.getUserId());
+                        workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+                        workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                        workflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
+                        workflowVerifyUserGroupDO.setCreateTime(currentTime);
+                        workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
+                        verifyUserList.add(user.getUserId());
+                    }
+                }
+            }
+
+            WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
+
+            WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
+            WorkflowNodeDO lastWorkflowNodeDO = workflowNodeDOList.get(workflowNodeDOList.size() - 1);
+
+            if (workflowLinkDO == null) {
+                WorkflowLinkDO newWorkflowLinkDO = new WorkflowLinkDO();
+                newWorkflowLinkDO.setWorkflowLinkNo(generateNoSupport.generateWorkflowLinkNo(currentTime, loginUser.getUserId()));
+                newWorkflowLinkDO.setWorkflowType(workflowTemplateDO.getWorkflowType());
+                newWorkflowLinkDO.setWorkflowTemplateId(workflowTemplateDO.getId());
+                newWorkflowLinkDO.setWorkflowReferNo(workflowReferNo);
+                newWorkflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+                newWorkflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
+                newWorkflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+                newWorkflowLinkDO.setCommitUser(loginUser.getUserId());
+                newWorkflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
+                newWorkflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+                newWorkflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                newWorkflowLinkDO.setCreateUser(loginUser.getUserId().toString());
+                newWorkflowLinkDO.setCreateTime(currentTime);
+                workflowLinkMapper.save(newWorkflowLinkDO);
+
+                saveWorkflowLink(newWorkflowLinkDO, workflowReferNo, thisWorkflowNodeDO, loginUser.getUserId(), null, currentTime, null, null, verifyUserList, workflowNodeDOList, verifyUserGroupId);
+                workflowLinkNo = newWorkflowLinkDO.getWorkflowLinkNo();
+
+            } else {
+                List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
+                if (workflowLinkDetailDOList == null || workflowLinkDetailDOList.isEmpty()) {
+                    result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+                    return result;
+                }
+
+                WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
+                if (!VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
+                    result.setErrorCode(ErrorCode.WORKFLOW_LINK_STATUS_ERROR);
+                    return result;
+                }
+
+                workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+                workflowLinkDO.setWorkflowLastStep(lastWorkflowNodeDO.getWorkflowStep());
+                workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+                workflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
+                workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+                workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+                workflowLinkDO.setUpdateTime(currentTime);
+                workflowLinkMapper.update(workflowLinkDO);
+
+                saveWorkflowLink(workflowLinkDO, workflowReferNo, thisWorkflowNodeDO, loginUser.getUserId(), null, currentTime, null, null, verifyUserList, workflowNodeDOList, verifyUserGroupId);
+                workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
+            }
+        } else {
+            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(1));
+            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
+                subCompanyId = CommonConstant.HEAD_COMPANY_ID;
+            }
+            WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(1);
+            if (!verifyVerifyUsers(thisWorkflowNodeDO, null, subCompanyId)) {
+                result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
+                return result;
+            }
+
+            WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
+
+            //生成审核组id
+            WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+            workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
+            workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
+            workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            workflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
+            workflowVerifyUserGroupDO.setCreateTime(currentTime);
+            workflowVerifyUserGroupMapper.save(workflowVerifyUserGroupDO);
+
+            workflowLinkDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+            workflowLinkDO.setWorkflowLastStep(thisWorkflowNodeDO.getWorkflowStep());
+            workflowLinkDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+            workflowLinkDO.setVerifyUserGroupId(verifyUserGroupId);
+            workflowLinkDO.setCurrentVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowLinkDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            workflowLinkDO.setUpdateUser(loginUser.getUserId().toString());
+            workflowLinkDO.setUpdateTime(currentTime);
+            workflowLinkMapper.update(workflowLinkDO);
+
+            // 生成提交人工作流
+            WorkflowVerifyUserGroupDO commitWorkflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+            commitWorkflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
+            commitWorkflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
+            commitWorkflowVerifyUserGroupDO.setVerifyUser(loginUser.getUserId());
+            commitWorkflowVerifyUserGroupDO.setVerifyTime(currentTime);
+            commitWorkflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+            commitWorkflowVerifyUserGroupDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            commitWorkflowVerifyUserGroupDO.setCreateUser(loginUser.getUserId().toString());
+            commitWorkflowVerifyUserGroupDO.setCreateTime(currentTime);
+            workflowVerifyUserGroupMapper.save(commitWorkflowVerifyUserGroupDO);
+
+            saveWorkflowImage(commitWorkflowVerifyUserGroupDO.getId(), null, currentTime);
+
+            WorkflowLinkDetailDO commitWorkflowLinkDetailDO = new WorkflowLinkDetailDO();
+            commitWorkflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+            commitWorkflowLinkDetailDO.setWorkflowReferNo(workflowLinkDO.getWorkflowReferNo());
+            commitWorkflowLinkDetailDO.setWorkflowCurrentNodeId(0);
+            commitWorkflowLinkDetailDO.setWorkflowStep(0);
+            commitWorkflowLinkDetailDO.setWorkflowNextNodeId(thisWorkflowNodeDO.getId());
+            commitWorkflowLinkDetailDO.setVerifyUser(loginUser.getUserId());
+            commitWorkflowLinkDetailDO.setVerifyUserGroupId(commitWorkflowVerifyUserGroupDO.getVerifyUserGroupId());
+            commitWorkflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_PASS);
+            commitWorkflowLinkDetailDO.setVerifyTime(currentTime);
+            commitWorkflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            commitWorkflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+            commitWorkflowLinkDetailDO.setCreateTime(currentTime);
+            workflowLinkDetailMapper.save(commitWorkflowLinkDetailDO);
+
+            WorkflowLinkDetailDO workflowLinkDetailDO = new WorkflowLinkDetailDO();
+            workflowLinkDetailDO.setWorkflowLinkId(workflowLinkDO.getId());
+            workflowLinkDetailDO.setWorkflowReferNo(workflowLinkDO.getWorkflowReferNo());
+            workflowLinkDetailDO.setWorkflowStep(thisWorkflowNodeDO.getWorkflowStep());
+            workflowLinkDetailDO.setWorkflowCurrentNodeId(thisWorkflowNodeDO.getId());
+            workflowLinkDetailDO.setWorkflowPreviousNodeId(0);
+            workflowLinkDetailDO.setVerifyUserGroupId(verifyUserGroupId);
+            workflowLinkDetailDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
+            workflowLinkDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            workflowLinkDetailDO.setCreateUser(loginUser.getUserId().toString());
+            workflowLinkDetailDO.setCreateTime(currentTime);
+            workflowLinkDetailMapper.save(workflowLinkDetailDO);
+
+            messageService.superSendMessage(MessageContant.WORKFLOW_COMMIT_TITLE, String.format(MessageContant.WORKFLOW_COMMIT_CONTENT, WorkflowType.getWorkflowTypeDesc(workflowLinkDO.getWorkflowType()), workflowLinkDO.getWorkflowLinkNo()), null);
             workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         }
 
