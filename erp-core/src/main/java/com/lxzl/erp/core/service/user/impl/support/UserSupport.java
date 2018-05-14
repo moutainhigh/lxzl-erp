@@ -196,7 +196,13 @@ public class UserSupport {
         List<Role> userRoleList = getCurrentUser().getRoleList();
         return checkRoleListHaveChannelCompany(userRoleList);
     }
-
+    /**
+     * 是否属于渠道分公司
+     */
+    public boolean isChannelSubCompany(User user) {
+        List<Role> userRoleList = user.getRoleList();
+        return checkRoleListHaveChannelCompany(userRoleList);
+    }
     /**
      * 是否是商务人员
      */

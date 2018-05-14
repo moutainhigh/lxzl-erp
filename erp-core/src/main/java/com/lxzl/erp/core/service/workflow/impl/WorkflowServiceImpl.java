@@ -658,6 +658,17 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
+        if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
+            CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+            if(customerDO==null){
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+                return result;
+            }
+            ServiceResult<String,User > userResult = userService.getUserById(Integer.valueOf(customerDO.getCreateUser()));
+            if(userSupport.isChannelSubCompany(userResult.getResult())){
+                workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
+            }
+        }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         if (workflowLinkDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
@@ -983,6 +994,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 如果审核通过并且下一步审核不为空的时候，判断下一步的审核人是否正确
         if (
 //                isNeedNextVerify&&
+                //工作流为渠道分公司审核客户时，不需要校验
+                !WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType())&&
                 VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
             Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo(),nextWorkflowNodeDO);
             if (!verifyVerifyUsers(nextWorkflowNodeDO, nextVerifyUser, subCompanyId)) {
@@ -1000,10 +1013,18 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDetailMapper.update(lastWorkflowLinkDetailDO);
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
-
-            // 审核通过并且有下一步的情况
-            if (
+            if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType())&&
+                    workflowLinkDO.getWorkflowStep()==1){
+                ServiceResult<String,String> channelCustomerCommitResult = channelCustomerCommitWorkFlow(workflowLinkDO.getWorkflowReferNo());
+                if(!ErrorCode.SUCCESS.equals(channelCustomerCommitResult.getErrorCode())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
+                    result.setErrorCode(channelCustomerCommitResult.getErrorCode());
+                    return result;
+                }
+            }else if (
+                // 审核通过并且有下一步的情况
 //                    isNeedNextVerify&&
+                    !WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType())&&
                     nextWorkflowNodeDO != null) {
 
                 WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
