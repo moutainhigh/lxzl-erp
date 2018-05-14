@@ -590,6 +590,7 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NAME_TO_SHORT = "J500165";
     public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
     public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
+    public static final String CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY = "J500168";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -823,7 +824,7 @@ public class ErrorCode {
     public static final String BANK_SLIP_CLAIM_PAY_STATUS_ERROR = "J18000030";
     public static final String BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED = "J18000031";
     public static final String BANK_SLIP_DETAIL_NOT_INCOME = "J18000032";
-    public static final String OVERSTEP_CURRENT_MONTH = "J18000033";
+    public static final String OVERSTEP_CURRENT_DAY = "J18000033";
     public static final String BANK_SLIP_DETAIL_NOT_HIDE = "J18000034";
     public static final String BANK_SLIP_DETAIL_NOT_DISPLAY = "J18000035";
     public static final String BANK_SLIP_IMPORT_FAIL = "J18000036";
@@ -1472,6 +1473,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
         MAP.put(RETURN_ORDER_ALREADY_SUCCESS, "该退货单已有结算单");
         MAP.put(RETURN_ORDER_CAN_NOT_CREATE_STATEMENT, "该退货单尚未完成退货，不能生成结算单");
+        MAP.put(CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY, "客户的业务员不能由地方分公司转为渠道大客户业务员");
+
 
         MAP.put(MESSAGE_TITLE_NOT_NULL, "站内信标题不能为空");
         MAP.put(MESSAGE_CONTENT_NOT_NULL, "站内信内容不能为空");
@@ -1705,7 +1708,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_CLAIM_PAY_STATUS_ERROR, "系统正在充值或已充值成功，不能重新认领或派发");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
         MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
-        MAP.put(OVERSTEP_CURRENT_MONTH, "不能选择未来月份");
+        MAP.put(OVERSTEP_CURRENT_DAY, "不能选择未来日期");
         MAP.put(BANK_SLIP_DETAIL_NOT_HIDE, "当前不是隐藏状态");
         MAP.put(BANK_SLIP_DETAIL_NOT_DISPLAY, "当前不是显示状态");
         MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");

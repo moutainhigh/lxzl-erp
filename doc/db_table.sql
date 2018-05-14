@@ -3081,7 +3081,7 @@ CREATE TABLE `erp_bank_slip` (
   `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '分公司名称',
   `bank_type` int(11) NOT NULL COMMENT '银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行',
-  `slip_month` datetime NOT NULL COMMENT '月份',
+  `slip_day` datetime NOT NULL COMMENT '导入日期',
   `account_no` varchar(50) COMMENT '查询账号',
   `in_count` int(11) NOT NULL COMMENT '进款笔数',
   `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
@@ -3144,6 +3144,18 @@ CREATE TABLE `erp_bank_slip_claim` (
   INDEX index_erp_bank_slip_detail_id ( `bank_slip_detail_id` ) ,
   INDEX index_other_side_account_no ( `other_side_account_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
+
+CREATE table `erp_bank_slip_detail_operation_log`(
+		`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+		`bank_slip_detail_id` INT(20) NOT NULL COMMENT '银行对公流水明细ID',
+		`operation_type` INT(11) NOT NULL COMMENT '1-下推，2-属地化，3-自动属地化，4-属地化，5-取消属地化，6-隐藏,7-取消隐藏，8-自动认领，9-认领，10-确认',
+		`operation_content` TEXT  COMMENT '操作内容',
+		`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+		`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+		`create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+		 PRIMARY KEY(`id`),
+		 INDEX index_bank_slip_detail_id ( `bank_slip_detail_id` )
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行流水明细操作记录表'
 
 
 DROP TABLE if exists `erp_return_visit`;
@@ -3514,6 +3526,8 @@ CREATE TABLE `erp_order_split_detail` (
 	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
 	PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
+
+
 
 
 

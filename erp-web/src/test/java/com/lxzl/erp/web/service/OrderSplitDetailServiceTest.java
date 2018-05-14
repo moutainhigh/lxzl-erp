@@ -45,7 +45,7 @@ public class OrderSplitDetailServiceTest extends BaseUnTransactionalTest {
 
 	@Test
 	public void testQueryOrderSplitDetailByOrderItemTypeAndOrderItemReferId() {
-		ServiceResult<String, List<OrderSplit>> serviceResult = orderSplitDetailService.queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(Integer.valueOf(1), Integer.valueOf(26));
+		ServiceResult<String, List<OrderSplitDetail>> serviceResult = orderSplitDetailService.queryOrderSplitDetailByOrderItemTypeAndOrderItemReferId(Integer.valueOf(1), Integer.valueOf(26));
 		System.out.println(serviceResult.getResult().size());
 	}
 
