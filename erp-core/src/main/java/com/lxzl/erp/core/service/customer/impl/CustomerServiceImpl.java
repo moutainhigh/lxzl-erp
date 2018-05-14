@@ -1451,19 +1451,7 @@ public class CustomerServiceImpl implements CustomerService {
                     return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 if (verifyResult) {
-                    ServiceResult<String ,WorkflowLink> workflowResult = workflowService.getWorkflowLink(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER,businessNo);
-                    if(!ErrorCode.SUCCESS.equals(workflowResult.getErrorCode())){
-                        return workflowResult.getErrorCode();
-                    }
-                    WorkflowLink workflowLink = workflowResult.getResult();
-                    if(CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())&&workflowLink.getWorkflowStep()==1){
-                        ServiceResult<String, String> channelCustomerCommitResult =  workflowService.channelCustomerCommitWorkFlow(businessNo);
-                        if(!ErrorCode.SUCCESS.equals(channelCustomerCommitResult.getErrorCode())){
-                            return channelCustomerCommitResult.getErrorCode();
-                        }
-                    }else{
-                        customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
-                    }
+                    customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
                 } else {
                     customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
                 }
