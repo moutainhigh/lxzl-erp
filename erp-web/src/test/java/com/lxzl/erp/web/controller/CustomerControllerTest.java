@@ -451,32 +451,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customerPersonQueryParam.setIsRisk(1);
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
     }
-    @Test
-    public void pageDisabledCustomerCompany() throws Exception {
-        CustomerCompanyQueryParam customerCompanyQueryParam = new CustomerCompanyQueryParam();
-//        customerCompanyQueryParam.setCustomerNo("LXCC10002018010100005");
-//          customerCompanyQueryParam.setCompanyName("a");
-//          customerCompanyQueryParam.setIsRisk(1);
-//        customerCompanyQueryParam.setProductPurpose("测试");
-//        customerCompanyQueryParam.setIsDisabled(0);
-//        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
-//        customerCompanyQueryParam.setConnectPhone("13726273851");
-//        customerCompanyQueryParam.setOwnerSubCompanyId(3);
-        TestResult result = getJsonTestResult("/customer/pageDisabledCustomerCompany", customerCompanyQueryParam);
-    }
 
-    @Test
-    public void pageDisabledCustomerPerson() throws Exception {
-        CustomerPersonQueryParam customerPersonQueryParam = new CustomerPersonQueryParam();
-        customerPersonQueryParam.setPageNo(1);
-        customerPersonQueryParam.setPageSize(5);
-//        customerPersonQueryParam.setRealName("a");
-//        customerPersonQueryParam.setIsDisabled(0);
-//        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
-//        customerPersonQueryParam.setOwnerSubCompanyId(2);
-//        customerPersonQueryParam.setIsRisk(1);
-        TestResult result = getJsonTestResult("/customer/pageDisabledCustomerPerson", customerPersonQueryParam);
-    }
     @Test
     public void testPageCustomerPerson() throws Exception {
         String str = " {\n" +

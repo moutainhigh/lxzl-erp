@@ -361,7 +361,7 @@
 
 		SELECT count(ecc.id)
 		FROM erp_customer_company ecc
-		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1 AND ec.is_disabled = 0
+		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
@@ -387,6 +387,9 @@
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
 				AND ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.customerCompanyQueryParam.isDisabled, jdbcType=INTEGER}
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerStatus != null">
 				AND ec.customer_status = #{maps.customerCompanyQueryParam.customerStatus, jdbcType=INTEGER}
@@ -414,7 +417,7 @@
 		FROM (
 		SELECT <include refid="company_column_List"/>
 		FROM erp_customer_company ecc
-		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1 AND ec.is_disabled = 0
+		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1
 		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
 		<where>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
@@ -441,6 +444,9 @@
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
 				AND ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
 			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.customerCompanyQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerStatus != null">
 				AND ec.customer_status = #{maps.customerCompanyQueryParam.customerStatus, jdbcType=INTEGER}
 			</if>
@@ -458,7 +464,7 @@
 		ORDER BY ecc.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
 		) ecc
-		LEFT JOIN erp_customer ec ON ecc.ecc_customer_id=ec.id AND ec.data_status=1 AND ec.is_disabled = 0
+		LEFT JOIN erp_customer ec ON ecc.ecc_customer_id=ec.id AND ec.data_status=1
 		LEFT JOIN erp_area_province eap ON ecc.ecc_province=eap.id AND eap.data_status=1
 		LEFT JOIN erp_area_city eac ON ecc.ecc_city=eac.id AND eac.data_status=1
 		LEFT JOIN erp_area_district ead ON ecc.ecc_district=ead.id AND ead.data_status=1
@@ -505,6 +511,9 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != ''">
 				AND ecp.connect_phone LIKE CONCAT('%','${maps.customerPersonQueryParam.connectPhone}','%' )
 			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.customerPersonQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
 				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
 			</if>
@@ -516,9 +525,6 @@
 			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
 				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				and ec.is_disabled = 0
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
@@ -573,6 +579,9 @@
 			<if test="maps.isQueryAll == null">
 				and ec.data_status = 1 AND ec.customer_type=2
 			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isDisabled != null">
+				AND ec.is_disabled = #{maps.customerPersonQueryParam.isDisabled, jdbcType=INTEGER}
+			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
 				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
 			</if>
@@ -581,240 +590,8 @@
 			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
 				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				and ec.is_disabled = 0
 			</if>
 			<include refid="permission_sql.customer_control"/>
-		</where>
-		ORDER BY ec.create_time DESC
-		LIMIT #{maps.start},#{maps.pageSize}
-	</select>
-	<select id="findDisabledCustomerCompanyCountByParams" resultType="Integer" parameterType="map">
-
-		SELECT count(ecc.id)
-		FROM erp_customer_company ecc
-		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1 AND ec.is_disabled = 1
-		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		<where>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
-				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != ''">
-				and ecc.connect_real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectRealName}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != ''">
-				and ecc.connect_phone LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectPhone}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
-				AND ecc.simple_company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != ''">
-				AND owner_user.real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.ownerName}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.province != null">
-				AND ecc.province = #{maps.customerCompanyQueryParam.province, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.city != null">
-				AND ecc.city = #{maps.customerCompanyQueryParam.city, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
-				AND ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerStatus != null">
-				AND ec.customer_status = #{maps.customerCompanyQueryParam.customerStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerSubCompanyId != null">
-				AND ec.owner_sub_company_id = #{maps.customerCompanyQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
-				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
-			</if>
-			<if test="maps.isQueryAll == null">
-				and ecc.data_status = 1
-			</if>
-		</where>
-	</select>
-	<select id="findDisabledCustomerCompanyByParams" resultMap="CustomerDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="ecc_column_List"/>
-		,eap.province_name AS provinceName
-		,eac.city_name AS cityName
-		,ead.district_name AS districtName
-		,union_user.real_name AS unionUserName
-		,owner_user.real_name AS ownerName
-		,esc.sub_company_name AS ownerSubCompanyName
-		FROM (
-		SELECT <include refid="company_column_List"/>
-		FROM erp_customer_company ecc
-		INNER JOIN erp_customer ec ON ec.id = ecc.customer_id AND ec.data_status = 1 AND ec.is_disabled = 1
-		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		<where>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != null &amp;&amp; maps.customerCompanyQueryParam.customerNo != ''">
-				and ecc.customer_no LIKE CONCAT('%','${maps.customerCompanyQueryParam.customerNo}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != null &amp;&amp; maps.customerCompanyQueryParam.connectRealName != ''">
-				and ecc.connect_real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectRealName}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != null &amp;&amp; maps.customerCompanyQueryParam.connectPhone != ''">
-				and ecc.connect_phone LIKE CONCAT('%','${maps.customerCompanyQueryParam.connectPhone}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.companyName != null &amp;&amp; maps.customerCompanyQueryParam.companyName != ''">
-				AND ecc.simple_company_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.companyName}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != null &amp;&amp; maps.customerCompanyQueryParam.ownerName != ''">
-				AND owner_user.real_name LIKE CONCAT('%','${maps.customerCompanyQueryParam.ownerName}','%' )
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.province != null">
-				AND ecc.province = #{maps.customerCompanyQueryParam.province, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.city != null">
-				AND ecc.city = #{maps.customerCompanyQueryParam.city, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.district != null">
-				AND ecc.district = #{maps.customerCompanyQueryParam.district, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.customerStatus != null">
-				AND ec.customer_status = #{maps.customerCompanyQueryParam.customerStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.ownerSubCompanyId != null">
-				AND ec.owner_sub_company_id = #{maps.customerCompanyQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
-				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
-			</if>
-			<if test="maps.isQueryAll == null">
-				and ecc.data_status = 1
-			</if>
-		</where>
-		ORDER BY ecc.create_time DESC
-		LIMIT #{maps.start},#{maps.pageSize}
-		) ecc
-		LEFT JOIN erp_customer ec ON ecc.ecc_customer_id=ec.id AND ec.data_status=1 AND ec.is_disabled = 1
-		LEFT JOIN erp_area_province eap ON ecc.ecc_province=eap.id AND eap.data_status=1
-		LEFT JOIN erp_area_city eac ON ecc.ecc_city=eac.id AND eac.data_status=1
-		LEFT JOIN erp_area_district ead ON ecc.ecc_district=ead.id AND ead.data_status=1
-		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
-		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
-		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		ORDER BY ecc.ecc_create_time DESC
-	</select>
-
-
-	<select id="findDisabledCustomerPersonCountByParams" resultType="java.lang.Integer" parameterType="map">
-		SELECT COUNT(*)
-		FROM erp_customer ec
-		LEFT JOIN erp_customer_person ecp ON ec.id = ecp.customer_id AND ecp.data_status=1
-		LEFT JOIN erp_user owner_user on ec.owner = owner_user.id
-		<where>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
-				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.realName != null &amp;&amp; maps.customerPersonQueryParam.realName != null">
-				AND ecp.real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.realName}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.phone != null &amp;&amp; maps.customerPersonQueryParam.phone != ''">
-				AND ecp.phone LIKE CONCAT('%','${maps.customerPersonQueryParam.phone}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerName != null &amp;&amp; maps.customerPersonQueryParam.ownerName != ''">
-				AND owner_user.real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.ownerName}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.province != null">
-				AND ecp.province = #{maps.customerPersonQueryParam.province, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.city != null">
-				AND ecp.city = #{maps.customerPersonQueryParam.city, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.district != null">
-				AND ecp.district = #{maps.customerPersonQueryParam.district, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.personNo != null &amp;&amp; maps.customerPersonQueryParam.personNo != ''">
-				AND ecp.person_no LIKE CONCAT('%','${maps.customerPersonQueryParam.personNo}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != ''">
-				AND ecp.connect_real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.connectRealName}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != ''">
-				AND ecp.connect_phone LIKE CONCAT('%','${maps.customerPersonQueryParam.connectPhone}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
-				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerSubCompanyId != null">
-				AND ec.owner_sub_company_id = #{maps.customerPersonQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.isQueryAll == null">
-				and ec.data_status = 1 AND ec.customer_type = 2
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
-				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				and ec.is_disabled = 1
-			</if>
-		</where>
-	</select>
-
-	<select id="findDisabledCustomerPersonByParams" resultMap="CustomerDO" parameterType="map">
-		SELECT <include refid="column_List"/>,<include refid="person_column_List"/>
-		,eap.province_name AS provinceName
-		,eac.city_name AS cityName
-		,ead.district_name AS districtName
-		,union_user.real_name AS unionUserName
-		,owner_user.real_name AS ownerName
-		,esc.sub_company_name AS ownerSubCompanyName
-		FROM erp_customer ec LEFT JOIN erp_customer_person ecp ON ec.id=ecp.customer_id AND ecp.data_status=1
-		LEFT JOIN erp_area_province eap ON ecp.province=eap.id AND eap.data_status=1
-		LEFT JOIN erp_area_city eac ON ecp.city=eac.id AND eac.data_status=1
-		LEFT JOIN erp_area_district ead ON ecp.district=ead.id AND ead.data_status=1
-		LEFT JOIN  erp_user union_user on ec.union_user = union_user.id
-		LEFT JOIN  erp_user owner_user on ec.owner = owner_user.id
-		LEFT JOIN erp_sub_company esc on ec.owner_sub_company_id = esc.id AND esc.data_status = 1
-		<where>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerNo != null &amp;&amp; maps.customerPersonQueryParam.customerNo != ''">
-				AND ec.customer_no LIKE CONCAT('%','${maps.customerPersonQueryParam.customerNo}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.realName != null &amp;&amp; maps.customerPersonQueryParam.realName != null">
-				AND ecp.real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.realName}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.phone != null &amp;&amp; maps.customerPersonQueryParam.phone != ''">
-				AND ecp.phone LIKE CONCAT('%','${maps.customerPersonQueryParam.phone}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerName != null &amp;&amp; maps.customerPersonQueryParam.ownerName != ''">
-				AND owner_user.real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.ownerName}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.province != null">
-				AND ecp.province = #{maps.customerPersonQueryParam.province, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.city != null">
-				AND ecp.city = #{maps.customerPersonQueryParam.city, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.district != null">
-				AND ecp.district = #{maps.customerPersonQueryParam.district, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.personNo != null &amp;&amp; maps.customerPersonQueryParam.personNo != ''">
-				AND ecp.person_no LIKE CONCAT('%','${maps.customerPersonQueryParam.personNo}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != null &amp;&amp; maps.customerPersonQueryParam.connectRealName != ''">
-				AND ecp.connect_real_name LIKE CONCAT('%','${maps.customerPersonQueryParam.connectRealName}','%' )
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != null &amp;&amp; maps.customerPersonQueryParam.connectPhone != ''">
-				AND ecp.connect_phone LIKE CONCAT('%','${maps.customerPersonQueryParam.connectPhone}','%' )
-			</if>
-			<if test="maps.isQueryAll == null">
-				and ec.data_status = 1 AND ec.customer_type=2
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.customerStatus != null">
-				AND ec.customer_status = #{maps.customerPersonQueryParam.customerStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.ownerSubCompanyId != null">
-				AND ec.owner_sub_company_id = #{maps.customerPersonQueryParam.ownerSubCompanyId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
-				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
-			</if>
-			<if test="true">
-				and ec.is_disabled = 1
-			</if>
 		</where>
 		ORDER BY ec.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}

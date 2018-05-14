@@ -218,19 +218,4 @@ public interface CustomerService extends VerifyReceiver {
      */
     ServiceResult<String,String> setIsRisk();
 
-    /**
-     * 查询禁用的公司客户
-     *
-     * @param customerCompanyQueryParam
-     * @return
-     */
-    ServiceResult<String,Page<Customer>> pageDisabledCustomerCompany(CustomerCompanyQueryParam customerCompanyQueryParam);
-
-    /**
-     * 查询禁用的个人客户
-     *
-     * @param customerPersonQueryParam
-     * @return
-     */
-    ServiceResult<String,Page<Customer>> pageDisabledCustomerPerson(CustomerPersonQueryParam customerPersonQueryParam);
 }
