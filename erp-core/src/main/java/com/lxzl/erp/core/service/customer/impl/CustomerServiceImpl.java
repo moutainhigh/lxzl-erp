@@ -2433,6 +2433,16 @@ public class CustomerServiceImpl implements CustomerService {
                 //设置客户的属地化时间
                 customerDO.setLocalizationTime(now);
             }
+            //如果客户开发人不是渠道大客户业务员，并且修改后的开发人是渠道大客户业务员
+            if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
+                return serviceResult;
+            }
+            //如果客户开发人是渠道大客户业务员,并且修改后的开发人不是渠道大客户业务员
+            if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+                //设置客户的属地化时间
+                customerDO.setLocalizationTime(now);
+            }
             customerDO.setOwner(customer.getOwner());
         }
 
@@ -2447,6 +2457,11 @@ public class CustomerServiceImpl implements CustomerService {
                     //如果联合开发员不是电销，并且修改后联合开发员是电销
                     if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
                         serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
+                        return serviceResult;
+                    }
+                    //如果联合开发员不是渠道大客户业务员，并且修改后联合开发员是渠道大客户业务员
+                    if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
                         return serviceResult;
                     }
                     customerDO.setUnionUser(customer.getUnionUser());

@@ -120,7 +120,8 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setOrderTypeNumber("D");
         }
         formSEOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
-        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())) {
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())||
+                CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(orderSubCompanyDO.getId())) {
             formSEOrder.setOrderFromNumber("XS");// 订单来源 XS	线上 XX 线下
         } else {
             formSEOrder.setOrderFromNumber("XX");
