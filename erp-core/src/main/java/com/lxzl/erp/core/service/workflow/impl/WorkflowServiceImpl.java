@@ -169,8 +169,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkNo = customerCommitWorkFlow.getResult();
         } else {
             Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(0));
-            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)||
-                    CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId)) {
+            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
             WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
@@ -488,6 +487,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
+        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+            if(userSupport.isChannelSubCompany()){
+                workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
+            }
+        }
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
         WorkflowNodeDO workflowNodeDO = null;
         WorkflowTemplateDO workflowTemplateDO = workflowTemplateMapper.findByWorkflowType(workflowType);
@@ -588,8 +592,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
         Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDO);
-        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)||
-                CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId)) {
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
             subCompanyId = CommonConstant.HEAD_COMPANY_ID;
         }
         List<User> userList = getUserListByNode(workflowNodeDO, subCompanyId);
@@ -1661,8 +1664,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         } else {
             Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(1));
-            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)||
-                    CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId)) {
+            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
             WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(1);
@@ -1906,8 +1908,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
         } else {
             Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(1));
-            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)||
-                    CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId)) {
+            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
             WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(1);

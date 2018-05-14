@@ -3081,7 +3081,7 @@ CREATE TABLE `erp_bank_slip` (
   `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '分公司名称',
   `bank_type` int(11) NOT NULL COMMENT '银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行',
-  `slip_month` datetime NOT NULL COMMENT '月份',
+  `slip_day` datetime NOT NULL COMMENT '导入日期',
   `account_no` varchar(50) COMMENT '查询账号',
   `in_count` int(11) NOT NULL COMMENT '进款笔数',
   `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
