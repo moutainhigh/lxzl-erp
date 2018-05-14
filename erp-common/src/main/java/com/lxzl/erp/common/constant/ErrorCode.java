@@ -1708,7 +1708,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_CLAIM_PAY_STATUS_ERROR, "系统正在充值或已充值成功，不能重新认领或派发");
         MAP.put(BANK_SLIP_DETAIL_NOT_NEED_CONFIRMED, "没有需要确认的银行对公流水认领数据");
         MAP.put(BANK_SLIP_DETAIL_NOT_INCOME, "当前流水记录不是收入流水");
-        MAP.put(OVERSTEP_CURRENT_DAY, "不能选择未来天");
+        MAP.put(OVERSTEP_CURRENT_DAY, "不能选择未来日期");
         MAP.put(BANK_SLIP_DETAIL_NOT_HIDE, "当前不是隐藏状态");
         MAP.put(BANK_SLIP_DETAIL_NOT_DISPLAY, "当前不是显示状态");
         MAP.put(BANK_SLIP_IMPORT_FAIL, "您可能错传了其他银行数据，如果您确认上传文件无误，请联系管理员处理");
