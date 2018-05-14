@@ -109,7 +109,12 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam) {
         ServiceResult<String, Page<BankSlip>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipQueryParam.getPageNo(), bankSlipQueryParam.getPageSize());
-
+        if(bankSlipQueryParam.getSlipDayStart() != null){
+            bankSlipQueryParam.setSlipDayStart(DateUtil.getDayByOffset(bankSlipQueryParam.getSlipDayStart(),CommonConstant.COMMON_ZERO));
+        }
+        if(bankSlipQueryParam.getSlipDayEnd() != null){
+            bankSlipQueryParam.setSlipDayEnd(DateUtil.getDayByOffset(bankSlipQueryParam.getSlipDayEnd(),CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD));
+        }
         Integer departmentType = 0;
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
 //            //财务人员类型设置为1
@@ -142,13 +147,13 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, String> saveBankSlip(BankSlip bankSlip) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        //校验上传流水月份是否超过当月
-        if (bankSlip.getSlipMonth().getTime() - DateUtil.getMonthByCurrentOffset(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD).getTime() > 0) {
-            serviceResult.setErrorCode(ErrorCode.OVERSTEP_CURRENT_MONTH);
+        //校验上传流水月份是否超过当天
+        if (bankSlip.getSlipDay().getTime() - DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD).getTime() > 0) {
+            serviceResult.setErrorCode(ErrorCode.OVERSTEP_CURRENT_DAY);
             return serviceResult;
         }
         Integer bankType = bankSlip.getBankType();
-        bankSlip.setSlipMonth(DateUtil.getMonthByOffset(bankSlip.getSlipMonth(), CommonConstant.COMMON_ZERO));
+        bankSlip.setSlipDay(DateUtil.getDayByOffset(bankSlip.getSlipDay(), CommonConstant.COMMON_ZERO));
         if (!BankType.BOC_BANK.equals(bankType) &&
                 !BankType.TRAFFIC_BANK.equals(bankType) &&
                 !BankType.NAN_JING_BANK.equals(bankType) &&
@@ -165,7 +170,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //分公司一个月不通银行只能导入一次
 
-        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndMonthAndBankType(bankSlip.getSubCompanyId(), bankSlip.getSlipMonth(), bankType);
+        BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(bankSlip.getSubCompanyId(), bankSlip.getSlipDay(), bankType);
         if (bankSlipDO != null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_EXISTS);
             return serviceResult;
@@ -304,10 +309,12 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, Page<BankSlipDetail>> pageBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam) {
         ServiceResult<String, Page<BankSlipDetail>> result = new ServiceResult<>();
         PageQuery pageQuery = new PageQuery(bankSlipDetailQueryParam.getPageNo(), bankSlipDetailQueryParam.getPageSize());
-        if(bankSlipDetailQueryParam.getSlipMonth() != null){
-            bankSlipDetailQueryParam.setSlipMonth(DateUtil.getMonthByOffset(bankSlipDetailQueryParam.getSlipMonth(), CommonConstant.COMMON_ZERO));
+        if(bankSlipDetailQueryParam.getSlipDayStart() != null){
+            bankSlipDetailQueryParam.setSlipDayStart(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getSlipDayStart(),CommonConstant.COMMON_ZERO));
         }
-
+        if(bankSlipDetailQueryParam.getSlipDayEnd() != null){
+            bankSlipDetailQueryParam.setSlipDayEnd(DateUtil.getDayByOffset(bankSlipDetailQueryParam.getSlipDayEnd(),CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD));
+        }
         Integer departmentType = 0;
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1

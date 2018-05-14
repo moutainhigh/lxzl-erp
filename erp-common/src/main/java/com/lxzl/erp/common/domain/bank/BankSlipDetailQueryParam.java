@@ -20,7 +20,9 @@ public class BankSlipDetailQueryParam extends BasePageParam {
     private Integer detailStatus;   //明细状态，1-未认领，2-已认领，3-已确定，4-忽略
     private Integer isLocalization;   //'是否已属地化,0-否，1-是[总公司时有值]',
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date slipMonth;   //月份
+    private Date slipDayStart;   //导入开始时间日期
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date slipDayEnd;   //导入结束时间日期
     private String otherSideAccountNo;   //对方账号
     private String tradeSerialNo;   //交易流水号
 
@@ -48,12 +50,20 @@ public class BankSlipDetailQueryParam extends BasePageParam {
         this.otherSideAccountNo = otherSideAccountNo;
     }
 
-    public Date getSlipMonth() {
-        return slipMonth;
+    public Date getSlipDayStart() {
+        return slipDayStart;
     }
 
-    public void setSlipMonth(Date slipMonth) {
-        this.slipMonth = slipMonth;
+    public void setSlipDayStart(Date slipDayStart) {
+        this.slipDayStart = slipDayStart;
+    }
+
+    public Date getSlipDayEnd() {
+        return slipDayEnd;
+    }
+
+    public void setSlipDayEnd(Date slipDayEnd) {
+        this.slipDayEnd = slipDayEnd;
     }
 
     public Integer getIsLocalization() {
