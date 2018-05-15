@@ -586,7 +586,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
             if (customerConsignInfoDOList.size() == 0) {
-                workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
+                workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(workflowTemplateDO.getWorkflowNodeDOList().size()-1);
                 List<User> userList = getUserListByNode(workflowNodeDO, subCompanyId);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 result.setResult(userList);
