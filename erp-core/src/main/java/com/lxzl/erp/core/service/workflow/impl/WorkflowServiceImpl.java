@@ -226,7 +226,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (warehouseDO != null) {
                 subCompanyId = warehouseDO.getSubCompanyId();
             }
-        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)||
+                WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             if (customerDO != null) {
                 subCompanyId = customerDO.getOwnerSubCompanyId();
@@ -532,7 +533,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     return result;
                 }
                 if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
-                        WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
+                        (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==2)) {
                     CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
                     if (customerDO == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
