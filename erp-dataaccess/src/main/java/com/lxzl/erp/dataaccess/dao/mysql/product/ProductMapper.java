@@ -19,7 +19,7 @@ public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     List<ProductDO> findProductByParams(@Param("maps") Map<String, Object> paramMap);
     Integer findProductCountByParams(@Param("maps") Map<String, Object> paramMap);
 
-    List<ProductDO> findByProductSkuIds(@Param("productSkuIds") Set<Integer> productSkuIds);
+    List<ProductDO> findByIds(@Param("productIds") Set<Integer> productIds);
 
     List<ProductSkuDO> findSkuRentByCustomerId(@Param("customerId") Integer customerId);
 
@@ -28,4 +28,5 @@ public interface ProductMapper extends BaseMysqlDAO<ProductDO> {
     ProductDO findExistsProduct(@Param("brandId") Integer brandId,@Param("categoryId") Integer categoryId,@Param("productModel") String productModel);
 
     List<ProductDO> findByProductParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
+
 }

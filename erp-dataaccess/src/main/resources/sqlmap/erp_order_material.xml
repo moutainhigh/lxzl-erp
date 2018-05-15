@@ -25,6 +25,7 @@
 		<result column="renting_material_count" jdbcType="INTEGER" property="rentingMaterialCount" />
 		<result column="FEntry_id" property="FEntryID"/>
 		<result column="product_number" property="productNumber"/>
+		<result column="order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId" />
 		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -34,7 +35,7 @@
 	</resultMap>
 
 	<sql id="column_List">
-		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length, eom.rent_length_type as rent_length_type, eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.rent_deposit_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.renting_material_count,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user,eom.FEntry_id as FEntry_id, eom.product_number as product_number
+		eom.id,eom.order_id,eom.material_id,eom.rent_type as rent_type,eom.rent_time_length as rent_time_length, eom.rent_length_type as rent_length_type, eom.material_name,eom.material_count,eom.material_unit_amount,eom.material_amount,eom.rent_deposit_amount,eom.deposit_amount,eom.credit_deposit_amount,eom.insurance_amount,eom.material_snapshot,eom.deposit_cycle,eom.payment_cycle,eom.pay_mode,eom.is_new_material,eom.renting_material_count,eom.data_status,eom.remark,eom.create_time,eom.create_user,eom.update_time,eom.update_user,eom.FEntry_id as FEntry_id, eom.product_number as product_number,eom.order_joint_product_id as order_joint_product_id
 	</sql>
 
 	<select id="queryLastPrice" resultType="java.util.Map" parameterType="java.util.Map">
@@ -154,6 +155,9 @@
 			</if>
 			<if test="updateUser != null">
 				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="orderJointProductId != null">
+				order_joint_product_id = #{orderJointProductId, jdbcType=INTEGER},
 			</if>
 		</set>
 	</sql>
