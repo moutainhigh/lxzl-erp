@@ -1,7 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.order;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
+import org.springframework.data.annotation.Transient;
+
 import java.math.BigDecimal;
 
 public class OrderMaterialDO  extends BaseDO {
@@ -31,9 +32,29 @@ public class OrderMaterialDO  extends BaseDO {
 
 	private String serialNumber;        // 序号
 
+	private Integer orderJointProductId; // 订单组合商品id
+	@Transient
+	private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
+
+	public Integer getIdentityNo() {
+		return identityNo;
+	}
+
+	public void setIdentityNo(Integer identityNo) {
+		this.identityNo = identityNo;
+	}
+
+	public Integer getOrderJointProductId() {
+		return orderJointProductId;
+	}
+
+	public void setOrderJointProductId(Integer orderJointProductId) {
+		this.orderJointProductId = orderJointProductId;
+	}
 
 	public Integer getId(){
 		return id;

@@ -59,6 +59,7 @@ public class ErrorCode {
     public static final String USER_ROLE_IS_NOT_SUPER_ADMIN = "J100030";
     public static final String SUB_COMPANY_ID_NOT_NULL = "J100031";
     public static final String WORKFLOW_CONFIG_ERROR = "J100032";
+    public static final String WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS = "J100033";
 
     public static final String PRODUCT_ID_NOT_NULL = "J200000";
     public static final String PRODUCT_NAME_NOT_NULL = "J200001";
@@ -146,6 +147,9 @@ public class ErrorCode {
     public static final String PROPERTY_ID_NOT_NULL = "J200083";
     public static final String PROPERTY_TYPE_MUST_BE_ONE_OR_TWO = "J200084";
     public static final String PRODUCT_CATEGORY_NOT_EXISTS = "J200085";
+    public static final String PRODUCT_COUNT_ERROR = "J200086";
+    public static final String PRODUCT_CAN_NOT_REPEAT = "J200087";
+
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
     public static final String PROPERTY_NAME_NOT_EXISTS = "J800088";
@@ -592,6 +596,8 @@ public class ErrorCode {
     public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
     public static final String CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY = "J500168";
 
+    public static final String ORDER_JOINT_PRODUCT_ERROR = "J500169";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -964,6 +970,7 @@ public class ErrorCode {
         MAP.put(CUSTOMER_ORDER_NOT_NEED_RETURN_VISIT, "该客户的订单到目前为止，已经全部归还物品，无需进行回访了");
         MAP.put(CUSTOMER_RETURN_ID_NOT_NULL, "客户的回访记录的ID不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_NOT_EXISTS, "客户的回访记录不存在");
+        MAP.put(WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS, "客户工作流不允许驳回到上一级");
 
 
         MAP.put(PRODUCT_ID_NOT_NULL, "商品唯一标识不能为空");
@@ -978,6 +985,7 @@ public class ErrorCode {
         MAP.put(PRODUCT_SKU_IS_NULL_OR_NOT_EXISTS, "此商品SKU不存在或发生变更");
         MAP.put(PRODUCT_SKU_PRICE_ERROR, "商品SKU价格填写不正确");
         MAP.put(PRODUCT_SKU_COUNT_ERROR, "商品SKU数量填写不正确");
+        MAP.put(PRODUCT_COUNT_ERROR, "商品数量填写不正确");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_NOT_EXISTS, "商品属性不存在");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_NOT_EXISTS, "商品属性值不存在");
         MAP.put(PRODUCT_CATEGORY_PROPERTY_VALUE_ALREADY_EXISTS, "商品属性值不存在");
@@ -1413,6 +1421,7 @@ public class ErrorCode {
         MAP.put(EQUIPMENT_NOT_RENT, "该设备不是客户在租设备，不能退还，请仔细检查");
         MAP.put(RETURN_ORDER_IS_CHARGING_IS_NOT_NULL, "是否计租赁费用不能为空");
         MAP.put(PRODUCT_SKU_CAN_NOT_REPEAT, "商品SKU不能重复，请检查该单");
+        MAP.put(PRODUCT_CAN_NOT_REPEAT, "商品不能重复，请检查该单");
         MAP.put(MATERIAL_CAN_NOT_REPEAT, "配件不能重复，请检查该单");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_END, "只有处理中的退还单可以结束");
         MAP.put(RETURN_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的退还单可以取消");
@@ -1776,6 +1785,8 @@ public class ErrorCode {
         MAP.put(ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST, "分公司不存在");
         MAP.put(ORDER_SPLIT_SPLIT_COUNT_EXCEED, "拆单数量不能大于订单项总数");
         MAP.put(ORDER_SPLIT_PEER_COUNT_EXCEED, "同行调拨超过限制");
+
+        MAP.put(ORDER_JOINT_PRODUCT_ERROR, "订单组合商品参数错误");
     }
 
 

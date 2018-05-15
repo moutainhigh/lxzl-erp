@@ -154,5 +154,5 @@ public interface WorkflowService extends BaseService {
     ServiceResult<String, String> workflowImportData();
 
 
-    ServiceResult<String, String> channelCustomerCommitWorkFlow(WorkflowLinkDO workflowLinkDO);
+    ServiceResult<String, String> channelCustomerCommitWorkFlow(WorkflowLinkDO workflowLinkDO, Integer verifyUser);
 }

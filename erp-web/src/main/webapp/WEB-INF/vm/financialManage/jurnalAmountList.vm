@@ -83,11 +83,13 @@
                                         <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <label for="slipMonth" class="input-group date">
-                                        <input type="text" name="slipMonth" id="slipMonth" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择月份">
+                                <div class="form-group pull-right mn mr10" style="width: 195px;">
+                                    <input type="hidden" name="slipDayStart" id="slipDayStart" />
+                                    <input type="hidden" name="slipDayEnd" id="slipDayEnd" />
+                                    <div class="input-group date" id="slipTimePicker">
+                                        <input type="text" name="slipTimePicker" id="slipTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择导入时间">
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                    </label>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -200,7 +202,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'modal.choose.customerByAll.js',
