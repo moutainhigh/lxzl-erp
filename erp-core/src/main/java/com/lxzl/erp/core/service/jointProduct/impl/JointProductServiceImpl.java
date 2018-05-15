@@ -144,21 +144,8 @@ public class JointProductServiceImpl implements JointProductService {
         Map<Integer, JointProductProductDO> productDeleteMap = ListUtil.listToMap(jointProductProductDOList, "id");
 
         if (CollectionUtil.isNotEmpty(jointProductProductList)) {
-            //判断id是否相同
-            //判断是否有重复id
-            Set<Integer> productIdSet = new HashSet<>();
             for (JointProductProduct jointProductProduct : jointProductProductList) {
-                productIdSet.add(jointProductProduct.getProductId());
-            }
-            if(productIdSet.size() > 0 ) {
-                if (jointProductProductList.size() > productIdSet.size()) {
-                    serviceResult.setErrorCode(ErrorCode.PRODUCT_CAN_NOT_REPEAT);
-                    return serviceResult;
-                }
-            }
-
-            for (JointProductProduct jointProductProduct : jointProductProductList) {
-                if (jointProductProduct.getProductId() == null) {
+                if (jointProductProduct.getJointProductProductId() == null) {
                     //新增
                     JointProductProductDO jointProductProductDO = new JointProductProductDO();
                     jointProductProductDO.setJointProductId(jointProductDO.getId());
@@ -199,20 +186,6 @@ public class JointProductServiceImpl implements JointProductService {
         Map<Integer, JointMaterialDO> materialDeleteMap = ListUtil.listToMap(jointMaterialDoList, "id");
         if (CollectionUtil.isNotEmpty(jointMaterialList)) {
             //以下是处理 erp_joint_material 的数据
-            //判断是否有重复id
-            HashSet<Integer> materialIdSet = new HashSet<>();
-            for (JointMaterial jointMaterial : jointMaterialList) {
-                    materialIdSet.add(jointMaterial.getMaterialId());
-            }
-            if(materialIdSet.size() > 0 ){
-                if (jointMaterialList.size() > materialIdSet.size()) {
-                    serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return serviceResult;
-                }
-            }
-
-
             for (JointMaterial jointMaterial : jointMaterialList) {
                 if (jointMaterial.getJointMaterialId() == null) {
                     //新增
