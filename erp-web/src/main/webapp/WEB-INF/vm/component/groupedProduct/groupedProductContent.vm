@@ -84,7 +84,7 @@
                         <tbody>
                         {{#dataSource}}
                         {{#listData}}
-                        <tr class="productRow" data-id="{{productId}}" data-serial="{{serialNumber}}">
+                        <tr class="productRow" data-id="{{productId}}" data-serial="{{serialNumber}}" data-jointid="{{jointProductProductId}}">
                             <td>
                                 <label class="option block mn">
                                     <input type="checkbox" name="checkItem" value="{{productId}}" data-serial="{{serialNumber}}">
@@ -217,23 +217,19 @@
                         <tbody>
                         {{#dataSource}}
                         {{#listData}}
-                        <tr class="materialRow">
+                        <tr class="materialRow"  data-jointid="{{jointMaterialId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{materialNo}}"  data-isnew="{{isNewMaterial}}">
+                                    <input type="checkbox" name="checkItem" value="{{materialNo}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>
-                                <!-- {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}} -->
-                                {{materialName}}
-                            </td>
+                            <td>{{materialName}}</td>
                             <td>{{brandName}}</td>
                             <td>{{materialTypeStr}}</td>
                             <td>￥{{currentMaterialPrice}}</td>
                             <td>
                                 <div>
-                                    <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
                                     <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                     <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
                                     <label class="field prepend-icon mw200">

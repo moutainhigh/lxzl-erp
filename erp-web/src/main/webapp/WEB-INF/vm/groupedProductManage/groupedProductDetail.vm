@@ -13,13 +13,12 @@
     <section id="content_wrapper">
         #parse("layout/topbarDropmenu.vm")
         #parse("layout/topbar.vm")
-        <section id="content" class="pn animated fadeIn">
+        <section id="content" class="animated fadeIn">
             <form id="groupedProductDetailForm">
-
-                <div class="pv30 ph40 bg-light dark br-b br-grey posr">
-                    <script type="text/html" id="groupedProductHeadTpl">
-                        {{#groupedProduct}}
-                        <div class="va-t m30">
+                <div class="panel panel-primary panel-border top mb15">
+                    <div class="panel-body">
+                        <script type="text/html" id="groupedProductHeadTpl">
+                            {{#groupedProduct}}
                             <div class="row">
                                 <div class="col-md-6">
                                     <dl class="dl-horizontal">
@@ -37,23 +36,23 @@
                                     </dl>
                                 </div>
                             </div>
-                        </div>
-                        {{/groupedProduct}}
-                    </script>
-                    <div class="table-layout" id="groupedProductHead"></div>
+                            {{/groupedProduct}}
+                        </script>
+                        <div class="table-layout" id="groupedProductHead"></div>
+                    </div>
                 </div>
 
-                <div class="p25 pt35">
+                <div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel">
                                 <div class="panel-heading">
                                     <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
                                         <li class="active">
-                                            <a href="#purchaseOrderProductItems" data-toggle="tab">商品项</a>
+                                            <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                         </li>
                                         <li>
-                                            <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项</a>
+                                            <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -76,14 +75,14 @@
                                                     {{#dataSource}}
                                                     {{#listData}}
                                                     <tr class="productRow">
-                                                        <td>{{productNo}}</td>
-                                                        <td>{{productName}}</td>
-                                                        <td>{{categoryName}}</td>
-                                                        <td>{{brandName}}</td>
+                                                        <td>{{product.productNo}}</td>
+                                                        <td>{{product.productName}}</td>
+                                                        <td>{{product.categoryName}}</td>
+                                                        <td>{{product.brandName}}</td>
                                                         <td>{{productCount}} </td>
                                                         <td class="text-right">
                                                             <div class="btn-group text-right">
-                                                                <a href="#" type="button" class="btn btn-default btn-xs viewButton" data-productid="{{productId}}">查看SKU</a>
+                                                                <a href="#" type="button" class="btn btn-default btn-xs viewButton" data-productid="{{product.productId}}">查看SKU</a>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -213,7 +212,6 @@
     #parse("layout/footer.vm")
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
-    'manage.group.product.mixin.js',
     'manage.group.product.detail.js');
 </script>
 <script type="text/javascript">
