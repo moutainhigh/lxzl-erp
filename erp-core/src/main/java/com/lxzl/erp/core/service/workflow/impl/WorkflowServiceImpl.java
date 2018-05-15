@@ -167,7 +167,17 @@ public class WorkflowServiceImpl implements WorkflowService {
                 return result;
             }
             workflowLinkNo = customerCommitWorkFlow.getResult();
-        } else {
+        }  else {
+                WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
+                //如果是渠道分公司且地址全部审核通过
+                if (workflowLinkDO!=null&&(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()>=1)) {
+                    CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+                    List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
+                    if (customerConsignInfoDOList.size() == 0) {
+                        return channelCustomerCommitWorkFlow(workflowLinkDO);
+                    }
+                }
+
             Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(0));
             if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
@@ -177,7 +187,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
                 return result;
             }
-            WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
             if (workflowLinkDO == null) {
                 workflowLinkNo = generateWorkflowLink(workflowTemplateDO, workflowReferNo, commitRemark, verifyUser, verifyMatters, imgIdList, currentTime, orderRemark);
                 workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
