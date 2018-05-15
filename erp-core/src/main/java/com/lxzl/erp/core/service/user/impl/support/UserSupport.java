@@ -129,6 +129,16 @@ public class UserSupport {
         }
         return flag;
     }
+    private boolean checkRoleListHaveChannelCompany(List<Role> userRoleList) {
+        boolean flag = false;
+        for (Role role : userRoleList) {
+            //如果是总公司角色
+            if (SubCompanyType.SUB_COMPANY_TYPE_CHANNEL.equals(role.getSubCompanyType())) {
+                return true;
+            }
+        }
+        return flag;
+    }
 
     /**
      * 判断当前用户是否可以使用该仓库
@@ -180,6 +190,20 @@ public class UserSupport {
     }
 
     /**
+     * 是否属于渠道分公司
+     */
+    public boolean isChannelSubCompany() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        return checkRoleListHaveChannelCompany(userRoleList);
+    }
+    /**
+     * 是否属于渠道分公司
+     */
+    public boolean isChannelSubCompany(User user) {
+        List<Role> userRoleList = user.getRoleList();
+        return checkRoleListHaveChannelCompany(userRoleList);
+    }
+    /**
      * 是否是商务人员
      */
     public boolean isBusinessAffairsPerson() {
@@ -194,7 +218,21 @@ public class UserSupport {
         }
         return false;
     }
-
+    /**
+     * 是否是电销人员
+     */
+    public boolean isElectric() {
+        List<Role> userRoleList = getCurrentUser().getRoleList();
+        if (CollectionUtil.isNotEmpty(userRoleList)) {
+            for (Role role : userRoleList) {
+                DepartmentDO departmentDO = departmentMapper.findById(role.getDepartmentId());
+                if (DepartmentType.DEPARTMENT_TYPE_ELECTRIC.equals(departmentDO.getDepartmentType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * 是否是风控人员
      */

@@ -85,8 +85,15 @@
     </select>
 
     <select id="listCount" resultType="java.lang.Integer" parameterType="map">
-        SELECT count(ekro.id) FROM erp_k3_return_order ekro
+        SELECT count(distinct ekro.id) FROM erp_k3_return_order ekro
+        <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
+            INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id and ekrod.data_status = 1
+        </if>
+
         <where>
+            <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
+                and ekrod.order_no = #{maps.k3ReturnOrderQueryParam.orderNo}
+            </if>
             <if test="maps.k3ReturnOrderQueryParam.returnOrderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.returnOrderNo != ''">
                 and ekro.return_order_no like CONCAT('%','${maps.k3ReturnOrderQueryParam.returnOrderNo}','%' )
             </if>
@@ -121,7 +128,13 @@
         SELECT
         <include refid="column_List"/>
         FROM erp_k3_return_order ekro
+        <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
+            INNER JOIN erp_k3_return_order_detail ekrod ON ekrod.return_order_id = ekro.id and ekrod.data_status = 1
+        </if>
         <where>
+            <if test="maps.k3ReturnOrderQueryParam.orderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.orderNo != ''">
+                and ekrod.order_no = #{maps.k3ReturnOrderQueryParam.orderNo}
+            </if>
             <if test="maps.k3ReturnOrderQueryParam.returnOrderNo != null &amp;&amp; maps.k3ReturnOrderQueryParam.returnOrderNo != ''">
                 and ekro.return_order_no like CONCAT('%','${maps.k3ReturnOrderQueryParam.returnOrderNo}','%' )
             </if>
