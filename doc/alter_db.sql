@@ -771,4 +771,8 @@ CREATE TABLE `erp_order_split_detail` (
 
 alter table `erp_bank_slip` change `slip_month` `slip_day` datetime NOT NULL COMMENT '导入日期'
 
+ALTER TABLE erp_order_product add `order_joint_product_id` int(20) COMMENT '订单组合商品id';
+ALTER TABLE erp_order_material add `order_joint_product_id` int(20) COMMENT '订单组合商品id';
+ALTER TABLE erp_joint_product DROP COLUMN is_new;
+
 
