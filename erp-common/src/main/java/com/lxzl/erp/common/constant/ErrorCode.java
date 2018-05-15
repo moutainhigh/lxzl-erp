@@ -429,8 +429,6 @@ public class ErrorCode {
     public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400051";
     public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400052";
 
-    public static final String ORDER_JOINT_PRODUCT_ERROR = "J400053";
-
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
     public static final String CUSTOMER_PERSON_NOT_NULL = "J500003";
@@ -596,6 +594,8 @@ public class ErrorCode {
     public static final String CUSTOMER_COMPANY_NAME_CAN_NOT_EQUAL_CUSTOMER_PERSON_REALNAME = "J500166";
     public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
     public static final String CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY = "J500168";
+
+    public static final String ORDER_JOINT_PRODUCT_ERROR = "J500169";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
