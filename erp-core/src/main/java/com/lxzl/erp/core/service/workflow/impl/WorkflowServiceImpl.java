@@ -1966,6 +1966,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
             //生成审核组id
             WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
+            workflowVerifyUserGroupDO.setVerifyUser(verifyUser);
             workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
             workflowVerifyUserGroupDO.setVerifyType(VerifyType.VERIFY_TYPE_THIS_IS_PASS);
             workflowVerifyUserGroupDO.setVerifyStatus(VerifyStatus.VERIFY_STATUS_COMMIT);
