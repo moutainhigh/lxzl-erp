@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.statistics.impl;
 
+import com.google.common.collect.Lists;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -29,6 +30,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -59,10 +64,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 空参数
         paramMap.clear();
         paramMap.put("orderQueryParam", new OrderQueryParam());
-        Integer totalOrderCount = orderMapper.findOrderCountByParams(paramMap);
+        //Integer totalOrderCount = orderMapper.findOrderCountByParams(paramMap);
+        Integer totalOrderCount = orderMapper.listCount();
         statisticsIndexInfo.setTotalOrderCount(totalOrderCount);
 
-        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(paramMap);
+        //List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(paramMap);
+        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.queryPaidSubCompanyOrderAmount();
         Map<String, BigDecimal> subCompanyRentAmount = new HashMap<>();
         for (Map<String, Object> subCompanyRentAmountMap : subCompanyRentAmountList) {
             if (subCompanyRentAmountMap.get("total_order_amount") != null && subCompanyRentAmountMap.get("total_order_amount") instanceof BigDecimal) {
@@ -267,19 +274,49 @@ public class StatisticsServiceImpl implements StatisticsService {
         ServiceResult<String, List<StatisticsHomeByRentLengthType>> serviceResult = new ServiceResult<>();
         List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList = new ArrayList<>();
         List<TimePairs> timePairsList = getTimePairs(homeRentByTimeParam.getTimeDimensionType());
-        if(CollectionUtil.isNotEmpty(timePairsList)){
+//        if(CollectionUtil.isNotEmpty(timePairsList)){
+//            for(TimePairs timePairs : timePairsList){
+//                HomeRentParam homeRentParam = new HomeRentParam();
+//                Map<String, Object> maps = new HashMap<>();
+//                maps.put("homeRentParam", homeRentParam);
+//                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getLongRent(timePairs.startTime,timePairs.endTime);
+//                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+//            }
+//        }
+        if(CollectionUtil.isNotEmpty(timePairsList)) {
+            List<Future<StatisticsHomeByRentLengthType>> taskResults = Lists.newArrayList();
+            ExecutorService executor = Executors.newFixedThreadPool(timePairsList.size());
             for(TimePairs timePairs : timePairsList){
-                HomeRentParam homeRentParam = new HomeRentParam();
-                Map<String, Object> maps = new HashMap<>();
-                maps.put("homeRentParam", homeRentParam);
-                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getLongRent(timePairs.startTime,timePairs.endTime);
-                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+                StatisticHomeByLongRentTask task = new StatisticHomeByLongRentTask(timePairs.startTime, timePairs.endTime);
+                taskResults.add(executor.submit(task));
             }
+            for (Future<StatisticsHomeByRentLengthType> result: taskResults) {
+                try {
+                    StatisticsHomeByRentLengthType res = result.get();
+                    statisticsHomeByRentLengthTypeList.add(res);
+                } catch (Exception exception) {
+                }
+            }
+            executor.shutdown();
         }
         addNoPassed(homeRentByTimeParam.getTimeDimensionType(),statisticsHomeByRentLengthTypeList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;
+    }
+
+    private class StatisticHomeByLongRentTask implements Callable<StatisticsHomeByRentLengthType> {
+        private Date startTime;
+        private Date endTime;
+        protected StatisticHomeByLongRentTask(Date startTime, Date endTime) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+        @Override
+        public StatisticsHomeByRentLengthType call() throws Exception {
+            return getLongRent(startTime, endTime);
+        }
+
     }
     private void addNoPassed(Integer timeDimensionType, List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList){
         List<Date> noPassedDateList = null;
@@ -326,7 +363,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         homeRentParam.setStartTime(startTime);
         homeRentParam.setEndTime(endTime);
         maps.put("homeRentParam", homeRentParam);
-        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        //StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByLongRent(maps);
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForHome(maps);
         BigDecimal rentDeposit = BigDecimal.ZERO;//租金押金
         BigDecimal deposit = BigDecimal.ZERO;//设备押金
@@ -350,7 +388,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 rent = BigDecimalUtil.add(rent,rentAmount);
                 prepayRent = BigDecimalUtil.add(prepayRent,prepayRentAmount);
                 otherAmount = BigDecimalUtil.add(otherAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentIncome = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                rentIncome = BigDecimalUtil.sub(
+                        BigDecimalUtil.sub(
+                                BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
             }
         }
         statisticsHomeByRentLengthType.setRentDeposit(rentDeposit);
@@ -376,7 +416,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         homeRentParam.setStartTime(startTime);
         homeRentParam.setEndTime(endTime);
         maps.put("homeRentParam", homeRentParam);
-        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        //StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByShortRent(maps);
+        /*
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForHome(maps);
         BigDecimal rentIncome = BigDecimal.ZERO;//租金收入
         if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
@@ -386,6 +428,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 }
             }
         }
+        */
+
+        BigDecimal rentIncome = statementOrderDetailMapper.queryAllRentIncomeForHome(maps);
         statisticsHomeByRentLengthType.setRentIncome(rentIncome);
         statisticsHomeByRentLengthType.setTotalOrderCount(statisticsHomeByRentLengthType.getOrderCountByNewCustomer()+statisticsHomeByRentLengthType.getOrderCountByOldCustomer());
         statisticsHomeByRentLengthType.setTotalProductCount(statisticsHomeByRentLengthType.getProductCountByNewCustomer()+statisticsHomeByRentLengthType.getProductCountByOldCustomer());
@@ -397,19 +442,47 @@ public class StatisticsServiceImpl implements StatisticsService {
         ServiceResult<String, List<StatisticsHomeByRentLengthType>> serviceResult = new ServiceResult<>();
         List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList = new ArrayList<>();
         List<TimePairs> timePairsList = getTimePairs(homeRentByTimeParam.getTimeDimensionType());
-        if(CollectionUtil.isNotEmpty(timePairsList)){
+//        if(CollectionUtil.isNotEmpty(timePairsList)){
+//            for(TimePairs timePairs : timePairsList){
+//                HomeRentParam homeRentParam = new HomeRentParam();
+//                Map<String, Object> maps = new HashMap<>();
+//                maps.put("homeRentParam", homeRentParam);
+//                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getShortRent(timePairs.startTime,timePairs.endTime);
+//                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+//            }
+//        }
+        if(CollectionUtil.isNotEmpty(timePairsList)) {
+            List<Future<StatisticsHomeByRentLengthType>> taskResults = Lists.newArrayList();
+            ExecutorService executor = Executors.newFixedThreadPool(timePairsList.size());
             for(TimePairs timePairs : timePairsList){
-                HomeRentParam homeRentParam = new HomeRentParam();
-                Map<String, Object> maps = new HashMap<>();
-                maps.put("homeRentParam", homeRentParam);
-                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getShortRent(timePairs.startTime,timePairs.endTime);
-                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+                StatisticHomeByShortRentTask task = new StatisticHomeByShortRentTask(timePairs.startTime, timePairs.endTime);
+                taskResults.add(executor.submit(task));
             }
+            for (Future<StatisticsHomeByRentLengthType> result: taskResults) {
+                try {
+                    statisticsHomeByRentLengthTypeList.add(result.get());
+                } catch (Exception exception) {
+                }
+            }
+            executor.shutdown();
         }
         addNoPassed(homeRentByTimeParam.getTimeDimensionType(),statisticsHomeByRentLengthTypeList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;
+    }
+    private class StatisticHomeByShortRentTask implements Callable<StatisticsHomeByRentLengthType> {
+        private Date startTime;
+        private Date endTime;
+        protected StatisticHomeByShortRentTask(Date startTime, Date endTime) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+        @Override
+        public StatisticsHomeByRentLengthType call() throws Exception {
+            return getShortRent(startTime, endTime);
+        }
+
     }
 
     @Override

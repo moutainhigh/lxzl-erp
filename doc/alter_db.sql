@@ -775,4 +775,50 @@ ALTER TABLE erp_order_product add `order_joint_product_id` int(20) COMMENT '订�
 ALTER TABLE erp_order_material add `order_joint_product_id` int(20) COMMENT '订单组合商品id';
 ALTER TABLE erp_joint_product DROP COLUMN is_new;
 
+-- 如果索引存在则删除索引  added by liuyong begin++ 2018-05-15 12:00
+DROP PROCEDURE IF EXISTS del_index;
+CREATE PROCEDURE del_index(IN p_tablename varchar(200), IN p_idxname VARCHAR(200))
+BEGIN
+DECLARE str VARCHAR(250);
+DECLARE cur_database VARCHAR(100);
+SELECT DATABASE() INTO cur_database;
+set @str=concat(' DROP INDEX ',p_idxname,' ON ',p_tablename);
+SELECT count(*) INTO @cnt FROM information_schema.statistics WHERE table_schema=cur_database and table_name=p_tablename and index_name=p_idxname ;
+IF @cnt > 0 THEN
+    PREPARE stmt FROM @str;
+    EXECUTE stmt ;
+END IF;
+END ;
+
+-- index for table [erp_order_product]
+call del_index('erp_order_product','index_create_time');
+call del_index('erp_order_product','index_order_id');
+ALTER TABLE erp_order_product ADD INDEX index_create_time (create_time);
+ALTER TABLE erp_order_product ADD INDEX index_order_id (order_id);
+
+-- index for table [erp_order]
+call del_index('erp_order','index_buyer_customer_id');
+call del_index('erp_order','index_create_time');
+-- ALTER TABLE erp_order DROP INDEX index_buyer_customer_id;
+-- ALTER TABLE erp_order DROP INDEX index_create_time;
+ALTER TABLE erp_order ADD INDEX index_create_time (create_time);
+ALTER TABLE erp_order ADD INDEX index_buyer_customer_id (buyer_customer_id);
+-- index for table [erp_k3_return_order_detail]
+call del_index('erp_k3_return_order_detail','index_order_no');
+call del_index('erp_k3_return_order_detail','index_return_order_id');
+-- ALTER TABLE erp_k3_return_order_detail DROP INDEX index_return_order_id;
+-- ALTER TABLE erp_k3_return_order_detail DROP INDEX index_order_no;
+ALTER TABLE erp_k3_return_order_detail ADD INDEX index_order_no (order_no);
+ALTER TABLE erp_k3_return_order_detail ADD INDEX index_return_order_id (return_order_id);
+-- index for table [erp_k3_return_order]
+call del_index('erp_k3_return_order','index_return_time');
+-- ALTER TABLE erp_k3_return_order DROP INDEX index_return_time;
+ALTER TABLE erp_k3_return_order ADD INDEX index_return_time (return_time);
+
+-- index for table [erp_statement_order_detail]
+call del_index('erp_statement_order_detail','index_statement_expect_pay_time');
+-- ALTER TABLE erp_statement_order_detail DROP INDEX index_statement_expect_pay_time;
+ALTER TABLE erp_statement_order_detail ADD INDEX index_statement_expect_pay_time (statement_expect_pay_time);
+
+-- added by liuyong end++ 2018-05-15 12:00
 
