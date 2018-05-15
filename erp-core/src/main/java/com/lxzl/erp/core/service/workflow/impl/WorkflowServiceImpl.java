@@ -659,7 +659,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
+        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             if(customerDO==null){
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
