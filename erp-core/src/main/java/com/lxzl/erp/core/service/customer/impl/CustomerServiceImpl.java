@@ -1415,8 +1415,13 @@ public class CustomerServiceImpl implements CustomerService {
             result.setErrorCode(ErrorCode.CUSTOMER_STATUS_IS_PASS_CAN_REJECT);
             return result;
         }
-
-        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
+        String userId = customerDO.getCreateUser();
+        Integer workflowType = WorkflowType.WORKFLOW_TYPE_CUSTOMER;
+        UserDO userDO = userMapper.findByUserId(Integer.parseInt(userId));
+        if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
+            workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
+        }
+        ServiceResult<String, String> rejectPassResult = workflowService.rejectPassWorkFlow(workflowType, customerRejectParam.getCustomerNo(), customerRejectParam.getRemark());
         if (!ErrorCode.SUCCESS.equals(rejectPassResult.getErrorCode())) {
             result.setErrorCode(rejectPassResult.getErrorCode());
             return result;
@@ -1451,19 +1456,7 @@ public class CustomerServiceImpl implements CustomerService {
                     return ErrorCode.BUSINESS_EXCEPTION;
                 }
                 if (verifyResult) {
-                    ServiceResult<String ,WorkflowLink> workflowResult = workflowService.getWorkflowLink(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER,businessNo);
-                    if(!ErrorCode.SUCCESS.equals(workflowResult.getErrorCode())){
-                        return workflowResult.getErrorCode();
-                    }
-                    WorkflowLink workflowLink = workflowResult.getResult();
-                    if(CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(customerDO.getOwnerSubCompanyId())&&workflowLink.getWorkflowStep()==1){
-                        ServiceResult<String, String> channelCustomerCommitResult =  workflowService.channelCustomerCommitWorkFlow(businessNo);
-                        if(!ErrorCode.SUCCESS.equals(channelCustomerCommitResult.getErrorCode())){
-                            return channelCustomerCommitResult.getErrorCode();
-                        }
-                    }else{
-                        customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
-                    }
+                    customerDO.setCustomerStatus(CustomerStatus.STATUS_PASS);
                 } else {
                     customerDO.setCustomerStatus(CustomerStatus.STATUS_REJECT);
                 }
