@@ -1372,7 +1372,8 @@ public class CustomerServiceImpl implements CustomerService {
                 customerCommitParam.setVerifyMatters("个人客户审核事项：1.申请额度 2.客户相关信息图片核对");
             }
             ServiceResult<String, String> verifyResult = null;
-            if(userSupport.isChannelSubCompany()){
+            UserDO userDO = userMapper.findByUserId(Integer.parseInt(customerDO.getCreateUser()));
+            if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
                 verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
             }else{
                 verifyResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_CUSTOMER, customerCommitParam.getCustomerNo(), customerCommitParam.getVerifyUserId(), customerCommitParam.getVerifyMatters(), customerCommitParam.getRemark(), customerCommitParam.getImgIdList(), null);
