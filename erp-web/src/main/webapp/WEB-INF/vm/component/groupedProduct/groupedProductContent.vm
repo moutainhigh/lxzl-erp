@@ -13,18 +13,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group field">
-                    <label class="col-md-3 control-label">是否全新：</label>
-                    <div class="col-md-9">
-                        <div class="input-group" style="width:100%; padding-top:5px;">
-                            <label class="block mn switch switch-primary">
-                                <input type="checkbox" name="isNew" id="isNew" value="1" />
-                                <label for="isNew" data-on="全新" data-off="次新"></label>
-                                <span></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+##                <div class="form-group field">
+##                    <label class="col-md-3 control-label">是否全新：</label>
+##                    <div class="col-md-9">
+##                        <div class="input-group" style="width:100%; padding-top:5px;">
+##                            <label class="block mn switch switch-primary">
+##                                <input type="checkbox" name="isNew" id="isNew" value="1" />
+##                                <label for="isNew" data-on="全新" data-off="次新"></label>
+##                                <span></span>
+##                            </label>
+##                        </div>
+##                    </div>
+##                </div>
                 <div class="form-group field">
                     <label class="col-md-3 control-label">备注：</label>
                     <div class="col-md-9">
@@ -133,9 +133,6 @@
                                         <table class="table">
                                             <thead>
                                             <tr class="bg-light">
-                                                {{#showIsNewCheckBox}}
-                                                <th>商品属性</th>
-                                                {{/showIsNewCheckBox}}
                                                 <th>SKU</th>
                                                 <th>库存</th>
                                                 <th>价值</th>
@@ -146,15 +143,6 @@
                                             <tbody>
                                                 {{#skuList}}
                                                 <tr class="skuTr">
-                                                    {{#showIsNewCheckBox}}
-                                                    <td>
-                                                        <label class="block mn switch switch-primary">
-                                                            <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
-                                                            <label for="isNewProduct-{{skuId}}" data-on="全新" data-off="次新"></label>
-                                                            <span></span>
-                                                        </label>
-                                                    </td>
-                                                    {{/showIsNewCheckBox}}
                                                     <td>{{propertiesToStr}}</td>
                                                     <td>
                                                         <p class="isUsed">{{oldProductSkuCount}}</p>
