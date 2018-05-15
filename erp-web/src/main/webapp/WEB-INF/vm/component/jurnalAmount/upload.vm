@@ -26,12 +26,18 @@
                     </div>
                 </div>
                 <div class="section row">
-                    <div class="col-md-12 form-group mn mr10">
-                        <label class="field-label">月份</label>
-                        <label for="slipMonth" class="input-group date">
-                            <input type="text" readonly name="slipMonth" id="slipMonth" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间">
-                            <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
-                        </label>
+                    <div class="col-md-6 form-group mn mr10">
+                        <label class="field-label">日期</label>
+##                        <label for="slipDay" class="input-group date">
+##                            <input type="text" readonly name="slipDay" id="slipDay" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间">
+##                            <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
+##                        </label>
+                        <div>
+                            <div class="input-group date" id="slipDayPicker">
+                                <input type="text" name="slipDay" id="slipDayInput" class="form-control" autocomplete="off" placeholder="选择日期" style="height:42px;">
+                                <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="section row">

@@ -68,7 +68,7 @@
                         <label class="col-md-6 control-label">租赁时长</label>
                         <div class="col-md-6">
                             <div>
-                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number required" type="text" placeholder="输入租赁时长" />
+                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number checkInteger required" type="text" placeholder="输入租赁时长" />
                             </div>
                         </div>
                     </div>

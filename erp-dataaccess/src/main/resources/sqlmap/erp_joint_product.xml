@@ -11,21 +11,20 @@
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
-        <result column="is_new" jdbcType="INTEGER" property="isNew"/>
         <collection property="jointMaterialDOList" resultMap="JointMaterialDO" />
-        <collection property="jointProductSkuDOList" resultMap="JointProductSkuDO" />
+        <collection property="jointProductProductDOList" resultMap="JointProductProductDO" />
     </resultMap>
-    <resultMap id="JointProductSkuDO" type="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductSkuDO">
-        <id column="ejps_id" jdbcType="INTEGER" property="id"/>
-        <result column="ejps_jointProductId" jdbcType="INTEGER" property="jointProductId"/>
-        <result column="ejps_skuId" jdbcType="INTEGER" property="skuId"/>
-        <result column="ejps_skuCount" jdbcType="INTEGER" property="skuCount"/>
-        <result column="ejps_dataStatus" jdbcType="INTEGER" property="dataStatus"/>
-        <result column="ejps_remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="ejps_createTime" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="ejps_createUser" jdbcType="VARCHAR" property="createUser"/>
-        <result column="ejps_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="ejps_updateUser" jdbcType="VARCHAR" property="updateUser"/>
+    <resultMap id="JointProductProductDO" type="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO">
+        <id column="ejpp_id" jdbcType="INTEGER" property="id"/>
+        <result column="ejpp_jointProductId" jdbcType="INTEGER" property="jointProductId"/>
+        <result column="ejpp_productId" jdbcType="INTEGER" property="productId"/>
+        <result column="ejpp_productCount" jdbcType="INTEGER" property="productCount"/>
+        <result column="ejpp_dataStatus" jdbcType="INTEGER" property="dataStatus"/>
+        <result column="ejpp_remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="ejpp_createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="ejpp_createUser" jdbcType="VARCHAR" property="createUser"/>
+        <result column="ejpp_updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="ejpp_updateUser" jdbcType="VARCHAR" property="updateUser"/>
     </resultMap>
     <resultMap id="JointMaterialDO" type="com.lxzl.erp.dataaccess.domain.jointProduct.JointMaterialDO">
         <id column="ejm_id" jdbcType="INTEGER" property="id"/>
@@ -44,11 +43,11 @@
     <sql id="material_column_List">
         ejm.id AS ejm_id,ejm.joint_product_id AS ejm_jointProductId,ejm.material_id AS ejm_materialId,ejm.material_count AS ejm_materialCount,ejm.data_status AS ejm_dataStatus,ejm.remark AS ejm_remark,ejm.create_time AS ejm_createTime,ejm.create_user AS ejm_createUser,ejm.update_time AS ejm_updateTime,ejm.update_user AS ejm_updateUser,ejm.material_no AS ejm_materialNo
     </sql>
-    <sql id="sku_column_List">
-        ejps.id AS ejps_id,ejps.joint_product_id AS ejps_jointProductId,ejps.sku_id AS ejps_skuId,ejps.sku_count AS ejps_skuCount,ejps.data_status AS ejps_dataStatus,ejps.remark AS ejps_remark,ejps.create_time AS ejps_createTime,ejps.create_user AS ejps_createUser,ejps.update_time AS ejps_updateTime,ejps.update_user AS ejps_updateUser
+    <sql id="product_column_List">
+        ejpp.id AS ejpp_id,ejpp.joint_product_id AS ejpp_jointProductId,ejpp.product_id AS ejpp_productId,ejpp.product_count AS ejpp_productCount,ejpp.data_status AS ejpp_dataStatus,ejpp.remark AS ejpp_remark,ejpp.create_time AS ejpp_createTime,ejpp.create_user AS ejpp_createUser,ejpp.update_time AS ejpp_updateTime,ejpp.update_user AS ejpp_updateUser
     </sql>
     <sql id="column_List">
-        ejp.id,ejp.joint_product_name,ejp.is_new,ejp.data_status,ejp.remark,ejp.create_time,ejp.create_user,ejp.update_time,ejp.update_user
+        ejp.id,ejp.joint_product_name,ejp.data_status,ejp.remark,ejp.create_time,ejp.create_user,ejp.update_time,ejp.update_user
     </sql>
 
     <select id="findById" resultMap="JointProductDO" parameterType="java.lang.Integer">
@@ -83,9 +82,6 @@
         <set>
             <if test="jointProductName != null">
                 joint_product_name = #{jointProductName,jdbcType=VARCHAR},
-            </if>
-            <if test="isNew != null">
-                is_new = #{isNew,jdbcType=INTEGER},
             </if>
             <if test="dataStatus != null">
                 data_status = #{dataStatus,jdbcType=INTEGER},
@@ -122,13 +118,13 @@
 
     <select id="findDetailByJointProductId" resultMap="JointProductDO" parameterType="java.lang.Integer">
         SELECT <include refid="column_List"/>,<include refid="material_column_List"/>,
-        <include refid="sku_column_List"/>
+        <include refid="product_column_List"/>
         FROM (
         SELECT
         <include refid="column_List"/>
         FROM erp_joint_product ejp
         WHERE ejp.id = #{jointProductId,jdbcType=INTEGER} AND ejp.data_status = 1
-        ) ejp  LEFT JOIN erp_joint_product_sku ejps on ejps.joint_product_id = ejp.id and ejps.data_status=1
+        ) ejp  LEFT JOIN erp_joint_product_product ejpp on ejpp.joint_product_id = ejp.id and ejpp.data_status=1
         LEFT JOIN erp_joint_material ejm on ejm.joint_product_id = ejp.id and ejm.data_status=1
     </select>
     <select id="findJointProductCountByParam" resultType="java.lang.Integer" parameterType="map">
@@ -137,9 +133,6 @@
         <where>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductId != null">
                 and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
-            </if>
-            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.isNew != null">
-                and ejp.is_new = #{maps.jointProductQueryParam.isNew,jdbcType=INTEGER}
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
                 and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
@@ -157,7 +150,7 @@
     </select>
     <select id="findJointProductByParams" resultMap="JointProductDO" parameterType="map">
         SELECT <include refid="column_List"/>,<include refid="material_column_List"/>,
-        <include refid="sku_column_List"/>
+        <include refid="product_column_List"/>
         FROM (
         SELECT
         <include refid="column_List"/>
@@ -165,9 +158,6 @@
         <where>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductId != null">
                 and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
-            </if>
-            <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.isNew != null">
-                and ejp.is_new = #{maps.jointProductQueryParam.isNew,jdbcType=INTEGER}
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
                 and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
@@ -185,7 +175,7 @@
         ORDER BY ejp.create_time DESC
         LIMIT #{maps.start},#{maps.pageSize}
         ) ejp
-        LEFT JOIN erp_joint_product_sku ejps on ejps.joint_product_id = ejp.id and ejps.data_status=1
+        LEFT JOIN erp_joint_product_product ejpp on ejpp.joint_product_id = ejp.id and ejpp.data_status=1
         LEFT JOIN erp_joint_material ejm on ejm.joint_product_id = ejp.id and ejm.data_status=1
         ORDER BY ejp.create_time DESC
     </select>
