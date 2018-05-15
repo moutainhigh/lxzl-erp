@@ -5,7 +5,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderProductDO extends BaseDO {
@@ -34,9 +33,31 @@ public class OrderProductDO extends BaseDO {
     private Integer isNewProduct;
     private Integer rentingProductCount;        // 在租商品总数
 
+    private String serialNumber;        // 序号
+
+    private Integer orderJointProductId; // 订单组合商品id
+    @Transient
+    private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
+
+    public Integer getIdentityNo() {
+        return identityNo;
+    }
+
+    public void setIdentityNo(Integer identityNo) {
+        this.identityNo = identityNo;
+    }
+
+    public Integer getOrderJointProductId() {
+        return orderJointProductId;
+    }
+
+    public void setOrderJointProductId(Integer orderJointProductId) {
+        this.orderJointProductId = orderJointProductId;
+    }
 
     public Integer getId() {
         return id;
@@ -245,4 +266,8 @@ public class OrderProductDO extends BaseDO {
     public void setProductNumber(String productNumber) {
         this.productNumber = productNumber;
     }
+
+    public String getSerialNumber() { return serialNumber; }
+
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 }

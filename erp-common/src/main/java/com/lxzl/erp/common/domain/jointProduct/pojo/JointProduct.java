@@ -29,8 +29,7 @@ public class JointProduct extends BasePO {
 
     @Valid
     private List<JointMaterial> jointMaterialList;   //组合商品物料项表
-    @Valid
-    private List<JointProductSku> jointProductSkuList;   //组合商品sku项表
+    private List<JointProductProduct> jointProductProductList; // 组合商品商品表
 
     public Integer getJointProductId() {
         return jointProductId;
@@ -104,11 +103,11 @@ public class JointProduct extends BasePO {
         this.jointMaterialList = jointMaterialList;
     }
 
-    public List<JointProductSku> getJointProductSkuList() {
-        return jointProductSkuList;
+    public List<JointProductProduct> getJointProductProductList() {
+        return jointProductProductList;
     }
 
-    public void setJointProductSkuList(List<JointProductSku> jointProductSkuList) {
-        this.jointProductSkuList = jointProductSkuList;
+    public void setJointProductProductList(List<JointProductProduct> jointProductProductList) {
+        this.jointProductProductList = jointProductProductList;
     }
 }

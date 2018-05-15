@@ -19,7 +19,7 @@ public class Coupon extends BasePO {
 	private String couponCode;   //优惠券编号：规则LX+8位大写字母数字组合(不要O和0)
 	private BigDecimal faceValue;   //优惠券面值
 	private BigDecimal deductionAmount;   //抵扣金额
-	private Integer couponStatus;   //优惠券状态，0-未领取，4-可用，8-已用，12-作废
+	private Integer couponStatus;   //优惠券状态，0-未领取，4-可用，6-锁定，8-已用，12-作废
 	private String customerNo;   //客戶编号
 	private Integer isOnline;   //是否线上，0-否，1-是
 	private Date receiveTime;   //领取时间

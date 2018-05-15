@@ -68,7 +68,16 @@ public class DateUtil {
 
         return Integer.parseInt(String.valueOf(between_days));
     }
-
+    public static boolean isLeapYesr(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        Integer year = calendar.get(Calendar.YEAR);
+        if(year%4==0&&year%100!=0||year%400==0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      * 获取下月指定日期当天开始时间
@@ -332,8 +341,39 @@ public class DateUtil {
         }
         return dateList;
     }
+
+    /**
+     * 获取给定日期月份第一天凌晨 Tue May 01 00:00:00 CST 2018
+     * @param date
+     * @return
+     */
+    public static Date getStartMonthDate(Date date) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, 1);
+        ca.set(Calendar.HOUR_OF_DAY ,0);
+        ca.set(Calendar.MINUTE, 0);
+        ca.set(Calendar.SECOND, 0);
+        return ca.getTime();
+    }
+
+    /**
+     * 获取给定日期月份第一天凌晨 Thu May 31 23:59:59 CST 2018
+     * @param date
+     * @return
+     */
+    public static Date getEndMonthDate(Date date) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        ca.set(Calendar.HOUR_OF_DAY ,23);
+        ca.set(Calendar.MINUTE, 59);
+        ca.set(Calendar.SECOND, 59);
+        return ca.getTime();
+    }
+
     public static void main(String[] args) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        List<Date> dateList = getCurrentYearPassedMonth();
 //        for(Date date : dateList){
 //            System.out.println(simpleDateFormat.format(date));
@@ -347,10 +387,12 @@ public class DateUtil {
 //        for(Date date : dateList3){
 //            System.out.println(simpleDateFormat.format(date));
 //        }
-        List<Date> dateList4 = getCurrentMonthNoPassedDay();
-        for(Date date : dateList4){
-            System.out.println(simpleDateFormat.format(date));
-        }
+//        List<Date> dateList4 = getCurrentMonthNoPassedDay();
+//        for(Date date : dateList4){
+//            System.out.println(simpleDateFormat.format(date));
+//        }
 //        System.out.println(simpleDateFormat.format(getDayByOffset(1)));
+        Date d = DateUtil.getEndMonthDate(new Date());
+        System.out.println(d);
     }
 }

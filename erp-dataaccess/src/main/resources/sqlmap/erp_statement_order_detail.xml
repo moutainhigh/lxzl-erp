@@ -59,6 +59,10 @@
         <result column="statement_coupon_amount" jdbcType="DECIMAL" property="statementCouponAmount" />
         <result column="statement_detail_penalty_amount" jdbcType="DECIMAL" property="statementDetailPenaltyAmount" />
         <result column="statement_detail_penalty_paid_amount" jdbcType="DECIMAL" property="statementDetailPenaltyPaidAmount" />
+
+        <result column="salesman_id" jdbcType="INTEGER" property="salesmanId" />
+        <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+        <result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
     </resultMap>
 
     <sql id="column_List">
@@ -115,7 +119,7 @@
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
 
-    <select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+    <select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod
@@ -267,6 +271,43 @@
         AND esod.statement_expect_pay_time>=#{maps.homeRentParam.startTime} AND
         #{maps.homeRentParam.endTime}>esod.statement_expect_pay_time
     </select>
+
+    <select id="listAllForRentInfo" resultMap="StatementOrderDetailDO" parameterType="map">
+        SELECT<include refid="column_List"/>,
+        eo3.order_seller_id salesman_id,
+        eo3.order_sub_company_id sub_company_id,
+        (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN eom.rent_length_type
+        end) rent_length_type,
+        (CASE WHEN esod.order_item_type = 1 THEN eop.rent_type WHEN esod.order_item_type = 2 THEN eom.rent_type end)
+        rent_type,
+        (CASE WHEN esod.order_item_type = 1 THEN eop.product_count WHEN esod.order_item_type = 2 THEN eom.material_count
+        end) goods_count,
+        (CASE WHEN esod.order_item_type = 1 THEN eop.product_unit_amount WHEN esod.order_item_type = 2 THEN
+        eom.material_unit_amount end) goods_unit_amount
+        FROM erp_statement_order_detail esod
+        LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND
+        esod.order_item_type = 1
+        LEFT JOIN erp_order_material eom ON eom.id = esod.order_item_refer_id AND eom.data_status=1 AND
+        esod.order_item_type = 2
+        LEFT JOIN erp_order eo1 ON eop.order_id = eo1.id AND eo1.data_status=1
+        LEFT JOIN erp_order eo2 ON eom.order_id = eo2.id AND eo2.data_status=1
+        LEFT JOIN erp_order eo3 ON esod.order_id = eo3.id AND eo3.data_status=1
+        LEFT JOIN erp_user eu ON eu.id=eo3.order_seller_id
+        WHERE esod.data_status = 1 AND esod.order_type = 1 AND esod.statement_detail_status=8
+        <if test="maps.rentInfoQueryParam.rentLengthType!=null">
+            AND (CASE WHEN esod.order_item_type = 1 THEN eop.rent_length_type WHEN esod.order_item_type = 2 THEN
+            eom.rent_length_type end)=#{maps.rentInfoQueryParam.rentLengthType}
+        </if>
+        <if test="maps.rentInfoQueryParam.subCompanyId!=null">
+            AND eo3.order_sub_company_id = #{maps.rentInfoQueryParam.subCompanyId}
+        </if>
+        <if test="maps.rentInfoQueryParam.salesmanName!=null&amp;&amp; maps.rentInfoQueryParam.salesmanName != ''">
+            AND eu.real_name LIKE CONCAT('%','${maps.rentInfoQueryParam.salesmanName}','%' )
+        </if>
+        AND esod.statement_expect_pay_time>=#{maps.rentInfoQueryParam.startTime} AND
+        #{maps.rentInfoQueryParam.endTime}>esod.statement_expect_pay_time
+    </select>
+
     <sql id="set_column_sql">
         <set>
             <if test="statementOrderId != null">

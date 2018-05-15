@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.List;
@@ -85,6 +86,18 @@ public interface WorkflowService extends BaseService {
      * @return 工作流ID
      */
     ServiceResult<String, Integer> verifyWorkFlow(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer nextVerifyUser, List<Integer> imgIdList);
+    /**
+     * 审核工作流---核心接口
+     *
+     * @param workflowLinkNo 工作流ID
+     * @param verifyStatus   审核状态
+     * @param returnType     返回类型0返回根部，1返回上一级
+     * @param verifyOpinion  审核意见
+     * @param currentVerifyUser  当前审核的用户id
+     * @param nextVerifyUser 下一步的审核人，没有下一步的时候可空
+     * @return 工作流ID
+     */
+    ServiceResult<String, Integer> verifyWorkFlowFromCore(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer currentVerifyUser, Integer nextVerifyUser, List<Integer> imgIdList);
 
     /**
      * 是否需要审核
@@ -139,4 +152,7 @@ public interface WorkflowService extends BaseService {
      * @return
      */
     ServiceResult<String, String> workflowImportData();
+
+
+    ServiceResult<String, String> channelCustomerCommitWorkFlow(WorkflowLinkDO workflowLinkDO);
 }

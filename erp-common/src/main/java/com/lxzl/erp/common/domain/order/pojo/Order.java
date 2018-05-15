@@ -1,12 +1,16 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
+import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.NotBlank;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +19,7 @@ import java.util.List;
 public class Order extends BasePO {
 
     private Integer orderId;                    // 订单号
+    @NotBlank(message = ErrorCode.ORDER_NO_NOT_NULL,groups = {IdGroup.class})
     private String orderNo;                     // 订单编号
     private Integer deliveryMode;               // 发货方式，1快递，2自提，3凌雄配送
     private Integer buyerCustomerId;            // 客户ID
@@ -76,9 +81,12 @@ public class Order extends BasePO {
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
+    private List<OrderJointProduct> orderJointProductList;      // 订单组合商品项
     private OrderConsignInfo orderConsignInfo;                  // 收货地址信息
 
     private List<OrderTimeAxis> orderTimeAxisList;
+
+    private List<ReletOrder> reletOrderList;
 
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;                                 // 审核人ID
@@ -94,12 +102,30 @@ public class Order extends BasePO {
 
     private  List<K3ReturnOrderDetail> k3ReturnOrderDetailList; //退货单项列表
 
+    private List<Coupon> couponList;//该订单使用的设备优惠券
+
+    public List<Coupon> getCouponList() {
+        return couponList;
+    }
+
+    public void setCouponList(List<Coupon> couponList) {
+        this.couponList = couponList;
+    }
+
     public List<OrderProduct> getOrderProductList() {
         return orderProductList;
     }
 
     public void setOrderProductList(List<OrderProduct> orderProductList) {
         this.orderProductList = orderProductList;
+    }
+
+    public List<ReletOrder> getReletOrderList() {
+        return reletOrderList;
+    }
+
+    public void setReletOrderList(List<ReletOrder> reletOrderList) {
+        this.reletOrderList = reletOrderList;
     }
 
     public OrderConsignInfo getOrderConsignInfo() {
@@ -636,5 +662,13 @@ public class Order extends BasePO {
 
     public void setWorkflowLink(WorkflowLink workflowLink) {
         this.workflowLink = workflowLink;
+    }
+
+    public List<OrderJointProduct> getOrderJointProductList() {
+        return orderJointProductList;
+    }
+
+    public void setOrderJointProductList(List<OrderJointProduct> orderJointProductList) {
+        this.orderJointProductList = orderJointProductList;
     }
 }

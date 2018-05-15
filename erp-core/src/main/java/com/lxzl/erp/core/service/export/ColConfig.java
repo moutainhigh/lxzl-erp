@@ -10,7 +10,7 @@ public class ColConfig {
     private static Integer DEFAULT_WIDTH = 4000;
     private String fieldName;
     private String colName;
-    private Integer width = DEFAULT_WIDTH;
+    private Integer width;
     private ExcelExportView excelExportView;
 
 
@@ -47,6 +47,7 @@ public class ColConfig {
         this.fieldName = fieldName;
     }
 
+
     public ColConfig(String fieldName, String colName, Integer width, ExcelExportView excelExportView) {
         this.fieldName = fieldName;
         this.colName = colName;
@@ -54,21 +55,12 @@ public class ColConfig {
         this.excelExportView = excelExportView;
     }
     public ColConfig(String fieldName, String colName, ExcelExportView excelExportView) {
-        this.fieldName = fieldName;
-        this.colName = colName;
-        this.excelExportView = excelExportView;
-        new ColConfig(fieldName,colName,DEFAULT_WIDTH,excelExportView);
+        this(fieldName,colName,DEFAULT_WIDTH,excelExportView);
     }
     public ColConfig(String fieldName, String colName) {
-        this.fieldName = fieldName;
-        this.colName = colName;
-        this.excelExportView = DefaultExcelExportView.getInstance();
-        new ColConfig(fieldName,colName,DEFAULT_WIDTH,excelExportView);
+        this(fieldName,colName,DEFAULT_WIDTH,DefaultExcelExportView.getInstance());
     }
     public ColConfig(String fieldName, String colName, Integer width) {
-        this.fieldName = fieldName;
-        this.colName = colName;
-        this.excelExportView = DefaultExcelExportView.getInstance();
-        new ColConfig(fieldName,colName,width,excelExportView);
+        this(fieldName,colName,width,DefaultExcelExportView.getInstance());
     }
 }

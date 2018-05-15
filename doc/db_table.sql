@@ -380,6 +380,10 @@ CREATE TABLE `erp_customer_update_log` (
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `owner` int(20) COMMENT '数据归属人，跟单员',
   `union_user` int(20) COMMENT '联合开发人',
+  `is_owner_update_flag` int(11)  COMMENT '是否变更了归属人，0否1是',
+  `is_union_user_update_flag` int(11)  COMMENT '是否变更了联合开发人，0否1是',
+  `old_owner` int(20)  COMMENT '变更之前的开发人',
+  `old_union_user` int(20)  COMMENT '变更之前的联合开发人',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2685,6 +2689,7 @@ DROP TABLE if exists `erp_joint_product`;
 CREATE TABLE `erp_joint_product` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
   `joint_product_name` varchar(64) NOT NULL COMMENT '组合商品名称',
+  `is_new` INT(11) NOT NULL COMMENT '是否全新：0-否，1-是',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2693,6 +2698,38 @@ CREATE TABLE `erp_joint_product` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='组合商品表';
+
+DROP TABLE if exists `erp_joint_product_product`;
+CREATE TABLE `erp_joint_product_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `joint_product_id` int(20) NOT NULL COMMENT '组合商品ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_count` int(11) NOT NULL COMMENT '商品数量',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='组合商品商品项表';
+
+DROP TABLE if exists `erp_order_joint_product`;
+CREATE TABLE `erp_order_joint_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `joint_product_id` int(20) NOT NULL COMMENT '组合商品id',
+  `joint_product_count` int(11) NOT NULL COMMENT '组合商品数量',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单组合商品项表';
+
+
 
 DROP TABLE if exists `erp_joint_product_sku`;
 CREATE TABLE `erp_joint_product_sku` (
@@ -3076,7 +3113,7 @@ CREATE TABLE `erp_bank_slip` (
   `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '分公司名称',
   `bank_type` int(11) NOT NULL COMMENT '银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行',
-  `slip_month` datetime NOT NULL COMMENT '月份',
+  `slip_day` datetime NOT NULL COMMENT '导入日期',
   `account_no` varchar(50) COMMENT '查询账号',
   `in_count` int(11) NOT NULL COMMENT '进款笔数',
   `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
@@ -3139,6 +3176,18 @@ CREATE TABLE `erp_bank_slip_claim` (
   INDEX index_erp_bank_slip_detail_id ( `bank_slip_detail_id` ) ,
   INDEX index_other_side_account_no ( `other_side_account_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
+
+CREATE table `erp_bank_slip_detail_operation_log`(
+		`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+		`bank_slip_detail_id` INT(20) NOT NULL COMMENT '银行对公流水明细ID',
+		`operation_type` INT(11) NOT NULL COMMENT '1-下推，2-属地化，3-自动属地化，4-属地化，5-取消属地化，6-隐藏,7-取消隐藏，8-自动认领，9-认领，10-确认',
+		`operation_content` TEXT  COMMENT '操作内容',
+		`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+		`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+		`create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+		 PRIMARY KEY(`id`),
+		 INDEX index_bank_slip_detail_id ( `bank_slip_detail_id` )
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行流水明细操作记录表'
 
 
 DROP TABLE if exists `erp_return_visit`;
@@ -3461,10 +3510,12 @@ CREATE TABLE `erp_relet_order_material` (
   INDEX index_material_id ( `material_id` )
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='续租订单配件项表';
 
-DROP TABLE IF EXISTS `erp_business_commission_config`;
-CREATE TABLE `erp_business_commission_config` (
+DROP TABLE IF EXISTS `erp_print_log`;
+CREATE TABLE `erp_print_log` (
   `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `role_id` INT(20) NOT NULL COMMENT '角色ID',
+  `refer_no` varchar(100) NOT NULL COMMENT '关联NO',
+  `refer_type` int(11) COMMENT '关联项类型，1-交货单,2-退货单',
+  `print_count` int(11) NOT NULL DEFAULT 0 COMMENT '打印次数',
   `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
@@ -3472,7 +3523,41 @@ CREATE TABLE `erp_business_commission_config` (
   `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
   `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成角色表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='打印记录表';
+
+DROP TABLE IF EXISTS `erp_business_commission_config`;
+CREATE TABLE `erp_business_commission_config` (
+  `id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `department_type` INT(11) NOT NULL COMMENT '部门类型',
+  `data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+  `create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+  `update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='业务提成配置表';
+
+
+DROP TABLE IF EXISTS `erp_order_split_detail`;
+CREATE TABLE `erp_order_split_detail` (
+	`id` INT(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`order_no` varchar(100) NOT NULL COMMENT '订单号',
+	`order_id` int(20) NOT NULL COMMENT '订单ID',
+	`order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为配件',
+	`order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
+	`split_count` int(20) NOT NULL DEFAULT 0 COMMENT '拆分数量',
+	`is_peer` int(11) NOT NULL DEFAULT '0' COMMENT '是否同行调拨，0-否，1是',
+	`delivery_sub_company_id` INT(20) COMMENT '发货分公司id[非同行调拨时必填]',
+	`delivery_sub_company_name` varchar(50) DEFAULT '' COMMENT '发货分公司名称',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
 
 
 

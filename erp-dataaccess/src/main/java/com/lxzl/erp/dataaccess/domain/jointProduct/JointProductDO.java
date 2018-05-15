@@ -12,11 +12,11 @@ public class JointProductDO  extends BaseDO {
 	private String jointProductName;
 	private Integer dataStatus;
 	private String remark;
+
 	@Transient
 	private List<JointMaterialDO> jointMaterialDOList;   //组合商品物料项表
 	@Transient
-	private List<JointProductSkuDO> jointProductSkuDOList;   //组合商品sku项表
-
+	private List<JointProductProductDO> jointProductProductDOList;   //组合商品商品项表
 
 	public Integer getId(){
 		return id;
@@ -59,11 +59,11 @@ public class JointProductDO  extends BaseDO {
 		this.jointMaterialDOList = jointMaterialDOList;
 	}
 
-	public List<JointProductSkuDO> getJointProductSkuDOList() {
-		return jointProductSkuDOList;
+	public List<JointProductProductDO> getJointProductProductDOList() {
+		return jointProductProductDOList;
 	}
 
-	public void setJointProductSkuDOList(List<JointProductSkuDO> jointProductSkuDOList) {
-		this.jointProductSkuDOList = jointProductSkuDOList;
+	public void setJointProductProductDOList(List<JointProductProductDO> jointProductProductDOList) {
+		this.jointProductProductDOList = jointProductProductDOList;
 	}
 }

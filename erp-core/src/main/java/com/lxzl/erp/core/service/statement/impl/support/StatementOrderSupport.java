@@ -1,14 +1,13 @@
 package com.lxzl.erp.core.service.statement.impl.support;
 
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.DataDictionaryType;
-import com.lxzl.erp.common.constant.RentLengthType;
-import com.lxzl.erp.common.constant.StatementMode;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.util.BigDecimalUtil;
 import com.lxzl.erp.common.util.CollectionUtil;
+import com.lxzl.erp.common.util.DateUtil;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.DepartmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
@@ -19,6 +18,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.RoleMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
@@ -126,27 +126,116 @@ public class StatementOrderSupport {
      * @return
      */
     public Integer getCustomerStatementDate(Integer statementDate,Date rentStartTime) {
-        Integer statementDays;
         if (statementDate == null){
             DataDictionaryDO dataDictionaryDO = dataDictionaryMapper.findDataByOnlyOneType(DataDictionaryType.DATA_DICTIONARY_TYPE_STATEMENT_DATE);
-            if (dataDictionaryDO == null) {
-                statementDays = StatementMode.STATEMENT_MONTH_END;
-            } else {
-                statementDays = Integer.parseInt(dataDictionaryDO.getDataName());
-            }
-        }else{
-            if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementDate)) {
-                // 如果结算日为按月结算，那么就要自然日来结算
-                Calendar rentStartTimeCalendar = Calendar.getInstance();
-                rentStartTimeCalendar.setTime(rentStartTime);
+            statementDate = dataDictionaryDO==null?StatementMode.STATEMENT_MONTH_END:Integer.parseInt(dataDictionaryDO.getDataName());
+        }
+        if (StatementMode.STATEMENT_MONTH_NATURAL.equals(statementDate)) {
+            // 如果结算日为按月结算，那么就要自然日来结算
+            Calendar rentStartTimeCalendar = Calendar.getInstance();
+            rentStartTimeCalendar.setTime(rentStartTime);
+            //如果是当月第一天
+            if(DateUtil.isSameDay(rentStartTimeCalendar.getTime(),DateUtil.getStartMonthDate(rentStartTimeCalendar.getTime()))){
+                statementDate = StatementMode.STATEMENT_MONTH_END;
+            }else{
                 rentStartTimeCalendar.add(Calendar.DAY_OF_MONTH, -1);
-                statementDays = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
-            } else {
-                statementDays = statementDate;
+                statementDate = rentStartTimeCalendar.get(Calendar.DAY_OF_MONTH);
             }
         }
-
-        return statementDays;
+        return statementDate;
     }
 
+    /**
+     * 恢复结算单
+     * @param currentTime
+     * @param statementOrderDetailDOList
+     */
+    public void reStatement( Date currentTime , List<StatementOrderDetailDO> statementOrderDetailDOList){
+        //处理结算单
+        //缓存查询到的结算单
+        Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
+
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
+                if (statementOrderDO == null) {
+                    statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                    statementCache.put(statementOrderDO.getId(), statementOrderDO);
+                }
+                //处理结算单总金额
+                statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
+                //处理结算租金押金金额
+                statementOrderDO.setStatementRentDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositAmount(), statementOrderDetailDO.getStatementDetailRentDepositAmount()));
+                //处理结算押金金额
+                statementOrderDO.setStatementDepositAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositAmount(), statementOrderDetailDO.getStatementDetailDepositAmount()));
+                //处理结算租金金额
+                statementOrderDO.setStatementRentAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentAmount(), statementOrderDetailDO.getStatementDetailRentAmount()));
+                //处理结算单逾期金额
+                statementOrderDO.setStatementOverdueAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOverdueAmount(), statementOrderDetailDO.getStatementDetailOverdueAmount()));
+                //处理其他费用
+                statementOrderDO.setStatementOtherAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherAmount(), statementOrderDetailDO.getStatementDetailOtherAmount()));
+                //处理冲正金额
+                statementOrderDO.setStatementCorrectAmount(BigDecimalUtil.sub(statementOrderDO.getStatementCorrectAmount(), statementOrderDetailDO.getStatementDetailCorrectAmount()));
+                statementOrderDetailDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                statementOrderDetailDO.setUpdateTime(currentTime);
+                statementOrderDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                statementOrderDetailMapper.update(statementOrderDetailDO);
+            }
+            for (Integer key : statementCache.keySet()) {
+                StatementOrderDO statementOrderDO = statementCache.get(key);
+                if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), BigDecimal.ZERO) == 0) {
+                    statementOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                }
+                statementOrderDO.setUpdateTime(currentTime);
+                statementOrderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                statementOrderMapper.update(statementOrderDO);
+            }
+        }
+    }
+    /**
+     * 恢复结算单已支付金额
+     */
+    public void reStatementPaid(List<StatementOrderDetailDO> statementOrderDetailDOList){
+        //处理结算单
+        //缓存查询到的结算单
+        Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
+                if (statementOrderDO == null) {
+                    statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                    statementCache.put(statementOrderDO.getId(), statementOrderDO);
+                }
+                BigDecimal statementDetailOtherPaidAmount = statementOrderDetailDO.getStatementDetailOtherPaidAmount();
+                BigDecimal statementDetailRentDepositPaidAmount = statementOrderDetailDO.getStatementDetailRentDepositPaidAmount();
+                BigDecimal statementDetailDepositPaidAmount = statementOrderDetailDO.getStatementDetailDepositPaidAmount();
+                BigDecimal statementDetailRentPaidAmount = statementOrderDetailDO.getStatementDetailRentPaidAmount();
+                BigDecimal statementDetailOverduePaidAmount = statementOrderDetailDO.getStatementDetailOverduePaidAmount();
+
+                //处理结算单已支付租金押金金额
+                statementOrderDO.setStatementRentDepositPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentDepositPaidAmount(), statementDetailRentDepositPaidAmount));
+                //处理结算单已支付押金金额
+                statementOrderDO.setStatementDepositPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementDepositPaidAmount(), statementDetailDepositPaidAmount));
+                //处理结算单已支付租金金额
+                statementOrderDO.setStatementRentPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementRentPaidAmount(), statementDetailRentPaidAmount));
+                //处理结算单已支付逾期金额
+                statementOrderDO.setStatementOverduePaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOverduePaidAmount(), statementDetailOverduePaidAmount));
+                //处理结算单已支付其他费用
+                statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherPaidAmount(), statementDetailOtherPaidAmount));
+            }
+            for (Integer key : statementCache.keySet()) {
+                StatementOrderDO statementOrderDO = statementCache.get(key);
+                if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),statementOrderDO.getStatementAmount())==0){
+                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
+                }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),BigDecimal.ZERO)>0){
+                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED_PART);
+                }else{
+                    statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_INIT);
+                }
+                statementOrderMapper.update(statementOrderDO);
+            }
+        }
+    }
+    @Autowired
+    private UserSupport userSupport;
 }

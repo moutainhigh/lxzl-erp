@@ -70,7 +70,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <div class="row">
-                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
                                 <li class="active">
                                     <a href="#purchaseOrderProductItems" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
                                 </li>
@@ -82,6 +82,12 @@
                                 </li>
                                 <li>
                                     <a href="#returnOrderList" data-toggle="tab">退货单</a>
+                                </li>
+                                <li>
+                                    <a href="#reletOrderList" data-toggle="tab" aria-expanded="true">续租单</a>
+                                </li>
+                                <li>
+                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">打印记录（共<span id="printRecordCount">0</span>次）</a>
                                 </li>
                             </ul>
                         </div>
@@ -100,6 +106,12 @@
 
                             <!-- 退货单 -->
                             #parse("component/order/returnOrder.vm")
+
+                            <!-- 续租单 -->
+                            #parse("component/order/reletOrder.vm")
+
+                            <!-- 打印记录 -->
+                            #parse("component/order/orderPrintRecord.vm")
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
@@ -122,6 +134,7 @@
                 'manage.order.util.js',
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
+                'manage.order.print.record.js',
                 'modal.input.js');
     </script>
     <script type="text/javascript">

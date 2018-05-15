@@ -17,10 +17,10 @@ public class StatisticsSalesmanPageParam extends BasePageParam {
 
 	@NotNull(message = ErrorCode.START_TIME_NOT_NULL)
 	private Date startTime; // 查询开始时间
-	@NotNull(message = ErrorCode.END_TIME_NOT_NULL)
-	private Date endTime; // 查询结束时间
+	private Date endTime;
 	private Integer subCompanyId; //所属分公司id
 	private String salesmanName; //业务员姓名模糊查询
+	private Integer rentLengthType; // 长租短租
 
 	public Date getStartTime() {
 		return startTime;
@@ -28,14 +28,6 @@ public class StatisticsSalesmanPageParam extends BasePageParam {
 
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
-	}
-
-	public Date getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
 	}
 
 	public Integer getSubCompanyId() {
@@ -52,5 +44,21 @@ public class StatisticsSalesmanPageParam extends BasePageParam {
 
 	public void setSalesmanName(String salesmanName) {
 		this.salesmanName = salesmanName;
+	}
+
+	public Integer getRentLengthType() {
+		return rentLengthType;
+	}
+
+	public void setRentLengthType(Integer rentLengthType) {
+		this.rentLengthType = rentLengthType;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 }

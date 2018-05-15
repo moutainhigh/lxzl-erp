@@ -38,10 +38,12 @@
         <property name="paymentSystemQueryChargeRecordPageURL" value="${PAYMENT_SYSTEM_QUERY_CHARGE_RECORD_PAGE_URL}"/>
         <property name="paymentSystemQueryPayResultURL" value="${PAYMENT_SYSTEM_QUERY_PAY_RESULT_URL}"/>
         <property name="paymentSystemQueryCustomerAccountLogPageURL" value="${PAYMENT_SYSTEM_QUERY_CUSTOMER_ACCOUNT_LOG_PAGE_URL}"/>
+        <property name="paymentSystemReturnDepositExpandURL" value="${PAYMENT_SYSTEM_RETURN_DEPOSIT_EXPAND_URL}"/>
     </bean>
 
     <bean id="dingDingConfig" class="com.lxzl.erp.common.domain.DingDingConfig">
         <property name="dingDingGatewayUrl" value="${DINGDING-GATEWAY-URL}"/>
+        <property name="dingdingSecret" value="${DINGDING-SECRET}"/>
         <property name="applyApprovingWorkflowCallBackUrl" value="${DINGDING-APPLY-APPROVING_WORKFLOW-CALLBACK-URL}"/>
     </bean>
 </beans>

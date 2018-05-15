@@ -33,7 +33,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void updateCouponBatch() throws Exception{
         CouponBatch couponBatch = new CouponBatch();
-        couponBatch.setCouponBatchId(20);
+        couponBatch.setCouponBatchId(80);
         couponBatch.setCouponBatchName("凌雄租赁大促销");
         couponBatch.setCouponType(2);
         couponBatch.setCouponBatchDescribe("双十二特惠，租一个苹果电脑送一个苹果手机");
@@ -46,7 +46,7 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     @Test
     public void deleteCouponBatch() throws Exception{
         CouponBatch couponBatch = new CouponBatch();
-        couponBatch.setCouponBatchId(1);
+        couponBatch.setCouponBatchId(80);
 
         TestResult testResult = getJsonTestResult("/coupon/deleteCouponBatch",couponBatch);
     }
@@ -55,10 +55,10 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         CouponBatchQueryParam couponBatchQueryParam = new CouponBatchQueryParam();
         couponBatchQueryParam.setPageNo(1);
         couponBatchQueryParam.setPageSize(2);
-        couponBatchQueryParam.setCouponType(1);
+        couponBatchQueryParam.setCouponType(80);
 //        customerPersonQueryParam.setIsDisabled(0);
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
-        couponBatchQueryParam.setCouponBatchName("十");
+//        couponBatchQueryParam.setCouponBatchName("十");
         TestResult testResult = getJsonTestResult("/coupon/pageCouponBatch", couponBatchQueryParam);
     }
     @Test
@@ -138,10 +138,15 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
 
     @Test
     public void findCouponByCustomerNo() throws Exception {
+        CustomerOrderCouponParam customerOrderCouponParam = new CustomerOrderCouponParam();
         Customer customer = new Customer();
-        customer.setCustomerNo("sssss");
+        customer.setCustomerNo("LXCC-1000-20180409-00004");
+        Order order = new Order();
+//        order.setOrderNo("LXO-20180313-027-00818");
+        customerOrderCouponParam.setCustomer(customer);
+        customerOrderCouponParam.setOrder(order);
 
-        TestResult testResult = getJsonTestResult("/coupon/findCouponByCustomerNo", customer);
+        TestResult testResult = getJsonTestResult("/coupon/findCouponByCustomerNo", customerOrderCouponParam);
     }
 
     @Test
@@ -170,7 +175,9 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
     public void useCoupon() throws Exception {
         Order order = new Order();
         order.setOrderId(1111);
-        order.setOrderNo("11111");
+//        order.setOrderNo("LXO-20180313-027-00813");
+        order.setOrderNo("LXO-20180313-027-00818");
+        order.setBuyerCustomerNo("LXCC-0755-20180112-00130");
         OrderProduct orderProduct1 = new OrderProduct();
         orderProduct1.setOrderId(1111);
         orderProduct1.setOrderProductId(1);
@@ -186,22 +193,14 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         orderProductList.add(orderProduct2);
         order.setOrderProductList(orderProductList);
         Coupon coupon1 = new Coupon();
-        coupon1.setCouponId(954);
-        coupon1.setCouponBatchDetailId(15);
-        coupon1.setCouponBatchId(15);
-        coupon1.setFaceValue(new BigDecimal(15));
+        coupon1.setCouponId(5443);
         Coupon coupon2 = new Coupon();
-        coupon2.setCouponId(786);
-        coupon2.setCouponBatchDetailId(12);
-        coupon2.setCouponBatchId(31);
-        coupon2.setFaceValue(new BigDecimal(25));
+        coupon2.setCouponId(5442);
         List<Coupon> couponList = new ArrayList<>();
         couponList.add(coupon1);
         couponList.add(coupon2);
-        UseCoupon useCoupon = new UseCoupon();
-        useCoupon.setOrder(order);
-        useCoupon.setCouponList(couponList);
-        TestResult testResult = getJsonTestResult("/coupon/useCoupon", useCoupon);
+        order.setCouponList(couponList);
+        TestResult testResult = getJsonTestResult("/coupon/useCoupon", order);
     }
     @Test
     public void pageCouponByCustomerNo() throws Exception {
@@ -234,5 +233,11 @@ public class CouponControllerTest extends ERPUnTransactionalTest{
         statementCouponParam.setCoupon(coupon);
         statementCouponParam.setStatementOrderDetail(statementOrderDetail);
         TestResult testResult = getJsonTestResult("/coupon/useStatementCoupon", statementCouponParam);
+    }
+    @Test
+    public void findOrderCouponByOrderNo() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("LXO-20180305-021-00030");
+        TestResult testResult = getJsonTestResult("/coupon/findOrderCouponByOrderNo", order);
     }
 }

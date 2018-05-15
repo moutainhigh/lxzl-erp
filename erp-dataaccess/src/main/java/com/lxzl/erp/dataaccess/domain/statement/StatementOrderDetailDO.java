@@ -54,6 +54,14 @@ public class StatementOrderDetailDO extends BaseDO {
     @Transient
     private BigDecimal goodsUnitAmount;
 
+    @Transient
+    private Integer salesmanId;
+    @Transient
+    private Integer subCompanyId;
+    @Transient
+    private Integer rentLengthType;
+
+    private String serialNumber;        // 序号
     private String itemName;
     private Integer itemIsNew;
 
@@ -400,4 +408,32 @@ public class StatementOrderDetailDO extends BaseDO {
     public void setStatementDetailPenaltyPaidAmount(BigDecimal statementDetailPenaltyPaidAmount) {
         this.statementDetailPenaltyPaidAmount = statementDetailPenaltyPaidAmount;
     }
+
+    public Integer getSubCompanyId() {
+        return subCompanyId;
+    }
+
+    public void setSubCompanyId(Integer subCompanyId) {
+        this.subCompanyId = subCompanyId;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
+    }
+
+    public Integer getSalesmanId() {
+        return salesmanId;
+    }
+
+    public void setSalesmanId(Integer salesmanId) {
+        this.salesmanId = salesmanId;
+    }
+
+    public String getSerialNumber() { return serialNumber; }
+
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 }

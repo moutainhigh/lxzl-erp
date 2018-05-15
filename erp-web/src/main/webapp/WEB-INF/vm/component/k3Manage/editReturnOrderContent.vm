@@ -101,7 +101,7 @@
                 </div>
 
                 <div class="form-group field" id="orderSubCompanyNameFormControl">
-                    <label class="col-md-3 control-label">发货公司</label>
+                    <label class="col-md-3 control-label"><em class="text-danger">*</em>发货公司</label>
                     <div class="col-md-9">
                         <div>
                             <select class="form-control required" name="deliverySubCompanyId" id="deliverySubCompanyId">

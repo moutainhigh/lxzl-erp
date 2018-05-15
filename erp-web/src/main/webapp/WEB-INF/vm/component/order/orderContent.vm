@@ -68,7 +68,7 @@
                         <label class="col-md-6 control-label">租赁时长</label>
                         <div class="col-md-6">
                             <div>
-                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number required" type="text" placeholder="输入租赁时长" />
+                                <input id="rentTimeLength" name="rentTimeLength" class="form-control number checkInteger required" type="text" placeholder="输入租赁时长" />
                             </div>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                         <tr class="productRow skuRow" productRowKey="{{productId}}">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}" data-rowid="{{rowid}}" >
+                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}" data-serialnumber="{{serialNumber}}" >
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
@@ -215,7 +215,7 @@
                                     <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
                                     <input type="hidden" name="productId" value="{{productId}}" class="productId" />
                                     <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
-                                    <input type="hidden" name="rowid" value="{{rowid}}" class="rowid" />
+                                    <input type="hidden" name="serialNumber" value="{{serialNumber}}" class="serialNumber" />
                                     <label class="field prepend-icon">
                                         <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required gui-input" placeholder="支持四位小数" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
@@ -279,10 +279,10 @@
                             </td>
 
                             <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}" data-rowid="{{rowid}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}" data-serialnumber="{{serialNumber}}">删除</a>
                                 </div>
                             </td>
                         </tr>
@@ -352,7 +352,7 @@
                         <tr class="materialRow">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{materialNo}}"  data-isnew="{{isNewMaterial}}" data-rowid="{{rowid}}">
+                                    <input type="checkbox" name="checkItem" value="{{materialNo}}"  data-isnew="{{isNewMaterial}}" data-serialnumber="{{serialNumber}}">
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
@@ -369,7 +369,7 @@
                                         <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
                                         <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
                                         <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
-                                        <input type="hidden" name="rowid" value="{{rowid}}" class="rowid" />
+                                        <input type="hidden" name="serialNumber" value="{{serialNumber}}" class="serialNumber" />
                                         <input type="text" name="materialUnitAmount-{{materialNo}}" value="{{materialUnitAmount}}" class="materialUnitAmount form-control required gui-input" placeholder="支持四位小数" />
                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                     </label>
@@ -430,10 +430,10 @@
                                 {{/showDepositAmount}}
                             </td>
                             <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-                            <td>{{#firstNeedPayDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/firstNeedPayDepositAmount}}</td>
+                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}" data-rowid="{{rowid}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}" data-serialnumber="{{serialNumber}}">删除</a>
                                 </div>
                             </td>
                         </tr>
