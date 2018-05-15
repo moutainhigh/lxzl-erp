@@ -105,7 +105,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         }
         k3ReturnOrderDetail1.setProductNo(number);
         k3ReturnOrderDetail1.setProductName(product.getProductName());
-        k3ReturnOrderDetail1.setProductCount(1);
+        k3ReturnOrderDetail1.setProductCount(0);
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");
