@@ -226,7 +226,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (warehouseDO != null) {
                 subCompanyId = warehouseDO.getSubCompanyId();
             }
-        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)||
+                WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             if (customerDO != null) {
                 subCompanyId = customerDO.getOwnerSubCompanyId();
@@ -532,7 +533,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     return result;
                 }
                 if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
-                        WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
+                        (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==2)) {
                     CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
                     if (customerDO == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -772,6 +773,13 @@ public class WorkflowServiceImpl implements WorkflowService {
         WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByNo(workflowLinkNo);
         if (workflowLinkDO == null) {
             result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            return result;
+        }
+        //客户不允许拨回到上一层
+        if((WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
+                WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()))&&
+        WorkflowReturnType.RETURN_TYPE_PREVIOUS.equals(returnType) ){
+            result.setErrorCode(ErrorCode.WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS);
             return result;
         }
         List<WorkflowLinkDetailDO> workflowLinkDetailDOList = workflowLinkDO.getWorkflowLinkDetailDOList();
