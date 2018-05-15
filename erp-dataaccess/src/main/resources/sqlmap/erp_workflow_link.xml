@@ -205,56 +205,7 @@
 	</select>
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		select count(distinct ewl.id) from erp_workflow_link ewl
-		<where>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
-                and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
-			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != ''">
-				and ewl.workflow_refer_no like CONCAT('%','${maps.workflowQueryParam.workflowReferNo}','%' )
-			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null &amp;&amp; maps.workflowQueryParam.verifyStatus != ''">
-				and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
-				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
-			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
-				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
-			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null ">
-				<![CDATA[ AND ewl.create_time >= #{maps.workflowQueryParam.createStartTime} ]]>
-			</if>
-			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null ">
-				<![CDATA[ AND ewl.create_time <= #{maps.workflowQueryParam.createEndTime} ]]>
-			</if>
-			<if test="maps.isQueryAll == null">
-				and ewl.data_status = 1
-			</if>
-			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
-				AND (ewl.create_user = #{maps.verifyUserId}
-				OR ewl.update_user = #{maps.verifyUserId}
-				OR ewl.current_verify_user = #{maps.verifyUserId}
-				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
-					OR ewl.verify_user_group_id in
-					<foreach item="item" index="index" collection="maps.currentUserGroupList"
-							 open="(" separator="," close=")">
-						#{item}
-					</foreach>
-				</if>
-				)
-			</if>
-		</where>
-	</select>
-
-	<select id="listPage" resultMap="WorkflowLinkDO" parameterType="map">
-		select link.*,<include refid="detail_column_List"/>,<include refid="group_column_List"/>
-		<trim prefix=",">
-			CASE WHEN link.workflow_step = link.workflow_last_step THEN true ELSE false END AS is_last_step,leu.real_name as current_verify_user_name,eu.real_name as detail_verify_user_name, ewn.workflow_node_name as workflow_current_node_name, euc.real_name as commit_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name,eug.real_name as group_verify_user_name
-		</trim>
-		from
-		(
-		select <include refid="column_List"/>
-		from erp_workflow_link ewl
+		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
 		<where>
 			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
 				and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
@@ -285,7 +236,58 @@
 				OR ewl.update_user = #{maps.verifyUserId}
 				OR ewl.current_verify_user = #{maps.verifyUserId}
 				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
-					OR ewl.verify_user_group_id in
+					OR ewld.verify_user_group_id in
+					<foreach item="item" index="index" collection="maps.currentUserGroupList"
+							 open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				)
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="WorkflowLinkDO" parameterType="map">
+		select link.*,<include refid="detail_column_List"/>,<include refid="group_column_List"/>
+		<trim prefix=",">
+			CASE WHEN link.workflow_step = link.workflow_last_step THEN true ELSE false END AS is_last_step,leu.real_name as current_verify_user_name,eu.real_name as detail_verify_user_name, ewn.workflow_node_name as workflow_current_node_name, euc.real_name as commit_user_name,ewnc.workflow_node_name as detail_workflow_current_node_name,ewnp.workflow_node_name as detail_workflow_previous_node_name,ewnn.workflow_node_name as detail_workflow_next_node_name,eug.real_name as group_verify_user_name
+		</trim>
+		from
+		(
+		select DISTINCT <include refid="column_List"/>
+		from erp_workflow_link ewl
+		INNER JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = ewl.id and ewld.data_status = 1
+		<where>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowType != null &amp;&amp; maps.workflowQueryParam.workflowType != ''">
+				and ewl.workflow_type = #{maps.workflowQueryParam.workflowType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != null &amp;&amp; maps.workflowQueryParam.workflowReferNo != ''">
+				and ewl.workflow_refer_no like CONCAT('%','${maps.workflowQueryParam.workflowReferNo}','%' )
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.verifyStatus != null &amp;&amp; maps.workflowQueryParam.verifyStatus != ''">
+				and ewl.current_verify_status = #{maps.workflowQueryParam.verifyStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != null &amp;&amp; maps.workflowQueryParam.currentVerifyUser != ''">
+				and ewl.current_verify_user = #{maps.workflowQueryParam.currentVerifyUser, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.commitUserId != null &amp;&amp; maps.workflowQueryParam.commitUserId != ''">
+				and ewl.commit_user = #{maps.workflowQueryParam.commitUserId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createStartTime != null ">
+				<![CDATA[ AND ewl.create_time >= #{maps.workflowQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.workflowQueryParam != null &amp;&amp; maps.workflowQueryParam.createEndTime != null ">
+				<![CDATA[ AND ewl.create_time <= #{maps.workflowQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ewl.data_status = 1
+			</if>
+			<if test="maps.verifyUserId!=null &amp;&amp; maps.verifyUserId != ''">
+				AND (ewl.create_user = #{maps.verifyUserId}
+				OR ewl.update_user = #{maps.verifyUserId}
+				OR ewl.current_verify_user = #{maps.verifyUserId}
+				<if test="maps.currentUserGroupList!=null &amp;&amp;maps.currentUserGroupList.size() != 0">
+					OR ewld.verify_user_group_id IN
 					<foreach item="item" index="index" collection="maps.currentUserGroupList"
 							 open="(" separator="," close=")">
 						#{item}
@@ -298,8 +300,8 @@
 		LIMIT #{maps.start},#{maps.pageSize}
 		) link
 		LEFT JOIN erp_workflow_link_detail ewld on ewld.workflow_link_id = link.id and ewld.data_status = 1
-        LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id AND ewvug.data_status = 1
-        LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
+		LEFT JOIN erp_workflow_verify_user_group ewvug on ewvug.verify_user_group_id = link.verify_user_group_id AND ewvug.data_status = 1
+		LEFT JOIN erp_user eug ON eug.id = ewvug.verify_user
 		LEFT JOIN erp_user eu ON eu.id = ewld.verify_user
 		LEFT JOIN erp_workflow_node ewnc on ewnc.id = ewld.workflow_current_node_id
 		LEFT JOIN erp_workflow_node ewnp on ewnp.id = ewld.workflow_previous_node_id

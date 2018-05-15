@@ -22,6 +22,7 @@ public class PaymentSystemConfig {
     public static String paymentSystemQueryChargeRecordPageURL;
     public static String paymentSystemQueryPayResultURL;
     public static String paymentSystemQueryCustomerAccountLogPageURL;
+    public static String paymentSystemReturnDepositExpandURL;
 
     public void setPaymentSystemManualChargeURL(String paymentSystemManualChargeURL) {
         PaymentSystemConfig.paymentSystemManualChargeURL = paymentSystemManualChargeURL;
@@ -74,4 +75,9 @@ public class PaymentSystemConfig {
     public void setPaymentSystemQueryCustomerAccountLogPageURL(String paymentSystemQueryCustomerAccountLogPageURL) {
         PaymentSystemConfig.paymentSystemQueryCustomerAccountLogPageURL = paymentSystemQueryCustomerAccountLogPageURL;
     }
+    public void setPaymentSystemReturnDepositExpandURL(String paymentSystemReturnDepositExpandURL) {
+        PaymentSystemConfig.paymentSystemReturnDepositExpandURL = paymentSystemReturnDepositExpandURL;
+    }
+
+
 }

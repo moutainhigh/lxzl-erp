@@ -93,6 +93,40 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public String returnDepositExpand(String customerNo,BigDecimal businessReturnRentAmount,BigDecimal businessReturnOtherAmount,BigDecimal businessReturnRentDepositAmount,
+                                      BigDecimal businessReturnDepositAmount,String remark) {
+        ReturnDepositExpandParam param = new ReturnDepositExpandParam();
+        param.setBusinessCustomerNo(customerNo);
+        param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
+        param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
+        Integer operateUser = userSupport.getCurrentUserId() == null ? CommonConstant.SUPER_USER_ID : userSupport.getCurrentUserId();
+        param.setBusinessOperateUser(operateUser.toString());
+        param.setBusinessReturnDepositAmount(businessReturnDepositAmount);
+        param.setBusinessReturnOtherAmount(businessReturnOtherAmount);
+        param.setBusinessReturnRentAmount(businessReturnRentAmount);
+        param.setBusinessReturnRentDepositAmount(businessReturnRentDepositAmount);
+        param.setRemark(remark);
+        try {
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String requestJson = FastJsonUtil.toJSONString(param);
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemReturnDepositExpandURL, requestJson, headerBuilder, "UTF-8");
+            logger.info("returnDepositExpand response:", response);
+            PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
+            if(paymentResult==null){
+                throw new BusinessException("支付网关没有响应，强制取消已支付订单失败");
+            }
+            if(!ErrorCode.SUCCESS.equals(paymentResult.getCode())){
+                throw new BusinessException(paymentResult.getDescription());
+            }
+            return ErrorCode.SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+    }
+
+    @Override
     public ServiceResult<String, Boolean> manualCharge(ManualChargeParam param) {
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);

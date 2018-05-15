@@ -23,6 +23,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
+import com.lxzl.erp.common.util.thread.TreadFactory;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
@@ -91,9 +92,9 @@ public class DingdingServiceImpl implements DingdingService {
     @Autowired
     private WorkflowService workflowService;
     /** 申请审批实例的线程 */
-    private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10);
+    private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10, new TreadFactory("approve"));
     /** 注册用户的线程 */
-    private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10);
+    private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10,  new TreadFactory("registUser"));
     @Override
     public String sendUserGroupMessage(String userGroupUrl, DingdingSendTextMessageRequest request) {
         String respContent = null;

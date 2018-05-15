@@ -15,9 +15,9 @@
                             <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
                         </div>
 
-##                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
-##                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
-##                        </div>
+                    ##                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                    ##                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                    ##                        </div>
 
                         <div class="form-group pull-right mn mr10">
                             <div class="input-group">
@@ -128,12 +128,12 @@
                                         <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
                                             <li class="tab-menu active">
                                                 <a href="#ordeProductItems-{{orderNo}}" data-toggle="tab">商品项
-##                                                    （共<span id="orderItemProductCount">{{orderProductListCount}}</span>件）
+                                                ##                                                    （共<span id="orderItemProductCount">{{orderProductListCount}}</span>件）
                                                 </a>
                                             </li>
                                             <li class="tab-menu">
                                                 <a href="#orderMaterialItems-{{orderNo}}" data-toggle="tab">配件项
-##                                                    （共<span id="orderItemMaterialCount">{{orderMaterialListCount}}</span>件）
+                                                ##                                                    （共<span id="orderItemMaterialCount">{{orderMaterialListCount}}</span>件）
                                                 </a>
                                             </li>
                                         </ul>

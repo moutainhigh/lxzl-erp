@@ -25,12 +25,28 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String, String> createOrder(Order order);
 
     /**
+     * 创建订单（包括组合商品）使用新接口，避免影响
+     *
+     * @param order 订单信息
+     * @return 订单编号
+     */
+    ServiceResult<String, String> createOrderNew(Order order);
+
+    /**
      * 编辑订单接口
      *
      * @param order 订单信息
      * @return 订单编号
      */
     ServiceResult<String, String> updateOrder(Order order);
+
+    /**
+     * 编辑订单接口（包括组合商品）使用新接口，避免影响
+     *
+     * @param order 订单信息
+     * @return 订单编号
+     */
+    ServiceResult<String, String> updateOrderNew(Order order);
 
     /**
      * 提交订单
@@ -47,6 +63,14 @@ public interface OrderService extends VerifyReceiver {
      * @return 支付结果
      */
     ServiceResult<String, String> payOrder(String orderNo);
+
+    /**
+     * 根据订单编号查询单个订单（包含组合商品）
+     *
+     * @param orderNo 订单编号
+     * @return 订单信息
+     */
+    ServiceResult<String, Order> queryOrderByNoNew(String orderNo);
 
     /**
      * 根据订单编号查询单个订单

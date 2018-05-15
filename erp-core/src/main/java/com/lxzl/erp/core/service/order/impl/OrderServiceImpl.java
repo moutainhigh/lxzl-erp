@@ -2,7 +2,6 @@ package com.lxzl.erp.core.service.order.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.lxzl.erp.common.constant.*;
-import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
@@ -11,7 +10,6 @@ import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
-import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
@@ -45,6 +43,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
@@ -60,6 +59,9 @@ import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.jointProduct.JointMaterialDO;
+import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductDO;
+import com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.BulkMaterialDO;
@@ -172,6 +174,210 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> createOrderNew(Order order) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
+
+        String verifyCreateOrderCode = verifyOperateOrder(order);
+        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
+            result.setErrorCode(verifyCreateOrderCode);
+            return result;
+        }
+
+        CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+
+        SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
+        orderDO.setOrderSellerId(customerDO.getOwner());
+
+        //添加客户的结算时间（天）
+//        Date rentStartTime = order.getRentStartTime();
+
+        //获取
+        orderDO.setStatementDate(customerDO.getStatementDate());
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+        orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderDO.setCreateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setCreateTime(currentTime);
+        orderDO.setUpdateTime(currentTime);
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(customerDO.getCustomerName());
+
+        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        orderDO.setExpectReturnTime(expectReturnTime);
+        orderMapper.save(orderDO);
+
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
+        updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+        // TODO: 2018\4\26 0026 使用优惠券
+        if (CollectionUtil.isEmpty(order.getCouponList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+        String rs = couponSupport.useCoupon(order);
+        if (!ErrorCode.SUCCESS.equals(rs)) {
+            result.setErrorCode(rs);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    // 预处理订单中的组合商品项
+    private void preValidateOrderJointProduct(Order order) {
+        List<OrderProduct> orderProductList = order.getOrderProductList();
+        if (CollectionUtil.isEmpty(orderProductList)) {
+            orderProductList = new ArrayList<>();
+            order.setOrderProductList(orderProductList);
+        }
+        List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
+        if (CollectionUtil.isEmpty(orderMaterialList)) {
+            orderMaterialList = new ArrayList<>();
+            order.setOrderMaterialList(orderMaterialList);
+        }
+
+        List<OrderJointProduct> orderJointProductList = order.getOrderJointProductList();
+
+        // 组合商品参数验证和格式化（组合商品中商品数量格式化）
+        String errorCode = verifyOperateOrderJointProduct(orderJointProductList);
+        if (!ErrorCode.SUCCESS.equals(errorCode)) {
+            throw new BusinessException(errorCode);
+        }
+
+        // 将组合商品列表中的商品和配件放到订单的订单商品项和订单配件项中，并为‘新增的’组合商品中的配件和商品添加IdentityNo序号
+        Integer identityNo = 1;
+        if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                List<OrderProduct> orderProductListTmp = orderJointProduct.getOrderProductList();
+                if (CollectionUtil.isNotEmpty(orderProductListTmp)) {
+                    for (OrderProduct orderProduct : orderProductListTmp) {
+                        orderProductList.add(orderProduct); // 添加到订单项中
+                        orderProduct.setIdentityNo(identityNo++);
+                    }
+                }
+                List<OrderMaterial> orderMaterialListTmp = orderJointProduct.getOrderMaterialList();
+                if (CollectionUtil.isNotEmpty(orderMaterialListTmp)) {
+                    for (OrderMaterial orderMaterial : orderMaterialListTmp) {
+                        orderMaterialList.add(orderMaterial); // 添加到订单项中
+                        orderMaterial.setIdentityNo(identityNo++);
+                    }
+                }
+            }
+        }
+    }
+
+    // 订单组合商品参数验证和格式化
+    private String verifyOperateOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
+        if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                Integer jointProductId = orderJointProduct.getJointProductId();
+                JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
+                if (jointProductDO == null) {
+                    return ErrorCode.JOINT_PRODUCT_ID_IS_NULL;
+                }
+
+                // 校验订单组合商品中商品项和配件项是否跟组合商品一致
+                List<OrderProduct> orderProductList = orderJointProduct.getOrderProductList();
+                List<JointProductProductDO> jointProductProductDOList = jointProductDO.getJointProductProductDOList();
+                if (CollectionUtil.isEmpty(orderProductList) && CollectionUtil.isEmpty(jointProductProductDOList)) {
+                } else if (CollectionUtil.isNotEmpty(orderProductList) && CollectionUtil.isNotEmpty(jointProductProductDOList)) {
+                    Map<Integer, OrderProduct> orderProductMap = ListUtil.listToMap(orderProductList, "productId");
+                    for (JointProductProductDO jointProductProductDO : jointProductProductDOList) {
+                        OrderProduct orderProduct = orderProductMap.get(jointProductProductDO.getProductId());
+                        if (orderProduct == null) {
+                            return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                        }
+                        orderProductMap.remove(jointProductProductDO.getProductId());
+                    }
+
+                    if (orderProductMap.size() != 0) {
+                        return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                    }
+                } else {
+                    return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                }
+
+                List<OrderMaterial> orderMaterialList = orderJointProduct.getOrderMaterialList();
+                List<JointMaterialDO> jointMaterialDOList = jointProductDO.getJointMaterialDOList();
+                if (CollectionUtil.isEmpty(orderMaterialList) && CollectionUtil.isEmpty(jointMaterialDOList)) {
+                } else if (CollectionUtil.isNotEmpty(orderMaterialList) && CollectionUtil.isNotEmpty(jointMaterialDOList)) {
+                    Map<Integer, OrderMaterial> orderMaterialMap = ListUtil.listToMap(orderMaterialList, "materialId");
+                    for (JointMaterialDO jointMaterialDO : jointMaterialDOList) {
+                        OrderMaterial orderMaterial = orderMaterialMap.get(jointMaterialDO.getMaterialId());
+                        if (orderMaterial == null) {
+                            return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                        }
+                        orderMaterialMap.remove(jointMaterialDO.getMaterialId());
+                    }
+
+                    if (orderMaterialMap.size() != 0) {
+                        return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                    }
+                } else {
+                    return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                }
+
+                // 重新设置组合商品中商品数量和配件数量
+                // 商品数量 = 订单组合商品数 * 组合商品定义时商品数量
+                Integer jointCount = orderJointProduct.getJointProductCount();
+                if (CollectionUtil.isNotEmpty(orderProductList) && CollectionUtil.isNotEmpty(jointProductProductDOList)) {
+                    Map<Integer, JointProductProductDO> jointProductProductDOMap = ListUtil.listToMap(jointProductProductDOList, "productId");
+                    for (OrderProduct orderProduct : orderProductList) {
+                        JointProductProductDO jointProductProductDO = jointProductProductDOMap.get(orderProduct.getProductId());
+                        orderProduct.setProductCount(jointProductProductDO.getProductCount() * jointCount);
+                    }
+                }
+                // 配件数量 = 订单组合商品数 * 订单组合商品配件数
+                if (CollectionUtil.isNotEmpty(orderMaterialList) && CollectionUtil.isNotEmpty(jointMaterialDOList)) {
+                    Map<Integer, JointMaterialDO> jointMaterialDOMap = ListUtil.listToMap(jointMaterialDOList, "materialId");
+                    for (OrderMaterial orderMaterial : orderMaterialList) {
+                        JointMaterialDO jointMaterialDO = jointMaterialDOMap.get(orderMaterial.getMaterialId());
+                        orderMaterial.setMaterialCount(orderMaterial.getMaterialCount() * jointCount);
+                    }
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
     private void setOrderProductSummary(OrderDO orderDO) {
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
@@ -245,6 +451,109 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setExpectReturnTime(expectReturnTime);
         orderMapper.update(orderDO);
 
+        saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
+        saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
+
+        updateOrderConsignInfo(order.getCustomerConsignId(), orderDO.getId(), loginUser, currentTime);
+        // TODO: 2018\4\26 0026  清除之前订单锁定的优惠券
+        String revertresult = couponSupport.revertCoupon(order.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(revertresult)) {
+            result.setErrorCode(revertresult);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        // TODO: 2018\4\26 0026  重新使用优惠券
+        if (CollectionUtil.isEmpty(order.getCouponList())) {
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+        String rs = couponSupport.useCoupon(order);
+        if (!ErrorCode.SUCCESS.equals(rs)) {
+            result.setErrorCode(rs);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(orderDO.getOrderNo());
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> updateOrderNew(Order order) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+
+        /***** 增加的组合商品逻辑 start*******/
+        // 预处理订单中的组合商品项
+        preValidateOrderJointProduct(order);
+        /***** 增加的组合商品逻辑 end*******/
+
+        String verifyCreateOrderCode = verifyOperateOrder(order);
+        if (!ErrorCode.SUCCESS.equals(verifyCreateOrderCode)) {
+            result.setErrorCode(verifyCreateOrderCode);
+            return result;
+        }
+        CustomerDO customerDO = customerMapper.findByNo(order.getBuyerCustomerNo());
+        OrderDO dbOrderDO = orderMapper.findByOrderNo(order.getOrderNo());
+        if (dbOrderDO == null) {
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+        if (!OrderStatus.ORDER_STATUS_WAIT_COMMIT.equals(dbOrderDO.getOrderStatus())) {
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!loginUser.getUserId().toString().equals(dbOrderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
+            return result;
+        }
+
+        List<OrderProductDO> orderProductDOList = ConverterUtil.convertList(order.getOrderProductList(), OrderProductDO.class);
+        List<OrderMaterialDO> orderMaterialDOList = ConverterUtil.convertList(order.getOrderMaterialList(), OrderMaterialDO.class);
+        OrderDO orderDO = ConverterUtil.convert(order, OrderDO.class);
+        orderDO.setOrderProductDOList(orderProductDOList);
+        orderDO.setOrderMaterialDOList(orderMaterialDOList);
+        // 校验客户风控信息
+        verifyCustomerRiskInfo(orderDO);
+        calculateOrderProductInfo(orderDO.getOrderProductDOList(), orderDO);
+        calculateOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO);
+
+        SubCompanyDO subCompanyDO = subCompanyMapper.findById(order.getDeliverySubCompanyId());
+        if (order.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+            return result;
+        }
+        orderDO.setOrderSubCompanyId(userSupport.getCurrentUserCompanyId());
+        orderDO.setDeliverySubCompanyId(order.getDeliverySubCompanyId());
+
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        orderDO.setId(dbOrderDO.getId());
+        orderDO.setOrderNo(dbOrderDO.getOrderNo());
+        orderDO.setOrderSellerId(customerDO.getOwner());
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_WAIT_COMMIT);
+        orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderDO.setUpdateTime(currentTime);
+        //添加当前客户名称
+        orderDO.setBuyerCustomerName(customerDO.getCustomerName());
+
+        //添加客户的结算时间（天）
+//        Date rentStartTime = order.getRentStartTime();
+        orderDO.setStatementDate(customerDO.getStatementDate());
+
+        Date expectReturnTime = generateExpectReturnTime(orderDO);
+        orderDO.setExpectReturnTime(expectReturnTime);
+        orderMapper.update(orderDO);
+
+        /***** 增加的组合商品逻辑 start*******/
+        saveOrderJointProductInfo(orderDO.getOrderJointProductDOList(), orderDO, loginUser, currentTime);
+        /***** 增加的组合商品逻辑 end*******/
         saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
         saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
         //为了不影响之前的订单逻辑，这里暂时使用修改的方式
@@ -982,6 +1291,161 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public ServiceResult<String, Order> queryOrderByNoNew(String orderNo) {
+        ServiceResult<String, Order> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+
+        List<OrderTimeAxisDO> orderTimeAxisDOList = orderTimeAxisSupport.getOrderTimeAxis(orderDO.getId());
+        orderDO.setOrderTimeAxisDOList(orderTimeAxisDOList);
+
+        Order order = ConverterUtil.convert(orderDO, Order.class);
+
+        ServiceResult<String, StatementOrder> statementOrderResult = statementService.queryStatementOrderDetailByOrderId(order.getOrderNo());
+        if (ErrorCode.SUCCESS.equals(statementOrderResult.getErrorCode())) {
+            order.setStatementOrder(statementOrderResult.getResult());
+        }
+
+        orderFirstNeedPayAmount(order, orderDO);
+
+        if (CollectionUtil.isNotEmpty(order.getOrderProductList())) {
+            BigDecimal totalProductDeposit = BigDecimal.ZERO;
+            BigDecimal totalProductRent = BigDecimal.ZERO;
+            for (OrderProduct orderProduct : order.getOrderProductList()) {
+                Product product = FastJsonUtil.toBean(orderProduct.getProductSkuSnapshot(), Product.class);
+                if (product != null && CollectionUtil.isNotEmpty(product.getProductSkuList())) {
+                    for (ProductSku productSku : product.getProductSkuList()) {
+                        if (orderProduct.getProductSkuId().equals(productSku.getSkuId())) {
+                            orderProduct.setProductSkuPropertyList(productSku.getProductSkuPropertyList());
+                            break;
+                        }
+                    }
+                }
+                // 计算首付
+                if (order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())) {
+                    for (StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()) {
+                        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
+                                && OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())
+                                && statementOrderDetail.getOrderId().equals(orderProduct.getOrderId())
+                                && statementOrderDetail.getOrderItemReferId().equals(orderProduct.getOrderProductId())
+                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(), order.getRentStartTime())) {
+                            orderProduct.setFirstNeedPayAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
+                                orderProduct.setFirstNeedPayRentAmount(BigDecimalUtil.add(orderProduct.getFirstNeedPayRentAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            }
+                        }
+                        orderProduct.setFirstNeedPayAmount(orderProduct.getFirstNeedPayAmount() == null ? BigDecimal.ZERO : orderProduct.getFirstNeedPayAmount());
+                        orderProduct.setFirstNeedPayRentAmount(orderProduct.getFirstNeedPayRentAmount() == null ? BigDecimal.ZERO : orderProduct.getFirstNeedPayRentAmount());
+                        orderProduct.setFirstNeedPayDepositAmount(BigDecimalUtil.add(orderProduct.getRentDepositAmount(), orderProduct.getDepositAmount()));
+                    }
+                }
+
+                List<OrderProductEquipmentDO> orderProductEquipmentDOList = orderProductEquipmentMapper.findByOrderProductId(orderProduct.getOrderProductId());
+                orderProduct.setOrderProductEquipmentList(ConverterUtil.convertList(orderProductEquipmentDOList, OrderProductEquipment.class));
+                totalProductDeposit = BigDecimalUtil.add(totalProductDeposit, orderProduct.getFirstNeedPayDepositAmount());
+                totalProductRent = BigDecimalUtil.add(totalProductRent, orderProduct.getFirstNeedPayRentAmount());
+
+            }
+            order.setTotalProductFirstNeedPayAmount(BigDecimalUtil.add(totalProductDeposit, totalProductRent));
+        }
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialList())) {
+            BigDecimal totalMaterialDeposit = BigDecimal.ZERO;
+            BigDecimal totalMaterialRent = BigDecimal.ZERO;
+            for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+                List<OrderMaterialBulkDO> orderMaterialBulkDOList = orderMaterialBulkMapper.findByOrderMaterialId(orderMaterial.getOrderMaterialId());
+                orderMaterial.setOrderMaterialBulkList(ConverterUtil.convertList(orderMaterialBulkDOList, OrderMaterialBulk.class));
+
+                // 计算首付
+                if (order.getStatementOrder() != null && CollectionUtil.isNotEmpty(order.getStatementOrder().getStatementOrderDetailList())) {
+                    for (StatementOrderDetail statementOrderDetail : order.getStatementOrder().getStatementOrderDetailList()) {
+                        if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())
+                                && OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())
+                                && statementOrderDetail.getOrderId().equals(orderMaterial.getOrderId())
+                                && statementOrderDetail.getOrderItemReferId().equals(orderMaterial.getOrderMaterialId())
+                                && com.lxzl.erp.common.util.DateUtil.isSameDay(statementOrderDetail.getStatementExpectPayTime(), order.getRentStartTime())) {
+                            orderMaterial.setFirstNeedPayAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            if (StatementDetailType.STATEMENT_DETAIL_TYPE_RENT.equals(statementOrderDetail.getStatementDetailType())) {
+                                orderMaterial.setFirstNeedPayRentAmount(BigDecimalUtil.add(orderMaterial.getFirstNeedPayRentAmount(), statementOrderDetail.getStatementDetailAmount()));
+                            }
+                        }
+                    }
+                    orderMaterial.setFirstNeedPayAmount(orderMaterial.getFirstNeedPayAmount() == null ? BigDecimal.ZERO : orderMaterial.getFirstNeedPayAmount());
+                    orderMaterial.setFirstNeedPayRentAmount(orderMaterial.getFirstNeedPayRentAmount() == null ? BigDecimal.ZERO : orderMaterial.getFirstNeedPayRentAmount());
+                    orderMaterial.setFirstNeedPayDepositAmount(BigDecimalUtil.add(orderMaterial.getRentDepositAmount(), orderMaterial.getDepositAmount()));
+                }
+                totalMaterialDeposit = BigDecimalUtil.add(totalMaterialDeposit, orderMaterial.getFirstNeedPayDepositAmount());
+                totalMaterialRent = BigDecimalUtil.add(totalMaterialRent, orderMaterial.getFirstNeedPayRentAmount());
+
+            }
+            order.setTotalMaterialFirstNeedPayAmount(BigDecimalUtil.add(totalMaterialDeposit, totalMaterialRent));
+        }
+        //获取订单退货单项列表
+        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
+        List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
+        order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
+        /*******组合商品逻辑 start********/
+        // 将orderJointProductId不为空的放入对应的OrderJointProduct中, 并将数量除以组合商品数
+        List<OrderJointProduct> orderJointProductList = order.getOrderJointProductList();
+        if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            Map<Integer, OrderJointProduct> orderJointProductMap = ListUtil.listToMap(orderJointProductList, "orderJointProductId");
+            List<OrderProduct> orderProductList = order.getOrderProductList();
+            if (CollectionUtil.isNotEmpty(orderProductList)) {
+                List<OrderProduct> removeOrderProductList = new ArrayList<>();
+                for (OrderProduct orderProduct : orderProductList) {
+                    if (orderProduct.getOrderJointProductId() != null) {
+                        OrderJointProduct orderJointProduct = orderJointProductMap.get(orderProduct.getOrderJointProductId());
+                        if (orderJointProduct != null) {
+                            if (orderJointProduct.getOrderProductList() == null) {
+                                orderJointProduct.setOrderProductList(new ArrayList<OrderProduct>());
+                            }
+                            if (orderJointProduct.getJointProductCount() > 0 ) { // 将订单商品数量除以组合商品数得到每个组合商品实际数量
+                                Integer realCount = orderProduct.getProductCount() / orderJointProduct.getJointProductCount();
+                                orderProduct.setProductCount(realCount);
+                            }
+                            orderJointProduct.getOrderProductList().add(orderProduct);
+                            removeOrderProductList.add(orderProduct);
+                        }
+                    }
+                }
+                orderProductList.removeAll(removeOrderProductList);
+            }
+            List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
+            if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+                List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
+                for (OrderMaterial orderMaterial : orderMaterialList) {
+                    if (orderMaterial.getOrderJointProductId() != null) {
+                        OrderJointProduct orderJointProduct = orderJointProductMap.get(orderMaterial.getOrderJointProductId());
+                        if (orderJointProduct != null) {
+                            if (orderJointProduct.getOrderMaterialList() == null) {
+                                orderJointProduct.setOrderMaterialList(new ArrayList<OrderMaterial>());
+                            }
+                            if (orderJointProduct.getJointProductCount() > 0 ) { // 将订单配件数量除以组合商品数得到每个组合配件实际数量
+                                Integer realCount = orderMaterial.getMaterialCount() / orderJointProduct.getJointProductCount();
+                                orderMaterial.setMaterialCount(realCount);
+                            }
+                            orderJointProduct.getOrderMaterialList().add(orderMaterial);
+                            removeOrderMaterialList.add(orderMaterial); // 从返回的商品项列表移除组合商品中的
+                        }
+                    }
+                }
+                orderMaterialList.removeAll(removeOrderMaterialList);
+            }
+        }
+        /*******组合商品逻辑 end********/
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(order);
+        return result;
+    }
+
+    @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, String> cancelOrder(String orderNo, Integer cancelOrderReasonType) {
         Date currentTime = new Date();
@@ -1043,10 +1507,11 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
         //非超级管理员，不能处理已支付的订单
-        if (
-//                !userSupport.isSuperUser()&&
-
-                (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus()))) {
+        boolean paid = false;
+        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+            paid = true;
+        }
+        if (!userSupport.isSuperUser()&&paid) {
             result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
             return result;
         }
@@ -1066,75 +1531,6 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
         }
-        //审核中的订单，处理工作流
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
-            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo());
-            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
-                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
-                return result;
-            }
-        }
-        //审核中或者待发货订单，处理风控额度及结算单
-        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
-                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
-            //恢复信用额度
-            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
-            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
-                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
-            }
-            statementOrderSupport.reStatement(orderDO,currentTime);
-        }
-        //超级管理员处理已支付的订单
-
-
-        //已付设备押金
-        BigDecimal depositPaidAmount = BigDecimal.ZERO;
-        //已付其他费用
-        BigDecimal otherPaidAmount = BigDecimal.ZERO;
-        // 已付租金
-        BigDecimal rentPaidAmount = BigDecimal.ZERO;
-        //已付逾期费用
-        BigDecimal overduePaidAmount = BigDecimal.ZERO;
-        //已付违约金
-        BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
-        //已付租金押金
-        BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
-
-        if (PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
-            List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
-            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
-                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
-                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
-                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
-                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
-                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
-                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
-            }
-//            if(BigDecimalUtil.compare(BigDecimal.ZERO,paidAmount)>0){
-//                //该笔金额加款到客户余额
-//                ManualChargeParam manualChargeParam = new ManualChargeParam();
-//                manualChargeParam.setBusinessCustomerNo(orderDO.getBuyerCustomerNo());
-//                manualChargeParam.setChargeAmount(paidAmount);
-//                manualChargeParam.setChargeRemark("超级管理员强制取消已支付订单，已支付金额退还到客户余额");
-//                ServiceResult<String, Boolean> rechargeResult = paymentService.manualCharge(manualChargeParam);
-//                if (!ErrorCode.SUCCESS.equals(rechargeResult.getErrorCode())) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                    result.setErrorCode(rechargeResult.getErrorCode());
-//                    return result;
-//                }
-//            }
-        }
-
-
-        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
-        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
-        orderDO.setUpdateTime(currentTime);
-        orderDO.setUpdateUser(loginUser.getUserId().toString());
-        orderMapper.update(orderDO);
-        // 记录订单时间轴
-        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
         IERPService service = null;
         try {
             K3SendRecordDO k3SendRecordDO = k3SendRecordMapper.findByReferIdAndType(orderDO.getId(), PostK3Type.POST_K3_TYPE_CANCEL_ORDER);
@@ -1181,6 +1577,36 @@ public class OrderServiceImpl implements OrderService {
         } catch (RemoteException e) {
             throw new BusinessException("k3取消订单失败:", e.getMessage());
         }
+
+        //审核中的订单，处理工作流
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus())) {
+            ServiceResult<String, String> cancelWorkFlowResult = workflowService.cancelWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderDO.getOrderNo());
+            if (!ErrorCode.SUCCESS.equals(cancelWorkFlowResult.getErrorCode())) {
+                result.setErrorCode(cancelWorkFlowResult.getErrorCode());
+                return result;
+            }
+        }
+        List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+        //审核中或者待发货订单，处理风控额度及结算单
+        if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
+                OrderStatus.ORDER_STATUS_DELIVERED.equals(orderDO.getOrderStatus())) {
+            //恢复信用额度
+            BigDecimal totalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+            if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
+            }
+            statementOrderSupport.reStatement(currentTime,statementOrderDetailDOList);
+        }
+        orderDO.setCancelOrderReasonType(cancelOrderReasonType);
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
+        orderDO.setUpdateTime(currentTime);
+        orderDO.setUpdateUser(loginUser.getUserId().toString());
+        orderMapper.update(orderDO);
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, currentTime, loginUser.getUserId());
+
+
         // TODO: 2018\4\26 0026 清除锁定优惠券
         String revertresult = couponSupport.revertCoupon(orderDO.getOrderNo());
         if (!ErrorCode.SUCCESS.equals(revertresult)) {
@@ -1188,6 +1614,43 @@ public class OrderServiceImpl implements OrderService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
+
+
+        //超级管理员处理已支付的订单
+        //已付设备押金
+        BigDecimal depositPaidAmount = BigDecimal.ZERO;
+        //已付其他费用
+        BigDecimal otherPaidAmount = BigDecimal.ZERO;
+        // 已付租金
+        BigDecimal rentPaidAmount = BigDecimal.ZERO;
+        //已付逾期费用
+        BigDecimal overduePaidAmount = BigDecimal.ZERO;
+        //已付违约金
+        BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+        //已付租金押金
+        BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+
+        if (paid) {
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+            }
+            //处理结算单总状态及已支付金额
+            statementOrderSupport.reStatementPaid(statementOrderDetailDOList);
+            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
+                    ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
+            if(!ErrorCode.SUCCESS.equals(returnCode)){
+                result.setErrorCode(returnCode);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
+        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(orderDO.getOrderNo());
         return result;
@@ -2221,6 +2684,84 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    private void saveOrderJointProductInfo(List<OrderJointProductDO> orderJointProductDOList, OrderDO orderDO, User loginUser, Date currentTime) {
+
+        List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderProductDOList, "identityNo");
+        Map<Integer, OrderMaterialDO> orderMaterialDOMap = ListUtil.listToMap(orderMaterialDOList, "identityNo");
+
+        List<OrderJointProductDO> saveOrderJointProductDOList = new ArrayList<>();
+        List<OrderJointProductDO> updateOrderJointProductDOList = new ArrayList<>();
+        List<OrderJointProductDO> dbOrderJointProductDOList = orderJointProductMapper.findByOrderId(orderDO.getId());
+        Map<Integer, OrderJointProductDO> dbOrderJointProductDOMap = ListUtil.listToMap(dbOrderJointProductDOList, "id");
+        if (CollectionUtil.isNotEmpty(orderJointProductDOList)) {
+            for (OrderJointProductDO orderJointProductDO : orderJointProductDOList) {
+                OrderJointProductDO dbOrderJointProductDO = dbOrderJointProductDOMap.get(orderJointProductDO.getId());
+                if (dbOrderJointProductDO != null) {
+                    updateOrderJointProductDOList.add(orderJointProductDO);
+                    dbOrderJointProductDOMap.remove(orderJointProductDO.getId());
+                } else {
+                    saveOrderJointProductDOList.add(orderJointProductDO);
+                }
+            }
+        }
+
+        if (saveOrderJointProductDOList.size() > 0) {
+            for (OrderJointProductDO orderJointProductDO : saveOrderJointProductDOList) {
+                orderJointProductDO.setOrderId(orderDO.getId());
+                orderJointProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderJointProductDO.setCreateUser(loginUser.getUserId().toString());
+                orderJointProductDO.setUpdateUser(loginUser.getUserId().toString());
+                orderJointProductDO.setCreateTime(currentTime);
+                orderJointProductDO.setUpdateTime(currentTime);
+                orderJointProductMapper.save(orderJointProductDO);
+
+                // 新增的保存后要根据IdentityNo找到orderDO中对应的组合商品商品和配件，并设置orderJointProductId
+                List<OrderProductDO> orderProductDOListForJoint = orderJointProductDO.getOrderProductDOList();
+                if (CollectionUtil.isNotEmpty(orderProductDOListForJoint)) {
+                    for (OrderProductDO orderProductDOForJoint : orderProductDOListForJoint) {
+                        OrderProductDO orderProductDO = orderProductDOMap.get(orderProductDOForJoint.getIdentityNo());
+                        if (orderProductDO != null) {
+                            orderProductDO.setOrderJointProductId(orderJointProductDO.getId());
+                        }
+                    }
+                }
+
+                List<OrderMaterialDO> orderMaterialDOListForJoint = orderJointProductDO.getOrderMaterialDOList();
+                if (CollectionUtil.isNotEmpty(orderMaterialDOListForJoint)) {
+                    for (OrderMaterialDO orderMaterialDOForJoint : orderMaterialDOListForJoint) {
+                        OrderMaterialDO orderMaterialDO = orderMaterialDOMap.get(orderMaterialDOForJoint.getIdentityNo());
+                        if (orderMaterialDO != null) {
+                            orderMaterialDO.setOrderJointProductId(orderJointProductDO.getId());
+                        }
+                    }
+                }
+            }
+        }
+
+        if (updateOrderJointProductDOList.size() > 0) {
+            for (OrderJointProductDO orderJointProductDO : updateOrderJointProductDOList) {
+                orderJointProductDO.setOrderId(orderDO.getId());
+                orderJointProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+                orderJointProductDO.setUpdateUser(loginUser.getUserId().toString());
+                orderJointProductDO.setUpdateTime(currentTime);
+                orderJointProductMapper.update(orderJointProductDO);
+            }
+        }
+
+        if (dbOrderJointProductDOMap.size() > 0 ) {
+            for (Map.Entry<Integer, OrderJointProductDO> entry : dbOrderJointProductDOMap.entrySet()) {
+                OrderJointProductDO orderJointProductDO = entry.getValue();
+                orderJointProductDO.setOrderId(orderDO.getId());
+                orderJointProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+                orderJointProductDO.setUpdateUser(loginUser.getUserId().toString());
+                orderJointProductDO.setUpdateTime(currentTime);
+                orderJointProductMapper.update(orderJointProductDO);
+            }
+        }
+    }
+
     private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
 
         List<OrderProductDO> saveOrderProductDOList = new ArrayList<>();
@@ -3132,4 +3673,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private OrderJointProductMapper orderJointProductMapper;
+
+    @Autowired
+    private JointProductMapper jointProductMapper;
 }

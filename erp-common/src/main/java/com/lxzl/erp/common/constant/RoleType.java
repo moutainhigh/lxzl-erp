@@ -106,4 +106,7 @@ public class RoleType {
     public static final Integer ROLE_TYPE_400_CALL_SERVICE = 1200006;  //400电话客服
     public static final Integer ROLE_TYPE_ELECTRIC_TRAINER = 1200007;  //电销培训师
 
+    //渠道大客户
+    public static final Integer ROLE_TYPE_CHANNEL_MANAGER = 1300001;  //渠道总经理
+
 }
