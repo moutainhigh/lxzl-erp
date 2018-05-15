@@ -879,6 +879,10 @@ public class PageController extends BaseController {
     public String groupedProductEdit() {
         return "/groupedProductManage/groupedProductEdit";
     }
+    @RequestMapping("/grouped-product/chooseProduct")
+    public String groupChooseProduct() {
+        return "/component/groupedProduct/chooseProductModal";
+    }
 
 
     //回访记录
