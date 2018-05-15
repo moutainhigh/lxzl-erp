@@ -88,7 +88,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
         if (recentlyReletOrderInDB == null){
             //到期时间=订单的归还时间(第一次续租)
-            returnTime = order.getExpectReturnTime();
+            returnTime = orderServiceResult.getResult().getExpectReturnTime();
         }
         else {
             //到期时间=最近一次续租归还时间
