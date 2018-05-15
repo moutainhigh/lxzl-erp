@@ -105,7 +105,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         }
         k3ReturnOrderDetail1.setProductNo(number);
         k3ReturnOrderDetail1.setProductName(product.getProductName());
-        k3ReturnOrderDetail1.setProductCount(1);
+        k3ReturnOrderDetail1.setProductCount(0);
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");
@@ -278,7 +278,9 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryReturnOrder() throws Exception {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
-        param.setReturnOrderStatus(4);
+        param.setOrderNo("LXO-20180416-1000-00087");
+//        param.setReturnOrderStatus(16);
+        param.setK3CustomerNo("LXCC-027-20180416-00026");
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrder", param);
     }
 
