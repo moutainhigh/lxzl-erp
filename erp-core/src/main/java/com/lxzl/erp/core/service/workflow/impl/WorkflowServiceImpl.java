@@ -527,11 +527,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.SUCCESS);
                 return result;
             } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
-                // 如果 最后是驳回状态，审核人就要从头来
-                if (workflowTemplateDO == null || CollectionUtil.isEmpty(workflowTemplateDO.getWorkflowNodeDOList())) {
-                    result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
-                    return result;
-                }
+
                 if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
                         (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==2)) {
                     CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
@@ -580,14 +576,24 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
             }
         }
-        if (workflowNodeDO == null) {
-            result.setErrorCode(ErrorCode.WORKFLOW_NODE_NOT_EXISTS);
-            return result;
-        }
         Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDO);
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
             subCompanyId = CommonConstant.HEAD_COMPANY_ID;
         }
+        //为了不影响之前审核逻辑，这里copy了部分逻辑
+        if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
+                (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()>=1)) {
+            CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+            List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
+            if (customerConsignInfoDOList.size() == 0) {
+                workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(0);
+                List<User> userList = getUserListByNode(workflowNodeDO, subCompanyId);
+                result.setErrorCode(ErrorCode.SUCCESS);
+                result.setResult(userList);
+                return result;
+            }
+        }
+
         List<User> userList = getUserListByNode(workflowNodeDO, subCompanyId);
 
         result.setErrorCode(ErrorCode.SUCCESS);
