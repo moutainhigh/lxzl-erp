@@ -275,18 +275,14 @@
         ORDER BY epcp.data_order DESC,epcpv.data_order DESC,epi.img_order DESC,epidesc.img_order DESC
     </select>
 
-    <select id="findByProductSkuIds" resultMap="ProductDO" parameterType="java.lang.Integer">
+    <select id="findByIds" resultMap="ProductDO" parameterType="java.lang.Integer">
         select <include refid="column_List"/>
-        <trim prefix=",">
-            <include refid="sku_column_List" />
-        </trim>
         from erp_product ep
-        LEFT JOIN erp_product_sku eps on eps.product_id = ep.id
         where 1 = 1
         <choose>
-            <when test="productSkuIds != null &amp;&amp; productSkuIds.size() > 0">
-                and eps.id IN
-                <foreach collection="productSkuIds" index="index" item="item" open="(" separator="," close=")">
+            <when test="productIds != null &amp;&amp; productIds.size() > 0">
+                and ep.id IN
+                <foreach collection="productIds" index="index" item="item" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </when>
