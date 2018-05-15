@@ -790,6 +790,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ServiceResult<String, Integer> verifyWorkFlowFromCore(String workflowLinkNo, Integer verifyStatus, Integer returnType, String verifyOpinion, Integer currentVerifyUser, Integer nextVerifyUser, List<Integer> imgIdList) {
         Date currentTime = new Date();
         ServiceResult<String, Integer> result = new ServiceResult<>();
@@ -1958,16 +1959,11 @@ public class WorkflowServiceImpl implements WorkflowService {
             workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
         } else {
             //直接走风控
-            Integer subCompanyId = getSubCompanyId(workflowType, workflowLinkDO.getWorkflowReferNo(),workflowNodeDOList.get(1));
-            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
-                subCompanyId = CommonConstant.HEAD_COMPANY_ID;
-            }
             thisWorkflowNodeDO = workflowNodeDOList.get(2);
-            if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser, subCompanyId)) {
+            if (!verifyVerifyUsers(thisWorkflowNodeDO, verifyUser, CommonConstant.HEAD_COMPANY_ID)) {
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
                 return result;
             }
-
             //生成审核组id
             WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
             workflowVerifyUserGroupDO.setVerifyUserGroupId(verifyUserGroupId);
