@@ -581,8 +581,9 @@ public class WorkflowServiceImpl implements WorkflowService {
             subCompanyId = CommonConstant.HEAD_COMPANY_ID;
         }
         //为了不影响之前审核逻辑，这里copy了部分逻辑
-        if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
-                (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()>=1)) {
+
+        if (workflowLinkDO!=null&&(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
+                (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()>=1))) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
             if (customerConsignInfoDOList.size() == 0) {
