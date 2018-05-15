@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductProductMapper">
+
+	<resultMap id="JointProductProductDO" type="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="joint_product_id" jdbcType="INTEGER" property="jointProductId" />
+		<result column="product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ejpp.id,ejpp.joint_product_id,ejpp.product_id,ejpp.product_count,ejpp.data_status,ejpp.remark,ejpp.create_time,ejpp.create_user,ejpp.update_time,ejpp.update_user
+	</sql>
+
+	<select id="findById" resultMap="JointProductProductDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_joint_product_product ejpp
+		WHERE ejpp.id = #{id, jdbcType=INTEGER} AND ejpp.data_status = 1
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ejpp.id) FROM erp_joint_product_product ejpp
+		<where>
+			<if test="true">
+				AND ejpp.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="JointProductProductDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_joint_product_product ejpp
+		<where>
+			<if test="true">
+				AND ejpp.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="jointProductId != null">
+				joint_product_id = #{jointProductId,jdbcType=INTEGER},
+			</if>
+			<if test="productId != null">
+				product_id = #{productId,jdbcType=INTEGER},
+			</if>
+			<if test="productCount != null">
+				product_count = #{productCount,jdbcType=INTEGER},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO">
+		INSERT INTO erp_joint_product_product <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO">
+		UPDATE erp_joint_product_product <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findJointProductId"  resultMap="JointProductProductDO" >
+		SELECT * from erp_joint_product_product WHERE joint_product_id = #{jointProductId}
+	</select>
+
+	<update id="deleteByJointProductId" parameterType="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO">
+		update erp_joint_product_product <include refid="set_column_sql"/> WHERE joint_product_id = #{jointProductId, jdbcType=INTEGER}
+	</update>
+</mapper>

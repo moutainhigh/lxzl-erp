@@ -488,7 +488,12 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
         if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
-            if(userSupport.isChannelSubCompany()){
+            CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
+            if(customerDO ==null){
+                result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
+            }
+            UserDO userDO = userMapper.findByUserId(Integer.parseInt(customerDO.getCreateUser()));
+            if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
                 workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
             }
         }
@@ -515,20 +520,6 @@ public class WorkflowServiceImpl implements WorkflowService {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_HAVE_NO_DETAIL);
                 return result;
             }
-
-            //如果是订单的商务例行审核，则判断是否需要二审
-//            if(WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==1){
-//                ServiceResult<String,Boolean> isNeedSecondVerifyResult = orderService.isNeedSecondVerify(workflowReferNo);
-//                if(!ErrorCode.SUCCESS.equals(isNeedSecondVerifyResult.getErrorCode())){
-//                    result.setErrorCode(isNeedSecondVerifyResult.getErrorCode());
-//                    return result;
-//                }
-//                if(!isNeedSecondVerifyResult.getResult()){
-//                    result.setErrorCode(ErrorCode.SUCCESS);
-//                    return result;
-//                }
-//            }
-
 
             WorkflowLinkDetailDO lastWorkflowLinkDetailDO = workflowLinkDetailDOList.get(0);
             if (VerifyStatus.VERIFY_STATUS_PASS.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
@@ -659,7 +650,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
+        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             if(customerDO==null){
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);

@@ -146,6 +146,27 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    // 创建订单（包括组合商品）使用新接口避免影响
+    @RequestMapping(value = "createNew", method = RequestMethod.POST)
+    public Result createNew(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.createOrderNew(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    // 查询订单详情（包括组合商品） 使用新接口避免影响
+    @RequestMapping(value = "queryOrderByNoNew", method = RequestMethod.POST)
+    public Result queryOrderByNoNew(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, Order> serviceResult = orderService.queryOrderByNoNew(order.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    // 更新订单（包括组合商品） 使用新接口避免影响
+    @RequestMapping(value = "updateNew", method = RequestMethod.POST)
+    public Result updateNew(@RequestBody Order order, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.updateOrderNew(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 
