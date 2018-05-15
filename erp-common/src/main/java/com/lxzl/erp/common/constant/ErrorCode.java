@@ -146,8 +146,8 @@ public class ErrorCode {
     public static final String PROPERTY_ID_NOT_NULL = "J200083";
     public static final String PROPERTY_TYPE_MUST_BE_ONE_OR_TWO = "J200084";
     public static final String PRODUCT_CATEGORY_NOT_EXISTS = "J200085";
-    public static final String PRODUCT_COUNT_ERROR = "J200011";
-    public static final String PRODUCT_CAN_NOT_REPEAT = "J200000";
+    public static final String PRODUCT_COUNT_ERROR = "J200086";
+    public static final String PRODUCT_CAN_NOT_REPEAT = "J200087";
 
     public static final String PROPERTY_CAPACITY_VALUE_NOT_NULL = "J800086";
     public static final String PROPERTY_NAME_NOT_MATCH_MATERIAL_TYPE_NAME = "J800087";
