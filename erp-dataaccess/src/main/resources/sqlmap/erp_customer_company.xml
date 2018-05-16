@@ -302,4 +302,12 @@
 
 	</update>
 
+	<select id="findCustomerCompanyByName" resultMap="CustomerCompanyDO" parameterType="java.util.ArrayList">
+		SELECT <include refid="column_List"/> FROM erp_customer_company ecc WHERE  ecc.simple_company_name IN
+		<foreach collection="list" index="index" item="customerCompanyDO" separator="," open="(" close=")">
+			  #{customerCompanyDO.simpleCompanyName,jdbcType=VARCHAR}
+		</foreach>
+
+	</select>
+
 </mapper>

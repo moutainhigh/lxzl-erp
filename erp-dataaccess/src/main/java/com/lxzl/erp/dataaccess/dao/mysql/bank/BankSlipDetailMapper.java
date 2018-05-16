@@ -38,4 +38,14 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
     List<BankSlipDetailDO> exportBankSlipDetailDOByParams(@Param("maps")Map<String, Object> maps);
 
     List<BankSlipClaimDO> findByPayerNameAndOtherSideAccountNo(@Param("maps")Map<String, Object> maps);
+
+    void deleteBankSlipDetail(@Param("bankSlipDetailId") Integer id,@Param("updateUser") String string,@Param("updateTime") Date now);
+
+    BankSlipDetailDO findBankSlipDetail(@Param("maps")Map<String, Object> maps);
+
+    BankSlipDetailDO findUnknownBankSlipDetailById(@Param("maps") Map<String, Object> maps);
+
+    Integer findUnknownBankSlipDetailDOCountByParams(@Param("maps") Map<String, Object> maps);
+
+    List<BankSlipDetailDO> findUnknownBankSlipDetailDOByParams(@Param("maps") Map<String, Object> maps);
 }

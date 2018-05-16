@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
+import com.lxzl.erp.core.service.bank.impl.importSlip.support.BankSlipSupport;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
@@ -105,6 +106,7 @@ public class ImportNanJingBank {
             bankSlipDO.setUpdateTime(now);
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipMapper.save(bankSlipDO);
+            bankSlipDetailDOList = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
             //查看是否为空
             if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
@@ -372,4 +374,6 @@ public class ImportNanJingBank {
 
     @Autowired
     private BankSlipMapper bankSlipMapper;
+    @Autowired
+    private BankSlipSupport bankSlipSupport;
 }

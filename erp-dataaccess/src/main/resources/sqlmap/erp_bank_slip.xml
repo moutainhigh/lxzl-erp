@@ -79,8 +79,9 @@
 
     <select id="findById" resultMap="BankSlipDO" parameterType="java.lang.Integer">
         SELECT
-        <include refid="column_List"/>
+        <include refid="column_List"/>,<include refid="detail_column_List"/>
         FROM erp_bank_slip ebs
+        LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
         WHERE ebs.id = #{id, jdbcType=INTEGER} AND ebs.data_status = 1
     </select>
 
@@ -266,10 +267,12 @@
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO" parameterType="map">
+    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO">
         SELECT
-        <include refid="column_List"/>
-        FROM erp_bank_slip ebs WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_day =
+        <include refid="column_List"/>,<include refid="detail_column_List"/>
+        FROM erp_bank_slip ebs
+        LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
+        WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_day =
         #{slipDay,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
     </select>
 

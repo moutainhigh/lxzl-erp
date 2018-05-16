@@ -20,7 +20,7 @@ public interface BankSlipMapper extends BaseMysqlDAO<BankSlipDO> {
 
 	List<BankSlipDO> findBankSlipByParams(@Param("maps")Map<String, Object> maps);
 
-	BankSlipDO findBySubCompanyIdAndDayAndBankType(@Param("subCompanyId") Integer subCompanyId,@Param("slipDay")  Date day,@Param("bankType") Integer bankType);
+	List<BankSlipDO> findBySubCompanyIdAndDayAndBankType(@Param("subCompanyId") Integer subCompanyId,@Param("slipDay")  Date day,@Param("bankType") Integer bankType);
 
 	BankSlipDO findBankSlipAndBankSlipDetailByParams(@Param("maps") Map<String, Object> map);
 
