@@ -223,7 +223,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         bankSlip.setSubCompanyId(1);
         bankSlip.setBankType(BankType.BOC_BANK);
         bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/24"));
-        bankSlip.setExcelUrl("/group1/M00/00/2F/wKgKyFrhPguAIgyhAAAxVFprOic15.xlsx");
+        bankSlip.setExcelUrl("/group1/M00/00/35/wKgKyFr73hCAEJeMAAA5ofxt7q065.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)

@@ -106,7 +106,8 @@ public class ImportHanKouBank {
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipMapper.save(bankSlipDO);
 
-            bankSlipDetailDOList = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
+            bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
+            bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
             //查看是否为空
             if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
