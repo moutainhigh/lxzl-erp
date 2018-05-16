@@ -9,9 +9,9 @@
                     <div class="col-md-12">
                         <label class="field select">
                             <select id="returnType" name="returnType" class="required">
-                                <option value="">请选择驳回层级</option>
-                                <option value="1">驳回到上一级</option>
-                                <option value="0">驳回到发起人</option>
+##                                <option value="">请选择驳回层级</option>
+##                                <option value="1">驳回到上一级</option>
+##                                <option value="0">驳回到发起人</option>
                             </select>
                             <i class="arrow"></i>
                         </label>

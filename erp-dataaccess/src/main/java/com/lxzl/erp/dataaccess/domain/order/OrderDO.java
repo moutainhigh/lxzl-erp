@@ -71,6 +71,8 @@ public class OrderDO extends BaseDO {
 
     private List<ReletOrderDO> reletOrderDOList;
 
+    private List<OrderJointProductDO> orderJointProductDOList;
+
     @Transient
     private String buyerCustomerName;
     @Transient
@@ -81,6 +83,14 @@ public class OrderDO extends BaseDO {
     private String orderSubCompanyName;
     @Transient
     private String deliverySubCompanyName;                         // 发货所属分公司名称
+
+    public List<OrderJointProductDO> getOrderJointProductDOList() {
+        return orderJointProductDOList;
+    }
+
+    public void setOrderJointProductDOList(List<OrderJointProductDO> orderJointProductDOList) {
+        this.orderJointProductDOList = orderJointProductDOList;
+    }
 
     public Integer getId() {
         return id;

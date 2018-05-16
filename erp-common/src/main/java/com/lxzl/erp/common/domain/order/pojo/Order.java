@@ -11,7 +11,7 @@ import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.io.Serializable;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -82,6 +82,8 @@ public class Order extends BasePO {
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
+    @Valid
+    private List<OrderJointProduct> orderJointProductList;      // 订单组合商品项
     private OrderConsignInfo orderConsignInfo;                  // 收货地址信息
 
     private List<OrderTimeAxis> orderTimeAxisList;
@@ -662,5 +664,13 @@ public class Order extends BasePO {
 
     public void setWorkflowLink(WorkflowLink workflowLink) {
         this.workflowLink = workflowLink;
+    }
+
+    public List<OrderJointProduct> getOrderJointProductList() {
+        return orderJointProductList;
+    }
+
+    public void setOrderJointProductList(List<OrderJointProduct> orderJointProductList) {
+        this.orderJointProductList = orderJointProductList;
     }
 }
