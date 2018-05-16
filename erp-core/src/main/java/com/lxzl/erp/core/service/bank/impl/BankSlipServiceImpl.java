@@ -401,7 +401,9 @@ public class BankSlipServiceImpl implements BankSlipService {
             }
 
             // 保存日志list
-            bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
+            if(CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)){
+                bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
+            }
         }
         serviceResult.setErrorCode(result.getErrorCode());
         return serviceResult;
