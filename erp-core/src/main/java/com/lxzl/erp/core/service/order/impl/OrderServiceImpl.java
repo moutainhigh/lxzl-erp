@@ -261,6 +261,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // 预处理订单中的组合商品项
+    // 1. 校验订单组合商品列表是否和组合商品列表商品和配件id一致
+    // 2. 重新设置组合商品中的商品数和配件数（商品数 = 订单组合商品数 * 组合商品定义的商品数）（配件数 = 订单组合商品数 * 订单组合商品配件数）
+    // 3. 将每个组合商品中的商品配件增加唯一序号，以便在保存完每一个组合商品后，根据组合商品中的商品和配件列表的序号找到订单商品配件中对应的商品，并设置组合商品项id
     private void preValidateOrderJointProduct(Order order) {
         List<OrderProduct> orderProductList = order.getOrderProductList();
         if (CollectionUtil.isEmpty(orderProductList)) {
@@ -2684,8 +2687,9 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    // 保存订单组合商品项
+    // 在保存新增的组合商品项时，会根据identityNo找到orderDO中这个组合商品对应的商品或配件，把组合商品项id设置进去，所以此方法应在保存订单商品配件之前
     private void saveOrderJointProductInfo(List<OrderJointProductDO> orderJointProductDOList, OrderDO orderDO, User loginUser, Date currentTime) {
-
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
         Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderProductDOList, "identityNo");
