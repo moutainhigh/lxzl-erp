@@ -28,4 +28,5 @@ public interface CustomerCompanyMapper extends BaseMysqlDAO<CustomerCompanyDO> {
 	void  batchAddSimpleCompanyName(@Param("customerCompanyList") List<CustomerCompanyDO> newCustomerCompanyList);
 
 	List<CustomerCompanyDO> findCustomerCompanyByName(@Param("list") List<CustomerCompanyDO> customerCompanyDOList);
+
 }

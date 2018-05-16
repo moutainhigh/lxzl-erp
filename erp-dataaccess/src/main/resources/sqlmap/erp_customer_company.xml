@@ -302,11 +302,15 @@
 
 	</update>
 
-	<select id="findCustomerCompanyByName" resultMap="CustomerCompanyDO" parameterType="java.util.ArrayList">
-		SELECT <include refid="column_List"/> FROM erp_customer_company ecc WHERE  ecc.simple_company_name IN
-		<foreach collection="list" index="index" item="customerCompanyDO" separator="," open="(" close=")">
-			  #{customerCompanyDO.simpleCompanyName,jdbcType=VARCHAR}
-		</foreach>
+	<select id="findCustomerCompanyByName" resultMap="CustomerCompanyDO" >
+		SELECT * FROM erp_customer_company ecc3 INNER JOIN (
+			SELECT ecc1.simple_company_name AS simple_company_name,MIN(ecc1.create_time) AS create_time FROM(
+				SELECT * FROM `erp_customer_company` ecc WHERE ecc.data_status = 1 AND ecc.simple_company_name IN
+					<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+						#{item.simpleCompanyName,jdbcType=VARCHAR}
+					</foreach>
+				)ecc1 GROUP BY ecc1.simple_company_name
+		) ecc2 ON ecc3.create_time = ecc2.create_time AND ecc2.simple_company_name = ecc3.simple_company_name
 
 	</select>
 

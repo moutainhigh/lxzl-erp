@@ -267,7 +267,7 @@
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO">
+    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO" parameterType="map">
         SELECT
         <include refid="column_List"/>,<include refid="detail_column_List"/>
         FROM erp_bank_slip ebs

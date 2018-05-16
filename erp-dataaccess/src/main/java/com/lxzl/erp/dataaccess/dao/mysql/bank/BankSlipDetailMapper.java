@@ -48,4 +48,7 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
     Integer findUnknownBankSlipDetailDOCountByParams(@Param("maps") Map<String, Object> maps);
 
     List<BankSlipDetailDO> findUnknownBankSlipDetailDOByParams(@Param("maps") Map<String, Object> maps);
+
+    List<BankSlipDetailDO>  findLastBankSlipDetail(@Param("list") List<BankSlipDetailDO> selectBankSlipDetailDOList);
+
 }

@@ -73,44 +73,44 @@ public interface BankSlipService {
      */
     ServiceResult<String, BankSlipDetail> queryBankSlipDetail(BankSlipDetail bankSlipDetail);
     /**
-     * 删除银行流水
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/4/2 16:15
-     * @param : bankSlip
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
+    * 删除银行流水
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/2 16:15
+    * @param : bankSlip
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
     ServiceResult<String,Integer> deleteBankSlip(BankSlip bankSlip);
     /**
-     * 隐藏银行流水项
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/4/2 17:45
-     * @param : bankSlipDetail
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
+    * 隐藏银行流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/2 17:45
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
     ServiceResult<String,Integer> hideBankSlipDetail(BankSlipDetail bankSlipDetail);
     /**
-     * 显示银行流水项
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/4/2 17:45
-     * @param : bankSlipDetail
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
+    * 显示银行流水项
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/2 17:45
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
     ServiceResult<String,Integer> displayBankSlipDetail(BankSlipDetail bankSlipDetail);
     /**
-     * 批量指派银行流水明细
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/4/16 17:31
-     * @param : bankSlipDetail
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
+    * 批量指派银行流水明细
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/16 17:31
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */ 
     ServiceResult<String,Integer> localizationBankSlipDetail(BankSlip bankSlip);
     /**
-     * 取消指派银行流水明细
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/4/16 21:17
-     * @param : bankSlipDetailList
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
+    * 取消指派银行流水明细
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/4/16 21:17
+    * @param : bankSlipDetailList
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
+    */
     ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail);
 
     /**
@@ -122,35 +122,35 @@ public interface BankSlipService {
      */
     ServiceResult<String,BankSlipDetail> queryBankSlipClaim(BankSlipDetail bankSlipDetail);
     /**
-     * 未知银行流水详情
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/12 14:42
-     * @param : bankSlipDetail
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
+    * 未知银行流水详情
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/12 14:42
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
     ServiceResult<String,String> queryUnknownBankSlipDetail(BankSlipDetail bankSlipDetail);
     /**
-     * 查询操作日志
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/15 14:34
-     * @param : bankSlipDetailOperationLogQueryParam
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.bank.pojo.BankSlip>>
-     */
+    * 查询操作日志
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/15 14:34
+    * @param : bankSlipDetailOperationLogQueryParam
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.bank.pojo.BankSlip>>
+    */
     ServiceResult<String,Page<BankSlipDetailOperationLog>> pageBankSlipDetailOperationLog(BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam);
     /**
-     * 未知流水分页
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/15 21:37
-     * @param : bankSlipDetailOperationLogQueryParam
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog>>
-     */
+    * 未知流水分页
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/15 21:37
+    * @param : bankSlipDetailOperationLogQueryParam
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog>>
+    */
     ServiceResult<String, Page<BankSlipDetail>> pageUnknownBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam);
     /**
-     * 指派未知数据
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/5/15 23:08
-     * @param : bankSlipDetail
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
+    * 指派未知数据
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/15 23:08
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
     ServiceResult<String,String> unknownBankSlipDetail(BankSlipDetail bankSlipDetail);
 }
