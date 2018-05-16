@@ -43,14 +43,15 @@
                                         <input type="hidden" class="bankSlipId" name="bankSlipId" value="">
                                         <input type="hidden" class="isLocalization" name="isLocalization" value="">
                                         <input type="hidden" class="detailStatus" name="detailStatus" value="">
-                                        <input type="hidden" class="slipMonth" name="slipMonth" value="">
+                                        <input type="hidden" class="slipDayStart" name="slipDayStart" value="">
+                                        <input type="hidden" class="slipDayEnd" name="slipDayEnd" value="">
                                         <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
                                     </form>
                                     <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
                                 </div>
                                 {{/exportButtons}}
                             </script>
-                            <div class="btn-group" id="exportButton"></div>
+                            <div class="btn-group" id="exportButton" style="margin-left:-5px;"></div>
                         </div>
                         <div class="pull-right mr10 text-right">
                             <form id="searchForm" class="form-horizontal">
