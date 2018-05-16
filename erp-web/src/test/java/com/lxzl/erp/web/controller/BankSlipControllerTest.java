@@ -5,6 +5,7 @@ import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankType;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailOperationLogQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
@@ -25,6 +26,20 @@ import java.util.*;
  * @Modified By:
  */
 public class BankSlipControllerTest extends ERPUnTransactionalTest {
+    @Test
+    public void unknownBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(1);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/unknownBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
+    public void pageBankSlipDetailOperationLog() throws Exception {
+        BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam = new BankSlipDetailOperationLogQueryParam();
+        bankSlipDetailOperationLogQueryParam.setBankSlipDetailId(15);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/pageBankSlipDetailOperationLog",bankSlipDetailOperationLogQueryParam);
+    }
+
     @Test
     public void queryBankSlipClaim() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -220,10 +235,10 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        北京(中国银行)
         BankSlip bankSlip = new BankSlip();
 //        bankSlip.setSubCompanyName("北京分公司");
-        bankSlip.setSubCompanyId(1);
-        bankSlip.setBankType(BankType.BOC_BANK);
+        bankSlip.setSubCompanyId(8);
+        bankSlip.setBankType(BankType.CMBC_BANK);
         bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/24"));
-        bankSlip.setExcelUrl("/group1/M00/00/35/wKgKyFr73hCAEJeMAAA5ofxt7q065.xlsx");
+        bankSlip.setExcelUrl("/group1/M00/00/36/wKgKyFr77tCATooXAAA0jv5Lh8468.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
