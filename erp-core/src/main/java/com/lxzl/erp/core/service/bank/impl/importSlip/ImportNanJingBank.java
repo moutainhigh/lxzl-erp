@@ -105,7 +105,7 @@ public class ImportNanJingBank {
             bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO.setUpdateTime(now);
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-            bankSlipMapper.save(bankSlipDO);
+
             bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
             bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
             //查看是否为空
