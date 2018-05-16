@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.bank;
 
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 import java.math.BigDecimal;
@@ -199,6 +200,31 @@ public class BankSlipDetailDO  extends BaseDO {
 
 	public void setBankSlipId(Integer bankSlipId){
 		this.bankSlipId = bankSlipId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BankSlipDetailDO)) return false;
+
+		BankSlipDetailDO that = (BankSlipDetailDO) o;
+		if (getPayerName() != null ? !getPayerName().equals(that.getPayerName()) : that.getPayerName() != null)
+			return false;
+		if (getTradeAmount() != null ? !getTradeAmount().setScale(2,BigDecimal.ROUND_UP).equals(that.getTradeAmount().setScale(2,BigDecimal.ROUND_UP)) : that.getTradeAmount() != null)
+			return false;
+		if (getTradeSerialNo() != null ? !getTradeSerialNo().equals(that.getTradeSerialNo()) : that.getTradeSerialNo() != null)
+			return false;
+		if (getTradeTime() != null ? !getTradeTime().equals(that.getTradeTime()) : that.getTradeTime() != null)
+			return false;
+		if (getOtherSideAccountNo() != null ? !getOtherSideAccountNo().equals(that.getOtherSideAccountNo()) : that.getOtherSideAccountNo() != null)
+			return false;
+		if (getMerchantOrderNo() != null ? !getMerchantOrderNo().equals(that.getMerchantOrderNo()) : that.getMerchantOrderNo() != null)
+			return false;
+		if (getLoanSign() != null ? !getLoanSign().equals(that.getLoanSign()) : that.getLoanSign() != null)
+			return false;
+		if (getDataStatus() != null ? !getDataStatus().equals(that.getDataStatus()) : that.getDataStatus() != null)
+			return false;
+		return true;
 	}
 
 }

@@ -173,6 +173,7 @@
         <mapper resource="sqlmap/erp_order_split_detail.xml" />
         <mapper resource="sqlmap/erp_order_joint_product.xml" />
 
-    </mappers>
+        <mapper resource="sqlmap/erp_bank_slip_detail_operation_log.xml" />
+</mappers>
 
 </configuration>
