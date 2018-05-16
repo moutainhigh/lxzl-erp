@@ -105,6 +105,10 @@ public class ImportAlipay {
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
             bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
+            if(bankSlipDO == null){
+                serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
+                return serviceResult;
+            }
             bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
             //查看是否为空
             if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
