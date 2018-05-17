@@ -71,18 +71,10 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-##                                {{#hasCommonActionButtons}}
-##                                <th>
-##                                    <label class="option block mn">
-##                                        <input type="checkbox" name="checkAll" value="">
-##                                        <span class="checkbox mn"></span>
-##                                    </label>
-##                                </th>
-##                                {{/hasCommonActionButtons}}
                                 <th>资金流水ID</th>
                                 <th>分公司名称</th>
                                 <th>银行类型</th>
-                                <th>月份</th>
+                                <th>导入时间</th>
                                 <th>查询账号</th>
                                 <th>进款笔数</th>
                                 <th>需认领笔数</th>
@@ -101,18 +93,10 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-##                                {{#hasCommonActionButtons}}
-##                                <td>
-##                                    <label class="option block mn">
-##                                        <input type="checkbox" name="checkItem" value="{{productId}}">
-##                                        <span class="checkbox mn"></span>
-##                                    </label>
-##                                </td>
-##                                {{/hasCommonActionButtons}}
                                 <td>{{bankSlipId}}</td>
                                 <td>{{subCompanyName}}</td>
                                 <td>{{bankTypeValue}}</td>
-                                <td>{{#clockMonthTime}}{{slipMonth}}{{/clockMonthTime}}</td>
+                                <td>{{#shortTime}}{{slipDay}}{{/shortTime}}</td>
                                 <td>{{accountNo}}</td>
                                 <td>{{inCount}}</td>
                                 <td>{{needClaimCount}}</td>
