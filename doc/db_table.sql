@@ -1278,6 +1278,8 @@ CREATE TABLE `erp_order_product` (
   `pay_mode` int(11) NOT NULL DEFAULT '0' COMMENT '支付方式：1先用后付，2先付后用',
   `is_new_product` int(11) NOT NULL DEFAULT 0 COMMENT '是否是全新机，1是0否',
   `renting_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '在租商品总数',
+  `order_joint_product_id` int(20) COMMENT '订单组合商品项ID',
+
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -3559,6 +3561,34 @@ CREATE TABLE `erp_order_split_detail` (
 	PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
 
+DROP TABLE IF EXISTS `erp_statistics_salesman_month`;
+CREATE TABLE `erp_statistics_salesman_month` (
+	`id` INT (20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`salesman_id` INT (20) NOT NULL COMMENT '业务员ID',
+	`salesman_name` VARCHAR (50) COMMENT '业务员姓名',
+	`sub_company_id` INT (20) NOT NULL COMMENT '所属分公司ID',
+	`sub_company_name` VARCHAR (50) NOT NULL COMMENT '所属分公司名称',
+	`rent_length_type` INT (11) NOT NULL COMMENT '租赁时长类型，1短租，2长租',
+	`deals_count` INT (11) NOT NULL COMMENT '成交单数',
+	`deals_product_count` INT (11) NOT NULL COMMENT '成交台数',
+	`deals_amount` DECIMAL (15, 5) NOT NULL DEFAULT 0 COMMENT '成交金额',
+	`await_receivable` DECIMAL (15, 5) NOT NULL DEFAULT 0 COMMENT '待收金额',
+	`income` DECIMAL (15, 5) NOT NULL DEFAULT 0 COMMENT '本期回款（已收）',
+	`receive` DECIMAL (15, 5) NOT NULL DEFAULT 0 COMMENT '应收 = 待收 + 本期回款',
+	`pure_increase` DECIMAL (15, 5) COMMENT '净增',
+	`confirm_time` datetime DEFAULT NULL COMMENT '确认时间',
+	`confirm_user` VARCHAR (20) DEFAULT '' COMMENT '确认人',
+	`confirm_status` INT (11) NOT NULL DEFAULT 0 COMMENT '确认状态，0-未确认，1-同意，2-拒绝',
+	`refuse_reason` VARCHAR (200) COMMENT '拒绝原因',
+	`month` datetime DEFAULT NULL COMMENT '年月',
+	`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+	`remark` VARCHAR(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+	`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+	`create_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '添加人',
+	`update_time` DATETIME DEFAULT NULL COMMENT '修改时间',
+	`update_user` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '修改人',
+	PRIMARY KEY (`id`)
+) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8 COLLATE = utf8_bin COMMENT = '业务员提成统计月结表';
 
 
 
