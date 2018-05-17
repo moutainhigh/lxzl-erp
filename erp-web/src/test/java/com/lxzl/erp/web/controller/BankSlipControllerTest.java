@@ -26,7 +26,7 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryBankSlipClaim() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -153,20 +153,20 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
     }
-    @Test
-    public void exportPageBankSlip() throws Exception {
-        BankSlipQueryParam bankSlipQueryParam = new BankSlipQueryParam();
-        bankSlipQueryParam.setPageNo(1);
-        bankSlipQueryParam.setPageSize(10);
-//        bankSlipQueryParam.setBankType();
-//        bankSlipQueryParam.setSlipMonth();
-//        bankSlipQueryParam.setSlipStatus();
-//        bankSlipQueryParam.setSubCompanyName("南京分公司");
-//        bankSlipQueryParam.setSubCompanyId(5);
-//        bankSlipQueryParam.setBankSlipId(167);
-
-        TestResult result = getJsonTestResult("/exportExcel/exportPageBankSlip", bankSlipQueryParam);
-    }
+//    @Test
+//    public void exportPageBankSlip() throws Exception {
+//        BankSlipQueryParam bankSlipQueryParam = new BankSlipQueryParam();
+//        bankSlipQueryParam.setPageNo(1);
+//        bankSlipQueryParam.setPageSize(10);
+////        bankSlipQueryParam.setBankType();
+////        bankSlipQueryParam.setSlipMonth();
+////        bankSlipQueryParam.setSlipStatus();
+////        bankSlipQueryParam.setSubCompanyName("南京分公司");
+////        bankSlipQueryParam.setSubCompanyId(5);
+////        bankSlipQueryParam.setBankSlipId(167);
+//
+//        TestResult result = getJsonTestResult("/exportExcel/exportPageBankSlip", bankSlipQueryParam);
+//    }
 
     @Test
     public void pageBankSlip1() throws Exception {
@@ -237,7 +237,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 //        北京(中国银行)
         BankSlip bankSlip = new BankSlip();
 //        bankSlip.setSubCompanyName("北京分公司");
-        bankSlip.setSubCompanyId(1);
+        bankSlip.setSubCompanyId(8);
         bankSlip.setBankType(BankType.BOC_BANK);
         bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/24"));
         bankSlip.setExcelUrl("/group1/M00/00/2F/wKgKyFrhPguAIgyhAAAxVFprOic15.xlsx");
