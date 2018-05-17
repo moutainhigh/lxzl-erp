@@ -5,7 +5,6 @@ import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.BankType;
-import com.lxzl.erp.common.domain.bank.BankSlipDetailOperationLogQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.ClaimParam;
@@ -17,7 +16,9 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: Pengbinjie
@@ -25,41 +26,7 @@ import java.util.*;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPUnTransactionalTest {
-//    @Test
-//    public void localizationBankSlipDetail() throws Exception {
-//        BankSlip bankSlip = new BankSlip();
-//        bankSlip.s
-//        TestResult jsonTestResult = getJsonTestResult("/bankSlip/localizationBankSlipDetail",bankSlipDetail);
-//    }
-
-    @Test
-    public void pageUnknownBankSlipDetail() throws Exception {
-        BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
-        TestResult jsonTestResult = getJsonTestResult("/bankSlip/pageUnknownBankSlipDetail",bankSlipDetailQueryParam);
-    }
-
-    @Test
-    public void queryUnknownBankSlipDetail() throws Exception {
-        BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(103);
-        TestResult jsonTestResult = getJsonTestResult("/bankSlip/queryUnknownBankSlipDetail",bankSlipDetail);
-    }
-
-    @Test
-    public void unknownBankSlipDetail() throws Exception {
-        BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(5);
-        TestResult jsonTestResult = getJsonTestResult("/bankSlip/unknownBankSlipDetail",bankSlipDetail);
-    }
-
-    @Test
-    public void pageBankSlipDetailOperationLog() throws Exception {
-        BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam = new BankSlipDetailOperationLogQueryParam();
-        bankSlipDetailOperationLogQueryParam.setBankSlipDetailId(15);
-        TestResult jsonTestResult = getJsonTestResult("/bankSlip/pageBankSlipDetailOperationLog",bankSlipDetailOperationLogQueryParam);
-    }
-
+public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void queryBankSlipClaim() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -70,7 +37,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void unAssignBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(5);
+        bankSlipDetail.setBankSlipDetailId(1);
         TestResult jsonTestResult = getJsonTestResult("/bankSlip/cancelLocalizationBankSlipDetail",bankSlipDetail);
     }
 
@@ -80,7 +47,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
         bankSlip.setLocalizationSubCompanyId(1);
         List<BankSlipDetail> list = new ArrayList<>();
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(121);
+        bankSlipDetail.setBankSlipDetailId(1);
 //        bankSlipDetail.setLocalizationSubCompanyId(3);
 //        BankSlipDetail bankSlipDetai2 = new BankSlipDetail();
 //        bankSlipDetai2.setBankSlipDetailId(18225);
@@ -115,21 +82,21 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void deleteBankSlip() throws Exception {
         BankSlip bankSlip= new BankSlip();
-        bankSlip.setBankSlipId(14);
+        bankSlip.setBankSlipId(4);
         TestResult result = getJsonTestResult("/bankSlip/deleteBankSlip", bankSlip);
     }
 
     @Test
     public void queryBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail= new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(1);
+        bankSlipDetail.setBankSlipDetailId(2);
         TestResult result = getJsonTestResult("/bankSlip/queryBankSlipDetail", bankSlipDetail);
     }
 
     @Test
     public void verifyBankSlipDetail() throws Exception {
         BankSlip bankSlip = new BankSlip();
-        bankSlip.setBankSlipId(4);
+        bankSlip.setBankSlipId(1);
         TestResult result = getJsonTestResult("/bankSlip/confirmBankSlip", bankSlip);
     }
 
@@ -137,16 +104,14 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-
-        bankSlipClaim.setBankSlipDetailId(5);
+        bankSlipClaim.setBankSlipDetailId(2);
         ArrayList<ClaimParam> list = new ArrayList<>();
         ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal("100.00"));
-        claimParam.setCustomerNo("LXCC-1000-20180511-00005");
+        claimParam.setClaimAmount(new BigDecimal("29820.00"));
+        claimParam.setCustomerNo("LXCC-2001-20180514-00006");
 //        ClaimParam claimParam1 =  new ClaimParam();
 //        claimParam1.setClaimAmount(new BigDecimal("1500"));
 //        claimParam1.setCustomerNo("LXCC-1000-20180511-00005");
-
 //        ClaimParam claimParam2 =  new ClaimParam();
 //        claimParam2.setClaimAmount(new BigDecimal(-10));
 //        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
@@ -187,6 +152,20 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlipQueryParam.setBankSlipId(2);
 
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlip", bankSlipQueryParam);
+    }
+    @Test
+    public void exportPageBankSlip() throws Exception {
+        BankSlipQueryParam bankSlipQueryParam = new BankSlipQueryParam();
+        bankSlipQueryParam.setPageNo(1);
+        bankSlipQueryParam.setPageSize(10);
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipQueryParam.setSubCompanyName("南京分公司");
+//        bankSlipQueryParam.setSubCompanyId(5);
+//        bankSlipQueryParam.setBankSlipId(167);
+
+        TestResult result = getJsonTestResult("/exportExcel/exportPageBankSlip", bankSlipQueryParam);
     }
 
     @Test
@@ -229,14 +208,17 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void pageBankSlipDetail() throws Exception {
         BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
-
         bankSlipDetailQueryParam.setPageNo(1);
         bankSlipDetailQueryParam.setPageSize(100);
         bankSlipDetailQueryParam.setSlipDayStart(new SimpleDateFormat("yyyy-MM-dd").parse("2015-04-22"));
         bankSlipDetailQueryParam.setSlipDayEnd(new SimpleDateFormat("yyyy-MM-dd").parse("2015-04-23"));
-
+//        bankSlipDetailQueryParam.setBankSlipId(203);
+//        bankSlipQueryParam.setBankType();
+//        bankSlipQueryParam.setSlipMonth();
+//        bankSlipQueryParam.setSlipStatus();
+//        bankSlipDetailQueryParam.setPayerName("武汉智寻天下科技有限公司");
+//        bankSlipDetailQueryParam.setIsLocalization(1);
 //        bankSlipDetailQueryParam.setSlipMonth(new SimpleDateFormat("yyyy-MM-dd").parse("2016-04-01"));
-
         TestResult result = getJsonTestResult("/bankSlip/pageBankSlipDetail", bankSlipDetailQueryParam);
     }
 
@@ -257,8 +239,8 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(1);
         bankSlip.setBankType(BankType.BOC_BANK);
-        bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/23"));
-        bankSlip.setExcelUrl("/group1/M00/00/36/wKgKyFr8QYKASScUAAA8QHYpXPI60.xlsx");
+        bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/24"));
+        bankSlip.setExcelUrl("/group1/M00/00/2F/wKgKyFrhPguAIgyhAAAxVFprOic15.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
