@@ -144,7 +144,7 @@
                     <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
                 </li>
                 <li>
-                    <a href="#purchaseOrderGroupProduct" data-toggle="tab">组合商品（共<span id="orderItemMaterialCount">0</span>个）</a>
+                    <a href="#purchaseOrderGroupProduct" data-toggle="tab">组合商品（共<span id="orderGroupProductCount">0</span>个）</a>
                 </li>
             </ul>
         </div>
@@ -339,8 +339,6 @@
                             <th>配件价值</th>
                             <th class="rentalPriceTh"><span class="text">单价</span>#*<i class="fa fa-info-circle ml5 hide" style="cursor:pointer" role="button" data-toggle="popover" data-trigger="focus" data-content="按天租订单：输入金额为订单租赁时长每台价格"></i>*#</th>
                             <th>数量</th>
-##                            <th>租赁类型</th>
-##                            <th>租赁时长</th>
                             <th>设备押金</th>
                             <th>支付方式</th>
 
@@ -384,24 +382,6 @@
                                     <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                 </label>
                             </td>
-##                            <td>
-##                                <label class="field select">
-##                                    <select name="rentType-{{materialNo}}" class="rentType required" style="min-width: 130px;">
-##                                        <option value="">选择租赁类型</option>
-##                                        {{#rentTypeList}}
-##                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-##                                        {{/rentTypeList}}
-##                                    </select>
-##                                    <i class="arrow"></i>
-##                                </label>
-##                            </td>
-##                            <td>
-##                                <div class="mw200">
-##                                    <label class="field prepend-icon">
-##                                        <input type="text" name="rentTimeLength-{{materialNo}}" value="{{rentTimeLength}}" class="rentTimeLength form-control required checkInteger pl10" placeholder="租赁时长" />
-##                                    </label>
-##                                </div>
-##                            </td>
                             <td>
                                 {{#showDepositAmount}}
                                 <label class="field prepend-icon mw200">
@@ -477,7 +457,7 @@
                     </div>
                 </div>
                 <div class="table-responsive hasTooltip">
-                    <script type="text/html" id="dataListTpl">
+                    <script type="text/html" id="groupListTpl">
                         <thead>
                         <tr class="bg-light">
                             <th>
@@ -495,29 +475,28 @@
                         </thead>
                         <tbody>
                         {{#listData}}
-                        <tr class="groupRow">
+                        <tr class="groupRow" class="bg-light">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{productId}}" data-skuid="{{skuId}}" data-isnew="{{isNewProduct}}" data-serialnumber="{{serialNumber}}" >
+                                    <input type="checkbox" name="checkItem" value="{{jointProductId}}" data-serialnumber="{{serialNumber}}" >
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
-                            <td>{{jointProductName}}</td>\
+                            <td>{{jointProductName}}</td>
                             <td>{{groupedProductTostr}}</td>
                             <td>{{groupedMaterialTostr}}</td>
                             <td class="productUnitAmountTd">
                                 <div class="smart-widget sm-right smr-50 mw200">
-                                    <input type="hidden" name="isNewProduct" class="isNewProduct" value="{{isNewProduct}}" />
                                     <input type="hidden" name="jointProductId" class="jointProductId" value="{{jointProductId}}" />
                                     <input type="hidden" name="serialNumber" class="serialNumber" value="{{serialNumber}}" />
                                     <label class="field prepend-icon mw200">
-                                        <input type="text" name="jointproductCount" value="{{jointproductCount}}" class="jointproductCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                        <input type="text" name="jointProductCount" value="{{jointProductCount}}" class="jointProductCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                     </label>
                                 </div>
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-skuid="{{skuId}}" data-productid="{{productId}}" data-isnew="{{isNewProduct}}" data-serialnumber="{{serialNumber}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteGroup" data-id="{{jointProductId}}" data-serialnumber="{{serialNumber}}">删除</a>
                                 </div>
                             </td>
                         </tr>
@@ -528,10 +507,10 @@
                                         <div class="row">
                                             <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
                                                 <li class="active">
-                                                    <a href="#groupProductItems" data-toggle="tab">商品项</a>
+                                                    <a href="#groupProductItems-{{jointProductId}}" data-toggle="tab">商品项</a>
                                                 </li>
                                                 <li>
-                                                    <a href="#groupMaterialItems" data-toggle="tab">配件项</a>
+                                                    <a href="#groupMaterialItems-{{jointProductId}}" data-toggle="tab">配件项</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -539,7 +518,7 @@
 
                                     <div class="panel-body light pn">
                                         <div class="tab-content pn br-n">
-                                            <div id="groupProductItems" class="tab-pane tab-pane-order active">
+                                            <div id="groupProductItems-{{jointProductId}}" class="tab-pane tab-pane-order active">
                                                 <div class="table-responsive">
                                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable">
                                                         <thead>
@@ -549,91 +528,150 @@
                                                             <th>类别</th>
                                                             <th>品牌</th>
                                                             <th>数量</th>
-                                                            <th class="text-right">操作</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {{#dataSource}}
-                                                        {{#listData}}
-                                                        <tr class="productRow">
+                                                        {{#chooseGroupProductList}}
+                                                        <tr class="productRow bg-light">
                                                             <td>{{product.productNo}}</td>
                                                             <td>{{product.productName}}</td>
                                                             <td>{{product.categoryName}}</td>
                                                             <td>{{product.brandName}}</td>
                                                             <td>{{productCount}} </td>
-                                                            <td class="text-right">
-                                                                <div class="btn-group text-right">
-                                                                    <a href="#" type="button" class="btn btn-default btn-xs viewButton" data-productid="{{product.productId}}">查看SKU</a>
-                                                                </div>
-                                                            </td>
                                                         </tr>
-                                                        <tr class="bg-light br-n" style="height: 0">
-                                                            <td colspan="6" class="pn mn br-n" style="height: 0">
-                                                                {{#product}}
-                                                                <div class="productDetial row p15">
-                                                                    {{#skuListSource}}
-                                                                    <div  class="row ph15">
-                                                                        <div class="panel m15">
-                                                                            <div class="panel-body pn">
-                                                                                <table class="table">
-                                                                                    <thead>
-                                                                                    <tr class="bg-light">
-                                                                                        <th>SKU</th>
-                                                                                        <th>库存</th>
-                                                                                        <th>价值</th>
-                                                                                        <th>日租</th>
-                                                                                        <th>月租</th>
+                                                        <tr class="br-n">
+                                                            <td colspan="6" class="pn mn br-n">
+                                                                <div class="productDetial row" style="margin:0;">
+                                                                    <div class="panel">
+                                                                        <div class="panel-body pn">
+                                                                            <table class="table">
+                                                                                <thead>
+                                                                                <tr>
+                                                                                    <th>SKU</th>
+                                                                                    <th>库存</th>
+                                                                                    <th>价值</th>
+                                                                                    <th>日租</th>
+                                                                                    <th>月租</th>
+##                                                                                    <th class="text-right">操作</th>
+                                                                                </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {{#chooseProductSkuList}}
+                                                                                    <tr class="skuTr">
+                                                                                        <td>{{propertiesToStr}}</td>
+                                                                                        <td>
+                                                                                            <p class="isUsed">{{oldProductSkuCount}}</p>
+                                                                                            <p class="isNew hide">{{newProductSkuCount}}</p>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
+                                                                                            <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                                                                            <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                                                                                            <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
+                                                                                        </td>
+##                                                                                        <td class="text-right">
+##                                                                                            <div class="btn-group text-right">
+##                                                                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-jointid="{{jointProductId}}" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
+##                                                                                            </div>
+##                                                                                        </td>
                                                                                     </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        {{#skuList}}
-                                                                                        <tr class="skuTr">
-                                                                                            <td>{{propertiesToStr}}</td>
-                                                                                            <td>
-                                                                                                <p class="isUsed">{{oldProductSkuCount}}</p>
-                                                                                                <p class="isNew hide">{{newProductSkuCount}}</p>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
-                                                                                                <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                                                                                <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-                                                                                                <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                        {{/skuList}}
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </div>
-                                                                            <div class="panel-footer pn pv5 ph15">
-                                                                                <div class="row">
-                                                                                    <div class="form-group mn pull-right">
-                                                                                        <button class="btn btn-xs btn-default mr15 hideAffixPanel">收起</button>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    {{/chooseProductSkuList}}
+                                                                                </tbody>
+                                                                            </table>
                                                                         </div>
                                                                     </div>
-                                                                    {{/skuListSource}}
                                                                 </div>
-                                                                {{/product}}
                                                             </td>
                                                         </tr>
-                                                        {{/listData}}
-                                                        <tr>
-                                                            <td valign="top" colspan="7">没有选择商品</td>
-                                                        </tr>
-                                                        {{/dataSource}}
+                                                        {{/chooseGroupProductList}}
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div id="groupMaterialItems" class="tab-pane tab-pane-order"></div>
+                                            <div id="groupMaterialItems-{{jointProductId}}" class="tab-pane tab-pane-order">
+                                                <div class="table-responsive">
+                                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>配件名称</th>
+                                                            <th>品牌</th>
+                                                            <th>类型</th>
+                                                            <th>配件价值</th>
+                                                            <th>数量</th>
+##                                                            <th>设备押金</th>
+##                                                            <th>支付方式</th>
+##                                                            <th>首付金额</th>
+##                                                            <th>首付押金</th>
+##                                                            <th class="text-right">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {{#groupMaterial}}
+                                                        {{#jointMaterialList}}
+                                                        <tr class="materialRow" data-rowdata="{{materialJSONString}}">
+                                                            <td>{{material.materialName}}</td>
+                                                            <td>{{material.brandName}}</td>
+                                                            <td>{{materialTypeStr}}</td>
+                                                            <td>￥{{material.materialPrice}}</td>
+                                                            <td>
+                                                                <label class="field prepend-icon mw200">
+                                                                    <input type="hidden" name="isNewMaterial" value="{{isNewMaterial}}" class="isNewMaterial" />
+                                                                    <input type="hidden" name="materialNo" value="{{materialNo}}" class="materialNo" />
+                                                                    <input type="hidden" name="materialId" value="{{materialId}}" class="materialId" />
+                                                                    <input type="hidden" name="serialNumber" value="{{serialNumber}}" class="serialNumber" />
+                                                                    <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
+                                                                </label>
+                                                            </td>
+##                                                            <td>
+##                                                                {{#showDepositAmount}}
+##                                                                <label class="field prepend-icon mw200">
+##                                                                    <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
+##                                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+##                                                                </label>
+##                                                                {{/showDepositAmount}}
+##                                                                {{^showDepositAmount}}
+##                                                                {{#isRentTypeByMonth}}
+##                                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+##                                                                {{/isRentTypeByMonth}}
+##                                                                {{/showDepositAmount}}
+##                                                            </td>
+##                                                            <td>
+##                                                                {{#showDepositAmount}}
+##                                                                <label class="field select">
+##                                                                    <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+##                                                                        <option value="">选择支付方式</option>
+##                                                                        {{#payModeList}}
+##                                                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+##                                                                        {{/payModeList}}
+##                                                                    </select>
+##                                                                    <i class="arrow"></i>
+##                                                                </label>
+##                                                                {{/showDepositAmount}}
+##                                                                {{^showDepositAmount}}
+##                                                                <p>{{payModeValue}}</p>
+##
+##                                                                {{/showDepositAmount}}
+##                                                            </td>
+##                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+##                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
+##                                                            <td class="text-right">
+##                                                                <div class="btn-group text-right">
+##                                                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}" data-serialnumber="{{serialNumber}}">删除</a>
+##                                                                </div>
+##                                                            </td>
+                                                        </tr>
+                                                        {{/jointMaterialList}}
+                                                        {{/groupMaterial}}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -647,7 +685,7 @@
                         {{/listData}}
                         </tbody>
                     </script>
-                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="groupListTable"></table>
                 </div>
             </div>
         </div>

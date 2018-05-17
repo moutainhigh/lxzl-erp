@@ -66,113 +66,89 @@
 
                 <script type="text/html" id="groupProductDetailTpl">
                     {{#group}}
-                    <div class="groupDetial row p15" data-group="{groupJSONString}}">
+                    <div class="groupDetial row p15" data-group="{{groupJSONString}}">
                         {{#groupProduct}}
                         <div  class="row ph15">
-                            <div class="panel m15">
-                                <div class="panel-heading pn ph8">
-                                    <span>选择SKU</span>
-                                </div>
+                            <div class="panel" style="margin: 0 15px;">
                                 <div class="panel-body pn">
                                     <table class="table">
-                                        <thead>
-                                        <tr class="bg-light">
-                                            <th>商品ID</th>
-                                            <th>商品名称</th>
-                                            <th>K3商品编号</th>
-                                            <th>类别</th>
-                                            <th>是否在租</th>
-                                            <th class="text-right">操作</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
+##                                        <thead>
                                             {{#productList}}
-                                            <tr>
-                                                <td>{{productId}}</td>
-                                                <td>{{productName}}</td>
-                                                <td>{{k3ProductNo}}</td>
-                                                <td>{{categoryName}}</td>
-                                                <td>{{isRentStr}}</td>
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-productid="{{productId}}">选择</a>
-                                                    </div>
-                                                </td>
+                                            <tr class="bg-light">
+                                                <th>商品ID</th>
+                                                <th>商品名称</th>
+                                                <th>商品编号</th>
+                                                <th>类别</th>
+                                                <th>品牌</th>
                                             </tr>
-                                            <tr>
+##                                        </thead>
+##                                        <tbody>
+
+                                            <tr class="bg-light">
+                                                <td>{{product.productId}}</td>
+                                                <td>{{product.productName}}</td>
+                                                <td>{{product.productNo}}</td>
+                                                <td>{{product.categoryName}}</td>
+                                                <td>{{product.brandName}}</td>
+                                            </tr>
+                                            <tr class="skuRow" data-product="{{productJSONString}}">
                                                 <td colspan="7" class="pn mn br-n">
-                                                    {{#product}}
-                                                    <div class="productDetial row p15" data-product="{{productJSONString}}">
-                                                        {{#skuListSource}}
-                                                        <div  class="row ph15">
-                                                            <div class="panel m15">
-                                                                <div class="panel-heading pn ph8">
-                                                                    <span>选择SKU</span>
-                                                                </div>
-                                                                <div class="panel-body pn">
-                                                                    <table class="table">
-                                                                        <thead>
-                                                                        <tr class="bg-light">
-                                                                            <th></th>
-                                                                            {{#showIsNewCheckBox}}
-                                                                            <th>商品属性</th>
-                                                                            {{/showIsNewCheckBox}}
-                                                                            <th>SKU</th>
-                                                                            <th>库存</th>
-                                                                            <th>价值</th>
-                                                                            <th>日租</th>
-                                                                            <th>月租</th>
-                                                                        </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                        {{#skuList}}
-                                                                        <tr class="skuTr">
-                                                                            <td>
-                                                                                <label class="option block mn">
-                                                                                    <input type="checkbox" name="sku" value="{{skuId}}">
-                                                                                    <span class="checkbox mn"></span>
-                                                                                </label>
-                                                                            </td>
-                                                                            {{#showIsNewCheckBox}}
-                                                                            <td>
-                                                                                <label class="block mn switch switch-primary">
-                                                                                    <input type="checkbox" name="isNewProduct" id="isNewProduct-{{skuId}}" value="1">
-                                                                                    <label for="isNewProduct-{{skuId}}" data-on="全新" data-off="次新"></label>
-                                                                                    <span></span>
-                                                                                </label>
-                                                                            </td>
-                                                                            {{/showIsNewCheckBox}}
-                                                                            <td>{{propertiesToStr}}</td>
-                                                                            <td>
-                                                                                <p class="isUsed">{{oldProductSkuCount}}</p>
-                                                                                <p class="isNew hide">{{newProductSkuCount}}</p>
-                                                                            </td>
-                                                                            <td>
-                                                                                <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
-                                                                                <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
-                                                                            </td>
-                                                                            <td>
-                                                                                <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                                                                <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
-                                                                            </td>
-                                                                            <td>
-                                                                                <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-                                                                                <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
-                                                                            </td>
-                                                                        </tr>
-                                                                        {{/skuList}}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
+                                                    {{#skuListSource}}
+                                                    <div class="row" style="margin:0;" data-sku="{{}}">
+                                                        <div class="panel" style="margin-bottom:0;">
+                                                            <div class="panel-heading pn ph8" style="background:#fff;">
+                                                                <span>选择SKU</span>
+                                                            </div>
+                                                            <div class="panel-body pn">
+                                                                <table class="table">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th></th>
+                                                                        <th>SKU</th>
+                                                                        <th>库存</th>
+                                                                        <th>价值</th>
+                                                                        <th>日租</th>
+                                                                        <th>月租</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {{#skuList}}
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="option block mn">
+                                                                                <input type="checkbox" name="sku" value="{{skuId}}">
+                                                                                <span class="checkbox mn"></span>
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>{{propertiesToStr}}</td>
+                                                                        <td>
+                                                                            <p class="isUsed">{{oldProductSkuCount}}</p>
+                                                                            <p class="isNew hide">{{newProductSkuCount}}</p>
+                                                                        </td>
+                                                                        <td>
+                                                                            <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
+                                                                            <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
+                                                                        </td>
+                                                                        <td>
+                                                                            <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+                                                                            <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
+                                                                        </td>
+                                                                        <td>
+                                                                            <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+                                                                            <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {{/skuList}}
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
-                                                        {{/skuListSource}}
                                                     </div>
-                                                    {{/product}}
+                                                    {{/skuListSource}}
                                                 </td>
                                             </tr>
                                             {{/productList}}
-                                        </tbody>
+##                                        </tbody>
                                     </table>
                                 </div>
                                 <div class="panel-footer pn pv5 ph15">
