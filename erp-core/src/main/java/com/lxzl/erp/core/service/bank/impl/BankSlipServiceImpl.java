@@ -405,7 +405,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             if (CollectionUtil.isNotEmpty(headerBankSlipDetailDOList)) {
                 bankSlipDetailMapper.updateSubCompanyAndIsLocalization(headerBankSlipDetailDOList);
             }
-            bankSlipDO.setLocalizationCount(bankSlipDO.getLocalizationCount() == null?0:bankSlipDO.getLocalizationCount()+localizationCount);
+            bankSlipDO.setLocalizationCount((bankSlipDO.getLocalizationCount() == null?0:bankSlipDO.getLocalizationCount())+localizationCount);
             bankSlipMapper.update(bankSlipDO);
 
             // 保存日志list

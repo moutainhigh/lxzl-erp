@@ -26,7 +26,7 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPUnTransactionalTest {
+public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void queryBankSlipClaim() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -239,8 +239,8 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
 //        bankSlip.setSubCompanyName("北京分公司");
         bankSlip.setSubCompanyId(8);
         bankSlip.setBankType(BankType.BOC_BANK);
-        bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/24"));
-        bankSlip.setExcelUrl("/group1/M00/00/2F/wKgKyFrhPguAIgyhAAAxVFprOic15.xlsx");
+        bankSlip.setSlipDay(new SimpleDateFormat("yyyy/MM/dd").parse("2015/04/25"));
+        bankSlip.setExcelUrl("/group1/M00/00/36/wKgKyFr9fcqAVDR5AAA8TSSoyqw75.xlsx");
         TestResult result = getJsonTestResult("/bankSlip/importExcel",bankSlip);
 
         //测试北京(中国银行)
