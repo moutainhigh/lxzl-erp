@@ -41,7 +41,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
     public void queryUnknownBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(44);
+        bankSlipDetail.setBankSlipDetailId(60);
         TestResult jsonTestResult = getJsonTestResult("/bankSlip/queryUnknownBankSlipDetail",bankSlipDetail);
     }
 
