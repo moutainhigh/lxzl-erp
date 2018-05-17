@@ -68,6 +68,12 @@ public class JointProductServiceImpl implements JointProductService {
         //添加数据到 erp_joint_product_product表
         List<JointProductProduct> jointProductProductList = jointProduct.getJointProductProductList();
         if (CollectionUtil.isNotEmpty(jointProductProductList)) {
+            //判断是否有重复id
+            if (validDuplicateProductId(jointProductProductList)) {
+                serviceResult.setErrorCode(ErrorCode.PRODUCT_CAN_NOT_REPEAT);
+                return serviceResult;
+            }
+
             for (JointProductProduct jointProductProduct : jointProductProductList) {
                 ProductDO productDO = productMapper.findById(jointProductProduct.getProductId());
                 if (productDO == null) {
@@ -91,6 +97,13 @@ public class JointProductServiceImpl implements JointProductService {
         //添加数据到 erp_joint_material 表
         List<JointMaterial> jointMaterialList = jointProduct.getJointMaterialList();
         if (CollectionUtil.isNotEmpty(jointMaterialList)) {
+            //判断是否有重复配件编号
+            if (validDuplicateMaterialNo(jointMaterialList)) {
+                serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return serviceResult;
+            }
+
             for (JointMaterial jointMaterial : jointMaterialList) {
                 MaterialDO materialDO = materialMapper.findByNo(jointMaterial.getMaterialNo());
                 if (materialDO == null) {
@@ -144,6 +157,12 @@ public class JointProductServiceImpl implements JointProductService {
         Map<Integer, JointProductProductDO> productDeleteMap = ListUtil.listToMap(jointProductProductDOList, "id");
 
         if (CollectionUtil.isNotEmpty(jointProductProductList)) {
+            //判断是否有重复id
+            if (validDuplicateProductId(jointProductProductList)) {
+                serviceResult.setErrorCode(ErrorCode.PRODUCT_CAN_NOT_REPEAT);
+                return serviceResult;
+            }
+
             for (JointProductProduct jointProductProduct : jointProductProductList) {
                 if (jointProductProduct.getJointProductProductId() == null) {
                     //新增
@@ -185,6 +204,13 @@ public class JointProductServiceImpl implements JointProductService {
         //待删除的数据
         Map<Integer, JointMaterialDO> materialDeleteMap = ListUtil.listToMap(jointMaterialDoList, "id");
         if (CollectionUtil.isNotEmpty(jointMaterialList)) {
+            //判断是否有重复配件编号
+            if (validDuplicateMaterialNo(jointMaterialList)) {
+                serviceResult.setErrorCode(ErrorCode.MATERIAL_CAN_NOT_REPEAT);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return serviceResult;
+            }
+
             //以下是处理 erp_joint_material 的数据
             for (JointMaterial jointMaterial : jointMaterialList) {
                 if (jointMaterial.getJointMaterialId() == null) {
@@ -250,6 +276,38 @@ public class JointProductServiceImpl implements JointProductService {
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(jointProductDO.getId());
         return serviceResult;
+    }
+
+    // 重复返回true
+    private boolean validDuplicateMaterialNo(List<JointMaterial> jointMaterialList) {
+        if (CollectionUtil.isNotEmpty(jointMaterialList)) {
+            HashSet<String> materialNoSet = new HashSet<>();
+            for (JointMaterial jointMaterial : jointMaterialList) {
+                materialNoSet.add(jointMaterial.getMaterialNo());
+            }
+
+            if (jointMaterialList.size() > materialNoSet.size()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // 有重复返回true
+    private boolean validDuplicateProductId(List<JointProductProduct> jointProductProductList) {
+        if (CollectionUtil.isNotEmpty(jointProductProductList)) {
+            Set<Integer> productIdSet = new HashSet<>();
+            for (JointProductProduct jointProductProduct : jointProductProductList) {
+                productIdSet.add(jointProductProduct.getProductId());
+            }
+
+            if (jointProductProductList.size() >productIdSet.size()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

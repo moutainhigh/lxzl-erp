@@ -95,4 +95,42 @@ public class ListUtil {
         return list;
     }
 
+    // 比较两个整数数组是否元素相同(不考虑顺序，可重复放相同值)
+    public static boolean equalIntegerList(List<Integer> list1, List<Integer> list2) {
+        if (list1 == list2) {
+            return true;
+        } else if (list1 != null && list2 != null && list1.size() == list2.size()) {
+            List<Integer> tmpList2 = new ArrayList<>();
+            for (Integer i : list2) {
+                tmpList2.add(i);
+            }
+
+            for (Integer i : list1) {
+                if (!tmpList2.remove(i)) {
+                    return false;
+                }
+            }
+
+            if (tmpList2.size() != 0) {
+                return false;
+            }
+
+            return true;
+        } else  {
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Integer> list1 = new ArrayList<Integer>();
+        list1.add(1);
+        list1.add(2);
+
+        List<Integer> list2 = new ArrayList<Integer>();
+        list2.add(2);
+        list2.add(1);
+//        list2.add(2);
+        System.out.println(equalIntegerList(list1, list2));
+    }
+
 }

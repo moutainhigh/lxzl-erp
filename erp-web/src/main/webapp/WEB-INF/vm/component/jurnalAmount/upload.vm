@@ -34,7 +34,8 @@
 ##                        </label>
                         <div>
                             <div class="input-group date" id="slipDayPicker">
-                                <input type="text" name="slipDay" id="slipDayInput" class="form-control" autocomplete="off" placeholder="选择日期" style="height:42px;">
+                                <input type="hidden" name="slipDay" id="slipDay">
+                                <input type="text" readonly id="slipDayInput" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间" style="height:42px;">
                                 <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -63,7 +64,7 @@
             </div>
             <div class="panel-footer text-right">
                 <button type="submit" class="button btn-primary submit-btn">确定</button>
-                <button type="button" class="button btn-default cancelButton"">取消</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
             </div>
         </form>
     </div>
