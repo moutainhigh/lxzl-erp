@@ -25,7 +25,7 @@ import java.util.*;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPUnTransactionalTest {
+public class BankSlipControllerTest extends ERPTransactionalTest {
 //    @Test
 //    public void localizationBankSlipDetail() throws Exception {
 //        BankSlip bankSlip = new BankSlip();
@@ -41,7 +41,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void queryUnknownBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
-        bankSlipDetail.setBankSlipDetailId(46);
+        bankSlipDetail.setBankSlipDetailId(44);
         TestResult jsonTestResult = getJsonTestResult("/bankSlip/queryUnknownBankSlipDetail",bankSlipDetail);
     }
 
@@ -114,7 +114,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void deleteBankSlip() throws Exception {
         BankSlip bankSlip= new BankSlip();
-        bankSlip.setBankSlipId(3);
+        bankSlip.setBankSlipId(14);
         TestResult result = getJsonTestResult("/bankSlip/deleteBankSlip", bankSlip);
     }
 

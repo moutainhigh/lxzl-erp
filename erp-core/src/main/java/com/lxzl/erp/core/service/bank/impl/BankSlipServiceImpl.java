@@ -833,7 +833,10 @@ public class BankSlipServiceImpl implements BankSlipService {
         Date now = new Date();
         Integer bankSlipId = bankSlip.getBankSlipId();
         BankSlipDO bankSlipDO = bankSlipMapper.findDetailById(bankSlipId);
-
+        if(!(String.valueOf(userSupport.getCurrentUserId())).equals(bankSlipDO.getCreateUser()) && !userSupport.isHeadUser()){
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
         if (bankSlipDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
             return serviceResult;
