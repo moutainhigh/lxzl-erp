@@ -105,7 +105,7 @@ public class ImportAlipay {
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
 
             bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
-            if(bankSlipDO == null){
+            if (bankSlipDO == null) {
                 serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
                 return serviceResult;
             }
@@ -117,15 +117,9 @@ public class ImportAlipay {
                 return serviceResult;
             }
             //保存  银行对公流水明细表
-            Integer isLocalization = null;
-            if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
-                isLocalization = CommonConstant.COMMON_CONSTANT_NO;
-            }
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
-                    bankSlipDetailDO.setIsLocalization(isLocalization);
-                }
+                bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
                 bankSlipDetailDO.setSubCompanyId(bankSlipDO.getSubCompanyId());
             }
             bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
