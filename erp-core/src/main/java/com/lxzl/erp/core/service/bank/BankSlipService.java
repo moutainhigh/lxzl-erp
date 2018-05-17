@@ -128,7 +128,7 @@ public interface BankSlipService {
     * @param : bankSlipDetail
     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
     */
-    ServiceResult<String,String> queryUnknownBankSlipDetail(BankSlipDetail bankSlipDetail);
+    ServiceResult<String, BankSlipDetail>  queryUnknownBankSlipDetail(BankSlipDetail bankSlipDetail);
     /**
     * 查询操作日志
     * @Author : XiaoLuYu

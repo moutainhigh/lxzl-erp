@@ -525,7 +525,7 @@
 
 	</select>
 	<update id="deleteBankSlipDetail">
-		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.data_status = 2,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs,id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER}
+		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs.id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER} AND ebsd.create_user = #{updateUser,jdbcType=VARCHAR} AND ebs.data_status = 1 AND ebsd.data_status = 1
 	</update>
 
 	<select id="findUnknownBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
@@ -655,7 +655,7 @@
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
-				AND (ebsd.detail_status = 1 OR (ebsd.detail_status = 2 and (ebsc.create_user = #{currentUser,jdbcType=INTEGER})) or (CASE WHEN ebsd.detail_status = 3 AND(
+				AND (ebsd.detail_status = 1 OR (ebsd.detail_status = 2 and (ebsc.create_user = #{currentUser,jdbcType=INTEGER} )) or (CASE WHEN ebsd.detail_status = 3 AND(
 				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
 				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
