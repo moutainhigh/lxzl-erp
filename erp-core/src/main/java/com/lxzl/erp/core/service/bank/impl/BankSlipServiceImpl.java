@@ -1156,12 +1156,7 @@ public class BankSlipServiceImpl implements BankSlipService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public ServiceResult<String, BankSlipDetailDO> cancelLocalizationBankSlipDetail(BankSlipDetail bankSlipDetail) {
-        ServiceResult<String, BankSlipDetailDO> serviceResult = new ServiceResult<>();
-        if (!userSupport.isHeadUser() && !userSupport.isSuperUser()) {
-            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
-            return serviceResult;
-        }
-        serviceResult = cancelLocalization(bankSlipDetail);
+        ServiceResult<String, BankSlipDetailDO> serviceResult = cancelLocalization(bankSlipDetail);
         return serviceResult;
 
     }
@@ -1231,7 +1226,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         headquartersBankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         //跟改流水项是否属地化状态和分公司id,跟新时间和操作人
 
-        bankSlipDetailDO.setSubCompanyId(CommonConstant.HEADER_COMPANY_ID);
+        bankSlipDetailDO.setSubCompanyId(bankSlipDetailDO.getOwnerSubCompanyId());
         bankSlipDetailDO.setUpdateTime(now);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailDO.setIsLocalization(LocalizationType.NOT_LOCALIZATION);
