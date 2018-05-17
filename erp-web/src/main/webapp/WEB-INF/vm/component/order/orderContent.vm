@@ -523,72 +523,118 @@
                                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable">
                                                         <thead>
                                                         <tr class="bg-light">
-                                                            <th>商品编号</th>
                                                             <th>商品名称</th>
                                                             <th>类别</th>
                                                             <th>品牌</th>
+                                                            <th>商品参数（SKU）</th>
+                                                            <th>商品保值价</th>
+                                                            <th class="rentalPriceTh"><span class="text">单价</span></th>
                                                             <th>数量</th>
+                                                            <th>设备押金</th>
+                                                            <th>支付方式</th>
+                                                            <th>首付金额</th>
+                                                            <th>首付押金</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         {{#chooseGroupProductList}}
-                                                        <tr class="productRow bg-light">
-                                                            <td>{{product.productNo}}</td>
-                                                            <td>{{product.productName}}</td>
-                                                            <td>{{product.categoryName}}</td>
-                                                            <td>{{product.brandName}}</td>
-                                                            <td>{{productCount}} </td>
-                                                        </tr>
-                                                        <tr class="br-n">
-                                                            <td colspan="6" class="pn mn br-n">
-                                                                <div class="productDetial row" style="margin:0;">
-                                                                    <div class="panel">
-                                                                        <div class="panel-body pn">
-                                                                            <table class="table">
-                                                                                <thead>
-                                                                                <tr>
-                                                                                    <th>SKU</th>
-                                                                                    <th>库存</th>
-                                                                                    <th>价值</th>
-                                                                                    <th>日租</th>
-                                                                                    <th>月租</th>
-##                                                                                    <th class="text-right">操作</th>
-                                                                                </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    {{#chooseProductSkuList}}
-                                                                                    <tr class="skuTr">
-                                                                                        <td>{{propertiesToStr}}</td>
-                                                                                        <td>
-                                                                                            <p class="isUsed">{{oldProductSkuCount}}</p>
-                                                                                            <p class="isNew hide">{{newProductSkuCount}}</p>
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
-                                                                                            <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
-                                                                                            <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
-                                                                                            <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
-                                                                                        </td>
-##                                                                                        <td class="text-right">
-##                                                                                            <div class="btn-group text-right">
-##                                                                                                <a href="#" type="button" class="btn btn-default btn-xs deleteSKUButton" data-jointid="{{jointProductId}}" data-skuid="{{skuId}}" data-productid="{{productId}}">删除</a>
-##                                                                                            </div>
-##                                                                                        </td>
-                                                                                    </tr>
-                                                                                    {{/chooseProductSkuList}}
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div>
+                                                        <tr class="productRow">
+                                                            <td>{{productName}}</td>
+                                                            <td style="max-width:260px;">{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                                            <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
+                                                            <td>{{propertiesToStr}}</td>
+                                                            <td>￥{{currentSkuPrice}}</td>
+                                                            <td class="productUnitAmountTd">
+                                                                <div class="smart-widget sm-right smr-50 mw200">
+                                                                    <input type="hidden" name="isNewProduct" value="{{isNewProduct}}" class="isNewProduct" />
+                                                                    <input type="hidden" name="productId" value="{{productId}}" class="productId" />
+                                                                    <input type="hidden" name="skuId" value="{{skuId}}" class="productSkuId" />
+                                                                    <input type="hidden" name="serialNumber" value="{{serialNumber}}" class="serialNumber" />
+                                                                    <label class="field prepend-icon">
+                                                                        <input type="text" name="productUnitAmount-{{skuId}}-{{rowKey}}" value="{{productUnitAmount}}" class="productUnitAmount form-control required gui-input" placeholder="支持四位小数" />
+                                                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                                    </label>
+                                                                    <button type="button" class="button btn-primary bradiusN chooseProductUnitAmount" data-productskuid="{{skuId}}"><i class="fa fa-search"></i></button>
                                                                 </div>
                                                             </td>
+                                                            <td>{{productCount}} </td>
+                                                            <td>
+                                                                {{#showDepositAmount}}
+                                                                <label class="field prepend-icon mw200">
+                                                                    <input type="text" name="depositAmount-{{skuId}}-{{rowKey}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入设备押金" />
+                                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                                </label>
+                                                                {{/showDepositAmount}}
+                                                                {{^showDepositAmount}}
+                                                                    {{#isRentTypeByMonth}}
+                                                                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                                    {{/isRentTypeByMonth}}
+                                                                {{/showDepositAmount}}
+                                                            </td>
+                                                            <td>
+                                                                {{#showDepositAmount}}
+                                                                <label class="field select">
+                                                                    <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+                                                                        <option value="">选择支付方式</option>
+                                                                        {{#payModeList}}
+                                                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                                        {{/payModeList}}
+                                                                    </select>
+                                                                    <i class="arrow"></i>
+                                                                </label>
+                                                                {{/showDepositAmount}}
+                                                                {{^showDepositAmount}}
+                                                                    <p>{{payModeValue}}</p>
+                                                                {{/showDepositAmount}}
+                                                            </td>
+                                
+                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                                                         </tr>
+##                                                        <tr class="br-n">
+##                                                            <td colspan="6" class="pn mn br-n">
+##                                                                <div class="productDetial row" style="margin:0;">
+##                                                                    <div class="panel">
+##                                                                        <div class="panel-body pn">
+##                                                                            <table class="table">
+##                                                                                <thead>
+##                                                                                <tr>
+##                                                                                    <th>SKU</th>
+##                                                                                    <th>库存</th>
+##                                                                                    <th>价值</th>
+##                                                                                    <th>日租</th>
+##                                                                                    <th>月租</th>
+##                                                                                </tr>
+##                                                                                </thead>
+##                                                                                <tbody>
+##                                                                                    {{#chooseProductSkuList}}
+##                                                                                    <tr class="skuTr">
+##                                                                                        <td>{{propertiesToStr}}</td>
+##                                                                                        <td>
+##                                                                                            <p class="isUsed">{{oldProductSkuCount}}</p>
+##                                                                                            <p class="isNew hide">{{newProductSkuCount}}</p>
+##                                                                                        </td>
+##                                                                                        <td>
+##                                                                                            <p class="isUsed">￥{{#price}}{{skuPrice}}{{/price}}</p>
+##                                                                                            <p class="isNew hide">￥{{#price}}{{newSkuPrice}}{{/price}}</p>
+##                                                                                        </td>
+##                                                                                        <td>
+##                                                                                            <p class="isUsed">￥{{#price}}{{dayRentPrice}}{{/price}}</p>
+##                                                                                            <p class="isNew hide">￥{{#price}}{{newDayRentPrice}}{{/price}}</p>
+##                                                                                        </td>
+##                                                                                        <td>
+##                                                                                            <p class="isUsed">￥{{#price}}{{monthRentPrice}}{{/price}}</p>
+##                                                                                            <p class="isNew hide">￥{{#price}}{{newMonthRentPrice}}{{/price}}</p>
+##                                                                                        </td>
+##                                                                                    </tr>
+##                                                                                    {{/chooseProductSkuList}}
+##                                                                                </tbody>
+##                                                                            </table>
+##                                                                        </div>
+##                                                                    </div>
+##                                                                </div>
+##                                                            </td>
+##                                                        </tr>
                                                         {{/chooseGroupProductList}}
                                                         </tbody>
                                                     </table>
@@ -604,11 +650,10 @@
                                                             <th>类型</th>
                                                             <th>配件价值</th>
                                                             <th>数量</th>
-##                                                            <th>设备押金</th>
-##                                                            <th>支付方式</th>
-##                                                            <th>首付金额</th>
-##                                                            <th>首付押金</th>
-##                                                            <th class="text-right">操作</th>
+                                                            <th>设备押金</th>
+                                                            <th>支付方式</th>
+                                                            <th>首付金额</th>
+                                                            <th>首付押金</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -628,43 +673,38 @@
                                                                     <input type="text" name="materialCount-{{materialNo}}" value="{{materialCount}}" class="materialCount form-control required checkInteger pl10" placeholder="输入租赁数量" />
                                                                 </label>
                                                             </td>
-##                                                            <td>
-##                                                                {{#showDepositAmount}}
-##                                                                <label class="field prepend-icon mw200">
-##                                                                    <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
-##                                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
-##                                                                </label>
-##                                                                {{/showDepositAmount}}
-##                                                                {{^showDepositAmount}}
-##                                                                {{#isRentTypeByMonth}}
-##                                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
-##                                                                {{/isRentTypeByMonth}}
-##                                                                {{/showDepositAmount}}
-##                                                            </td>
-##                                                            <td>
-##                                                                {{#showDepositAmount}}
-##                                                                <label class="field select">
-##                                                                    <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
-##                                                                        <option value="">选择支付方式</option>
-##                                                                        {{#payModeList}}
-##                                                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
-##                                                                        {{/payModeList}}
-##                                                                    </select>
-##                                                                    <i class="arrow"></i>
-##                                                                </label>
-##                                                                {{/showDepositAmount}}
-##                                                                {{^showDepositAmount}}
-##                                                                <p>{{payModeValue}}</p>
-##
-##                                                                {{/showDepositAmount}}
-##                                                            </td>
-##                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-##                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
-##                                                            <td class="text-right">
-##                                                                <div class="btn-group text-right">
-##                                                                    <a href="#" type="button" class="btn btn-default btn-xs delMaterialButton" data-materialno="{{materialNo}}" data-isnew="{{isNewMaterial}}" data-serialnumber="{{serialNumber}}">删除</a>
-##                                                                </div>
-##                                                            </td>
+                                                            <td>
+                                                                {{#showDepositAmount}}
+                                                                <label class="field prepend-icon mw200">
+                                                                    <input type="text" name="depositAmount-{{materialNo}}" value="{{depositAmount}}" class="depositAmount form-control required moneyNumber gui-input" placeholder="输入配件押金" />
+                                                                    <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                                </label>
+                                                                {{/showDepositAmount}}
+                                                                {{^showDepositAmount}}
+                                                                {{#isRentTypeByMonth}}
+                                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                                {{/isRentTypeByMonth}}
+                                                                {{/showDepositAmount}}
+                                                            </td>
+                                                            <td>
+                                                                {{#showDepositAmount}}
+                                                                <label class="field select">
+                                                                    <select name="payMode-{{skuId}}-{{rowKey}}" class="payMode required" style="min-width: 130px;">
+                                                                        <option value="">选择支付方式</option>
+                                                                        {{#payModeList}}
+                                                                        <option value="{{num}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+                                                                        {{/payModeList}}
+                                                                    </select>
+                                                                    <i class="arrow"></i>
+                                                                </label>
+                                                                {{/showDepositAmount}}
+                                                                {{^showDepositAmount}}
+                                                                <p>{{payModeValue}}</p>
+
+                                                                {{/showDepositAmount}}
+                                                            </td>
+                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                                                         </tr>
                                                         {{/jointMaterialList}}
                                                         {{/groupMaterial}}
