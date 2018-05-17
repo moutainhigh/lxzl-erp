@@ -106,7 +106,7 @@ public class ImportCMBCBank {
             bankSlipDO.setUpdateTime(now);
             bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
-            if(bankSlipDO == null){
+            if (bankSlipDO == null) {
                 serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
                 return serviceResult;
             }
@@ -124,9 +124,7 @@ public class ImportCMBCBank {
             }
             for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
                 bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                if (CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
-                    bankSlipDetailDO.setIsLocalization(isLocalization);
-                }
+                bankSlipDetailDO.setIsLocalization(isLocalization);
                 bankSlipDetailDO.setSubCompanyId(bankSlipDO.getSubCompanyId());
             }
             bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
