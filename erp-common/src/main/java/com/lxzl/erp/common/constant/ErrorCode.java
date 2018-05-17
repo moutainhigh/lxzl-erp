@@ -904,6 +904,12 @@ public class ErrorCode {
     public static final String ORDER_SPLIT_SPLIT_COUNT_EXCEED = "J230000006";
     public static final String ORDER_SPLIT_PEER_COUNT_EXCEED = "J230000007";
 
+    //业务员提成统计月结表错误信息
+    public static final String STATISTICS_SALESMAN_MONTH_NOT_EXISTS = "J240000001";
+    public static final String CONFIRM_STATUS_NOT_NULL = "J240000002";
+    public static final String CONFIRM_STATUS_ERROR = "J240000003";
+    public static final String STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS = "J240000004";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1795,6 +1801,11 @@ public class ErrorCode {
         MAP.put(ORDER_SPLIT_PEER_COUNT_EXCEED, "同行调拨超过限制");
 
         MAP.put(ORDER_JOINT_PRODUCT_ERROR, "订单组合商品参数错误");
+
+        MAP.put(STATISTICS_SALESMAN_MONTH_NOT_EXISTS, "业务员提成统计月结数据不存在");
+        MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
+        MAP.put(CONFIRM_STATUS_ERROR, "确认状态错误");
+        MAP.put(STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS, "该月业务员提成统计月结数据已生成，请勿重复生成");
     }
 
 
