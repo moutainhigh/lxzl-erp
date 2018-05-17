@@ -160,6 +160,16 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, String> saveBankSlip(BankSlip bankSlip) throws Exception {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
+        //判断当前用户是否是本分公司的(总公司除外)
+        if(userSupport.isElectric() || userSupport.isChannelSubCompany()){
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+        if (!(userSupport.getCurrentUserCompanyId().equals(bankSlip.getSubCompanyId()) && (userSupport.isFinancePerson() || userSupport.isSuperUser()))) {
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
+            return serviceResult;
+        }
+
         //校验上传流水月份是否超过当天
         if (bankSlip.getSlipDay().getTime() - DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_DATA_OPERATION_TYPE_ADD).getTime() > 0) {
             serviceResult.setErrorCode(ErrorCode.OVERSTEP_CURRENT_DAY);
@@ -401,7 +411,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             }
 
             // 保存日志list
-            if(CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)){
+            if (CollectionUtil.isNotEmpty(bankSlipDetailOperationLogDOList)) {
                 bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
             }
         }
@@ -425,7 +435,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric()) {
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
             //商务类型设置为2
             departmentType = 2;
         } else if (userSupport.isBusinessPerson()) {
@@ -529,12 +539,12 @@ public class BankSlipServiceImpl implements BankSlipService {
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
 
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
-            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && userSupport.isElectric()) {
+            if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
                 serviceResult.setErrorCode(ErrorCode.CURRENT_ROLES_NOT_PERMISSION);
                 return serviceResult;
             }
         }
-        if(!(LocalizationType.UNKNOWN.equals(bankSlipDetailDO.getIsLocalization()) && CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getOwnerSubCompanyId()))){
+        if (!(LocalizationType.UNKNOWN.equals(bankSlipDetailDO.getIsLocalization()) && CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getOwnerSubCompanyId()))) {
             //当前用户如不是总公司,看是否有权先操作
             String verifyPermission = verifyPermission(bankSlipDO, bankSlipDetailDO);
             if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
@@ -797,7 +807,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric()) {
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
             //商务类型设置为2
             departmentType = 2;
         } else if (userSupport.isBusinessPerson()) {
@@ -882,7 +892,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //是否有权隐藏
-        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric()) {
+        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -964,7 +974,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //是否有权下推
-        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric()) {
+        if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
@@ -1023,10 +1033,6 @@ public class BankSlipServiceImpl implements BankSlipService {
         ServiceResult<String, Integer> serviceResult = new ServiceResult<>();
         Date now = new Date();
         //是否总公司和超级管理员
-        if (!userSupport.isHeadUser() && !userSupport.isSuperUser()) {
-            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
-            return serviceResult;
-        }
 
         //判断公司是否存在
         SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getLocalizationSubCompanyId());
@@ -1053,11 +1059,11 @@ public class BankSlipServiceImpl implements BankSlipService {
             BankSlipDO bankSlipDO = bankSlipDOMap.get(bankSlipDetailDO.getBankSlipId());
 
             //判断所属公司是否是总公司
-            if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDO.getSubCompanyId())) {
-                serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HEADER_COMPANY);
+            String permission = verifyPermission(bankSlipDO, bankSlipDetailDO);
+            if(!ErrorCode.SUCCESS.equals(permission)){
+                serviceResult.setErrorCode(permission);
                 return serviceResult;
             }
-
 
             //判断是否确认
             if (BankSlipDetailStatus.CONFIRMED.equals(bankSlipDetailDO.getDetailStatus())) {
@@ -1072,16 +1078,16 @@ public class BankSlipServiceImpl implements BankSlipService {
                 return serviceResult;
             }
             boolean isLocalizationFlag = false;
-            if (LocalizationType.NOT_LOCALIZATION.equals(bankSlipDetailDO.getIsLocalization())) {
+            if (LocalizationType.NOT_LOCALIZATION.equals(bankSlipDetailDO.getIsLocalization()) || bankSlipDetailDO.getIsLocalization() == null || "".equals(bankSlipDetailDO.getIsLocalization())) {
                 //总公司的数量和状态的改变
-                if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlip.getLocalizationSubCompanyId())) {
+                if (!userSupport.getCurrentUserCompanyId().equals(bankSlip.getLocalizationSubCompanyId())) {
                     bankSlipDO.setLocalizationCount(bankSlipDO.getLocalizationCount() == null ? 1 : bankSlipDO.getLocalizationCount() + 1);
                 } else {
                     isLocalizationFlag = true;
                 }
             } else {
                 //如果总表为总公司和指派的公司为总公司和原来归属公司不为总公司改变数量(只有属地化过才有这种情况)
-                if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getSubCompanyId()) && CommonConstant.HEADER_COMPANY_ID.equals(bankSlip.getLocalizationSubCompanyId())) {
+                if (!userSupport.getCurrentUserCompanyId().equals(bankSlipDetailDO.getSubCompanyId()) && userSupport.getCurrentUserCompanyId().equals(bankSlip.getLocalizationSubCompanyId())) {
                     bankSlipDO.setLocalizationCount(bankSlipDO.getLocalizationCount() - 1);
                     isLocalizationFlag = true;
                 }
@@ -1171,12 +1177,11 @@ public class BankSlipServiceImpl implements BankSlipService {
         //根据总表
         BankSlipDO headquartersBankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
 
-        //判断所属公司是否是总公司
-        if (!CommonConstant.HEADER_COMPANY_ID.equals(headquartersBankSlipDO.getSubCompanyId())) {
-            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_HEADER_COMPANY);
+        //判断是否是本公司数据和属地化数据
+        if(!userSupport.getCurrentUserCompanyId().equals(bankSlipDetailDO.getOwnerSubCompanyId()) && !userSupport.getCurrentUserCompanyId().equals(bankSlipDetailDO.getSubCompanyId())){
+            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-
         //需判断这个单子是否下推,未推只有财务管理员电销操作 ,下推了只有业务员和商务电销可以操作
         String localizationPermission = verifyLocalizationPermission(headquartersBankSlipDO);
         if (!ErrorCode.SUCCESS.equals(localizationPermission)) {
@@ -1282,7 +1287,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric()) {
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
             //商务类型设置为2
             departmentType = 2;
         } else if (userSupport.isBusinessPerson()) {
@@ -1316,7 +1321,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric()) {
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
             //商务类型设置为2
             departmentType = 2;
         } else if (userSupport.isBusinessPerson()) {
@@ -1363,21 +1368,21 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //todo 判断是否是总公司数据
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
-        if(bankSlipDetailDO == null){
+        if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
-        if(!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getOwnerSubCompanyId())){
+        if (!CommonConstant.HEADER_COMPANY_ID.equals(bankSlipDetailDO.getOwnerSubCompanyId())) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
         //todo 判断是未认领状态
-        if(!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())){
+        if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
             return serviceResult;
         }
         //todo 判断是否是没有属地化
-        if(!LocalizationType.NOT_LOCALIZATION.equals(bankSlipDetailDO.getIsLocalization())){
+        if (!LocalizationType.NOT_LOCALIZATION.equals(bankSlipDetailDO.getIsLocalization())) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_IS_LOCALIZATION_OR_UNKNOWN);
             return serviceResult;
         }
@@ -1399,7 +1404,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (userSupport.isFinancePerson() || userSupport.isSuperUser()) {
             //财务人员类型设置为1
             departmentType = 1;
-        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric()) {
+        } else if (userSupport.isBusinessAffairsPerson() || userSupport.isElectric() || userSupport.isChannelSubCompany()) {
             //商务类型设置为2
             departmentType = 2;
         } else if (userSupport.isBusinessPerson()) {
@@ -1419,7 +1424,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
             BigDecimal lastClaimAmount = bankSlipDetailDO.getTradeAmount();
             for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
-                lastClaimAmount =  BigDecimalUtil.sub(lastClaimAmount, bankSlipClaimDO.getClaimAmount());
+                lastClaimAmount = BigDecimalUtil.sub(lastClaimAmount, bankSlipClaimDO.getClaimAmount());
             }
             bankSlipDetailDO.setTradeAmount(lastClaimAmount);
         }
@@ -1500,13 +1505,13 @@ public class BankSlipServiceImpl implements BankSlipService {
         if (SlipStatus.ALREADY_PUSH_DOWN.equals(headquartersBankSlipDO.getSlipStatus())) {
             //是否是财务,业务员,商务
             if (!userSupport.isSuperUser()) {
-                if (!userSupport.isBusinessPerson() && !userSupport.isBusinessAffairsPerson() && !userSupport.isFinancePerson() && !userSupport.isElectric()) {
+                if (!userSupport.isBusinessPerson() && !userSupport.isBusinessAffairsPerson() && !userSupport.isFinancePerson() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
                     return ErrorCode.DATA_HAVE_NO_PERMISSION;
                 }
             }
         } else if (SlipStatus.INITIALIZE.equals(headquartersBankSlipDO.getSlipStatus())) {
             if (!userSupport.isSuperUser()) {
-                if (!userSupport.isFinancePerson() && !userSupport.isElectric()) {
+                if (!userSupport.isFinancePerson() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
                     return ErrorCode.DATA_HAVE_NO_PERMISSION;
                 }
             }
