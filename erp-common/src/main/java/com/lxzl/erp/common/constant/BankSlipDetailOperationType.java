@@ -16,6 +16,6 @@ public class BankSlipDetailOperationType {
     public static final Integer MOTION_CLAIM = 7;  //7-自动认领
     public static final Integer CLAIM = 8;   //8-认领
     public static final Integer RECHARGE = 9;  //9-充值
-    public static final Integer DELETE = 10;  //9-删除
+    public static final Integer DELETE = 10;  //10-删除
 
 }

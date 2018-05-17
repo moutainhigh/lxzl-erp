@@ -48,7 +48,7 @@ public class OrderMaterial extends BasePO {
 
 	private Integer orderJointProductId; // 订单组合商品id
 	@Transient
-	private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+	private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
 
 	// 以下为K3的数据字段
 	private Integer FEntryID;

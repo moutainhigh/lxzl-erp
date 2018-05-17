@@ -276,6 +276,14 @@
         #{slipDay,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
     </select>
 
+    <select id="findBySubCompanyIdAndBankType" resultMap="BankSlipDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>,<include refid="detail_column_List"/>
+        FROM erp_bank_slip ebs
+        LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
+        WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
+    </select>
+
     <update id="updateBankSlipDO" parameterType="java.util.List">
         UPDATE erp_bank_slip
         SET
