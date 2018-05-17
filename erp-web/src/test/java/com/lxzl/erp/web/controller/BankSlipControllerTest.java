@@ -114,7 +114,7 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void deleteBankSlip() throws Exception {
         BankSlip bankSlip= new BankSlip();
-        bankSlip.setBankSlipId(1);
+        bankSlip.setBankSlipId(3);
         TestResult result = getJsonTestResult("/bankSlip/deleteBankSlip", bankSlip);
     }
 

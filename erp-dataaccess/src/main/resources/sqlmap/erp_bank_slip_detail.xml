@@ -387,7 +387,7 @@
 	</insert>
 
 	<insert id="deleteByBankSlipId" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List" >
-		update erp_bank_slip_detail ebsd INNER JOIN erp_bank_slip_claim ebsc
+		update erp_bank_slip_detail ebsd LEFT JOIN erp_bank_slip_claim ebsc ON ebsc.bank_slip_detail_id = ebsd.id
 		SET
 		<trim>
 			ebsd.data_status =
