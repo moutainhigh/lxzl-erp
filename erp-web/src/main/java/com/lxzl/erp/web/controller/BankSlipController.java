@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.common.domain.validGroup.bank.AssignGroup;
 import com.lxzl.erp.common.domain.validGroup.bank.ClaimBankSlipDetailGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -124,12 +125,12 @@ public class BankSlipController {
 
     @RequestMapping(value = "queryUnknownBankSlipDetail", method = RequestMethod.POST)
     public Result queryUnknownBankSlipDetail(@RequestBody @Validated(IdGroup.class) BankSlipDetail bankSlipDetail, BindingResult validated) throws Exception {
-        ServiceResult<String, String> serviceResult = bankSlipService.queryUnknownBankSlipDetail(bankSlipDetail);
+        ServiceResult<String, BankSlipDetail> serviceResult = bankSlipService.queryUnknownBankSlipDetail(bankSlipDetail);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
     @RequestMapping(value = "pageBankSlipDetailOperationLog", method = RequestMethod.POST)
-    public Result pageBankSlipDetailOperationLog(@RequestBody BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam, BindingResult validated) throws Exception {
+    public Result pageBankSlipDetailOperationLog(@RequestBody @Validated(QueryGroup.class) BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam, BindingResult validated) throws Exception {
         ServiceResult<String, Page<BankSlipDetailOperationLog>> serviceResult = bankSlipService.pageBankSlipDetailOperationLog(bankSlipDetailOperationLogQueryParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }

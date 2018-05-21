@@ -821,4 +821,3 @@ call del_index('erp_statement_order_detail','index_statement_expect_pay_time');
 ALTER TABLE erp_statement_order_detail ADD INDEX index_statement_expect_pay_time (statement_expect_pay_time);
 
 -- added by liuyong end++ 2018-05-15 12:00
-

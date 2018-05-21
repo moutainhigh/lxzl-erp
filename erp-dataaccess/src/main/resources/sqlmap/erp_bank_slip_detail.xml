@@ -525,11 +525,11 @@
 
 	</select>
 	<update id="deleteBankSlipDetail">
-		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.data_status = 2,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs,id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER}
+		UPDATE erp_bank_slip ebs,erp_bank_slip_detail ebsd SET ebs.claim_count=claim_count-1,ebs.need_claim_count=need_claim_count+1,ebsd.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsd.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsd.bank_slip_id = ebs.id AND ebsd.id = #{bankSlipDetailId, jdbcType=INTEGER} AND ebsd.create_user = #{updateUser,jdbcType=VARCHAR} AND ebs.data_status = 1 AND ebsd.data_status = 1
 	</update>
 
 	<select id="findUnknownBankSlipDetailDOCountByParams" resultType="Integer" parameterType="map">
-		SELECT COUNT(ebsd.id)  FROM erp_bank_slip_detail ebsd
+		SELECT COUNT(DISTINCT ebsd.id)  FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
@@ -649,17 +649,34 @@
 				and 1=2
 			</if>
 			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
-				and 1=1
+				and (CASE  WHEN #{maps.currentUser,jdbcType=VARCHAR} != '500001' THEN ebsc.create_user IN
+				(select eu.id from
+				(
+				select ed.id from erp_department ed
+				<where>
+					<if test="maps.subCompanyId != null">
+						and ed.sub_company_id = #{maps.subCompanyId, jdbcType=INTEGER}
+					</if>
+					<if test="true">
+						and ed.data_status = 1
+					</if>
+				</where>
+				order by ed.parent_department_id,ed.data_order desc
+				) department left join erp_role er on er.department_id = department.id and er.data_status = 1
+				left join erp_user_role eur on eur.role_id = er.id and eur.data_status = 1
+				left join erp_user eu on eu.id = eur.user_id
+				order by er.data_order desc, er.create_time desc) ELSE 1=1 END
+				)
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
-				AND (ebsd.detail_status = 1 OR (ebsd.detail_status = 2 and (ebsc.create_user = #{currentUser,jdbcType=INTEGER})) or (CASE WHEN ebsd.detail_status = 3 AND(
+				AND (ebsd.detail_status = 1  OR ebsd.detail_status = 2  or (CASE WHEN ebsd.detail_status = 3 AND(
 				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
 				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
-				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ))
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )) and ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}
 			</if>
 			and ebsd.is_localization = 2 and ebs.sub_company_id = 1
 		</where>
