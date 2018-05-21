@@ -8,24 +8,27 @@ import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.DateUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -695,6 +698,112 @@ public class StatisticsServiceImpl implements StatisticsService {
         return serviceResult;
     }
 
+    /**
+     * 确认业务员提成统计月结信息
+     * @param statisticsSalesmanMonth
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateStatisticsSalesmanMonth(StatisticsSalesmanMonth statisticsSalesmanMonth) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        StatisticsSalesmanMonthDO statisticsSalesmanMonthDO = statisticsSalesmanMonthMapper.findById(statisticsSalesmanMonth.getStatisticsSalesmanMonthId());
+        if (statisticsSalesmanMonthDO == null ) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_SALESMAN_MONTH_NOT_EXISTS);//业务员提成统计月结数据不存在
+            return serviceResult;
+        }
+        statisticsSalesmanMonthDO.setConfirmTime(date);
+        statisticsSalesmanMonthDO.setConfirmUser(userSupport.getCurrentUserId().toString());
+        statisticsSalesmanMonthDO.setConfirmStatus(statisticsSalesmanMonth.getConfirmStatus());
+        statisticsSalesmanMonthDO.setRefuseReason(statisticsSalesmanMonth.getRefuseReason());
+        statisticsSalesmanMonthDO.setUpdateTime(date);
+        statisticsSalesmanMonthDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        statisticsSalesmanMonthMapper.update(statisticsSalesmanMonthDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    /**
+     * 创建业务员提成统计月结信息
+     * @param date
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> createStatisticsSalesmanMonth(Date date) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        // 格式化查询时间
+        Date start = DateUtil.getStartMonthDate(date);
+        Date end = DateUtil.getEndMonthDate(date);
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", start);
+        maps.put("end", end);
+        StatisticsSalesmanMonthDO statisticsSalesmanMonthDO1 = statisticsSalesmanMonthMapper.findByMonth(start);
+        if (statisticsSalesmanMonthDO1!= null) {
+            result.setErrorCode(ErrorCode.STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS);//业务员提成统计月结数据不存在
+            return result;
+        }
+        // 查询以业务员，分公司分组的初步数据(主数据)
+        List<StatisticsSalesmanDetail> statisticsSalesmanDetailList = statisticsMapper.querySalesmanDetailByDate(maps);
+        for (StatisticsSalesmanDetail statisticsSalesmanDetail : statisticsSalesmanDetailList) {
+            statisticsSalesmanDetail.setReceive(statisticsSalesmanDetail.getAwaitReceivable().add(statisticsSalesmanDetail.getIncome()));
+        }
+        // 装换为salesmanId-subCompnayId为key的map
+        Map<String, StatisticsSalesmanDetail> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailList, "salesmanId", "subCompanyId", "rentLengthType");
+
+
+        for (StatisticsSalesmanDetail statisticsSalesmanDetail : statisticsSalesmanDetailList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetail.getRentLengthType()) {
+                statisticsSalesmanDetail.setPureIncrease(BigDecimal.valueOf(0));
+            }
+        }
+
+        // 查询扩展数据来计算净增台数
+        List<StatisticsSalesmanDetailExtend> statisticsSalesmanDetailExtendList = statisticsMapper.querySalesmanDetailExtendByDate(maps);
+        List<StatisticsSalesmanReturnOrder> statisticsSalesmanReturnOrderList = statisticsMapper.querySalesmanReturnOrderByDate(maps);
+
+        // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中，只算长租
+        for (StatisticsSalesmanDetailExtend statisticsSalesmanDetailExtend : statisticsSalesmanDetailExtendList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailExtend.getRentLengthType()) {
+                String key = statisticsSalesmanDetailExtend.getSalesmanId() + "-" + statisticsSalesmanDetailExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailExtend.getRentLengthType();
+                StatisticsSalesmanDetail statisticsSalesmanDetail = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetail != null) {
+                    BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailExtend);
+                    statisticsSalesmanDetail.setPureIncrease(statisticsSalesmanDetail.getPureIncrease().add(increaseProduct));
+                }
+            }
+        }
+
+        // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中，只算长租
+        for (StatisticsSalesmanReturnOrder statisticsSalesmanReturnOrder : statisticsSalesmanReturnOrderList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanReturnOrder.getRentLengthType()) {
+                String key = statisticsSalesmanReturnOrder.getEuId() + "-" + statisticsSalesmanReturnOrder.getEscId() + "-" + statisticsSalesmanReturnOrder.getRentLengthType();
+                StatisticsSalesmanDetail statisticsSalesmanDetail = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetail != null) {
+                    BigDecimal returnProduct = calcPureReturn(statisticsSalesmanReturnOrder);
+                    statisticsSalesmanDetail.setPureIncrease(statisticsSalesmanDetail.getPureIncrease().subtract(returnProduct));
+                }
+            }
+        }
+
+        List<StatisticsSalesmanMonthDO> statisticsSalesmanMonthDOList = ConverterUtil.convertList(statisticsSalesmanDetailList,StatisticsSalesmanMonthDO.class);
+        for (StatisticsSalesmanMonthDO statisticsSalesmanMonthDO:statisticsSalesmanMonthDOList) {
+            statisticsSalesmanMonthDO.setMonth(start);//年月
+            statisticsSalesmanMonthDO.setConfirmStatus(ConfirmStatus.CONFIRM_STATUS_UNCONFIRMED);//确认状态，0-未确认，1-同意，2-拒绝
+            statisticsSalesmanMonthDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);//状态：0不可用；1可用；2删除
+            statisticsSalesmanMonthDO.setCreateTime(new Date());//添加时间
+            statisticsSalesmanMonthDO.setUpdateTime(new Date());//修改时间
+            statisticsSalesmanMonthDO.setCreateUser(userSupport.getCurrentUserId().toString());//添加人
+            statisticsSalesmanMonthDO.setUpdateUser(userSupport.getCurrentUserId().toString());//修改人
+        }
+        statisticsSalesmanMonthMapper.addList(statisticsSalesmanMonthDOList);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
     /*
     获取key为salesmanId-subCompanyId-rentLengthType
      */
@@ -767,4 +876,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private SubCompanyMapper subCompanyMapper;
     @Autowired
     private ProductSupport productSupport;
+    @Autowired
+    private StatisticsSalesmanMonthMapper statisticsSalesmanMonthMapper;
+    @Autowired
+    private UserSupport userSupport;
 }
