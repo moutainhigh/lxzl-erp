@@ -599,7 +599,7 @@ public class BankSlipServiceImpl implements BankSlipService {
                 bankSlipDetailMapper.deleteBankSlipDetail(bankSlipDetailDO.getId(), userSupport.getCurrentUserId().toString(), now);
 
                 Integer amount = bankSlipClaimMapper.findAmountByBankSlipDetailId(bankSlipDetailDO.getId());
-                BigDecimal dbAmount = new BigDecimal(amount);
+                BigDecimal dbAmount = new BigDecimal(amount==null?0:amount);
                 dbAmount.setScale(2, BigDecimal.ROUND_UP);
                 allClaimAmount = BigDecimalUtil.add(allClaimAmount, dbAmount);
                 //判断总共金额是否相等
@@ -1325,6 +1325,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("departmentType", departmentType);
         maps.put("bankSlipDetailId", bankSlipDetail.getBankSlipDetailId());
         maps.put("currentUser", userSupport.getCurrentUserId().toString());
+        maps.put("subCompanyId", userSupport.getCurrentUserCompanyId());
 
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findUnknownBankSlipDetailById(maps);
 
@@ -1332,11 +1333,16 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
             return serviceResult;
         }
-        // 判断是否是总公司人员
-        if (!userSupport.isHeadUser()) {
-            serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
-            return serviceResult;
+
+        List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
+        if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
+            BigDecimal claimAmount = new BigDecimal(0);
+            for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
+                claimAmount = BigDecimalUtil.add(claimAmount,bankSlipClaimDO.getClaimAmount());
+            }
+            bankSlipDetailDO.setTradeAmount(BigDecimalUtil.sub(bankSlipDetailDO.getTradeAmount(),claimAmount));
         }
+
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         String permission = verifyLocalizationPermission(bankSlipDO);
         if (!ErrorCode.SUCCESS.equals(permission)) {
@@ -1354,13 +1360,13 @@ public class BankSlipServiceImpl implements BankSlipService {
     public ServiceResult<String, String> unknownBankSlipDetail(BankSlipDetail bankSlipDetail) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
         Date now = new Date();
-        //todo 指派未知数据
-        //todo 判断是否是总公司人员
+        //指派未知数据
+        //判断是否是总公司人员
         if (!userSupport.isHeadUser()) {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-        //todo 判断是否是总公司数据
+        //判断是否是总公司数据
         BankSlipDetailDO bankSlipDetailDO = bankSlipDetailMapper.findById(bankSlipDetail.getBankSlipDetailId());
         if (bankSlipDetailDO == null) {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_NOT_EXISTS);
@@ -1370,17 +1376,12 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.DATA_HAVE_NO_PERMISSION);
             return serviceResult;
         }
-        //todo 判断是未认领状态
-//        if (!BankSlipDetailStatus.UN_CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
-//            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED);
-//            return serviceResult;
-//        }
-        //todo 判断是否是没有属地化
-//        if (!LocalizationType.NOT_LOCALIZATION.equals(bankSlipDetailDO.getIsLocalization())) {
-//            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_IS_LOCALIZATION_OR_UNKNOWN);
-//            return serviceResult;
-//        }
-        //todo 跟新
+        //判断是否是未知
+        if (!LocalizationType.UNKNOWN.equals(bankSlipDetailDO.getIsLocalization())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_IS_UNKNOWN);
+            return serviceResult;
+        }
+        //跟新
         bankSlipDetailDO.setIsLocalization(LocalizationType.UNKNOWN);
         bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         bankSlipDetailDO.setUpdateTime(now);
@@ -1413,14 +1414,15 @@ public class BankSlipServiceImpl implements BankSlipService {
         maps.put("currentUser", userSupport.getCurrentUserId().toString());
         Integer totalCount = bankSlipDetailMapper.findUnknownBankSlipDetailDOCountByParams(maps);
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findUnknownBankSlipDetailDOByParams(maps);
-
-        for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
-            List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
-            BigDecimal lastClaimAmount = bankSlipDetailDO.getTradeAmount();
-            for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
-                lastClaimAmount = BigDecimalUtil.sub(lastClaimAmount, bankSlipClaimDO.getClaimAmount());
+        if(CollectionUtil.isNotEmpty(bankSlipDetailDOList)){
+            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
+                List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
+                BigDecimal lastClaimAmount = bankSlipDetailDO.getTradeAmount();
+                for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
+                    lastClaimAmount = BigDecimalUtil.sub(lastClaimAmount, bankSlipClaimDO.getClaimAmount());
+                }
+                bankSlipDetailDO.setTradeAmount(lastClaimAmount);
             }
-            bankSlipDetailDO.setTradeAmount(lastClaimAmount);
         }
 
         List<BankSlipDetail> bankSlipDetailList = ConverterUtil.convertList(bankSlipDetailDOList, BankSlipDetail.class);
@@ -1572,6 +1574,8 @@ public class BankSlipServiceImpl implements BankSlipService {
         bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         bankSlipDetailOperationLogDO.setCreateTime(now);
         bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailOperationLogDO.setUpdateTime(now);
+        bankSlipDetailOperationLogDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         // 保存日志list
         bankSlipDetailOperationLogMapper.save(bankSlipDetailOperationLogDO);
     }

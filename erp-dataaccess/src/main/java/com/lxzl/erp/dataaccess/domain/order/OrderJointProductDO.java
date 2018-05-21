@@ -14,9 +14,18 @@ public class OrderJointProductDO extends BaseDO {
     private Integer jointProductCount;
     private Integer dataStatus;
     private String remark;
+    private Integer isNew;
 
     List<OrderProductDO> orderProductDOList;
     List<OrderMaterialDO> orderMaterialDOList;
+
+    public Integer getIsNew() {
+        return isNew;
+    }
+
+    public void setIsNew(Integer isNew) {
+        this.isNew = isNew;
+    }
 
     public String getJointProductName() {
         return jointProductName;

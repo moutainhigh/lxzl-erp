@@ -94,4 +94,19 @@
 		update erp_joint_material <include refid="set_column_sql"/> WHERE joint_product_id = #{jointProductId, jdbcType=INTEGER}
 	</update>
 
+	<select id="findByIds" resultMap="JointMaterialDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_joint_material as ejm
+		WHERE 1 = 1
+		<choose>
+			<when test="ids != null &amp;&amp; ids.size>0">
+				AND id IN
+				<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and 1 = 2
+			</otherwise>
+		</choose>
+	</select>
 </mapper>
