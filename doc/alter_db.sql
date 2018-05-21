@@ -798,10 +798,10 @@ ALTER TABLE erp_order_product ADD INDEX index_order_id (order_id);
 
 -- index for table [erp_order]
 call del_index('erp_order','index_buyer_customer_id');
-call del_index('erp_order','index_create_time');
+call del_index('erp_order','index_rent_start_time');
 -- ALTER TABLE erp_order DROP INDEX index_buyer_customer_id;
 -- ALTER TABLE erp_order DROP INDEX index_create_time;
-ALTER TABLE erp_order ADD INDEX index_create_time (create_time);
+ALTER TABLE erp_order ADD INDEX index_rent_start_time (rent_start_time);
 ALTER TABLE erp_order ADD INDEX index_buyer_customer_id (buyer_customer_id);
 -- index for table [erp_k3_return_order_detail]
 call del_index('erp_k3_return_order_detail','index_order_no');
