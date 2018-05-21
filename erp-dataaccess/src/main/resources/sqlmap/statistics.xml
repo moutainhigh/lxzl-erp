@@ -740,7 +740,7 @@ ORDER BY esc.data_order DESC
             LEFT JOIN erp_customer ec ON esod.customer_id = ec.id AND ec.data_status = 1
             LEFT JOIN erp_order eo ON eo.id = esod.order_id AND eo.data_status = 1
             LEFT JOIN erp_user eu ON eu.id = eo.order_seller_id
-            WHERE esod.statement_detail_status = 0 AND  esod.data_status = 1 AND esod.order_type = 1 AND esod.statement_expect_pay_time>NOW()
+            WHERE esod.statement_detail_status = 0 AND  esod.data_status = 1 AND esod.order_type = 1
         <if test="maps.awaitReceivableQueryParam != null &amp;&amp; maps.awaitReceivableQueryParam.rentLengthType!=null">
             AND  eo.rent_length_type = #{maps.awaitReceivableQueryParam.rentLengthType, jdbcType=INTEGER}
         </if>
@@ -770,7 +770,7 @@ ORDER BY esc.data_order DESC
         LEFT JOIN erp_order eo ON esod.order_id = eo.id AND eo.data_status=1
         LEFT JOIN erp_user eu ON eu.id=eo.order_seller_id
         LEFT JOIN erp_sub_company esc ON esc.id=eo.order_sub_company_id and esc.data_status = 1
-        WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1 AND esod.statement_expect_pay_time>NOW()
+        WHERE esod.statement_detail_status=0 AND esod.data_status = 1 AND esod.order_type = 1
         <if test="maps.awaitReceivableQueryParam.rentLengthType!=null">
             AND eo.rent_length_type = #{maps.awaitReceivableQueryParam.rentLengthType}
         </if>
@@ -825,15 +825,15 @@ ORDER BY esc.data_order DESC
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) total_rented_customer_count_short,
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=2 AND esod.order_status=20 THEN esod.buyer_customer_id ELSE NULL END)) total_renting_customer_count_long,
         COUNT(DISTINCT
-        (CASE WHEN esod.rent_length_type=1 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.buyer_customer_id ELSE NULL END )) total_await_receivable_customer_count_short ,
+        (CASE WHEN esod.rent_length_type=1 AND esod.statement_detail_status=0 THEN esod.buyer_customer_id ELSE NULL END )) total_await_receivable_customer_count_short ,
         COUNT(DISTINCT
-        (CASE WHEN esod.rent_length_type=2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.buyer_customer_id ELSE NULL END ))  total_await_receivable_customer_count_long,
+        (CASE WHEN esod.rent_length_type=2 AND esod.statement_detail_status=0 THEN esod.buyer_customer_id ELSE NULL END ))  total_await_receivable_customer_count_long,
         SUM(CASE WHEN esod.statement_expect_pay_time >=(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 1 MONTH ),'%Y-%m-%d 00:00:00'))
         AND (SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 0 MONTH ),'%Y-%m-%d 00:00:00'))>esod.statement_expect_pay_time
         THEN esod.statement_detail_amount ELSE 0 END ) total_last_month_rent,
-        SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_short,
-        SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_long,
-        SUM(CASE WHEN esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable
+        SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_short,
+        SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable_long,
+        SUM(CASE WHEN esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) total_await_receivable
         from (
         SELECT esod.id,
         esod.statement_detail_amount,
@@ -868,15 +868,15 @@ ORDER BY esc.data_order DESC
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=1 AND (esod.order_status=20 OR esod.order_status=24 OR esod.order_status=32) THEN esod.buyer_customer_id ELSE NULL END)) rented_customer_count_short,
         COUNT(DISTINCT (CASE WHEN esod.rent_length_type=2 AND esod.order_status=20 THEN esod.buyer_customer_id ELSE NULL END)) renting_customer_count_long,
         COUNT(DISTINCT
-        (CASE WHEN esod.rent_length_type=1 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.buyer_customer_id ELSE NULL END )) await_receivable_customer_count_short ,
+        (CASE WHEN esod.rent_length_type=1 AND esod.statement_detail_status=0 THEN esod.buyer_customer_id ELSE NULL END )) await_receivable_customer_count_short ,
         COUNT(DISTINCT
-        (CASE WHEN esod.rent_length_type=2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.buyer_customer_id ELSE NULL END ))  await_receivable_customer_count_long,
+        (CASE WHEN esod.rent_length_type=2 AND esod.statement_detail_status=0 THEN esod.buyer_customer_id ELSE NULL END ))  await_receivable_customer_count_long,
         SUM(CASE WHEN esod.statement_expect_pay_time >=(SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 1 MONTH ),'%Y-%m-%d 00:00:00'))
         AND (SELECT DATE_FORMAT(DATE_SUB( DATE_SUB( NOW() , INTERVAL DAYOFMONTH( NOW() ) -1 DAY ) , INTERVAL 0 MONTH ),'%Y-%m-%d 00:00:00'))>esod.statement_expect_pay_time
         THEN esod.statement_detail_amount ELSE 0 END ) last_month_rent,
-        SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable_short,
-        SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable_long,
-        SUM(CASE WHEN esod.statement_detail_status=0 AND esod.statement_expect_pay_time>NOW() THEN esod.statement_detail_amount ELSE 0 END ) await_receivable
+        SUM(CASE WHEN esod.rent_length_type = 1 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) await_receivable_short,
+        SUM(CASE WHEN esod.rent_length_type = 2 AND esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) await_receivable_long,
+        SUM(CASE WHEN esod.statement_detail_status=0 THEN esod.statement_detail_amount ELSE 0 END ) await_receivable
         from (
         SELECT esod.id,
         esod.statement_detail_amount,
