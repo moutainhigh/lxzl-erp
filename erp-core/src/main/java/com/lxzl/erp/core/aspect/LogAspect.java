@@ -16,8 +16,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * User : LiuKe
@@ -51,7 +49,7 @@ public class LogAspect {
             url = request.getRequestURI();
         }
         log.info("**********************************************  Request To Controller ("+url+") **********************************************");
-        log.info("------------------------  Request Parameters  ------------------------startTime: ");
+        log.info("------------------------  Request Parameters  ------------------------");
         Object[] os = pjp.getArgs();
         Object result = null;
         try{
@@ -77,7 +75,7 @@ public class LogAspect {
     public Object controllerLogResponse(Object obj) throws Throwable {
         log.info("------------------------  Response Result  ------------------------");
         log.info(JSON.toJSONString(obj));
-        log.info("**********************************************  Request End **********************************************endTime: ");
+        log.info("**********************************************  Request End **********************************************");
         return obj;
     }
 }
