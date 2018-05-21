@@ -844,7 +844,7 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000044";
     public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000045";
     public static final String BANK_SLIP_DETAIL_DATA_IS_NULL = "J18000046";
-    public static final String BANK_SLIP_DETAIL_IS_LOCALIZATION_OR_UNKNOWN = "J18000047";
+    public static final String BANK_SLIP_DETAIL_IS_UNKNOWN = "J18000047";
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
 
@@ -903,6 +903,12 @@ public class ErrorCode {
     public static final String ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST = "J230000006";
     public static final String ORDER_SPLIT_SPLIT_COUNT_EXCEED = "J230000006";
     public static final String ORDER_SPLIT_PEER_COUNT_EXCEED = "J230000007";
+
+    //业务员提成统计月结表错误信息
+    public static final String STATISTICS_SALESMAN_MONTH_NOT_EXISTS = "J240000001";
+    public static final String CONFIRM_STATUS_NOT_NULL = "J240000002";
+    public static final String CONFIRM_STATUS_ERROR = "J240000003";
+    public static final String STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS = "J240000004";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1735,7 +1741,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是确认状态,");
         MAP.put(BANK_SLIP_DETAIL_DATA_IS_NULL, "银行对公流水无导入数据,");
-        MAP.put(BANK_SLIP_DETAIL_IS_LOCALIZATION_OR_UNKNOWN, "银行对公流水是属地化或者未知状态,");
+        MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录都已存在");
 
@@ -1795,6 +1801,11 @@ public class ErrorCode {
         MAP.put(ORDER_SPLIT_PEER_COUNT_EXCEED, "同行调拨超过限制");
 
         MAP.put(ORDER_JOINT_PRODUCT_ERROR, "订单组合商品参数错误");
+
+        MAP.put(STATISTICS_SALESMAN_MONTH_NOT_EXISTS, "业务员提成统计月结数据不存在");
+        MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
+        MAP.put(CONFIRM_STATUS_ERROR, "确认状态错误");
+        MAP.put(STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS, "该月业务员提成统计月结数据已生成，请勿重复生成");
     }
 
 

@@ -26,11 +26,6 @@
                                 <input type="text" name="productId" id="productId" class="form-control input-sm bradius number" autocomplete="off" placeholder="输入商品ID">
                             </div>
                         </div>
-##                        <select name="isRent" id="isRentMultiselect" class="hide">
-##                            <option value="">全部（在租状态）</option>
-##                            <option value="1">在租</option>
-##                            <option value="0">下架</option>
-##                        </select>
                     </form>
                 </div>
             </div>
@@ -52,7 +47,7 @@
                     <tbody>
                     {{#dataSource}}
                     {{#listData}}
-                    <tr>
+                    <tr data-rowdata="{{productJSONString}}">
                         <td>{{productId}}</td>
                         <td><a class="productImg open-img-popup" data-imgs={{productImgJSON}}><img src="{{mainImg}}" /></a></td>
                         <td>{{productName}}</td>
@@ -61,6 +56,7 @@
                         <td>{{isRentStr}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
+                                <a href="#" type="button" class="btn btn-default btn-xs viewButton" data-productid="{{productId}}">查看</a>
                                 <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-productid="{{productId}}">选择</a>
                             </div>
                         </td>
@@ -71,7 +67,7 @@
                     {{/listData}}
                     {{^listData}}
                     <tr>
-                        <td valign="top" colspan="14" class="text-center">没有查询到商品</td>
+                        <td valign="top" colspan="7" class="text-center">没有查询到商品</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -79,18 +75,14 @@
                 </script>
                 <script type="text/html"  id="chooseProductModalDetialTpl">
                     {{#product}}
-                    <div class="productDetial row p15" data-product="{{productJSONString}}">
+                    <div class="productDetial row p15">
                         {{#skuListSource}}
                         <div  class="row ph15">
                             <div class="panel m15">
-                                <div class="panel-heading pn ph8">
-                                    <span>选择SKU</span>
-                                </div>
                                 <div class="panel-body pn">
                                     <table class="table">
                                         <thead>
                                         <tr class="bg-light">
-                                            <th></th>
                                             {{#showIsNewCheckBox}}
                                             <th>商品属性</th>
                                             {{/showIsNewCheckBox}}
@@ -104,12 +96,6 @@
                                         <tbody>
                                             {{#skuList}}
                                             <tr class="skuTr">
-                                                <td>
-                                                    <label class="option block mn">
-                                                        <input type="checkbox" name="sku" value="{{skuId}}">
-                                                        <span class="checkbox mn"></span>
-                                                    </label>
-                                                </td>
                                                 {{#showIsNewCheckBox}}
                                                 <td>
                                                     <label class="block mn switch switch-primary">
@@ -144,8 +130,7 @@
                                 <div class="panel-footer pn pv5 ph15">
                                     <div class="row">
                                         <div class="form-group mn pull-right">
-                                            <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
-                                            <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>
+                                            <button class="btn btn-xs btn-default mr15 hideAffixPanel">收起</button>
                                         </div>
                                     </div>
                                 </div>
@@ -167,6 +152,7 @@
         </div>
     </div>
 </div>
-
-
-
+    
+    
+    
+    
