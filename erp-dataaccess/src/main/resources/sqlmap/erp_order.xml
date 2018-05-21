@@ -147,6 +147,7 @@
         <result column="order_joint_product_order_id" jdbcType="INTEGER" property="orderId"/>
         <result column="order_joint_product_joint_product_count" jdbcType="INTEGER" property="jointProductCount"/>
         <result column="order_joint_product_joint_product_id" jdbcType="INTEGER" property="jointProductId"/>
+        <result column="order_joint_product_name" jdbcType="VARCHAR" property="jointProductName"/>
         <result column="order_joint_product_data_status" jdbcType="INTEGER" property="dataStatus"/>
         <result column="order_joint_product_remark" jdbcType="VARCHAR" property="remark"/>
         <result column="order_joint_product_create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -251,7 +252,7 @@
     </sql>
 
     <sql id="joint_product_column_List">
-        eojp.id as order_joint_product_id,eojp.order_id as order_joint_product_order_id,eojp.joint_product_id as order_joint_product_joint_product_id, eojp.joint_product_count as order_joint_product_joint_product_count,eojp.data_status as order_joint_product_data_status,eojp.remark as order_joint_product_remark, eojp.create_time as order_joint_product_create_time, eojp.create_user as order_joint_product_create_user,eojp.update_time as order_joint_product_update_time,eojp.update_user as order_joint_product_update_user
+        eojp.id as order_joint_product_id,ejp.joint_product_name as order_joint_product_name,eojp.order_id as order_joint_product_order_id,eojp.joint_product_id as order_joint_product_joint_product_id, eojp.joint_product_count as order_joint_product_joint_product_count,eojp.data_status as order_joint_product_data_status,eojp.remark as order_joint_product_remark, eojp.create_time as order_joint_product_create_time, eojp.create_user as order_joint_product_create_user,eojp.update_time as order_joint_product_update_time,eojp.update_user as order_joint_product_update_user
     </sql>
 
     <sql id="time_axis_column_List">
@@ -359,6 +360,7 @@
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
         LEFT JOIN erp_relet_order ero ON m_order.id = ero.order_id and ero.data_status = 1
         LEFT JOIN erp_order_joint_product eojp on m_order.id = eojp.order_id and eojp.data_status = 1
+        LEFT JOIN erp_joint_product ejp on ejp.id = eojp.joint_product_id
     </select>
 
     <select id="findByCustomerId" resultMap="OrderDO" parameterType="java.lang.Integer">
