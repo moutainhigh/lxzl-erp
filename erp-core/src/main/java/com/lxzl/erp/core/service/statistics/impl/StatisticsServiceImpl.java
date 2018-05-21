@@ -8,10 +8,7 @@ import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.DateUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
@@ -791,21 +788,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 }
             }
         }
-        List<StatisticsSalesmanMonthDO> statisticsSalesmanMonthDOList = new ArrayList<>();
-        for (StatisticsSalesmanDetail statisticsSalesmanDetail:statisticsSalesmanDetailList) {
-            StatisticsSalesmanMonthDO statisticsSalesmanMonthDO = new StatisticsSalesmanMonthDO();
-            statisticsSalesmanMonthDO.setSalesmanId(statisticsSalesmanDetail.getSalesmanId());//业务员ID
-            statisticsSalesmanMonthDO.setSalesmanName(statisticsSalesmanDetail.getSalesmanName());//业务员姓名
-            statisticsSalesmanMonthDO.setSubCompanyId(statisticsSalesmanDetail.getSubCompanyId());//所属分公司ID
-            statisticsSalesmanMonthDO.setSubCompanyName(statisticsSalesmanDetail.getSubCompanyName());//所属分公司名称
-            statisticsSalesmanMonthDO.setRentLengthType(statisticsSalesmanDetail.getRentLengthType());//租赁时长类型，1短租，2长租
-            statisticsSalesmanMonthDO.setDealsCount(statisticsSalesmanDetail.getDealsCount());//成交单数
-            statisticsSalesmanMonthDO.setDealsProductCount(statisticsSalesmanDetail.getDealsProductCount());//成交台数
-            statisticsSalesmanMonthDO.setDealsAmount(statisticsSalesmanDetail.getDealsAmount());//成交金额
-            statisticsSalesmanMonthDO.setAwaitReceivable(statisticsSalesmanDetail.getAwaitReceivable());//待收金额
-            statisticsSalesmanMonthDO.setIncome(statisticsSalesmanDetail.getIncome());//本期回款（已收）
-            statisticsSalesmanMonthDO.setReceive(statisticsSalesmanDetail.getReceive());//应收 = 待收 + 本期回款
-            statisticsSalesmanMonthDO.setPureIncrease(statisticsSalesmanDetail.getPureIncrease());//净增
+
+        List<StatisticsSalesmanMonthDO> statisticsSalesmanMonthDOList = ConverterUtil.convertList(statisticsSalesmanDetailList,StatisticsSalesmanMonthDO.class);
+        for (StatisticsSalesmanMonthDO statisticsSalesmanMonthDO:statisticsSalesmanMonthDOList) {
             statisticsSalesmanMonthDO.setMonth(start);//年月
             statisticsSalesmanMonthDO.setConfirmStatus(ConfirmStatus.CONFIRM_STATUS_UNCONFIRMED);//确认状态，0-未确认，1-同意，2-拒绝
             statisticsSalesmanMonthDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);//状态：0不可用；1可用；2删除
@@ -813,8 +798,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsSalesmanMonthDO.setUpdateTime(new Date());//修改时间
             statisticsSalesmanMonthDO.setCreateUser(userSupport.getCurrentUserId().toString());//添加人
             statisticsSalesmanMonthDO.setUpdateUser(userSupport.getCurrentUserId().toString());//修改人
-
-            statisticsSalesmanMonthDOList.add(statisticsSalesmanMonthDO);
         }
         statisticsSalesmanMonthMapper.addList(statisticsSalesmanMonthDOList);
         result.setErrorCode(ErrorCode.SUCCESS);
