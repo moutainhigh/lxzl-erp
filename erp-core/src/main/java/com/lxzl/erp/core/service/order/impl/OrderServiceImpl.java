@@ -270,6 +270,14 @@ public class OrderServiceImpl implements OrderService {
     // 3. 将每个组合商品中的商品配件增加唯一序号（不会存储），以便在保存完每一个组合商品后，根据组合商品中的商品和配件列表的序号找到订单商品配件中对应的商品，并设置组合商品项id
     // 4. 将组合商品中的商品和配件放入到订单商品和配件中
     private void preValidateOrderJointProduct(Order order) {
+        verifyOrderJointProduct(order.getOrderJointProductList());
+        setCountForOrderJointProduct(order.getOrderJointProductList());
+        buildOrderJointProduct(order);
+    }
+
+    // 3. 将每个组合商品中的商品配件增加唯一序号（不会存储），以便在保存完每一个组合商品后，根据组合商品中的商品和配件列表的序号找到订单商品配件中对应的商品，并设置组合商品项id
+    // 4. 将组合商品中的商品和配件放入到订单商品和配件中
+    private void buildOrderJointProduct(Order order) {
         List<OrderProduct> orderProductList = order.getOrderProductList();
         if (CollectionUtil.isEmpty(orderProductList)) {
             orderProductList = new ArrayList<>();
@@ -282,12 +290,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<OrderJointProduct> orderJointProductList = order.getOrderJointProductList();
-
-        // 组合商品参数验证和格式化（组合商品中商品数量格式化）
-        String errorCode = verifyOperateOrderJointProduct(orderJointProductList);
-        if (!ErrorCode.SUCCESS.equals(errorCode)) {
-            throw new BusinessException(errorCode);
-        }
 
         // 将组合商品列表中的商品和配件放到订单的订单商品项和订单配件项中，并为‘新增的’组合商品中的配件和商品添加IdentityNo序号
         Integer identityNo = 1;
@@ -312,13 +314,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // 订单组合商品参数验证和格式化
-    private String verifyOperateOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
+    private String verifyOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
         if (CollectionUtil.isNotEmpty(orderJointProductList)) {
             for (OrderJointProduct orderJointProduct : orderJointProductList) {
                 Integer jointProductId = orderJointProduct.getJointProductId();
                 JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
                 if (jointProductDO == null) {
-                    return ErrorCode.JOINT_PRODUCT_ID_IS_NULL;
+                    throw new BusinessException(ErrorCode.JOINT_PRODUCT_ID_IS_NULL);
                 }
 
                 // 校验订单组合商品中商品项和配件项是否跟组合商品一致
@@ -337,7 +339,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (!ListUtil.equalIntegerList(productIdList, dbProductIdList)) {
-                    return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_ERROR);
                 }
 
                 List<OrderMaterial> orderMaterialList = orderJointProduct.getOrderMaterialList();
@@ -355,8 +357,27 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (!ListUtil.equalIntegerList(materialIdList, dbMaterailIdList)) {
-                    return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_ERROR);
                 }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
+
+    // 订单组合商品数量设置
+    private String setCountForOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
+        if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                Integer jointProductId = orderJointProduct.getJointProductId();
+                JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
+                if (jointProductDO == null) {
+                    throw new BusinessException(ErrorCode.JOINT_PRODUCT_ID_IS_NULL);
+                }
+
+                // 校验订单组合商品中商品项和配件项是否跟组合商品一致
+                List<OrderProduct> orderProductList = orderJointProduct.getOrderProductList();
+                List<JointProductProductDO> jointProductProductDOList = jointProductDO.getJointProductProductDOList();
 
                 // 重新设置组合商品中商品数量
                 // 商品数量 = 订单组合商品数 * 组合商品定义时商品数量
@@ -1805,7 +1826,8 @@ public class OrderServiceImpl implements OrderService {
         ServiceResult<String, Order> result = new ServiceResult<>();
         Date currentTime = new Date();
         /*****组合商品 start*******/
-        preValidateOrderJointProduct(order);
+        setCountForOrderJointProduct(order.getOrderJointProductList());
+        buildOrderJointProduct(order);
         /*****组合商品 end*******/
         if ((order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) && (order.getOrderMaterialList() == null || order.getOrderMaterialList().isEmpty())) {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
@@ -1920,12 +1942,16 @@ public class OrderServiceImpl implements OrderService {
         List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
         Map<Integer, OrderMaterial> orderMaterialMap = ListUtil.listToMap(orderMaterialList, "identityNo");
         if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            List<OrderProduct> removeOrderProductList = new ArrayList<>();
+            List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
+
             for (OrderJointProduct orderJointProduct :orderJointProductList) {
                 List<OrderProduct> processedOrderProductList = new ArrayList<>(); // 处理后的
                 List<OrderProduct> orderProductListForJoint = orderJointProduct.getOrderProductList();
                 if (CollectionUtil.isNotEmpty(orderProductListForJoint)) {
                     for (OrderProduct orderProductForJoint : orderProductListForJoint) {
                         if (orderProductMap.get(orderProductForJoint.getIdentityNo()) != null) {
+                            removeOrderProductList.add(orderProductMap.get(orderProductForJoint.getIdentityNo()));
                             processedOrderProductList.add(orderProductMap.get(orderProductForJoint.getIdentityNo()));
                         }
                     }
@@ -1937,12 +1963,16 @@ public class OrderServiceImpl implements OrderService {
                 if (CollectionUtil.isNotEmpty(orderMaterialListForJoint)) {
                     for (OrderMaterial orderMaterialForJoint : orderMaterialListForJoint) {
                         if (orderMaterialMap.get(orderMaterialForJoint.getIdentityNo()) != null) {
+                            removeOrderMaterialList.add(orderMaterialMap.get(orderMaterialForJoint.getIdentityNo()));
                             processedOrderMaterialList.add(orderMaterialMap.get(orderMaterialForJoint.getIdentityNo()));
                         }
                     }
                 }
                 orderJointProduct.setOrderMaterialList(processedOrderMaterialList);
             }
+
+            orderProductList.removeAll(removeOrderProductList);
+            orderMaterialList.removeAll(removeOrderMaterialList);
         }
     }
 
