@@ -775,49 +775,51 @@ ALTER TABLE erp_order_product add `order_joint_product_id` int(20) COMMENT '订�
 ALTER TABLE erp_order_material add `order_joint_product_id` int(20) COMMENT '订单组合商品id';
 ALTER TABLE erp_joint_product DROP COLUMN is_new;
 
--- 如果索引存在则删除索引  added by liuyong begin++ 2018-05-15 12:00
-DROP PROCEDURE IF EXISTS del_index;
-CREATE PROCEDURE del_index(IN p_tablename varchar(200), IN p_idxname VARCHAR(200))
-BEGIN
-DECLARE str VARCHAR(250);
-DECLARE cur_database VARCHAR(100);
-SELECT DATABASE() INTO cur_database;
-set @str=concat(' DROP INDEX ',p_idxname,' ON ',p_tablename);
-SELECT count(*) INTO @cnt FROM information_schema.statistics WHERE table_schema=cur_database and table_name=p_tablename and index_name=p_idxname ;
-IF @cnt > 0 THEN
-    PREPARE stmt FROM @str;
-    EXECUTE stmt ;
-END IF;
-END ;
+ALTER TABLE erp_order_joint_product add `is_new` int(11) NOT NULL DEFAULT '0' COMMENT '新旧：0旧，1新';
+-- 订单商品项和订单配件项分别添加组合商品商品项id和组合商品配件项id
+ALTER TABLE erp_order_product add `joint_product_product_id` int(20) COMMENT '组合商品商品项id';
+ALTER TABLE erp_order_material add `joint_material_id` int(20) COMMENT '组合商品配件项id';
 
--- index for table [erp_order_product]
-call del_index('erp_order_product','index_create_time');
-call del_index('erp_order_product','index_order_id');
-ALTER TABLE erp_order_product ADD INDEX index_create_time (create_time);
-ALTER TABLE erp_order_product ADD INDEX index_order_id (order_id);
+DROP TABLE if exists `erp_order_confirm_change_log`;
+CREATE TABLE `erp_order_confirm_change_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+	`change_reason_type` INT(11) COMMENT '变更原因类型',
+	`change_reason` varchar(500) COMMENT '变更原因',
+	`is_restatement_success` INT(11) NOT NULL DEFAULT '0' COMMENT '是否重算成功：0-否，1-是',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=3000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录表';
 
--- index for table [erp_order]
-call del_index('erp_order','index_buyer_customer_id');
-call del_index('erp_order','index_rent_start_time');
--- ALTER TABLE erp_order DROP INDEX index_buyer_customer_id;
--- ALTER TABLE erp_order DROP INDEX index_create_time;
-ALTER TABLE erp_order ADD INDEX index_rent_start_time (rent_start_time);
-ALTER TABLE erp_order ADD INDEX index_buyer_customer_id (buyer_customer_id);
--- index for table [erp_k3_return_order_detail]
-call del_index('erp_k3_return_order_detail','index_order_no');
-call del_index('erp_k3_return_order_detail','index_return_order_id');
--- ALTER TABLE erp_k3_return_order_detail DROP INDEX index_return_order_id;
--- ALTER TABLE erp_k3_return_order_detail DROP INDEX index_order_no;
-ALTER TABLE erp_k3_return_order_detail ADD INDEX index_order_no (order_no);
-ALTER TABLE erp_k3_return_order_detail ADD INDEX index_return_order_id (return_order_id);
--- index for table [erp_k3_return_order]
-call del_index('erp_k3_return_order','index_return_time');
--- ALTER TABLE erp_k3_return_order DROP INDEX index_return_time;
-ALTER TABLE erp_k3_return_order ADD INDEX index_return_time (return_time);
 
--- index for table [erp_statement_order_detail]
-call del_index('erp_statement_order_detail','index_statement_expect_pay_time');
--- ALTER TABLE erp_statement_order_detail DROP INDEX index_statement_expect_pay_time;
-ALTER TABLE erp_statement_order_detail ADD INDEX index_statement_expect_pay_time (statement_expect_pay_time);
+DROP TABLE if exists `erp_order_confirm_change_log_detail`;
+CREATE TABLE `erp_order_confirm_change_log_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+  `item_type` int(11) NOT NULL COMMENT '类型：1-商品项，2-配件项',
+  `item_id` int(11) NOT NULL COMMENT '商品项/配件项ID',
+  `order_item_count` int(11) NOT NULL COMMENT '订单初始商品/配件数',
+  `old_item_count` int(11) NOT NULL COMMENT '原商品/配件数',
+  `new_item_count` int(11) NOT NULL COMMENT '新商品/配件数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_item_id ( `item_id` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录详情表';
 
--- added by liuyong end++ 2018-05-15 12:00
+
+ALTER TABLE erp_order_product add `stable_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单商品总数，该字段只在订单未提交时可变化';
+ALTER TABLE erp_order_material add  `stable_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单配件总数，该字段只在订单未提交时可变化';
+UPDATE erp_order_product SET stable_product_count = product_count;
+UPDATE erp_order_material SET stable_material_count = material_count;
