@@ -8,15 +8,6 @@
             <div class="panel-body p25">
                 <div class="section row">
                     <div class="col-md-6">
-                        <label for="province" class="field-label"><em class="text-danger">*</em>请选择分公司名称</label>
-                        <label class="field select">
-                            <select id="subCompanyId" name="subCompanyId" class="required">
-                                <option value="">请选择</option>
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-6">
                         <label for="province" class="field-label"><em class="text-danger">*</em>请选择银行类型</label>
                         <label class="field select">
                             <select id="bankType" name="bankType" class="required">
@@ -24,17 +15,12 @@
                             <i class="arrow"></i>
                         </label>
                     </div>
-                </div>
-                <div class="section row">
-                    <div class="col-md-6 form-group mn mr10">
+                    <div class="col-md-6">
                         <label class="field-label">日期</label>
-##                        <label for="slipDay" class="input-group date">
-##                            <input type="text" readonly name="slipDay" id="slipDay" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间">
-##                            <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
-##                        </label>
                         <div>
                             <div class="input-group date" id="slipDayPicker">
-                                <input type="text" name="slipDay" id="slipDayInput" class="form-control" autocomplete="off" placeholder="选择日期" style="height:42px;">
+                                <input type="hidden" name="slipDay" id="slipDay">
+                                <input type="text" readonly id="slipDayInput" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间" style="height:42px;">
                                 <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -63,7 +49,7 @@
             </div>
             <div class="panel-footer text-right">
                 <button type="submit" class="button btn-primary submit-btn">确定</button>
-                <button type="button" class="button btn-default cancelButton"">取消</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
             </div>
         </form>
     </div>

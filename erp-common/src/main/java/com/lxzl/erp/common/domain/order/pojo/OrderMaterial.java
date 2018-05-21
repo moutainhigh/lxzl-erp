@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.order.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
@@ -47,12 +48,31 @@ public class OrderMaterial extends BasePO {
 	private String serialNumber;        // 序号
 
 	private Integer orderJointProductId; // 订单组合商品id
+	private Integer jointMaterialId; // 关联的组合商品配件项id
 	@Transient
-	private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+	private JointMaterial jointMaterial;
+	@Transient
+	private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
 
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
+
+	public JointMaterial getJointMaterial() {
+		return jointMaterial;
+	}
+
+	public void setJointMaterial(JointMaterial jointMaterial) {
+		this.jointMaterial = jointMaterial;
+	}
+
+	public Integer getJointMaterialId() {
+		return jointMaterialId;
+	}
+
+	public void setJointMaterialId(Integer jointMaterialId) {
+		this.jointMaterialId = jointMaterialId;
+	}
 
 	public Integer getIdentityNo() {
 		return identityNo;

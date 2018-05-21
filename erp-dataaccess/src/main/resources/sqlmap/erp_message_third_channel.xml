@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.messagethirdchannel.MessageThirdChannelMapper">
+
+	<resultMap id="MessageThirdChannelDO" type="com.lxzl.erp.dataaccess.domain.messagethirdchannel.MessageThirdChannelDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="message_title" jdbcType="VARCHAR" property="messageTitle" />
+		<result column="message_content" jdbcType="VARCHAR" property="messageContent" />
+		<result column="message_type" jdbcType="INTEGER" property="messageType" />
+		<result column="message_channel" jdbcType="INTEGER" property="messageChannel" />
+		<result column="receiver_user_id" jdbcType="INTEGER" property="receiverUserId" />
+		<result column="sender_user_id" jdbcType="INTEGER" property="senderUserId" />
+		<result column="sender_remark" jdbcType="VARCHAR" property="senderRemark" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		emtc.id,emtc.message_title,emtc.message_content,emtc.message_type,emtc.message_channel,emtc.receiver_user_id,emtc.sender_user_id,emtc.sender_remark,emtc.data_status,emtc.remark,emtc.create_time,emtc.create_user,emtc.update_time,emtc.update_user
+	</sql>
+
+	<select id="findById" resultMap="MessageThirdChannelDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_message_third_channel emtc 
+		WHERE emtc.id = #{id, jdbcType=INTEGER} AND emtc.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(emtc.id) FROM erp_message_third_channel emtc 
+		<where>
+			<if test="true">
+				AND emtc.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="MessageThirdChannelDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_message_third_channel emtc 
+		<where>
+			<if test="true">
+				AND emtc.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="messageTitle != null">
+				message_title = #{messageTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="messageContent != null">
+				message_content = #{messageContent,jdbcType=VARCHAR},
+			</if>
+			<if test="messageType != null">
+				message_type = #{messageType,jdbcType=INTEGER},
+			</if>
+			<if test="messageChannel != null">
+				message_channel = #{messageChannel,jdbcType=INTEGER},
+			</if>
+			<if test="receiverUserId != null">
+				receiver_user_id = #{receiverUserId,jdbcType=INTEGER},
+			</if>
+			<if test="senderUserId != null">
+				sender_user_id = #{senderUserId,jdbcType=INTEGER},
+			</if>
+			<if test="senderRemark != null">
+				sender_remark = #{senderRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.messagethirdchannel.MessageThirdChannelDO">
+		INSERT INTO erp_message_third_channel <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.messagethirdchannel.MessageThirdChannelDO">
+		UPDATE erp_message_third_channel <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

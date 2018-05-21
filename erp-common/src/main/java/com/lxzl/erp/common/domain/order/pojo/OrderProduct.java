@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.springframework.data.annotation.Transient;
@@ -44,12 +45,31 @@ public class OrderProduct extends BasePO {
     private String serialNumber;        // 序号
 
     private Integer orderJointProductId; // 订单组合商品id
+    private Integer jointProductProductId; // 关联的组合商品商品项id
     @Transient
-    private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+    private JointProductProduct jointProductProduct;
+    @Transient
+    private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
 
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
+
+    public Integer getJointProductProductId() {
+        return jointProductProductId;
+    }
+
+    public JointProductProduct getJointProductProduct() {
+        return jointProductProduct;
+    }
+
+    public void setJointProductProduct(JointProductProduct jointProductProduct) {
+        this.jointProductProduct = jointProductProduct;
+    }
+
+    public void setJointProductProductId(Integer jointProductProductId) {
+        this.jointProductProductId = jointProductProductId;
+    }
 
     public Integer getIdentityNo() {
         return identityNo;

@@ -5,6 +5,9 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
@@ -43,7 +46,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
@@ -261,7 +266,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // 预处理订单中的组合商品项
+    // 1. 校验订单组合商品列表是否和组合商品列表商品和配件id一致
+    // 2. 重新设置组合商品中的商品数和配件数（商品数 = 订单组合商品数 * 组合商品定义的商品数）（配件数 = 订单组合商品配件数）
+    // 3. 将每个组合商品中的商品配件增加唯一序号（不会存储），以便在保存完每一个组合商品后，根据组合商品中的商品和配件列表的序号找到订单商品配件中对应的商品，并设置组合商品项id
+    // 4. 将组合商品中的商品和配件放入到订单商品和配件中
     private void preValidateOrderJointProduct(Order order) {
+        verifyOrderJointProduct(order.getOrderJointProductList());
+        setCountForOrderJointProduct(order.getOrderJointProductList());
+        buildOrderJointProduct(order);
+    }
+
+    // 3. 将每个组合商品中的商品配件增加唯一序号（不会存储），以便在保存完每一个组合商品后，根据组合商品中的商品和配件列表的序号找到订单商品配件中对应的商品，并设置组合商品项id
+    // 4. 将组合商品中的商品和配件放入到订单商品和配件中
+    private void buildOrderJointProduct(Order order) {
         List<OrderProduct> orderProductList = order.getOrderProductList();
         if (CollectionUtil.isEmpty(orderProductList)) {
             orderProductList = new ArrayList<>();
@@ -274,12 +291,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<OrderJointProduct> orderJointProductList = order.getOrderJointProductList();
-
-        // 组合商品参数验证和格式化（组合商品中商品数量格式化）
-        String errorCode = verifyOperateOrderJointProduct(orderJointProductList);
-        if (!ErrorCode.SUCCESS.equals(errorCode)) {
-            throw new BusinessException(errorCode);
-        }
 
         // 将组合商品列表中的商品和配件放到订单的订单商品项和订单配件项中，并为‘新增的’组合商品中的配件和商品添加IdentityNo序号
         Integer identityNo = 1;
@@ -303,58 +314,74 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // 订单组合商品参数验证和格式化
-    private String verifyOperateOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
+    // 订单组合商品参数验证
+    private String verifyOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
         if (CollectionUtil.isNotEmpty(orderJointProductList)) {
             for (OrderJointProduct orderJointProduct : orderJointProductList) {
                 Integer jointProductId = orderJointProduct.getJointProductId();
                 JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
                 if (jointProductDO == null) {
-                    return ErrorCode.JOINT_PRODUCT_ID_IS_NULL;
+                    throw new BusinessException(ErrorCode.JOINT_PRODUCT_ID_IS_NULL);
                 }
 
                 // 校验订单组合商品中商品项和配件项是否跟组合商品一致
                 List<OrderProduct> orderProductList = orderJointProduct.getOrderProductList();
                 List<JointProductProductDO> jointProductProductDOList = jointProductDO.getJointProductProductDOList();
-                if (CollectionUtil.isEmpty(orderProductList) && CollectionUtil.isEmpty(jointProductProductDOList)) {
-                } else if (CollectionUtil.isNotEmpty(orderProductList) && CollectionUtil.isNotEmpty(jointProductProductDOList)) {
-                    Map<Integer, OrderProduct> orderProductMap = ListUtil.listToMap(orderProductList, "productId");
+                List<Integer> productIdList = new ArrayList<>();
+                List<Integer> dbProductIdList = new ArrayList<>();
+                if (CollectionUtil.isNotEmpty(orderProductList)) {
+                    for (OrderProduct orderProduct : orderProductList) {
+                        productIdList.add(orderProduct.getProductId());
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(jointProductProductDOList)) {
                     for (JointProductProductDO jointProductProductDO : jointProductProductDOList) {
-                        OrderProduct orderProduct = orderProductMap.get(jointProductProductDO.getProductId());
-                        if (orderProduct == null) {
-                            return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
-                        }
-                        orderProductMap.remove(jointProductProductDO.getProductId());
+                        dbProductIdList.add(jointProductProductDO.getProductId());
                     }
-
-                    if (orderProductMap.size() != 0) {
-                        return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
-                    }
-                } else {
-                    return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+                }
+                if (!ListUtil.equalIntegerList(productIdList, dbProductIdList)) {
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_PRODUCT_ERROR);
                 }
 
+                // 订单组合商品配件必须是组合商品配件的子集
                 List<OrderMaterial> orderMaterialList = orderJointProduct.getOrderMaterialList();
                 List<JointMaterialDO> jointMaterialDOList = jointProductDO.getJointMaterialDOList();
-                if (CollectionUtil.isEmpty(orderMaterialList) && CollectionUtil.isEmpty(jointMaterialDOList)) {
-                } else if (CollectionUtil.isNotEmpty(orderMaterialList) && CollectionUtil.isNotEmpty(jointMaterialDOList)) {
-                    Map<Integer, OrderMaterial> orderMaterialMap = ListUtil.listToMap(orderMaterialList, "materialId");
+                List<Integer> materialIdList = new ArrayList<>();
+                List<Integer> dbMaterailIdList = new ArrayList<>();
+                if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+                    for (OrderMaterial orderMaterial : orderMaterialList) {
+                        materialIdList.add(orderMaterial.getMaterialId());
+                    }
+                }
+                if (CollectionUtil.isNotEmpty(jointMaterialDOList)) {
                     for (JointMaterialDO jointMaterialDO : jointMaterialDOList) {
-                        OrderMaterial orderMaterial = orderMaterialMap.get(jointMaterialDO.getMaterialId());
-                        if (orderMaterial == null) {
-                            return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
-                        }
-                        orderMaterialMap.remove(jointMaterialDO.getMaterialId());
+                        dbMaterailIdList.add(jointMaterialDO.getMaterialId());
                     }
+                }
+                if (!dbMaterailIdList.containsAll(materialIdList)) {
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_MATERIAL_ERROR);
+                }
+            }
+        }
 
-                    if (orderMaterialMap.size() != 0) {
-                        return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
-                    }
-                } else {
-                    return ErrorCode.ORDER_JOINT_PRODUCT_ERROR;
+        return ErrorCode.SUCCESS;
+    }
+
+    // 订单组合商品数量设置
+    private String setCountForOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
+        if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                Integer jointProductId = orderJointProduct.getJointProductId();
+                JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(jointProductId);
+                if (jointProductDO == null) {
+                    throw new BusinessException(ErrorCode.JOINT_PRODUCT_ID_IS_NULL);
                 }
 
-                // 重新设置组合商品中商品数量和配件数量
+                // 校验订单组合商品中商品项和配件项是否跟组合商品一致
+                List<OrderProduct> orderProductList = orderJointProduct.getOrderProductList();
+                List<JointProductProductDO> jointProductProductDOList = jointProductDO.getJointProductProductDOList();
+
+                // 重新设置组合商品中商品数量
                 // 商品数量 = 订单组合商品数 * 组合商品定义时商品数量
                 Integer jointCount = orderJointProduct.getJointProductCount();
                 if (CollectionUtil.isNotEmpty(orderProductList) && CollectionUtil.isNotEmpty(jointProductProductDOList)) {
@@ -362,14 +389,6 @@ public class OrderServiceImpl implements OrderService {
                     for (OrderProduct orderProduct : orderProductList) {
                         JointProductProductDO jointProductProductDO = jointProductProductDOMap.get(orderProduct.getProductId());
                         orderProduct.setProductCount(jointProductProductDO.getProductCount() * jointCount);
-                    }
-                }
-                // 配件数量 = 订单组合商品数 * 订单组合商品配件数
-                if (CollectionUtil.isNotEmpty(orderMaterialList) && CollectionUtil.isNotEmpty(jointMaterialDOList)) {
-                    Map<Integer, JointMaterialDO> jointMaterialDOMap = ListUtil.listToMap(jointMaterialDOList, "materialId");
-                    for (OrderMaterial orderMaterial : orderMaterialList) {
-                        JointMaterialDO jointMaterialDO = jointMaterialDOMap.get(orderMaterial.getMaterialId());
-                        orderMaterial.setMaterialCount(orderMaterial.getMaterialCount() * jointCount);
                     }
                 }
             }
@@ -1392,12 +1411,43 @@ public class OrderServiceImpl implements OrderService {
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         /*******组合商品逻辑 start********/
-        // 将orderJointProductId不为空的放入对应的OrderJointProduct中, 并将数量除以组合商品数
+        // 将orderJointProductId不为空的订单商品和配件放入对应的OrderJointProduct中, 并将数量除以组合商品数
+        buildOrderJointProductAfterQuery(order);
+        /*******组合商品逻辑 end********/
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(order);
+        return result;
+    }
+
+    // 根据订单商品项和配件项的组合商品项id来将其移动到对应的组合商品项中
+    private void buildOrderJointProductAfterQuery(Order order) {
         List<OrderJointProduct> orderJointProductList = order.getOrderJointProductList();
         if (CollectionUtil.isNotEmpty(orderJointProductList)) {
             Map<Integer, OrderJointProduct> orderJointProductMap = ListUtil.listToMap(orderJointProductList, "orderJointProductId");
             List<OrderProduct> orderProductList = order.getOrderProductList();
             if (CollectionUtil.isNotEmpty(orderProductList)) {
+                // 填入JointProductProduct实体
+                Set<Integer> jointProductProductIds = new HashSet<>();
+                for (OrderProduct orderProduct : orderProductList) {
+                    if (orderProduct .getJointProductProductId() != null) {
+                        jointProductProductIds.add(orderProduct .getJointProductProductId());
+                    }
+                }
+                if (jointProductProductIds.size() > 0) {
+                    List<JointProductProductDO> jointProductProductDOList = jointProductProductMapper.findByIds(jointProductProductIds);
+                    List<JointProductProduct> jointProductProductList = ConverterUtil.convertList(jointProductProductDOList, JointProductProduct.class);
+                    Map<Integer, JointProductProduct> jointProductProductMap = ListUtil.listToMap(jointProductProductList, "jointProductProductId");
+                    for (OrderProduct orderProduct : orderProductList) {
+                        if (orderProduct.getJointProductProductId() != null) {
+                            JointProductProduct jointProductProduct = jointProductProductMap.get(orderProduct.getJointProductProductId());
+                            if (jointProductProduct != null) {
+                                orderProduct.setJointProductProduct(jointProductProduct);
+                            }
+                        }
+                    }
+                }
+
+
                 List<OrderProduct> removeOrderProductList = new ArrayList<>();
                 for (OrderProduct orderProduct : orderProductList) {
                     if (orderProduct.getOrderJointProductId() != null) {
@@ -1405,10 +1455,6 @@ public class OrderServiceImpl implements OrderService {
                         if (orderJointProduct != null) {
                             if (orderJointProduct.getOrderProductList() == null) {
                                 orderJointProduct.setOrderProductList(new ArrayList<OrderProduct>());
-                            }
-                            if (orderJointProduct.getJointProductCount() > 0 ) { // 将订单商品数量除以组合商品数得到每个组合商品实际数量
-                                Integer realCount = orderProduct.getProductCount() / orderJointProduct.getJointProductCount();
-                                orderProduct.setProductCount(realCount);
                             }
                             orderJointProduct.getOrderProductList().add(orderProduct);
                             removeOrderProductList.add(orderProduct);
@@ -1419,6 +1465,27 @@ public class OrderServiceImpl implements OrderService {
             }
             List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
             if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+                // 填入JointMaterial实体
+                Set<Integer> jointMaterialIds = new HashSet<>();
+                for (OrderMaterial orderMaterial : orderMaterialList) {
+                    if (orderMaterial.getJointMaterialId() != null) {
+                        jointMaterialIds.add(orderMaterial.getJointMaterialId());
+                    }
+                }
+                if (jointMaterialIds.size() > 0) {
+                    List<JointMaterialDO> jointMaterialDOList = jointMaterialMapper.findByIds(jointMaterialIds);
+                    List<JointMaterial> jointMaterialList = ConverterUtil.convertList(jointMaterialDOList, JointMaterial.class);
+                    Map<Integer, JointMaterial> jointMaterialMap = ListUtil.listToMap(jointMaterialList, "jointMaterialId");
+                    for (OrderMaterial orderMaterial : orderMaterialList) {
+                        if (orderMaterial.getJointMaterialId() != null) {
+                            JointMaterial jointMaterial = jointMaterialMap.get(orderMaterial.getJointMaterialId());
+                            if (jointMaterial != null) {
+                                orderMaterial.setJointMaterial(jointMaterial);
+                            }
+                        }
+                    }
+                }
+
                 List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
                 for (OrderMaterial orderMaterial : orderMaterialList) {
                     if (orderMaterial.getOrderJointProductId() != null) {
@@ -1427,10 +1494,6 @@ public class OrderServiceImpl implements OrderService {
                             if (orderJointProduct.getOrderMaterialList() == null) {
                                 orderJointProduct.setOrderMaterialList(new ArrayList<OrderMaterial>());
                             }
-                            if (orderJointProduct.getJointProductCount() > 0 ) { // 将订单配件数量除以组合商品数得到每个组合配件实际数量
-                                Integer realCount = orderMaterial.getMaterialCount() / orderJointProduct.getJointProductCount();
-                                orderMaterial.setMaterialCount(realCount);
-                            }
                             orderJointProduct.getOrderMaterialList().add(orderMaterial);
                             removeOrderMaterialList.add(orderMaterial); // 从返回的商品项列表移除组合商品中的
                         }
@@ -1438,11 +1501,16 @@ public class OrderServiceImpl implements OrderService {
                 }
                 orderMaterialList.removeAll(removeOrderMaterialList);
             }
+
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(orderJointProduct.getJointProductId());
+                if (jointProductDO != null) {
+                    JointProduct jointProduct = ConverterUtil.convert(jointProductDO, JointProduct.class);
+                    orderJointProduct.setJointProductProductList(jointProduct.getJointProductProductList());
+                    orderJointProduct.setJointMaterialList(jointProduct.getJointMaterialList());
+                }
+            }
         }
-        /*******组合商品逻辑 end********/
-        result.setErrorCode(ErrorCode.SUCCESS);
-        result.setResult(order);
-        return result;
     }
 
     @Override
@@ -1767,7 +1835,10 @@ public class OrderServiceImpl implements OrderService {
 
         ServiceResult<String, Order> result = new ServiceResult<>();
         Date currentTime = new Date();
-
+        /*****组合商品 start*******/
+        setCountForOrderJointProduct(order.getOrderJointProductList());
+        buildOrderJointProduct(order);
+        /*****组合商品 end*******/
         if ((order.getOrderProductList() == null || order.getOrderProductList().isEmpty()) && (order.getOrderMaterialList() == null || order.getOrderMaterialList().isEmpty())) {
             result.setErrorCode(ErrorCode.ORDER_PRODUCT_LIST_NOT_NULL);
             return result;
@@ -1864,9 +1935,55 @@ public class OrderServiceImpl implements OrderService {
 
         orderFirstNeedPayAmount(order, orderDO);
 
+        /*****组合商品 start*******/
+        rebuildOrderJointProductByIdentityNo(order);
+        /*****组合商品 end*******/
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
+    }
+
+    // 根据订单商品项和配件项的IdentityNo来将其替换对应的组合商品项中商品和配件，并重置数量
+    private void rebuildOrderJointProductByIdentityNo(Order order) {
+        List<OrderJointProduct> orderJointProductList = order.getOrderJointProductList();
+        List<OrderProduct> orderProductList = order.getOrderProductList();
+        Map<Integer, OrderProduct> orderProductMap = ListUtil.listToMap(orderProductList, "identityNo");
+        List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
+        Map<Integer, OrderMaterial> orderMaterialMap = ListUtil.listToMap(orderMaterialList, "identityNo");
+        if (CollectionUtil.isNotEmpty(orderJointProductList)) {
+            List<OrderProduct> removeOrderProductList = new ArrayList<>();
+            List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
+
+            for (OrderJointProduct orderJointProduct :orderJointProductList) {
+                List<OrderProduct> processedOrderProductList = new ArrayList<>(); // 处理后的
+                List<OrderProduct> orderProductListForJoint = orderJointProduct.getOrderProductList();
+                if (CollectionUtil.isNotEmpty(orderProductListForJoint)) {
+                    for (OrderProduct orderProductForJoint : orderProductListForJoint) {
+                        if (orderProductMap.get(orderProductForJoint.getIdentityNo()) != null) {
+                            removeOrderProductList.add(orderProductMap.get(orderProductForJoint.getIdentityNo()));
+                            processedOrderProductList.add(orderProductMap.get(orderProductForJoint.getIdentityNo()));
+                        }
+                    }
+                }
+                orderJointProduct.setOrderProductList(processedOrderProductList); // 放入处理后的商品
+
+                List<OrderMaterial> processedOrderMaterialList = new ArrayList<>();
+                List<OrderMaterial> orderMaterialListForJoint = orderJointProduct.getOrderMaterialList();
+                if (CollectionUtil.isNotEmpty(orderMaterialListForJoint)) {
+                    for (OrderMaterial orderMaterialForJoint : orderMaterialListForJoint) {
+                        if (orderMaterialMap.get(orderMaterialForJoint.getIdentityNo()) != null) {
+                            removeOrderMaterialList.add(orderMaterialMap.get(orderMaterialForJoint.getIdentityNo()));
+                            processedOrderMaterialList.add(orderMaterialMap.get(orderMaterialForJoint.getIdentityNo()));
+                        }
+                    }
+                }
+                orderJointProduct.setOrderMaterialList(processedOrderMaterialList);
+            }
+
+            orderProductList.removeAll(removeOrderProductList);
+            orderMaterialList.removeAll(removeOrderMaterialList);
+        }
     }
 
     private String getErrorMessage(com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ServiceResult response, K3SendRecordDO k3SendRecordDO) {
@@ -2684,8 +2801,9 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    // 保存订单组合商品项
+    // 在保存新增的组合商品项时，会根据identityNo找到orderDO中这个组合商品对应的商品或配件，把组合商品项id设置进去，所以此方法应在保存订单商品配件之前
     private void saveOrderJointProductInfo(List<OrderJointProductDO> orderJointProductDOList, OrderDO orderDO, User loginUser, Date currentTime) {
-
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
         Map<Integer, OrderProductDO> orderProductDOMap = ListUtil.listToMap(orderProductDOList, "identityNo");
@@ -3679,4 +3797,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private JointProductMapper jointProductMapper;
+
+    @Autowired
+    private JointProductProductMapper jointProductProductMapper;
+
+    @Autowired
+    private JointMaterialMapper jointMaterialMapper;
 }

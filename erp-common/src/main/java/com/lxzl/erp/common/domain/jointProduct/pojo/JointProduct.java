@@ -29,6 +29,7 @@ public class JointProduct extends BasePO {
 
     @Valid
     private List<JointMaterial> jointMaterialList;   //组合商品物料项表
+    @Valid
     private List<JointProductProduct> jointProductProductList; // 组合商品商品表
 
     public Integer getJointProductId() {

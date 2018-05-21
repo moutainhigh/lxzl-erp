@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.domain.bank;
 
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 import java.math.BigDecimal;
@@ -199,6 +200,17 @@ public class BankSlipDetailDO  extends BaseDO {
 
 	public void setBankSlipId(Integer bankSlipId){
 		this.bankSlipId = bankSlipId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BankSlipDetailDO)) return false;
+
+		BankSlipDetailDO that = (BankSlipDetailDO) o;
+		if (getTradeSerialNo() != null ? !getTradeSerialNo().equals(that.getTradeSerialNo()) : that.getTradeSerialNo() != null)
+			return false;
+		return true;
 	}
 
 }

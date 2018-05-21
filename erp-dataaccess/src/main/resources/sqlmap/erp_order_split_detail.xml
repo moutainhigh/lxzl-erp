@@ -93,9 +93,10 @@
         <set>
             data_status = 2
         </set>
-        WHERE id IN
+        WHERE 1 = 1
         <choose>
             <when test="ids != null &amp;&amp; ids.size>0">
+                AND id IN
                 <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
                     #{item}
                 </foreach>
