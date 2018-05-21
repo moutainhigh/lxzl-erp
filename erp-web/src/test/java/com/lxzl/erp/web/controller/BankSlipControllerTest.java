@@ -28,6 +28,28 @@ import java.util.List;
  */
 public class BankSlipControllerTest extends ERPTransactionalTest {
     @Test
+    public void queryUnknownBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail =  new BankSlipDetail();
+//        bankSlipDetail.setBankSlipDetailId(2);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/queryUnknownBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
+    public void pageUnknownBankSlipDetail() throws Exception {
+        BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
+        bankSlipDetailQueryParam.setPageNo(1);
+        bankSlipDetailQueryParam.setPageSize(100);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/pageUnknownBankSlipDetail",bankSlipDetailQueryParam);
+    }
+
+    @Test
+    public void unknownBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(2);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/unknownBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
     public void queryBankSlipClaim() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
         bankSlipDetail.setBankSlipDetailId(9);
@@ -107,7 +129,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
         bankSlipClaim.setBankSlipDetailId(2);
         ArrayList<ClaimParam> list = new ArrayList<>();
         ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal("29820.00"));
+        claimParam.setClaimAmount(new BigDecimal("10000"));
         claimParam.setCustomerNo("LXCC-2001-20180514-00006");
 //        ClaimParam claimParam1 =  new ClaimParam();
 //        claimParam1.setClaimAmount(new BigDecimal("1500"));
