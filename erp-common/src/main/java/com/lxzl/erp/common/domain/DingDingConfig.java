@@ -45,7 +45,7 @@ public class DingDingConfig {
     /**
      * 接口---发起审批实例
      */
-    private static String interfaceSendSystemMessage = "sendSystemMessage";
+    private static String interfaceSendSystemMessage = "sendDingTalkMsg";
     /**
      * 获取注销钉钉网关工作流接口的url
      */

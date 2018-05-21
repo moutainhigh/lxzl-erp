@@ -1,5 +1,6 @@
 package com.lxzl.erp.common.domain.dingding.message;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.lxzl.erp.common.domain.dingding.DingdingBaseDTO;
 import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 
@@ -23,6 +24,7 @@ public class DingdingMessageDTO extends DingdingBaseDTO {
         this.messageTitle = messageThirdChannel.getMessageTitle();
     }
 
+    @JSONField(name = "userId")
     public Integer getReceiverUserId() {
         return receiverUserId;
     }
@@ -31,6 +33,7 @@ public class DingdingMessageDTO extends DingdingBaseDTO {
         this.receiverUserId = receiverUserId;
     }
 
+    @JSONField(name = "content")
     public String getMessageContent() {
         return messageContent;
     }
@@ -39,6 +42,7 @@ public class DingdingMessageDTO extends DingdingBaseDTO {
         this.messageContent = messageContent;
     }
 
+    @JSONField(name = "title")
     public String getMessageTitle() {
         return messageTitle;
     }
