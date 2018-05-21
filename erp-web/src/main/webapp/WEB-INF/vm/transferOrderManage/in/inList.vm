@@ -74,14 +74,6 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                {{#hasCommonActionButtons}}
-                                <th class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="orders" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                {{/hasCommonActionButtons}}
                                 <th>编号</th>
                                 <th>名称</th>
                                 <th>状态</th>
@@ -98,14 +90,6 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <td class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="mobileos" value="FR">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </td>
-                                {{/hasCommonActionButtons}}
                                 <td>{{transferOrderNo}}</td>
                                 <td>{{transferOrderName}}</td>
                                 <td class="{{transferOrderStatusClass}}">{{transferOrderStatusValue}}</td>

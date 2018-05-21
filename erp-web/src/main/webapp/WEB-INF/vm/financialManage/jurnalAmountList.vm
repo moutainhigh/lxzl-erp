@@ -24,14 +24,34 @@
                         <div class="pull-left ml10">
                             <script type="text/html" id="actionCommonButtonsTpl">
                                 <button type="button" class="btn btn-primary btn-sm refreshButton" title="刷新"><i class="fa fa-refresh"></i></button>
-##                                {{#acitonCommonButtons}}
+                                {{#acitonCommonButtons}}
                                 <a href="javascript:;" class="btn btn-primary btn-sm designateBtn" title="批量指派">
                                     <i class="fa fa-tag"></i> 批量指派
                                 </a>
-##                                {{/acitonCommonButtons}}
+                                {{/acitonCommonButtons}}
                             </script>
-
                             <div class="btn-group" id="actionCommonButtons"></div>
+
+                            <script type="text/html" id="exportButtonsTpl">
+                                {{#exportButtons}}
+                                <div style="display: inline-block">
+                                    <form action="${ctx}{{menuUrl}}exportExcel/exportPageBankSlipDetail" method="post" id="exportForm" target="exportFrame">
+                                        <input type="hidden" name="pageSize" value="1000000000">
+                                        <input type="hidden" name="pageNo" value="1">
+                                        <input type="hidden" name="loanSign" value="1">
+                                        <input type="hidden" class="payerName" name="payerName" value="">
+                                        <input type="hidden" class="bankSlipId" name="bankSlipId" value="">
+                                        <input type="hidden" class="isLocalization" name="isLocalization" value="">
+                                        <input type="hidden" class="detailStatus" name="detailStatus" value="">
+                                        <input type="hidden" class="slipDayStart" name="slipDayStart" value="">
+                                        <input type="hidden" class="slipDayEnd" name="slipDayEnd" value="">
+                                        <input type="submit" class="btn btn-primary btn-sm exportBtn"  value="导出">
+                                    </form>
+                                    <iframe id="exportFrame" name="exportFrame" src="about:blank" style="display:none;"></iframe>
+                                </div>
+                                {{/exportButtons}}
+                            </script>
+                            <div class="btn-group" id="exportButton" style="margin-left:-5px;"></div>
                         </div>
                         <div class="pull-right mr10 text-right">
                             <form id="searchForm" class="form-horizontal">
@@ -44,9 +64,14 @@
                                         <input type="text" name="payerName" id="payerName" class="form-control input-sm bradius" autocomplete="off" placeholder="付款人姓名">
                                     </div>
                                 </div>
+                                <div class="field form-group pull-right">
+                                    <div class="input-group">
+                                        <input type="hidden" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                    </div>
+                                </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <div class="input-group">
-                                        <input type="text" name="bankSlipId" id="bankSlipId" class="form-control input-sm bradius" autocomplete="off" placeholder="银行流水ID">
+                                        <input type="text" name="tradeSerialNo" id="tradeSerialNo" class="form-control input-sm bradius" autocomplete="off" placeholder="交易流水号">
                                     </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10">
@@ -59,11 +84,13 @@
                                         <select class="form-control input-sm bradius" name="detailStatus" id="detailStatus"></select>
                                     </div>
                                 </div>
-                                <div class="form-group pull-right mn mr10" style="width: 210px;">
-                                    <label for="slipMonth" class="input-group date">
-                                        <input type="text" name="slipMonth" id="slipMonth" data-type="date" data-format="yyyy-MM" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择月份">
+                                <div class="form-group pull-right mn mr10" style="width: 195px;">
+                                    <input type="hidden" name="slipDayStart" id="slipDayStart" />
+                                    <input type="hidden" name="slipDayEnd" id="slipDayEnd" />
+                                    <div class="input-group date" id="slipTimePicker">
+                                        <input type="text" name="slipTimePicker" id="slipTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择导入时间">
                                         <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                    </label>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -74,14 +101,14 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr>
-##                                {{#hasCommonActionButtons}}
+                                {{#hasCommonActionButtons}}
                                 <th>
                                     <label class="option block mn">
                                         <input type="checkbox" name="checkAll" value="">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </th>
-##                                {{/hasCommonActionButtons}}
+                               {{/hasCommonActionButtons}}
                                 <th>资金流水ID</th>
                                 <th>付款人</th>
                                 <th>商户订单号</th>
@@ -105,14 +132,14 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-##                                {{#hasCommonActionButtons}}
+                                {{#hasCommonActionButtons}}
                                 <td>
                                     <label class="option block mn">
                                         <input type="checkbox" name="checkItem" value="{{bankSlipDetailId}}">
                                         <span class="checkbox mn"></span>
                                     </label>
                                 </td>
-##                                {{/hasCommonActionButtons}}
+                                {{/hasCommonActionButtons}}
                                 <td>{{bankSlipId}}</td>
                                 <td>{{payerName}}</td>
                                 <td>{{merchantOrderNo}}</td>
@@ -176,7 +203,6 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
-<script type="text/javascript" src="${staticCommon}assets/admin-tools/admin-forms/js/jquery-tcm-month.js"></script>
 <script type="text/javascript">
     management_load_script('${staticManagement}/js',
             'modal.choose.customerByAll.js',

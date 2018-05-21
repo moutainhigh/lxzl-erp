@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailOperationLogMapper">
+
+	<resultMap id="BankSlipDetailOperationLogDO" type="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="bank_slip_detail_id" jdbcType="INTEGER" property="bankSlipDetailId" />
+		<result column="operation_type" jdbcType="INTEGER" property="operationType" />
+		<result column="operation_content" jdbcType="VARCHAR" property="operationContent" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ebsdol.id,ebsdol.bank_slip_detail_id,ebsdol.operation_type,ebsdol.operation_content,ebsdol.data_status,ebsdol.create_time,ebsdol.create_user
+	</sql>
+
+	<select id="findById" resultMap="BankSlipDetailOperationLogDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail_operation_log ebsdol 
+		WHERE ebsdol.id = #{id, jdbcType=INTEGER} AND ebsdol.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ebsdol.id) FROM erp_bank_slip_detail_operation_log ebsdol 
+		<where>
+			<if test="true">
+				AND ebsdol.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="BankSlipDetailOperationLogDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_bank_slip_detail_operation_log ebsdol 
+		<where>
+			<if test="true">
+				AND ebsdol.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="bankSlipDetailId != null">
+				bank_slip_detail_id = #{bankSlipDetailId,jdbcType=INTEGER},
+			</if>
+			<if test="operationType != null">
+				operation_type = #{operationType,jdbcType=INTEGER},
+			</if>
+			<if test="operationContent != null">
+				operation_content = #{operationContent,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO">
+		INSERT INTO erp_bank_slip_detail_operation_log <include refid="set_column_sql"/>
+	</insert>
+
+	<insert id="saveBankSlipDetailOperationLogDOList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+		INSERT INTO erp_bank_slip_detail_operation_log (id,bank_slip_detail_id,operation_type,operation_content,data_status,create_time,create_user)
+		VALUES
+		<foreach collection="list" separator="," item="bankSlipDetailOperationLogDO" index="index">
+			(
+			#{bankSlipDetailOperationLogDO.id,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.bankSlipDetailId,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.operationType,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.operationContent,jdbcType=VARCHAR},
+			#{bankSlipDetailOperationLogDO.dataStatus,jdbcType=INTEGER},
+			#{bankSlipDetailOperationLogDO.createTime,jdbcType=TIMESTAMP},
+			#{bankSlipDetailOperationLogDO.createUser,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO">
+		UPDATE erp_bank_slip_detail_operation_log <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<select id="findBankSlipDetailOperationLogCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT  COUNT(ebsdol.id) FROM erp_bank_slip_detail ebsd
+		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
+		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
+		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
+		LEFT JOIN  erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
+		LEFT JOIN  erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no
+		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
+		LEFT JOIN  erp_bank_slip_detail_operation_log ebsdol ON ebsd.id = ebsdol.bank_slip_detail_id
+		<where>
+			<if test="maps.bankSlipDetailOperationLogQueryParam != null &amp;&amp; maps.bankSlipDetailOperationLogQueryParam.bankSlipDetailId != null">
+				and ebsdol.bank_slip_detail_id = #{maps.bankSlipDetailOperationLogQueryParam.bankSlipDetailId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsdol.data_status = 1
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+				and 1=2
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+				and 1=1
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
+				and ebs.slip_status !=0 AND ebsd.detail_status != 5
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ebsd.detail_status = 4 or (CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ))
+			</if>
+			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
+				(CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )
+				)
+			</if>
+		</where>
+	</select>
+
+	<select id="findBankSlipDetailOperationLogByParams" resultMap="BankSlipDetailOperationLogDO" parameterType="map">
+		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
+		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
+		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
+		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
+		LEFT JOIN  erp_bank_slip_claim ebsc ON ebsd.id = ebsc.bank_slip_detail_id AND ebsc.data_status = 1
+		LEFT JOIN  erp_k3_mapping_customer ek3mc ON ek3mc.erp_customer_code = ebsc.customer_no
+		LEFT JOIN  erp_customer ec ON ebsc.customer_no = ec.customer_no
+		LEFT JOIN  erp_bank_slip_detail_operation_log ebsdol ON ebsd.id = ebsdol.bank_slip_detail_id
+		<where>
+			<if test="maps.bankSlipDetailOperationLogQueryParam != null &amp;&amp; maps.bankSlipDetailOperationLogQueryParam.bankSlipDetailId != null">
+				and ebsdol.bank_slip_detail_id = #{maps.bankSlipDetailOperationLogQueryParam.bankSlipDetailId,jdbcType=INTEGER}
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ebsdol.data_status = 1
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 0">
+				and 1=2
+			</if>
+			<if  test="maps.departmentType != null &amp;&amp;maps.departmentType == 1">
+				and 1=1
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 2">
+				and ebs.slip_status !=0 AND ebsd.detail_status != 5
+			</if>
+			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+				AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ebsd.detail_status = 4 or (CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END ))
+			</if>
+			<if  test="maps.subCompanyId != null &amp;&amp;maps.subCompanyId != 1">
+				and (ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} OR (ebsd.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER} AND ebsd.is_localization = 1 AND (ebs.slip_status = 1 OR ebs.slip_status = 2) AND ebsd.detail_status != 5) OR
+				(CASE WHEN ebsd.detail_status = 3 AND(
+				ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR}
+				or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
+				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}) THEN 1 = 1 ELSE 1=2 END )
+				)
+			</if>
+			LIMIT #{maps.start},#{maps.pageSize}
+		</where>
+	</select>
+
+</mapper>

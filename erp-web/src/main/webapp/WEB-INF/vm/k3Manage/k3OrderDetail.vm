@@ -219,6 +219,7 @@
 ##                                            <th>商品价值</th>
                                             <th>商品单价</th>
                                             <th>数量</th>
+                                            <th>在租数量</th>
                                             <th>租期</th>
                                             <th>支付方式</th>
                                             <th>设备押金</th>
@@ -237,9 +238,8 @@
                                             <td>
                                                 ￥{{#price}}{{productUnitAmount}}{{/price}}
                                             </td>
-                                            <td>
-                                                {{productCount}}
-                                            </td>
+                                            <td>{{productCount}}</td>
+                                            <td>{{rentingProductCount}}</td>
                                             <td>
                                                 <p>{{rentTypeValue}}</p>
                                                 <p>{{rentTimeLength}}{{rentTypeUnit}}</p>
@@ -285,6 +285,7 @@
 ##                                            <th>配件价值</th>
                                             <th>配件单价</th>
                                             <th>数量</th>
+                                            <th>在租数量</th>
                                             <th>租期</th>
                                             <th>支付方式</th>
                                             <th>设备押金</th>
@@ -303,9 +304,8 @@
                                             <td>
                                                 ￥{{#price}}{{materialUnitAmount}}{{/price}}
                                             </td>
-                                            <td>
-                                                {{materialCount}}
-                                            </td>
+                                            <td>{{materialCount}}</td>
+                                            <td>{{rentingMaterialCount}}</td>
                                             <td>
                                                 <p>{{rentTypeValue}}</p>
                                                 <p>{{rentTimeLength}}{{rentTypeUnit}}</p>

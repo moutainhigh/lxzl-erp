@@ -3,8 +3,8 @@ package com.lxzl.erp.common.domain.order.pojo;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -41,9 +41,23 @@ public class OrderProduct extends BasePO {
     private BigDecimal firstNeedPayRentAmount;      // 首付租金金额
     private BigDecimal firstNeedPayDepositAmount;      // 首付押金金额
 
+    private String serialNumber;        // 序号
+
+    private Integer orderJointProductId; // 订单组合商品id
+    @Transient
+    private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
+
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
+
+    public Integer getIdentityNo() {
+        return identityNo;
+    }
+
+    public void setIdentityNo(Integer identityNo) {
+        this.identityNo = identityNo;
+    }
 
     public Integer getOrderProductId() {
         return orderProductId;
@@ -285,5 +299,17 @@ public class OrderProduct extends BasePO {
 
     public void setProductNumber(String productNumber) {
         this.productNumber = productNumber;
+    }
+
+    public String getSerialNumber() { return serialNumber; }
+
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public Integer getOrderJointProductId() {
+        return orderJointProductId;
+    }
+
+    public void setOrderJointProductId(Integer orderJointProductId) {
+        this.orderJointProductId = orderJointProductId;
     }
 }

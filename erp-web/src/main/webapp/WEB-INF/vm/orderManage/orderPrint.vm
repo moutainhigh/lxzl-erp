@@ -146,7 +146,7 @@
     <div class="panel-heading">
         <span class="panel-title" style="color:red;"><span class="glyphicon glyphicon-print"></span>打印订单（创建21cm*27.9cm规格：控制面板=>设备和打印机=>选中当前打印机=>调整打印选项=>用户自定义打印纸），打印时候选择创建的规格，并调整打印机。</span>
         <div class="panel-header-menu pull-right mr10">
-            <a href="javascript:window.print()" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
+            <a href="javascript:;" id="printButton" class="btn btn-xs btn-default btn-gradient mr5"> <i class="fa fa-print fs13"></i> </a>
         </div>
     </div>
 </div>
@@ -154,7 +154,7 @@
     <script type="text/html" id="orderBaseInfoTpl">
         {{#order}}
         <div class="row p10">
-            <div class="col-xs-4">
+            <div class="col-xs-5">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>客户名称</label><span class="mr5">：</span></dt>
                     <dd>{{buyerCustomerName}}&nbsp;</dd>
@@ -178,7 +178,7 @@
                     <dd>{{buyerRemark}}&nbsp;</dd>
                 </dl>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-3">
                 <dl class="dl-horizontal dl-horizontal-rental mbn">
                     <dt><label>配送方式</label><span class="mr5">：</span></dt>
                     <dd>{{deliveryModeValue}}&nbsp;</dd>
@@ -340,7 +340,7 @@
                 </div>
                 <div class="print-col text-right">
 ##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
-                    <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
+##                    <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
                     <p class="orderNo" id="orderNo{{pagerIndex}}"></p>
                 </div>
             </div>
@@ -416,7 +416,7 @@
             </tr>
             <tr>
                 <td class="bg-light"><b>订单总价:</b></td><td>￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
-                <td class="bg-light"><b>其它费用:</b></td><td>运费：￥{{#price}}{{logisticsAmount}}{{/price}}</td>
+                <td class="bg-light"><b>其它费用:</b></td><td>￥{{#price}}{{logisticsAmount}}{{/price}}</td>
                 <td class="bg-light"><b>首付金额:</b></td><td>￥{{#price}}{{firstNeedPayAmount}}{{/price}}</td>
             </tr>
             </tbody>

@@ -3,12 +3,12 @@ package com.lxzl.erp.dataaccess.domain.jointProduct;
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
 
 
-public class JointProductSkuDO  extends BaseDO {
+public class JointProductProductDO extends BaseDO {
 
 	private Integer id;
 	private Integer jointProductId;
-	private Integer skuId;
-	private Integer skuCount;
+	private Integer productId;
+	private Integer productCount;
 	private Integer dataStatus;
 	private String remark;
 
@@ -28,20 +28,20 @@ public class JointProductSkuDO  extends BaseDO {
 		this.jointProductId = jointProductId;
 	}
 
-	public Integer getSkuId(){
-		return skuId;
+	public Integer getProductId() {
+		return productId;
 	}
 
-	public void setSkuId(Integer skuId){
-		this.skuId = skuId;
+	public void setProductId(Integer productId) {
+		this.productId = productId;
 	}
 
-	public Integer getSkuCount(){
-		return skuCount;
+	public Integer getProductCount() {
+		return productCount;
 	}
 
-	public void setSkuCount(Integer skuCount){
-		this.skuCount = skuCount;
+	public void setProductCount(Integer productCount) {
+		this.productCount = productCount;
 	}
 
 	public Integer getDataStatus(){

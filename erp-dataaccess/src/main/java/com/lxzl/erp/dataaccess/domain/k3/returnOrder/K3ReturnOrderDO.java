@@ -178,9 +178,6 @@ public class K3ReturnOrderDO  extends BaseDO {
 	}
 
 	public Integer getSuccessStatus() {
-		if (successStatus == null) {
-			successStatus = CommonConstant.COMMON_CONSTANT_YES;
-		}
 		return successStatus;
 	}
 

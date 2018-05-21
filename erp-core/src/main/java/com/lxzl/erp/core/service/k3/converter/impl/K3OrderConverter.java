@@ -23,10 +23,14 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderTimeAxisMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderTimeAxisDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +120,8 @@ public class K3OrderConverter implements ConvertK3DataService {
             formSEOrder.setOrderTypeNumber("D");
         }
         formSEOrder.setBusinessTypeNumber("ZY");// 经营类型  ZY	经营性租赁 RZ 融资性租赁
-        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())) {
+        if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(orderSubCompanyDO.getId())||
+                CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(orderSubCompanyDO.getId())) {
             formSEOrder.setOrderFromNumber("XS");// 订单来源 XS	线上 XX 线下
         } else {
             formSEOrder.setOrderFromNumber("XX");
@@ -160,18 +165,18 @@ public class K3OrderConverter implements ConvertK3DataService {
             if (CollectionUtil.isNotEmpty(erpOrder.getOrderProductList())) {
                 for (OrderProduct orderProduct : erpOrder.getOrderProductList()) {
                     Product product = JSON.parseObject(orderProduct.getProductSkuSnapshot(), Product.class);
-//                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId());
-                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(product.getCategoryId().toString());
-                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(product.getBrandId().toString());
+                    ProductDO productDO = productMapper.findByProductId(orderProduct.getProductId()); //目前从DO里面取编码等，从快照里面取sku
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(productDO.getCategoryId().toString());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(productDO.getBrandId().toString());
 
                     FormICItem formICItem = new FormICItem();
-                    formICItem.setModel(product.getProductModel());//型号名称
-                    formICItem.setName(product.getProductName());//商品名称
+                    formICItem.setModel(productDO.getProductModel());//型号名称
+                    formICItem.setName(productDO.getProductName());//商品名称
                     String number = "";
-                    if (StringUtil.isNotEmpty(product.getK3ProductNo())) {
-                        number = product.getK3ProductNo();
+                    if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
+                        number = productDO.getK3ProductNo();
                     } else {
-                        number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + product.getProductModel();
+                        number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
                     }
 
                     if(CommonConstant.COMMON_CONSTANT_YES.equals(erpOrder.getIsPeer())){
@@ -348,4 +353,8 @@ public class K3OrderConverter implements ConvertK3DataService {
     private UserSupport userSupport;
     @Autowired
     private OrderTimeAxisMapper orderTimeAxisMapper;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private ProductSkuMapper productSkuMapper;
 }

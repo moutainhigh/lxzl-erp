@@ -22,6 +22,11 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     void updateListForReturn(@Param("orderDOList") List<OrderDO> orderDOList);
 
     /**
+     * 根据订单项类型和订单项id查找关联的订单
+     */
+    OrderDO findByOrderItemTypeAndOrderItemReferId(@Param("orderItemType") Integer orderItemType, @Param("orderItemReferId") Integer orderItemReferId);
+
+    /**
      * 已支付的订单总金额
      * */
     BigDecimal findPaidOrderAmount();
@@ -37,4 +42,8 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     OrderDO findConsignByCustomerNo(@Param("customerNo") String customerNo);
 
     List<OrderDO> findByOrderStatus(@Param("orderStatus") Integer orderStatus);
+
+    Integer findOrderForReturnCountParam(@Param("maps") Map<String, Object> maps);
+
+    List<OrderDO> findOrderForReturnParam(@Param("maps") Map<String, Object> maps);
 }

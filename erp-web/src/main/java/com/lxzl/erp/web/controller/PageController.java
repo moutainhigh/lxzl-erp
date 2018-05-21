@@ -265,7 +265,7 @@ public class PageController extends BaseController {
     public String returnOrderManageEdit() {
         return "/returnOrderManage/returnOrderEdit";
     }
-    @RequestMapping(value = "/order-return-manage/print")
+    @RequestMapping(value = "/return-order-k3/print")
     public String returnOrderManagePrint() {
         return "/returnOrderManage/returnOrderPrint";
     }
@@ -721,6 +721,10 @@ public class PageController extends BaseController {
     public String statisticsManageReceiveSummaryList() {
         return "/statisticsManage/awaitReceiveSummaryList";
     }
+    @RequestMapping("/statistics/salesmanDeduct-list")
+    public String statisticsManageSalesmanDeductList() {
+        return "/statisticsManage/salesmanDeduct";
+    }
 
 
     //充值记录
@@ -875,6 +879,10 @@ public class PageController extends BaseController {
     public String groupedProductEdit() {
         return "/groupedProductManage/groupedProductEdit";
     }
+    @RequestMapping("/grouped-product/chooseProduct")
+    public String groupChooseProduct() {
+        return "/component/groupedProduct/chooseProductModal";
+    }
 
 
     //回访记录
@@ -993,10 +1001,10 @@ public class PageController extends BaseController {
         return "/component/product/chooseModal";
     }
 
-    //选择商品/组合商品Modal
-    @RequestMapping("/all-product/choose")
-    public String allProductChoose() {
-        return "/component/order/chooseProductModal";
+    //组合商品Modal
+    @RequestMapping("/group-product/choose")
+    public String groupProductChoose() {
+        return "/component/order/chooseGroupProduct";
     }
 
     //提交审核选择审核人及填写审核备注

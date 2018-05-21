@@ -1,22 +1,17 @@
 package com.lxzl.erp.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.ERPTransactionalTest;
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.order.pojo.OrderJointProduct;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
-import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
-import com.lxzl.erp.core.service.order.OrderService;
-import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
-import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -39,6 +34,57 @@ public class OrderTest extends ERPUnTransactionalTest {
 
     @Test
     public void testCreateOrder() throws Exception {
+        Order order = buildTestOrder();
+        TestResult testResult = getJsonTestResult("/order/create", order);
+    }
+
+    @Test
+    public void testCreateNewOrder() throws Exception {
+        Order order = buildTestOrder();
+
+        // 添加组合商品相关参数
+        List<OrderJointProduct> orderJointProductList = new ArrayList<>();
+        OrderJointProduct orderJointProduct1 = new OrderJointProduct();
+        orderJointProduct1.setJointProductCount(3);
+        orderJointProduct1.setJointProductId(16);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct.setProductId(2000003);
+        orderProduct.setProductSkuId(1019);
+        orderProduct.setProductCount(2);
+        orderProduct.setIsNewProduct(0);
+//        orderProduct.setInsuranceAmount(new BigDecimal(33.33333));
+        orderProduct.setProductUnitAmount(new BigDecimal(16.66666));
+//        orderProduct.setInsuranceAmount(new BigDecimal(33.33333));
+        orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct.setDepositAmount(new BigDecimal(100.00));
+        orderProductList.add(orderProduct);
+
+        orderJointProduct1.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial.setMaterialId(13);
+        orderMaterial.setMaterialCount(3);
+        orderMaterial.setIsNewMaterial(1);
+        orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(600.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(600.0));
+        orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial.setDepositAmount(new BigDecimal("30"));
+        orderMaterialList.add(orderMaterial);
+
+        orderJointProduct1.setOrderMaterialList(orderMaterialList);
+        orderJointProductList.add(orderJointProduct1);
+        order.setOrderJointProductList(orderJointProductList);
+        TestResult testResult = getJsonTestResult("/order/createNew", order);
+    }
+
+    private Order buildTestOrder() {
         Order order = new Order();
 
         order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
@@ -46,15 +92,16 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setBuyerRemark("2018.3.22 18:52 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
-        order.setOrderSubCompanyId(8);
-//        order.setDeliverySubCompanyId(1);
+        order.setOrderSubCompanyId(3);
+        order.setDeliverySubCompanyId(1);
 
-        order.setRentType(OrderRentType.RENT_TYPE_DAY);
+        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
         order.setRentTimeLength(6);
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct.setProductId(2000018);
         orderProduct.setProductSkuId(218);
         orderProduct.setProductCount(2);
         orderProduct.setIsNewProduct(0);
@@ -89,7 +136,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct2.setDepositAmount(new BigDecimal(600.0));
 //        orderProductList.add(orderProduct2);
 
-        order.setOrderProductList(orderProductList);
+//        order.setOrderProductList(orderProductList);
 
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
@@ -135,7 +182,8 @@ public class OrderTest extends ERPUnTransactionalTest {
         order.setCustomerConsignId(5445);
         order.setRentStartTime(new Date());
         order.setIsPeer(0);
-        TestResult testResult = getJsonTestResult("/order/create", order);
+
+        return order;
     }
 
     @Test
@@ -261,6 +309,148 @@ public class OrderTest extends ERPUnTransactionalTest {
     }
 
     @Test
+    public void testUpdateOrderNew() throws Exception {
+        Order order = new Order();
+        order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
+        order.setLogisticsAmount(new BigDecimal(12));
+        order.setBuyerRemark("2018.3.21 14:52 测试");
+        order.setRentStartTime(new Date());
+        order.setExpectDeliveryTime(new Date());
+        order.setOrderSubCompanyId(4);
+        order.setDeliverySubCompanyId(1);
+
+        order.setRentType(OrderRentType.RENT_TYPE_MONTH);
+        order.setRentTimeLength(20);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct.setOrderProductId(565);
+        orderProduct.setProductSkuId(216);
+        orderProduct.setProductCount(5);
+        orderProduct.setIsNewProduct(1);
+        orderProduct.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct.setProductUnitAmount(new BigDecimal(1000.0));
+        orderProduct.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct.setDepositAmount(new BigDecimal(1000.0));
+//        orderProductList.add(orderProduct);
+
+        OrderProduct orderProduct1 = new OrderProduct();
+        orderProduct1.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct1.setOrderProductId(564);
+        orderProduct1.setProductSkuId(216);
+        orderProduct1.setProductCount(5);
+        orderProduct1.setIsNewProduct(0);
+        orderProduct1.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct1.setProductUnitAmount(new BigDecimal(1000.0));
+        orderProduct1.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct1.setDepositAmount(new BigDecimal(1000.0));
+//        orderProductList.add(orderProduct1);
+
+        OrderProduct orderProduct2 = new OrderProduct();
+        orderProduct2.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderProduct2.setProductSkuId(216);
+        orderProduct2.setProductCount(4);
+        orderProduct2.setIsNewProduct(1);
+        orderProduct2.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct2.setProductUnitAmount(new BigDecimal(1000.0));
+        orderProduct2.setInsuranceAmount(new BigDecimal(1000.0));
+        orderProduct2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct2.setDepositAmount(new BigDecimal(1000.0));
+//        orderProductList.add(orderProduct2);
+
+//        order.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+//        orderMaterial.setOrderMaterialId(385);
+        orderMaterial.setMaterialId(40);
+        orderMaterial.setMaterialCount(10);
+        orderMaterial.setIsNewMaterial(1);
+        orderMaterial.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(100.0));
+        orderMaterial.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial.setDepositAmount(new BigDecimal(30.0));
+        orderMaterialList.add(orderMaterial);
+
+        OrderMaterial orderMaterial1 = new OrderMaterial();
+        orderMaterial1.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderMaterial1.setOrderMaterialId(384);
+        orderMaterial1.setMaterialId(40);
+        orderMaterial1.setMaterialCount(2);
+        orderMaterial1.setIsNewMaterial(0);
+        orderMaterial1.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial1.setMaterialUnitAmount(new BigDecimal(100.0));
+        orderMaterial1.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial1.setDepositAmount(new BigDecimal(30.0));
+//        orderMaterialList.add(orderMaterial1);
+
+        OrderMaterial orderMaterial2 = new OrderMaterial();
+        orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE);
+        orderMaterial2.setMaterialId(40);
+        orderMaterial2.setMaterialCount(5);
+        orderMaterial2.setIsNewMaterial(1);
+        orderMaterial2.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial2.setMaterialUnitAmount(new BigDecimal(100.0));
+        orderMaterial2.setInsuranceAmount(new BigDecimal(100.0));
+        orderMaterial2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial2.setDepositAmount(new BigDecimal(30.0));
+//        orderMaterialList.add(orderMaterial2);
+
+        order.setOrderMaterialList(orderMaterialList);
+
+        buildJoinProductParam(order);
+
+        order.setOrderNo("LXO-20180515-1000-00030");
+        order.setBuyerCustomerNo("LXCC-027-20180322-00784");
+        order.setCustomerConsignId(5445);
+        order.setRentStartTime(new Date());
+        order.setIsPeer(0);
+        TestResult testResult = getJsonTestResult("/order/updateNew", order);
+    }
+
+    private void buildJoinProductParam(Order order) {
+        // 添加组合商品相关参数
+        List<OrderJointProduct> orderJointProductList = new ArrayList<>();
+        OrderJointProduct orderJointProduct1 = new OrderJointProduct();
+        orderJointProduct1.setOrderJointProductId(15);
+        orderJointProduct1.setJointProductCount(2);
+        orderJointProduct1.setJointProductId(16);
+
+        List<OrderProduct> orderProductList = new ArrayList<>();
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrderJointProductId(15); // 必须一致
+        orderProduct.setOrderProductId(2648); // 必须一致，没有表示新增
+        orderProduct.setProductId(2000003); // 必须一致
+        orderProduct.setProductSkuId(1017); // 可编辑
+        orderProduct.setProductCount(2); // 可编辑
+        orderProduct.setIsNewProduct(1); // 可编辑
+        orderProduct.setProductUnitAmount(new BigDecimal(16.66666)); // 可编辑
+        orderProductList.add(orderProduct);
+        orderJointProduct1.setOrderProductList(orderProductList);
+
+        List<OrderMaterial> orderMaterialList = new ArrayList<>();
+        OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setOrderJointProductId(15); // 必须一致
+        orderMaterial.setOrderMaterialId(4253); // 必须一致，没有表示新增
+        orderMaterial.setMaterialId(13); // 必须一致
+        orderMaterial.setMaterialCount(3); // 可编辑
+        orderMaterial.setIsNewMaterial(1); // 可编辑
+        orderMaterial.setMaterialUnitAmount(new BigDecimal(600.0)); // 可编辑
+        orderMaterialList.add(orderMaterial);
+
+        orderJointProduct1.setOrderMaterialList(orderMaterialList);
+        orderJointProductList.add(orderJointProduct1);
+        order.setOrderJointProductList(orderJointProductList);
+    }
+
+    @Test
     public void testCommitOrder() throws Exception {
         OrderCommitParam order = new OrderCommitParam();
         order.setOrderNo("LXO-20180328-027-01290");
@@ -339,7 +529,8 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderNo("LXO-20180307-1000-00014");
 //        param.setDeliverySubCompanyId(2);
 //        param.setOrderStatus(16);
-        param.setPayStatus(24);
+        param.setEndRentStratTime(new Date());
+//        param.setPayStatus(24);
         TestResult testResult = getJsonTestResult("/order/queryAllOrder", param);
     }
     @Test
@@ -365,8 +556,15 @@ public class OrderTest extends ERPUnTransactionalTest {
     @Test
     public void queryOrderByNo() throws Exception {
         Order order = new Order();
-        order.setOrderNo("LXO-20180404-1000-00005");
+        order.setOrderNo("LXO-20180514-1000-00023");
         TestResult testResult = getJsonTestResult("/order/queryOrderByNo", order);
+    }
+
+    @Test
+    public void queryOrderByNoNew() throws Exception {
+        Order order = new Order();
+        order.setOrderNo("LXO-20180515-1000-00028");
+        TestResult testResult = getJsonTestResult("/order/queryOrderByNoNew", order);
     }
 
     @Test
@@ -392,7 +590,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         order.setDeliveryMode(DeliveryMode.DELIVERY_MODE_EXPRESS);
         order.setLogisticsAmount(new BigDecimal(0.0));
-        order.setBuyerRemark("2018.3.17 17:19 测试");
+        order.setBuyerRemark("2018.5.5 09:27 测试");
         order.setRentStartTime(new Date());
         order.setExpectDeliveryTime(new Date());
         order.setOrderSubCompanyId(8);
@@ -402,6 +600,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 
         List<OrderProduct> orderProductList = new ArrayList<>();
         OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setSerialNumber("1");
         orderProduct.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT);
         orderProduct.setProductSkuId(40);
         orderProduct.setIsNewProduct(1);
@@ -412,11 +611,25 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderProduct.setDepositAmount(new BigDecimal(0.0));
         orderProductList.add(orderProduct);
+
+        OrderProduct orderProduct2 = new OrderProduct();
+        orderProduct2.setSerialNumber("2");
+        orderProduct2.setPayMode(OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT);
+        orderProduct2.setProductSkuId(40);
+        orderProduct2.setIsNewProduct(1);
+        orderProduct2.setProductCount(1);
+        orderProduct2.setInsuranceAmount(new BigDecimal(0.0));
+        orderProduct2.setProductUnitAmount(new BigDecimal(10.0));
+        orderProduct2.setInsuranceAmount(new BigDecimal(0.0));
+        orderProduct2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderProduct2.setDepositAmount(new BigDecimal(0.0));
+        orderProductList.add(orderProduct2);
         order.setOrderProductList(orderProductList);
 
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
         OrderMaterial orderMaterial = new OrderMaterial();
+        orderMaterial.setSerialNumber("1");
         orderMaterial.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
         orderMaterial.setMaterialId(12);
         orderMaterial.setIsNewMaterial(1);
@@ -427,7 +640,20 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderMaterial.setDepositAmount(new BigDecimal(1200.0));
         orderMaterialList.add(orderMaterial);
-//        order.setOrderMaterialList(orderMaterialList);
+
+        OrderMaterial orderMaterial2 = new OrderMaterial();
+        orderMaterial2.setSerialNumber("2");
+        orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+        orderMaterial2.setMaterialId(12);
+        orderMaterial2.setIsNewMaterial(1);
+        orderMaterial2.setMaterialCount(5);
+        orderMaterial2.setInsuranceAmount(new BigDecimal(1200));
+        orderMaterial2.setMaterialUnitAmount(new BigDecimal(1200.0));
+        orderMaterial2.setInsuranceAmount(new BigDecimal(1200.0));
+        orderMaterial2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderMaterial2.setDepositAmount(new BigDecimal(1200.0));
+        orderMaterialList.add(orderMaterial2);
+        order.setOrderMaterialList(orderMaterialList);
 
         order.setBuyerCustomerNo("LXCC-2000-20180328-00823");
         order.setRentStartTime(new Date());

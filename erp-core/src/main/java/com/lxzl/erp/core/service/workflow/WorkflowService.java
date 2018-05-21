@@ -7,6 +7,7 @@ import com.lxzl.erp.common.domain.workflow.WorkflowLinkQueryParam;
 import com.lxzl.erp.common.domain.workflow.WorkflowTemplateQueryParam;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowTemplate;
+import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.core.service.BaseService;
 
 import java.util.List;
@@ -151,4 +152,7 @@ public interface WorkflowService extends BaseService {
      * @return
      */
     ServiceResult<String, String> workflowImportData();
+
+
+    ServiceResult<String, String> channelCustomerCommitWorkFlow(WorkflowLinkDO workflowLinkDO, Integer verifyUser);
 }

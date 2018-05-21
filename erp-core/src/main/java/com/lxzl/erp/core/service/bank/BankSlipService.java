@@ -2,15 +2,14 @@ package com.lxzl.erp.core.service.bank;
 
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.BankSlipDetailOperationLogQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.BankSlipQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
-import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
-
-import java.util.List;
 
 /**
  * @Author: your name
@@ -44,15 +43,7 @@ public interface BankSlipService {
      */
     ServiceResult<String, Integer> pushDownBankSlip(BankSlip bankSlip);
 
-    /**
-     * 忽略流水项
-     *
-     * @param : bankSlipDetail
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/3/22 16:13
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
-     */
-    ServiceResult<String, Integer> ignoreBankSlipDetail(BankSlipDetail bankSlipDetail);
+
 
     /**
      * 认领流水项
@@ -130,4 +121,36 @@ public interface BankSlipService {
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Integer>
      */
     ServiceResult<String,BankSlipDetail> queryBankSlipClaim(BankSlipDetail bankSlipDetail);
+    /**
+    * 未知银行流水详情
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/12 14:42
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String, BankSlipDetail>  queryUnknownBankSlipDetail(BankSlipDetail bankSlipDetail);
+    /**
+    * 查询操作日志
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/15 14:34
+    * @param : bankSlipDetailOperationLogQueryParam
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.bank.pojo.BankSlip>>
+    */
+    ServiceResult<String,Page<BankSlipDetailOperationLog>> pageBankSlipDetailOperationLog(BankSlipDetailOperationLogQueryParam bankSlipDetailOperationLogQueryParam);
+    /**
+    * 未知流水分页
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/15 21:37
+    * @param : bankSlipDetailOperationLogQueryParam
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,com.lxzl.erp.common.domain.Page<com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog>>
+    */
+    ServiceResult<String, Page<BankSlipDetail>> pageUnknownBankSlipDetail(BankSlipDetailQueryParam bankSlipDetailQueryParam);
+    /**
+    * 指派未知数据
+    * @Author : XiaoLuYu
+    * @Date : Created in 2018/5/15 23:08
+    * @param : bankSlipDetail
+    * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
+    */
+    ServiceResult<String,String> unknownBankSlipDetail(BankSlipDetail bankSlipDetail);
 }

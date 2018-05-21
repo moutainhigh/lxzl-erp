@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper">
+
+	<resultMap id="ReletOrderDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="relet_order_no" jdbcType="VARCHAR" property="reletOrderNo" />
+		<result column="order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="buyer_customer_id" jdbcType="INTEGER" property="buyerCustomerId" />
+		<result column="buyer_customer_no" jdbcType="VARCHAR" property="buyerCustomerNo" />
+		<result column="buyer_customer_name" jdbcType="VARCHAR" property="buyerCustomerName" />
+		<result column="order_sub_company_id" jdbcType="INTEGER" property="orderSubCompanyId" />
+		<result column="delivery_sub_company_id" jdbcType="INTEGER" property="deliverySubCompanyId" />
+		<result column="order_sub_company_name" jdbcType="VARCHAR" property="orderSubCompanyName"/>
+		<result column="delivery_sub_company_name" jdbcType="VARCHAR" property="deliverySubCompanyName"/>
+		<result column="rent_type" jdbcType="INTEGER" property="rentType" />
+		<result column="rent_time_length" jdbcType="INTEGER" property="rentTimeLength" />
+		<result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="rent_start_time" jdbcType="TIMESTAMP" property="rentStartTime" />
+		<result column="total_product_count" jdbcType="INTEGER" property="totalProductCount" />
+		<result column="total_product_amount" jdbcType="DECIMAL" property="totalProductAmount" />
+		<result column="total_material_count" jdbcType="INTEGER" property="totalMaterialCount" />
+		<result column="total_material_amount" jdbcType="DECIMAL" property="totalMaterialAmount" />
+		<result column="total_order_amount" jdbcType="DECIMAL" property="totalOrderAmount" />
+		<result column="total_paid_order_amount" jdbcType="DECIMAL" property="totalPaidOrderAmount" />
+		<result column="order_seller_id" jdbcType="INTEGER" property="orderSellerId" />
+		<result column="order_seller_name" jdbcType="VARCHAR" property="orderSellerName"/>
+		<result column="order_union_seller_id" jdbcType="INTEGER" property="orderUnionSellerId" />
+		<result column="total_discount_amount" jdbcType="DECIMAL" property="totalDiscountAmount" />
+		<result column="relet_order_status" jdbcType="INTEGER" property="reletOrderStatus" />
+		<result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+		<result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+		<result column="expect_return_time" jdbcType="TIMESTAMP" property="expectReturnTime" />
+		<result column="actual_return_time" jdbcType="TIMESTAMP" property="actualReturnTime" />
+		<result column="high_tax_rate" jdbcType="INTEGER" property="highTaxRate" />
+		<result column="low_tax_rate" jdbcType="INTEGER" property="lowTaxRate" />
+		<result column="statement_date" jdbcType="INTEGER" property="statementDate" />
+		<result column="buyer_remark" jdbcType="VARCHAR" property="buyerRemark" />
+		<result column="product_summary" jdbcType="VARCHAR" property="productSummary" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="owner" jdbcType="INTEGER" property="owner" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<collection property="reletOrderProductDOList" resultMap="ReletOrderProductDO"/>
+		<collection property="reletOrderMaterialDOList" resultMap="ReletOrderMaterialDO"/>
+	</resultMap>
+
+	<resultMap id="ReletOrderMaterialDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO">
+		<id column="material_id" jdbcType="INTEGER" property="id" />
+		<result column="material_relet_order_id" jdbcType="INTEGER" property="reletOrderId" />
+		<result column="material_relet_order_no" jdbcType="VARCHAR" property="reletOrderNo" />
+		<result column="material_order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="material_order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="material_order_material_id" jdbcType="INTEGER" property="orderMaterialId" />
+		<result column="material_material_id" jdbcType="INTEGER" property="materialId" />
+		<result column="material_material_name" jdbcType="VARCHAR" property="materialName" />
+		<result column="material_material_count" jdbcType="INTEGER" property="materialCount" />
+		<result column="material_material_unit_amount" jdbcType="DECIMAL" property="materialUnitAmount" />
+		<result column="material_material_amount" jdbcType="DECIMAL" property="materialAmount" />
+		<result column="material_material_snapshot" jdbcType="VARCHAR" property="materialSnapshot" />
+		<result column="material_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="material_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="material_is_new_material" jdbcType="INTEGER" property="isNewMaterial" />
+		<result column="material_renting_material_count" jdbcType="INTEGER" property="rentingMaterialCount" />
+		<result column="material_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="material_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="material_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="material_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="material_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="material_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<resultMap id="ReletOrderProductDO" type="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO">
+		<id column="product_id" jdbcType="INTEGER" property="id" />
+		<result column="product_relet_order_id" jdbcType="INTEGER" property="reletOrderId" />
+		<result column="product_relet_order_no" jdbcType="VARCHAR" property="reletOrderNo" />
+		<result column="product_order_id" jdbcType="INTEGER" property="orderId" />
+		<result column="product_order_no" jdbcType="VARCHAR" property="orderNo" />
+		<result column="product_order_product_id" jdbcType="INTEGER" property="orderProductId" />
+		<result column="product_product_id" jdbcType="INTEGER" property="productId" />
+		<result column="product_product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_product_sku_id" jdbcType="INTEGER" property="productSkuId" />
+		<result column="product_product_sku_name" jdbcType="VARCHAR" property="productSkuName" />
+		<result column="product_product_count" jdbcType="INTEGER" property="productCount" />
+		<result column="product_product_unit_amount" jdbcType="DECIMAL" property="productUnitAmount" />
+		<result column="product_product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="product_product_sku_snapshot" jdbcType="VARCHAR" property="productSkuSnapshot" />
+		<result column="product_payment_cycle" jdbcType="INTEGER" property="paymentCycle" />
+		<result column="product_pay_mode" jdbcType="INTEGER" property="payMode" />
+		<result column="product_is_new_product" jdbcType="INTEGER" property="isNewProduct" />
+		<result column="product_renting_product_count" jdbcType="INTEGER" property="rentingProductCount" />
+		<result column="product_data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="product_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="product_create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="product_create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="product_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="product_update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		ero.id,ero.relet_order_no,ero.order_id,ero.order_no,ero.buyer_customer_id,ero.buyer_customer_no,ero.buyer_customer_name,ero.order_sub_company_id,ero.delivery_sub_company_id,ero.rent_type,ero.rent_time_length,ero.rent_length_type,ero.rent_start_time,ero.total_product_count,ero.total_product_amount,ero.total_material_count,ero.total_material_amount,ero.total_order_amount,ero.total_paid_order_amount,ero.order_seller_id,ero.order_union_seller_id,ero.total_discount_amount,ero.relet_order_status,ero.pay_status,ero.pay_time,ero.expect_return_time,ero.actual_return_time,ero.high_tax_rate,ero.low_tax_rate,ero.statement_date,ero.buyer_remark,ero.product_summary,ero.data_status,ero.remark,ero.owner,ero.create_time,ero.create_user,ero.update_time,ero.update_user
+	</sql>
+
+	<sql id="material_column_List">
+		erom.id as material_id,erom.relet_order_id as material_relet_order_id,erom.relet_order_no as material_relet_order_no,erom.order_id as material_order_id,erom.order_no as material_order_no,erom.order_material_id as material_order_material_id,erom.material_id as material_material_id,erom.material_name as material_material_name,erom.material_count as material_material_count,erom.material_unit_amount as material_material_unit_amount,erom.material_amount as material_material_amount,erom.material_snapshot as material_material_snapshot,erom.payment_cycle as material_payment_cycle,erom.pay_mode as material_pay_mode,erom.is_new_material as material_is_new_material,erom.renting_material_count as material_renting_material_count,erom.data_status as material_data_status,erom.remark as material_remark,erom.create_time as material_create_time,erom.create_user as material_create_user,erom.update_time as material_update_time,erom.update_user as material_update_user
+	</sql>
+
+	<sql id="product_column_List">
+		erop.id as product_id,erop.relet_order_id as product_relet_order_id,erop.relet_order_no as product_relet_order_no,erop.order_id as product_order_id,erop.order_no as product_order_no,erop.order_product_id as product_order_product_id,erop.product_id as product_product_id,erop.product_name as product_product_name,erop.product_sku_id as product_product_sku_id,erop.product_sku_name as product_product_sku_name,erop.product_count as product_product_count,erop.product_unit_amount as product_product_unit_amount,erop.product_amount as product_product_amount,erop.product_sku_snapshot as product_product_sku_snapshot,erop.payment_cycle as product_payment_cycle,erop.pay_mode as product_pay_mode,erop.is_new_product as product_is_new_product,erop.renting_product_count as product_renting_product_count,erop.data_status as product_data_status,erop.remark as product_remark,erop.create_time as product_create_time,erop.create_user as product_create_user,erop.update_time as product_update_time,erop.update_user as product_update_user
+	</sql>
+
+	<select id="findById" resultMap="ReletOrderDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_relet_order ero 
+		WHERE ero.id = #{id, jdbcType=INTEGER} AND ero.data_status = 1 
+	</select>
+
+	<select id="findByReletOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">
+		SELECT <include refid="column_List"/> FROM erp_relet_order ero
+		WHERE ero.relet_order_no = #{reletOrderNo, jdbcType=VARCHAR} AND ero.data_status = 1
+	</select>
+
+	<select id="findRecentlyReletOrderByOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">
+		SELECT  <include refid="column_List"/> FROM erp_relet_order ero
+		WHERE ero.order_no = #{orderNo, jdbcType=VARCHAR} AND ero.data_status = 1
+		ORDER  BY ero.create_time DESC
+		LIMIT 0,1
+	</select>
+
+
+	<select id="findDetailByReletOrderId" resultMap="ReletOrderDO" parameterType="java.lang.Integer">
+		SELECT m_order.*
+		<trim prefix=",">
+			<include refid="product_column_List"/>
+		</trim>
+		<trim prefix=",">
+			<include refid="material_column_List"/>
+		</trim>
+		FROM (
+		SELECT
+		<include refid="column_List"/>
+		<trim prefix=",">
+			eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
+			delivery_sub_company_name
+		</trim>
+		FROM erp_relet_order ero
+		LEFT JOIN erp_user eu ON eu.id = ero.order_seller_id
+		LEFT JOIN erp_sub_company esc ON esc.id = ero.order_sub_company_id AND esc.data_status = 1
+		LEFT JOIN erp_sub_company escd ON escd.id = ero.delivery_sub_company_id AND escd.data_status = 1
+		WHERE ero.id = #{reletOrderId, jdbcType=INTEGER} and ero.data_status=1
+		) m_order
+		LEFT JOIN erp_relet_order_product erop ON m_order.id = erop.relet_order_id and erop.data_status = 1
+		LEFT JOIN erp_relet_order_material erom ON m_order.id = erom.relet_order_id and erom.data_status = 1
+	</select>
+
+
+	<select id="findReletOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id)
+		FROM erp_relet_order  ero
+		INNER JOIN erp_user eu ON eu.id = ero.order_seller_id
+		INNER JOIN erp_sub_company esc ON esc.id = ero.order_sub_company_id AND esc.data_status = 1
+		LEFT JOIN erp_sub_company escd ON escd.id = ero.delivery_sub_company_id AND escd.data_status = 1
+		<where>
+			<if test="maps.reletOrderQueryParam.buyerRealName != null &amp;&amp; maps.reletOrderQueryParam.buyerRealName != ''">
+				and ero.buyer_customer_name like CONCAT('%','${maps.reletOrderQueryParam.buyerRealName}','%' )
+			</if>
+
+			<if test="maps.reletOrderQueryParam.subCompanyId != null">
+				and ero.order_sub_company_id = #{maps.reletOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.deliverySubCompanyId != null">
+				and ero.delivery_sub_company_id = #{maps.reletOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderId != null">
+				and ero.order_id = #{maps.reletOrderQueryParam.orderId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderNo != null &amp;&amp; maps.reletOrderQueryParam.orderNo != ''">
+				and ero.order_no like CONCAT('%','${maps.reletOrderQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.reletOrderQueryParam.buyerCustomerId != null">
+				and ero.buyer_customer_id = #{maps.reletOrderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.reletOrderQueryParam.buyerCustomerNo != ''">
+				and ero.buyer_customer_no = #{maps.reletOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderSellerId != null">
+				and ero.order_seller_id = #{maps.reletOrderQueryParam.orderSellerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.rentType != null">
+				and ero.rent_type = #{maps.reletOrderQueryParam.rentType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderStatus != null">
+				and ero.relet_order_status = #{maps.reletOrderQueryParam.orderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderStatusList != null &amp;&amp; maps.reletOrderQueryParam.orderStatusList.size() > 0">
+				and ero.relet_order_status in
+				<foreach item="item" index="index" collection="maps.reletOrderQueryParam.orderStatusList"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="maps.reletOrderQueryParam.payStatus != null">
+				and ero.pay_status = #{maps.reletOrderQueryParam.payStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND ero.create_time >= #{maps.reletOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.reletOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.reletOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
+			</if>
+			<include refid="permission_sql.order_control"/>
+		</where>
+	</select>
+
+
+	<select id="findReletOrderByParams" resultMap="ReletOrderDO" parameterType="map">
+
+		SELECT
+		<include refid="column_List"/>
+		<trim prefix=",">
+			eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
+			delivery_sub_company_name, ec.customer_no AS buyer_customer_no
+		</trim>
+		FROM erp_relet_order   ero
+		INNER JOIN erp_user eu ON eu.id = ero.order_seller_id
+		INNER JOIN erp_customer ec ON ec.id = ero.buyer_customer_id AND ec.data_status = 1
+		INNER JOIN erp_sub_company esc ON esc.id = ero.order_sub_company_id AND esc.data_status = 1
+		LEFT JOIN erp_sub_company escd ON escd.id = ero.delivery_sub_company_id AND escd.data_status = 1
+		<where>
+			<if test="maps.reletOrderQueryParam.buyerRealName != null &amp;&amp; maps.reletOrderQueryParam.buyerRealName != ''">
+				and ero.buyer_customer_name like CONCAT('%','${maps.reletOrderQueryParam.buyerRealName}','%' )
+			</if>
+			<if test="maps.reletOrderQueryParam.subCompanyId != null">
+				and ero.order_sub_company_id = #{maps.reletOrderQueryParam.subCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.deliverySubCompanyId != null">
+				and ero.delivery_sub_company_id = #{maps.reletOrderQueryParam.deliverySubCompanyId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderId != null">
+				and ero.order_id = #{maps.reletOrderQueryParam.orderId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderNo != null &amp;&amp; maps.reletOrderQueryParam.orderNo != ''">
+				and ero.order_no like CONCAT('%','${maps.reletOrderQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.reletOrderQueryParam.buyerCustomerId != null">
+				and ero.buyer_customer_id = #{maps.reletOrderQueryParam.buyerCustomerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.buyerCustomerNo != null &amp;&amp; maps.reletOrderQueryParam.buyerCustomerNo != ''">
+				and ec.customer_no = #{maps.reletOrderQueryParam.buyerCustomerNo, jdbcType=VARCHAR}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderSellerId != null">
+				and ero.order_seller_id = #{maps.reletOrderQueryParam.orderSellerId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.rentType != null">
+				and ero.rent_type = #{maps.reletOrderQueryParam.rentType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderStatus != null">
+				and ero.relet_order_status = #{maps.reletOrderQueryParam.orderStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderStatusList != null &amp;&amp; maps.reletOrderQueryParam.orderStatusList.size() > 0">
+				and ero.relet_order_status in
+				<foreach item="item" index="index" collection="maps.reletOrderQueryParam.orderStatusList"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="maps.reletOrderQueryParam.payStatus != null">
+				and ero.pay_status = #{maps.reletOrderQueryParam.payStatus, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.createStartTime != null">
+				<![CDATA[ AND ero.create_time >= #{maps.reletOrderQueryParam.createStartTime} ]]>
+			</if>
+			<if test="maps.reletOrderQueryParam.createEndTime != null ">
+				<![CDATA[ AND ero.create_time <= #{maps.reletOrderQueryParam.createEndTime} ]]>
+			</if>
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
+			</if>
+			<include refid="permission_sql.order_control"/>
+		</where>
+		ORDER BY ero.create_time DESC
+		LIMIT #{maps.start},#{maps.pageSize}
+
+	</select>
+
+
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(ero.id) FROM erp_relet_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="ReletOrderDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_relet_order ero 
+		<where>
+			<if test="true">
+				AND ero.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="reletOrderNo != null">
+				relet_order_no = #{reletOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=INTEGER},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerCustomerId != null">
+				buyer_customer_id = #{buyerCustomerId,jdbcType=INTEGER},
+			</if>
+			<if test="buyerCustomerNo != null">
+				buyer_customer_no = #{buyerCustomerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerCustomerName != null">
+				buyer_customer_name = #{buyerCustomerName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderSubCompanyId != null">
+				order_sub_company_id = #{orderSubCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="deliverySubCompanyId != null">
+				delivery_sub_company_id = #{deliverySubCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="rentType != null">
+				rent_type = #{rentType,jdbcType=INTEGER},
+			</if>
+			<if test="rentTimeLength != null">
+				rent_time_length = #{rentTimeLength,jdbcType=INTEGER},
+			</if>
+			<if test="rentLengthType != null">
+				rent_length_type = #{rentLengthType,jdbcType=INTEGER},
+			</if>
+			<if test="rentStartTime != null">
+				rent_start_time = #{rentStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="totalProductCount != null">
+				total_product_count = #{totalProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalProductAmount != null">
+				total_product_amount = #{totalProductAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalMaterialCount != null">
+				total_material_count = #{totalMaterialCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalMaterialAmount != null">
+				total_material_amount = #{totalMaterialAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalOrderAmount != null">
+				total_order_amount = #{totalOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalPaidOrderAmount != null">
+				total_paid_order_amount = #{totalPaidOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderSellerId != null">
+				order_seller_id = #{orderSellerId,jdbcType=INTEGER},
+			</if>
+			<if test="orderUnionSellerId != null">
+				order_union_seller_id = #{orderUnionSellerId,jdbcType=INTEGER},
+			</if>
+			<if test="totalDiscountAmount != null">
+				total_discount_amount = #{totalDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="reletOrderStatus != null">
+				relet_order_status = #{reletOrderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="payStatus != null">
+				pay_status = #{payStatus,jdbcType=INTEGER},
+			</if>
+			<if test="payTime != null">
+				pay_time = #{payTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expectReturnTime != null">
+				expect_return_time = #{expectReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="actualReturnTime != null">
+				actual_return_time = #{actualReturnTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="highTaxRate != null">
+				high_tax_rate = #{highTaxRate,jdbcType=INTEGER},
+			</if>
+			<if test="lowTaxRate != null">
+				low_tax_rate = #{lowTaxRate,jdbcType=INTEGER},
+			</if>
+			<if test="statementDate != null">
+				statement_date = #{statementDate,jdbcType=INTEGER},
+			</if>
+			<if test="buyerRemark != null">
+				buyer_remark = #{buyerRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="productSummary != null">
+				product_summary = #{productSummary,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				owner = #{owner,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO">
+		INSERT INTO erp_relet_order <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO">
+		UPDATE erp_relet_order <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+</mapper>

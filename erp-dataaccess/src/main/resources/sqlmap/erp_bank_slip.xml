@@ -7,7 +7,7 @@
         <result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId"/>
         <result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName"/>
         <result column="bank_type" jdbcType="INTEGER" property="bankType"/>
-        <result column="slip_month" jdbcType="TIMESTAMP" property="slipMonth"/>
+        <result column="slip_day" jdbcType="TIMESTAMP" property="slipDay"/>
         <result column="account_no" jdbcType="VARCHAR" property="accountNo"/>
         <result column="in_count" jdbcType="INTEGER" property="inCount"/>
         <result column="need_claim_count" jdbcType="INTEGER" property="needClaimCount"/>
@@ -66,7 +66,7 @@
     </resultMap>
 
     <sql id="column_List">
-		ebs.id,ebs.sub_company_id,ebs.sub_company_name,ebs.bank_type,ebs.slip_month,ebs.account_no,ebs.in_count,ebs.need_claim_count,ebs.claim_count,ebs.confirm_count,ebs.slip_status,ebs.excel_url,ebs.localization_count,ebs.data_status,ebs.remark,ebs.create_time,ebs.create_user,ebs.update_time,ebs.update_user
+		ebs.id,ebs.sub_company_id,ebs.sub_company_name,ebs.bank_type,ebs.slip_day,ebs.account_no,ebs.in_count,ebs.need_claim_count,ebs.claim_count,ebs.confirm_count,ebs.slip_status,ebs.excel_url,ebs.localization_count,ebs.data_status,ebs.remark,ebs.create_time,ebs.create_user,ebs.update_time,ebs.update_user
 	</sql>
 
     <sql id="detail_column_List">
@@ -79,8 +79,9 @@
 
     <select id="findById" resultMap="BankSlipDO" parameterType="java.lang.Integer">
         SELECT
-        <include refid="column_List"/>
+        <include refid="column_List"/>,<include refid="detail_column_List"/>
         FROM erp_bank_slip ebs
+        LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
         WHERE ebs.id = #{id, jdbcType=INTEGER} AND ebs.data_status = 1
     </select>
 
@@ -124,8 +125,8 @@
             <if test="bankType != null">
                 bank_type = #{bankType,jdbcType=INTEGER},
             </if>
-            <if test="slipMonth != null">
-                slip_month = #{slipMonth,jdbcType=TIMESTAMP},
+            <if test="slipDay != null">
+                slip_day = #{slipDay,jdbcType=TIMESTAMP},
             </if>
             <if test="accountNo != null">
                 account_no = #{accountNo,jdbcType=VARCHAR},
@@ -196,8 +197,11 @@
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
                 and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
             </if>
-            <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
-                and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
+            <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayStart != null">
+                <![CDATA[ and ebs.slip_day >= #{maps.bankSlipQueryParam.slipDayStart,jdbcType=DATE} ]]>
+            </if>
+            <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayEnd != null">
+                <![CDATA[ and ebs.slip_day < #{maps.bankSlipQueryParam.slipDayEnd,jdbcType=DATE} ]]>
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null">
                 and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
@@ -234,8 +238,11 @@
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.bankType != null">
                 and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
             </if>
-            <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipMonth != null">
-                and ebs.slip_month = #{maps.bankSlipQueryParam.slipMonth,jdbcType=DATE}
+            <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayStart != null">
+                <![CDATA[ and ebs.slip_day >= #{maps.bankSlipQueryParam.slipDayStart,jdbcType=DATE} ]]>
+            </if>
+            <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayEnd != null">
+                <![CDATA[ and ebs.slip_day < #{maps.bankSlipQueryParam.slipDayEnd,jdbcType=DATE} ]]>
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null">
                 and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
@@ -256,15 +263,25 @@
                 and ebs.sub_company_id = #{maps.subCompanyId,jdbcType=INTEGER}
             </if>
         </where>
-        ORDER BY ebs.slip_month DESC ,ebs.sub_company_id ASC
+        ORDER BY ebs.slip_day DESC ,ebs.sub_company_id ASC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <select id="findBySubCompanyIdAndMonthAndBankType" resultMap="BankSlipDO" parameterType="map">
+    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO" parameterType="map">
         SELECT
-        <include refid="column_List"/>
-        FROM erp_bank_slip ebs WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_month =
-        #{slipMonth,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
+        <include refid="column_List"/>,<include refid="detail_column_List"/>
+        FROM erp_bank_slip ebs
+        LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
+        WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_day =
+        #{slipDay,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
+    </select>
+
+    <select id="findBySubCompanyIdAndBankType" resultMap="BankSlipDO" parameterType="map">
+        SELECT
+        <include refid="column_List"/>,<include refid="detail_column_List"/>
+        FROM erp_bank_slip ebs
+        LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
+        WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
     </select>
 
     <update id="updateBankSlipDO" parameterType="java.util.List">

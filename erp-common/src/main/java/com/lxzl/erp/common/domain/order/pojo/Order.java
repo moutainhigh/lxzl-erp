@@ -4,13 +4,14 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.io.Serializable;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -81,9 +82,13 @@ public class Order extends BasePO {
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
+    @Valid
+    private List<OrderJointProduct> orderJointProductList;      // 订单组合商品项
     private OrderConsignInfo orderConsignInfo;                  // 收货地址信息
 
     private List<OrderTimeAxis> orderTimeAxisList;
+
+    private List<ReletOrder> reletOrderList;
 
     // 审核人和提交审核信息,只提供给审核的时候用
     private Integer verifyUser;                                 // 审核人ID
@@ -115,6 +120,14 @@ public class Order extends BasePO {
 
     public void setOrderProductList(List<OrderProduct> orderProductList) {
         this.orderProductList = orderProductList;
+    }
+
+    public List<ReletOrder> getReletOrderList() {
+        return reletOrderList;
+    }
+
+    public void setReletOrderList(List<ReletOrder> reletOrderList) {
+        this.reletOrderList = reletOrderList;
     }
 
     public OrderConsignInfo getOrderConsignInfo() {
@@ -651,5 +664,13 @@ public class Order extends BasePO {
 
     public void setWorkflowLink(WorkflowLink workflowLink) {
         this.workflowLink = workflowLink;
+    }
+
+    public List<OrderJointProduct> getOrderJointProductList() {
+        return orderJointProductList;
+    }
+
+    public void setOrderJointProductList(List<OrderJointProduct> orderJointProductList) {
+        this.orderJointProductList = orderJointProductList;
     }
 }

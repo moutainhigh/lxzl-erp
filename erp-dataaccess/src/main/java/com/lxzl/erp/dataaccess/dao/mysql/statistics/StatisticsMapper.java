@@ -41,11 +41,21 @@ public interface StatisticsMapper extends BaseMysqlDAO {
 
     List<StatisticsAwaitReceivableDetail> queryStatisticsAwaitReceivable(@Param("maps") Map<String, Object> maps);
 
-    StatisticsSalesman querySalesmanCount(@Param("maps") Map<String, Object> maps);
-
-    List<StatisticsSalesmanDetail> querySalesman(@Param("maps") Map<String, Object> maps);
-
     StatisticsRentInfo queryRentInfoCount(@Param("maps") Map<String, Object> maps);
 
     List<StatisticsRentInfoDetail> queryRentInfoDetail(@Param("maps") Map<String, Object> maps);
+
+    StatisticsSalesman querySalesmanCount(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetail> querySalesmanDetail(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetailExtend> querySalesmanDetailExtend(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanReturnOrder> querySalesmanReturnOrder(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetail> querySalesmanDetailByDate(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetailExtend> querySalesmanDetailExtendByDate(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanReturnOrder> querySalesmanReturnOrderByDate(@Param("maps") Map<String, Object> maps);
 }

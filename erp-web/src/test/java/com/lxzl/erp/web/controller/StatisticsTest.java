@@ -5,6 +5,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.TimeDimensionType;
 import com.lxzl.erp.common.domain.statistics.*;
+import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanMonth;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -144,12 +145,10 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsSalesmanPageParam.setPageNo(1);
         statisticsSalesmanPageParam.setPageSize(10);
         SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
-        Date start = sdf.parse(" 2008-07-10 19:20:00 ");
-        Date end = sdf.parse(" 2028-07-10 19:20:00 ");
+        Date start = sdf.parse(" 2018-04-10 19:20:00 ");
         statisticsSalesmanPageParam.setStartTime(start);
-        statisticsSalesmanPageParam.setEndTime(end);
-        statisticsSalesmanPageParam.setOrderBy("await_receivable");
-        statisticsSalesmanPageParam.setOrderType("DESC");
+//        statisticsSalesmanPageParam.setOrderBy("awaitReceivable");
+//        statisticsSalesmanPageParam.setOrderType("DESC");
 //        statisticsSalesmanPageParam.setSubCompanyId(3);
 //        statisticsSalesmanPageParam.setSalesmanName("何");
         TestResult testResult = getJsonTestResult("/statistics/querySalesman", statisticsSalesmanPageParam);
@@ -167,6 +166,20 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsRentInfoPageParam.setStartTime(start);
         statisticsRentInfoPageParam.setEndTime(end);
         TestResult testResult = getJsonTestResult("/statistics/queryRentInfo", statisticsRentInfoPageParam);
+    }
+//    @Test
+//    public void createStatisticsSalesmanMonth() throws Exception {
+//        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟
+//        String dstr="2018-04-17";
+//        java.util.Date date =sdf.parse(dstr);
+//        TestResult testResult = getJsonTestResult("/statistics/createStatisticsSalesmanMonth", date);
+//    }
+    @Test
+    public void updateStatisticsSalesmanMonth() throws Exception {
+        StatisticsSalesmanMonth statisticsSalesmanMonth = new StatisticsSalesmanMonth();
+        statisticsSalesmanMonth.setStatisticsSalesmanMonthId(2);
+        statisticsSalesmanMonth.setConfirmStatus(1);
+        TestResult testResult = getJsonTestResult("/statistics/updateStatisticsSalesmanMonth", statisticsSalesmanMonth);
     }
 
     private Date getFistByMonth() {
@@ -190,4 +203,5 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         ca.set(Calendar.MILLISECOND, 999);
         return ca.getTime();
     }
+
 }

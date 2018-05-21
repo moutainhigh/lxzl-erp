@@ -2,7 +2,6 @@ package com.lxzl.erp.dataaccess.dao.mysql.material;
 
 
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
-import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 @Repository
 public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     MaterialDO findByMaterialTypeAndCapacity(@Param("materialType") Integer materialType, @Param("materialCapacityValue") Double materialCapacityValue);
@@ -32,4 +33,6 @@ public interface MaterialMapper extends BaseMysqlDAO<MaterialDO> {
     List<MaterialDO> findAllMaterial();
 
     List<MaterialDO> findByMaterialParam(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
+
+    List<MaterialDO> findByIds(@Param("ids") Set<Integer> ids);
 }

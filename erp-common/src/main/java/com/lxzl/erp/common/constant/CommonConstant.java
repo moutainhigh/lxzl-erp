@@ -29,6 +29,7 @@ public class CommonConstant {
     public static final Integer SUPER_PRODUCT_CATEGORY_ID = 800000;
     public static final Integer HEAD_COMPANY_ID = 1;
     public static final Integer ELECTRIC_SALE_COMPANY_ID = 10;
+    public static final Integer CHANNEL_CUSTOMER_COMPANY_ID = 11;
     public static final Integer HEADER_COMPANY_ID = 1;
 
     public static final String COMMUNITY_SESSION_KEY = "community_id";
@@ -56,6 +57,7 @@ public class CommonConstant {
     public static final BigDecimal ORDER_NEED_VERIFY_PRODUCT_AMOUNT = new BigDecimal(200000);
 
     public static final Integer COMMON_ZERO = 0;
+    public static final Integer COMMON_ONE = 1;
     public static final Integer WORKFLOW_STEP_TWO = 2;
 
 }

@@ -35,12 +35,20 @@
                             </div>
                             <div class="pull-right mr10 text-right">
                                 <form id="searchForm" class="form-horizontal">
-                                    <div class="pull-right">
+                                    <script type="text/html" id="isDisabledTpl">
+                                        {{#isDisabled}}
+                                        <button type="button" class="btn btn-default btn-sm" id="isDisabledBtn">是否禁用</button>
+                                        {{/isDisabled}}
+                                    </script>
+                                    <div class="pull-right" id="isDisabledWrapper"></div>
+                                    
+                                    <div class="pull-right mn mr5">
                                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
                                         <button type="reset" class="btn btn-default btn-sm">重置</button>
                                     </div>
                                     <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                         <div class="input-group">
+                                            <input type="hidden" name="isDisabled" id="isDisabled" class="form-control input-sm bradius" value="0">
                                             <input type="text" name="ownerName" id="ownerName" class="form-control input-sm bradius" autocomplete="off" placeholder="业务员姓名">
                                         </div>
                                     </div>
@@ -85,14 +93,6 @@
                             <script type="text/html" id="dataListTpl">
                                 <thead>
                                 <tr>
-                                    {{#hasCommonActionButtons}}
-                                    <th>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="checkAll" value="">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </th>
-                                    {{/hasCommonActionButtons}}
                                     <th>客户编号</th>
                                     <th>真实姓名</th>
                                     <th>联系方式</th>
@@ -112,14 +112,6 @@
                                 {{#dataSource}}
                                 {{#listData}}
                                 <tr data-rowdata="{{rowData}}">
-                                    {{#hasCommonActionButtons}}
-                                    <td>
-                                        <label class="option block mn">
-                                            <input type="checkbox" name="checkItem" value="{{productId}}">
-                                            <span class="checkbox mn"></span>
-                                        </label>
-                                    </td>
-                                    {{/hasCommonActionButtons}}
                                     <td>{{customerNo}}</td>
                                     <td>{{customerPerson.realName}}</td>
                                     <td>

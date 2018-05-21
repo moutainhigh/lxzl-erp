@@ -1,0 +1,148 @@
+<div id="purchaseOrderGroupProduct" class="tab-pane">
+        <div class="table-responsive hasTooltip">
+            <script type="text/html" id="groupListTpl">
+                <thead>
+                <tr class="bg-light">
+                    <th>组合名称</th>
+                    <th>商品项</th>
+                    <th>配件项</th>
+                    <th>数量</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#listData}}
+                <tr class="groupRow" class="bg-light">
+                    <td>{{jointProductName}}</td>
+                    <td>{{groupedProductTostr}}</td>
+                    <td>{{groupedMaterialTostr}}</td>
+                    <td>{{jointProductCount}}</td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="pn br-n">
+                        <div class="panel m15">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
+                                        <li class="active"  data-id="groupProductItems-{{jointProductId}}-{{isNew}}">
+                                            <a href="#groupProductItems-{{jointProductId}}-{{isNew}}" data-toggle="tab">商品项</a>
+                                        </li>
+                                        <li data-id="groupMaterialItems-{{jointProductId}}-{{isNew}}">
+                                            <a href="#groupMaterialItems-{{jointProductId}}-{{isNew}}" data-toggle="tab">配件项</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="panel-body light pn">
+                                <div class="tab-content pn br-n">
+                                    <div id="groupProductItems-{{jointProductId}}-{{isNew}}" class="tab-pane tab-pane-order active"  data-id="groupProductItems-{{jointProductId}}">
+                                        <div class="table-responsive">
+                                            <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                                                <thead>
+                                                <tr class="bg-light">
+                                                    <th>商品名称</th>
+                                                    <th>类别</th>
+                                                    <th>品牌</th>
+                                                    <th>商品参数（SKU）</th>
+                                                    <th>商品保值价</th>
+                                                    <th class="rentalPriceTh"><span class="text">单价</span></th>
+                                                    <th>数量</th>
+                                                    <th>设备押金</th>
+                                                    <th>支付方式</th>
+                                                    <th>首付金额</th>
+                                                    <th>首付押金</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#groupProduct}}
+                                                {{#chooseGroupProductList}}
+                                                <tr class="productRow" data-jointid="{{jointProductId}}" data-isnew="{{isNewIntValue}}" data-productid="{{productId}}" data-serial="{{serialNumber}}">
+                                                    <td>
+                                                        {{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}
+                                                        {{productName}}
+                                                    </td>
+                                                    <td style="max-width:260px;">{{categoryName}}</td>
+                                                    <td>{{brandName}}</td>
+                                                    <td>{{propertiesToStr}}</td>
+                                                    <td>￥{{currentSkuPrice}}</td>
+                                                    <td class="productUnitAmountTd">{{productUnitAmount}}</td>
+                                                    <td>{{productCount}} </td>
+                                                    <td>{{depositAmount}}</td>
+                                                    <td>
+                                                        <p>{{payModeValue}}</p>
+                                                        {{#isRentTypeByMonth}}
+                                                        <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                        {{/isRentTypeByMonth}}
+                                                    </td>
+                        
+                                                    <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                                    <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
+                                                </tr>
+                                                {{/chooseGroupProductList}}
+                                                {{/groupProduct}}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="groupMaterialItems-{{jointProductId}}-{{isNew}}" class="tab-pane tab-pane-order groupMaterial" data-id="groupMaterialItems-{{jointProductId}}">
+                                        <div class="table-responsive">
+                                            <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+                                                <thead>
+                                                <tr>
+                                                    <th>配件名称</th>
+                                                    <th>品牌</th>
+                                                    <th>类型</th>
+                                                    <th>配件价值</th>
+                                                    <th class="rentalPriceTh"><span class="text">单价</span></th>
+                                                    <th>数量</th>
+                                                    <th>设备押金</th>
+                                                    <th>支付方式</th>
+                                                    <th>首付金额</th>
+                                                    <th>首付押金</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#groupMaterial}}
+                                                {{#chooseMaterialList}}
+                                                <tr class="materialRow" data-rowdata="{{materialJSONString}}">
+                                                    <td>
+                                                        {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                        {{material.materialName}}
+                                                    </td>
+                                                    <td>{{material.brandName}}</td>
+                                                    <td>{{material.materialTypeName}}</td>
+                                                    <td>￥{{currentMaterialPrice}}</td>
+                                                    <td>{{materialUnitAmount}}</td>
+                                                    <td>{{materialCount}}</td>
+                                                    <td>{{depositAmount}}</td>
+                                                    <td>
+                                                        <p>{{payModeValue}}</p>
+                                                        {{#isRentTypeByMonth}}
+                                                        <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                        {{/isRentTypeByMonth}}
+                                                    </td>
+                                                    <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                                    <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
+                                                </tr>
+                                                {{/chooseMaterialList}}
+                                                {{/groupMaterial}}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/listData}}
+                {{^listData}}
+                <tr>
+                    <td valign="top" colspan="6" class="text-center">无组合商品</td>
+                </tr>
+                {{/listData}}
+                </tbody>
+            </script>
+            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="groupListTable"></table>
+        </div>
+    </div>

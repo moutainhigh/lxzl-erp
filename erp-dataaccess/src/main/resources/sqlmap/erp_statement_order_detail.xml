@@ -119,7 +119,7 @@
         ORDER BY esod.statement_expect_pay_time ASC,esod.statement_detail_phase ASC,esod.statement_order_id ASC
     </select>
 
-    <select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO" parameterType="java.lang.Integer">
+    <select id="findByOrderTypeAndId" resultMap="StatementOrderDetailDO">
         SELECT
         <include refid="column_List"/>
         FROM erp_statement_order_detail esod

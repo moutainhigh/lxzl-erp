@@ -45,7 +45,6 @@
                         <th>商品名称</th>
                         <th>K3商品编号</th>
                         <th>类别</th>
-##                        <th>总库存</th>
                         <th>是否在租</th>
                         <th class="text-right">操作</th>
                     </tr>
@@ -59,7 +58,6 @@
                         <td>{{productName}}</td>
                         <td>{{k3ProductNo}}</td>
                         <td>{{categoryName}}</td>
-##                        <td>{{totalStock}}</td>
                         <td>{{isRentStr}}</td>
                         <td class="text-right">
                             <div class="btn-group text-right">
@@ -97,8 +95,6 @@
                                             <th>商品属性</th>
                                             {{/showIsNewCheckBox}}
                                             <th>SKU</th>
-                                            #*<th>新库存</th>
-                                            <th>次新库存</th>*#
                                             <th>库存</th>
                                             <th>价值</th>
                                             <th>日租</th>
@@ -124,12 +120,6 @@
                                                 </td>
                                                 {{/showIsNewCheckBox}}
                                                 <td>{{propertiesToStr}}</td>
-##                                                <td>
-##                                                    {{newProductSkuCount}}
-##                                                </td>
-##                                                <td>
-##                                                    {{oldProductSkuCount}}
-##                                                </td>
                                                 <td>
                                                     <p class="isUsed">{{oldProductSkuCount}}</p>
                                                     <p class="isNew hide">{{newProductSkuCount}}</p>
@@ -153,7 +143,6 @@
                                 </div>
                                 <div class="panel-footer pn pv5 ph15">
                                     <div class="row">
-##                                        <button type="button" class="btn btn-default btn-xs pull-right hideAffixPanel">收起</button>
                                         <div class="form-group mn pull-right">
                                             <button class="btn btn-xs btn-primary mr15 confirmChoose">确定</button>
                                             <button class="btn btn-xs btn-default mr15 cancelChoose">取消</button>

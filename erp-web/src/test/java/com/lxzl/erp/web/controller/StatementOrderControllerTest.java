@@ -5,6 +5,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.StatementOrderPayType;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
+import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -23,7 +24,7 @@ import java.util.List;
  * @author gaochao
  * @date 2017-12-12 8:52
  */
-public class StatementOrderControllerTest extends ERPTransactionalTest {
+public class StatementOrderControllerTest extends ERPUnTransactionalTest {
 
     @Test
     public void createNew() throws Exception {
@@ -72,6 +73,7 @@ public class StatementOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void page() throws Exception {
         StatementOrderQueryParam param = new StatementOrderQueryParam();
+        param.setOrderNo("LXO-20180305-0755-00009");//LXO-20180305-010-00001
 
         TestResult testResult = getJsonTestResult("/statementOrder/page", param);
     }
@@ -87,7 +89,7 @@ public class StatementOrderControllerTest extends ERPTransactionalTest {
     @Test
     public void detail() throws Exception {
         StatementOrderPayParam param = new StatementOrderPayParam();
-        param.setStatementOrderNo("LXSO-706124-20190401-00008");
+        param.setStatementOrderNo("LXSO-705243-20190301-00460");
         TestResult testResult = getJsonTestResult("/statementOrder/detail", param);
     }
 
@@ -144,5 +146,11 @@ public class StatementOrderControllerTest extends ERPTransactionalTest {
         param.add(pay3);
 
         TestResult testResult = getJsonTestResult("/statementOrder/batchPay", param);
+    }
+    @Test
+    public void reCreateOrderStatement() throws Exception {
+        Order param = new Order();
+        param.setOrderNo("LXO-20180507-027-00005");
+        TestResult testResult = getJsonTestResult("/statementOrder/reCreateOrderStatement", param);
     }
 }

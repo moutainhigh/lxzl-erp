@@ -40,6 +40,9 @@
                                     <button type="reset" class="btn btn-default btn-sm">重置</button>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                    <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="订单编号">
+                                </div>
+                                <div class="form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="returnOrderNo" id="returnOrderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入退货单编号">
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
@@ -47,6 +50,11 @@
                                 </div>
                                 <div class="field form-group pull-right mn mr10" style="width: 120px;">
                                     <input type="text" name="k3CustomerName" id="k3CustomerName" class="form-control input-sm bradius" autocomplete="off" placeholder="K3客户名称">
+                                </div>
+                                <div class="form-group pull-right mn mr10">
+                                    <div class="input-group">
+                                        <select class="form-control input-sm bradius" name="returnOrderStatus" id="returnOrderStatus"></select>
+                                    </div>
                                 </div>
                                 <div class="form-group pull-right mn mr10" style="width: 210px;">
                                     <input type="hidden" name="returnStartTime" id="returnStartTime" />
@@ -65,14 +73,6 @@
                         <script type="text/html" id="dataListTpl">
                             <thead>
                             <tr class="bg-light">
-                                {{#hasCommonActionButtons}}
-                                <th class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="orders" value="">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </th>
-                                {{/hasCommonActionButtons}}
                                 <th>退还编号</th>
                                 <th>K3客户编码</th>
                                 <th>K3客户名称</th>
@@ -89,14 +89,6 @@
                             {{#dataSource}}
                             {{#listData}}
                             <tr>
-                                {{#hasCommonActionButtons}}
-                                <td class="text-center">
-                                    <label class="option block mn">
-                                        <input type="checkbox" name="mobileos" value="FR">
-                                        <span class="checkbox mn"></span>
-                                    </label>
-                                </td>
-                                {{/hasCommonActionButtons}}
                                 <td>{{returnOrderNo}}</td>
                                 <td>{{k3CustomerNo}}</td>
                                 <td>{{k3CustomerName}}</td>

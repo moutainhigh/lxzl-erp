@@ -42,6 +42,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseDeliveryOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchase.PurchaseReceiveOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.purchaseApply.PurchaseApplyOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.repairOrder.RepairOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
@@ -92,6 +93,32 @@ public class GenerateNoSupport {
             builder.append(subCustomerCode);
             builder.append("-");
             builder.append(String.format("%05d", orderCount + 1));
+            return builder.toString();
+        }
+    }
+
+    /**
+     * 生成续租单编号
+     */
+    public String generateReletOrderNo(Date currentTime, String subCustomerCode) {
+        if (StringUtil.isBlank(subCustomerCode)) {
+            subCustomerCode = "1000";
+        }
+        synchronized (this) {
+            Map<String, Object> maps = new HashMap<>();
+            OrderQueryParam orderQueryParam = new OrderQueryParam();
+            orderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
+            orderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
+            maps.put("reletOrderQueryParam", orderQueryParam);
+            maps.put("isQueryAll", CommonConstant.COMMON_CONSTANT_YES);
+            Integer reletOrderCount = reletOrderMapper.findReletOrderCountByParams(maps);
+            StringBuilder builder = new StringBuilder();
+            builder.append("LXR-");
+            builder.append(new SimpleDateFormat("yyyyMMdd").format(currentTime));
+            builder.append("-");
+            builder.append(subCustomerCode);
+            builder.append("-");
+            builder.append(String.format("%05d", reletOrderCount + 1));
             return builder.toString();
         }
     }
@@ -919,6 +946,8 @@ public class GenerateNoSupport {
     private SupplierMapper supplierMapper;
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private ReletOrderMapper reletOrderMapper;
     @Autowired
     private WarehouseMapper warehouseMapper;
     @Autowired

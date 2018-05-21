@@ -36,6 +36,7 @@
                 'modal.choose.customer.business.js',
                 'modal.choose.user.js',
                 'modal.choose.company.js',
+                'modal.choose.group.product.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'manage.customer.address.js',
