@@ -23,8 +23,8 @@ public class OrderJointProduct extends BasePO {
 
     @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NULL, groups = {UpdateGroup.class, AddGroup.class})
     private Integer jointProductId; // 组合商品id
-    @Min(value = 1, message = ErrorCode.ORDER_JOINT_PRODUCT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @NotNull(message = ErrorCode.ORDER_JOINT_PRODUCT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
+    @Min(value = 1, message = ErrorCode.ORDER_JOINT_PRODUCT_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @NotNull(message = ErrorCode.ORDER_JOINT_PRODUCT_COUNT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
     private Integer jointProductCount; // 组合商品数量
 
     private String jointProductName;

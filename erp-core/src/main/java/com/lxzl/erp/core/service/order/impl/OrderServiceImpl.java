@@ -313,7 +313,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // 订单组合商品参数验证和格式化
+    // 订单组合商品参数验证
     private String verifyOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
         if (CollectionUtil.isNotEmpty(orderJointProductList)) {
             for (OrderJointProduct orderJointProduct : orderJointProductList) {
@@ -339,9 +339,10 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (!ListUtil.equalIntegerList(productIdList, dbProductIdList)) {
-                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_ERROR);
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_PRODUCT_ERROR);
                 }
 
+                // 订单组合商品配件必须是组合商品配件的子集
                 List<OrderMaterial> orderMaterialList = orderJointProduct.getOrderMaterialList();
                 List<JointMaterialDO> jointMaterialDOList = jointProductDO.getJointMaterialDOList();
                 List<Integer> materialIdList = new ArrayList<>();
@@ -356,8 +357,8 @@ public class OrderServiceImpl implements OrderService {
                         dbMaterailIdList.add(jointMaterialDO.getMaterialId());
                     }
                 }
-                if (!ListUtil.equalIntegerList(materialIdList, dbMaterailIdList)) {
-                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_ERROR);
+                if (!dbMaterailIdList.containsAll(materialIdList)) {
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_MATERIAL_ERROR);
                 }
             }
         }

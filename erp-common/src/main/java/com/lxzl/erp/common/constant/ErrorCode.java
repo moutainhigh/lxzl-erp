@@ -596,7 +596,9 @@ public class ErrorCode {
     public static final String CUSTOMER_PERSON_REAL_NAME_ERROR = "J500167";
     public static final String CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY = "J500168";
 
-    public static final String ORDER_JOINT_PRODUCT_ERROR = "J500169";
+    public static final String ORDER_JOINT_PRODUCT_COUNT_ERROR = "J500169";
+    public static final String ORDER_JOINT_PRODUCT_PRODUCT_ERROR = "J500170";
+    public static final String ORDER_JOINT_PRODUCT_MATERIAL_ERROR = "J500171";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1800,7 +1802,9 @@ public class ErrorCode {
         MAP.put(ORDER_SPLIT_SPLIT_COUNT_EXCEED, "拆单数量不能大于订单项总数");
         MAP.put(ORDER_SPLIT_PEER_COUNT_EXCEED, "同行调拨超过限制");
 
-        MAP.put(ORDER_JOINT_PRODUCT_ERROR, "订单组合商品参数错误");
+        MAP.put(ORDER_JOINT_PRODUCT_COUNT_ERROR, "订单组合商品数量不能为空");
+        MAP.put(ORDER_JOINT_PRODUCT_PRODUCT_ERROR, "订单组合商品中商品项选择不全");
+        MAP.put(ORDER_JOINT_PRODUCT_MATERIAL_ERROR, "订单组合商品中配件项不属于当前组合商品");
 
         MAP.put(STATISTICS_SALESMAN_MONTH_NOT_EXISTS, "业务员提成统计月结数据不存在");
         MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
