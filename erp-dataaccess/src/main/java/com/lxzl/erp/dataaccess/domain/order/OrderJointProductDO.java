@@ -10,12 +10,21 @@ public class OrderJointProductDO extends BaseDO {
     private Integer id;
     private Integer orderId;
     private Integer jointProductId;
+    private String jointProductName;
     private Integer jointProductCount;
     private Integer dataStatus;
     private String remark;
 
     List<OrderProductDO> orderProductDOList;
     List<OrderMaterialDO> orderMaterialDOList;
+
+    public String getJointProductName() {
+        return jointProductName;
+    }
+
+    public void setJointProductName(String jointProductName) {
+        this.jointProductName = jointProductName;
+    }
 
     public List<OrderProductDO> getOrderProductDOList() {
         return orderProductDOList;
