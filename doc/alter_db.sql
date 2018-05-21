@@ -817,3 +817,9 @@ CREATE TABLE `erp_order_confirm_change_log_detail` (
   INDEX index_order_no ( `order_no` ),
   INDEX index_item_id ( `item_id` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录详情表';
+
+
+ALTER TABLE erp_order_product add `stable_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单商品总数，该字段只在订单未提交时可变化';
+ALTER TABLE erp_order_material add  `stable_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单配件总数，该字段只在订单未提交时可变化';
+UPDATE erp_order_product SET stable_product_count = product_count;
+UPDATE erp_order_material SET stable_material_count = material_count;
