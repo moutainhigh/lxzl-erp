@@ -905,6 +905,10 @@ public class ErrorCode {
     public static final String ORDER_SPLIT_SUB_COMPANY_ID_NOT_EXIST = "J230000006";
     public static final String ORDER_SPLIT_SPLIT_COUNT_EXCEED = "J230000006";
     public static final String ORDER_SPLIT_PEER_COUNT_EXCEED = "J230000007";
+    public static final String MESSAGE_CONTENT_CANT_NULL = "J230000008";
+    public static final String RECEIVER_USER_ID_CANT_NULL = "J230000009";
+    public static final String THIRD_INTERFACE_ERROR = "J230000010";
+
 
     //业务员提成统计月结表错误信息
     public static final String STATISTICS_SALESMAN_MONTH_NOT_EXISTS = "J240000001";
@@ -1771,7 +1775,9 @@ public class ErrorCode {
         MAP.put(COUPON_ID_NOT_NULL,"优惠卷ID不能为空");
         MAP.put(COUPON_NOT_USED_THIS_STATEMENT,"这个结算单未使用优惠券");
         MAP.put(COUPON_USED_THIS_STATEMENT,"该结算单已使用过结算单优惠券，不能重复使用");
-
+        MAP.put(MESSAGE_CONTENT_CANT_NULL,"消息内容不能为空");
+        MAP.put(RECEIVER_USER_ID_CANT_NULL,"消息接收者不能为空");
+        MAP.put(THIRD_INTERFACE_ERROR,"调用第三方接口异常");
 
         MAP.put(SWITCH_INTERFACE_URL_NOT_NULL, "接口URL不能为空");
         MAP.put(SWITCH_IS_OPEN_NOT_NULL, "是否开启状态不能为空");
