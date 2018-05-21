@@ -25,8 +25,18 @@ public class OrderJointProduct extends BasePO {
     @NotNull(message = ErrorCode.ORDER_JOINT_PRODUCT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
     private Integer jointProductCount; // 组合商品数量
 
+    private String jointProductName;
+
     List<OrderProduct> orderProductList; // 订单组合商品中商品项列表
     List<OrderMaterial> orderMaterialList; // 订单组合商品中配件项列表
+
+    public String getJointProductName() {
+        return jointProductName;
+    }
+
+    public void setJointProductName(String jointProductName) {
+        this.jointProductName = jointProductName;
+    }
 
     public Integer getOrderJointProductId() {
         return orderJointProductId;
