@@ -909,7 +909,6 @@ public class ErrorCode {
     public static final String RECEIVER_USER_ID_CANT_NULL = "J230000009";
     public static final String THIRD_INTERFACE_ERROR = "J230000010";
 
-
     //业务员提成统计月结表错误信息
     public static final String STATISTICS_SALESMAN_MONTH_NOT_EXISTS = "J240000001";
     public static final String CONFIRM_STATUS_NOT_NULL = "J240000002";
