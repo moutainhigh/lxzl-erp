@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -1485,7 +1486,6 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
 
-
                 List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
                 for (OrderMaterial orderMaterial : orderMaterialList) {
                     if (orderMaterial.getOrderJointProductId() != null) {
@@ -1500,6 +1500,15 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 orderMaterialList.removeAll(removeOrderMaterialList);
+            }
+
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(orderJointProduct.getJointProductId());
+                if (jointProductDO != null) {
+                    JointProduct jointProduct = ConverterUtil.convert(jointProductDO, JointProduct.class);
+                    orderJointProduct.setJointProductProductList(jointProduct.getJointProductProductList());
+                    orderJointProduct.setJointMaterialList(jointProduct.getJointMaterialList());
+                }
             }
         }
     }
