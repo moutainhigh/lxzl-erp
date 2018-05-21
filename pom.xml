@@ -26,7 +26,6 @@
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.sourceJdk>1.7</project.build.sourceJdk>
 		<project.build.targetJdk>1.7</project.build.targetJdk>
 		<jm.build.jvmsize>1024m</jm.build.jvmsize>
 		<jm.maven.version>3.0.5</jm.maven.version>
@@ -67,6 +66,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${dep.maven-compiler-plugin.version}</version>
 					<configuration>
+						<source>${project.build.targetJdk}</source>
 						<target>${project.build.targetJdk}</target>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<maxmem>${jm.build.jvmsize}</maxmem>
