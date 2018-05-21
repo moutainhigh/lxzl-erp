@@ -96,7 +96,7 @@
 	</update>
 
 	<update id="deleteByBankSlipDetailId">
-		UPDATE erp_bank_slip_claim ebsc SET ebsc.data_status = 2,ebsc.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsc.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsc.bank_slip_detail_id = #{bankSlipDetailId, jdbcType=INTEGER}
+		UPDATE erp_bank_slip_claim ebsc SET ebsc.data_status = 2,ebsc.update_time = #{updateTime,jdbcType=TIMESTAMP},ebsc.update_user = #{updateUser,jdbcType=VARCHAR}  WHERE ebsc.bank_slip_detail_id = #{bankSlipDetailId, jdbcType=INTEGER} AND ebsc.create_user = #{updateUser, jdbcType=VARCHAR} AND ebsc.data_status = 1
 	</update>
 
 	<update id="updateBankSlipClaimDO" parameterType="java.util.List">
@@ -163,7 +163,6 @@
 		)Debsc ON Debsc.claim_serial_no = ebsc.claim_serial_no
 	</select>
 
-
 	<update id="deleteBankSlipClaimDO" parameterType="java.util.List">
 		update erp_bank_slip_claim
 		SET
@@ -190,5 +189,9 @@
 			#{item.id,jdbcType=INTEGER}
 		</foreach>
 	</update>
+
+	<select id="findAmountByBankSlipDetailId" resultType="java.lang.Integer">
+		SELECT SUM(ebsc.claim_amount) FROM  erp_bank_slip_claim ebsc WHERE  ebsc.bank_slip_detail_id = #{bankSlipDetailId,jdbcType=INTEGER} AND ebsc.data_status = 1
+	</select>
 
 </mapper>

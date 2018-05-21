@@ -843,6 +843,10 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_ASSIGN_IS_NULL = "J18000043";
     public static final String BANK_SLIP_DETAIL_NOT_LOCALIZATION = "J18000044";
     public static final String BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED = "J18000045";
+    public static final String BANK_SLIP_DETAIL_DATA_IS_NULL = "J18000046";
+    public static final String BANK_SLIP_DETAIL_IS_LOCALIZATION_OR_UNKNOWN = "J18000047";
+    public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
+    public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1688,7 +1692,7 @@ public class ErrorCode {
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
-        MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄为空");
+        MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄导入数据为空");
         MAP.put(INPUT_STREAM_READER_IS_FAIL, "导入excelIO流转换发生异常！");
         MAP.put(APPLE_EQUIPMENT_WRITE_IS_FAIL, "风控苹果设备填写有误");
         MAP.put(NEW_EQUIPMENT_WRITE_IS_FAIL, "全新设备填写有误");
@@ -1730,6 +1734,10 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_ASSIGN_IS_NULL, "需派发数据为空");
         MAP.put(BANK_SLIP_DETAIL_NOT_LOCALIZATION, "当前流水项不是属地化状态");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED, "银行对公流水记录是确认状态,");
+        MAP.put(BANK_SLIP_DETAIL_DATA_IS_NULL, "银行对公流水无导入数据,");
+        MAP.put(BANK_SLIP_DETAIL_IS_LOCALIZATION_OR_UNKNOWN, "银行对公流水是属地化或者未知状态,");
+        MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
+        MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录都已存在");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
