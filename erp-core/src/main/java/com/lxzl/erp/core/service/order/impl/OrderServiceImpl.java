@@ -5,6 +5,8 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
@@ -43,7 +45,9 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.jointProduct.JointProductProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.BulkMaterialMapper;
@@ -1399,6 +1403,28 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, OrderJointProduct> orderJointProductMap = ListUtil.listToMap(orderJointProductList, "orderJointProductId");
             List<OrderProduct> orderProductList = order.getOrderProductList();
             if (CollectionUtil.isNotEmpty(orderProductList)) {
+                // 填入JointProductProduct实体
+                Set<Integer> jointProductProductIds = new HashSet<>();
+                for (OrderProduct orderProduct : orderProductList) {
+                    if (orderProduct .getJointProductProductId() != null) {
+                        jointProductProductIds.add(orderProduct .getJointProductProductId());
+                    }
+                }
+                if (jointProductProductIds.size() > 0) {
+                    List<JointProductProductDO> jointProductProductDOList = jointProductProductMapper.findByIds(jointProductProductIds);
+                    List<JointProductProduct> jointProductProductList = ConverterUtil.convertList(jointProductProductDOList, JointProductProduct.class);
+                    Map<Integer, JointProductProduct> jointProductProductMap = ListUtil.listToMap(jointProductProductList, "jointProductProductId");
+                    for (OrderProduct orderProduct : orderProductList) {
+                        if (orderProduct.getJointProductProductId() != null) {
+                            JointProductProduct jointProductProduct = jointProductProductMap.get(orderProduct.getJointProductProductId());
+                            if (jointProductProduct != null) {
+                                orderProduct.setJointProductProduct(jointProductProduct);
+                            }
+                        }
+                    }
+                }
+
+
                 List<OrderProduct> removeOrderProductList = new ArrayList<>();
                 for (OrderProduct orderProduct : orderProductList) {
                     if (orderProduct.getOrderJointProductId() != null) {
@@ -1416,6 +1442,28 @@ public class OrderServiceImpl implements OrderService {
             }
             List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
             if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+                // 填入JointMaterial实体
+                Set<Integer> jointMaterialIds = new HashSet<>();
+                for (OrderMaterial orderMaterial : orderMaterialList) {
+                    if (orderMaterial.getJointMaterialId() != null) {
+                        jointMaterialIds.add(orderMaterial.getJointMaterialId());
+                    }
+                }
+                if (jointMaterialIds.size() > 0) {
+                    List<JointMaterialDO> jointMaterialDOList = jointMaterialMapper.findByIds(jointMaterialIds);
+                    List<JointMaterial> jointMaterialList = ConverterUtil.convertList(jointMaterialDOList, JointMaterial.class);
+                    Map<Integer, JointMaterial> jointMaterialMap = ListUtil.listToMap(jointMaterialList, "jointMaterialId");
+                    for (OrderMaterial orderMaterial : orderMaterialList) {
+                        if (orderMaterial.getJointMaterialId() != null) {
+                            JointMaterial jointMaterial = jointMaterialMap.get(orderMaterial.getJointMaterialId());
+                            if (jointMaterial != null) {
+                                orderMaterial.setJointMaterial(jointMaterial);
+                            }
+                        }
+                    }
+                }
+
+
                 List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
                 for (OrderMaterial orderMaterial : orderMaterialList) {
                     if (orderMaterial.getOrderJointProductId() != null) {
@@ -3709,4 +3757,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private JointProductMapper jointProductMapper;
+
+    @Autowired
+    private JointProductProductMapper jointProductProductMapper;
+
+    @Autowired
+    private JointMaterialMapper jointMaterialMapper;
 }

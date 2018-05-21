@@ -90,4 +90,20 @@
 	<update id="deleteByJointProductId" parameterType="com.lxzl.erp.dataaccess.domain.jointProduct.JointProductProductDO">
 		update erp_joint_product_product <include refid="set_column_sql"/> WHERE joint_product_id = #{jointProductId, jdbcType=INTEGER}
 	</update>
+
+	<select id="findByIds" resultMap="JointProductProductDO" parameterType="java.lang.Integer">
+		select <include refid="column_List"/> from erp_joint_product_product as ejpp
+		WHERE 1 = 1
+		<choose>
+			<when test="ids != null &amp;&amp; ids.size>0">
+				 AND id IN
+				<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and 1 = 2
+			</otherwise>
+		</choose>
+	</select>
 </mapper>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface JointProductProductMapper extends BaseMysqlDAO<JointProductProductDO> {
@@ -16,4 +17,6 @@ public interface JointProductProductMapper extends BaseMysqlDAO<JointProductProd
     Integer listCount(@Param("maps") Map<String, Object> paramMap);
 
     Integer deleteByJointProductId(JointProductProductDO jointProductProductDO);
+
+    List<JointProductProductDO> findByIds(@Param("ids") Set<Integer> ids);
 }
