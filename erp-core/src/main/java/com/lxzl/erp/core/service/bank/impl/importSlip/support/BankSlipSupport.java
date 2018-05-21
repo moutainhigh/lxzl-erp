@@ -26,7 +26,6 @@ public class BankSlipSupport {
 
     public BankSlipDO formatBankSlipDetail(BankSlipDO bankSlipDO, List<BankSlipDetailDO> bankSlipDetailDOList) {
 
-//        Map<String, BankSlipDetailDO> bankSlipDetailDOMap = ListUtil.listToMap(bankSlipDetailDOList, "tradeSerialNo");
         //查询出导入时间的所有本公司的所有导入数据
         List<BankSlipDO> dbBankSlipDOList = bankSlipMapper.findBySubCompanyIdAndBankType(bankSlipDO.getSubCompanyId(), bankSlipDO.getBankType());
 

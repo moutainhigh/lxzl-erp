@@ -9,6 +9,7 @@
         <result column="order_id" property="orderId"/>
         <result column="joint_product_id" jdbcType="INTEGER" property="jointProductId" />
         <result column="joint_product_count" jdbcType="INTEGER" property="jointProductCount" />
+        <result column="is_new" jdbcType="INTEGER" property="isNew" />
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
         <result column="create_user" property="createUser"/>
@@ -18,7 +19,7 @@
     </resultMap>
 
     <sql id="column_List">
-        eojp.id as id,eojp.order_id as order_id,eojp.joint_product_id as joint_product_id, eojp.joint_product_count as joint_product_count,eojp.data_status as data_status,eojp.remark as remark, eojp.create_time as create_time, eojp.create_user as create_user,eojp.update_time as update_time,eojp.update_user as update_user
+        eojp.id as id,eojp.is_new as is_new,eojp.order_id as order_id,eojp.joint_product_id as joint_product_id, eojp.joint_product_count as joint_product_count,eojp.data_status as data_status,eojp.remark as remark, eojp.create_time as create_time, eojp.create_user as create_user,eojp.update_time as update_time,eojp.update_user as update_user
     </sql>
 
     <select id="findById" resultMap="OrderJointProductDO" parameterType="java.lang.Integer">
@@ -53,6 +54,9 @@
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime, jdbcType=TIMESTAMP},
+            </if>
+            <if test="isNew != null">
+                is_new = #{isNew, jdbcType=INTEGER},
             </if>
         </set>
     </sql>

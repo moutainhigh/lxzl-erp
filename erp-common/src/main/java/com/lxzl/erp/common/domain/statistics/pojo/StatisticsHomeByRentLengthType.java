@@ -2,6 +2,7 @@ package com.lxzl.erp.common.domain.statistics.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatisticsHomeByRentLengthType {
+public class StatisticsHomeByRentLengthType implements Serializable{
 
     private Integer newCustomerCount = 0 ;   //长租新增客户数
     private Integer oldCustomerCount = 0 ;   //长租老客户数
