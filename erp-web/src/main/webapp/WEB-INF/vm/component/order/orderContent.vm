@@ -533,8 +533,8 @@
                                                             <th>数量</th>
                                                             <th>设备押金</th>
                                                             <th>支付方式</th>
-##                                                            <th>首付金额</th>
-##                                                            <th>首付押金</th>
+                                                            <th>首付金额</th>
+                                                            <th>首付押金</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -589,12 +589,12 @@
                                                                 </label>
                                                                 {{/showDepositAmount}}
                                                                 {{^showDepositAmount}}
-                                                                    <p>{{payModeValue}}</p>
+                                                                <p>{{payModeValue}}</p>
                                                                 {{/showDepositAmount}}
                                                             </td>
                                 
-##                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-##                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
+                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                                                         </tr>
                                                         {{/chooseGroupProductList}}
                                                         {{/groupProduct}}
@@ -615,8 +615,8 @@
                                                             <th>数量</th>
                                                             <th>设备押金</th>
                                                             <th>支付方式</th>
-##                                                            <th>首付金额</th>
-##                                                            <th>首付押金</th>
+                                                            <th>首付金额</th>
+                                                            <th>首付押金</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -675,11 +675,10 @@
                                                                 {{/showDepositAmount}}
                                                                 {{^showDepositAmount}}
                                                                 <p>{{payModeValue}}</p>
-
                                                                 {{/showDepositAmount}}
                                                             </td>
-##                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
-##                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
+                                                            <td>{{#showFirstPayRentAmount}}￥{{#price}}{{firstNeedPayRentAmount}}{{/price}}{{/showFirstPayRentAmount}}</td>
+                                                            <td>{{#showFirstDepositAmount}}￥{{#price}}{{firstNeedPayDepositAmount}}{{/price}}{{/showFirstDepositAmount}}</td>
                                                         </tr>
                                                         {{/chooseMaterialList}}
                                                         {{/groupMaterial}}

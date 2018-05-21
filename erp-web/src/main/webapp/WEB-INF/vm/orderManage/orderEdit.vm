@@ -32,6 +32,7 @@
             'manage.order.mixin.js',
             'manage.order.edit.js',
             'modal.choose.material.js',
+            'modal.choose.product.js',
             'modal.choose.customer.js',
             'modal.choose.customer.business.js',
             'modal.choose.user.js',
