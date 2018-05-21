@@ -156,6 +156,7 @@
         <result column="order_joint_product_create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="order_joint_product_update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="order_joint_product_update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="order_joint_product_is_new" jdbcType="INTEGER" property="isNew" />
     </resultMap>
 
     <resultMap type="com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO" id="OrderConsignInfoDO">
@@ -254,7 +255,7 @@
     </sql>
 
     <sql id="joint_product_column_List">
-        eojp.id as order_joint_product_id,ejp.joint_product_name as order_joint_product_name,eojp.order_id as order_joint_product_order_id,eojp.joint_product_id as order_joint_product_joint_product_id, eojp.joint_product_count as order_joint_product_joint_product_count,eojp.data_status as order_joint_product_data_status,eojp.remark as order_joint_product_remark, eojp.create_time as order_joint_product_create_time, eojp.create_user as order_joint_product_create_user,eojp.update_time as order_joint_product_update_time,eojp.update_user as order_joint_product_update_user
+        eojp.id as order_joint_product_id,ejp.joint_product_name as order_joint_product_name,eojp.order_id as order_joint_product_order_id,eojp.joint_product_id as order_joint_product_joint_product_id, eojp.joint_product_count as order_joint_product_joint_product_count,eojp.data_status as order_joint_product_data_status,eojp.remark as order_joint_product_remark, eojp.create_time as order_joint_product_create_time, eojp.create_user as order_joint_product_create_user,eojp.update_time as order_joint_product_update_time,eojp.update_user as order_joint_product_update_user,eojp.is_new as order_joint_product_is_new
     </sql>
 
     <sql id="time_axis_column_List">

@@ -3,6 +3,8 @@ package com.lxzl.erp.common.domain.order.pojo;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.common.util.validate.constraints.In;
@@ -23,8 +25,8 @@ public class OrderJointProduct extends BasePO {
 
     @NotNull(message = ErrorCode.JOINT_PRODUCT_ID_IS_NULL, groups = {UpdateGroup.class, AddGroup.class})
     private Integer jointProductId; // 组合商品id
-    @Min(value = 1, message = ErrorCode.ORDER_JOINT_PRODUCT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
-    @NotNull(message = ErrorCode.ORDER_JOINT_PRODUCT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
+    @Min(value = 1, message = ErrorCode.ORDER_JOINT_PRODUCT_COUNT_ERROR, groups = {AddGroup.class, UpdateGroup.class})
+    @NotNull(message = ErrorCode.ORDER_JOINT_PRODUCT_COUNT_ERROR, groups = {UpdateGroup.class, AddGroup.class})
     private Integer jointProductCount; // 组合商品数量
 
     private String jointProductName;
@@ -34,6 +36,24 @@ public class OrderJointProduct extends BasePO {
 
     List<OrderProduct> orderProductList; // 订单组合商品中商品项列表
     List<OrderMaterial> orderMaterialList; // 订单组合商品中配件项列表
+    List<JointProductProduct> jointProductProductList;
+    List<JointMaterial> jointMaterialList;
+
+    public List<JointProductProduct> getJointProductProductList() {
+        return jointProductProductList;
+    }
+
+    public void setJointProductProductList(List<JointProductProduct> jointProductProductList) {
+        this.jointProductProductList = jointProductProductList;
+    }
+
+    public List<JointMaterial> getJointMaterialList() {
+        return jointMaterialList;
+    }
+
+    public void setJointMaterialList(List<JointMaterial> jointMaterialList) {
+        this.jointMaterialList = jointMaterialList;
+    }
 
     public String getJointProductName() {
         return jointProductName;

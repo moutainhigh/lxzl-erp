@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProduct;
 import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
@@ -313,7 +314,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // 订单组合商品参数验证和格式化
+    // 订单组合商品参数验证
     private String verifyOrderJointProduct(List<OrderJointProduct> orderJointProductList) {
         if (CollectionUtil.isNotEmpty(orderJointProductList)) {
             for (OrderJointProduct orderJointProduct : orderJointProductList) {
@@ -339,9 +340,10 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (!ListUtil.equalIntegerList(productIdList, dbProductIdList)) {
-                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_ERROR);
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_PRODUCT_ERROR);
                 }
 
+                // 订单组合商品配件必须是组合商品配件的子集
                 List<OrderMaterial> orderMaterialList = orderJointProduct.getOrderMaterialList();
                 List<JointMaterialDO> jointMaterialDOList = jointProductDO.getJointMaterialDOList();
                 List<Integer> materialIdList = new ArrayList<>();
@@ -356,8 +358,8 @@ public class OrderServiceImpl implements OrderService {
                         dbMaterailIdList.add(jointMaterialDO.getMaterialId());
                     }
                 }
-                if (!ListUtil.equalIntegerList(materialIdList, dbMaterailIdList)) {
-                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_ERROR);
+                if (!dbMaterailIdList.containsAll(materialIdList)) {
+                    throw new BusinessException(ErrorCode.ORDER_JOINT_PRODUCT_MATERIAL_ERROR);
                 }
             }
         }
@@ -1484,7 +1486,6 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
 
-
                 List<OrderMaterial> removeOrderMaterialList = new ArrayList<>();
                 for (OrderMaterial orderMaterial : orderMaterialList) {
                     if (orderMaterial.getOrderJointProductId() != null) {
@@ -1499,6 +1500,15 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 orderMaterialList.removeAll(removeOrderMaterialList);
+            }
+
+            for (OrderJointProduct orderJointProduct : orderJointProductList) {
+                JointProductDO jointProductDO = jointProductMapper.findDetailByJointProductId(orderJointProduct.getJointProductId());
+                if (jointProductDO != null) {
+                    JointProduct jointProduct = ConverterUtil.convert(jointProductDO, JointProduct.class);
+                    orderJointProduct.setJointProductProductList(jointProduct.getJointProductProductList());
+                    orderJointProduct.setJointMaterialList(jointProduct.getJointMaterialList());
+                }
             }
         }
     }
