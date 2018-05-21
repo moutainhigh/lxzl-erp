@@ -426,7 +426,7 @@ public class DingdingServiceImpl implements DingdingService {
             dingdingResultDTO = JSONObject.parseObject(respContent, DingdingResultDTO.class);
         } catch (Exception e) {
             dingdingResultDTO = new DingdingResultDTO();
-            dingdingResultDTO.setCode(ErrorCode.BUSINESS_EXCEPTION);
+            dingdingResultDTO.setCode(ErrorCode.THIRD_INTERFACE_ERROR);
             dingdingResultDTO.setSuccess(false);
             logger.error("postDingdingGatway message error,{}", e);
         }

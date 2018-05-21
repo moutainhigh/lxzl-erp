@@ -21,11 +21,11 @@ public class MessageThirdChannelBO {
         ServiceResult<String, Object> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         if (StringUtils.isBlank(messageThirdChannel.getMessageContent())) {
-            serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            serviceResult.setErrorCode(ErrorCode.MESSAGE_CONTENT_CANT_NULL);
             return serviceResult;
         }
         if (messageThirdChannel.getReceiverUserId() == null) {
-            serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            serviceResult.setErrorCode(ErrorCode.RECEIVER_USER_ID_CANT_NULL);
             return serviceResult;
         }
         return serviceResult;
