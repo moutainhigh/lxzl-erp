@@ -34,6 +34,7 @@
                             <th>组合商品名称</th>
                             <th>商品项</th>
                             <th>配件项</th>
+                            <th>属性</th>
                             <th class="text-right">操作</th>
                         </tr>
                     </thead>
@@ -45,6 +46,13 @@
                                 <td>{{jointProductName}}</td>
                                 <td>{{groupedProductTostr}}</td>
                                 <td>{{groupedMaterialTostr}}</td>
+                                <td>
+                                    <label class="block mn switch switch-primary">
+                                        <input type="checkbox" name="isNew" id="isNewGroup-{{jointProductId}}" value="1" />
+                                        <label for="isNewGroup-{{jointProductId}}" data-on="全新" data-off="次新"></label>
+                                        <span></span>
+                                    </label>
+                                </td>
                                 <td class="text-right">
                                     <div class="btn-group text-right">
                                         <a href="#" type="button" class="btn btn-default btn-xs chooseButton" data-id="{{jointProductId}}">选择</a>
