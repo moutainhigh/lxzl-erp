@@ -506,11 +506,11 @@
                                 <div class="panel m15">
                                     <div class="panel-heading">
                                         <div class="row">
-                                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
-                                                <li class="active"  data-id="groupProductItems-{{jointProductId}}-{{isNew}}">
+                                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs">
+                                                <li class="{{groupActive}}" data-id="{{jointProductId}}" data-isnew="{{isNew}}">
                                                     <a href="#groupProductItems-{{jointProductId}}-{{isNew}}" data-toggle="tab">商品项</a>
                                                 </li>
-                                                <li data-id="groupMaterialItems-{{jointProductId}}-{{isNew}}">
+                                                <li class="{{materialActive}}" data-id="{{jointProductId}}" data-isnew="{{isNew}}">
                                                     <a href="#groupMaterialItems-{{jointProductId}}-{{isNew}}" data-toggle="tab">配件项</a>
                                                 </li>
                                             </ul>
@@ -519,7 +519,7 @@
 
                                     <div class="panel-body light pn">
                                         <div class="tab-content pn br-n">
-                                            <div id="groupProductItems-{{jointProductId}}-{{isNew}}" class="tab-pane tab-pane-order groupProduct active"  data-id="groupProductItems-{{jointProductId}}">
+                                            <div id="groupProductItems-{{jointProductId}}-{{isNew}}" class="tab-pane tab-pane-order groupProduct {{groupActive}}"  data-id="groupProductItems-{{jointProductId}}">
                                                 <div class="table-responsive">
                                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13">
                                                         <thead>
@@ -608,7 +608,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div id="groupMaterialItems-{{jointProductId}}-{{isNew}}" class="tab-pane tab-pane-order groupMaterial" data-id="groupMaterialItems-{{jointProductId}}">
+                                            <div id="groupMaterialItems-{{jointProductId}}-{{isNew}}" class="tab-pane tab-pane-order groupMaterial {{materialActive}}" data-id="groupMaterialItems-{{jointProductId}}">
                                                 <div class="table-responsive">
                                                     <table class="table admin-form theme-warning tc-checkbox-1 fs13">
                                                         <thead>

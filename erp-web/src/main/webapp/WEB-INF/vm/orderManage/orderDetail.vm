@@ -77,9 +77,9 @@
                                 <li>
                                     <a href="#purchaseOrderMaterialItems" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
                                 </li>
-                                <li>
-                                    <a href="#purchaseOrderGroupProduct" data-toggle="tab">组合商品（共<span id="orderGroupProductCount">0</span>个）</a>
-                                </li>
+##                                <li>
+##                                    <a href="#purchaseOrderGroupProduct" data-toggle="tab">组合商品（共<span id="orderGroupProductCount">0</span>个）</a>
+##                                </li>
                                 <li>
                                     <a href="#statementOrderList" data-toggle="tab">结算单</a>
                                 </li>
@@ -105,7 +105,7 @@
                             #parse("component/order/orderMaterial.vm")
 
                             <!-- 组合商品 -->
-                            #parse("component/order/orderGroupProduct.vm")
+##                            #parse("component/order/orderGroupProduct.vm")
 
                             <!-- 结算单 -->
                             #parse("component/order/orderStatement.vm")
