@@ -1123,9 +1123,9 @@ ORDER BY esc.data_order DESC
     <select id="querySalesmanDetail" resultMap="SalesmanDetail" parameterType="map">
     select
     eu.id salesman_id,
-    eu.real_name salesman_name,
+    MAX(eu.real_name) salesman_name,
     esc.id sub_company_id,
-    esc.sub_company_name sub_company_name,
+    MAX(esc.sub_company_name) sub_company_name,
     rlt.rent_length_type,
     MIN(deal_data.deals_count) deals_count,
     MIN(deal_data.deals_product_count) deals_product_count,
@@ -1194,9 +1194,9 @@ ORDER BY esc.data_order DESC
     <select id="querySalesmanDetailByDate" resultMap="SalesmanDetail" parameterType="map">
         select
         eu.id salesman_id,
-        eu.real_name salesman_name,
+        MAX(eu.real_name) salesman_name,
         esc.id sub_company_id,
-        esc.sub_company_name sub_company_name,
+        MAX(esc.sub_company_name) sub_company_name,
         rlt.rent_length_type,
         MIN(deal_data.deals_count) deals_count,
         MIN(deal_data.deals_product_count) deals_product_count,
@@ -1322,21 +1322,30 @@ ORDER BY esc.data_order DESC
     </resultMap>
 
     <select id="querySalesmanReturnOrder" resultMap="SalesmanReturnOrder" parameterType="map">
-        select
-        eop.id eop_id,
-        eo.order_seller_id eu_id,
-        eo.order_sub_company_id esc_id,
-        eop.rent_length_type,
-        k3ro.return_time,
-        k3rod.product_count,
-        k3rod.product_no,
-        eop.create_time,
-        ec.localization_time,
-        eop.rent_type,
-        eo.rent_start_time,
-        eo.rent_time_length,
+        SELECT
+        MAX(eop.id) eop_id,
+        MAX(eo.order_seller_id) eu_id,
+        MAX(eo.order_sub_company_id) esc_id,
+        MAX(eop.rent_length_type) rent_length_type,
+        MAX(k3ro.return_time) return_time,
+        MAX(k3rod.product_count) product_count,
+        MAX(k3rod.product_no) product_no,
+        MAX(eop.create_time) create_time,
+        MAX(ec.localization_time) localization_time,
+        MAX(eop.rent_type) rent_type,
+        MAX(eo.rent_start_time) rent_start_time,
+        MAX(eo.rent_time_length) rent_time_length,
         MAX(ecul.create_time) customer_update_time,
-        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
+        MAX(CASE
+        WHEN epc.id IN (800002, 800003, 800005) THEN
+        1
+        WHEN epc.id IN (800004) THEN
+        0.7
+        WHEN epc.id IN (800006) THEN
+        0.3
+        ELSE
+        0
+        END) product_count_factor
         from erp_k3_return_order_detail k3rod
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
         LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id
@@ -1388,21 +1397,30 @@ ORDER BY esc.data_order DESC
 
     </select>
     <select id="querySalesmanReturnOrderByDate" resultMap="SalesmanReturnOrder" parameterType="map">
-        select
-        eop.id eop_id,
-        eo.order_seller_id eu_id,
-        eo.order_sub_company_id esc_id,
-        eop.rent_length_type,
-        k3ro.return_time,
-        k3rod.product_count,
-        k3rod.product_no,
-        eop.create_time,
-        ec.localization_time,
-        eop.rent_type,
-        eo.rent_start_time,
-        eo.rent_time_length,
+        SELECT
+        MAX(eop.id) eop_id,
+        MAX(eo.order_seller_id) eu_id,
+        MAX(eo.order_sub_company_id) esc_id,
+        MAX(eop.rent_length_type) rent_length_type,
+        MAX(k3ro.return_time) return_time,
+        MAX(k3rod.product_count) product_count,
+        MAX(k3rod.product_no) product_no,
+        MAX(eop.create_time) create_time,
+        MAX(ec.localization_time) localization_time,
+        MAX(eop.rent_type) rent_type,
+        MAX(eo.rent_start_time) rent_start_time,
+        MAX(eo.rent_time_length) rent_time_length,
         MAX(ecul.create_time) customer_update_time,
-        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
+        MAX(CASE
+        WHEN epc.id IN (800002, 800003, 800005) THEN
+        1
+        WHEN epc.id IN (800004) THEN
+        0.7
+        WHEN epc.id IN (800006) THEN
+        0.3
+        ELSE
+        0
+        END) product_count_factor
         from erp_k3_return_order_detail k3rod
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
         LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id
