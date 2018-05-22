@@ -578,7 +578,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             }
         }
 
-        if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
+        if(CollectionUtil.isEmpty(claimParamList)){
             //删除所有
             bankSlipClaimMapper.deleteBankSlipClaimDO(userSupport.getCurrentUserId().toString(), now, bankSlipClaimDOList);
 
