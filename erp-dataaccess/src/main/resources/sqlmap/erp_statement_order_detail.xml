@@ -273,7 +273,7 @@
     </select>
 
     <select id="queryAllRentIncomeForHome" resultType="java.math.BigDecimal" parameterType="map">
-        SELECT SUM(statement_detail_amount)
+        SELECT IFNULL(SUM(statement_detail_amount),0)
         FROM erp_statement_order_detail esod
         LEFT JOIN erp_order_product eop ON eop.id = esod.order_item_refer_id AND eop.data_status=1 AND
         esod.order_item_type = 1
