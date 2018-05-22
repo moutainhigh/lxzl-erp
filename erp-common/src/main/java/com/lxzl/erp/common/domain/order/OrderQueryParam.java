@@ -35,7 +35,7 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Integer payStatus;
     private Integer isPeer;
     private Integer isRecycleBin;//是否回收站
-    private Integer isReturnOverDue;   //退还是否逾期
+    private Integer isReturnOverDue;  //商品退还是否逾期
 
     public Integer getOrderId() {
         return orderId;
