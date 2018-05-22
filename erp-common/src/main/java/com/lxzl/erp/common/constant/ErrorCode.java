@@ -849,6 +849,7 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_IS_UNKNOWN = "J18000047";
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
+    public static final String CHARGE_RECORD_IS_NULL = "J18000050";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1749,6 +1750,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录都已存在");
+        MAP.put(CHARGE_RECORD_IS_NULL, "快付通充值记录为空");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
