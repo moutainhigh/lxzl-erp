@@ -135,7 +135,7 @@
                 and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
-                and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
+                and upper(ejp.joint_product_name) like upper(CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' ))
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null">
                 <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
@@ -160,7 +160,7 @@
                 and ejp.id = #{maps.jointProductQueryParam.jointProductId,jdbcType=INTEGER}
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.jointProductName != null &amp;&amp; maps.jointProductQueryParam.jointProductName != ''">
-                and ejp.joint_product_name like CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' )
+                and upper(ejp.joint_product_name) like upper(CONCAT('%','${maps.jointProductQueryParam.jointProductName}','%' ))
             </if>
             <if test="maps.jointProductQueryParam != null &amp;&amp; maps.jointProductQueryParam.startDate != null">
                 <![CDATA[ AND ejp.create_time >= #{maps.jointProductQueryParam.startDate} ]]>
