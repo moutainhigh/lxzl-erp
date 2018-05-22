@@ -1431,7 +1431,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             return serviceResult;
         }
 
-        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetail.getBankSlipId());
+        BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
         List<BankSlipClaimDO> newDankSlipClaimDOList = new ArrayList<>();
         List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = new ArrayList<>();
         boolean paySuccessFlag = paymentClaim(bankSlipDetailDO.getBankSlipClaimDOList(), newDankSlipClaimDOList, bankSlipDetailOperationLogDOList, bankSlipDO, bankSlipDetailDO, now);
