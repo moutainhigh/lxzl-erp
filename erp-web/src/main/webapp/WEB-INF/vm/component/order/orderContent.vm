@@ -478,7 +478,7 @@
                         <tr class="groupRow" class="bg-light">
                             <td>
                                 <label class="option block mn">
-                                    <input type="checkbox" name="checkItem" value="{{jointProductId}}" data-serialnumber="{{serialNumber}}" >
+                                    <input type="checkbox" name="checkItem" value="{{jointProductId}}" data-isnew="{{isNew}}" >
                                     <span class="checkbox mn"></span>
                                 </label>
                             </td>
@@ -497,7 +497,7 @@
                             </td>
                             <td class="text-right">
                                 <div class="btn-group text-right">
-                                    <a href="#" type="button" class="btn btn-default btn-xs deleteGroup" data-id="{{jointProductId}}" data-serialnumber="{{serialNumber}}">删除</a>
+                                    <a href="#" type="button" class="btn btn-default btn-xs deleteGroup" data-id="{{jointProductId}}" data-isnew="{{isNew}}">删除</a>
                                 </div>
                             </td>
                         </tr>

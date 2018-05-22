@@ -102,7 +102,7 @@
                                             <tr class="skuRow" data-product="{{productJSONString}}" >
                                                 <td colspan="7" class="pn mn br-n">
                                                     {{#skuListSource}}
-                                                    <div class="row" style="margin:0;" data-sku="{{}}">
+                                                    <div class="row" style="margin:0;">
                                                         <div class="panel" style="margin-bottom:0;">
                                                             <div class="panel-heading pn ph8" style="background:#fff;">
                                                                 <span>选择SKU</span>
