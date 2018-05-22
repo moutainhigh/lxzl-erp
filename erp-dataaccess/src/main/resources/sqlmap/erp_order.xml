@@ -469,10 +469,10 @@
                 and eo.order_status != 28
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
-                and  NOW() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
-                and (eo.expect_return_time >= NOW()  OR eo.order_status NOT  IN (16, 20, 22))
+                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
@@ -597,6 +597,12 @@
             </if>
             <if test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==0">
                 and eo.order_status != 28
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
+                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
+                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
