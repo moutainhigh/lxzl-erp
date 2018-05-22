@@ -74,7 +74,7 @@
 
                 <script type="text/html" id="groupProductDetailTpl">
                     {{#group}}
-                    <div class="groupDetial row p15" data-group="{{groupJSONString}}">
+                    <div class="groupDetial row p15" data-group="{{groupJSONString}}" data-material="{{groupMaterialJSONString}}">
                         {{#groupProduct}}
                         <div  class="row ph15">
                             <div class="panel" style="margin: 0 15px;">
@@ -99,7 +99,7 @@
                                                 <td>{{product.categoryName}}</td>
                                                 <td>{{product.brandName}}</td>
                                             </tr>
-                                            <tr class="skuRow" data-product="{{productJSONString}}">
+                                            <tr class="skuRow" data-product="{{productJSONString}}" >
                                                 <td colspan="7" class="pn mn br-n">
                                                     {{#skuListSource}}
                                                     <div class="row" style="margin:0;" data-sku="{{}}">
