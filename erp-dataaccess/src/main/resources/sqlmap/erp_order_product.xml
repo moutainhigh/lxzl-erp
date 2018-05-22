@@ -30,6 +30,7 @@
         <result column="FEntry_id" property="FEntryID"/>
         <result column="product_number" property="productNumber"/>
         <result column="order_joint_product_id" jdbcType="INTEGER" property="orderJointProductId" />
+        <result column="joint_product_product_id" jdbcType="INTEGER" property="jointProductProductId" />
         <result column="data_status" property="dataStatus"/>
         <result column="remark" property="remark"/>
         <result column="create_user" property="createUser"/>
@@ -39,7 +40,7 @@
     </resultMap>
 
     <sql id="column_List">
-        eop.id as id,eop.order_id as order_id,eop.rent_type as rent_type,eop.rent_time_length as rent_time_length,eop.rent_length_type as rent_length_type,eop.product_id as product_id,eop.product_name as product_name,eop.product_sku_id as product_sku_id,eop.product_sku_name as product_sku_name,eop.product_count as product_count,eop.product_unit_amount as product_unit_amount,eop.product_amount as product_amount,eop.rent_deposit_amount as rent_deposit_amount,eop.deposit_amount as deposit_amount,eop.credit_deposit_amount as credit_deposit_amount,eop.insurance_amount as insurance_amount,eop.product_sku_snapshot as product_sku_snapshot,eop.deposit_cycle as deposit_cycle,eop.payment_cycle as payment_cycle,eop.pay_mode as pay_mode,eop.is_new_product as is_new_product,eop.renting_product_count,eop.data_status as data_status,eop.remark as remark,eop.create_time as create_time,eop.create_user as create_user,eop.update_time as update_time,eop.update_user as update_user, eop.FEntry_id as FEntry_id, eop.product_number as product_number,eop.order_joint_product_id as order_joint_product_id
+        eop.id as id,eop.order_id as order_id,eop.rent_type as rent_type,eop.rent_time_length as rent_time_length,eop.rent_length_type as rent_length_type,eop.product_id as product_id,eop.product_name as product_name,eop.product_sku_id as product_sku_id,eop.product_sku_name as product_sku_name,eop.product_count as product_count,eop.product_unit_amount as product_unit_amount,eop.product_amount as product_amount,eop.rent_deposit_amount as rent_deposit_amount,eop.deposit_amount as deposit_amount,eop.credit_deposit_amount as credit_deposit_amount,eop.insurance_amount as insurance_amount,eop.product_sku_snapshot as product_sku_snapshot,eop.deposit_cycle as deposit_cycle,eop.payment_cycle as payment_cycle,eop.pay_mode as pay_mode,eop.is_new_product as is_new_product,eop.renting_product_count,eop.data_status as data_status,eop.remark as remark,eop.create_time as create_time,eop.create_user as create_user,eop.update_time as update_time,eop.update_user as update_user, eop.FEntry_id as FEntry_id, eop.product_number as product_number,eop.order_joint_product_id as order_joint_product_id,eop.joint_product_product_id as joint_product_product_id
     </sql>
 
     <select id="findById" resultMap="OrderProductDO" parameterType="java.lang.Integer">
@@ -147,6 +148,9 @@
             </if>
             <if test="orderJointProductId != null">
                 order_joint_product_id = #{orderJointProductId, jdbcType=INTEGER},
+            </if>
+            <if test="jointProductProductId != null">
+                joint_product_product_id = #{jointProductProductId, jdbcType=INTEGER},
             </if>
         </set>
     </sql>

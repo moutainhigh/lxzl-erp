@@ -37,79 +37,82 @@
                             </div>
                             <div class="text-right pull-right pr10">
                                 <form id="searchForm" class="form-horizontal">
-                                    <div class="pull-right">
-                                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
-                                        <button type="reset" class="btn btn-default btn-sm">重置</button>
-                                        <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
-                                        <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
-                                    </div>
-                                    <div class="form-group pull-right mn mr10" style="width: 120px;">
-                                        <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
-                                    </div>
-
-                                    <div class="field form-group pull-right mn mr10" style="width: 120px;">
-                                        <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
-                                    </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="payStatus" id="payStatus">
-                                                <option value="">请选择</option>
-                                            </select>
+                                    <div class="row">
+                                        <div class="form-group pull-right mn mr10" style="width: 120px;">
+                                            <input type="text" name="orderNo" id="orderNo" class="form-control input-sm bradius" autocomplete="off" placeholder="输入订单编号">
                                         </div>
-                                    </div>
-##                                    <div class="form-group pull-right mn mr10">
-##                                        <div class="input-group">
-##                                            <select class="form-control input-sm bradius" name="orderStatus" id="orderStatus">
-##                                                <option value="">请选择</option>
-##                                            </select>
-##                                        </div>
-##                                    </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="topbar-right">
-                                            <div class="ib topbar-dropdown bradius">
-                                                <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
-                                                    <optgroup label="请选择:">
-                                                        <option value="">全部（订单状态）</option>
-                                                    </optgroup>
+                                        <div class="field form-group pull-right mn mr10" style="width: 120px;">
+                                            <input type="text" name="buyerRealName" id="buyerRealName" class="form-control input-sm bradius" autocomplete="off" placeholder="输入客户姓名">
+                                        </div>
+                                        <div class="form-group pull-right mn mr10">
+                                            <div class="input-group">
+                                                <select class="form-control input-sm bradius" name="isReturnOverDue" id="isReturnOverDue">
+                                                    <option value="">请选择</option>
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="rentType" id="rentType">
-                                                <option value="">请选择</option>
-                                            </select>
+                                        <div class="form-group pull-right mn mr10">
+                                            <div class="input-group">
+                                                <select class="form-control input-sm bradius" name="payStatus" id="payStatus">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10">
+                                            <div class="topbar-right">
+                                                <div class="ib topbar-dropdown bradius">
+                                                    <select id="orderStatusList" multiple="multiple" name="orderStatusList" data-type="optgroup">
+                                                        <optgroup label="请选择:">
+                                                            <option value="">全部（订单状态）</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10">
+                                            <div class="input-group">
+                                                <select class="form-control input-sm bradius" name="rentType" id="rentType">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10">
+                                            <div class="input-group">
+                                                <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10">
+                                            <div class="input-group">
+                                                <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
+                                                    <option value="">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10" style="width: 195px;">
+                                            <input type="hidden" name="startRentStratTime" id="startRentStratTime" />
+                                            <input type="hidden" name="endRentStratTime" id="endRentStratTime" />
+                                            <div class="input-group date" id="rentTimePicker">
+                                                <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
+                                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pull-right mn mr10" style="width: 195px;">
+                                            <input type="hidden" name="createStartTime" id="createStartTime" />
+                                            <input type="hidden" name="createEndTime" id="createEndTime" />
+                                            <div class="input-group date" id="createTimePicker">
+                                                <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
+                                                <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="subCompanyId" id="subCompanyId">
-                                                <option value="">请选择</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group pull-right mn mr10">
-                                        <div class="input-group">
-                                            <select class="form-control input-sm bradius" name="deliverySubCompanyId" id="deliverySubCompanyId">
-                                                <option value="">请选择</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group pull-right mn mr10" style="width: 195px;">
-                                        <input type="hidden" name="startRentStratTime" id="startRentStratTime" />
-                                        <input type="hidden" name="endRentStratTime" id="endRentStratTime" />
-                                        <div class="input-group date" id="rentTimePicker">
-                                            <input type="text" name="rentTimePicker" id="rentTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="起租时间">
-                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group pull-right mn mr10" style="width: 195px;">
-                                        <input type="hidden" name="createStartTime" id="createStartTime" />
-                                        <input type="hidden" name="createEndTime" id="createEndTime" />
-                                        <div class="input-group date" id="createTimePicker">
-                                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control input-sm bradiusL" autocomplete="off" placeholder="选择下单时间">
-                                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
+                                    <div class="row mt10">
+                                        <div class="pull-right mn mr10">
+                                            <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                                            <button type="reset" class="btn btn-default btn-sm">重置</button>
+                                            <button type="button" id="recycleBtn" class="btn btn-default btn-sm">回收站</button>
+                                            <input type="hidden" name="isRecycleBin" id="isRecycleBin" value="0">
                                         </div>
                                     </div>
                                 </form>

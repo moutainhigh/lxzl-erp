@@ -4,8 +4,7 @@ package com.lxzl.erp.core.service.dingding;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.DingdingSendTextMessageRequest;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
-import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveDTO;
-import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
+import com.lxzl.erp.common.domain.dingding.message.DingdingMessageDTO;
 import com.lxzl.se.core.service.BaseService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2017-10-25 19:59
  */
 public interface DingdingService extends BaseService {
+
+    /** 发送消息给钉钉 */
+    ServiceResult<String, Object> sendMessageToDingding(DingdingMessageDTO dingdingMessageDTO);
 
     /**
      * 叮叮消息推送信息

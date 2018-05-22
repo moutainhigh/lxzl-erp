@@ -26,7 +26,29 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
+    @Test
+    public void queryUnknownBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail =  new BankSlipDetail();
+//        bankSlipDetail.setBankSlipDetailId(2);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/queryUnknownBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
+    public void pageUnknownBankSlipDetail() throws Exception {
+        BankSlipDetailQueryParam bankSlipDetailQueryParam = new BankSlipDetailQueryParam();
+        bankSlipDetailQueryParam.setPageNo(1);
+        bankSlipDetailQueryParam.setPageSize(100);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/pageUnknownBankSlipDetail",bankSlipDetailQueryParam);
+    }
+
+    @Test
+    public void unknownBankSlipDetail() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(2);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/unknownBankSlipDetail",bankSlipDetail);
+    }
+
     @Test
     public void queryBankSlipClaim() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -104,21 +126,21 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(2);
-        ArrayList<ClaimParam> list = new ArrayList<>();
-        ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal("29820.00"));
-        claimParam.setCustomerNo("LXCC-2001-20180514-00006");
+        bankSlipClaim.setBankSlipDetailId(6);
+//        ArrayList<ClaimParam> list = new ArrayList<>();
+//        ClaimParam claimParam =  new ClaimParam();
+//        claimParam.setClaimAmount(new BigDecimal("10000"));
+//        claimParam.setCustomerNo("LXCC-2001-20180514-00006");
 //        ClaimParam claimParam1 =  new ClaimParam();
 //        claimParam1.setClaimAmount(new BigDecimal("1500"));
 //        claimParam1.setCustomerNo("LXCC-1000-20180511-00005");
 //        ClaimParam claimParam2 =  new ClaimParam();
 //        claimParam2.setClaimAmount(new BigDecimal(-10));
 //        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
-        list.add(claimParam);
+//        list.add(claimParam);
 //        list.add(claimParam1);
 //        list.add(claimParam2);
-        bankSlipClaim.setClaimParam(list);
+//        bankSlipClaim.setClaimParam(list);
         bankSlipClaim.setRemark("aaaaaaaaaaaaaaaaaaa");
         TestResult result = getJsonTestResult("/bankSlip/claimBankSlipDetail", bankSlipClaim);
     }

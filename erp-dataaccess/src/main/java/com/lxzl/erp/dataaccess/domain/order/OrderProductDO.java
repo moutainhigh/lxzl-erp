@@ -36,12 +36,21 @@ public class OrderProductDO extends BaseDO {
     private String serialNumber;        // 序号
 
     private Integer orderJointProductId; // 订单组合商品id
+    private Integer jointProductProductId; // 关联的组合商品商品项id
     @Transient
     private Integer identityNo; // 标识号，只在业务逻辑处理时使用
 
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
+
+    public Integer getJointProductProductId() {
+        return jointProductProductId;
+    }
+
+    public void setJointProductProductId(Integer jointProductProductId) {
+        this.jointProductProductId = jointProductProductId;
+    }
 
     public Integer getIdentityNo() {
         return identityNo;

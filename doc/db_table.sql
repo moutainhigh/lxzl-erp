@@ -1266,6 +1266,7 @@ CREATE TABLE `erp_order_product` (
   `product_sku_id` int(20) COMMENT '商品SKU ID',
   `product_sku_name` varchar(100) COLLATE utf8_bin COMMENT '商品SKU名称',
   `product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
+  `stable_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单商品总数，该字段只在订单未提交时可变化',
   `product_unit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '商品单价',
   `product_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '商品价格',
   `rent_deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '租赁押金金额',
@@ -1321,6 +1322,7 @@ CREATE TABLE `erp_order_material` (
   `material_count` int(11) NOT NULL DEFAULT '0' COMMENT '配件总数',
   `material_unit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '配件单价',
   `material_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '配件价格',
+  `stable_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单配件总数，该字段只在订单未提交时可变化',
   `rent_deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '租赁押金金额',
   `deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '押金金额',
   `credit_deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
@@ -3560,7 +3562,40 @@ CREATE TABLE `erp_order_split_detail` (
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
 
 
+DROP TABLE if exists `erp_order_confirm_change_log`;
+CREATE TABLE `erp_order_confirm_change_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+	`change_reason_type` INT(11) COMMENT '变更原因类型',
+	`change_reason` varchar(500) COMMENT '变更原因',
+	`is_restatement_success` INT(11) NOT NULL DEFAULT '0' COMMENT '是否重算成功：0-否，1-是',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=3000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录表';
 
 
-
-
+DROP TABLE if exists `erp_order_confirm_change_log_detail`;
+CREATE TABLE `erp_order_confirm_change_log_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+  `item_type` int(11) NOT NULL COMMENT '类型：1-商品项，2-配件项',
+  `item_id` int(11) NOT NULL COMMENT '商品项/配件项ID',
+  `order_item_count` int(11) NOT NULL COMMENT '订单初始商品/配件数',
+  `old_item_count` int(11) NOT NULL COMMENT '原商品/配件数',
+  `new_item_count` int(11) NOT NULL COMMENT '新商品/配件数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_item_id ( `item_id` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录详情表';

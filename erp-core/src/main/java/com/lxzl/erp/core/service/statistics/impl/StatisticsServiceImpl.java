@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.statistics.impl;
 
+import com.google.common.collect.Lists;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -8,27 +9,34 @@ import com.lxzl.erp.common.domain.order.OrderQueryParam;
 import com.lxzl.erp.common.domain.product.ProductEquipmentQueryParam;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
-import com.lxzl.erp.common.util.BigDecimalUtil;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.DateUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.amount.support.AmountSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
+import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -59,10 +67,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 空参数
         paramMap.clear();
         paramMap.put("orderQueryParam", new OrderQueryParam());
-        Integer totalOrderCount = orderMapper.findOrderCountByParams(paramMap);
+        //Integer totalOrderCount = orderMapper.findOrderCountByParams(paramMap);
+        Integer totalOrderCount = orderMapper.listCount();
         statisticsIndexInfo.setTotalOrderCount(totalOrderCount);
 
-        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(paramMap);
+        //List<Map<String, Object>> subCompanyRentAmountList = orderMapper.querySubCompanyOrderAmount(paramMap);
+        List<Map<String, Object>> subCompanyRentAmountList = orderMapper.queryPaidSubCompanyOrderAmount();
         Map<String, BigDecimal> subCompanyRentAmount = new HashMap<>();
         for (Map<String, Object> subCompanyRentAmountMap : subCompanyRentAmountList) {
             if (subCompanyRentAmountMap.get("total_order_amount") != null && subCompanyRentAmountMap.get("total_order_amount") instanceof BigDecimal) {
@@ -267,19 +277,49 @@ public class StatisticsServiceImpl implements StatisticsService {
         ServiceResult<String, List<StatisticsHomeByRentLengthType>> serviceResult = new ServiceResult<>();
         List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList = new ArrayList<>();
         List<TimePairs> timePairsList = getTimePairs(homeRentByTimeParam.getTimeDimensionType());
-        if(CollectionUtil.isNotEmpty(timePairsList)){
+//        if(CollectionUtil.isNotEmpty(timePairsList)){
+//            for(TimePairs timePairs : timePairsList){
+//                HomeRentParam homeRentParam = new HomeRentParam();
+//                Map<String, Object> maps = new HashMap<>();
+//                maps.put("homeRentParam", homeRentParam);
+//                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getLongRent(timePairs.startTime,timePairs.endTime);
+//                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+//            }
+//        }
+        if(CollectionUtil.isNotEmpty(timePairsList)) {
+            List<Future<StatisticsHomeByRentLengthType>> taskResults = Lists.newArrayList();
+            ExecutorService executor = Executors.newFixedThreadPool(timePairsList.size());
             for(TimePairs timePairs : timePairsList){
-                HomeRentParam homeRentParam = new HomeRentParam();
-                Map<String, Object> maps = new HashMap<>();
-                maps.put("homeRentParam", homeRentParam);
-                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getLongRent(timePairs.startTime,timePairs.endTime);
-                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+                StatisticHomeByLongRentTask task = new StatisticHomeByLongRentTask(timePairs.startTime, timePairs.endTime);
+                taskResults.add(executor.submit(task));
             }
+            for (Future<StatisticsHomeByRentLengthType> result: taskResults) {
+                try {
+                    StatisticsHomeByRentLengthType res = result.get();
+                    statisticsHomeByRentLengthTypeList.add(res);
+                } catch (Exception exception) {
+                }
+            }
+            executor.shutdown();
         }
         addNoPassed(homeRentByTimeParam.getTimeDimensionType(),statisticsHomeByRentLengthTypeList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;
+    }
+
+    private class StatisticHomeByLongRentTask implements Callable<StatisticsHomeByRentLengthType> {
+        private Date startTime;
+        private Date endTime;
+        protected StatisticHomeByLongRentTask(Date startTime, Date endTime) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+        @Override
+        public StatisticsHomeByRentLengthType call() throws Exception {
+            return getLongRent(startTime, endTime);
+        }
+
     }
     private void addNoPassed(Integer timeDimensionType, List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList){
         List<Date> noPassedDateList = null;
@@ -326,7 +366,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         homeRentParam.setStartTime(startTime);
         homeRentParam.setEndTime(endTime);
         maps.put("homeRentParam", homeRentParam);
-        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        //StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByLongRent(maps);
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForHome(maps);
         BigDecimal rentDeposit = BigDecimal.ZERO;//租金押金
         BigDecimal deposit = BigDecimal.ZERO;//设备押金
@@ -350,7 +391,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 rent = BigDecimalUtil.add(rent,rentAmount);
                 prepayRent = BigDecimalUtil.add(prepayRent,prepayRentAmount);
                 otherAmount = BigDecimalUtil.add(otherAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
-                rentIncome = BigDecimalUtil.sub(BigDecimalUtil.sub(BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
+                rentIncome = BigDecimalUtil.sub(
+                        BigDecimalUtil.sub(
+                                BigDecimalUtil.add(rentIncome,statementOrderDetailDO.getStatementDetailAmount()),statementOrderDetailDO.getStatementDetailDepositReturnAmount()),statementOrderDetailDO.getStatementDetailRentDepositReturnAmount());
             }
         }
         statisticsHomeByRentLengthType.setRentDeposit(rentDeposit);
@@ -376,7 +419,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         homeRentParam.setStartTime(startTime);
         homeRentParam.setEndTime(endTime);
         maps.put("homeRentParam", homeRentParam);
-        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        //StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByRentLengthType(maps);
+        StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = statisticsMapper.queryHomeByShortRent(maps);
+        /*
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.listAllForHome(maps);
         BigDecimal rentIncome = BigDecimal.ZERO;//租金收入
         if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
@@ -386,6 +431,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 }
             }
         }
+        */
+
+        BigDecimal rentIncome = statementOrderDetailMapper.queryAllRentIncomeForHome(maps);
         statisticsHomeByRentLengthType.setRentIncome(rentIncome);
         statisticsHomeByRentLengthType.setTotalOrderCount(statisticsHomeByRentLengthType.getOrderCountByNewCustomer()+statisticsHomeByRentLengthType.getOrderCountByOldCustomer());
         statisticsHomeByRentLengthType.setTotalProductCount(statisticsHomeByRentLengthType.getProductCountByNewCustomer()+statisticsHomeByRentLengthType.getProductCountByOldCustomer());
@@ -397,19 +445,47 @@ public class StatisticsServiceImpl implements StatisticsService {
         ServiceResult<String, List<StatisticsHomeByRentLengthType>> serviceResult = new ServiceResult<>();
         List<StatisticsHomeByRentLengthType> statisticsHomeByRentLengthTypeList = new ArrayList<>();
         List<TimePairs> timePairsList = getTimePairs(homeRentByTimeParam.getTimeDimensionType());
-        if(CollectionUtil.isNotEmpty(timePairsList)){
+//        if(CollectionUtil.isNotEmpty(timePairsList)){
+//            for(TimePairs timePairs : timePairsList){
+//                HomeRentParam homeRentParam = new HomeRentParam();
+//                Map<String, Object> maps = new HashMap<>();
+//                maps.put("homeRentParam", homeRentParam);
+//                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getShortRent(timePairs.startTime,timePairs.endTime);
+//                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+//            }
+//        }
+        if(CollectionUtil.isNotEmpty(timePairsList)) {
+            List<Future<StatisticsHomeByRentLengthType>> taskResults = Lists.newArrayList();
+            ExecutorService executor = Executors.newFixedThreadPool(timePairsList.size());
             for(TimePairs timePairs : timePairsList){
-                HomeRentParam homeRentParam = new HomeRentParam();
-                Map<String, Object> maps = new HashMap<>();
-                maps.put("homeRentParam", homeRentParam);
-                StatisticsHomeByRentLengthType statisticsHomeByRentLengthType = getShortRent(timePairs.startTime,timePairs.endTime);
-                statisticsHomeByRentLengthTypeList.add(statisticsHomeByRentLengthType);
+                StatisticHomeByShortRentTask task = new StatisticHomeByShortRentTask(timePairs.startTime, timePairs.endTime);
+                taskResults.add(executor.submit(task));
             }
+            for (Future<StatisticsHomeByRentLengthType> result: taskResults) {
+                try {
+                    statisticsHomeByRentLengthTypeList.add(result.get());
+                } catch (Exception exception) {
+                }
+            }
+            executor.shutdown();
         }
         addNoPassed(homeRentByTimeParam.getTimeDimensionType(),statisticsHomeByRentLengthTypeList);
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         serviceResult.setResult(statisticsHomeByRentLengthTypeList);
         return serviceResult;
+    }
+    private class StatisticHomeByShortRentTask implements Callable<StatisticsHomeByRentLengthType> {
+        private Date startTime;
+        private Date endTime;
+        protected StatisticHomeByShortRentTask(Date startTime, Date endTime) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+        @Override
+        public StatisticsHomeByRentLengthType call() throws Exception {
+            return getShortRent(startTime, endTime);
+        }
+
     }
 
     @Override
@@ -695,6 +771,112 @@ public class StatisticsServiceImpl implements StatisticsService {
         return serviceResult;
     }
 
+    /**
+     * 确认业务员提成统计月结信息
+     * @param statisticsSalesmanMonth
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> updateStatisticsSalesmanMonth(StatisticsSalesmanMonth statisticsSalesmanMonth) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Date date = new Date();
+        StatisticsSalesmanMonthDO statisticsSalesmanMonthDO = statisticsSalesmanMonthMapper.findById(statisticsSalesmanMonth.getStatisticsSalesmanMonthId());
+        if (statisticsSalesmanMonthDO == null ) {
+            serviceResult.setErrorCode(ErrorCode.STATISTICS_SALESMAN_MONTH_NOT_EXISTS);//业务员提成统计月结数据不存在
+            return serviceResult;
+        }
+        statisticsSalesmanMonthDO.setConfirmTime(date);
+        statisticsSalesmanMonthDO.setConfirmUser(userSupport.getCurrentUserId().toString());
+        statisticsSalesmanMonthDO.setConfirmStatus(statisticsSalesmanMonth.getConfirmStatus());
+        statisticsSalesmanMonthDO.setRefuseReason(statisticsSalesmanMonth.getRefuseReason());
+        statisticsSalesmanMonthDO.setUpdateTime(date);
+        statisticsSalesmanMonthDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        statisticsSalesmanMonthMapper.update(statisticsSalesmanMonthDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    /**
+     * 创建业务员提成统计月结信息
+     * @param date
+     * @return
+     */
+    @Override
+    public ServiceResult<String, String> createStatisticsSalesmanMonth(Date date) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+
+        // 格式化查询时间
+        Date start = DateUtil.getStartMonthDate(date);
+        Date end = DateUtil.getEndMonthDate(date);
+
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", start);
+        maps.put("end", end);
+        StatisticsSalesmanMonthDO statisticsSalesmanMonthDO1 = statisticsSalesmanMonthMapper.findByMonth(start);
+        if (statisticsSalesmanMonthDO1!= null) {
+            result.setErrorCode(ErrorCode.STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS);//业务员提成统计月结数据不存在
+            return result;
+        }
+        // 查询以业务员，分公司分组的初步数据(主数据)
+        List<StatisticsSalesmanDetail> statisticsSalesmanDetailList = statisticsMapper.querySalesmanDetailByDate(maps);
+        for (StatisticsSalesmanDetail statisticsSalesmanDetail : statisticsSalesmanDetailList) {
+            statisticsSalesmanDetail.setReceive(statisticsSalesmanDetail.getAwaitReceivable().add(statisticsSalesmanDetail.getIncome()));
+        }
+        // 装换为salesmanId-subCompnayId为key的map
+        Map<String, StatisticsSalesmanDetail> statisticsSalesmanDetailTwoMap = ListUtil.listToMap(statisticsSalesmanDetailList, "salesmanId", "subCompanyId", "rentLengthType");
+
+
+        for (StatisticsSalesmanDetail statisticsSalesmanDetail : statisticsSalesmanDetailList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetail.getRentLengthType()) {
+                statisticsSalesmanDetail.setPureIncrease(BigDecimal.valueOf(0));
+            }
+        }
+
+        // 查询扩展数据来计算净增台数
+        List<StatisticsSalesmanDetailExtend> statisticsSalesmanDetailExtendList = statisticsMapper.querySalesmanDetailExtendByDate(maps);
+        List<StatisticsSalesmanReturnOrder> statisticsSalesmanReturnOrderList = statisticsMapper.querySalesmanReturnOrderByDate(maps);
+
+        // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中，只算长租
+        for (StatisticsSalesmanDetailExtend statisticsSalesmanDetailExtend : statisticsSalesmanDetailExtendList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanDetailExtend.getRentLengthType()) {
+                String key = statisticsSalesmanDetailExtend.getSalesmanId() + "-" + statisticsSalesmanDetailExtend.getSubCompanyId() + "-" + statisticsSalesmanDetailExtend.getRentLengthType();
+                StatisticsSalesmanDetail statisticsSalesmanDetail = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetail != null) {
+                    BigDecimal increaseProduct = calcPureIncrease(statisticsSalesmanDetailExtend);
+                    statisticsSalesmanDetail.setPureIncrease(statisticsSalesmanDetail.getPureIncrease().add(increaseProduct));
+                }
+            }
+        }
+
+        // 遍历计算每一订单项净增台数累加到相应的StatisticsSalesmanDetailTwo实体中，只算长租
+        for (StatisticsSalesmanReturnOrder statisticsSalesmanReturnOrder : statisticsSalesmanReturnOrderList) {
+            if (RentLengthType.RENT_LENGTH_TYPE_LONG == statisticsSalesmanReturnOrder.getRentLengthType()) {
+                String key = statisticsSalesmanReturnOrder.getEuId() + "-" + statisticsSalesmanReturnOrder.getEscId() + "-" + statisticsSalesmanReturnOrder.getRentLengthType();
+                StatisticsSalesmanDetail statisticsSalesmanDetail = statisticsSalesmanDetailTwoMap.get(key);
+                if (statisticsSalesmanDetail != null) {
+                    BigDecimal returnProduct = calcPureReturn(statisticsSalesmanReturnOrder);
+                    statisticsSalesmanDetail.setPureIncrease(statisticsSalesmanDetail.getPureIncrease().subtract(returnProduct));
+                }
+            }
+        }
+
+        List<StatisticsSalesmanMonthDO> statisticsSalesmanMonthDOList = ConverterUtil.convertList(statisticsSalesmanDetailList,StatisticsSalesmanMonthDO.class);
+        for (StatisticsSalesmanMonthDO statisticsSalesmanMonthDO:statisticsSalesmanMonthDOList) {
+            statisticsSalesmanMonthDO.setMonth(start);//年月
+            statisticsSalesmanMonthDO.setConfirmStatus(ConfirmStatus.CONFIRM_STATUS_UNCONFIRMED);//确认状态，0-未确认，1-同意，2-拒绝
+            statisticsSalesmanMonthDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);//状态：0不可用；1可用；2删除
+            statisticsSalesmanMonthDO.setCreateTime(new Date());//添加时间
+            statisticsSalesmanMonthDO.setUpdateTime(new Date());//修改时间
+            statisticsSalesmanMonthDO.setCreateUser(userSupport.getCurrentUserId().toString());//添加人
+            statisticsSalesmanMonthDO.setUpdateUser(userSupport.getCurrentUserId().toString());//修改人
+        }
+        statisticsSalesmanMonthMapper.addList(statisticsSalesmanMonthDOList);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
     /*
     获取key为salesmanId-subCompanyId-rentLengthType
      */
@@ -767,4 +949,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private SubCompanyMapper subCompanyMapper;
     @Autowired
     private ProductSupport productSupport;
+    @Autowired
+    private StatisticsSalesmanMonthMapper statisticsSalesmanMonthMapper;
+    @Autowired
+    private UserSupport userSupport;
 }

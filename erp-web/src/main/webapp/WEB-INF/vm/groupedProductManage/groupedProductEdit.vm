@@ -36,7 +36,7 @@
                 'api.data.js',
                 'manage.group.product.mixin.js',
                 'manage.group.product.edit.js',
-                'modal.choose.product.js',
+                'manage.group.choose.product.js',
                 'modal.choose.material.js',
                 'manage.order.item.render.js',
                 'manage.group.product.util.js',);

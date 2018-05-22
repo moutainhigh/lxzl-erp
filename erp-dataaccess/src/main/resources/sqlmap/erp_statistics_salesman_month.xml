@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzl.erp.dataaccess.dao.mysql.statistics.StatisticsSalesmanMonthMapper">
+
+	<resultMap id="StatisticsSalesmanMonthDO" type="com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="salesman_id" jdbcType="INTEGER" property="salesmanId" />
+		<result column="salesman_name" jdbcType="VARCHAR" property="salesmanName" />
+		<result column="sub_company_id" jdbcType="INTEGER" property="subCompanyId" />
+		<result column="sub_company_name" jdbcType="VARCHAR" property="subCompanyName" />
+		<result column="rent_length_type" jdbcType="INTEGER" property="rentLengthType" />
+		<result column="deals_count" jdbcType="INTEGER" property="dealsCount" />
+		<result column="deals_product_count" jdbcType="INTEGER" property="dealsProductCount" />
+		<result column="deals_amount" jdbcType="DECIMAL" property="dealsAmount" />
+		<result column="await_receivable" jdbcType="DECIMAL" property="awaitReceivable" />
+		<result column="income" jdbcType="DECIMAL" property="income" />
+		<result column="receive" jdbcType="DECIMAL" property="receive" />
+		<result column="pure_increase" jdbcType="DECIMAL" property="pureIncrease" />
+		<result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+		<result column="confirm_user" jdbcType="VARCHAR" property="confirmUser" />
+		<result column="confirm_status" jdbcType="INTEGER" property="confirmStatus" />
+		<result column="refuse_reason" jdbcType="VARCHAR" property="refuseReason" />
+		<result column="month" jdbcType="TIMESTAMP" property="month" />
+		<result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+	</resultMap>
+
+	<sql id="column_List">
+		essm.id,essm.salesman_id,essm.salesman_name,essm.sub_company_id,essm.sub_company_name,essm.rent_length_type,essm.deals_count,essm.deals_product_count,essm.deals_amount,essm.await_receivable,essm.income,essm.receive,essm.pure_increase,essm.confirm_time,essm.confirm_user,essm.confirm_status,essm.refuse_reason,essm.month,essm.data_status,essm.remark,essm.create_time,essm.create_user,essm.update_time,essm.update_user
+	</sql>
+
+	<select id="findById" resultMap="StatisticsSalesmanMonthDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_statistics_salesman_month essm 
+		WHERE essm.id = #{id, jdbcType=INTEGER} AND essm.data_status = 1 
+	</select>
+
+	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(essm.id) FROM erp_statistics_salesman_month essm 
+		<where>
+			<if test="true">
+				AND essm.data_status = 1
+			</if>
+		</where>
+	</select>
+
+	<select id="listPage" resultMap="StatisticsSalesmanMonthDO" parameterType="map">
+		SELECT <include refid="column_List"/> FROM erp_statistics_salesman_month essm 
+		<where>
+			<if test="true">
+				AND essm.data_status = 1
+			</if>
+		</where>
+		LIMIT #{maps.start},#{maps.pageSize}
+	</select>
+
+	<sql id="set_column_sql">
+		<set>
+			<if test="salesmanId != null">
+				salesman_id = #{salesmanId,jdbcType=INTEGER},
+			</if>
+			<if test="salesmanName != null">
+				salesman_name = #{salesmanName,jdbcType=VARCHAR},
+			</if>
+			<if test="subCompanyId != null">
+				sub_company_id = #{subCompanyId,jdbcType=INTEGER},
+			</if>
+			<if test="subCompanyName != null">
+				sub_company_name = #{subCompanyName,jdbcType=VARCHAR},
+			</if>
+			<if test="rentLengthType != null">
+				rent_length_type = #{rentLengthType,jdbcType=INTEGER},
+			</if>
+			<if test="dealsCount != null">
+				deals_count = #{dealsCount,jdbcType=INTEGER},
+			</if>
+			<if test="dealsProductCount != null">
+				deals_product_count = #{dealsProductCount,jdbcType=INTEGER},
+			</if>
+			<if test="dealsAmount != null">
+				deals_amount = #{dealsAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="awaitReceivable != null">
+				await_receivable = #{awaitReceivable,jdbcType=DECIMAL},
+			</if>
+			<if test="income != null">
+				income = #{income,jdbcType=DECIMAL},
+			</if>
+			<if test="receive != null">
+				receive = #{receive,jdbcType=DECIMAL},
+			</if>
+			<if test="pureIncrease != null">
+				pure_increase = #{pureIncrease,jdbcType=DECIMAL},
+			</if>
+			<if test="confirmTime != null">
+				confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="confirmUser != null">
+				confirm_user = #{confirmUser,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmStatus != null">
+				confirm_status = #{confirmStatus,jdbcType=INTEGER},
+			</if>
+			<if test="refuseReason != null">
+				refuse_reason = #{refuseReason,jdbcType=VARCHAR},
+			</if>
+			<if test="month != null">
+				month = #{month,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+	</sql>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO">
+		INSERT INTO erp_statistics_salesman_month <include refid="set_column_sql"/>
+	</insert>
+
+	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.statistics.StatisticsSalesmanMonthDO">
+		UPDATE erp_statistics_salesman_month <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<insert id="addList" parameterType="java.util.ArrayList" >
+		INSERT INTO erp_statistics_salesman_month (id,salesman_id,salesman_name,sub_company_id,sub_company_name,rent_length_type,
+		deals_count,deals_product_count,deals_amount,await_receivable,income,receive,pure_increase,confirm_time,confirm_user,
+		confirm_status,refuse_reason,month,data_status,remark,create_time,create_user,update_time,update_user
+		)
+		values
+		<foreach collection="list" item="statisticsSalesmanMonthDO" separator="," >
+			(#{statisticsSalesmanMonthDO.id}, #{statisticsSalesmanMonthDO.salesmanId},#{statisticsSalesmanMonthDO.salesmanName},
+			#{statisticsSalesmanMonthDO.subCompanyId},#{statisticsSalesmanMonthDO.subCompanyName},#{statisticsSalesmanMonthDO.rentLengthType},
+			#{statisticsSalesmanMonthDO.dealsCount},#{statisticsSalesmanMonthDO.dealsProductCount},#{statisticsSalesmanMonthDO.dealsAmount},
+			#{statisticsSalesmanMonthDO.awaitReceivable},#{statisticsSalesmanMonthDO.income},#{statisticsSalesmanMonthDO.receive},
+			#{statisticsSalesmanMonthDO.pureIncrease},#{statisticsSalesmanMonthDO.confirmTime},#{statisticsSalesmanMonthDO.confirmUser},
+			#{statisticsSalesmanMonthDO.confirmStatus},#{statisticsSalesmanMonthDO.refuseReason},#{statisticsSalesmanMonthDO.month},
+			#{statisticsSalesmanMonthDO.dataStatus},#{statisticsSalesmanMonthDO.remark},#{statisticsSalesmanMonthDO.createTime},
+			#{statisticsSalesmanMonthDO.createUser},#{statisticsSalesmanMonthDO.updateTime},#{statisticsSalesmanMonthDO.updateUser})
+		</foreach>
+	</insert>
+
+	<select id="findByMonth" resultMap="StatisticsSalesmanMonthDO" parameterType="java.util.Date">
+		SELECT <include refid="column_List"/> FROM erp_statistics_salesman_month essm
+		WHERE essm.month = #{start, jdbcType=TIMESTAMP} AND essm.data_status = 1
+		order by essm.id ASC limit 1
+	</select>
+</mapper>

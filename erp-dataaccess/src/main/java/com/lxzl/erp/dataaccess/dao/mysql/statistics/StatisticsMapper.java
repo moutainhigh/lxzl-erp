@@ -29,6 +29,10 @@ public interface StatisticsMapper extends BaseMysqlDAO {
 
     List<StatisticsUnReceivableDetail> queryStatisticsUnReceivable(@Param("maps") Map<String, Object> paramMap);
 
+    StatisticsHomeByRentLengthType queryHomeByLongRent(@Param("maps") Map<String, Object> paramMap);
+
+    StatisticsHomeByRentLengthType queryHomeByShortRent(@Param("maps") Map<String, Object> paramMap);
+
     StatisticsHomeByRentLengthType queryHomeByRentLengthType(@Param("maps") Map<String, Object> paramMap);
 
     List<StatisticsUnReceivableDetailForSubCompany> querySubCompanyInfo();
@@ -52,4 +56,10 @@ public interface StatisticsMapper extends BaseMysqlDAO {
     List<StatisticsSalesmanDetailExtend> querySalesmanDetailExtend(@Param("maps") Map<String, Object> maps);
 
     List<StatisticsSalesmanReturnOrder> querySalesmanReturnOrder(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetail> querySalesmanDetailByDate(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanDetailExtend> querySalesmanDetailExtendByDate(@Param("maps") Map<String, Object> maps);
+
+    List<StatisticsSalesmanReturnOrder> querySalesmanReturnOrderByDate(@Param("maps") Map<String, Object> maps);
 }

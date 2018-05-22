@@ -5,6 +5,7 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.TimeDimensionType;
 import com.lxzl.erp.common.domain.statistics.*;
+import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanMonth;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -166,6 +167,20 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         statisticsRentInfoPageParam.setEndTime(end);
         TestResult testResult = getJsonTestResult("/statistics/queryRentInfo", statisticsRentInfoPageParam);
     }
+//    @Test
+//    public void createStatisticsSalesmanMonth() throws Exception {
+//        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟
+//        String dstr="2018-04-17";
+//        java.util.Date date =sdf.parse(dstr);
+//        TestResult testResult = getJsonTestResult("/statistics/createStatisticsSalesmanMonth", date);
+//    }
+    @Test
+    public void updateStatisticsSalesmanMonth() throws Exception {
+        StatisticsSalesmanMonth statisticsSalesmanMonth = new StatisticsSalesmanMonth();
+        statisticsSalesmanMonth.setStatisticsSalesmanMonthId(2);
+        statisticsSalesmanMonth.setConfirmStatus(1);
+        TestResult testResult = getJsonTestResult("/statistics/updateStatisticsSalesmanMonth", statisticsSalesmanMonth);
+    }
 
     private Date getFistByMonth() {
         Calendar c = Calendar.getInstance();
@@ -188,4 +203,5 @@ public class StatisticsTest extends ERPUnTransactionalTest {
         ca.set(Calendar.MILLISECOND, 999);
         return ca.getTime();
     }
+
 }

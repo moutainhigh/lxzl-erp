@@ -5,6 +5,7 @@ import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,8 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> listAllForStatistics(@Param("maps") Map<String, Object> paramMap);
 
     List<StatementOrderDetailDO> listAllForHome(@Param("maps") Map<String, Object> paramMap);
+
+    BigDecimal queryAllRentIncomeForHome(@Param("maps") Map<String, Object> paramMap);
 
     List<StatementOrderDetailDO> findByStatementOrderIdAndItemReferId(@Param("itemReferId") Integer itemReferId, @Param("statementOrderId") Integer statementOrderId);
 
