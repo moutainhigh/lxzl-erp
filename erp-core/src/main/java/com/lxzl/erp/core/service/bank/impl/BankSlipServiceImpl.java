@@ -1430,8 +1430,30 @@ public class BankSlipServiceImpl implements BankSlipService {
             serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
             return serviceResult;
         }
-
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        if (bankSlipDO == null) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        //当前用户如不是总公司,看是否有权先操作
+        String verifyPermission = verifyPermission(bankSlipDO);
+        if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
+        }
+
+        //是否为商务
+        if (!userSupport.isBusinessAffairsPerson() && !userSupport.isSuperUser()) {
+            serviceResult.setErrorCode(ErrorCode.IS_NOT_BUSINESS_AFFAIRS_PERSON);
+            return serviceResult;
+        }
+        //是否为已经下推
+        if (!SlipStatus.ALREADY_PUSH_DOWN.equals(bankSlipDO.getSlipStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN);
+            return serviceResult;
+        }
+
         List<BankSlipClaimDO> newDankSlipClaimDOList = new ArrayList<>();
         List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = new ArrayList<>();
         boolean paySuccessFlag = paymentClaim(bankSlipDetailDO.getBankSlipClaimDOList(), newDankSlipClaimDOList, bankSlipDetailOperationLogDOList, bankSlipDO, bankSlipDetailDO, now);
