@@ -112,6 +112,7 @@ public class DingdingServiceImpl implements DingdingService {
             return serviceResult;
         }
         serviceResult.setErrorCode(dingdingResultDTO.getCode());
+        serviceResult.setResult(dingdingResultDTO);
         return serviceResult;
     }
 
