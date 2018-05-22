@@ -468,6 +468,12 @@
             <if test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==0">
                 and eo.order_status != 28
             </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
+                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
+                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
+            </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
@@ -509,7 +515,16 @@
         LIMIT #{maps.start},#{maps.pageSize}
 
     </select>
-
+    <select id="queryPaidSubCompanyOrderAmount" resultType="java.util.HashMap" parameterType="java.util.Map">
+       SELECT
+          esc.id,
+	      esc.sub_company_name,
+	      SUM( eo.total_order_amount ) AS total_order_amount
+       FROM
+	      erp_sub_company esc
+	   LEFT JOIN (SELECT order_sub_company_id,total_order_amount from erp_order WHERE pay_status = 8) eo ON esc.id = eo.order_sub_company_id
+       GROUP BY esc.id
+    </select>
     <select id="querySubCompanyOrderAmount" resultType="java.util.HashMap" parameterType="java.util.Map">
         SELECT esc.sub_company_name, sum(eo.total_order_amount) as total_order_amount
         FROM erp_sub_company esc LEFT JOIN erp_department ed ON esc.id = ed.sub_company_id
@@ -524,6 +539,11 @@
         FROM erp_order eo WHERE eo.pay_status = 8
     </select>
 
+    <select id="listCount" resultType="java.lang.Integer" >
+        SELECT COUNT( eo.id )
+        FROM erp_order eo
+        WHERE eo.data_status = 1
+    </select>
     <select id="findOrderCountByParams" resultType="java.lang.Integer" parameterType="map">
         SELECT count(eo.id)
         FROM erp_order eo
@@ -577,6 +597,12 @@
             </if>
             <if test="maps.orderQueryParam.isRecycleBin != null &amp;&amp; maps.orderQueryParam.isRecycleBin==0">
                 and eo.order_status != 28
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
+                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+            </if>
+            <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
+                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}

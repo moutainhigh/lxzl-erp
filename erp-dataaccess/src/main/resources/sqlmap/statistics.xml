@@ -409,6 +409,118 @@
         <result column="rent_income" jdbcType="DECIMAL" property="rentIncome" />
     </resultMap>
 
+    <select id="queryHomeByLongRent" resultMap="StatisticsHomeByRentLengthType" parameterType="map">
+        SELECT COUNT(DISTINCT new_customer_table.buyer_customer_id) new_customer_count,
+        COUNT(DISTINCT old_customer_table.buyer_customer_id) old_customer_count  ,
+        COUNT(DISTINCT (CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_new_customer,
+        COUNT(DISTINCT (CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_old_customer,
+        IFNULL(SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL AND (eo.order_status=20 OR eo.order_status=22) THEN eop.product_count ELSE 0 END),0) product_count_by_new_customer,
+        IFNULL(SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL AND (eo.order_status=20 OR eo.order_status=22) THEN eop.product_count ELSE 0 END),0) product_count_by_old_customer,
+        IFNULL((
+            SELECT SUM(ekrod.real_product_count)
+            FROM erp_k3_return_order_detail ekrod FORCE INDEX (index_order_no, index_return_order_id)
+            INNER JOIN erp_k3_return_order ekro ON ekrod.return_order_id = ekro.id  AND ekro.return_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime} > ekro.return_time
+            INNER JOIN erp_order eo ON ekrod.order_no=eo.order_no AND eo.rent_length_type=2
+            WHERE ekrod.data_status=1 AND ekrod.real_product_count > 0
+        ), 0) return_product_count
+        FROM erp_order_product eop LEFT JOIN erp_order eo  FORCE INDEX (index_rent_start_time) ON eo.id=eop.order_id AND eo.data_status=1
+        LEFT JOIN
+        (
+           SELECT all_customer.buyer_customer_id FROM (
+               SELECT DISTINCT eo.buyer_customer_id
+               FROM  erp_order eo
+               FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+               WHERE eo.data_status=1 AND eo.rent_length_type = 2 AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24)
+                   AND eo.rent_start_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime} > eo.rent_start_time
+           ) all_customer
+           LEFT JOIN (
+                SELECT DISTINCT eo.buyer_customer_id
+                FROM  erp_order eo FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+                WHERE eo.rent_length_type = 2 AND eo.buyer_customer_id IN (
+                    SELECT DISTINCT eo2.buyer_customer_id
+                    FROM  erp_order eo2
+                    FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+                    WHERE eo2.data_status=1 AND eo2.rent_length_type = 2 AND (eo2.order_status=20 OR eo2.order_status=22 OR eo2.order_status=24)
+                           AND eo2.rent_start_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}> eo2.rent_start_time)
+                AND  #{maps.homeRentParam.startTime} > eo.rent_start_time
+		        AND (CASE WHEN eo.expect_return_time >= eo.actual_return_time THEN eo.actual_return_time ELSE eo.expect_return_time END) >  #{maps.homeRentParam.startTime}
+           ) old_customer ON old_customer.buyer_customer_id = all_customer.buyer_customer_id
+           WHERE  old_customer.buyer_customer_id IS NULL
+        ) new_customer_table ON new_customer_table.buyer_customer_id = eo.buyer_customer_id
+        LEFT JOIN
+        (
+           SELECT DISTINCT eo.buyer_customer_id
+           FROM  erp_order eo FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+           WHERE eo.rent_length_type = 2 AND eo.buyer_customer_id IN (
+               SELECT DISTINCT eo2.buyer_customer_id
+               FROM  erp_order eo2
+               FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+               WHERE eo2.data_status=1 AND eo2.rent_length_type = 2 AND (eo2.order_status=20 OR eo2.order_status=22 OR eo2.order_status=24)
+                      AND eo2.rent_start_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}> eo2.rent_start_time)
+           AND  #{maps.homeRentParam.startTime} > eo.rent_start_time
+		   AND (CASE WHEN eo.expect_return_time >= eo.actual_return_time THEN eo.actual_return_time ELSE eo.expect_return_time END) >  #{maps.homeRentParam.startTime}
+        ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
+        WHERE eop.rent_length_type = 2 AND eop.data_status=1
+        AND eo.rent_start_time>=#{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}> eo.rent_start_time
+        AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24)
+        AND eo.confirm_delivery_time IS NOT NULL
+        AND (CASE WHEN eo.expect_return_time >= eo.actual_return_time THEN eo.actual_return_time ELSE eo.expect_return_time END) >  #{maps.homeRentParam.startTime}
+    </select>
+
+    <select id="queryHomeByShortRent" resultMap="StatisticsHomeByRentLengthType" parameterType="map">
+        SELECT COUNT(DISTINCT new_customer_table.buyer_customer_id) new_customer_count,
+        COUNT(DISTINCT old_customer_table.buyer_customer_id) old_customer_count,
+        COUNT(DISTINCT (CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_new_customer,
+        COUNT(DISTINCT (CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL THEN eop.order_id ELSE NULL END)) order_count_by_old_customer,
+        IFNULL(SUM(CASE WHEN new_customer_table.buyer_customer_id IS NOT NULL AND eo.confirm_delivery_time IS NOT NULL AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24) THEN eop.product_count ELSE 0 END),0) product_count_by_new_customer,
+        IFNULL(SUM(CASE WHEN old_customer_table.buyer_customer_id IS NOT NULL AND eo.confirm_delivery_time IS NOT NULL AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24) THEN eop.product_count ELSE 0 END),0) product_count_by_old_customer,
+        IFNULL((
+            SELECT  SUM(ekrod.real_product_count)
+            FROM erp_k3_return_order_detail ekrod FORCE INDEX (index_order_no, index_return_order_id)
+            INNER JOIN erp_k3_return_order ekro ON ekrod.return_order_id = ekro.id  AND ekro.return_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime} > ekro.return_time
+            INNER JOIN erp_order eo ON ekrod.order_no=eo.order_no AND eo.rent_length_type = 1
+            WHERE ekrod.data_status=1 AND ekrod.real_product_count > 0
+        ),0) return_product_count
+        FROM erp_order_product eop LEFT JOIN erp_order eo FORCE INDEX (index_rent_start_time) ON eo.id=eop.order_id AND eo.data_status=1
+        LEFT JOIN
+        (
+            SELECT all_customer.buyer_customer_id FROM (
+                SELECT DISTINCT eo.buyer_customer_id
+                   FROM  erp_order eo FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+                   WHERE eo.data_status=1 AND eo.rent_length_type = 1 AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24) AND eo.confirm_delivery_time IS NOT NULL
+                       AND eo.rent_start_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime} > eo.rent_start_time
+            ) all_customer LEFT JOIN
+            (
+                SELECT DISTINCT eo.buyer_customer_id
+                FROM  erp_order eo FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+                WHERE eo.rent_length_type = 1 AND eo.data_status=1 AND #{maps.homeRentParam.startTime} > eo.rent_start_time
+                    AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24) AND eo.confirm_delivery_time IS NOT NULL
+                    AND eo.buyer_customer_id IN (
+                        SELECT DISTINCT eo2.buyer_customer_id
+                        FROM  erp_order eo2 FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+                        WHERE eo2.rent_length_type = 1 AND eo2.data_status=1 AND (eo2.order_status=20 OR eo2.order_status=22 OR eo2.order_status=24) AND eo2.confirm_delivery_time IS NOT NULL
+                        AND eo2.rent_start_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}> eo2.rent_start_time)
+            ) old_customer ON all_customer.buyer_customer_id = old_customer.buyer_customer_id WHERE old_customer.buyer_customer_id IS NULL
+        ) new_customer_table ON new_customer_table.buyer_customer_id = eo.buyer_customer_id
+        LEFT JOIN
+        (
+            SELECT DISTINCT eo.buyer_customer_id
+            FROM  erp_order eo
+            FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+            WHERE eo.rent_length_type = 1 AND eo.data_status=1 AND #{maps.homeRentParam.startTime} > eo.rent_start_time
+                AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24) AND eo.confirm_delivery_time IS NOT NULL
+                AND eo.buyer_customer_id IN (
+                    SELECT DISTINCT eo2.buyer_customer_id
+                    FROM  erp_order eo2
+                    FORCE INDEX (index_rent_start_time, index_buyer_customer_id)
+                    WHERE eo2.rent_length_type = 1 AND eo2.data_status=1 AND (eo2.order_status=20 OR eo2.order_status=22 OR eo2.order_status=24) AND eo2.confirm_delivery_time IS NOT NULL
+                    AND eo2.rent_start_time >= #{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}> eo2.rent_start_time)
+        ) old_customer_table ON old_customer_table.buyer_customer_id = eo.buyer_customer_id
+        WHERE  eop.rent_length_type = 1 AND eop.data_status=1
+        AND eo.rent_start_time>=#{maps.homeRentParam.startTime} AND #{maps.homeRentParam.endTime}>eo.rent_start_time
+        AND (eo.order_status=20 OR eo.order_status=22 OR eo.order_status=24) AND eo.confirm_delivery_time IS NOT NULL
+    </select>
+
     <select id="queryHomeByRentLengthType" resultMap="StatisticsHomeByRentLengthType" parameterType="map">
         SELECT COUNT(DISTINCT new_customer_table.buyer_customer_id) new_customer_count,
         COUNT(DISTINCT old_customer_table.buyer_customer_id) old_customer_count  ,
@@ -1011,9 +1123,9 @@ ORDER BY esc.data_order DESC
     <select id="querySalesmanDetail" resultMap="SalesmanDetail" parameterType="map">
     select
     eu.id salesman_id,
-    eu.real_name salesman_name,
+    MAX(eu.real_name) salesman_name,
     esc.id sub_company_id,
-    esc.sub_company_name sub_company_name,
+    MAX(esc.sub_company_name) sub_company_name,
     rlt.rent_length_type,
     MIN(deal_data.deals_count) deals_count,
     MIN(deal_data.deals_product_count) deals_product_count,
@@ -1082,9 +1194,9 @@ ORDER BY esc.data_order DESC
     <select id="querySalesmanDetailByDate" resultMap="SalesmanDetail" parameterType="map">
         select
         eu.id salesman_id,
-        eu.real_name salesman_name,
+        MAX(eu.real_name) salesman_name,
         esc.id sub_company_id,
-        esc.sub_company_name sub_company_name,
+        MAX(esc.sub_company_name) sub_company_name,
         rlt.rent_length_type,
         MIN(deal_data.deals_count) deals_count,
         MIN(deal_data.deals_product_count) deals_product_count,
@@ -1210,21 +1322,30 @@ ORDER BY esc.data_order DESC
     </resultMap>
 
     <select id="querySalesmanReturnOrder" resultMap="SalesmanReturnOrder" parameterType="map">
-        select
-        eop.id eop_id,
-        eo.order_seller_id eu_id,
-        eo.order_sub_company_id esc_id,
-        eop.rent_length_type,
-        k3ro.return_time,
-        k3rod.product_count,
-        k3rod.product_no,
-        eop.create_time,
-        ec.localization_time,
-        eop.rent_type,
-        eo.rent_start_time,
-        eo.rent_time_length,
+        SELECT
+        MAX(eop.id) eop_id,
+        MAX(eo.order_seller_id) eu_id,
+        MAX(eo.order_sub_company_id) esc_id,
+        MAX(eop.rent_length_type) rent_length_type,
+        MAX(k3ro.return_time) return_time,
+        MAX(k3rod.product_count) product_count,
+        MAX(k3rod.product_no) product_no,
+        MAX(eop.create_time) create_time,
+        MAX(ec.localization_time) localization_time,
+        MAX(eop.rent_type) rent_type,
+        MAX(eo.rent_start_time) rent_start_time,
+        MAX(eo.rent_time_length) rent_time_length,
         MAX(ecul.create_time) customer_update_time,
-        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
+        MAX(CASE
+        WHEN epc.id IN (800002, 800003, 800005) THEN
+        1
+        WHEN epc.id IN (800004) THEN
+        0.7
+        WHEN epc.id IN (800006) THEN
+        0.3
+        ELSE
+        0
+        END) product_count_factor
         from erp_k3_return_order_detail k3rod
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
         LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id
@@ -1276,21 +1397,30 @@ ORDER BY esc.data_order DESC
 
     </select>
     <select id="querySalesmanReturnOrderByDate" resultMap="SalesmanReturnOrder" parameterType="map">
-        select
-        eop.id eop_id,
-        eo.order_seller_id eu_id,
-        eo.order_sub_company_id esc_id,
-        eop.rent_length_type,
-        k3ro.return_time,
-        k3rod.product_count,
-        k3rod.product_no,
-        eop.create_time,
-        ec.localization_time,
-        eop.rent_type,
-        eo.rent_start_time,
-        eo.rent_time_length,
+        SELECT
+        MAX(eop.id) eop_id,
+        MAX(eo.order_seller_id) eu_id,
+        MAX(eo.order_sub_company_id) esc_id,
+        MAX(eop.rent_length_type) rent_length_type,
+        MAX(k3ro.return_time) return_time,
+        MAX(k3rod.product_count) product_count,
+        MAX(k3rod.product_no) product_no,
+        MAX(eop.create_time) create_time,
+        MAX(ec.localization_time) localization_time,
+        MAX(eop.rent_type) rent_type,
+        MAX(eo.rent_start_time) rent_start_time,
+        MAX(eo.rent_time_length) rent_time_length,
         MAX(ecul.create_time) customer_update_time,
-        CASE WHEN epc.id in (800002, 800003, 800005) THEN 1 WHEN epc.id in (800004) THEN 0.7 WHEN epc.id in (800006) THEN 0.3 ELSE 0 END product_count_factor
+        MAX(CASE
+        WHEN epc.id IN (800002, 800003, 800005) THEN
+        1
+        WHEN epc.id IN (800004) THEN
+        0.7
+        WHEN epc.id IN (800006) THEN
+        0.3
+        ELSE
+        0
+        END) product_count_factor
         from erp_k3_return_order_detail k3rod
         LEFT JOIN erp_k3_return_order k3ro on k3rod.return_order_id = k3ro.id and k3ro.data_status = 1
         LEFT JOIN erp_order_product eop on k3rod.order_item_id = eop.id
