@@ -204,6 +204,7 @@ public class StatementServiceImpl implements StatementService {
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUserId);
         List<StatementOrderDetailDO> finalAddStatementOrderDetailDOList = new ArrayList<>();
+
         if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
             K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
             if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
@@ -313,8 +314,13 @@ public class StatementServiceImpl implements StatementService {
         //有退货单不允许重算
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
-            result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
-            return result;
+            for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_RETURN,k3ReturnOrderDetailDO.getReturnOrderId());
+                if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+                    result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
+                    return result;
+                }
+            }
         }
 
 //        ServiceResult<String, String> clearResult = clearStatementOrderDetail(orderDO);
