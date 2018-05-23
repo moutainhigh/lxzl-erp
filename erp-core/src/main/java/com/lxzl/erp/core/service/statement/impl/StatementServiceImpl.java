@@ -3366,7 +3366,9 @@ public class StatementServiceImpl implements StatementService {
             orderMapper.update(orderDO);
         }else{
             //如果未支付，物理删除结算单详情，结算单
-            statementOrderDetailMapper.realDeleteStatementOrderDetailList(statementOrderDetailDOList);
+            if(CollectionUtil.isNotEmpty(statementOrderDetailDOList)){
+                statementOrderDetailMapper.realDeleteStatementOrderDetailList(statementOrderDetailDOList);
+            }
             List<StatementOrderDO> deleteStatementOrderDOList = new ArrayList<>();
             for(Integer key : statementOrderDOMap.keySet()){
                 StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
@@ -3374,7 +3376,10 @@ public class StatementServiceImpl implements StatementService {
                     deleteStatementOrderDOList.add(statementOrderDO);
                 }
             }
-            statementOrderMapper.realDeleteStatementOrderList(deleteStatementOrderDOList);
+            if(CollectionUtil.isNotEmpty(deleteStatementOrderDOList)){
+                statementOrderMapper.realDeleteStatementOrderList(deleteStatementOrderDOList);
+            }
+
         }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
