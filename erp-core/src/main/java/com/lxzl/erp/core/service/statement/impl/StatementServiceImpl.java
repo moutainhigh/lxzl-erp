@@ -182,8 +182,12 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
-
-
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
+            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
+            if(k3OrderStatementConfigDO!=null||k3OrderStatementConfigDO.getRentStartTime()!=null){
+                rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+            }
+        }
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
             if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
