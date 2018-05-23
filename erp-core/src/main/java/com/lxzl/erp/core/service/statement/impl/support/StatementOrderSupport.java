@@ -150,18 +150,11 @@ public class StatementOrderSupport {
      * @param currentTime
      * @param statementOrderDetailDOList
      */
-    public void reStatement( Date currentTime , List<StatementOrderDetailDO> statementOrderDetailDOList){
+    public void reStatement( Date currentTime , Map<Integer, StatementOrderDO> statementCache ,List<StatementOrderDetailDO> statementOrderDetailDOList){
         //处理结算单
-        //缓存查询到的结算单
-        Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
-
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
                 StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
-                if (statementOrderDO == null) {
-                    statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                    statementCache.put(statementOrderDO.getId(), statementOrderDO);
-                }
                 //处理结算单总金额
                 statementOrderDO.setStatementAmount(BigDecimalUtil.sub(BigDecimalUtil.round(statementOrderDO.getStatementAmount(), BigDecimalUtil.STANDARD_SCALE), BigDecimalUtil.round(statementOrderDetailDO.getStatementDetailAmount(), BigDecimalUtil.STANDARD_SCALE)));
                 //处理结算租金押金金额
@@ -195,17 +188,12 @@ public class StatementOrderSupport {
     /**
      * 恢复结算单已支付金额
      */
-    public void reStatementPaid(List<StatementOrderDetailDO> statementOrderDetailDOList){
+    public void reStatementPaid(Map<Integer, StatementOrderDO> statementOrderDOMap , List<StatementOrderDetailDO> statementOrderDetailDOList){
         //处理结算单
         //缓存查询到的结算单
-        Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
         if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
             for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
-                StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
-                if (statementOrderDO == null) {
-                    statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
-                    statementCache.put(statementOrderDO.getId(), statementOrderDO);
-                }
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(statementOrderDetailDO.getStatementOrderId());
                 BigDecimal statementDetailOtherPaidAmount = statementOrderDetailDO.getStatementDetailOtherPaidAmount();
                 BigDecimal statementDetailRentDepositPaidAmount = statementOrderDetailDO.getStatementDetailRentDepositPaidAmount();
                 BigDecimal statementDetailDepositPaidAmount = statementOrderDetailDO.getStatementDetailDepositPaidAmount();
@@ -223,8 +211,8 @@ public class StatementOrderSupport {
                 //处理结算单已支付其他费用
                 statementOrderDO.setStatementOtherPaidAmount(BigDecimalUtil.sub(statementOrderDO.getStatementOtherPaidAmount(), statementDetailOtherPaidAmount));
             }
-            for (Integer key : statementCache.keySet()) {
-                StatementOrderDO statementOrderDO = statementCache.get(key);
+            for (Integer key : statementOrderDOMap.keySet()) {
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
                 if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),statementOrderDO.getStatementAmount())==0){
                     statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_SETTLED);
                 }else if(BigDecimalUtil.compare(statementOrderDO.getStatementPaidAmount(),BigDecimal.ZERO)>0){
@@ -236,6 +224,22 @@ public class StatementOrderSupport {
             }
         }
     }
+    public Map<Integer,StatementOrderDO> getStatementOrderByDetails(List<StatementOrderDetailDO> statementOrderDetailDOList) {
+        //缓存查询到的结算单
+        Map<Integer, StatementOrderDO> statementCache = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
+            for (StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList) {
+                StatementOrderDO statementOrderDO = statementCache.get(statementOrderDetailDO.getStatementOrderId());
+                if (statementOrderDO == null) {
+                    statementOrderDO = statementOrderMapper.findById(statementOrderDetailDO.getStatementOrderId());
+                    statementCache.put(statementOrderDO.getId(), statementOrderDO);
+                }
+            }
+        }
+        return statementCache;
+    }
     @Autowired
     private UserSupport userSupport;
+
+
 }

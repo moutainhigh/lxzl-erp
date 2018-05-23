@@ -3599,3 +3599,15 @@ CREATE TABLE `erp_order_confirm_change_log_detail` (
   INDEX index_order_no ( `order_no` ),
   INDEX index_item_id ( `item_id` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录详情表';
+
+DROP TABLE if exists `erp_k3_order_statement_config`;
+CREATE TABLE `erp_k3_order_statement_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+  `rent_start_time` datetime NOT NULL COMMENT '起租时间',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='k3订单结算配置表';
+

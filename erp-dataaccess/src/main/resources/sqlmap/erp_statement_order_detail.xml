@@ -788,4 +788,12 @@
         WHERE esod.return_refer_id = #{returnReferId, jdbcType=INTEGER} AND esod.statement_detail_type =
         #{statementDetailType, jdbcType=INTEGER} AND esod.data_status = 1
     </select>
+
+    <delete id="realDeleteStatementOrderDetailList">
+        DELETE FROM erp_statement_order_detail
+        WHERE id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </delete>
 </mapper>
