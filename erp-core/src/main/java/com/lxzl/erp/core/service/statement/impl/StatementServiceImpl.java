@@ -37,10 +37,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.changeOrder.ChangeOrderProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ChangeOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
@@ -58,6 +55,7 @@ import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.k3.K3OrderStatementConfigDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
@@ -241,6 +239,12 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
+            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
+            if(k3OrderStatementConfigDO!=null||k3OrderStatementConfigDO.getRentStartTime()!=null){
+                rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+            }
+        }
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
             customerDO = customerMapper.findByName(orderDO.getBuyerCustomerName());
@@ -3584,9 +3588,6 @@ public class StatementServiceImpl implements StatementService {
     private StatementOrderDetailMapper statementOrderDetailMapper;
 
     @Autowired
-    private DataDictionaryMapper dataDictionaryMapper;
-
-    @Autowired
     private PaymentService paymentService;
 
     @Autowired
@@ -3669,6 +3670,8 @@ public class StatementServiceImpl implements StatementService {
     private DingDingSupport dingDingSupport;
     @Autowired
     private ResultGenerator resultGenerator;
+    @Autowired
+    private K3OrderStatementConfigMapper k3OrderStatementConfigMapper;
 
 
 }
