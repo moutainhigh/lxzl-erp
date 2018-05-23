@@ -209,11 +209,13 @@ public class StatementServiceImpl implements StatementService {
             if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
                 Date k3RentStartTime = k3OrderStatementConfigDO.getRentStartTime();
                 for(StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList){
-                    //如果结算结束时间大于k3配置起租时间，则保存该结算单
-                    if(statementOrderDetailDO.getStatementEndTime().getTime()-k3RentStartTime.getTime()>0){
+                    //如果结算结束时间大于等于k3配置起租时间，则保存该结算单
+                    if(statementOrderDetailDO.getStatementEndTime().getTime()-k3RentStartTime.getTime()>=0){
                         finalAddStatementOrderDetailDOList.add(statementOrderDetailDO);
                     }
                 }
+            }else{
+                finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
             }
         }else{
             finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
