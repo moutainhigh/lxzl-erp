@@ -1655,6 +1655,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
+        Map<Integer, StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
         //审核中或者待发货订单，处理风控额度及结算单
         if (OrderStatus.ORDER_STATUS_VERIFYING.equals(orderDO.getOrderStatus()) ||
                 OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus()) ||
@@ -1664,7 +1665,7 @@ public class OrderServiceImpl implements OrderService {
             if (BigDecimalUtil.compare(totalCreditDepositAmount, BigDecimal.ZERO) != 0) {
                 customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), totalCreditDepositAmount);
             }
-            statementOrderSupport.reStatement(currentTime,statementOrderDetailDOList);
+            statementOrderSupport.reStatement(currentTime,statementOrderDOMap,statementOrderDetailDOList);
         }
         orderDO.setCancelOrderReasonType(cancelOrderReasonType);
         orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CANCEL);
@@ -1709,7 +1710,7 @@ public class OrderServiceImpl implements OrderService {
                 rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
             }
             //处理结算单总状态及已支付金额
-            statementOrderSupport.reStatementPaid(statementOrderDetailDOList);
+            statementOrderSupport.reStatementPaid(statementOrderDOMap,statementOrderDetailDOList);
             String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
                     ,rentDepositPaidAmount,depositPaidAmount,"超级管理员强制取消已支付订单，已支付金额退还到客户余额");
             if(!ErrorCode.SUCCESS.equals(returnCode)){

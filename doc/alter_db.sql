@@ -779,6 +779,25 @@ ALTER TABLE erp_order_joint_product add `is_new` int(11) NOT NULL DEFAULT '0' CO
 -- 订单商品项和订单配件项分别添加组合商品商品项id和组合商品配件项id
 ALTER TABLE erp_order_product add `joint_product_product_id` int(20) COMMENT '组合商品商品项id';
 ALTER TABLE erp_order_material add `joint_material_id` int(20) COMMENT '组合商品配件项id';
+-- 与订单表关联时用到
+ALTER TABLE erp_order_product ADD INDEX index_order_id (order_id);
+
+-- 长短租统计时用到
+ALTER TABLE erp_order ADD INDEX index_rent_start_time (rent_start_time);
+ALTER TABLE erp_order ADD INDEX index_buyer_customer_id (buyer_customer_id);
+
+-- 统计退回商品总数时用到
+ALTER TABLE erp_k3_return_order_detail ADD INDEX index_order_no (order_no);
+ALTER TABLE erp_k3_return_order_detail ADD INDEX index_return_order_id (return_order_id);
+-- 统计退回商品总数时用到
+ALTER TABLE erp_k3_return_order ADD INDEX index_return_time (return_time);
+
+--统计租金收入时用到
+ALTER TABLE erp_statement_order_detail ADD INDEX index_statement_expect_pay_time (statement_expect_pay_time);
+
+
+-------------------------------未执行-----------------------------
+
 
 DROP TABLE if exists `erp_order_confirm_change_log`;
 CREATE TABLE `erp_order_confirm_change_log` (
@@ -824,19 +843,5 @@ ALTER TABLE erp_order_material add  `stable_material_count` int(11) NOT NULL DEF
 UPDATE erp_order_product SET stable_product_count = product_count;
 UPDATE erp_order_material SET stable_material_count = material_count;
 
--- 与订单表关联时用到
-ALTER TABLE erp_order_product ADD INDEX index_order_id (order_id);
 
--- 长短租统计时用到
-ALTER TABLE erp_order ADD INDEX index_rent_start_time (rent_start_time);
-ALTER TABLE erp_order ADD INDEX index_buyer_customer_id (buyer_customer_id);
-
--- 统计退回商品总数时用到
-ALTER TABLE erp_k3_return_order_detail ADD INDEX index_order_no (order_no);
-ALTER TABLE erp_k3_return_order_detail ADD INDEX index_return_order_id (return_order_id);
--- 统计退回商品总数时用到
-ALTER TABLE erp_k3_return_order ADD INDEX index_return_time (return_time);
-
---统计租金收入时用到
-ALTER TABLE erp_statement_order_detail ADD INDEX index_statement_expect_pay_time (statement_expect_pay_time);
 

@@ -285,10 +285,10 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
         //目前仅允许未支付和支付失败订单重新结算
-        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
-            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
-            return result;
-        }
+//        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
+//            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
+//            return result;
+//        }
 
         //有退货单不允许重算
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
@@ -3292,18 +3292,64 @@ public class StatementServiceImpl implements StatementService {
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     ServiceResult<String, String> clearStatementOrder(OrderDO orderDO) {
         ServiceResult<String, String> result = new ServiceResult<>();
-//        if(PayStatus.PAY_STATUS_PAYING.equals(orderDO.getPayStatus())||PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus())||
-//                PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
-//            result.setErrorCode(ErrorCode.ORDER_ALREADY_PAID);
-//            return result;
-//        }
-//        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
-//        if(k3ReturnOrderDetailDOList!=null&&k3ReturnOrderDetailDOList.size()>0){
-//            result.setErrorCode(ErrorCode.HAS_RETURN_ORDER);
-//            return result;
-//        }
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
-        statementOrderSupport.reStatement(new Date(),statementOrderDetailDOList);
+        Map<Integer,StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
+        statementOrderSupport.reStatement(new Date(),statementOrderDOMap,statementOrderDetailDOList);
+
+        //处理已支付订单
+        boolean paid = false;
+        if(PayStatus.PAY_STATUS_PAID_PART.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())){
+            paid = true;
+        }
+        if (paid) {
+            //已付设备押金
+            BigDecimal depositPaidAmount = BigDecimal.ZERO;
+            //已付其他费用
+            BigDecimal otherPaidAmount = BigDecimal.ZERO;
+            // 已付租金
+            BigDecimal rentPaidAmount = BigDecimal.ZERO;
+            //已付逾期费用
+            BigDecimal overduePaidAmount = BigDecimal.ZERO;
+            //已付违约金
+            BigDecimal penaltyPaidAmount = BigDecimal.ZERO;
+            //已付租金押金
+            BigDecimal rentDepositPaidAmount = BigDecimal.ZERO;
+            for(StatementOrderDetailDO statementOrderDetailDO : statementOrderDetailDOList){
+                //计算所有已支付金额,由于付款是在冲正后做的，所以此时无需考虑冲正金额
+                depositPaidAmount = BigDecimalUtil.add(depositPaidAmount,statementOrderDetailDO.getStatementDetailDepositPaidAmount());
+                otherPaidAmount = BigDecimalUtil.add(otherPaidAmount,statementOrderDetailDO.getStatementDetailOtherPaidAmount());
+                rentPaidAmount = BigDecimalUtil.add(rentPaidAmount,statementOrderDetailDO.getStatementDetailRentPaidAmount());
+                overduePaidAmount = BigDecimalUtil.add(overduePaidAmount,statementOrderDetailDO.getStatementDetailOverduePaidAmount());
+                penaltyPaidAmount = BigDecimalUtil.add(penaltyPaidAmount,statementOrderDetailDO.getStatementDetailPenaltyPaidAmount());
+                rentDepositPaidAmount = BigDecimalUtil.add(rentDepositPaidAmount,statementOrderDetailDO.getStatementDetailRentDepositPaidAmount());
+            }
+            //处理结算单总状态及已支付金额
+            statementOrderSupport.reStatementPaid(statementOrderDOMap,statementOrderDetailDOList);
+            String returnCode = paymentService.returnDepositExpand(orderDO.getBuyerCustomerNo(),rentPaidAmount,BigDecimalUtil.addAll(otherPaidAmount,overduePaidAmount,penaltyPaidAmount)
+                    ,rentDepositPaidAmount,depositPaidAmount,"重算结算单，已支付金额退还到客户余额");
+            if(!ErrorCode.SUCCESS.equals(returnCode)){
+                result.setErrorCode(returnCode);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                return result;
+            }
+            //此处逻辑与强制取消订单不同，强制取消订单留存支付记录，不修改订单，重算修改订单支付状态
+            orderDO.setPayStatus(PayStatus.PAY_STATUS_INIT);
+            orderDO.setTotalPaidOrderAmount(BigDecimal.ZERO);
+            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            orderDO.setUpdateTime(new Date());
+            orderMapper.update(orderDO);
+        }else{
+            //如果未支付，物理删除结算单详情，结算单
+            statementOrderDetailMapper.realDeleteStatementOrderDetailList(statementOrderDetailDOList);
+            List<StatementOrderDO> deleteStatementOrderDOList = new ArrayList<>();
+            for(Integer key : statementOrderDOMap.keySet()){
+                StatementOrderDO statementOrderDO = statementOrderDOMap.get(key);
+                if(CommonConstant.DATA_STATUS_DELETE.equals(statementOrderDO.getDataStatus())){
+                    deleteStatementOrderDOList.add(statementOrderDO);
+                }
+            }
+            statementOrderMapper.realDeleteStatementOrderList(deleteStatementOrderDOList);
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
