@@ -170,6 +170,32 @@ public class OrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
+    /**
+     * 确认收货时发生退货修改订单并推送K3保存更改记录
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "confirmChangeOrder", method = RequestMethod.POST)
+    public Result confirmChangeOrder(@RequestBody  OrderConfirmChangeParam orderConfirmChangeParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.confirmChangeOrder(orderConfirmChangeParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    /**
+     * 超级管理员修改订单
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "supperUserChangeOrder", method = RequestMethod.POST)
+    public Result supperUserChangeOrder(@RequestBody  OrderConfirmChangeParam orderConfirmChangeParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = orderService.supperUserChangeOrder(orderConfirmChangeParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

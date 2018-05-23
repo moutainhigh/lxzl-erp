@@ -622,4 +622,12 @@
 		where date_format(esod.statement_expect_pay_time,'%Y-%m') = date_format(#{monthTime} , '%Y-%m');
 
 	</select>
+
+	<delete id="realDeleteStatementOrderList">
+		DELETE FROM erp_statement_order
+		WHERE id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.id,jdbcType=INTEGER}
+		</foreach>
+	</delete>
 </mapper>
