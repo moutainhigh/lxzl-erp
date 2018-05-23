@@ -853,4 +853,7 @@ CREATE TABLE `erp_k3_order_statement_config` (
   INDEX index_order_no ( `order_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='k3订单结算配置表';
 
+ALTER TABLE erp_order add `relet_order_no`  varchar(100)  DEFAULT NULL COMMENT '续租单编号';
+ALTER TABLE erp_order add `origin_order_no`  varchar(100)  DEFAULT NULL COMMENT '原订单编号';
+
 
