@@ -985,6 +985,11 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    //按天租的设置押金
+                    if (dborderDO.getRentType() == 1) {
+                        BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
+                        orderProductDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                    }
                     //将订单商品项中的商品总数、商品在租数进行更新
                     orderProductDO.setProductCount(orderItemParam.getItemCount());
                     orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
@@ -1014,6 +1019,11 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    //按天租的设置押金
+                    if (dborderDO.getRentType() == 1) {
+                        BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
+                        orderMaterialDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                    }
                     //将订单商品项中的商品总数、商品在租数进行更新
                     orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
                     orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
