@@ -177,8 +177,6 @@
         <mapper resource="sqlmap/erp_bank_slip_detail_operation_log.xml" />
         <mapper resource="sqlmap/erp_statistics_salesman_month.xml" />
         <mapper resource="sqlmap/erp_message_third_channel.xml" />
-        <mapper resource="sqlmap/erp_order_confirm_change_log.xml" />
-        <mapper resource="sqlmap/erp_order_confirm_change_log_detail.xml" />
 </mappers>
 
 </configuration>

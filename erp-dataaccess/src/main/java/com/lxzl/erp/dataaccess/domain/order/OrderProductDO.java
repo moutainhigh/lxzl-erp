@@ -18,7 +18,6 @@ public class OrderProductDO extends BaseDO {
     private Integer productSkuId;
     private String productSkuName;
     private Integer productCount;
-    private Integer stableProductCount;               // 下单商品总数，该字段只在订单未提交时可变化
     private BigDecimal productUnitAmount;
     private BigDecimal productAmount;
     private BigDecimal rentDepositAmount;
@@ -280,12 +279,4 @@ public class OrderProductDO extends BaseDO {
     public String getSerialNumber() { return serialNumber; }
 
     public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
-
-    public Integer getStableProductCount() {
-        return stableProductCount;
-    }
-
-    public void setStableProductCount(Integer stableProductCount) {
-        this.stableProductCount = stableProductCount;
-    }
 }

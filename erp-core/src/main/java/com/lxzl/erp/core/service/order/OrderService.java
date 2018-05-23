@@ -224,20 +224,4 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String,String> addReturnOrderToTimeAxis();
 
     ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo);
-
-    /**
-     * 确认收货时发生退货修改订单并推送K3保存更改记录
-     * @Author : sunzhipeng
-     * @param orderConfirmChangeParam
-     * @return
-     */
-    ServiceResult<String,String> confirmChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam);
-
-    /**
-     * 超级管理员修改订单
-     * @Author : sunzhipeng
-     * @param orderConfirmChangeParam
-     * @return
-     */
-    ServiceResult<String,String> supperUserChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam);
 }

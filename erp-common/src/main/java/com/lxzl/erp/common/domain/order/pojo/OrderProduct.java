@@ -21,7 +21,6 @@ public class OrderProduct extends BasePO {
     private Integer productSkuId;               // 商品配置ID
     private String productSkuName;              // 配置名称
     private Integer productCount;               // 商品数量
-    private Integer stableProductCount;               // 下单商品总数，该字段只在订单未提交时可变化
     private BigDecimal productUnitAmount;       // 单价
     private BigDecimal productAmount;           // 总价
     private BigDecimal rentDepositAmount;       // 租金押金
@@ -332,13 +331,5 @@ public class OrderProduct extends BasePO {
 
     public void setOrderJointProductId(Integer orderJointProductId) {
         this.orderJointProductId = orderJointProductId;
-    }
-
-    public Integer getStableProductCount() {
-        return stableProductCount;
-    }
-
-    public void setStableProductCount(Integer stableProductCount) {
-        this.stableProductCount = stableProductCount;
     }
 }
