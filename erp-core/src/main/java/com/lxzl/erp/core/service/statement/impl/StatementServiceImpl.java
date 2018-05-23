@@ -3303,7 +3303,8 @@ public class StatementServiceImpl implements StatementService {
 //            return result;
 //        }
         List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderTypeAndId(OrderType.ORDER_TYPE_ORDER,orderDO.getId());
-        statementOrderSupport.reStatement(new Date(),statementOrderDetailDOList);
+        Map<Integer,StatementOrderDO> statementOrderDOMap = statementOrderSupport.getStatementOrderByDetails(statementOrderDetailDOList);
+        statementOrderSupport.reStatement(new Date(),statementOrderDOMap,statementOrderDetailDOList);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
