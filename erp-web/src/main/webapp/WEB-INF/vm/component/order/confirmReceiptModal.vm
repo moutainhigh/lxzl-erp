@@ -1,27 +1,123 @@
-<div id="addCustomerAddressModal" class="popup-basic popup-lg admin-form mfp-with-anim "> ##mfp-hide
+<div id="receiptConfirmModal" class="popup-basic popup-xl admin-form mfp-with-anim ">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i>确认客户收货情况</span>
         </div>
-        <form method="post" id="UploadExcelForm" description="选择流水账单表格">
+        <form method="post" id="receiptForm" description="确认收货">
             <input type="hidden" name="excelUrl" />
             <div class="panel-body p25">
                 <div class="section row">
-                    <div class="col-md-6">
-                        <label for="province" class="field-label"><em class="text-danger">*</em>请选择银行类型</label>
-                        <label class="field select">
-                            <select id="bankType" name="bankType" class="required">
-                            </select>
-                            <i class="arrow"></i>
-                        </label>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="field-label">日期</label>
-                        <div>
-                            <div class="input-group date" id="slipDayPicker">
-                                <input type="hidden" name="slipDay" id="slipDay">
-                                <input type="text" readonly id="slipDayInput" data-type="date" class="form-control" autocomplete="off" placeholder="选择时间" style="height:42px;">
-                                <span class="input-group-addon cursor"><i class="fa fa-calendar"></i></span>
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
+                                    <li class="active">
+                                        <a href="#receiptProduct" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                    </li>
+                                    <li>
+                                        <a href="#receiptMaterial" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body light pn">
+                            <div class="tab-content pn br-n">
+                                <div id="receiptProduct" class="tab-pane tab-pane-order active">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="productListTpl">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th>商品名称</th>
+                                                <th>商品参数（SKU）</th>
+                                                <th>单价</th>
+                                                <th>在租数量</th>
+                                                <th>设备押金</th>
+                                                <th class="text-right">操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="productRow" productRowKey="{{productId}}">
+                                                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                                                <td>{{propertiesToStr}}</td>
+                                                <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt hide mw200">
+                                                        <input type="text" name="rentCount" value="" class="rentCount form-control required gui-input" placeholder="输入收货数量" />
+                                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                    <p class="rentCountTxt">{{rentingProductCount}}</p>
+                                                </td>
+                                                <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        <a href="#" type="button" class="btn btn-default btn-xs reviseCount">修改收货数量</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="15" class="text-center">无商品项</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productListTable"></table>
+                                    </div>
+                                </div>
+    
+                                <div id="receiptMaterial" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="materialListTpl">
+                                            <thead>
+                                            <tr>
+                                                <th>配件名称</th>
+                                                <th>类型</th>
+                                                <th class="rentalPriceTh"><span class="text">单价</span></th>
+                                                <th>在租数量</th>
+                                                <th>设备押金</th>
+                                                <th class="text-right">操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="materialRow">
+                                                <td>
+                                                    {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                    {{materialName}}
+                                                </td>
+                                                <td>{{materialTypeStr}}</td>
+                                                <td>￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt hide mw200">
+                                                        <input type="text" name="rentCount" value="" class="rentCount form-control required gui-input" placeholder="输入收货数量" />
+                                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                    </label>
+                                                    <p class="rentCountTxt">{{rentingMaterialCount}}</p>
+                                                </td>
+                                                <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
+                                                <td class="text-right">
+                                                    <div class="btn-group text-right">
+                                                        <a href="#" type="button" class="btn btn-default btn-xs reviseCount">修改收货数量</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="12" class="text-center">无配件项</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialListTable"></table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
