@@ -20,6 +20,7 @@ public class OrderMaterial extends BasePO {
 	private Integer materialId;   //物料ID
 	private String materialName;   //物料名称
 	private Integer materialCount;   //物料总数
+	private Integer stableMaterialCount;   //下单配件总数，该字段只在订单未提交时可变化
 	private BigDecimal materialUnitAmount;   //物料单价
 	private BigDecimal materialAmount;   //物料价格
 	private BigDecimal rentDepositAmount;	// 租赁押金
@@ -342,5 +343,13 @@ public class OrderMaterial extends BasePO {
 
 	public void setOrderJointProductId(Integer orderJointProductId) {
 		this.orderJointProductId = orderJointProductId;
+	}
+
+	public Integer getStableMaterialCount() {
+		return stableMaterialCount;
+	}
+
+	public void setStableMaterialCount(Integer stableMaterialCount) {
+		this.stableMaterialCount = stableMaterialCount;
 	}
 }

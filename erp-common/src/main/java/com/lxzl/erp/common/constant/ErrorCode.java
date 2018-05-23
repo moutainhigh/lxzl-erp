@@ -429,6 +429,9 @@ public class ErrorCode {
     public static final String HAS_RETURN_ORDER = "J400050";
     public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400051";
     public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400052";
+    public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400053";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400054";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400055";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -656,6 +659,8 @@ public class ErrorCode {
     public static final String AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100034";
     public static final String AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100035";
     public static final String CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS = "J1100036";
+    public static final String DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS = "J1100037";
+    public static final String CONFIRM_CHANGE_REASON_TYPE_ERROR = "J1100038";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -1498,6 +1503,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
         MAP.put(RETURN_ORDER_ALREADY_SUCCESS, "该退货单已有结算单");
         MAP.put(RETURN_ORDER_CAN_NOT_CREATE_STATEMENT, "该退货单尚未完成退货，不能生成结算单");
+        MAP.put(ORDER_ITEM_PARAM_LIST_NOT_NULL, "确认收货的商品、配件项列表不能为空");
+        MAP.put(ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT, "确认收货的商品数大于最初下单商品总数");
+        MAP.put(ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT, "确认收货的配件数大于最初下单配件总数");
         MAP.put(CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY, "客户的业务员不能由地方分公司转为渠道大客户业务员");
 
 
@@ -1557,6 +1565,8 @@ public class ErrorCode {
         MAP.put(AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "经办人身份证正面不能为空");
         MAP.put(AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "经办人身份证反面面不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS, "客户回访记录图片不能为空");
+        MAP.put(DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS, "交货单客户签字图片不能为空");
+        MAP.put(CONFIRM_CHANGE_REASON_TYPE_ERROR, "确认收货变更原因类型不存在");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
