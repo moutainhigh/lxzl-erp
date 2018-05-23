@@ -184,7 +184,7 @@ public class StatementServiceImpl implements StatementService {
         Date rentStartTime = orderDO.getRentStartTime();
         if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
             K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
-            if(k3OrderStatementConfigDO!=null||k3OrderStatementConfigDO.getRentStartTime()!=null){
+            if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
                 rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
             }
         }
@@ -245,7 +245,7 @@ public class StatementServiceImpl implements StatementService {
         Date rentStartTime = orderDO.getRentStartTime();
         if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
             K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
-            if(k3OrderStatementConfigDO!=null||k3OrderStatementConfigDO.getRentStartTime()!=null){
+            if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
                 rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
             }
         }
