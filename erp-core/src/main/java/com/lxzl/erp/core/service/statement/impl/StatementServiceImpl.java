@@ -182,13 +182,7 @@ public class StatementServiceImpl implements StatementService {
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
-        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
-            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
-            if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
-                rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
-                orderDO.setRentStartTime(rentStartTime);
-            }
-        }
+
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
         if (customerDO == null) {
             if (CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())) {
@@ -209,7 +203,24 @@ public class StatementServiceImpl implements StatementService {
         Integer statementDays = statementOrderSupport.getCustomerStatementDate(orderDO.getStatementDate(), rentStartTime);
         Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID : loginUser.getUserId();
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = generateStatementDetailList(orderDO, currentTime, statementDays, loginUserId);
-        saveStatementOrder(addStatementOrderDetailDOList, currentTime, loginUserId);
+        List<StatementOrderDetailDO> finalAddStatementOrderDetailDOList = new ArrayList<>();
+        if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsK3Order())){
+            K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
+            if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
+                Date k3RentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+                for(StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList){
+                    //如果结算结束时间大于等于k3配置起租时间，则保存该结算单
+                    if(statementOrderDetailDO.getStatementEndTime().getTime()-k3RentStartTime.getTime()>=0){
+                        finalAddStatementOrderDetailDOList.add(statementOrderDetailDO);
+                    }
+                }
+            }else{
+                finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+            }
+        }else{
+            finalAddStatementOrderDetailDOList = addStatementOrderDetailDOList;
+        }
+        saveStatementOrder(finalAddStatementOrderDetailDOList, currentTime, loginUserId);
 
         // 生成单子后，本次需要付款的金额
         BigDecimal thisNeedPayAmount = BigDecimal.ZERO;
