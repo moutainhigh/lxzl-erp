@@ -86,6 +86,7 @@
                                                 <th>商品ID</th>
                                                 <th>商品名称</th>
                                                 <th>商品编号</th>
+                                                <th>数量</th>
                                                 <th>类别</th>
                                                 <th>品牌</th>
                                             </tr>
@@ -96,13 +97,14 @@
                                                 <td>{{product.productId}}</td>
                                                 <td>{{product.productName}}</td>
                                                 <td>{{product.productNo}}</td>
+                                                <td>{{productCount}}</td>
                                                 <td>{{product.categoryName}}</td>
                                                 <td>{{product.brandName}}</td>
                                             </tr>
                                             <tr class="skuRow" data-product="{{productJSONString}}" >
                                                 <td colspan="7" class="pn mn br-n">
                                                     {{#skuListSource}}
-                                                    <div class="row" style="margin:0;" data-sku="{{}}">
+                                                    <div class="row" style="margin:0;">
                                                         <div class="panel" style="margin-bottom:0;">
                                                             <div class="panel-heading pn ph8" style="background:#fff;">
                                                                 <span>选择SKU</span>

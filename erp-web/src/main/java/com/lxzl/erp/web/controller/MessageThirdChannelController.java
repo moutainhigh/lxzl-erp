@@ -34,6 +34,13 @@ public class MessageThirdChannelController extends BaseController {
      * <pre>
      *     所需参数示例及其说明
      *     参数名称 : 示例值 : 说明 : 是否必须
+     *     messageThirdChannel.messageContent : 消息内容 : 消息内容 : 是
+     *     messageThirdChannel.receiverUserId : 12121 : 消息接收者用户编号 : 是
+     *     messageThirdChannel.messageTitle : 这是消息主题 : 消息主题 : 否
+     *     messageThirdChannel.messageType : 1 : 不传默认系统消息 : 否
+     *     messageThirdChannel.messageChannel : 1 : 消息渠道 默认钉钉 : 否
+     *     messageThirdChannel.senderUserId : -1 : 发送者用户编号 : 否
+     *     messageThirdChannel.senderRemark : System : 发送者备注 : 否
      * </pre>
      *
      * @param messageThirdChannel
