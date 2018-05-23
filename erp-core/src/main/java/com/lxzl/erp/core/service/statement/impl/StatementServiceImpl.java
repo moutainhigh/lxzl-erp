@@ -186,6 +186,7 @@ public class StatementServiceImpl implements StatementService {
             K3OrderStatementConfigDO k3OrderStatementConfigDO = k3OrderStatementConfigMapper.findByOrderId(orderDO.getId());
             if(k3OrderStatementConfigDO!=null&&k3OrderStatementConfigDO.getRentStartTime()!=null){
                 rentStartTime = k3OrderStatementConfigDO.getRentStartTime();
+                orderDO.setRentStartTime(rentStartTime);
             }
         }
         CustomerDO customerDO = customerMapper.findById(orderDO.getBuyerCustomerId());
