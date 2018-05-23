@@ -984,7 +984,7 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setRemark(null);
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+//                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
                     //按天租的设置押金
                     if (dborderDO.getRentType() == 1) {
                         BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
@@ -1018,7 +1018,7 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setRemark(null);
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+//                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
                     //按天租的设置押金
                     if (dborderDO.getRentType() == 1) {
                         BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
@@ -1139,7 +1139,7 @@ public class OrderServiceImpl implements OrderService {
         orderConfirmChangeLogDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
         orderConfirmChangeLogDO.setCreateTime(date);
         orderConfirmChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-        orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
+//        orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
         // TODO: 2018\5\22 0022  7.传参数给K3
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -4080,11 +4080,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private JointMaterialMapper jointMaterialMapper;
 
-    @Autowired
-    private OrderConfirmChangeLogMapper orderConfirmChangeLogMapper;
+//    @Autowired
+//    private OrderConfirmChangeLogMapper orderConfirmChangeLogMapper;
 
-    @Autowired
-    private OrderConfirmChangeLogDetailMapper orderConfirmChangeLogDetailMapper;
+//    @Autowired
+//    private OrderConfirmChangeLogDetailMapper orderConfirmChangeLogDetailMapper;
 
     @Autowired
     private ImgMysqlMapper imgMysqlMapper;
