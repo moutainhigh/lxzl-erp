@@ -677,7 +677,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         OrderConfirmChangeParam orderConfirmChangeParam = new OrderConfirmChangeParam();
         OrderItemParam orderItemParam1 = new OrderItemParam();
         orderItemParam1.setItemId(2907);
-        orderItemParam1.setItemCount(4);
+        orderItemParam1.setItemCount(3);
         orderItemParam1.setItemType(1);
         OrderItemParam orderItemParam2 = new OrderItemParam();
         orderItemParam2.setItemId(5037);
