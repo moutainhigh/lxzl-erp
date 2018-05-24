@@ -4,15 +4,19 @@ import com.lxzl.erp.common.constant.ErrorCode;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.quartz.QuartzJob;
+import com.lxzl.erp.common.domain.quartz.QuartzJobQueryParam;
 import com.lxzl.erp.common.domain.quartz.QuartzRunningJob;
 import com.lxzl.erp.common.domain.quartz.support.QuartzJobSupport;
+import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.service.quartz.QuartzService;
 import com.lxzl.se.core.quartz.component.QuartzManager;
 import com.lxzl.se.core.quartz.config.JobRunningInfo;
 import com.lxzl.se.core.quartz.config.QuartzParameter;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,8 +101,63 @@ public class QuartzServiceImpl implements QuartzService {
     }
 
     @Override
-    public ServiceResult<String, Page<QuartzJob>> queryAllJobs(QuartzJob quartzJob) {
-        return null;
+    public ServiceResult<String, Page<QuartzJob>> queryAllJobs(QuartzJobQueryParam quartzJobQueryParam) {
+        ServiceResult<String, Page<QuartzJob>> serviceResult = new ServiceResult<>();
+        List<QuartzParameter> quartzParameterList = quartzManager.getAllJobs();
+        List<QuartzParameter> removeList = new ArrayList<>();
+        // 过滤查询条件
+        if (CollectionUtil.isNotEmpty(quartzParameterList)) {
+            if (StringUtils.isNotBlank(quartzJobQueryParam.getSchedName())) {
+                for (QuartzParameter quartzParameter : quartzParameterList) {
+                    if (!quartzParameter.getSchedName().contains(quartzJobQueryParam.getSchedName())) {
+                        removeList.add(quartzParameter);
+                    }
+                }
+                quartzParameterList.removeAll(removeList);
+                removeList.clear();
+            }
+            if (StringUtils.isNotBlank(quartzJobQueryParam.getJobName())) {
+                for (QuartzParameter quartzParameter : quartzParameterList) {
+                    if (!quartzParameter.getJobName().contains(quartzJobQueryParam.getJobName())) {
+                        removeList.add(quartzParameter);
+                    }
+                }
+                quartzParameterList.removeAll(removeList);
+                removeList.clear();
+            }
+            if (StringUtils.isNotBlank(quartzJobQueryParam.getJobGroup())) {
+                for (QuartzParameter quartzParameter : quartzParameterList) {
+                    if (!quartzParameter.getJobGroup().contains(quartzJobQueryParam.getJobGroup())) {
+                        removeList.add(quartzParameter);
+                    }
+                }
+                quartzParameterList.removeAll(removeList);
+                removeList.clear();
+            }
+            if (StringUtils.isNotBlank(quartzJobQueryParam.getTriggerName())) {
+                for (QuartzParameter quartzParameter : quartzParameterList) {
+                    if (!quartzParameter.getTriggerName().contains(quartzJobQueryParam.getTriggerName())) {
+                        removeList.add(quartzParameter);
+                    }
+                }
+                quartzParameterList.removeAll(removeList);
+                removeList.clear();
+            }
+            if (StringUtils.isNotBlank(quartzJobQueryParam.getTriggerGroup())) {
+                for (QuartzParameter quartzParameter : quartzParameterList) {
+                    if (!quartzParameter.getTriggerGroup().contains(quartzJobQueryParam.getTriggerGroup())) {
+                        removeList.add(quartzParameter);
+                    }
+                }
+                quartzParameterList.removeAll(removeList);
+                removeList.clear();
+            }
+        }
+        List<QuartzJob> quartzJobList = QuartzJobSupport.convertQuartzParameterList2Job(quartzParameterList);
+        Page<QuartzJob> quartzJobPage = new Page<>(quartzJobList, quartzJobList.size(), quartzJobQueryParam.getPageNo(), quartzJobQueryParam.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(quartzJobPage);
+        return serviceResult;
     }
 
     @Override

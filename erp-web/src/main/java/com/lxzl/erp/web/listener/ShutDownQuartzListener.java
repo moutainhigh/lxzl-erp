@@ -23,7 +23,6 @@ public class ShutDownQuartzListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        System.out.println("绝影");
     }
 
     @Override

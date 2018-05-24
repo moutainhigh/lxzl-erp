@@ -1,6 +1,7 @@
 package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.common.domain.quartz.QuartzJob;
+import com.lxzl.erp.common.domain.quartz.QuartzJobQueryParam;
 import com.lxzl.erp.common.domain.validGroup.quartz.AddOrUpdateJobGroup;
 import com.lxzl.erp.common.domain.validGroup.quartz.JobGroup;
 import com.lxzl.erp.common.domain.validGroup.quartz.SchedNameGroup;
@@ -77,6 +78,11 @@ public class QuartzController extends BaseController {
     @RequestMapping(value = "getJobRunningInfo", method = RequestMethod.POST)
     public Result getJobRunningInfo(@RequestBody @Validated({SchedNameGroup.class, JobGroup.class}) QuartzJob quartzJob, BindingResult bindingResult) {
         return resultGenerator.generate(quartzService.getJobRunningInfo(quartzJob));
+    }
+
+    @RequestMapping(value = "queryAllJobs", method = RequestMethod.POST)
+    public Result queryAllJobs(@RequestBody QuartzJobQueryParam quartzJobQueryParam, BindingResult bindingResult) {
+        return resultGenerator.generate(quartzService.queryAllJobs(quartzJobQueryParam));
     }
 
     @Autowired
