@@ -661,6 +661,8 @@ public class ErrorCode {
     public static final String CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS = "J1100036";
     public static final String DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS = "J1100037";
     public static final String CONFIRM_CHANGE_REASON_TYPE_ERROR = "J1100038";
+    public static final String CONFIRM_CHANGE_REASON_NOT_NULL = "J1100039";
+    public static final String CONFIRM_CHANGE_REASON_TYPE_NOT_NULL = "J1100040";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -1567,6 +1569,8 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS, "客户回访记录图片不能为空");
         MAP.put(DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS, "交货单客户签字图片不能为空");
         MAP.put(CONFIRM_CHANGE_REASON_TYPE_ERROR, "确认收货变更原因类型不存在");
+        MAP.put(CONFIRM_CHANGE_REASON_NOT_NULL, "确认收货变更原因不能为空");
+        MAP.put(CONFIRM_CHANGE_REASON_TYPE_NOT_NULL, "确认收货变更原因类型不能为空");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
