@@ -36,6 +36,8 @@ public class FormSEOutStock  implements java.io.Serializable {
 
     private String phone;
 
+    private Integer returnReasonType;
+
     public FormSEOutStock() {
     }
 
@@ -53,7 +55,8 @@ public class FormSEOutStock  implements java.io.Serializable {
            java.util.Calendar date,
            FormSEOutStockEntry[] entryList,
            String note,
-           String phone) {
+           String phone,
+           Integer returnReasonType) {
            this.address = address;
            this.backCompanyNO = backCompanyNO;
            this.backDate = backDate;
@@ -68,6 +71,7 @@ public class FormSEOutStock  implements java.io.Serializable {
            this.entryList = entryList;
            this.note = note;
            this.phone = phone;
+           this.returnReasonType = returnReasonType;
     }
 
 
@@ -350,6 +354,26 @@ public class FormSEOutStock  implements java.io.Serializable {
         this.phone = phone;
     }
 
+
+    /**
+     * Gets the returnReasonType value for this FormSEOutStock.
+     * 
+     * @return returnReasonType
+     */
+    public Integer getReturnReasonType() {
+        return returnReasonType;
+    }
+
+
+    /**
+     * Sets the returnReasonType value for this FormSEOutStock.
+     * 
+     * @param returnReasonType
+     */
+    public void setReturnReasonType(Integer returnReasonType) {
+        this.returnReasonType = returnReasonType;
+    }
+
     private Object __equalsCalc = null;
     public synchronized boolean equals(Object obj) {
         if (!(obj instanceof FormSEOutStock)) return false;
@@ -403,7 +427,10 @@ public class FormSEOutStock  implements java.io.Serializable {
               this.note.equals(other.getNote()))) &&
             ((this.phone==null && other.getPhone()==null) || 
              (this.phone!=null &&
-              this.phone.equals(other.getPhone())));
+              this.phone.equals(other.getPhone()))) &&
+            ((this.returnReasonType==null && other.getReturnReasonType()==null) || 
+             (this.returnReasonType!=null &&
+              this.returnReasonType.equals(other.getReturnReasonType())));
         __equalsCalc = null;
         return _equals;
     }
@@ -464,6 +491,9 @@ public class FormSEOutStock  implements java.io.Serializable {
         }
         if (getPhone() != null) {
             _hashCode += getPhone().hashCode();
+        }
+        if (getReturnReasonType() != null) {
+            _hashCode += getReturnReasonType().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -573,6 +603,13 @@ public class FormSEOutStock  implements java.io.Serializable {
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("returnReasonType");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://schemas.datacontract.org/2004/07/ERPServer.Models", "returnReasonType"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
     }
 

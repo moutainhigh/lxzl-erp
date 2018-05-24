@@ -33,4 +33,6 @@ public interface StatementOrderMapper extends BaseMysqlDAO<StatementOrderDO> {
 
     List<StatementOrderDO> findByCustomerNo(@Param("customerNo") String customerNo,@Param("monthTime") Date monthTime);
 
+    void realDeleteStatementOrderList(List<StatementOrderDO> statementOrderDOList);
+
 }
