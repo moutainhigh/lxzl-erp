@@ -46,6 +46,7 @@ public class K3ReturnOrderConverter implements ConvertK3DataService {
         }
         formSEOutStock.setBackMode(returnModeString);//退货方式01上门收货，02客户自还，03客户快递，04转让设备
         formSEOutStock.setBackType("02");//退货类型 01发货 02退货 03 退换货
+        formSEOutStock.setReturnReasonType(k3ReturnOrder.getReturnReasonType());
         formSEOutStock.setBillNO(k3ReturnOrder.getReturnOrderNo());//单据编号
         formSEOutStock.setBiller(getString(k3ReturnOrder.getCreateUserRealName()));//创建人
         if (k3ReturnOrder.getDeliverySubCompanyId() != null && k3ReturnOrder.getDeliverySubCompanyId() != 0) {

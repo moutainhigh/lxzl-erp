@@ -59,6 +59,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.system.ImgMysqlMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
@@ -77,9 +78,11 @@ import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.system.ImageDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.CommonUtil;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -873,6 +876,272 @@ public class OrderServiceImpl implements OrderService {
         }
 
         result.setResult(isNeedVerify);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    /**
+     * 确认收货时发生退货修改订单并推送K3保存更改记录
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> confirmChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        // TODO: 2018\5\22 0022   1.保存订单确认收货变更记录详情
+        OrderDO dborderDO = orderMapper.findByOrderNo(orderConfirmChangeParam.getOrderNo());
+        if (dborderDO == null) {
+            logger.info("未查询到交易订单{}相关信息", dborderDO);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        // 判断订单状态，如果状态不是已发货状态不能进行确认收货功能
+        Integer orderState = dborderDO.getOrderStatus();
+        if (orderState == null || !OrderStatus.ORDER_STATUS_DELIVERED.equals(orderState)) {
+            logger.error("交易订单{}状态为{}，不能确认收货", dborderDO.getOrderNo(), orderState);
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        if (!userSupport.getCurrentUserId().toString().equals(dborderDO.getCreateUser())) {
+            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
+            return result;
+        }
+        //调用公共方法进行出处理
+        ServiceResult<String, String> serviceResult = changeOrderMethod(orderConfirmChangeParam, result, dborderDO);
+
+        return serviceResult;
+    }
+
+    /**
+     * 超级管理员修改订单
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> supperUserChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        // TODO: 2018\5\22 0022   1.保存订单确认收货变更记录详情
+        OrderDO dborderDO = orderMapper.findByOrderNo(orderConfirmChangeParam.getOrderNo());
+        if (dborderDO == null) {
+            logger.info("未查询到交易订单{}相关信息", dborderDO);
+            result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        // 拥有权限的人员进行修改进行判断，状态为不是已发货或者确认收货的不能修改
+        Integer orderState = dborderDO.getOrderStatus();
+        if (orderState == null || (!OrderStatus.ORDER_STATUS_DELIVERED.equals(orderState) && !OrderStatus.ORDER_STATUS_CONFIRM.equals(orderState))) {
+            logger.error("交易订单{}状态为{}，不能进行修改", dborderDO.getOrderNo(), orderState);
+            result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
+            return result;
+        }
+        //调用公共方法进行出处理
+        ServiceResult<String, String> serviceResult = changeOrderMethod(orderConfirmChangeParam, result, dborderDO);
+
+        return serviceResult;
+    }
+
+    /**
+     * 修改订单的公共方法
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @return
+     */
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ServiceResult<String, String> changeOrderMethod(OrderConfirmChangeParam orderConfirmChangeParam,ServiceResult<String, String> result,OrderDO dborderDO){
+        Date date = new Date();
+        List<OrderItemParam> orderItemParamList = orderConfirmChangeParam.getOrderItemParamList();
+
+        if (CollectionUtil.isEmpty(orderItemParamList)) {
+            result.setErrorCode(ErrorCode.ORDER_ITEM_PARAM_LIST_NOT_NULL);
+            return result;
+        }
+        // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
+        for (OrderItemParam orderItemParam:orderItemParamList) {
+            //商品变化保存订单确认收货变更记录详情信息
+            if (orderItemParam.getItemType()==1) {
+                OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
+                OrderProductDO orderProductDO = orderProductMapper.findById(orderItemParam.getItemId());
+                if (orderItemParam.getItemCount()>orderProductDO.getStableProductCount()) {
+                    result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT);
+                    return result;
+                }
+                //判断收货的商品是否跟原订单商品数不一致，不一致的进行记录并保存收货的数量
+                if (orderProductDO.getProductCount()!=orderItemParam.getItemCount()) {
+                    orderConfirmChangeLogDetailDO.setOrderId(dborderDO.getId());
+                    orderConfirmChangeLogDetailDO.setOrderNo(dborderDO.getOrderNo());
+                    orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                    orderConfirmChangeLogDetailDO.setItemId(orderItemParam.getItemId());
+                    orderConfirmChangeLogDetailDO.setOrderItemCount(orderProductDO.getStableProductCount());//订单初始商品/配件数
+                    orderConfirmChangeLogDetailDO.setOldItemCount(orderProductDO.getProductCount());//原商品/配件数
+                    orderConfirmChangeLogDetailDO.setNewItemCount(orderItemParam.getItemCount());//新商品/配件数
+                    orderConfirmChangeLogDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                    orderConfirmChangeLogDetailDO.setRemark(null);
+                    orderConfirmChangeLogDetailDO.setCreateTime(date);
+                    orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
+//                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    //按天租的设置押金
+                    if (dborderDO.getRentType() == 1) {
+                        BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
+                        orderProductDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                    }
+                    //将订单商品项中的商品总数、商品在租数进行更新
+                    orderProductDO.setProductCount(orderItemParam.getItemCount());
+                    orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
+
+                    //这里只更新了商品总数和再租商品数
+                    orderProductMapper.update(orderProductDO);
+                }
+            }
+            //配件变化保存订单确认收货变更记录详情信息
+            if (orderItemParam.getItemType()==2) {
+                OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
+                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderItemParam.getItemId());
+                if (orderItemParam.getItemCount()>orderMaterialDO.getStableMaterialCount()) {
+                    result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT);
+                    return result;
+                }
+                if (orderMaterialDO.getMaterialCount()!=orderItemParam.getItemCount()) {
+                    orderConfirmChangeLogDetailDO.setOrderId(dborderDO.getId());
+                    orderConfirmChangeLogDetailDO.setOrderNo(dborderDO.getOrderNo());
+                    orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                    orderConfirmChangeLogDetailDO.setItemId(orderMaterialDO.getId());
+                    orderConfirmChangeLogDetailDO.setOrderItemCount(orderMaterialDO.getStableMaterialCount());//订单初始商品/配件数
+                    orderConfirmChangeLogDetailDO.setOldItemCount(orderMaterialDO.getMaterialCount());//原商品/配件数
+                    orderConfirmChangeLogDetailDO.setNewItemCount(orderItemParam.getItemCount());//新商品/配件数
+                    orderConfirmChangeLogDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                    orderConfirmChangeLogDetailDO.setRemark(null);
+                    orderConfirmChangeLogDetailDO.setCreateTime(date);
+                    orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
+//                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    //按天租的设置押金
+                    if (dborderDO.getRentType() == 1) {
+                        BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
+                        orderMaterialDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                    }
+                    //将订单商品项中的商品总数、商品在租数进行更新
+                    orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
+                    orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
+                    //这里只更新了商品总数和再租商品数
+                    orderMaterialMapper.update(orderMaterialDO);
+                }
+            }
+        }
+        //保存图片
+        if (orderConfirmChangeParam.getDeliveryNoteCustomerSignImg()!= null) {
+            ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(orderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
+            if (deliveryNoteCustomerSignImgDO == null) {
+                result.setErrorCode(ErrorCode.DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS);
+                return result;
+            }
+            deliveryNoteCustomerSignImgDO.setImgType(ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            deliveryNoteCustomerSignImgDO.setRefId(dborderDO.getId().toString());
+            deliveryNoteCustomerSignImgDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            deliveryNoteCustomerSignImgDO.setUpdateTime(date);
+            imgMysqlMapper.update(deliveryNoteCustomerSignImgDO);
+        }
+        // 更新订单信息，并完成确认收货操作
+        OrderDO orderDO = orderMapper.findByOrderNo(orderConfirmChangeParam.getOrderNo());
+        orderConfirmChangeParam.setOrderId(orderDO.getId());
+        BigDecimal oldTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
+        //为计算前初始化参数
+        orderDO.setTotalRentDepositAmount(BigDecimal.ZERO);
+        orderDO.setTotalCreditDepositAmount(BigDecimal.ZERO);
+        orderDO.setTotalInsuranceAmount(BigDecimal.ZERO);
+        orderDO.setTotalDepositAmount(BigDecimal.ZERO);
+        orderDO.setTotalMustDepositAmount(BigDecimal.ZERO);
+
+        List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        // 更改订单，商品项，配件项的数量及金额
+        calculateOrderProductInfo(orderProductDOList, orderDO);
+        calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
+
+        orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
+        if (orderDO.getTotalProductCount() == 0 && orderDO.getTotalMaterialCount() == 0) {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
+        } else {
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        }
+        orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        orderDO.setUpdateTime(date);
+        orderDO.setConfirmDeliveryTime(date);
+        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+        // TODO: 2018\5\22 0022  4.恢复信用额度（现成方法，看看是否有日志的记录）
+        if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())>0) {
+            BigDecimal value = BigDecimalUtil.sub(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount());
+            if (BigDecimalUtil.compare(value, BigDecimal.ZERO) != 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), value);
+                logger.info("恢复信用额度{}", value);
+            }
+        }
+        if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())<0) {
+            BigDecimal value = BigDecimalUtil.sub(orderDO.getTotalCreditDepositAmount(),oldTotalCreditDepositAmount);
+            if (BigDecimalUtil.compare(value, BigDecimal.ZERO) != 0) {
+                customerSupport.subCreditAmountUsed(orderDO.getBuyerCustomerId(), value);
+                logger.info("恢复信用额度{}", value);
+            }
+        }
+
+        orderMapper.update(orderDO);
+
+        //存储订单项
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+            for (OrderProductDO orderProductDO : orderProductDOList) {
+                orderProductDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                orderProductDO.setUpdateTime(date);
+                orderProductMapper.update(orderProductDO);
+            }
+        }
+        //存储配件项
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO : orderMaterialDOList) {
+                orderMaterialDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+                orderMaterialDO.setUpdateTime(date);
+                orderMaterialMapper.update(orderMaterialDO);
+            }
+        }
+        //为了不影响之前的订单逻辑，这里暂时使用修改的方式
+        setOrderProductSummary(orderDO);
+        orderMapper.update(orderDO);
+
+        // 记录订单时间轴
+        orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+
+        // 重算结算单
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateOrderStatement(orderDO.getOrderNo());
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            result.setErrorCode(serviceResult.getErrorCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            return result;
+        }
+
+        //保存订单确认收货变更记录
+        OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
+        orderConfirmChangeLogDO.setOrderId(orderDO.getId());
+        orderConfirmChangeLogDO.setOrderNo(orderDO.getOrderNo());
+        orderConfirmChangeLogDO.setChangeReason(orderConfirmChangeParam.getChangeReason());
+        if (orderConfirmChangeParam.getChangeReasonType()==1) {
+            orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE__EQUIPMENT_FAILURE);
+        }else if (orderConfirmChangeParam.getChangeReasonType()==2) {
+            orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_MORE);
+        } else if (orderConfirmChangeParam.getChangeReasonType() == 3) {
+            orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_OTHER);
+        } else {
+            result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_ERROR);
+        }
+        orderConfirmChangeLogDO.setIsRestatementSuccess(CommonConstant.COMMON_CONSTANT_YES);
+        orderConfirmChangeLogDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+        orderConfirmChangeLogDO.setCreateTime(date);
+        orderConfirmChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+//        orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
+        // TODO: 2018\5\22 0022  7.传参数给K3
+
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -2908,6 +3177,7 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 orderProductDO.setCreateTime(currentTime);
                 orderProductDO.setUpdateTime(currentTime);
+                orderProductDO.setStableProductCount(orderProductDO.getProductCount());
                 orderProductMapper.save(orderProductDO);
             }
         }
@@ -2919,6 +3189,7 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 orderProductDO.setUpdateTime(currentTime);
+                orderProductDO.setStableProductCount(orderProductDO.getProductCount());
                 orderProductMapper.update(orderProductDO);
             }
         }
@@ -2930,6 +3201,7 @@ public class OrderServiceImpl implements OrderService {
                 orderProductDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 orderProductDO.setUpdateUser(loginUser.getUserId().toString());
                 orderProductDO.setUpdateTime(currentTime);
+                orderProductDO.setStableProductCount(orderProductDO.getProductCount());
                 orderProductMapper.update(orderProductDO);
             }
         }
@@ -2962,6 +3234,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMaterialDO.setCreateTime(currentTime);
                 orderMaterialDO.setUpdateTime(currentTime);
+                orderMaterialDO.setStableMaterialCount(orderMaterialDO.getMaterialCount());
                 orderMaterialMapper.save(orderMaterialDO);
             }
         }
@@ -2973,6 +3246,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMaterialDO.setUpdateTime(currentTime);
+                orderMaterialDO.setStableMaterialCount(orderMaterialDO.getMaterialCount());
                 orderMaterialMapper.update(orderMaterialDO);
             }
         }
@@ -2984,6 +3258,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMaterialDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
                 orderMaterialDO.setUpdateUser(loginUser.getUserId().toString());
                 orderMaterialDO.setUpdateTime(currentTime);
+                orderMaterialDO.setStableMaterialCount(orderMaterialDO.getMaterialCount());
                 orderMaterialMapper.update(orderMaterialDO);
             }
         }
@@ -3804,4 +4079,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private JointMaterialMapper jointMaterialMapper;
+
+//    @Autowired
+//    private OrderConfirmChangeLogMapper orderConfirmChangeLogMapper;
+
+//    @Autowired
+//    private OrderConfirmChangeLogDetailMapper orderConfirmChangeLogDetailMapper;
+
+    @Autowired
+    private ImgMysqlMapper imgMysqlMapper;
 }
