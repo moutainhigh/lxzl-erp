@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.k3.pojo.OrderMessage;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
@@ -31,6 +32,7 @@ import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
 import com.lxzl.erp.core.service.material.impl.support.MaterialSupport;
+import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -960,7 +962,7 @@ public class OrderServiceImpl implements OrderService {
         Integer oldTotalProductCount = dborderDO.getTotalProductCount();
         Integer oldTotalMaterialCount = dborderDO.getTotalMaterialCount();
         // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
-        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+        StringBuffer sb = new StringBuffer();
         sb.append("租赁订单-").append(dborderDO.getOrderNo()).append("用户已经确认收货，有部分退货情况，退货信息如下：\n");
         Integer count = 0;
         for (OrderItemParam orderItemParam:orderItemParamList) {
@@ -1140,21 +1142,19 @@ public class OrderServiceImpl implements OrderService {
             OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
             orderConfirmChangeLogDO.setOrderId(orderDO.getId());
             orderConfirmChangeLogDO.setOrderNo(orderDO.getOrderNo());
-            if (StringUtil.isEmpty(orderConfirmChangeParam.getChangeReason())) {
-                result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_NOT_NULL);
-                return result;
-            }
             if (orderConfirmChangeParam.getChangeReasonType()==null) {
                 result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_NOT_NULL);
                 return result;
             }
-            orderConfirmChangeLogDO.setChangeReason(orderConfirmChangeParam.getChangeReason());
             if (orderConfirmChangeParam.getChangeReasonType()==1) {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE__EQUIPMENT_FAILURE);
+                orderConfirmChangeLogDO.setChangeReason("设备故障");
             }else if (orderConfirmChangeParam.getChangeReasonType()==2) {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_MORE);
+                orderConfirmChangeLogDO.setChangeReason("商品数量超过实际需求");
             } else if (orderConfirmChangeParam.getChangeReasonType() == 3) {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_OTHER);
+                orderConfirmChangeLogDO.setChangeReason(orderConfirmChangeParam.getChangeReason());
             } else {
                 result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_ERROR);
                 return result;
@@ -1165,21 +1165,24 @@ public class OrderServiceImpl implements OrderService {
             orderConfirmChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
             orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
         }
-
         // TODO: 2018\5\22 0022  7.传参数给K3
         // TODO: 2018\5\22 0022  8.推送钉钉
         if (flag) {//有退货
             if (orderDO.getOrderStatus()==OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
-                sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+                sb = new StringBuffer();
                 sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户没有收货，订单中商品全部退回");
             }
         }else {//没有退货
-            sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+            sb = new StringBuffer();
             sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，没有退货情况。");
         }
-        System.out.println(sb.toString());
-        dingDingSupport.dingDingSendMessage(sb.toString());
 
+        if (orderDO.getOrderSellerId()!= null) {
+            MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+            messageThirdChannel.setMessageContent(sb.toString());
+            messageThirdChannel.setReceiverUserId(orderDO.getOrderSellerId());
+            messageThirdChannelService.sendMessage(messageThirdChannel);
+        }
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -4132,4 +4135,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ImgMysqlMapper imgMysqlMapper;
+
+    @Autowired
+    private MessageThirdChannelService messageThirdChannelService;
 }
