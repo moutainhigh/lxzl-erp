@@ -96,14 +96,14 @@ public class PaymentController extends BaseController {
     }
 
     @RequestMapping(value = "exportHistoryChargeRecord", method = RequestMethod.POST)
-    public Result exportHistoryChargeRecord(@RequestBody ChargeRecordPageParam param, BindingResult validResult) throws Exception {
-        ServiceResult<String, String> serviceResult = paymentService.exportHistoryChargeRecord(param);
+    public Result exportHistoryChargeRecord(@RequestBody ExportChargeRecordPageParam exportChargeRecordPageParam, BindingResult validResult) throws Exception {
+        ServiceResult<String, String> serviceResult = paymentService.exportHistoryChargeRecord(exportChargeRecordPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 
     @RequestMapping(value = "constantlyExportQueryChargeRecord", method = RequestMethod.POST)
-    public Result constantlyExportQueryChargeRecord(@RequestBody @Validated(QueryGroup.class) ChargeRecordPageParam param, BindingResult validResult) throws Exception {
-        ServiceResult<String, String> serviceResult = paymentService.constantlyExportQueryChargeRecord(param);
+    public Result constantlyExportQueryChargeRecord(@RequestBody @Validated(QueryGroup.class) ExportChargeRecordPageParam exportChargeRecordPageParam, BindingResult validResult) throws Exception {
+        ServiceResult<String, String> serviceResult = paymentService.constantlyExportQueryChargeRecord(exportChargeRecordPageParam);
         return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 }
