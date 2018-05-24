@@ -220,10 +220,10 @@
 			and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
 		</if>
 		<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
-			<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=DATE} ]]>
+			<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
-			<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=DATE} ]]>
+			<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 		</if>
 		<if test="maps.isQueryAll == null">
 			and ebsd.data_status = 1
@@ -284,10 +284,10 @@
 				and ebsd.is_localization = #{maps.bankSlipDetailQueryParam.isLocalization,jdbcType=INTEGER}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
-				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=DATE} ]]>
+				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
-				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=DATE} ]]>
+				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -550,10 +550,10 @@
 				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
-				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=DATE} ]]>
+				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
-				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=DATE} ]]>
+				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -600,10 +600,10 @@
 				and ebsd.trade_serial_no = #{maps.bankSlipDetailQueryParam.tradeSerialNo,jdbcType=VARCHAR}
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayStart != null">
-				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=DATE} ]]>
+				<![CDATA[ and ebs.slip_day >= #{maps.bankSlipDetailQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.bankSlipDetailQueryParam != null &amp;&amp; maps.bankSlipDetailQueryParam.slipDayEnd != null">
-				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=DATE} ]]>
+				<![CDATA[ and ebs.slip_day < #{maps.bankSlipDetailQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ebsd.data_status = 1
@@ -680,6 +680,17 @@
 			</if>
 			and ebsd.is_localization = 2 and ebs.sub_company_id = 1
 		</where>
+	</select>
+
+	<select id="findBankSlipDetailByTradeSerialNoList" resultMap="BankSlipDetailDO" parameterType="java.util.List">
+		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE  ebsd.trade_serial_no IN
+		<foreach collection="list" close=")" open="(" separator="," item="tradeSerialNo" index="index">
+			#{tradeSerialNo,jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+	<select id="findBankSlipDetailByTradeSerialNo" resultMap="BankSlipDetailDO">
+		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd WHERE  ebsd.trade_serial_no = #{thirdPartyPayOrderId,jdbcType=VARCHAR}
 	</select>
 
 </mapper>

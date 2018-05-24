@@ -18,6 +18,45 @@ import java.math.BigDecimal;
  * @Time : Created in 10:19
  */
 public class PaymentControllerTest extends ERPUnTransactionalTest {
+    @Test
+    public void constantlyExportQueryChargeRecord1() throws Exception {
+        ChargeRecordPageParam param =  new ChargeRecordPageParam();
+        param.setChargeOrderNo("CO201804101732343301061");
+        TestResult testResult = getJsonTestResult("/payment/constantlyExportQueryChargeRecord", param);
+    }
+
+    @Test
+    public void exportQueryChargeRecordParamPage() throws Exception {
+        ChargeRecordPageParam param =  new ChargeRecordPageParam();
+        TestResult testResult = getJsonTestResult("/payment/exportHistoryChargeRecord", param);
+    }
+
+
+    @Test
+    public void constantlyExportQueryChargeRecord() throws Exception {
+        ChargeRecordPageParam chargeRecordPageParam =  new ChargeRecordPageParam();
+
+//        List<ChargeRecord> list = new ArrayList<>();
+//        ChargeRecord chargeRecord = new ChargeRecord();
+//        chargeRecord.setCustomerId(12);
+//        chargeRecord.setBusinessOrderNo("oo-asdas");
+//        chargeRecord.setChargeTime(new Date());
+//        chargeRecord.setChargeAmountReal(new BigDecimal(20));
+//        chargeRecord.setChargeStatus(CommonConstant.DATA_STATUS_ENABLE);
+//        chargeRecord.setChargeName("测试用户");
+//        chargeRecord.setChargeDescription("充值详情");
+//        chargeRecord.setOpenId("12312qweq1231");
+//        chargeRecord.setBusinessCustomerNo("cc-asdbaksjdbkajsbdajs");
+//        chargeRecord.setThirdPartyPayOrderId("取2131231");
+//        chargeRecord.setSubCompanyId(1);
+//        chargeRecord.setSubCompanyName("深圳分公司");
+//        chargeRecord.setRemark("这是备注");
+//        list.add(chargeRecord);
+//        chargeRecordPageParam.setChargeRecordList(list);
+        ChargeRecordPageParam param = new ChargeRecordPageParam();
+        param.setChargeOrderNo("1111111");
+        TestResult testResult = getJsonTestResult("/payment/constantlyExportQueryChargeRecord", param);
+    }
 
     @Test
     public void weixinPay() throws Exception {
@@ -45,7 +84,7 @@ public class PaymentControllerTest extends ERPUnTransactionalTest {
         param.setPageSize(10);
 //        param.setBusinessCustomerNo("LXCC10002018010500023");
 //        param.setCustomerName("腾讯");
-        param.setChargeType(2);
+//        param.setChargeType(2);
 //        param.setChargeBodyId("2");
 //        param.setChargeStatus(20);
 //        param.setQueryStartTime(new Date("1514908800000"));
