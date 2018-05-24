@@ -3,10 +3,7 @@ package com.lxzl.erp.core.service.payment;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
-import com.lxzl.erp.common.domain.payment.ChargeRecordPageParam;
-import com.lxzl.erp.common.domain.payment.CustomerAccountLogParam;
-import com.lxzl.erp.common.domain.payment.ManualChargeParam;
-import com.lxzl.erp.common.domain.payment.ManualDeductParam;
+import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
@@ -157,7 +154,7 @@ public interface PaymentService extends BaseService {
      * @param : itemList
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> exportHistoryChargeRecord(ChargeRecordPageParam param) throws ParseException;
+    ServiceResult<String,String> exportHistoryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException;
     /**
      * 时时导入快付通数据到银行流水
      * @Author : XiaoLuYu
@@ -165,7 +162,7 @@ public interface PaymentService extends BaseService {
      * @param : itemList
      * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
      */
-    ServiceResult<String,String> constantlyExportQueryChargeRecord(ChargeRecordPageParam param) throws ParseException;
+    ServiceResult<String,String> constantlyExportQueryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException;
     /**
      * 导入当天丢失快付通数据到银行流水
      * @Author : XiaoLuYu
