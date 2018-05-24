@@ -425,13 +425,13 @@ public class ErrorCode {
     public static final String ORDER_MESSAGE_NULL = "J400146";
     public static final String CANCEL_ORDER_REASON_TYPE_NULL = "J400147";
     public static final String DAY_RENT_ORDER_NOT_PAY = "J400148";
-    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400049";
-    public static final String HAS_RETURN_ORDER = "J400050";
-    public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400051";
-    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400052";
-    public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400053";
-    public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400054";
-    public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400055";
+    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400149";
+    public static final String HAS_RETURN_ORDER = "J400150";
+    public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400151";
+    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400152";
+    public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400153";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400154";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400155";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -663,6 +663,8 @@ public class ErrorCode {
     public static final String CONFIRM_CHANGE_REASON_TYPE_ERROR = "J1100038";
     public static final String CONFIRM_CHANGE_REASON_NOT_NULL = "J1100039";
     public static final String CONFIRM_CHANGE_REASON_TYPE_NOT_NULL = "J1100040";
+    public static final String ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM = "J1100041";
+    public static final String ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM = "J1100042";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -858,6 +860,7 @@ public class ErrorCode {
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
     public static final String CHARGE_RECORD_IS_NULL = "J18000050";
     public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
+    public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1583,6 +1586,8 @@ public class ErrorCode {
         MAP.put(CONFIRM_CHANGE_REASON_TYPE_ERROR, "确认收货变更原因类型不存在");
         MAP.put(CONFIRM_CHANGE_REASON_NOT_NULL, "确认收货变更原因不能为空");
         MAP.put(CONFIRM_CHANGE_REASON_TYPE_NOT_NULL, "确认收货变更原因类型不能为空");
+        MAP.put(ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM, "商品数量更改成0的商品项不能重复修改");
+        MAP.put(ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM, "配件数量更改成0的配件项不能重复修改");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
@@ -1778,6 +1783,7 @@ public class ErrorCode {
         MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录都已存在");
         MAP.put(CHARGE_RECORD_IS_NULL, "快付通充值记录为空");
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
+        MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");

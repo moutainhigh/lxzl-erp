@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.quartz;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.quartz.QuartzJob;
+import com.lxzl.erp.common.domain.quartz.QuartzJobQueryParam;
 import com.lxzl.erp.common.domain.quartz.QuartzRunningJob;
 
 import java.util.List;
@@ -65,10 +66,10 @@ public interface QuartzService {
 
     /**
      * 分页查询所有job
-     * @param quartzJob
+     * @param quartzJobQueryParam
      * @return
      */
-    ServiceResult<String, Page<QuartzJob>> queryAllJobs(QuartzJob quartzJob);
+    ServiceResult<String, Page<QuartzJob>> queryAllJobs(QuartzJobQueryParam quartzJobQueryParam);
 
     /**
      * 获取某个sched下面的所有job

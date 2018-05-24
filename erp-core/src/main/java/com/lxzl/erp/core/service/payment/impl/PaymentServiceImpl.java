@@ -476,7 +476,6 @@ public class PaymentServiceImpl implements PaymentService {
 //                }
 //            }
 
-//            String response = HttpClientUtil.post("http://testpayment.52rental.com/payment-system/charge/queryChargeRecordPage", requestJson, headerBuilder, "UTF-8");
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
@@ -699,12 +698,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> exportHistoryChargeRecord(ChargeRecordPageParam param) throws ParseException {
+    public ServiceResult<String, String> exportHistoryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException {
 
-        param.setChannelNo(ChannelNo.LYCHEE_PAY);
+        ChargeRecordPageParam param = new ChargeRecordPageParam();
+        param.setChannelNo(exportChargeRecordPageParam.getChannelNo());
         param.setPageNo(CommonConstant.COMMON_ONE);
         param.setPageSize(Integer.MAX_VALUE);
         param.setChargeStatus(ChargeStatus.PAY_SUCCESS);
+        param.setQueryStartTime(exportChargeRecordPageParam.getStartTime());
+        param.setQueryEndTime(exportChargeRecordPageParam.getEndTime());
+        param.setSubCompanyId(exportChargeRecordPageParam.getSubCompanyId());
+        param.setBusinessCustomerNo(exportChargeRecordPageParam.getCustomerNo());
+
         ServiceResult<String, Page<ChargeRecord>> result = queryChargeRecordParamPage(param);
         List<ChargeRecord> itemList = result.getResult().getItemList();
 
@@ -717,11 +722,13 @@ public class PaymentServiceImpl implements PaymentService {
         Map<String, ChargeRecord> chargeRecordMap = ListUtil.listToMap(itemList, "thirdPartyPayOrderId");
         List<String> chargeRecordList = new ArrayList<>(chargeRecordMap.keySet());
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailByTradeSerialNoList(chargeRecordList);
-        for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
-            chargeRecordMap.remove(bankSlipDetailDO.getTradeSerialNo());
+        if(CollectionUtil.isNotEmpty(bankSlipDetailDOList)){
+            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
+                chargeRecordMap.remove(bankSlipDetailDO.getTradeSerialNo());
+            }
+            itemList = ListUtil.mapToList(chargeRecordMap);
         }
 
-        itemList = ListUtil.mapToList(chargeRecordMap);
         if(CollectionUtil.isNotEmpty(itemList)){
             for (ChargeRecord chargeRecord : itemList) {
                 saveConstantlyExportQueryChargeRecordToBankSlip(chargeRecord);
@@ -733,11 +740,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ServiceResult<String, String> constantlyExportQueryChargeRecord(ChargeRecordPageParam param) throws ParseException {
+    public ServiceResult<String, String> constantlyExportQueryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        ChargeRecordPageParam param = new ChargeRecordPageParam();
         param.setPageNo(CommonConstant.COMMON_ONE);
         param.setPageSize(Integer.MAX_VALUE);
         param.setChargeStatus(ChargeStatus.PAY_SUCCESS);
+        param.setChargeOrderNo(exportChargeRecordPageParam.getChargeOrderNo());
+
         ServiceResult<String, Page<ChargeRecord>> result = queryChargeRecordParamPage(param);
         if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
             serviceResult.setErrorCode(result.getErrorCode());
@@ -845,9 +856,10 @@ public class PaymentServiceImpl implements PaymentService {
             bankSlipSupport.constantlyPaymentClaim(bankSlipClaimDO, bankSlipDO, bankSlipDetailDO,bankSlipDetailOperationLogDO, now);
             //记录保存记录id
         } catch (Exception e) {
-            bankSlipDetailOperationLogDO.setOperationContent("客户充值时时导入异常(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(chargeTime) + "）--充值人：" + userSupport.getCurrentUserCompany().getSubCompanyName() +"  "+ userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName()+"  "+userSupport.getCurrentUser().getRealName()  + ",客户编号：" + chargeRecord.getBusinessCustomerNo() + ",充值时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",充值：" + chargeRecord.getChargeAmountReal() + "元，失败！！！");
+            e.printStackTrace();
+            serviceResult.setErrorCode(ErrorCode.EXPORT_CHARGE_RECORD_IS_FAIL);
+            return serviceResult;
         }
-        bankSlipDetailOperationLogMapper.save(bankSlipDetailOperationLogDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -855,10 +867,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ServiceResult<String, String> exportTodayLeaveOutChargeRecord() throws ParseException {
-        ChargeRecordPageParam param = new ChargeRecordPageParam();
-        param.setQueryStartTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ZERO));
-        param.setQueryEndTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ONE));
-        return exportHistoryChargeRecord(param);
+        ExportChargeRecordPageParam exportChargeRecordPageParam = new ExportChargeRecordPageParam();
+        exportChargeRecordPageParam.setStartTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ZERO));
+        exportChargeRecordPageParam.setEndTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ONE));
+        return exportHistoryChargeRecord(exportChargeRecordPageParam);
     }
 
 }

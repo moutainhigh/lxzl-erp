@@ -960,7 +960,11 @@ public class OrderServiceImpl implements OrderService {
         Integer oldTotalProductCount = dborderDO.getTotalProductCount();
         Integer oldTotalMaterialCount = dborderDO.getTotalMaterialCount();
         // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+        sb.append("租赁订单-").append(dborderDO.getOrderNo()).append("用户已经确认收货，有部分退货情况，退货信息如下：\n");
+        Integer count = 0;
         for (OrderItemParam orderItemParam:orderItemParamList) {
+            count+=orderItemParam.getItemCount();
             //商品变化保存订单确认收货变更记录详情信息
             if (orderItemParam.getItemType()==1) {
                 OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
@@ -971,6 +975,10 @@ public class OrderServiceImpl implements OrderService {
                 }
                 //判断收货的商品是否跟原订单商品数不一致，不一致的进行记录并保存收货的数量
                 if (orderProductDO.getProductCount()!=orderItemParam.getItemCount()) {
+                    if (orderProductDO.getProductCount() == 0) {
+                        result.setErrorCode(ErrorCode.ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM);
+                        return result;
+                    }
                     orderConfirmChangeLogDetailDO.setOrderId(dborderDO.getId());
                     orderConfirmChangeLogDetailDO.setOrderNo(dborderDO.getOrderNo());
                     orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
@@ -983,6 +991,7 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    sb.append("商品-").append(orderProductDO.getProductName()).append("退").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台\n");
                     //按天租的设置押金
                     if (dborderDO.getRentType() == 1) {
                         BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
@@ -1005,6 +1014,10 @@ public class OrderServiceImpl implements OrderService {
                     return result;
                 }
                 if (orderMaterialDO.getMaterialCount()!=orderItemParam.getItemCount()) {
+                    if (orderMaterialDO.getMaterialCount() == 0) {
+                        result.setErrorCode(ErrorCode.ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM);
+                        return result;
+                    }
                     orderConfirmChangeLogDetailDO.setOrderId(dborderDO.getId());
                     orderConfirmChangeLogDetailDO.setOrderNo(dborderDO.getOrderNo());
                     orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
@@ -1017,6 +1030,7 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
                     orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    sb.append("配件-").append(orderMaterialDO.getMaterialName()).append("退").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台\n");
                     //按天租的设置押金
                     if (dborderDO.getRentType() == 1) {
                         BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
@@ -1061,7 +1075,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderMaterialInfo(orderMaterialDOList, orderDO);
 
         orderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(BigDecimalUtil.add(BigDecimalUtil.add(orderDO.getTotalProductAmount(), orderDO.getTotalMaterialAmount()), orderDO.getLogisticsAmount()), orderDO.getTotalInsuranceAmount()), orderDO.getTotalDiscountAmount()));
-        if (orderDO.getTotalProductCount() == 0 && orderDO.getTotalMaterialCount() == 0) {
+        if (count==0) {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_COLSE);
         } else {
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
@@ -1069,7 +1083,6 @@ public class OrderServiceImpl implements OrderService {
         orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
         orderDO.setUpdateTime(date);
         orderDO.setConfirmDeliveryTime(date);
-        orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
         // TODO: 2018\5\22 0022  4.恢复信用额度（现成方法，看看是否有日志的记录）
         if (BigDecimalUtil.compare(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount())>0) {
             BigDecimal value = BigDecimalUtil.sub(oldTotalCreditDepositAmount,orderDO.getTotalCreditDepositAmount());
@@ -1120,6 +1133,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
+        //是否有退货标记，true为有退货，false为全部收货
         Boolean flag = newTotalProductCount!=oldTotalProductCount || newTotalMaterialCount != oldTotalMaterialCount;
         if (flag) {
             //保存订单确认收货变更记录
@@ -1153,6 +1167,19 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // TODO: 2018\5\22 0022  7.传参数给K3
+        // TODO: 2018\5\22 0022  8.推送钉钉
+        if (flag) {//有退货
+            if (orderDO.getOrderStatus()==OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
+                sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+                sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户没有收货，订单中商品全部退回");
+            }
+        }else {//没有退货
+            sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+            sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，没有退货情况。");
+        }
+        System.out.println(sb.toString());
+        dingDingSupport.dingDingSendMessage(sb.toString());
+
 
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
@@ -3378,9 +3405,11 @@ public class OrderServiceImpl implements OrderService {
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && orderProductDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
-                    if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
-                        throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
+                    if (orderProductDO.getProductCount()>0) {
+                        BigDecimal remainder = orderProductDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderProductDO.getProductCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_PRODUCT_DEPOSIT_ERROR);
+                        }
                     }
                     depositAmount = orderProductDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
@@ -3465,10 +3494,13 @@ public class OrderServiceImpl implements OrderService {
 
                 // 小于等于90天的,不走风控，大于90天的，走风控授信
                 if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && orderMaterialDO.getRentTimeLength() <= CommonConstant.ORDER_NEED_VERIFY_DAYS) {
-                    BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
-                    if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
-                        throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
+                    if (orderMaterialDO.getMaterialCount()>0) {
+                        BigDecimal remainder = orderMaterialDO.getDepositAmount().divideAndRemainder(new BigDecimal(orderMaterialDO.getMaterialCount()))[1];
+                        if (BigDecimalUtil.compare(remainder, BigDecimal.ZERO) != 0) {
+                            throw new BusinessException(ErrorCode.ORDER_MATERIAL_DEPOSIT_ERROR);
+                        }
                     }
+
                     depositAmount = orderMaterialDO.getDepositAmount();
                     totalDepositAmount = BigDecimalUtil.add(totalDepositAmount, depositAmount);
                 } else if (customerRiskManagementDO != null && CommonConstant.COMMON_CONSTANT_YES.equals(customerRiskManagementDO.getIsFullDeposit())) {

@@ -183,6 +183,7 @@ public class BankSlipSupport {
         bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         bankSlipDetailOperationLogDO.setCreateTime(now);
         bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+        bankSlipDetailOperationLogMapper.save(bankSlipDetailOperationLogDO);
 
         //充值失败
         if (!paySuccessFlag) {
