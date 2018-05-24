@@ -676,8 +676,8 @@ public class OrderTest extends ERPUnTransactionalTest {
     public void confirmChangeOrder() throws Exception {
         OrderConfirmChangeParam orderConfirmChangeParam = new OrderConfirmChangeParam();
         OrderItemParam orderItemParam1 = new OrderItemParam();
-        orderItemParam1.setItemId(2910);
-        orderItemParam1.setItemCount(0);
+        orderItemParam1.setItemId(2908);
+        orderItemParam1.setItemCount(4);
         orderItemParam1.setItemType(1);
 //        OrderItemParam orderItemParam2 = new OrderItemParam();
 //        orderItemParam2.setItemId(2900);
@@ -697,7 +697,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        orderItemParamList.add(orderItemParam3);
 //        orderItemParamList.add(orderItemParam4);
         orderConfirmChangeParam.setOrderItemParamList(orderItemParamList);
-        orderConfirmChangeParam.setOrderNo("LXO-20180523-027-00113");
+        orderConfirmChangeParam.setOrderNo("LXO-20180523-027-00112");
         orderConfirmChangeParam.setChangeReasonType(1);
         orderConfirmChangeParam.setChangeReason("杀口接沙客sahksjdkaksjdakjshdkjas");
         Image image = new Image();
