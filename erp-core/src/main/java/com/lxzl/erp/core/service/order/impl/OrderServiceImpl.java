@@ -905,10 +905,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        if (!userSupport.getCurrentUserId().toString().equals(dborderDO.getCreateUser())) {
-            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
-            return result;
-        }
         //调用公共方法进行出处理
         ServiceResult<String, String> serviceResult = changeOrderMethod(orderConfirmChangeParam, result, dborderDO);
 
@@ -961,6 +957,8 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_ITEM_PARAM_LIST_NOT_NULL);
             return result;
         }
+        Integer oldTotalProductCount = dborderDO.getTotalProductCount();
+        Integer oldTotalMaterialCount = dborderDO.getTotalMaterialCount();
         // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
         for (OrderItemParam orderItemParam:orderItemParamList) {
             //商品变化保存订单确认收货变更记录详情信息
@@ -984,7 +982,7 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setRemark(null);
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
-//                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
                     //按天租的设置押金
                     if (dborderDO.getRentType() == 1) {
                         BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
@@ -1018,7 +1016,7 @@ public class OrderServiceImpl implements OrderService {
                     orderConfirmChangeLogDetailDO.setRemark(null);
                     orderConfirmChangeLogDetailDO.setCreateTime(date);
                     orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
-//                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
                     //按天租的设置押金
                     if (dborderDO.getRentType() == 1) {
                         BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
@@ -1120,26 +1118,40 @@ public class OrderServiceImpl implements OrderService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             return result;
         }
-
-        //保存订单确认收货变更记录
-        OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
-        orderConfirmChangeLogDO.setOrderId(orderDO.getId());
-        orderConfirmChangeLogDO.setOrderNo(orderDO.getOrderNo());
-        orderConfirmChangeLogDO.setChangeReason(orderConfirmChangeParam.getChangeReason());
-        if (orderConfirmChangeParam.getChangeReasonType()==1) {
-            orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE__EQUIPMENT_FAILURE);
-        }else if (orderConfirmChangeParam.getChangeReasonType()==2) {
-            orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_MORE);
-        } else if (orderConfirmChangeParam.getChangeReasonType() == 3) {
-            orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_OTHER);
-        } else {
-            result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_ERROR);
+        Integer newTotalProductCount = orderDO.getTotalProductCount();
+        Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
+        Boolean flag = newTotalProductCount!=oldTotalProductCount || newTotalMaterialCount != oldTotalMaterialCount;
+        if (flag) {
+            //保存订单确认收货变更记录
+            OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
+            orderConfirmChangeLogDO.setOrderId(orderDO.getId());
+            orderConfirmChangeLogDO.setOrderNo(orderDO.getOrderNo());
+            if (StringUtil.isEmpty(orderConfirmChangeParam.getChangeReason())) {
+                result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_NOT_NULL);
+                return result;
+            }
+            if (orderConfirmChangeParam.getChangeReasonType()==null) {
+                result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_NOT_NULL);
+                return result;
+            }
+            orderConfirmChangeLogDO.setChangeReason(orderConfirmChangeParam.getChangeReason());
+            if (orderConfirmChangeParam.getChangeReasonType()==1) {
+                orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE__EQUIPMENT_FAILURE);
+            }else if (orderConfirmChangeParam.getChangeReasonType()==2) {
+                orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_MORE);
+            } else if (orderConfirmChangeParam.getChangeReasonType() == 3) {
+                orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_OTHER);
+            } else {
+                result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_ERROR);
+                return result;
+            }
+            orderConfirmChangeLogDO.setIsRestatementSuccess(CommonConstant.COMMON_CONSTANT_YES);
+            orderConfirmChangeLogDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+            orderConfirmChangeLogDO.setCreateTime(date);
+            orderConfirmChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
         }
-        orderConfirmChangeLogDO.setIsRestatementSuccess(CommonConstant.COMMON_CONSTANT_YES);
-        orderConfirmChangeLogDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-        orderConfirmChangeLogDO.setCreateTime(date);
-        orderConfirmChangeLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-//        orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
+
         // TODO: 2018\5\22 0022  7.传参数给K3
 
         result.setErrorCode(ErrorCode.SUCCESS);
@@ -4080,11 +4092,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private JointMaterialMapper jointMaterialMapper;
 
-//    @Autowired
-//    private OrderConfirmChangeLogMapper orderConfirmChangeLogMapper;
+    @Autowired
+    private OrderConfirmChangeLogMapper orderConfirmChangeLogMapper;
 
-//    @Autowired
-//    private OrderConfirmChangeLogDetailMapper orderConfirmChangeLogDetailMapper;
+    @Autowired
+    private OrderConfirmChangeLogDetailMapper orderConfirmChangeLogDetailMapper;
 
     @Autowired
     private ImgMysqlMapper imgMysqlMapper;

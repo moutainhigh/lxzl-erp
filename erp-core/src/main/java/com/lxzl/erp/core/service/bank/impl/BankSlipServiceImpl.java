@@ -12,11 +12,10 @@ import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetailOperationLog;
-import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.bank.impl.importSlip.*;
-import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
+import com.lxzl.erp.core.service.bank.impl.importSlip.support.BankSlipSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipClaimMapper;
@@ -58,7 +57,7 @@ import java.util.regex.Pattern;
  */
 @Service
 public class BankSlipServiceImpl implements BankSlipService {
-    private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(BankSlipServiceImpl.class);
     @Autowired
     private ImportTrafficBank importTrafficBank;
 
@@ -118,6 +117,9 @@ public class BankSlipServiceImpl implements BankSlipService {
 
     @Autowired
     private BankSlipDetailOperationLogMapper bankSlipDetailOperationLogMapper;
+
+    @Autowired
+    private BankSlipSupport bankSlipSupport;
 
     @Override
     public ServiceResult<String, Page<BankSlip>> pageBankSlip(BankSlipQueryParam bankSlipQueryParam) {
@@ -744,7 +746,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             if (CollectionUtil.isEmpty(bankSlipClaimDOList)) {
                 continue;
             }
-            boolean paySuccessFlag = paymentClaim(bankSlipClaimDOList, newDankSlipClaimDOList, bankSlipDetailOperationLogDOList, bankSlipDO, bankSlipDetailDO, now);
+            boolean paySuccessFlag = bankSlipSupport.paymentClaim(bankSlipClaimDOList, newDankSlipClaimDOList, bankSlipDetailOperationLogDOList, bankSlipDO, bankSlipDetailDO, now);
 
             //充值成功改为确认 ,失败只是跟改明细跟新动作
             if (paySuccessFlag) {
@@ -1456,7 +1458,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         List<BankSlipClaimDO> newDankSlipClaimDOList = new ArrayList<>();
         List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList = new ArrayList<>();
-        boolean paySuccessFlag = paymentClaim(bankSlipDetailDO.getBankSlipClaimDOList(), newDankSlipClaimDOList, bankSlipDetailOperationLogDOList, bankSlipDO, bankSlipDetailDO, now);
+        boolean paySuccessFlag = bankSlipSupport.paymentClaim(bankSlipDetailDO.getBankSlipClaimDOList(), newDankSlipClaimDOList, bankSlipDetailOperationLogDOList, bankSlipDO, bankSlipDetailDO, now);
         if (paySuccessFlag) {
             //银行对公流水明细记录变为已确定
             bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CONFIRMED);
@@ -1632,54 +1634,5 @@ public class BankSlipServiceImpl implements BankSlipService {
         bankSlipDetailOperationLogMapper.save(bankSlipDetailOperationLogDO);
     }
 
-    private boolean paymentClaim(List<BankSlipClaimDO> bankSlipClaimDOList, List<BankSlipClaimDO> newDankSlipClaimDOList, List<BankSlipDetailOperationLogDO> bankSlipDetailOperationLogDOList, BankSlipDO bankSlipDO, BankSlipDetailDO bankSlipDetailDO, Date now) {
-        BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
-        Boolean paySuccessFlag = true;
-        StringBuffer stringBuffer = new StringBuffer("");
-        for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
-            //充值成功不需要再冲
-            if (!RechargeStatus.PAY_SUCCESS.equals(bankSlipClaimDO.getRechargeStatus())) {
-                //加款到客户账号
-                ManualChargeParam manualChargeParam = new ManualChargeParam();
-                manualChargeParam.setBusinessCustomerNo(bankSlipClaimDO.getCustomerNo());
-                manualChargeParam.setChargeAmount(bankSlipClaimDO.getClaimAmount());
-                manualChargeParam.setChargeRemark(bankSlipClaimDO.getRemark());
-                try {
-                    ServiceResult<String, Boolean> result = paymentService.manualCharge(manualChargeParam);
-                    if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
-                        //银行对公流水认领表 成功 改变状态
-                        bankSlipClaimDO.setRechargeStatus(RechargeStatus.PAY_SUCCESS);
-                        stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "客户充值(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",充值人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",充值时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",充值：" + bankSlipClaimDO.getClaimAmount() + "元，成功！！！");
-                    } else {
-                        //银行对公流水认领表 失败 改变状态
-                        bankSlipClaimDO.setRechargeStatus(RechargeStatus.PAY_FAIL);
-                        paySuccessFlag = false;
-                        stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "客户充值(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",充值人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",充值时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",充值：" + bankSlipClaimDO.getClaimAmount() + "元，失败！！！");
-                    }
-                } catch (Exception e) {
-                    logger.error("------------------充值出错----------------------", e);
-                    //银行对公流水认领表 失败 改变状态
-                    bankSlipClaimDO.setRechargeStatus(RechargeStatus.PAY_FAIL);
-                    paySuccessFlag = false;
-                    stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "客户充值(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",充值人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",充值时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",充值：" + bankSlipClaimDO.getClaimAmount() + "元，失败！！！");
-                }
-                bankSlipClaimDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-                bankSlipClaimDO.setUpdateTime(now);
-                newDankSlipClaimDOList.add(bankSlipClaimDO);
-            } else {
-                // 充值成功的充值也要记录
-                stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "客户充值(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",充值人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",充值时间：" + bankSlipClaimDO.getClaimAmount() + "元，" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipClaimDO.getUpdateTime()) + "已充值无需充值！！！");
-            }
-        }
-        // 添加操作日志
-        bankSlipDetailOperationLogDO.setBankSlipDetailId(bankSlipDetailDO.getId());
-        bankSlipDetailOperationLogDO.setOperationType(BankSlipDetailOperationType.RECHARGE);
-        bankSlipDetailOperationLogDO.setOperationContent(String.valueOf(stringBuffer));
-        bankSlipDetailOperationLogDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-        bankSlipDetailOperationLogDO.setCreateTime(now);
-        bankSlipDetailOperationLogDO.setCreateUser(userSupport.getCurrentUserId().toString());
-        bankSlipDetailOperationLogDOList.add(bankSlipDetailOperationLogDO);
-        return paySuccessFlag;
-    }
 
 }

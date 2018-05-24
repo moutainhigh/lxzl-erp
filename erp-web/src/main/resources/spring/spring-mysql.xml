@@ -96,6 +96,43 @@
 			</map>
 		</property>
 	</bean>
+
+	<bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.quartz.driverClassName}" />
+		<property name="url" value="${jdbc.quartz.url}" />
+		<property name="username" value="${jdbc.quartz.username}" />
+		<property name="password" value="${jdbc.quartz.password}" />
+		<property name="maxActive" value="${jdbc.quartz.maxActive}" />
+		<property name="initialSize" value="${jdbc.quartz.initialSize}" />
+		<property name="maxWait" value="${jdbc.quartz.maxWait}" />
+		<property name="maxIdle" value="${jdbc.quartz.maxIdle}" />
+		<property name="testOnBorrow" value="${jdbc.quartz.testOnBorrow}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+
+	<bean id="quartzDataSourceSlave1" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.quartz.driverClassName.slave1}" />
+		<property name="url" value="${jdbc.quartz.url.slave1}" />
+		<property name="username" value="${jdbc.quartz.username.slave1}" />
+		<property name="password" value="${jdbc.quartz.password.slave1}" />
+		<property name="maxActive" value="${jdbc.quartz.maxActive.slave1}" />
+		<property name="initialSize" value="${jdbc.quartz.initialSize.slave1}" />
+		<property name="maxWait" value="${jdbc.quartz.maxWait.slave1}" />
+		<property name="maxIdle" value="${jdbc.quartz.maxIdle.slave1}" />
+		<property name="testOnBorrow" value="${jdbc.quartz.testOnBorrow.slave1}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+
+	<bean id="quartzDataSourceProxy" class="com.lxzl.se.dataaccess.mysql.client.DataSourceProxy">
+		<property name="dataSource" ref="quartzDataSource" />
+		<property name="dbName" value="${jdbc.quartz.db}" />
+		<property name="dataSourceKey" value="${jdbc.quartz.key}" />
+		<property name="slaveDataSourceMap">
+			<map>
+				<entry key="${jdbc.quartz.key.slave1}" value-ref="quartzDataSourceSlave1" />
+			</map>
+		</property>
+	</bean>
 	
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<property name="dataSource" ref="dynamicDataSource" />
