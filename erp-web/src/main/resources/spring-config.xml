@@ -23,6 +23,7 @@
 	<import resource="spring/spring-mysql.xml" />
     <import resource="spring/spring-fastdfs.xml" />
 	<import resource="spring/spring-contant-properties.xml" />
+	<import resource="spring/spring-quartz.xml" />
 
 
 	<bean id="propertyConfigurer"
