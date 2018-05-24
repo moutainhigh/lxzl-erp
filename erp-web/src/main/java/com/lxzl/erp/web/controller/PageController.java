@@ -1001,10 +1001,16 @@ public class PageController extends BaseController {
         return "/component/product/chooseModal";
     }
 
-    //组合商品Modal
+    //选择组合商品Modal
     @RequestMapping("/group-product/choose")
     public String groupProductChoose() {
         return "/component/order/chooseGroupProduct";
+    }
+
+    //确认收货Modal
+    @RequestMapping("/receipt-confirm/modal")
+    public String receiptConfirmModal() {
+        return "/component/order/confirmReceiptModal";
     }
 
     //提交审核选择审核人及填写审核备注

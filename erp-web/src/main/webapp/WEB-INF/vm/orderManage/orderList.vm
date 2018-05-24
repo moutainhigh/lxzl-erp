@@ -259,6 +259,7 @@
         management_load_script('${staticManagement}/js',
                 'manage.order.handle.mixin.js',
                 'manage.order.js',
+                'manage.order.receipt.confirm.js',
                 'modal.input.js',
                 'modal.submit.audit.js');
     </script>

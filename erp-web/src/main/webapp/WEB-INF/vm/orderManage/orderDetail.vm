@@ -142,6 +142,7 @@
                 'manage.order.detail.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
+                'manage.order.receipt.confirm.js',
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
                 'manage.order.print.record.js',
