@@ -6,7 +6,7 @@
         <form method="post" id="receiptForm" description="确认收货">
             <input type="hidden" name="excelUrl" />
             <div class="panel-body p25">
-                <div class="section row">
+                <div class="row">
                     <div class="panel">
                         <div class="panel-heading">
                             <div class="row">
@@ -29,25 +29,26 @@
                                             <tr class="bg-light">
                                                 <th>商品名称</th>
                                                 <th>商品参数（SKU）</th>
-                                                <th>单价</th>
-                                                <th>在租数量</th>
-                                                <th>设备押金</th>
+                                                <th class="nowrap">单价</th>
+                                                <th class="nowrap">在租数量</th>
+                                                <th class="nowrap">设备押金</th>
                                                 <th class="text-right">操作</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="productRow" productRowKey="{{productId}}">
+                                            <tr class="orderItemRow" data-itemtype="1" data-id="{{productId}}">
                                                 <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                                                 <td>{{propertiesToStr}}</td>
                                                 <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
                                                 <td>
+                                                    <input type="hidden" name="productCount" value="{{productCount}}" class="orderCount">
                                                     <label class="field prepend-icon rentCountIpt hide mw200">
-                                                        <input type="text" name="rentCount" value="" class="rentCount form-control required gui-input" placeholder="输入收货数量" />
+                                                        <input type="text" name="itemCount" value="" class="itemCount form-control required gui-input" placeholder="输入收货数量" />
                                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                     </label>
-                                                    <p class="rentCountTxt">{{rentingProductCount}}</p>
+                                                    <p class="rentCountTxt">{{productCount}}</p>
                                                 </td>
                                                 <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
                                                 <td class="text-right">
@@ -85,7 +86,7 @@
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="materialRow">
+                                            <tr class="orderItemRow" data-itemtype="2" data-id="{{materialId}}">
                                                 <td>
                                                     {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
                                                     {{materialName}}
@@ -93,11 +94,12 @@
                                                 <td>{{materialTypeStr}}</td>
                                                 <td>￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
                                                 <td>
+                                                    <input type="hidden" name="materialCount" value="{{materialCount}}" class="orderCount">
                                                     <label class="field prepend-icon rentCountIpt hide mw200">
-                                                        <input type="text" name="rentCount" value="" class="rentCount form-control required gui-input" placeholder="输入收货数量" />
+                                                        <input type="text" name="itemCount" value="" class="itemCount form-control required gui-input" placeholder="输入收货数量" />
                                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                     </label>
-                                                    <p class="rentCountTxt">{{rentingMaterialCount}}</p>
+                                                    <p class="rentCountTxt">{{materialCount}}</p>
                                                 </td>
                                                 <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
                                                 <td class="text-right">
@@ -122,13 +124,33 @@
                         </div>
                     </div>
                 </div>
-                <div class="tray-bin">
-                    <div class="atl-dropzone dropzoneImg dz-clickable" id="upLoadSignPager">
-                        <div class="dz-default dz-message">
-                            <span>
-                                <i class="fa fa-cloud-upload"></i>
-                                <span class="sub-text">请上传客户签字确认的交货单</span>
-                            </span>
+                <div id="reasonTypeRow" class="row mb20 hide">
+                    <div class="col-md-12 mb10"><em class="text-danger">*</em>请选择退货原因</div>
+                    <div class="col-md-6">
+                        <div class="input-group" style="width:100%;">
+                            <select class="form-control input-sm" name="changeReasonType" id="changeReasonType" style="height:42px;">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 hide" id="changeReasonCol">
+                        <label for="changeReason" class="field pl10">
+                            <input type="text" name="changeReason" id="changeReason" class="gui-input required" placeholder="请输入原因"/>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb10"><em class="text-danger">*</em>请上传客户签字确认的交货单</div>
+                    <div class="col-md-12">
+                        <div class="tray-bin">
+                            <div class="atl-dropzone dropzoneImg dz-clickable" id="upLoadSignPager">
+                                <div class="dz-default dz-message">
+                                    <span>
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span class="sub-text">请上传客户签字确认的交货单</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
