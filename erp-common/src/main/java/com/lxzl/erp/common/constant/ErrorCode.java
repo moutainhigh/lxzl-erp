@@ -923,6 +923,17 @@ public class ErrorCode {
     public static final String CONFIRM_STATUS_ERROR = "J240000003";
     public static final String STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS = "J240000004";
 
+    // 定时任务错误信息
+    public static final String QUARTZ_SCHED_NAME_NOT_NULL = "J250000001";
+    public static final String QUARTZ_JOB_NAME_NOT_NULL = "J250000002";
+    public static final String QUARTZ_JOB_GROUP_NOT_NULL = "J250000003";
+    public static final String QUARTZ_JOB_CLASS_NAME_NOT_NULL = "J250000004";
+    public static final String QUARTZ_RECOVERY_FLAG_NOT_NULL = "J250000005";
+    public static final String QUARTZ_TRIGGER_NAME_NOT_NULL = "J250000006";
+    public static final String QUARTZ_TRIGGER_GROUP_NOT_NULL = "J250000007";
+    public static final String QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL = "J250000008";
+    public static final String QUARTZ_EXPRESSION_NOT_NULL = "J250000009";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1831,6 +1842,16 @@ public class ErrorCode {
         MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
         MAP.put(CONFIRM_STATUS_ERROR, "确认状态错误");
         MAP.put(STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS, "该月业务员提成统计月结数据已生成，请勿重复生成");
+
+        MAP.put(QUARTZ_SCHED_NAME_NOT_NULL, "定时任务的Sched名称不能为空");
+        MAP.put(QUARTZ_JOB_NAME_NOT_NULL, "定时任务的任务名称不能为空");
+        MAP.put(QUARTZ_JOB_GROUP_NOT_NULL, "定时任务的任务组名称不能为空");
+        MAP.put(QUARTZ_JOB_CLASS_NAME_NOT_NULL, "定时任务的任务类名称不能为空");
+        MAP.put(QUARTZ_RECOVERY_FLAG_NOT_NULL, "定时任务的任务中断标识不能为空");
+        MAP.put(QUARTZ_TRIGGER_NAME_NOT_NULL, "定时任务的触发器名称不能为空");
+        MAP.put(QUARTZ_TRIGGER_GROUP_NOT_NULL, "定时任务的触发器组名称不能为空");
+        MAP.put(QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL, "定时任务的CRON标识不能为空");
+        MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
     }
 
 
