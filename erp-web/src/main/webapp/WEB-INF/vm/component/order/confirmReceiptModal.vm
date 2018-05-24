@@ -38,7 +38,7 @@
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="orderItemRow" data-itemtype="1" data-id="{{productId}}">
+                                            <tr class="orderItemRow" data-itemtype="1" data-id="{{orderProductId}}">
                                                 <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                                                 <td>{{propertiesToStr}}</td>
                                                 <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
@@ -86,7 +86,7 @@
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="orderItemRow" data-itemtype="2" data-id="{{materialId}}">
+                                            <tr class="orderItemRow" data-itemtype="2" data-id="{{orderMaterialId}}">
                                                 <td>
                                                     {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
                                                     {{materialName}}
