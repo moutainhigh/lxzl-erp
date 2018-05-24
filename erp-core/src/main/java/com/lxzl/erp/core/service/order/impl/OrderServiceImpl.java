@@ -905,10 +905,6 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_STATUS_ERROR);
             return result;
         }
-        if (!userSupport.getCurrentUserId().toString().equals(dborderDO.getCreateUser())) {
-            result.setErrorCode(ErrorCode.DATA_NOT_BELONG_TO_YOU);
-            return result;
-        }
         //调用公共方法进行出处理
         ServiceResult<String, String> serviceResult = changeOrderMethod(orderConfirmChangeParam, result, dborderDO);
 
@@ -1124,11 +1120,20 @@ public class OrderServiceImpl implements OrderService {
         }
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
-        if (newTotalProductCount!=oldTotalProductCount || newTotalMaterialCount != oldTotalMaterialCount) {
+        Boolean flag = newTotalProductCount!=oldTotalProductCount || newTotalMaterialCount != oldTotalMaterialCount;
+        if (flag) {
             //保存订单确认收货变更记录
             OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
             orderConfirmChangeLogDO.setOrderId(orderDO.getId());
             orderConfirmChangeLogDO.setOrderNo(orderDO.getOrderNo());
+            if (StringUtil.isEmpty(orderConfirmChangeParam.getChangeReason())) {
+                result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_NOT_NULL);
+                return result;
+            }
+            if (orderConfirmChangeParam.getChangeReasonType()==null) {
+                result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_NOT_NULL);
+                return result;
+            }
             orderConfirmChangeLogDO.setChangeReason(orderConfirmChangeParam.getChangeReason());
             if (orderConfirmChangeParam.getChangeReasonType()==1) {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE__EQUIPMENT_FAILURE);
@@ -1138,6 +1143,7 @@ public class OrderServiceImpl implements OrderService {
                 orderConfirmChangeLogDO.setChangeReasonType(ConfirmChangeReasonType.CONFIRM_CHANGE_REASON_TYPE_OTHER);
             } else {
                 result.setErrorCode(ErrorCode.CONFIRM_CHANGE_REASON_TYPE_ERROR);
+                return result;
             }
             orderConfirmChangeLogDO.setIsRestatementSuccess(CommonConstant.COMMON_CONSTANT_YES);
             orderConfirmChangeLogDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
