@@ -30,9 +30,8 @@
                                                 <th>商品名称</th>
                                                 <th>商品参数（SKU）</th>
                                                 <th class="nowrap">单价</th>
-                                                <th class="nowrap">在租数量</th>
-                                                <th class="nowrap">设备押金</th>
-                                                <th class="text-right">操作</th>
+                                                <th class="text-center nowrap">商品数量</th>
+                                                <th class="nowrap" style="width:220px;">收货数量</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -42,19 +41,13 @@
                                                 <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                                                 <td>{{propertiesToStr}}</td>
                                                 <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                                                <td class="text-center">{{productCount}}</td>
                                                 <td>
                                                     <input type="hidden" name="productCount" value="{{productCount}}" class="orderCount">
-                                                    <label class="field prepend-icon rentCountIpt hide mw200">
-                                                        <input type="text" name="itemCount" value="" class="itemCount form-control required gui-input" placeholder="输入收货数量" />
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="itemCount" value="" class="itemCount form-control gui-input" placeholder="{{productCount}}" />
                                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                     </label>
-                                                    <p class="rentCountTxt">{{productCount}}</p>
-                                                </td>
-                                                <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs reviseCount">修改收货数量</a>
-                                                    </div>
                                                 </td>
                                             </tr>
                                             {{/listData}}
@@ -77,10 +70,9 @@
                                             <tr>
                                                 <th>配件名称</th>
                                                 <th>类型</th>
-                                                <th class="rentalPriceTh"><span class="text">单价</span></th>
-                                                <th>在租数量</th>
-                                                <th>设备押金</th>
-                                                <th class="text-right">操作</th>
+                                                <th class="rentalPriceTh nowrap"><span class="text">单价</span></th>
+                                                <th class="text-center nowrap">配件数量</th>
+                                                <th style="width:220px;">收货数量</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -93,19 +85,13 @@
                                                 </td>
                                                 <td>{{materialTypeStr}}</td>
                                                 <td>￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                                                <td class="text-center">{{materialCount}}</td>
                                                 <td>
                                                     <input type="hidden" name="materialCount" value="{{materialCount}}" class="orderCount">
-                                                    <label class="field prepend-icon rentCountIpt hide mw200">
-                                                        <input type="text" name="itemCount" value="" class="itemCount form-control required gui-input" placeholder="输入收货数量" />
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="itemCount" value="" class="itemCount form-control gui-input" placeholder="{{materialCount}}" />
                                                         <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
                                                     </label>
-                                                    <p class="rentCountTxt">{{materialCount}}</p>
-                                                </td>
-                                                <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
-                                                <td class="text-right">
-                                                    <div class="btn-group text-right">
-                                                        <a href="#" type="button" class="btn btn-default btn-xs reviseCount">修改收货数量</a>
-                                                    </div>
                                                 </td>
                                             </tr>
                                             {{/listData}}
