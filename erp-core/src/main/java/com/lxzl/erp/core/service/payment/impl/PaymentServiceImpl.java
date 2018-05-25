@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -475,7 +476,6 @@ public class PaymentServiceImpl implements PaymentService {
 //                    }
 //                }
 //            }
-
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
@@ -699,7 +699,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ServiceResult<String, String> exportHistoryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException {
-
+        //传入查询参数
         ChargeRecordPageParam param = new ChargeRecordPageParam();
         param.setChannelNo(exportChargeRecordPageParam.getChannelNo());
         param.setPageNo(CommonConstant.COMMON_ONE);
@@ -709,7 +709,7 @@ public class PaymentServiceImpl implements PaymentService {
         param.setQueryEndTime(exportChargeRecordPageParam.getEndTime());
         param.setSubCompanyId(exportChargeRecordPageParam.getSubCompanyId());
         param.setBusinessCustomerNo(exportChargeRecordPageParam.getCustomerNo());
-
+        //调接口查询结果
         ServiceResult<String, Page<ChargeRecord>> result = queryChargeRecordParamPage(param);
         List<ChargeRecord> itemList = result.getResult().getItemList();
 
@@ -718,7 +718,7 @@ public class PaymentServiceImpl implements PaymentService {
             serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
             return serviceResult;
         }
-
+        //过滤已有的数据
         Map<String, ChargeRecord> chargeRecordMap = ListUtil.listToMap(itemList, "thirdPartyPayOrderId");
         List<String> chargeRecordList = new ArrayList<>(chargeRecordMap.keySet());
         List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailByTradeSerialNoList(chargeRecordList);
@@ -728,7 +728,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
             itemList = ListUtil.mapToList(chargeRecordMap);
         }
-
+        //保存过滤完成的数据
         if(CollectionUtil.isNotEmpty(itemList)){
             for (ChargeRecord chargeRecord : itemList) {
                 saveConstantlyExportQueryChargeRecordToBankSlip(chargeRecord);
@@ -776,7 +776,7 @@ public class PaymentServiceImpl implements PaymentService {
         //判断是否有重复数据
         BankSlipDetailDO dbBankSlipDetailDO = bankSlipDetailMapper.findBankSlipDetailByTradeSerialNo(chargeRecord.getThirdPartyPayOrderId());
         if(dbBankSlipDetailDO != null){
-            serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_EXIST);
             return serviceResult;
         }
 
@@ -794,7 +794,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //跟新数据
                 bankSlipMapper.update(bankSlipDO);
             } else {
-
+                //保存银行流水
                 bankSlipDO = new BankSlipDO();
                 bankSlipDO.setSubCompanyId(chargeRecord.getSubCompanyId());   //分公司ID
                 bankSlipDO.setSubCompanyName(chargeRecord.getSubCompanyName());   //分公司名称
@@ -854,9 +854,9 @@ public class PaymentServiceImpl implements PaymentService {
             bankSlipClaimMapper.save(bankSlipClaimDO);
             //加款
             bankSlipSupport.constantlyPaymentClaim(bankSlipClaimDO, bankSlipDO, bankSlipDetailDO,bankSlipDetailOperationLogDO, now);
-            //记录保存记录id
         } catch (Exception e) {
             e.printStackTrace();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(ErrorCode.EXPORT_CHARGE_RECORD_IS_FAIL);
             return serviceResult;
         }
