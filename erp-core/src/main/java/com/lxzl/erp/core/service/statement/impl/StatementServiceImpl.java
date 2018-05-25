@@ -408,7 +408,10 @@ public class StatementServiceImpl implements StatementService {
                     sb.append("重算订单【系统错误】：订单号["+orderNo+"]\n");
                 }
             }
-            dingDingSupport.dingDingSendMessage(sb.toString());
+        }
+        String message = sb.toString();
+        if(StringUtil.isNotEmpty(message)){
+            dingDingSupport.dingDingSendMessage(message);
         }
         return ErrorCode.SUCCESS;
     }
