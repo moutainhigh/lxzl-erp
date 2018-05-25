@@ -1,0 +1,112 @@
+<div id="reletOrderModal" class="popup-basic popup-lg admin-form mfp-with-anim ">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="fa fa-pencil"></i>订单续租</span>
+        </div>
+        <form method="post" id="reletOrderForm" description="订单续租">
+            <input type="hidden" name="excelUrl" />
+            <div class="panel-body p25">
+                <div class="row">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <ul class="nav panel-tabs-border panel-tabs panel-tabs-left orderItemTabs" id="modalList">
+                                    <li class="active">
+                                        <a href="#reletProduct" data-toggle="tab">商品项（共<span id="orderItemProductCount">0</span>件）</a>
+                                    </li>
+                                    <li>
+                                        <a href="#reletMaterial" data-toggle="tab">配件项（共<span id="orderItemMaterialCount">0</span>件）</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body light pn">
+                            <div class="tab-content pn br-n">
+                                <div id="reletProduct" class="tab-pane tab-pane-order active">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="productListTpl">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th>商品名称</th>
+                                                <th>商品参数（SKU）</th>
+                                                <th class="nowrap">单价</th>
+                                                <th class="nowrap">商品数量</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="orderItemRow" data-itemtype="1" data-id="{{orderProductId}}">
+                                                <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                                                <td>{{propertiesToStr}}</td>
+                                                <td>￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="productCount" value="" class="productCount form-control gui-input pl10" placeholder="{{productCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{productCount}}";};'/>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="4" class="text-center">无商品项</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="productListTable"></table>
+                                    </div>
+                                </div>
+    
+                                <div id="reletMaterial" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="materialListTpl">
+                                            <thead>
+                                            <tr>
+                                                <th>配件名称</th>
+                                                <th>类型</th>
+                                                <th class="rentalPriceTh nowrap"><span class="text">单价</span></th>
+                                                <th class="nowrap">配件数量</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#dataSource}}
+                                            {{#listData}}
+                                            <tr class="orderItemRow" data-itemtype="2" data-id="{{orderMaterialId}}">
+                                                <td>
+                                                    {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
+                                                    {{materialName}}
+                                                </td>
+                                                <td>{{materialTypeStr}}</td>
+                                                <td>￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+                                                <td>
+                                                    <label class="field prepend-icon rentCountIpt mw200">
+                                                        <input type="text" name="materialCount" value="" class="materialCount form-control gui-input pl10" placeholder="{{materialCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{materialCount}}";};' />
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{^listData}}
+                                            <tr>
+                                                <td valign="top" colspan="4" class="text-center">无配件项</td>
+                                            </tr>
+                                            {{/listData}}
+                                            {{/dataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="materialListTable"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-right">
+                <button type="submit" class="button btn-primary submit-btn">确定</button>
+                <button type="button" class="button btn-default cancelButton">取消</button>
+            </div>
+        </form>
+    </div>
+</div>

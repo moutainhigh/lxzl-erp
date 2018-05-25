@@ -1013,6 +1013,12 @@ public class PageController extends BaseController {
         return "/component/order/confirmReceiptModal";
     }
 
+    //订单续租Modal
+    @RequestMapping("/relet-order/modal")
+    public String reletOrderModal() {
+        return "/component/order/reletOrderModal";
+    }
+
     //提交审核选择审核人及填写审核备注
     @RequestMapping("/submit-audit/modal")
     public String submitAuditModal() {
