@@ -425,10 +425,13 @@ public class ErrorCode {
     public static final String ORDER_MESSAGE_NULL = "J400146";
     public static final String CANCEL_ORDER_REASON_TYPE_NULL = "J400147";
     public static final String DAY_RENT_ORDER_NOT_PAY = "J400148";
-    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400049";
-    public static final String HAS_RETURN_ORDER = "J400050";
-    public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400051";
-    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400052";
+    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400149";
+    public static final String HAS_RETURN_ORDER = "J400150";
+    public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400151";
+    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400152";
+    public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400153";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400154";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400155";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -656,6 +659,12 @@ public class ErrorCode {
     public static final String AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS = "J1100034";
     public static final String AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS = "J1100035";
     public static final String CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS = "J1100036";
+    public static final String DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS = "J1100037";
+    public static final String CONFIRM_CHANGE_REASON_TYPE_ERROR = "J1100038";
+    public static final String CONFIRM_CHANGE_REASON_NOT_NULL = "J1100039";
+    public static final String CONFIRM_CHANGE_REASON_TYPE_NOT_NULL = "J1100040";
+    public static final String ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM = "J1100041";
+    public static final String ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM = "J1100042";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -850,6 +859,9 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
     public static final String CHARGE_RECORD_IS_NULL = "J18000050";
+    public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
+    public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
+    public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -915,6 +927,17 @@ public class ErrorCode {
     public static final String CONFIRM_STATUS_NOT_NULL = "J240000002";
     public static final String CONFIRM_STATUS_ERROR = "J240000003";
     public static final String STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS = "J240000004";
+
+    // 定时任务错误信息
+    public static final String QUARTZ_SCHED_NAME_NOT_NULL = "J250000001";
+    public static final String QUARTZ_JOB_NAME_NOT_NULL = "J250000002";
+    public static final String QUARTZ_JOB_GROUP_NOT_NULL = "J250000003";
+    public static final String QUARTZ_JOB_CLASS_NAME_NOT_NULL = "J250000004";
+    public static final String QUARTZ_RECOVERY_FLAG_NOT_NULL = "J250000005";
+    public static final String QUARTZ_TRIGGER_NAME_NOT_NULL = "J250000006";
+    public static final String QUARTZ_TRIGGER_GROUP_NOT_NULL = "J250000007";
+    public static final String QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL = "J250000008";
+    public static final String QUARTZ_EXPRESSION_NOT_NULL = "J250000009";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1498,6 +1521,9 @@ public class ErrorCode {
         MAP.put(CUSTOMER_PERSON_REAL_NAME_ERROR, "个人名称有误");
         MAP.put(RETURN_ORDER_ALREADY_SUCCESS, "该退货单已有结算单");
         MAP.put(RETURN_ORDER_CAN_NOT_CREATE_STATEMENT, "该退货单尚未完成退货，不能生成结算单");
+        MAP.put(ORDER_ITEM_PARAM_LIST_NOT_NULL, "确认收货的商品、配件项列表不能为空");
+        MAP.put(ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT, "确认收货的商品数大于最初下单商品总数");
+        MAP.put(ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT, "确认收货的配件数大于最初下单配件总数");
         MAP.put(CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY, "客户的业务员不能由地方分公司转为渠道大客户业务员");
 
 
@@ -1557,6 +1583,12 @@ public class ErrorCode {
         MAP.put(AGENT_PERSON_NO_PICTURE_FRONT_IMAGE_NOT_EXISTS, "经办人身份证正面不能为空");
         MAP.put(AGENT_PERSON_NO_PICTURE_BACK_IMAGE_NOT_EXISTS, "经办人身份证反面面不能为空");
         MAP.put(CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS, "客户回访记录图片不能为空");
+        MAP.put(DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS, "交货单客户签字图片不能为空");
+        MAP.put(CONFIRM_CHANGE_REASON_TYPE_ERROR, "确认收货变更原因类型不存在");
+        MAP.put(CONFIRM_CHANGE_REASON_NOT_NULL, "确认收货变更原因不能为空");
+        MAP.put(CONFIRM_CHANGE_REASON_TYPE_NOT_NULL, "确认收货变更原因类型不能为空");
+        MAP.put(ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM, "商品数量更改成0的商品项不能重复修改");
+        MAP.put(ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM, "配件数量更改成0的配件项不能重复修改");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
@@ -1749,8 +1781,11 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_DATA_IS_NULL, "银行对公流水无导入数据,");
         MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
-        MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录都已存在");
+        MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录已存在");
         MAP.put(CHARGE_RECORD_IS_NULL, "快付通充值记录为空");
+        MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
+        MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
+        MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -1817,6 +1852,16 @@ public class ErrorCode {
         MAP.put(CONFIRM_STATUS_NOT_NULL, "确认状态不能为空");
         MAP.put(CONFIRM_STATUS_ERROR, "确认状态错误");
         MAP.put(STATISTICS_SALESMAN_MONTH_HASH_PEER_EXISTS, "该月业务员提成统计月结数据已生成，请勿重复生成");
+
+        MAP.put(QUARTZ_SCHED_NAME_NOT_NULL, "定时任务的Sched名称不能为空");
+        MAP.put(QUARTZ_JOB_NAME_NOT_NULL, "定时任务的任务名称不能为空");
+        MAP.put(QUARTZ_JOB_GROUP_NOT_NULL, "定时任务的任务组名称不能为空");
+        MAP.put(QUARTZ_JOB_CLASS_NAME_NOT_NULL, "定时任务的任务类名称不能为空");
+        MAP.put(QUARTZ_RECOVERY_FLAG_NOT_NULL, "定时任务的任务中断标识不能为空");
+        MAP.put(QUARTZ_TRIGGER_NAME_NOT_NULL, "定时任务的触发器名称不能为空");
+        MAP.put(QUARTZ_TRIGGER_GROUP_NOT_NULL, "定时任务的触发器组名称不能为空");
+        MAP.put(QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL, "定时任务的CRON标识不能为空");
+        MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
     }
 
 

@@ -5,10 +5,8 @@ import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.order.*;
-import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.order.pojo.OrderJointProduct;
-import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
-import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.order.pojo.*;
+import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.JSONUtil;
 import org.junit.Test;
@@ -134,9 +132,9 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderProduct2.setInsuranceAmount(new BigDecimal(600.0));
         orderProduct2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderProduct2.setDepositAmount(new BigDecimal(600.0));
-//        orderProductList.add(orderProduct2);
+        orderProductList.add(orderProduct2);
 
-//        order.setOrderProductList(orderProductList);
+        order.setOrderProductList(orderProductList);
 
         List<OrderMaterial> orderMaterialList = new ArrayList<>();
 
@@ -162,7 +160,7 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial1.setInsuranceAmount(new BigDecimal(600.0));
         orderMaterial1.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderMaterial1.setDepositAmount(new BigDecimal("30"));
-//        orderMaterialList.add(orderMaterial1);
+        orderMaterialList.add(orderMaterial1);
 
         OrderMaterial orderMaterial2 = new OrderMaterial();
         orderMaterial2.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
@@ -174,9 +172,9 @@ public class OrderTest extends ERPUnTransactionalTest {
         orderMaterial2.setInsuranceAmount(new BigDecimal(600.0));
         orderMaterial2.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderMaterial2.setDepositAmount(new BigDecimal("30"));
-//        orderMaterialList.add(orderMaterial2);
+        orderMaterialList.add(orderMaterial2);
 
-//        order.setOrderMaterialList(orderMaterialList);
+        order.setOrderMaterialList(orderMaterialList);
 
         order.setBuyerCustomerNo("LXCC-027-20180322-00784");
         order.setCustomerConsignId(5445);
@@ -673,5 +671,62 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        param.setOrderStatus(16);
 
         TestResult testResult = getJsonTestResult("/order/queryVerifyOrder", param);
+    }
+    @Test
+    public void confirmChangeOrder() throws Exception {
+        OrderConfirmChangeParam orderConfirmChangeParam = new OrderConfirmChangeParam();
+        OrderItemParam orderItemParam1 = new OrderItemParam();
+        orderItemParam1.setItemId(2908);
+        orderItemParam1.setItemCount(4);
+        orderItemParam1.setItemType(1);
+//        OrderItemParam orderItemParam2 = new OrderItemParam();
+//        orderItemParam2.setItemId(2900);
+//        orderItemParam2.setItemCount(0);
+//        orderItemParam2.setItemType(1);
+//        OrderItemParam orderItemParam3 = new OrderItemParam();
+//        orderItemParam3.setItemId(5029);
+//        orderItemParam3.setItemCount(0);
+//        orderItemParam3.setItemType(2);
+//        OrderItemParam orderItemParam4 = new OrderItemParam();
+//        orderItemParam4.setItemId(5030);
+//        orderItemParam4.setItemCount(0);
+//        orderItemParam4.setItemType(2);
+        List<OrderItemParam> orderItemParamList = new ArrayList<>();
+        orderItemParamList.add(orderItemParam1);
+//        orderItemParamList.add(orderItemParam2);
+//        orderItemParamList.add(orderItemParam3);
+//        orderItemParamList.add(orderItemParam4);
+        orderConfirmChangeParam.setOrderItemParamList(orderItemParamList);
+        orderConfirmChangeParam.setOrderNo("LXO-20180523-027-00112");
+        orderConfirmChangeParam.setChangeReasonType(1);
+        orderConfirmChangeParam.setChangeReason("杀口接沙客sahksjdkaksjdakjshdkjas");
+        Image image = new Image();
+        image.setImgId(3133);
+        orderConfirmChangeParam.setDeliveryNoteCustomerSignImg(image);
+
+
+
+        TestResult testResult = getJsonTestResult("/order/confirmChangeOrder", orderConfirmChangeParam);
+    }
+    @Test
+    public void supperUserChangeOrder() throws Exception {
+        OrderConfirmChangeParam orderConfirmChangeParam = new OrderConfirmChangeParam();
+        OrderItemParam orderItemParam = new OrderItemParam();
+        orderItemParam.setItemId(2899);
+        orderItemParam.setItemCount(4);
+        orderItemParam.setItemType(1);
+        List<OrderItemParam> orderItemParamList = new ArrayList<>();
+        orderItemParamList.add(orderItemParam);
+        orderConfirmChangeParam.setOrderItemParamList(orderItemParamList);
+        orderConfirmChangeParam.setOrderNo("LXO-20180523-027-00106");
+        orderConfirmChangeParam.setChangeReasonType(1);
+        orderConfirmChangeParam.setChangeReason("杀口接沙客");
+        Image image = new Image();
+        image.setImgId(1);
+        orderConfirmChangeParam.setDeliveryNoteCustomerSignImg(image);
+
+
+
+        TestResult testResult = getJsonTestResult("/order/supperUserChangeOrder", orderConfirmChangeParam);
     }
 }

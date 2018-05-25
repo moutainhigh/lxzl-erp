@@ -198,10 +198,10 @@
                 and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayStart != null">
-                <![CDATA[ and ebs.slip_day >= #{maps.bankSlipQueryParam.slipDayStart,jdbcType=DATE} ]]>
+                <![CDATA[ and ebs.slip_day >= #{maps.bankSlipQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayEnd != null">
-                <![CDATA[ and ebs.slip_day < #{maps.bankSlipQueryParam.slipDayEnd,jdbcType=DATE} ]]>
+                <![CDATA[ and ebs.slip_day < #{maps.bankSlipQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null">
                 and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
@@ -239,10 +239,10 @@
                 and ebs.bank_type = #{maps.bankSlipQueryParam.bankType,jdbcType=INTEGER}
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayStart != null">
-                <![CDATA[ and ebs.slip_day >= #{maps.bankSlipQueryParam.slipDayStart,jdbcType=DATE} ]]>
+                <![CDATA[ and ebs.slip_day >= #{maps.bankSlipQueryParam.slipDayStart,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipDayEnd != null">
-                <![CDATA[ and ebs.slip_day < #{maps.bankSlipQueryParam.slipDayEnd,jdbcType=DATE} ]]>
+                <![CDATA[ and ebs.slip_day < #{maps.bankSlipQueryParam.slipDayEnd,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="maps.bankSlipQueryParam != null &amp;&amp; maps.bankSlipQueryParam.slipStatus != null">
                 and ebs.slip_status = #{maps.bankSlipQueryParam.slipStatus,jdbcType=INTEGER}
@@ -267,13 +267,13 @@
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
-    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO" parameterType="map">
+    <select id="findBySubCompanyIdAndDayAndBankType" resultMap="BankSlipDO">
         SELECT
         <include refid="column_List"/>,<include refid="detail_column_List"/>
         FROM erp_bank_slip ebs
         LEFT JOIN erp_bank_slip_detail ebsd ON ebsd.bank_slip_id = ebs.id AND ebsd.data_status = 1
         WHERE ebs.sub_company_id = #{subCompanyId,jdbcType=INTEGER} AND ebs.slip_day =
-        #{slipDay,jdbcType=DATE} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
+        #{slipDay,jdbcType=TIMESTAMP} AND ebs.bank_type = #{bankType,jdbcType=INTEGER} AND ebs.data_status = 1
     </select>
 
     <select id="findBySubCompanyIdAndBankType" resultMap="BankSlipDO" parameterType="map">
