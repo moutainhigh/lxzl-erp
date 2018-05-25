@@ -45,8 +45,7 @@
                                                 <td>
                                                     <input type="hidden" name="productCount" value="{{productCount}}" class="orderCount">
                                                     <label class="field prepend-icon rentCountIpt mw200">
-                                                        <input type="text" name="itemCount" value="" class="itemCount form-control gui-input" placeholder="{{productCount}}" />
-                                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                        <input type="text" name="itemCount" value="" class="itemCount form-control gui-input pl10" placeholder="{{productCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{productCount}}";};'/>
                                                     </label>
                                                 </td>
                                             </tr>
@@ -89,8 +88,7 @@
                                                 <td>
                                                     <input type="hidden" name="materialCount" value="{{materialCount}}" class="orderCount">
                                                     <label class="field prepend-icon rentCountIpt mw200">
-                                                        <input type="text" name="itemCount" value="" class="itemCount form-control gui-input" placeholder="{{materialCount}}" />
-                                                        <label for="listPrice" class="field-icon"><i class="fa fa-jpy"></i></label>
+                                                        <input type="text" name="itemCount" value="" class="itemCount form-control gui-input pl10" placeholder="{{materialCount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{materialCount}}";};' />
                                                     </label>
                                                 </td>
                                             </tr>
@@ -133,7 +131,7 @@
                                 <div class="dz-default dz-message">
                                     <span>
                                         <i class="fa fa-cloud-upload"></i>
-                                        <span class="sub-text">请上传客户签字确认的交货单</span>
+                                        <span class="sub-text">将图片拖入或点击（支持.jpg|.ipeg|.png，不能超过4M）</span>
                                     </span>
                                 </div>
                             </div>
