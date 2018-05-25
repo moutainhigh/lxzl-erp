@@ -345,6 +345,7 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public String batchReCreateOrderStatement(List<String> orderNoList, List<String> customerNoList) {
 
+        StringBuffer sb = new StringBuffer();
         Set<String> orderNoSet = new HashSet<>();
         for(String orderNo : orderNoList){
             orderNoSet.add(orderNo);
@@ -352,14 +353,18 @@ public class StatementServiceImpl implements StatementService {
 //        待发货、已发货、确认收货，部分归还，全部归还，完成 状态可重算
         if(CollectionUtil.isNotEmpty(customerNoList)){
             for(String customerNo : customerNoList){
+                if(StringUtil.isEmpty(customerNo)){
+                    continue;
+                }
                 CustomerDO customerDO = customerMapper.findByNo(customerNo);
                 if(customerDO==null){
-                    dingDingSupport.dingDingSendMessage("客户编号:"+customerNo +"有误");
+                    sb.append("客户编号["+customerNo +"]不存在\n");
                     continue;
                 }
                 List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
                 for(OrderDO orderDO : orderDOList){
                     if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
+                        sb.append("批量重算不支持已支付订单["+orderDO.getOrderNo() +"]，未处理\n");
                         continue;
                     }
                     if(!OrderStatus.ORDER_STATUS_WAIT_DELIVERY.equals(orderDO.getOrderStatus())&&
@@ -369,6 +374,7 @@ public class StatementServiceImpl implements StatementService {
                         !OrderStatus.ORDER_STATUS_RETURN_BACK.equals(orderDO.getOrderStatus())&&
                         !OrderStatus.ORDER_STATUS_OVER.equals(orderDO.getOrderStatus())
                         ){
+                        sb.append("订单["+orderDO.getOrderNo() +"]状态不可重算，未处理\n");
                         continue;
                     }
                     orderNoSet.add(orderDO.getOrderNo());
@@ -376,20 +382,33 @@ public class StatementServiceImpl implements StatementService {
             }
         }
         if(CollectionUtil.isNotEmpty(orderNoSet)){
+
             for(String orderNo : orderNoSet){
                 try{
+                    if(StringUtil.isEmpty(orderNo)){
+                        continue;
+                    }
+                    OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+                    if(orderDO==null){
+                        sb.append("订单号["+orderNo+"]"+"不存在\n");
+                        continue;
+                    }
+                    if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
+                        sb.append("批量重算不支持已支付订单["+orderDO.getOrderNo() +"]，未处理\n");
+                        continue;
+                    }
                     ServiceResult<String, BigDecimal> result = reCreateOrderStatement(orderNo);
                     if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
                         String json = JSON.toJSONString(resultGenerator.generate(result.getErrorCode()));
-                        dingDingSupport.dingDingSendMessage("重算订单结算单【失败】：订单号["+orderNo+"]   "+json);
+                        sb.append("重算订单结算单【失败】：订单号["+orderNo +"]"+json+"\n");
                     }else{
-                        dingDingSupport.dingDingSendMessage("成功重算订单：订单号["+orderNo+"]");
+                        sb.append("成功重算订单：订单号["+orderNo+"]\n");
                     }
                 }catch (Exception e){
-                    logger.error("重算订单失败：订单号"+orderNo,e);
-                    dingDingSupport.dingDingSendMessage("重算订单系统【错误】：订单号["+orderNo+"]");
+                    sb.append("重算订单【系统错误】：订单号["+orderNo+"]\n");
                 }
             }
+            dingDingSupport.dingDingSendMessage(sb.toString());
         }
         return ErrorCode.SUCCESS;
     }
