@@ -890,6 +890,9 @@ public class ErrorCode {
     public static final String RELET_ORDER_RENT_COUNT_ERROR = "J21000004";
     public static final String RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE = "J21000005";
     public static final String RELET_ORDER_NOT_IN_RELET_TIME_SCOPE = "J21000006";
+    public static final String RELET_ORDER_UNIT_AMOUNT_ERROR = "J21000007";
+    public static final String RELET_ORDER_RENT_TIME_LENGTH_ERROR = "J21000008";
+    public static final String RELET_ORDER_NOT_EXISTS = "J21000009";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1792,6 +1795,9 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_RENT_COUNT_ERROR, "此订单商品项或配件项的在租数量有误，无法续租");
         MAP.put(RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE, "此订单状态不在续租范围，无法续租");
         MAP.put(RELET_ORDER_NOT_IN_RELET_TIME_SCOPE, "此订单不在续租时间范围，无法续租");
+        MAP.put(RELET_ORDER_UNIT_AMOUNT_ERROR, "此订单商品项或配件项的单价有误，无法续租");
+        MAP.put(RELET_ORDER_RENT_TIME_LENGTH_ERROR, "此订单租赁期限有误，无法续租");
+        MAP.put(RELET_ORDER_NOT_EXISTS, "此续租单不存在");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");

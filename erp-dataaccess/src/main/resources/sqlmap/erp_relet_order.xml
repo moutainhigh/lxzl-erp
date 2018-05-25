@@ -119,8 +119,28 @@
 	</select>
 
 	<select id="findByReletOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">
-		SELECT <include refid="column_List"/> FROM erp_relet_order ero
+		SELECT m_order.*
+		<trim prefix=",">
+			<include refid="product_column_List"/>
+		</trim>
+		<trim prefix=",">
+			<include refid="material_column_List"/>
+		</trim>
+		FROM (
+		SELECT
+		<include refid="column_List"/>
+		<trim prefix=",">
+			eu.real_name AS order_seller_name, esc.sub_company_name AS order_sub_company_name, escd.sub_company_name AS
+			delivery_sub_company_name
+		</trim>
+		FROM erp_relet_order ero
+		LEFT JOIN erp_user eu ON eu.id = ero.order_seller_id
+		LEFT JOIN erp_sub_company esc ON esc.id = ero.order_sub_company_id AND esc.data_status = 1
+		LEFT JOIN erp_sub_company escd ON escd.id = ero.delivery_sub_company_id AND escd.data_status = 1
 		WHERE ero.relet_order_no = #{reletOrderNo, jdbcType=VARCHAR} AND ero.data_status = 1
+		) m_order
+		LEFT JOIN erp_relet_order_product erop ON m_order.id = erop.relet_order_id and erop.data_status = 1
+		LEFT JOIN erp_relet_order_material erom ON m_order.id = erom.relet_order_id and erom.data_status = 1
 	</select>
 
 	<select id="findRecentlyReletOrderByOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">

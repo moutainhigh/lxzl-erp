@@ -57,6 +57,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductEquipmentMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowLinkMapper;
@@ -75,6 +76,7 @@ import com.lxzl.erp.dataaccess.domain.material.MaterialTypeDO;
 import com.lxzl.erp.dataaccess.domain.order.*;
 import com.lxzl.erp.dataaccess.domain.product.ProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductSkuDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.warehouse.WarehouseDO;
@@ -83,6 +85,7 @@ import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1304,9 +1307,61 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
+
+        //判断是否是续租单，是否可续租
+        String setReletOrderInfoCode = setReletOrderInfo(order);
+        if (!ErrorCode.SUCCESS.equals(setReletOrderInfoCode)) {
+            result.setErrorCode(setReletOrderInfoCode);
+            return result;
+        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
+    }
+
+    /**
+     * 判断是否是续租单，是否可续租
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/5/25 10:47
+     * @param
+     * @return
+     */
+    private String setReletOrderInfo(Order order){
+
+        if (null == order || null == order.getExpectReturnTime()){
+            return ErrorCode.PARAM_IS_NOT_NULL;
+        }
+
+        //是否为续租订单
+        if (StringUtil.isBlank(order.getReletOrderNo())){
+            order.setIsReletOrder(0);
+        }
+        else{
+            order.setIsReletOrder(1);
+        }
+
+        //是否可续租
+        order.setCanReletOrder(0);
+
+        //检查是否在续租时间范围
+        Date currentTime = new Date();
+        Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
+        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == order.getRentLengthType() && dayCount < -10)
+                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == order.getRentLengthType() && dayCount < -3)) {  //订单： 长租前10天 和 短租前3天 可续租
+            return ErrorCode.SUCCESS;
+        }
+
+        //查询是否有续租单且不能续租 信息
+        ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
+        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
+            return ErrorCode.SUCCESS;
+        }
+
+        order.setCanReletOrder(1);  //可续租
+        return ErrorCode.SUCCESS;
     }
 
     @Override
@@ -1409,6 +1464,13 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
+        //判断是否是续租单，是否可续租
+        String setReletOrderInfoCode = setReletOrderInfo(order);
+        if (!ErrorCode.SUCCESS.equals(setReletOrderInfoCode)) {
+            result.setErrorCode(setReletOrderInfoCode);
+            return result;
+        }
 
         /*******组合商品逻辑 start********/
         // 将orderJointProductId不为空的订单商品和配件放入对应的OrderJointProduct中, 并将数量除以组合商品数
@@ -2014,6 +2076,12 @@ public class OrderServiceImpl implements OrderService {
             orderNoList.add(orderDO.getOrderNo());
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
+            //判断是否是续租单，是否可续租
+            String setReletOrderInfoCode = setReletOrderInfo(order);
+            if (!ErrorCode.SUCCESS.equals(setReletOrderInfoCode)) {
+                result.setErrorCode(setReletOrderInfoCode);
+                return result;
+            }
             orderList.add(order);
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
@@ -2044,7 +2112,21 @@ public class OrderServiceImpl implements OrderService {
 
         Integer totalCount = orderMapper.findOrderCountByParams(maps);
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
-        Page<Order> page = new Page<>(ConverterUtil.convertList(orderDOList, Order.class), totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+
+        List<Order> orderList = new ArrayList<>();
+        for (OrderDO orderDO : orderDOList) {
+
+            Order order = ConverterUtil.convert(orderDO, Order.class);
+            //判断是否是续租单，是否可续租
+            String setReletOrderInfoCode = setReletOrderInfo(order);
+            if (!ErrorCode.SUCCESS.equals(setReletOrderInfoCode)) {
+                result.setErrorCode(setReletOrderInfoCode);
+                return result;
+            }
+            orderList.add(order);
+        }
+
+        Page<Order> page = new Page<>(orderList, totalCount, orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(page);
         return result;
@@ -2880,7 +2962,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
+    @Override
+    public void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime) {
 
         List<OrderProductDO> saveOrderProductDOList = new ArrayList<>();
         Map<Integer, OrderProductDO> updateOrderProductDOMap = new HashMap<>();
@@ -2934,7 +3017,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
+    @Override
+    public void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime) {
 
         List<OrderMaterialDO> saveOrderMaterialDOList = new ArrayList<>();
         Map<Integer, OrderMaterialDO> updateOrderMaterialDOMap = new HashMap<>();
@@ -3676,6 +3760,8 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+
+
     @Autowired
     private UserSupport userSupport;
 
@@ -3684,6 +3770,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private ReletOrderMapper reletOrderMapper;
 
     @Autowired
     private StatementService statementService;
