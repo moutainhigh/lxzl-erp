@@ -82,4 +82,9 @@
 	<update id="update" parameterType="com.lxzl.erp.dataaccess.domain.order.OrderConfirmChangeLogDO">
 		UPDATE erp_order_confirm_change_log <include refid="set_column_sql"/> WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+	<select id="findLastByOrderId" resultMap="OrderConfirmChangeLogDO" parameterType="java.lang.Integer">
+		SELECT <include refid="column_List"/> FROM erp_order_confirm_change_log eoccl
+		WHERE eoccl.order_id = #{orderId, jdbcType=INTEGER} AND eoccl.data_status = 1
+		order by id desc LIMIT 1
+	</select>
 </mapper>
