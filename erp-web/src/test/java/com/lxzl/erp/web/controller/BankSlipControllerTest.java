@@ -28,6 +28,20 @@ import java.util.List;
  */
 public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
+    public void confirmSingleBankSlip() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(19);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/confirmBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
+    public void confirmSingleBankSlipJson() throws Exception {
+        String str = "{\"bankSlipDetailId\":9}";
+        BankSlipDetail bankSlipDetail = JSONUtil.convertJSONToBean(str, BankSlipDetail.class);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/confirmBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
     public void queryUnknownBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail =  new BankSlipDetail();
 //        bankSlipDetail.setBankSlipDetailId(2);
@@ -126,18 +140,18 @@ public class BankSlipControllerTest extends ERPUnTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(6);
-//        ArrayList<ClaimParam> list = new ArrayList<>();
-//        ClaimParam claimParam =  new ClaimParam();
-//        claimParam.setClaimAmount(new BigDecimal("10000"));
-//        claimParam.setCustomerNo("LXCC-2001-20180514-00006");
+        bankSlipClaim.setBankSlipDetailId(19);
+        ArrayList<ClaimParam> list = new ArrayList<>();
+        ClaimParam claimParam =  new ClaimParam();
+        claimParam.setClaimAmount(new BigDecimal("2240"));
+        claimParam.setCustomerNo("LXCC-2001-20180514-00008");
 //        ClaimParam claimParam1 =  new ClaimParam();
 //        claimParam1.setClaimAmount(new BigDecimal("1500"));
 //        claimParam1.setCustomerNo("LXCC-1000-20180511-00005");
 //        ClaimParam claimParam2 =  new ClaimParam();
 //        claimParam2.setClaimAmount(new BigDecimal(-10));
 //        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
-//        list.add(claimParam);
+        list.add(claimParam);
 //        list.add(claimParam1);
 //        list.add(claimParam2);
 //        bankSlipClaim.setClaimParam(list);

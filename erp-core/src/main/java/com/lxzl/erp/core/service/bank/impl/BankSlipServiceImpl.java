@@ -1441,12 +1441,16 @@ public class BankSlipServiceImpl implements BankSlipService {
         //当前用户如不是总公司,看是否有权先操作
         String verifyPermission = verifyPermission(bankSlipDO);
         if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
-            serviceResult.setErrorCode(verifyPermission);
-            return serviceResult;
+            if(userSupport.getCurrentUserCompanyId().equals(bankSlipDetailDO.getSubCompanyId())){
+                if( !userSupport.isElectric() && !userSupport.isChannelSubCompany()){
+                    serviceResult.setErrorCode(verifyPermission);
+                    return serviceResult;
+                }
+            }
         }
 
         //是否为商务
-        if (!userSupport.isBusinessAffairsPerson() && !userSupport.isSuperUser()) {
+        if (!userSupport.isBusinessAffairsPerson() && !userSupport.isSuperUser() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
             serviceResult.setErrorCode(ErrorCode.IS_NOT_BUSINESS_AFFAIRS_PERSON);
             return serviceResult;
         }
