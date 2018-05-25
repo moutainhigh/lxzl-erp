@@ -14,6 +14,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.*;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -54,13 +56,7 @@ public class ImportICBCBank {
         BankSlipDO bankSlipDO = null;
         String excelUrl = bankSlip.getExcelUrl();
         try {
-            Workbook work = null;
-            String fileType = excelUrl.substring(excelUrl.lastIndexOf("."));
-            if (".xlsx".equals(fileType)) {
-                work = new XSSFWorkbook(inputStream);
-            } else if (".xls".equals(fileType)) {
-                work = new HSSFWorkbook(inputStream);
-            }
+            Workbook work = WorkbookFactory.create(inputStream);
 
             if (null == work) {
                 serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
@@ -126,7 +122,7 @@ public class ImportICBCBank {
             bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
             bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
         } catch (IOException e) {
-            logger.error("导入excel的IO流转换发生异常", e);
+            logger.error("导入转换发生异常", e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
             serviceResult.setErrorCode(ErrorCode.INPUT_STREAM_READER_IS_FAIL);
             return serviceResult;
@@ -135,7 +131,7 @@ public class ImportICBCBank {
                 inputStream.close();
             } catch (IOException e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                logger.error("关闭excel的IO流转换发生异常", e);
+                logger.error("关闭转换发生异常", e);
             }
         }
 
