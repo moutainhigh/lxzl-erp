@@ -405,7 +405,8 @@ public class StatementServiceImpl implements StatementService {
                         sb.append("成功重算订单：订单号["+orderNo+"]\n");
                     }
                 }catch (Exception e){
-                    sb.append("重算订单【系统错误】：订单号["+orderNo+"]"+e.toString()+"\n");
+                    logger.error("重算订单【系统错误】：订单号["+orderNo+"]",e);
+                    sb.append("重算订单【系统错误】：订单号["+orderNo+"]"+e.getMessage()+"\n");
                 }
             }
         }
