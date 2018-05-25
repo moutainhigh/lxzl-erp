@@ -34,7 +34,6 @@ public class BankSlipClaim extends BasePO {
 	private String k3CustomerNo;  //k3客户编码
 
 	@Valid
-	@CollectionNotNull(message = ErrorCode.RECORD_NOT_EXISTS,groups = {ClaimBankSlipDetailGroup.class})
 	private List<ClaimParam> claimParam;
 
 	public String getK3CustomerNo() {

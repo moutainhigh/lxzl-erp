@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccount
 import com.lxzl.erp.common.domain.payment.*;
 import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
 import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
+import com.lxzl.erp.common.domain.validGroup.QueryGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.payment.PaymentService;
@@ -17,6 +18,7 @@ import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -91,5 +93,17 @@ public class PaymentController extends BaseController {
     public Result weixinQueryCustomerAccountLogPage(@RequestBody InterfaceCustomerAccountLogParam param, BindingResult validResult) {
         ServiceResult<String, Map<String, Object>> serviceResult = paymentService.weixinQueryCustomerAccountLogPage(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "exportHistoryChargeRecord", method = RequestMethod.POST)
+    public Result exportHistoryChargeRecord(@RequestBody ExportChargeRecordPageParam exportChargeRecordPageParam, BindingResult validResult) throws Exception {
+        ServiceResult<String, String> serviceResult = paymentService.exportHistoryChargeRecord(exportChargeRecordPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "constantlyExportQueryChargeRecord", method = RequestMethod.POST)
+    public Result constantlyExportQueryChargeRecord(@RequestBody @Validated(QueryGroup.class) ExportChargeRecordPageParam exportChargeRecordPageParam, BindingResult validResult) throws Exception {
+        ServiceResult<String, String> serviceResult = paymentService.constantlyExportQueryChargeRecord(exportChargeRecordPageParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(),serviceResult.getResult());
     }
 }

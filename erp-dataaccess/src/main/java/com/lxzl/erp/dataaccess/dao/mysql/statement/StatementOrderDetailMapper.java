@@ -45,4 +45,6 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> findByReturnReferIdAndStatementType(@Param("returnReferId") Integer returnReferId, @Param("statementDetailType") Integer statementDetailType);
 
     List<StatementOrderDetailDO> listAllForRentInfo(@Param("maps") Map<String, Object> paramMap);
+
+    void realDeleteStatementOrderDetailList(List<StatementOrderDetailDO> statementOrderDetailDOList);
 }

@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -111,7 +112,24 @@ public class Order extends BasePO {
     private Integer canReletOrder;                  //是否可续租     0不可以续租  1可以
     private Integer isReletOrder;                   //是否为续租订单   0否  1是
 
+    private String changeReason;//确认收货变更原因
+    private Image deliveryNoteCustomerSignImg;//交货单客户签字
 
+    public String getChangeReason() {
+        return changeReason;
+    }
+
+    public void setChangeReason(String changeReason) {
+        this.changeReason = changeReason;
+    }
+
+    public Image getDeliveryNoteCustomerSignImg() {
+        return deliveryNoteCustomerSignImg;
+    }
+
+    public void setDeliveryNoteCustomerSignImg(Image deliveryNoteCustomerSignImg) {
+        this.deliveryNoteCustomerSignImg = deliveryNoteCustomerSignImg;
+    }
     public List<Coupon> getCouponList() {
         return couponList;
     }

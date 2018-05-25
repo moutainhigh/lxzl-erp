@@ -15,6 +15,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer materialId;
 	private String materialName;
 	private Integer materialCount;
+	private Integer stableMaterialCount;   //下单配件总数，该字段只在订单未提交时可变化
 	private BigDecimal materialUnitAmount;
 	private BigDecimal materialAmount;
 	private BigDecimal rentDepositAmount;
@@ -260,4 +261,12 @@ public class OrderMaterialDO  extends BaseDO {
 	public String getSerialNumber() { return serialNumber; }
 
 	public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+	public Integer getStableMaterialCount() {
+		return stableMaterialCount;
+	}
+
+	public void setStableMaterialCount(Integer stableMaterialCount) {
+		this.stableMaterialCount = stableMaterialCount;
+	}
 }

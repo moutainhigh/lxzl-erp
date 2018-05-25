@@ -26,7 +26,21 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
+    @Test
+    public void confirmSingleBankSlip() throws Exception {
+        BankSlipDetail bankSlipDetail = new BankSlipDetail();
+        bankSlipDetail.setBankSlipDetailId(19);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/confirmBankSlipDetail",bankSlipDetail);
+    }
+
+    @Test
+    public void confirmSingleBankSlipJson() throws Exception {
+        String str = "{\"bankSlipDetailId\":9}";
+        BankSlipDetail bankSlipDetail = JSONUtil.convertJSONToBean(str, BankSlipDetail.class);
+        TestResult jsonTestResult = getJsonTestResult("/bankSlip/confirmBankSlipDetail",bankSlipDetail);
+    }
+
     @Test
     public void queryUnknownBankSlipDetail() throws Exception {
         BankSlipDetail bankSlipDetail =  new BankSlipDetail();
@@ -126,11 +140,11 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
     public void claimBankSlipDetail() throws Exception {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
-        bankSlipClaim.setBankSlipDetailId(2);
+        bankSlipClaim.setBankSlipDetailId(19);
         ArrayList<ClaimParam> list = new ArrayList<>();
         ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal("10000"));
-        claimParam.setCustomerNo("LXCC-2001-20180514-00006");
+        claimParam.setClaimAmount(new BigDecimal("2240"));
+        claimParam.setCustomerNo("LXCC-2001-20180514-00008");
 //        ClaimParam claimParam1 =  new ClaimParam();
 //        claimParam1.setClaimAmount(new BigDecimal("1500"));
 //        claimParam1.setCustomerNo("LXCC-1000-20180511-00005");
@@ -140,7 +154,7 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
         list.add(claimParam);
 //        list.add(claimParam1);
 //        list.add(claimParam2);
-        bankSlipClaim.setClaimParam(list);
+//        bankSlipClaim.setClaimParam(list);
         bankSlipClaim.setRemark("aaaaaaaaaaaaaaaaaaa");
         TestResult result = getJsonTestResult("/bankSlip/claimBankSlipDetail", bankSlipClaim);
     }

@@ -51,4 +51,7 @@ public interface BankSlipDetailMapper extends BaseMysqlDAO<BankSlipDetailDO> {
 
     List<BankSlipDetailDO>  findLastBankSlipDetail(@Param("list") List<BankSlipDetailDO> selectBankSlipDetailDOList);
 
+    List<BankSlipDetailDO> findBankSlipDetailByTradeSerialNoList(@Param("list") List<String> list);
+
+    BankSlipDetailDO findBankSlipDetailByTradeSerialNo(@Param("thirdPartyPayOrderId") String thirdPartyPayOrderId);
 }
