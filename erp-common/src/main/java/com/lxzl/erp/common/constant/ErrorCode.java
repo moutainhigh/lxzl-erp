@@ -1737,7 +1737,7 @@ public class ErrorCode {
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
         MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄导入数据为空");
-        MAP.put(INPUT_STREAM_READER_IS_FAIL, "导入excelIO流转换发生异常！");
+        MAP.put(INPUT_STREAM_READER_IS_FAIL, "导入转换发生异常！");
         MAP.put(APPLE_EQUIPMENT_WRITE_IS_FAIL, "风控苹果设备填写有误");
         MAP.put(NEW_EQUIPMENT_WRITE_IS_FAIL, "全新设备填写有误");
         MAP.put(EXCEL_UPLOAD_ERROR, "EXCEL表格上传失败");
@@ -1754,7 +1754,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED, "银行对公流水记录不是未认领状态");
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
         MAP.put(BANK_SLIP_DETAIL_NOT_EXISTS, "银行对公流水记录项不存在");
-        MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
+        MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与认领金额总和不等");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED_OR_HIDE, "银行对公流水记录是已确认状态或者隐藏状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
         MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN, "银行对公流水状态不是已下推");
