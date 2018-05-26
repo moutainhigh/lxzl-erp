@@ -127,7 +127,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         reletOrderDO.setRentStartTime(cal.getTime());//更新起租时间= 到期时间后一天
 
         //续租时允许客户修改时长 和 单价
-        ServiceResult<String, Boolean> syncTargetOrderInfoResult = SyncOrderToReletOrder(order, reletOrderDO);
+        ServiceResult<String, Boolean> syncTargetOrderInfoResult = syncOrderToReletOrder(order, reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(syncTargetOrderInfoResult.getErrorCode())) {
             result.setErrorCode(syncTargetOrderInfoResult.getErrorCode());
             return result;
@@ -219,7 +219,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
 
         //续租时允许客户修改时长 和 单价
-        ServiceResult<String, Boolean> syncTargetOrderInfoResult = SyncReletOrderToReletOrderDO(reletOrder, reletOrderDO);
+        ServiceResult<String, Boolean> syncTargetOrderInfoResult = syncReletOrderToReletOrderDO(reletOrder, reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(syncTargetOrderInfoResult.getErrorCode())) {
             result.setErrorCode(syncTargetOrderInfoResult.getErrorCode());
             return result;
@@ -315,7 +315,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
             //同步续租单信息 到  续租订单中
-            String syncReletOrderToOrderCode = SyncReletOrderToOrder(reletOrderDO, orderDO);
+            String syncReletOrderToOrderCode = syncReletOrderToOrder(reletOrderDO, orderDO);
             if (!ErrorCode.SUCCESS.equals(syncReletOrderToOrderCode)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(syncReletOrderToOrderCode);
@@ -415,7 +415,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                     return ErrorCode.ORDER_NOT_EXISTS;
                 }
                 //同步续租单信息 到  续租订单中
-                String syncReletOrderToOrderCode = SyncReletOrderToOrder(reletOrderDO, orderDO);
+                String syncReletOrderToOrderCode = syncReletOrderToOrder(reletOrderDO, orderDO);
                 if (!ErrorCode.SUCCESS.equals(syncReletOrderToOrderCode)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return syncReletOrderToOrderCode;
@@ -641,7 +641,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @author ZhaoZiXuan
      * @date 2018/5/24 12:00
      */
-    private String SyncReletOrderToOrder(ReletOrderDO reletOrderDO, OrderDO orderDO) {
+    private String syncReletOrderToOrder(ReletOrderDO reletOrderDO, OrderDO orderDO) {
 
         if (null == reletOrderDO || null == orderDO) {
             return ErrorCode.PARAM_IS_NOT_NULL;
@@ -706,7 +706,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @author ZhaoZiXuan
      * @date 2018/5/23 9:47
      */
-    private ServiceResult<String, Boolean> SyncOrderToReletOrder(Order order, ReletOrderDO reletOrderDO) {
+    private ServiceResult<String, Boolean> syncOrderToReletOrder(Order order, ReletOrderDO reletOrderDO) {
 
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         boolean isNeedVerify = false;
@@ -774,7 +774,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @author ZhaoZiXuan
      * @date 2018/5/23 9:47
      */
-    private ServiceResult<String, Boolean> SyncReletOrderToReletOrderDO(ReletOrder reletOrder, ReletOrderDO reletOrderDO) {
+    private ServiceResult<String, Boolean> syncReletOrderToReletOrderDO(ReletOrder reletOrder, ReletOrderDO reletOrderDO) {
 
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         boolean isNeedVerify = false;

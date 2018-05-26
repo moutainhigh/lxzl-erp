@@ -234,7 +234,7 @@
 			<if test="maps.isQueryAll == null">
 				and ero.data_status = 1
 			</if>
-			<include refid="permission_sql.order_control"/>
+			<include refid="permission_sql.relet_order_control"/>
 		</where>
 	</select>
 
@@ -302,7 +302,7 @@
 			<if test="maps.isQueryAll == null">
 				and ero.data_status = 1
 			</if>
-			<include refid="permission_sql.order_control"/>
+			<include refid="permission_sql.relet_order_control"/>
 		</where>
 		ORDER BY ero.create_time DESC
 		LIMIT #{maps.start},#{maps.pageSize}
