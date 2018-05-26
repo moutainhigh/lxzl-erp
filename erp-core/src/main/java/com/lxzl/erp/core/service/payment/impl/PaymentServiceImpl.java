@@ -476,7 +476,8 @@ public class PaymentServiceImpl implements PaymentService {
 //                    }
 //                }
 //            }
-            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post("http://testpayment.52rental.com/payment-system/charge/queryChargeRecordPage", requestJson, headerBuilder, "UTF-8");
+//            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 Page<JSONObject> paymentChargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);

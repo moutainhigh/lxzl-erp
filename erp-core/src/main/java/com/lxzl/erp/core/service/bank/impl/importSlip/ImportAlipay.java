@@ -1,34 +1,25 @@
 package com.lxzl.erp.core.service.bank.impl.importSlip;
 
-import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.constant.BankSlipDetailStatus;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.LoanSignType;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.core.service.bank.impl.importSlip.support.BankSlipSupport;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import org.apache.commons.io.IOUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -44,101 +35,6 @@ import java.util.List;
  */
 @Repository
 public class ImportAlipay {
-    /**
-     * 保存工商银行
-     *
-     * @param : runningWater
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/3/19 17:50
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.String>
-     */
-    public ServiceResult<String, BankSlipDO> saveAlipay(BankSlip bankSlip, InputStream inputStream) throws Exception {
-        ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
-        BankSlipDO bankSlipDO = null;
-        try {
-            Workbook work = WorkbookFactory.create(inputStream);
-
-            if (null == work) {
-                serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
-                return serviceResult;
-            }
-
-            Sheet sheet = null;
-            Row row = null;
-            Cell cell = null;
-            Date now = new Date();
-
-            //遍历Excel中所有的sheet
-            sheet = work.getSheetAt(0);
-            if (sheet == null) {
-                serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
-                return serviceResult;
-            }
-            //遍历当前sheet中的所有行
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
-
-            bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
-
-            //存储
-            ServiceResult<String, List<BankSlipDetailDO>> data = getAlipayData(sheet, row, cell, bankSlipDO, now);
-            if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(data.getErrorCode());
-                return serviceResult;
-            }
-            List<BankSlipDetailDO> bankSlipDetailDOList = data.getResult();
-
-            //保存  银行对公流水表
-            bankSlipDO.setSubCompanyName(subCompanyDO.getSubCompanyName());
-
-            bankSlipDO.setSlipStatus(SlipStatus.INITIALIZE);
-            bankSlipDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-            bankSlipDO.setClaimCount(CommonConstant.COMMON_ZERO);
-            bankSlipDO.setConfirmCount(CommonConstant.COMMON_ZERO);
-            bankSlipDO.setCreateTime(now);
-            bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            bankSlipDO.setUpdateTime(now);
-            bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-
-            bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
-            if (bankSlipDO == null) {
-                serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
-                return serviceResult;
-            }
-            bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
-            //查看是否为空
-            if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
-                return serviceResult;
-            }
-            //保存  银行对公流水明细表
-            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
-                bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
-                bankSlipDetailDO.setSubCompanyId(bankSlipDO.getSubCompanyId());
-            }
-            bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
-            bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
-        } catch (Exception e) {
-            logger.error("导入转换发生异常", e);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            serviceResult.setErrorCode(ErrorCode.INPUT_STREAM_READER_IS_FAIL);
-            return serviceResult;
-        } finally {
-            try {
-                inputStream.close();
-            } catch (Exception e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                logger.error("关闭转换发生异常", e);
-            }
-        }
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(bankSlipDO);
-        return serviceResult;
-
-    }
 
     //存中国银行数据
 
@@ -379,16 +275,4 @@ public class ImportAlipay {
 
     @Autowired
     private UserSupport userSupport;
-
-    @Autowired
-    private BankSlipDetailMapper bankSlipDetailMapper;
-
-    @Autowired
-    private SubCompanyMapper subCompanyMapper;
-
-    @Autowired
-    private BankSlipMapper bankSlipMapper;
-
-    @Autowired
-    private BankSlipSupport bankSlipSupport;
 }
