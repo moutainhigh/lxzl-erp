@@ -85,11 +85,13 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
             if (mapFirst != null && mapFirst.size() > 0) {
                 for (String key : mapFirst.keySet()) {
                     Object value = mapFirst.get(key);
-                    if (StringUtils.isEmpty(IdCardCheckUtil.IDCardValidate(value.toString()))) {
-                        keySensitiveInfoMap.put(key, IDCARD_TYPE); // 身份证号对应key
-                    }
-                    if (IdCardCheckUtil.checkMobile(value.toString())) {
-                        keySensitiveInfoMap.put(key, PHONE_TYPE); // 电话号码对应key
+                    if (value != null) {
+                        if (StringUtils.isEmpty(IdCardCheckUtil.IDCardValidate(value.toString()))) {
+                            keySensitiveInfoMap.put(key, IDCARD_TYPE); // 身份证号对应key
+                        }
+                        if (IdCardCheckUtil.checkMobile(value.toString())) {
+                            keySensitiveInfoMap.put(key, PHONE_TYPE); // 电话号码对应key
+                        }
                     }
                 }
             }
@@ -99,18 +101,24 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                 for (Map<String, Object> map : mapList) {
                     for (Map.Entry<String, Integer> entrySensitive : keySensitiveInfoMap.entrySet()) {
                         if (entrySensitive.getValue().equals(PHONE_TYPE)) { // 电话号码只显示前后三位
-                            String value = map.get(entrySensitive.getKey()).toString();
-                            String top3 = value.substring(0,3);
-                            String last3 = value.substring(value.length() - 3, value.length());
-                            String result = top3 + SENSITIVE_INFO_VIEW + last3;
-                            map.put(entrySensitive.getKey(), result);
+                            Object valueObj = map.get(entrySensitive.getKey());
+                            if (valueObj != null && valueObj.toString().length() > 3) {
+                                String value = valueObj.toString();
+                                String top3 = value.substring(0,3);
+                                String last3 = value.substring(value.length() - 3, value.length());
+                                String result = top3 + SENSITIVE_INFO_VIEW + last3;
+                                map.put(entrySensitive.getKey(), result);
+                            }
                         }
                         if (entrySensitive.getValue().equals(IDCARD_TYPE)) { // 身份证号显示前后四位
-                            String value = map.get(entrySensitive.getKey()).toString();
-                            String top4 = value.substring(0,4);
-                            String last4 = value.substring(value.length() - 4, value.length());
-                            String result = top4 + SENSITIVE_INFO_VIEW + last4;
-                            map.put(entrySensitive.getKey(), result);
+                            Object valueObj = map.get(entrySensitive.getKey());
+                            if (valueObj != null && valueObj.toString().length() > 4) {
+                                String value = valueObj.toString();
+                                String top4 = value.substring(0,4);
+                                String last4 = value.substring(value.length() - 4, value.length());
+                                String result = top4 + SENSITIVE_INFO_VIEW + last4;
+                                map.put(entrySensitive.getKey(), result);
+                            }
                         }
                     }
                 }
