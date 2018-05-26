@@ -16,5 +16,5 @@ import java.util.Map;
 @Repository
 public interface DynamicSqlMapper extends BaseMysqlDAO {
 
-    List<Map> selectBySql(@Param("selectSql") String selectSql);
+    List<Map<String, Object>> selectBySql(@Param("selectSql") String selectSql);
 }

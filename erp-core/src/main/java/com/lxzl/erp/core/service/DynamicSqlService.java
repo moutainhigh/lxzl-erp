@@ -14,5 +14,5 @@ import java.util.Map;
  */
 public interface DynamicSqlService {
 
-    ServiceResult<String, Page<Map>> selectBySql(DynamicSql dynamicSql);
+    ServiceResult<String, Page<Map<String, Object>>> selectBySql(DynamicSql dynamicSql);
 }
