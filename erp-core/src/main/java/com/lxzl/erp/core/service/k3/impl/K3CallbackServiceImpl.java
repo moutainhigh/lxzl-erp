@@ -313,16 +313,17 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 //        }
 
         //如果退货单里的所有订单都是已经支付的就重新计算退货单的结算单，如果有一个订单是未支付的都不重算
-        Boolean flag = true;
-        List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList1 = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
-        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList1) {
+        Boolean flag = false;
+        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList) {
             OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-            if (orderDO.getPayStatus()!= PayStatus.PAY_STATUS_PAID) {
+            if (orderDO.getPayStatus() == PayStatus.PAY_STATUS_PAID) {
+                flag = true;
+            } else {
                 flag = false;
                 break;
             }
         }
-        // 重算退货单结算单
+        // 生成退货单结算单
         if (flag) {
             statementService.createK3ReturnOrderStatement(k3ReturnOrderDO.getReturnOrderNo());
         }
