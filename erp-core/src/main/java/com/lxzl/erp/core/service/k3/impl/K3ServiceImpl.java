@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -90,8 +91,7 @@ public class K3ServiceImpl implements K3Service {
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
-    private String k3confirmOrderUrl = "http://103.239.207.170:9090/OrderConfirml/ConfirmlOrder";//测试的
-//    private String k3confirmOrderUrl = "http://103.239.207.170:8888/OrderConfirml/ConfirmlOrder";//正式的
+    private String K3PassWord = "123";
 
 
     @Override
@@ -754,7 +754,7 @@ public class K3ServiceImpl implements K3Service {
         Map responseMap = new HashMap();
 
         formSEOrderConfirml.setOrderNo(orderConfirmChangeToK3Param.getOrderNo());
-        String PW = MD5Util.encrypt("123").toUpperCase().toUpperCase();
+        String PW = MD5Util.encrypt(K3PassWord).toUpperCase();
         formSEOrderConfirml.setPW(PW);
 
         List<ChangeOrderItemParam> changeOrderItemParamList = orderConfirmChangeToK3Param.getChangeOrderItemParamList();
@@ -771,10 +771,10 @@ public class K3ServiceImpl implements K3Service {
         }
         requestData.put("formSEOrderConfirml",formSEOrderConfirml);
         String requestJson  = JSONObject.toJSONString(requestData);
-        System.out.println(requestJson);
         try{
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
+            String k3confirmOrderUrl = K3Config.k3Server + "/OrderConfirml/ConfirmlOrder";  //k3确认收货url
             String response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
             responseMap =  JSONObject.parseObject(response,HashMap.class);
             if ("true".equals(responseMap.get("IsSuccess").toString())){
@@ -782,13 +782,12 @@ public class K3ServiceImpl implements K3Service {
                 serviceResult.setResult(responseMap.get("Message").toString());
                 return serviceResult;
             }else{
-                serviceResult.setErrorCode("确认收货推送K3数据失败");
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
+                throw new BusinessException(responseMap.get("Message").toString());
             }
         }catch (Exception e){
             e.printStackTrace();
-            throw new BusinessException(responseMap.get("Message").toString());
+            serviceResult.setErrorCode(ErrorCode.K3_CONFIRM_ORDER_SEND_ERROR);
+            return serviceResult;
         }
     }
 
