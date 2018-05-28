@@ -810,6 +810,7 @@ public class ErrorCode {
     /** k3历史退货单响应代码 */
     public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
 
+
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
     public static final String EXCEL_SHEET_IS_NULL = "J18000003";

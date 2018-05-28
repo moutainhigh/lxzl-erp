@@ -21,6 +21,7 @@
 	</bean>
 	<bean id="k3Config" class="com.lxzl.erp.common.domain.K3Config">
 		<property name="k3Server" value="${k3.server}" />
+		<property name="k3ServerFormal" value="${k3.serverFormal}" />
 	</bean>
 	<!--<context:property-placeholder location="mongo.properties"/>-->
 	<bean id="taskExecutor"
