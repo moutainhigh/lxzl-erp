@@ -80,47 +80,30 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
 
     private void filterSensitiveInfo(List<Map<String, Object>> mapList) {
         if (CollectionUtil.isNotEmpty(mapList)) {
-            Map<String, Integer> keySensitiveInfoMap = new HashMap<>();
-            Map<String, Object> mapFirst = mapList.get(0);
-            if (mapFirst != null && mapFirst.size() > 0) {
-                for (String key : mapFirst.keySet()) {
-                    Object value = mapFirst.get(key);
-                    if (value != null) {
+            // 循环处理mapList中的敏感信息
+            for (Map<String, Object> map : mapList) {
+                Map<String, Object> mapTmp = new HashMap<>(); // 保存需要处理的敏感字段
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    Object valueObj = entry.getValue();
+                    if (valueObj != null) {
+                        String value = valueObj.toString();
                         if (StringUtils.isEmpty(IdCardCheckUtil.IDCardValidate(value.toString()))) {
-                            keySensitiveInfoMap.put(key, IDCARD_TYPE); // 身份证号对应key
+                            String top4 = value.substring(0,4);
+                            String last4 = value.substring(value.length() - 4, value.length());
+                            String result = top4 + SENSITIVE_INFO_VIEW + last4;
+                            mapTmp.put(entry.getKey(), result);
                         }
                         if (IdCardCheckUtil.checkMobile(value.toString())) {
-                            keySensitiveInfoMap.put(key, PHONE_TYPE); // 电话号码对应key
+                            String top3 = value.substring(0,3);
+                            String last3 = value.substring(value.length() - 3, value.length());
+                            String result = top3 + SENSITIVE_INFO_VIEW + last3;
+                            map.put(entry.getKey(), result);
                         }
                     }
                 }
-            }
 
-            // 循环处理mapList中的敏感信息
-            if (keySensitiveInfoMap.size() > 0) {
-                for (Map<String, Object> map : mapList) {
-                    for (Map.Entry<String, Integer> entrySensitive : keySensitiveInfoMap.entrySet()) {
-                        if (entrySensitive.getValue().equals(PHONE_TYPE)) { // 电话号码只显示前后三位
-                            Object valueObj = map.get(entrySensitive.getKey());
-                            if (valueObj != null && valueObj.toString().length() > 3) {
-                                String value = valueObj.toString();
-                                String top3 = value.substring(0,3);
-                                String last3 = value.substring(value.length() - 3, value.length());
-                                String result = top3 + SENSITIVE_INFO_VIEW + last3;
-                                map.put(entrySensitive.getKey(), result);
-                            }
-                        }
-                        if (entrySensitive.getValue().equals(IDCARD_TYPE)) { // 身份证号显示前后四位
-                            Object valueObj = map.get(entrySensitive.getKey());
-                            if (valueObj != null && valueObj.toString().length() > 4) {
-                                String value = valueObj.toString();
-                                String top4 = value.substring(0,4);
-                                String last4 = value.substring(value.length() - 4, value.length());
-                                String result = top4 + SENSITIVE_INFO_VIEW + last4;
-                                map.put(entrySensitive.getKey(), result);
-                            }
-                        }
-                    }
+                for (Map.Entry<String, Object> entryTmp : mapTmp.entrySet()) {
+                    map.put(entryTmp.getKey(), entryTmp.getValue());
                 }
             }
         }

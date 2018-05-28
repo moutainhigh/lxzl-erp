@@ -14,7 +14,7 @@ public class DynamicSqlControllerTest extends ERPTransactionalTest {
 
     @Test
     public void testSelect() throws Exception {
-        String sql = "select * from erp_user limit 1000";
+        String sql = "select * from erp_user";
         String sql2 = "update erp_joint_product set data_status = 2 where id = 33";
 
         DynamicSql dynamicSql = new DynamicSql();
