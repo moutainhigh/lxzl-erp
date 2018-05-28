@@ -786,7 +786,7 @@ public class K3ServiceImpl implements K3Service {
             }
         }catch (Exception e){
             e.printStackTrace();
-            serviceResult.setErrorCode(ErrorCode.K3_CONFIRM_ORDER_SEND_ERROR);
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
             return serviceResult;
         }
     }
