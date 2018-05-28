@@ -18,6 +18,7 @@ import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
+import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import com.lxzl.erp.common.util.*;
@@ -951,7 +952,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ServiceResult<String, String> changeOrderMethod(OrderConfirmChangeParam orderConfirmChangeParam,ServiceResult<String, String> result,OrderDO dborderDO){
+    public ServiceResult<String, String> changeOrderMethod(OrderConfirmChangeParam orderConfirmChangeParam,ServiceResult<String, String> result,OrderDO orderDO){
         Date date = new Date();
         List<OrderItemParam> orderItemParamList = orderConfirmChangeParam.getOrderItemParamList();
 
@@ -959,93 +960,117 @@ public class OrderServiceImpl implements OrderService {
             result.setErrorCode(ErrorCode.ORDER_ITEM_PARAM_LIST_NOT_NULL);
             return result;
         }
-        Integer oldTotalProductCount = dborderDO.getTotalProductCount();
-        Integer oldTotalMaterialCount = dborderDO.getTotalMaterialCount();
+        Integer oldTotalProductCount = orderDO.getTotalProductCount();
+        Integer oldTotalMaterialCount = orderDO.getTotalMaterialCount();
+        OrderConfirmChangeToK3Param orderConfirmChangeToK3Param = new OrderConfirmChangeToK3Param();
+        List<ChangeOrderItemParam> changeOrderItemParamList = new ArrayList<>();
+        orderConfirmChangeToK3Param.setOrderId(orderDO.getId());
+        orderConfirmChangeToK3Param.setOrderNo(orderDO.getOrderNo());
         // TODO: 2018\5\23 0023 按天计算的单子押金退还需要单独一个逻辑来进行退还
         StringBuffer sb = new StringBuffer();
-        sb.append("租赁订单-").append(dborderDO.getOrderNo()).append("用户已经确认收货，有部分退货情况，退货信息如下：\n");
+        sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，有部分退货情况，退货信息如下：\n");
         Integer count = 0;
         for (OrderItemParam orderItemParam:orderItemParamList) {
             count+=orderItemParam.getItemCount();
             //商品变化保存订单确认收货变更记录详情信息
             if (orderItemParam.getItemType()==1) {
                 OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
-                OrderProductDO orderProductDO = orderProductMapper.findById(orderItemParam.getItemId());
-                if (orderItemParam.getItemCount()>orderProductDO.getStableProductCount()) {
-                    result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT);
-                    return result;
-                }
-                //判断收货的商品是否跟原订单商品数不一致，不一致的进行记录并保存收货的数量
-                if (orderProductDO.getProductCount()!=orderItemParam.getItemCount()) {
-                    if (orderProductDO.getProductCount() == 0) {
-                        result.setErrorCode(ErrorCode.ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM);
-                        return result;
-                    }
-                    orderConfirmChangeLogDetailDO.setOrderId(dborderDO.getId());
-                    orderConfirmChangeLogDetailDO.setOrderNo(dborderDO.getOrderNo());
-                    orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
-                    orderConfirmChangeLogDetailDO.setItemId(orderItemParam.getItemId());
-                    orderConfirmChangeLogDetailDO.setOrderItemCount(orderProductDO.getStableProductCount());//订单初始商品/配件数
-                    orderConfirmChangeLogDetailDO.setOldItemCount(orderProductDO.getProductCount());//原商品/配件数
-                    orderConfirmChangeLogDetailDO.setNewItemCount(orderItemParam.getItemCount());//新商品/配件数
-                    orderConfirmChangeLogDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-                    orderConfirmChangeLogDetailDO.setRemark(null);
-                    orderConfirmChangeLogDetailDO.setCreateTime(date);
-                    orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
-                    sb.append("商品-").append(orderProductDO.getProductName()).append("退").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台\n");
-                    //按天租的设置押金
-                    if (dborderDO.getRentType() == 1) {
-                        BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
-                        orderProductDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
-                    }
-                    //将订单商品项中的商品总数、商品在租数进行更新
-                    orderProductDO.setProductCount(orderItemParam.getItemCount());
-                    orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
+                for (OrderProductDO orderProductDO:orderDO.getOrderProductDOList()) {
+                    if (orderProductDO.getId().equals(orderItemParam.getItemId())) {
+                        if (orderItemParam.getItemCount()>orderProductDO.getStableProductCount()) {
+                            result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT);
+                            return result;
+                        }
+                        //判断收货的商品是否跟原订单商品数不一致，不一致的进行记录并保存收货的数量
+                        if (!orderProductDO.getProductCount().equals(orderItemParam.getItemCount())) {
+                            if (orderProductDO.getProductCount() == 0) {
+                                result.setErrorCode(ErrorCode.ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM);
+                                return result;
+                            }
+                            //设置传递K3参数
+                            ChangeOrderItemParam changeOrderItemParam = new ChangeOrderItemParam();
+                            changeOrderItemParam.setItemId(orderItemParam.getItemId());
+                            changeOrderItemParam.setItemType(orderItemParam.getItemType());
+                            changeOrderItemParam.setReturnCount(orderProductDO.getStableProductCount()-orderItemParam.getItemCount());
+                            changeOrderItemParamList.add(changeOrderItemParam);
 
-                    //这里只更新了商品总数和再租商品数
-                    orderProductMapper.update(orderProductDO);
+                            orderConfirmChangeLogDetailDO.setOrderId(orderDO.getId());
+                            orderConfirmChangeLogDetailDO.setOrderNo(orderDO.getOrderNo());
+                            orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                            orderConfirmChangeLogDetailDO.setItemId(orderItemParam.getItemId());
+                            orderConfirmChangeLogDetailDO.setOrderItemCount(orderProductDO.getStableProductCount());//订单初始商品/配件数
+                            orderConfirmChangeLogDetailDO.setOldItemCount(orderProductDO.getProductCount());//原商品/配件数
+                            orderConfirmChangeLogDetailDO.setNewItemCount(orderItemParam.getItemCount());//新商品/配件数
+                            orderConfirmChangeLogDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                            orderConfirmChangeLogDetailDO.setRemark(null);
+                            orderConfirmChangeLogDetailDO.setCreateTime(date);
+                            orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                            orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                            sb.append("商品-").append(orderProductDO.getProductName()).append("退").append(orderProductDO.getProductCount()-orderItemParam.getItemCount()).append("台\n");
+                            //按天租的设置押金
+                            if (orderDO.getRentType() == 1) {
+                                BigDecimal one = BigDecimalUtil.div(orderProductDO.getDepositAmount(),new BigDecimal(orderProductDO.getProductCount()),3);
+                                orderProductDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                            }
+                            //将订单商品项中的商品总数、商品在租数进行更新
+                            orderProductDO.setProductCount(orderItemParam.getItemCount());
+                            orderProductDO.setRentingProductCount(orderItemParam.getItemCount());
+                        }
+                    }
                 }
+
             }
             //配件变化保存订单确认收货变更记录详情信息
             if (orderItemParam.getItemType()==2) {
                 OrderConfirmChangeLogDetailDO orderConfirmChangeLogDetailDO = new OrderConfirmChangeLogDetailDO();
-                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(orderItemParam.getItemId());
-                if (orderItemParam.getItemCount()>orderMaterialDO.getStableMaterialCount()) {
-                    result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT);
-                    return result;
-                }
-                if (orderMaterialDO.getMaterialCount()!=orderItemParam.getItemCount()) {
-                    if (orderMaterialDO.getMaterialCount() == 0) {
-                        result.setErrorCode(ErrorCode.ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM);
-                        return result;
+                for (OrderMaterialDO orderMaterialDO:orderDO.getOrderMaterialDOList()) {
+                    if (orderMaterialDO.getId().equals( orderItemParam.getItemId())) {
+                        if (orderItemParam.getItemCount()>orderMaterialDO.getStableMaterialCount()) {
+                            result.setErrorCode(ErrorCode.ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT);
+                            return result;
+                        }
+                        if (!orderMaterialDO.getMaterialCount().equals(orderItemParam.getItemCount())) {
+                            if (orderMaterialDO.getMaterialCount() == 0) {
+                                result.setErrorCode(ErrorCode.ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM);
+                                return result;
+                            }
+                            //设置传递K3参数
+                            ChangeOrderItemParam changeOrderItemParam = new ChangeOrderItemParam();
+                            changeOrderItemParam.setItemId(orderItemParam.getItemId());
+                            changeOrderItemParam.setItemType(orderItemParam.getItemType());
+                            changeOrderItemParam.setReturnCount(orderMaterialDO.getStableMaterialCount()-orderItemParam.getItemCount());
+                            changeOrderItemParamList.add(changeOrderItemParam);
+
+                            orderConfirmChangeLogDetailDO.setOrderId(orderDO.getId());
+                            orderConfirmChangeLogDetailDO.setOrderNo(orderDO.getOrderNo());
+                            orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
+                            orderConfirmChangeLogDetailDO.setItemId(orderMaterialDO.getId());
+                            orderConfirmChangeLogDetailDO.setOrderItemCount(orderMaterialDO.getStableMaterialCount());//订单初始商品/配件数
+                            orderConfirmChangeLogDetailDO.setOldItemCount(orderMaterialDO.getMaterialCount());//原商品/配件数
+                            orderConfirmChangeLogDetailDO.setNewItemCount(orderItemParam.getItemCount());//新商品/配件数
+                            orderConfirmChangeLogDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
+                            orderConfirmChangeLogDetailDO.setRemark(null);
+                            orderConfirmChangeLogDetailDO.setCreateTime(date);
+                            orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
+                            orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
+                            sb.append("配件-").append(orderMaterialDO.getMaterialName()).append("退").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台\n");
+                            //按天租的设置押金
+                            if (orderDO.getRentType() == 1) {
+                                BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
+                                orderMaterialDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
+                            }
+                            //将订单商品项中的商品总数、商品在租数进行更新
+                            orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
+                            orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
+                        }
                     }
-                    orderConfirmChangeLogDetailDO.setOrderId(dborderDO.getId());
-                    orderConfirmChangeLogDetailDO.setOrderNo(dborderDO.getOrderNo());
-                    orderConfirmChangeLogDetailDO.setItemType(OrderItemType.ORDER_ITEM_TYPE_PRODUCT);
-                    orderConfirmChangeLogDetailDO.setItemId(orderMaterialDO.getId());
-                    orderConfirmChangeLogDetailDO.setOrderItemCount(orderMaterialDO.getStableMaterialCount());//订单初始商品/配件数
-                    orderConfirmChangeLogDetailDO.setOldItemCount(orderMaterialDO.getMaterialCount());//原商品/配件数
-                    orderConfirmChangeLogDetailDO.setNewItemCount(orderItemParam.getItemCount());//新商品/配件数
-                    orderConfirmChangeLogDetailDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-                    orderConfirmChangeLogDetailDO.setRemark(null);
-                    orderConfirmChangeLogDetailDO.setCreateTime(date);
-                    orderConfirmChangeLogDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
-                    orderConfirmChangeLogDetailMapper.save(orderConfirmChangeLogDetailDO);
-                    sb.append("配件-").append(orderMaterialDO.getMaterialName()).append("退").append(orderMaterialDO.getMaterialCount()-orderItemParam.getItemCount()).append("台\n");
-                    //按天租的设置押金
-                    if (dborderDO.getRentType() == 1) {
-                        BigDecimal one = BigDecimalUtil.div(orderMaterialDO.getDepositAmount(),new BigDecimal(orderMaterialDO.getMaterialCount()),3);
-                        orderMaterialDO.setDepositAmount(BigDecimalUtil.mul(one,new BigDecimal(orderItemParam.getItemCount())));
-                    }
-                    //将订单商品项中的商品总数、商品在租数进行更新
-                    orderMaterialDO.setMaterialCount(orderItemParam.getItemCount());
-                    orderMaterialDO.setRentingMaterialCount(orderItemParam.getItemCount());
-                    //这里只更新了商品总数和再租商品数
-                    orderMaterialMapper.update(orderMaterialDO);
                 }
+
             }
         }
+        //设置传送到K3的参数
+        orderConfirmChangeToK3Param.setChangeOrderItemParamList(changeOrderItemParamList);
+
         //保存图片
         if (orderConfirmChangeParam.getDeliveryNoteCustomerSignImg()!= null) {
             ImageDO deliveryNoteCustomerSignImgDO = imgMysqlMapper.findById(orderConfirmChangeParam.getDeliveryNoteCustomerSignImg().getImgId());
@@ -1054,13 +1079,34 @@ public class OrderServiceImpl implements OrderService {
                 return result;
             }
             deliveryNoteCustomerSignImgDO.setImgType(ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
-            deliveryNoteCustomerSignImgDO.setRefId(dborderDO.getId().toString());
+            deliveryNoteCustomerSignImgDO.setRefId(orderDO.getId().toString());
             deliveryNoteCustomerSignImgDO.setUpdateUser(userSupport.getCurrentUserId().toString());
             deliveryNoteCustomerSignImgDO.setUpdateTime(date);
             imgMysqlMapper.update(deliveryNoteCustomerSignImgDO);
         }
-        // 更新订单信息，并完成确认收货操作
-        OrderDO orderDO = orderMapper.findByOrderNo(orderConfirmChangeParam.getOrderNo());
+        //没有变化走原来确认收货逻辑
+        if (count==(oldTotalProductCount+oldTotalMaterialCount)) {
+            orderDO.setConfirmDeliveryTime(date);
+            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_CONFIRM);
+            orderDO.setUpdateTime(date);
+            orderDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            orderMapper.update(orderDO);
+
+            // 记录订单时间轴
+            orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), orderDO.getOrderStatus(), null, date, userSupport.getCurrentUserId());
+            sb = new StringBuffer();
+            sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，没有退货情况。");
+            if (orderDO.getOrderSellerId()!= null) {
+                MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
+                messageThirdChannel.setMessageContent(sb.toString());
+                messageThirdChannel.setReceiverUserId(orderDO.getOrderSellerId());
+                messageThirdChannelService.sendMessage(messageThirdChannel);
+            }
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(orderDO.getOrderNo());
+            return result;
+        }
+//        // 更新订单信息，并完成确认收货操作
         orderConfirmChangeParam.setOrderId(orderDO.getId());
         BigDecimal oldTotalCreditDepositAmount = orderDO.getTotalCreditDepositAmount();
         //为计算前初始化参数
@@ -1101,8 +1147,6 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        orderMapper.update(orderDO);
-
         //存储订单项
         if (CollectionUtil.isNotEmpty(orderProductDOList)) {
             for (OrderProductDO orderProductDO : orderProductDOList) {
@@ -1136,7 +1180,7 @@ public class OrderServiceImpl implements OrderService {
         Integer newTotalProductCount = orderDO.getTotalProductCount();
         Integer newTotalMaterialCount = orderDO.getTotalMaterialCount();
         //是否有退货标记，true为有退货，false为全部收货
-        Boolean flag = newTotalProductCount!=oldTotalProductCount || newTotalMaterialCount != oldTotalMaterialCount;
+        Boolean flag = !newTotalProductCount.equals(oldTotalProductCount) || !newTotalMaterialCount.equals(oldTotalMaterialCount);
         if (flag) {
             //保存订单确认收货变更记录
             OrderConfirmChangeLogDO orderConfirmChangeLogDO = new OrderConfirmChangeLogDO();
@@ -1172,11 +1216,7 @@ public class OrderServiceImpl implements OrderService {
                 sb = new StringBuffer();
                 sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户没有收货，订单中商品全部退回");
             }
-        }else {//没有退货
-            sb = new StringBuffer();
-            sb.append("租赁订单-").append(orderDO.getOrderNo()).append("用户已经确认收货，没有退货情况。");
         }
-
         if (orderDO.getOrderSellerId()!= null) {
             MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
             messageThirdChannel.setMessageContent(sb.toString());
@@ -1615,6 +1655,20 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
+
+        //获取确认收货变更原因及交货单客户签字图片逻辑
+        if (order.getOrderStatus()>OrderStatus.ORDER_STATUS_DELIVERED) {
+            ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(),ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            if (byRefId!= null) {
+                Image image = ConverterUtil.convert(byRefId,Image.class);
+                order.setDeliveryNoteCustomerSignImg(image);
+            }
+            OrderConfirmChangeLogDO orderConfirmChangeLogDO = orderConfirmChangeLogMapper.findLastByOrderId(order.getOrderId());
+            if (orderConfirmChangeLogDO!=null) {
+                order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
+            }
+        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
@@ -1725,6 +1779,18 @@ public class OrderServiceImpl implements OrderService {
         // 将orderJointProductId不为空的订单商品和配件放入对应的OrderJointProduct中, 并将数量除以组合商品数
         buildOrderJointProductAfterQuery(order);
         /*******组合商品逻辑 end********/
+        //获取确认收货变更原因及交货单客户签字图片逻辑
+        if (order.getOrderStatus()>OrderStatus.ORDER_STATUS_DELIVERED) {
+            ImageDO byRefId = imgMysqlMapper.findLastByRefIdAndType(order.getOrderId().toString(),ImgType.DELIVERY_NOTE_CUSTOMER_SIGN);
+            if (byRefId!= null) {
+                Image image = ConverterUtil.convert(byRefId,Image.class);
+                order.setDeliveryNoteCustomerSignImg(image);
+            }
+            OrderConfirmChangeLogDO orderConfirmChangeLogDO = orderConfirmChangeLogMapper.findLastByOrderId(order.getOrderId());
+            if (orderConfirmChangeLogDO!=null) {
+                order.setChangeReason(orderConfirmChangeLogDO.getChangeReason());
+            }
+        }
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;

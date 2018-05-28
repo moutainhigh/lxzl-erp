@@ -12,4 +12,6 @@ public interface OrderConfirmChangeLogMapper extends BaseMysqlDAO<OrderConfirmCh
 	List<OrderConfirmChangeLogDO> listPage(@Param("maps") Map<String, Object> paramMap);
 
 	Integer listCount(@Param("maps") Map<String, Object> paramMap);
+
+    OrderConfirmChangeLogDO findLastByOrderId(@Param("orderId")Integer orderId);
 }
