@@ -1,10 +1,7 @@
 package com.lxzl.erp.core.service.k3.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.OrderStatus;
-import com.lxzl.erp.common.constant.ReturnOrderStatus;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrder;
 import com.lxzl.erp.common.domain.delivery.pojo.DeliveryOrderMaterial;
@@ -193,7 +190,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             serviceResult.setErrorCode(ErrorCode.RETURN_ORDER_STATUS_CAN_NOT_RETURN);
             return serviceResult;
         }
-
         return callbackReturnDetail(k3ReturnOrder,k3ReturnOrderDO);
     }
     @Override
@@ -271,6 +267,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
 
         }
+        Boolean flag = true;
         for (Integer orderId : set) {
 
             Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
@@ -281,6 +278,10 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             OrderDO orderDO = orderMapper.findById(orderId);
             if(orderDO == null){
                 continue;
+            }
+            //如果訂單有未支付的就將標記改成false
+            if (flag && !PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+                flag = false;
             }
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                 //处理最后一件商品退还时间
@@ -315,6 +316,11 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 //            serviceResult.setErrorCode(statementResult.getErrorCode());
 //            return serviceResult;
 //        }
+
+        // 生成退货单结算单
+        if (flag) {
+            statementService.createK3ReturnOrderStatement(k3ReturnOrderDO.getReturnOrderNo());
+        }
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
@@ -366,4 +372,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
     private DingDingSupport dingDingSupport;
     @Autowired
     private ProductSupport productSupport;
+    @Autowired
+    private StatementService statementService;
 }

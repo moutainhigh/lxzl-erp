@@ -26,6 +26,10 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     private Date startRentStratTime;
     private Date endRentStratTime;
 
+    private Date startExpectReturnTime;  //起始预计归还时间
+    private Date endExpectReturnTime;
+    private Integer rentLengthType;    //1 短租 2长租
+
 
     private List<Integer> passiveUserIdList;
     private Integer subCompanyId;
@@ -216,7 +220,6 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     public void setEndRentStratTime(Date endRentStratTime) {
         this.endRentStratTime = endRentStratTime;
     }
-
     public Integer getIsReturnOverDue() {
         return isReturnOverDue;
     }
@@ -224,4 +227,27 @@ public class OrderQueryParam extends BasePageParam implements Serializable {
     public void setIsReturnOverDue(Integer isReturnOverDue) {
         this.isReturnOverDue = isReturnOverDue;
     }
-}
+
+public Date getStartExpectReturnTime() {
+        return startExpectReturnTime;
+    }
+
+    public void setStartExpectReturnTime(Date startExpectReturnTime) {
+        this.startExpectReturnTime = startExpectReturnTime;
+    }
+
+    public Date getEndExpectReturnTime() {
+        return endExpectReturnTime;
+    }
+
+    public void setEndExpectReturnTime(Date endExpectReturnTime) {
+        this.endExpectReturnTime = endExpectReturnTime;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
+    }}

@@ -48,7 +48,7 @@ public class ReletOrderProduct extends BasePO {
 		this.productSkuId = orderProduct.getProductSkuId();
 		this.productSkuName = orderProduct.getProductSkuName();
 		this.productCount = orderProduct.getProductCount();
-//		this.materialSnapshot = orderMaterial.getMaterialSnapshot();
+		this.productSkuSnapshot = orderProduct.getProductSkuSnapshot();
 		this.productUnitAmount = orderProduct.getProductUnitAmount();
 		this.productAmount = orderProduct.getProductAmount();
 		this.paymentCycle = orderProduct.getPaymentCycle();

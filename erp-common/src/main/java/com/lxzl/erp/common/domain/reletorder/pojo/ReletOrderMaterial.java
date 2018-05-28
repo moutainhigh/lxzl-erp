@@ -46,7 +46,7 @@ public class ReletOrderMaterial extends BasePO {
 		this.materialCount = orderMaterial.getMaterialCount();
 		this.materialUnitAmount = orderMaterial.getMaterialUnitAmount();
 		this.materialAmount = orderMaterial.getMaterialAmount();
-//		this.materialSnapshot = orderMaterial.getMaterialSnapshot();
+		this.materialSnapshot = orderMaterial.getMaterialSnapshot();
 		this.paymentCycle = orderMaterial.getPaymentCycle();
 		this.payMode = orderMaterial.getPayMode();
 		this.isNewMaterial = orderMaterial.getIsNewMaterial();
