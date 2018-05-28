@@ -680,7 +680,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        orderItemParam1.setItemCount(3);
 //        orderItemParam1.setItemType(1);
         OrderItemParam orderItemParam2 = new OrderItemParam();
-        orderItemParam2.setItemId(2961);
+        orderItemParam2.setItemId(2971);
         orderItemParam2.setItemCount(2);
         orderItemParam2.setItemType(1);
 //        OrderItemParam orderItemParam3 = new OrderItemParam();
@@ -697,7 +697,7 @@ public class OrderTest extends ERPUnTransactionalTest {
 //        orderItemParamList.add(orderItemParam3);
 //        orderItemParamList.add(orderItemParam4);
         orderConfirmChangeParam.setOrderItemParamList(orderItemParamList);
-        orderConfirmChangeParam.setOrderNo("LXO-20180528-027-00150");
+        orderConfirmChangeParam.setOrderNo("LXO-20180528-027-00155");
         orderConfirmChangeParam.setChangeReasonType(1);
         orderConfirmChangeParam.setChangeReason("杀口接沙客sahksjdkaksjdakjshdkjas");
         Image image = new Image();
