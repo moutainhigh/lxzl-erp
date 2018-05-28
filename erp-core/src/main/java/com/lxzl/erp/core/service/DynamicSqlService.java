@@ -1,10 +1,9 @@
 package com.lxzl.erp.core.service;
 
-import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>Description: </p>
@@ -14,5 +13,5 @@ import java.util.Map;
  */
 public interface DynamicSqlService {
 
-    ServiceResult<String, Page<Map<String, Object>>> selectBySql(DynamicSql dynamicSql);
+    ServiceResult<String, List<List<Object>>> selectBySql(DynamicSql dynamicSql);
 }

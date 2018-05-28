@@ -939,6 +939,9 @@ public class ErrorCode {
     public static final String QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL = "J250000008";
     public static final String QUARTZ_EXPRESSION_NOT_NULL = "J250000009";
 
+    // 动态SQL查询
+    public static final String DYNAMIC_SQL_ERROR = "J260000001";
+
     static {
         MAP.put(SUCCESS, "成功");
         MAP.put(ID_NOT_NULL, "ID不能为空");
@@ -1862,6 +1865,8 @@ public class ErrorCode {
         MAP.put(QUARTZ_TRIGGER_GROUP_NOT_NULL, "定时任务的触发器组名称不能为空");
         MAP.put(QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL, "定时任务的CRON标识不能为空");
         MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
+
+        MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
     }
 
 
