@@ -8,6 +8,7 @@ import com.lxzl.erp.common.domain.k3.K3SendRecordParam;
 import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 
 import java.util.Map;
 
@@ -61,4 +62,10 @@ public interface K3Service {
      */
     ServiceResult<String, String> queryK3HistoricalRefundList(K3ReturnOrderQueryParam k3ReturnOrderQueryParam , StringBuffer info);
 
+    /**
+     * 推送确认收货的信息给K3
+     * @param orderConfirmChangeToK3Param
+     * @return
+     */
+    ServiceResult<String,String> confirmOrder(OrderConfirmChangeToK3Param orderConfirmChangeToK3Param);
 }
