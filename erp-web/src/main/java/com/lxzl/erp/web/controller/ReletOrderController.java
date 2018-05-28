@@ -54,9 +54,9 @@ public class ReletOrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryReletOrderDetailById", method = RequestMethod.POST)
-    public Result queryReletOrderDetailById(@RequestBody ReletOrderQueryParam param, BindingResult validResult){
-        ServiceResult<String, ReletOrder> serviceResult = reletOrderService.queryReletOrderDetailById(param.getReletOrderId());
+    @RequestMapping(value = "queryReletOrderByNo", method = RequestMethod.POST)
+    public Result queryReletOrderByNo(@RequestBody ReletOrderQueryParam param, BindingResult validResult){
+        ServiceResult<String, ReletOrder> serviceResult = reletOrderService.queryReletOrderByNo(param.getReletOrderNo());
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 

@@ -48,14 +48,14 @@ public interface ReletOrderService extends VerifyReceiver {
 
 
     /**
-     * 根据续租单id查询续租单详情
+     * 根据续租单编号查询续租单详情
      *
      * @author ZhaoZiXuan
      * @date 2018/4/27 16:47
-     * @param   reletOrderId 续租单id
+     * @param   reletOrderNo 续租单编号
      * @return   续租单详情
      */
-    ServiceResult<String, ReletOrder> queryReletOrderDetailById(Integer reletOrderId);
+    ServiceResult<String, ReletOrder> queryReletOrderByNo(String reletOrderNo);
 
 
     /**

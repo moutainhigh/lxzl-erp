@@ -36,14 +36,17 @@ import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialTypeMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductSkuMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
+import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
@@ -314,6 +317,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         } else {  //不需要审核时
             reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
+            Integer originOrderId = orderDO.getId();
             //同步续租单信息 到  续租订单中
             String syncReletOrderToOrderCode = syncReletOrderToOrder(reletOrderDO, orderDO);
             if (!ErrorCode.SUCCESS.equals(syncReletOrderToOrderCode)) {
@@ -334,6 +338,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             orderMapper.save(orderDO);
             orderService.saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
             orderService.saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+            //保存续租单地址信息（方便后期退货等）
+            saveReletOrderConsignInfo(orderDO.getId(),originOrderId, loginUser, currentTime);
 
             // 续租单生成结算单 ，关联订单Id
             ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(orderDO);
@@ -359,6 +365,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
 
+
+
     @Override
     public ServiceResult<String, Page<ReletOrder>> queryAllReletOrder(ReletOrderQueryParam reletOrderQueryParam) {
         ServiceResult<String, Page<ReletOrder>> result = new ServiceResult<>();
@@ -381,14 +389,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     @Override
-    public ServiceResult<String, ReletOrder> queryReletOrderDetailById(Integer reletOrderId) {
+    public ServiceResult<String, ReletOrder> queryReletOrderByNo(String reletOrderNo) {
         ServiceResult<String, ReletOrder> result = new ServiceResult<>();
 
-        if (null == reletOrderId) {
-            result.setErrorCode(ErrorCode.RELET_ORDER_QUERY_ID_NOT_NULL);
+        if (null == reletOrderNo) {
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
-        ReletOrderDO reletOrderDO = reletOrderMapper.findDetailByReletOrderId(reletOrderId);
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
         ReletOrder reletOrder = ConverterUtil.convert(reletOrderDO, ReletOrder.class);
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(reletOrder);
@@ -414,6 +422,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 if (orderDO == null){
                     return ErrorCode.ORDER_NOT_EXISTS;
                 }
+                Integer originOrderId = orderDO.getId();
                 //同步续租单信息 到  续租订单中
                 String syncReletOrderToOrderCode = syncReletOrderToOrder(reletOrderDO, orderDO);
                 if (!ErrorCode.SUCCESS.equals(syncReletOrderToOrderCode)) {
@@ -433,6 +442,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 orderMapper.save(orderDO);
                 orderService.saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
                 orderService.saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
+                //保存续租单地址信息（方便后期退货等）
+                saveReletOrderConsignInfo(orderDO.getId(),originOrderId, loginUser, currentTime);
 
                 // 续租单生成结算单 ，关联订单Id
                 ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(orderDO);
@@ -1018,6 +1029,28 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
     }
 
+    /**
+     * 保存续租订单的地址信息
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/5/28 10:34
+     * @param
+     * @return
+     */
+    private void saveReletOrderConsignInfo(Integer orderIdByRelet, Integer orderId, User loginUser, Date currentTime) {
+
+        OrderConsignInfoDO dbOrderConsignInfoDO = orderConsignInfoMapper.findByOrderId(orderId);
+        if (dbOrderConsignInfoDO != null){
+            dbOrderConsignInfoDO.setOrderId(orderIdByRelet);
+            dbOrderConsignInfoDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
+            dbOrderConsignInfoDO.setCreateUser(loginUser.getUserId().toString());
+            dbOrderConsignInfoDO.setUpdateUser(loginUser.getUserId().toString());
+            dbOrderConsignInfoDO.setCreateTime(currentTime);
+            dbOrderConsignInfoDO.setUpdateTime(currentTime);
+            orderConsignInfoMapper.save(dbOrderConsignInfoDO);
+        }
+
+    }
 
     private Date generateExpectReturnTime(ReletOrderDO reletOrderDO) {
         Date expectReturnTime = null;
@@ -1461,6 +1494,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private UserSupport userSupport;
+
+    @Autowired
+    private OrderConsignInfoMapper orderConsignInfoMapper;
 
     @Autowired
     private CustomerMapper customerMapper;
