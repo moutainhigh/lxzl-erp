@@ -1,4 +1,31 @@
-<div id="orderReceiptRecord" class="tab-pane tab-pane-order"></div>
+<div id="orderReceiptRecord" class="tab-pane tab-pane-order">
+    <div id="receiptRecordContent"></div>
+    
+    <script type="text/html" id="imgBoxTpl">
+        {{#img}}
+        <div class="row mn">
+            <p class="mn">交货单签收图</p>
+            <span class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{originalName}}" data-bound="" style="display: inline-block;">
+                <div class="panel p6 pbn">
+                    <div class="of-h">
+                        <img src="{{url}}" style="max-height: 170px;"  alt="{{des}}"/>
+                        <div class="row table-layout">
+                            <div class="col-xs-8 va-m pln">
+                                <h6>{{originalName}}</h6>
+                            </div>
+                            <div class="col-xs-4 text-right va-m prn">
+                                <span class="fa fa-eye-slash fs12 text-muted"></span>
+                                <span class="fa fa-circle fs10 text-info ml10"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </span>
+        </div>
+        {{/img}}
+    </script>
+    <div id="mix-container" class="grid pl20"></div>
+</div>
 <script type="text/html" id="receiptRecordTpl">
     {{#receipt}}
     {{#hasProductList}}
@@ -37,7 +64,7 @@
     {{/hasProductList}}
 
     {{#hasMaterialList}}
-    <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+    <table class="table admin-form theme-warning tc-checkbox-1 fs13 mb15" style="border-bottom: 1px solid #eeeeee;">
         <thead>
             <tr class="bg-light">
                 <th colspan="6" class="text-center">配件明细</th>
@@ -72,32 +99,34 @@
     {{/hasMaterialList}}
 
     {{#hasChangeReason}}
-    <div class="row mb10">
+    <div class="row mn mb15 pl20">
         <span>退货原因</span>:
         <span>{{changeReason}}</span>
     </div>
     {{/hasChangeReason}}
-    <div id="mix-container" class="grid">
-        {{#deliveryNoteCustomerSignImg}}
-        <span class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{des}}" data-bound="" style="display: inline-block;">
-            <div class="panel p6 pbn">
-                <div class="of-h">
-                    <img src="{{url}}" style="max-height: 170px;"  alt="{{des}}"/>
-                    <div class="row table-layout">
-                        <div class="col-xs-8 va-m pln">
-                            <h6>{{des}}</h6>
-                        </div>
-                        <div class="col-xs-4 text-right va-m prn">
-                            <span class="fa fa-eye-slash fs12 text-muted"></span>
-                            <span class="fa fa-circle fs10 text-info ml10"></span>
-                        </div>
-                    </div>
-                </div>
-    
-            </div>
-        </span>
-        {{/deliveryNoteCustomerSignImg}}
-    </div>
+
+
+##    <div id="mix-container" class="grid">
+##        {{#deliveryNoteCustomerSignImg}}
+##        <span class="mix label1 folder1 custom-img-link" href="{{imgDomain}}{{imgUrl}}" title="{{originalName}}" data-bound="" style="display: inline-block;">
+##            <div class="panel p6 pbn">
+##                <div class="of-h">
+##                    <img src="{{imgDomain}}{{imgUrl}}" style="max-height: 170px;"  alt="{{originalName}}"/>
+##                    <div class="row table-layout">
+##                        <div class="col-xs-8 va-m pln">
+##                            <h6>{{originalName}}</h6>
+##                        </div>
+##                        <div class="col-xs-4 text-right va-m prn">
+##                            <span class="fa fa-eye-slash fs12 text-muted"></span>
+##                            <span class="fa fa-circle fs10 text-info ml10"></span>
+##                        </div>
+##                    </div>
+##                </div>
+##
+##            </div>
+##        </span>
+##        {{/deliveryNoteCustomerSignImg}}
+##    </div>
     {{/receipt}}
     {{^receipt}}
     <div class="text-center row" style="height:42px; line-height:42px;">无客户签收记录</div>
