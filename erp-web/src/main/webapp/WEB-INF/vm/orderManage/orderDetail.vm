@@ -84,10 +84,13 @@
                                     <a href="#returnOrderList" data-toggle="tab">退货单</a>
                                 </li>
                                 <li>
-                                    <a href="#reletOrderList" data-toggle="tab" aria-expanded="true">续租单</a>
+                                    <a href="#reletOrderList" data-toggle="tab">续租单</a>
                                 </li>
                                 <li>
-                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                    <a href="#orderPrintList" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                </li>
+                                <li>
+                                    <a href="#orderReceiptRecord" data-toggle="tab">客户签收记录</a>
                                 </li>
                             </ul>
                         </div>
@@ -95,23 +98,26 @@
                     <div class="panel-body light pn">
                         <div class="tab-content pn br-n">
 
-                            <!-- 商品项 -->
+##                            <!-- 商品项 -->
                             #parse("component/order/orderProduct.vm")
 
-                            <!-- 配件项 -->
+##                            <!-- 配件项 -->
                             #parse("component/order/orderMaterial.vm")
 
-                            <!-- 结算单 -->
+##                            <!-- 结算单 -->
                             #parse("component/order/orderStatement.vm")
 
-                            <!-- 退货单 -->
+##                            <!-- 退货单 -->
                             #parse("component/order/returnOrder.vm")
 
-                            <!-- 续租单 -->
+##                            <!-- 续租单 -->
                             #parse("component/order/reletOrder.vm")
 
-                            <!-- 打印记录 -->
+##                            <!-- 打印记录 -->
                             #parse("component/order/orderPrintRecord.vm")
+
+##                            <!-- 打印记录 -->
+                            #parse("component/order/orderReceipt.vm")
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
