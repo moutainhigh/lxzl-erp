@@ -212,18 +212,8 @@
 			<if test="maps.reletOrderQueryParam.rentType != null">
 				and ero.rent_type = #{maps.reletOrderQueryParam.rentType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.reletOrderQueryParam.orderStatus != null">
-				and ero.relet_order_status = #{maps.reletOrderQueryParam.orderStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.reletOrderQueryParam.orderStatusList != null &amp;&amp; maps.reletOrderQueryParam.orderStatusList.size() > 0">
-				and ero.relet_order_status in
-				<foreach item="item" index="index" collection="maps.reletOrderQueryParam.orderStatusList"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
-			<if test="maps.reletOrderQueryParam.payStatus != null">
-				and ero.pay_status = #{maps.reletOrderQueryParam.payStatus, jdbcType=INTEGER}
+			<if test="maps.reletOrderQueryParam.reletOrderStatus != null">
+				and ero.relet_order_status = #{maps.reletOrderQueryParam.reletOrderStatus, jdbcType=INTEGER}
 			</if>
 			<if test="maps.reletOrderQueryParam.createStartTime != null">
 				<![CDATA[ AND ero.create_time >= #{maps.reletOrderQueryParam.createStartTime} ]]>
@@ -280,18 +270,8 @@
 			<if test="maps.reletOrderQueryParam.rentType != null">
 				and ero.rent_type = #{maps.reletOrderQueryParam.rentType, jdbcType=INTEGER}
 			</if>
-			<if test="maps.reletOrderQueryParam.orderStatus != null">
-				and ero.relet_order_status = #{maps.reletOrderQueryParam.orderStatus, jdbcType=INTEGER}
-			</if>
-			<if test="maps.reletOrderQueryParam.orderStatusList != null &amp;&amp; maps.reletOrderQueryParam.orderStatusList.size() > 0">
-				and ero.relet_order_status in
-				<foreach item="item" index="index" collection="maps.reletOrderQueryParam.orderStatusList"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
-			<if test="maps.reletOrderQueryParam.payStatus != null">
-				and ero.pay_status = #{maps.reletOrderQueryParam.payStatus, jdbcType=INTEGER}
+			<if test="maps.reletOrderQueryParam.reletOrderStatus != null">
+				and ero.relet_order_status = #{maps.reletOrderQueryParam.reletOrderStatus, jdbcType=INTEGER}
 			</if>
 			<if test="maps.reletOrderQueryParam.createStartTime != null">
 				<![CDATA[ AND ero.create_time >= #{maps.reletOrderQueryParam.createStartTime} ]]>
