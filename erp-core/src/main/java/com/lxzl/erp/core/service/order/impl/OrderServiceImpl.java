@@ -1698,7 +1698,7 @@ public class OrderServiceImpl implements OrderService {
 
         //查询是否有续租单且不能续租 信息
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
+        if (null != recentlyReletOrderInDB) {
             return false;
         }
 

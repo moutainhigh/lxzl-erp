@@ -102,7 +102,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //查询是否有续租单信息
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
+//        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
+        if (null != recentlyReletOrderInDB) {
             result.setErrorCode(ErrorCode.RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE);
             return result;
         }
