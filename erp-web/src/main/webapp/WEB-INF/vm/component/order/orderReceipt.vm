@@ -3,63 +3,101 @@
     {{#receipt}}
     {{#hasProductList}}
     <table class="table admin-form theme-warning tc-checkbox-1 fs13">
-    <thead>
-        <tr class="bg-light">
-            <th>商品名</th>
-            <th>金额类型</th>
-            <th>单价</th>
-            <th>商品数量</th>
-            <th>租赁类型</th>
-            <th>期数</th>
-            <th>结算单金额</th>
-            <th>其它费用</th>
-            <th>预计支付时间</th>
-            <th>已经支付金额</th>
-            <th>结算支付时间</th>
-            <th>逾期金额</th>
-            <th>退还租金押金</th>
-            <th>退还押金</th>
-            <th>状态</th>
-            <th class="text-right">结算时间</th>
+        <thead>
+            <tr class="bg-light">
+                <th colspan="6" class="text-center">商品明细</th>
+            </tr>
+            <tr class="bg-light">
+                <th>商品名称</th>
+                <th>商品参数</th>
+                <th class="text-center">单价</th>
+                <th class="text-center">商品数量</th>
+                <th class="text-center">收货数量</th>
+                <th>确认收货时间</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#orderProduct}}
+        {{#productList}}
+        <tr>
+            <td>
+                {{#isNewValueBadge}}{{isNewProduct}}{{/isNewValueBadge}}
+                {{productName}}
+            </td>
+            <td>{{propertiesToStr}}</td>
+            <td class="text-center">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+            <td class="text-center">{{stableProductCount}}</td>
+            <td class="text-center">{{productCount}}</td>
+            <td>{{#shortTime}}{{confirmDeliveryTime}}{{/shortTime}}</td>
         </tr>
-    </thead>
-    <tbody>
-    {{#productList}}
-    <tr>
-        <td>
-            <div class="mw200">
-                {{itemName}}
-            </div>
-        </td>
-        <td>{{statementDetailTypeValue}}</td>
-        <td>￥{{#price}}{{unitAmount}}{{/price}}</td>
-        <td>{{itemCount}}</td>
-        <td>{{itemRentTypeValue}}</td>
-        <td>{{statementDetailPhase}}</td>
-        <td>￥{{#price}}{{statementDetailAmount}}{{/price}}</td>
-        <td>￥{{#price}}{{statementDetailOtherAmount}}{{/price}}</td>
-        <td>{{#shortTime}}{{statementExpectPayTime}}{{/shortTime}}</td>
-        <td>￥{{#price}}{{statementDetailPaidAmount}}{{/price}}</td>
-        <td>{{#shortTime}}{{statementDetailPaidTime}}{{/shortTime}}</td>
-        <td>￥{{#price}}{{statementDetailOverdueAmount}}{{/price}}</td>
-        <td>
-            <p class="mn">￥{{#price}}{{statementDetailRentDepositReturnAmount}}{{/price}}</p>
-            <p class="mn mt5">{{#clockTime}}{{statementDetailRentDepositReturnTime}}{{/clockTime}}</p>
-        </td>
-        <td>
-            <p class="mn">￥{{#price}}{{statementDetailDepositReturnAmount}}{{/price}}</p>
-            <p class="mn mt5">{{#clockTime}}{{statementDetailDepositReturnTime}}{{/clockTime}}</p>
-        </td>
-        <td>{{statementDetailStatusValue}}</td>
-        <td>
-            <p class="mn">开始：{{#clockShorTime}}{{statementStartTime}}{{/clockShorTime}}</p>
-            <p class="mn mt5">结束：{{#clockShorTime}}{{statementEndTime}}{{/clockShorTime}}</p>
-        </td>
-    </tr>
-    {{/productList}}
-    </tbody>
+        {{/productList}}
+        {{/orderProduct}}
+        </tbody>
     </table>
     {{/hasProductList}}
+
+    {{#hasMaterialList}}
+    <table class="table admin-form theme-warning tc-checkbox-1 fs13">
+        <thead>
+            <tr class="bg-light">
+                <th colspan="6" class="text-center">配件明细</th>
+            </tr>
+            <tr class="bg-light">
+                <th>配件名称</th>
+                <th>类型</th>
+                <th class="text-center">单价</th>
+                <th class="text-center">配件数量</th>
+                <th class="text-center">收货数量</th>
+                <th>确认收货时间</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#orderMaterial}}
+        {{#materialList}}
+        <tr>
+            <td>
+                {{#isNewValueBadge}}{{isNewIntValue}}{{/isNewValueBadge}}
+                {{materialName}}
+            </td>
+            <td>{{materialTypeStr}}</td>
+            <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
+            <td class="text-center">{{stableMaterialCount}}</td>
+            <td class="text-center">{{materialCount}}</td>
+            <td>{{#shortTime}}{{confirmDeliveryTime}}{{/shortTime}}</td>
+        </tr>
+        {{/materialList}}
+        {{/orderMaterial}}
+        </tbody>
+    </table>
+    {{/hasMaterialList}}
+
+    {{#hasChangeReason}}
+    <div class="row mb10">
+        <span>退货原因</span>:
+        <span>{{changeReason}}</span>
+    </div>
+    {{/hasChangeReason}}
+    <div id="mix-container" class="grid">
+        {{#deliveryNoteCustomerSignImg}}
+        <span class="mix label1 folder1 custom-img-link" href="{{url}}" title="{{des}}" data-bound="" style="display: inline-block;">
+            <div class="panel p6 pbn">
+                <div class="of-h">
+                    <img src="{{url}}" style="max-height: 170px;"  alt="{{des}}"/>
+                    <div class="row table-layout">
+                        <div class="col-xs-8 va-m pln">
+                            <h6>{{des}}</h6>
+                        </div>
+                        <div class="col-xs-4 text-right va-m prn">
+                            <span class="fa fa-eye-slash fs12 text-muted"></span>
+                            <span class="fa fa-circle fs10 text-info ml10"></span>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </span>
+        {{/deliveryNoteCustomerSignImg}}
+    </div>
     {{/receipt}}
     {{^receipt}}
     <div class="text-center row" style="height:42px; line-height:42px;">无客户签收记录</div>
