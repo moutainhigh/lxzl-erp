@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
@@ -224,7 +225,6 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String,String> addReturnOrderToTimeAxis();
 
     ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo);
-
     /**
      * 确认收货时发生退货修改订单并推送K3保存更改记录
      * @Author : sunzhipeng
@@ -240,4 +240,8 @@ public interface OrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> supperUserChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam);
+
+
+    void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime);
+    void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime);
 }

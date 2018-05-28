@@ -36,7 +36,12 @@ public class RedisTest extends BaseUnTransactionalTest {
 
     @Test
     public void getUser() {
-        Map<Integer, User> userMap = redisManager.get(RedisKeyConstant.USER_KEY, Map.class);
+
+//        Map<Integer, User> userMap = redisManager.get(RedisKeyConstant.USER_KEY, Map.class);
+//        String strTest = redisManager.get("test");
+//        System.out.print(strTest);
+
+
     }
 
 
