@@ -267,6 +267,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             }
 
         }
+        Boolean flag = true;
         for (Integer orderId : set) {
 
             Integer totalRentingProductCount = orderProductMapper.findTotalRentingProductCountByOrderId(orderId);
@@ -277,6 +278,12 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             OrderDO orderDO = orderMapper.findById(orderId);
             if(orderDO == null){
                 continue;
+            }
+            //如果訂單有未支付的就將標記改成false
+            if (flag) {
+                if (!PayStatus.PAY_STATUS_PAID.equals(orderDO.getPayStatus())) {
+                    flag = false;
+                }
             }
             if (totalRentingProductCount==0 && totalRentingMaterialCount==0) {
                 //处理最后一件商品退还时间
@@ -312,17 +319,6 @@ public class K3CallbackServiceImpl implements K3CallbackService {
 //            return serviceResult;
 //        }
 
-        //如果退货单里的所有订单都是已经支付的就重新计算退货单的结算单，如果有一个订单是未支付的都不重算
-        Boolean flag = false;
-        for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO:k3ReturnOrderDetailDOList) {
-            OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-            if (orderDO.getPayStatus() == PayStatus.PAY_STATUS_PAID) {
-                flag = true;
-            } else {
-                flag = false;
-                break;
-            }
-        }
         // 生成退货单结算单
         if (flag) {
             statementService.createK3ReturnOrderStatement(k3ReturnOrderDO.getReturnOrderNo());
