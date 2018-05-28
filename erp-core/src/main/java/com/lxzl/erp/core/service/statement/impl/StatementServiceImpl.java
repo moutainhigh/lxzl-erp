@@ -73,6 +73,7 @@ import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrec
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.apache.ibatis.mapping.StatementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2905,6 +2906,7 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
             }
             if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
+                SqlLogInterceptor.setExecuteSql("skip print statementOrderDetailMapper.saveList  sql ......");
                 statementOrderDetailMapper.saveList(addStatementOrderDetailDOList);
             }
         }
