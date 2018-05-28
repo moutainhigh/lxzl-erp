@@ -11,6 +11,7 @@ import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.validGroup.AddGroup;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
@@ -264,6 +265,13 @@ public class K3Controller extends BaseController {
     public Result batchImportK3HistoricalRefundList(@RequestBody BatchImportK3HistoricalRefundListParam batchImportK3HistoricalRefundListParam) {
         return resultGenerator.generate( k3ReturnOrderService.batchImportK3HistoricalRefundList(batchImportK3HistoricalRefundListParam.getStartPage()));
     }
+
+    @RequestMapping(value = "confirmOrder", method = RequestMethod.POST)
+    public Result confirmOrder(@RequestBody OrderConfirmChangeToK3Param orderConfirmChangeToK3Param) {
+        ServiceResult<String, String> serviceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
+        return resultGenerator.generate(serviceResult);
+    }
+
     @Autowired
     private ResultGenerator resultGenerator;
 

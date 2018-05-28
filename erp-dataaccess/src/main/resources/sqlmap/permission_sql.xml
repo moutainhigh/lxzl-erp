@@ -73,6 +73,32 @@
 		</if>
 	</sql>
 
+
+	<sql id="relet_order_control">
+		<if test="maps.permissionParam!=null">
+			AND
+			<if test="maps.permissionParam.permissionUserIdList!= null" >
+				(ero.create_user in
+				<foreach item="item" index="index" collection="maps.permissionParam.permissionUserIdList" open="("
+						 separator="," close=")">
+					#{item}
+				</foreach>
+
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyId!= null" >
+				OR (
+				ero.order_sub_company_id = #{maps.permissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+			<if test="maps.permissionParam.permissionSubCompanyId!= null" >
+				OR (
+				ero.delivery_sub_company_id = #{maps.permissionParam.permissionSubCompanyId, jdbcType=INTEGER}
+				)
+			</if>
+			)
+		</if>
+	</sql>
+
 	<sql id="customer_control">
 		<if test="maps.permissionParam != null &amp;&amp; maps.permissionParam.permissionUserIdList != null">
 			AND

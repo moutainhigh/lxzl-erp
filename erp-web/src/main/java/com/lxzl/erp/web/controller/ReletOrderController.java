@@ -3,6 +3,8 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.reletorder.ReletOrderCommitParam;
+import com.lxzl.erp.common.domain.reletorder.ReletOrderCreateResult;
 import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.core.annotation.ControllerLog;
@@ -36,7 +38,13 @@ public class ReletOrderController extends BaseController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public Result create(@RequestBody Order order, BindingResult validResult) {
-        ServiceResult<String, Integer> serviceResult = reletOrderService.createReletOrder(order);
+        ServiceResult<String, ReletOrderCreateResult> serviceResult = reletOrderService.createReletOrder(order);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public Result update(@RequestBody ReletOrder reletOrder, BindingResult validResult) {
+        ServiceResult<String, ReletOrderCreateResult> serviceResult = reletOrderService.updateReletOrder(reletOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
@@ -46,9 +54,22 @@ public class ReletOrderController extends BaseController {
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 
-    @RequestMapping(value = "queryReletOrderDetailById", method = RequestMethod.POST)
-    public Result queryReletOrderDetailById(@RequestBody ReletOrderQueryParam param, BindingResult validResult){
-        ServiceResult<String, ReletOrder> serviceResult = reletOrderService.queryReletOrderDetailById(param.getReletOrderId());
+    @RequestMapping(value = "queryReletOrderByNo", method = RequestMethod.POST)
+    public Result queryReletOrderByNo(@RequestBody ReletOrderQueryParam param, BindingResult validResult){
+        ServiceResult<String, ReletOrder> serviceResult = reletOrderService.queryReletOrderByNo(param.getReletOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+
+    @RequestMapping(value = "commit", method = RequestMethod.POST)
+    public Result commit(@RequestBody ReletOrderCommitParam reletOrderCommitParam, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = reletOrderService.commitReletOrder(reletOrderCommitParam);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
+
+    @RequestMapping(value = "isNeedVerify", method = RequestMethod.POST)
+    public Result isNeedVerify(@RequestBody ReletOrder reletOrder, BindingResult validResult) {
+        ServiceResult<String, Boolean> serviceResult = reletOrderService.isNeedVerify(reletOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
