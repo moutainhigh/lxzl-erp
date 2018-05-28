@@ -8,18 +8,10 @@
                 <div class="row mb15">
                     <div class="form-group field">
                         <div class="col-md-6">
-                            <label class="col-md-4 control-label  text-right" style="line-height:39px;">租赁类型</label>
-                            <div class="col-md-8">
+                            <label class="col-md-3 control-label text-right" style="line-height:39px;">租赁时长</label>
+                            <div class="col-md-9">
                                 <div>
-                                    <select class="form-control bradius required" name="rentType" id="rentType"></select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="col-md-4 control-label text-right" style="line-height:39px;">租赁时长</label>
-                            <div class="col-md-8">
-                                <div>
-                                    <input id="rentTimeLength" name="rentTimeLength" class="form-control number checkInteger required bradius" type="text" placeholder="输入租赁时长" />
+                                    <input id="rentTimeLength" name="rentTimeLength" class="form-control number checkInteger required" type="text" placeholder="输入租赁时长" />
                                 </div>
                             </div>
                         </div>
@@ -48,17 +40,17 @@
                                             <tr class="bg-light">
                                                 <th>商品名称</th>
                                                 <th>商品参数（SKU）</th>
-                                                <th class="nowrap">商品数量</th>
+                                                <th class="nowrap text-center">商品数量</th>
                                                 <th class="nowrap">单价</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="orderItemRow" data-itemtype="1" data-id="{{orderProductId}}">
+                                            <tr class="productRow" data-amount="{{productUnitAmount}}" data-id="{{orderProductId}}">
                                                 <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
                                                 <td>{{propertiesToStr}}</td>
-                                                <td>{{productCount}}</td>
+                                                <td class="text-center">{{productCount}}</td>
                                                 <td>
                                                     <label class="field prepend-icon rentCountIpt mw200">
                                                         <input type="text" name="productUnitAmount" value="" class="productUnitAmount form-control gui-input pl10" placeholder="{{productUnitAmount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{productUnitAmount}}";};'/>
@@ -85,20 +77,20 @@
                                             <tr>
                                                 <th>配件名称</th>
                                                 <th>类型</th>
-                                                <th class="nowrap">配件数量</th>
+                                                <th class="text-center">配件数量</th>
                                                 <th class="rentalPriceTh nowrap"><span class="text">单价</span></th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {{#dataSource}}
                                             {{#listData}}
-                                            <tr class="orderItemRow" data-itemtype="2" data-id="{{orderMaterialId}}">
+                                            <tr class="materialRow" data-amount="{{materialUnitAmount}}" data-id="{{orderMaterialId}}">
                                                 <td>
                                                     {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
                                                     {{materialName}}
                                                 </td>
                                                 <td>{{materialTypeStr}}</td>
-                                                <td>{{materialCount}}</td>
+                                                <td class="text-center">{{materialCount}}</td>
                                                 <td>
                                                     <label class="field prepend-icon rentCountIpt mw200">
                                                         <input type="text" name="materialUnitAmount" value="" class="materialUnitAmount form-control gui-input pl10" placeholder="{{materialUnitAmount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{materialUnitAmount}}";};' />
