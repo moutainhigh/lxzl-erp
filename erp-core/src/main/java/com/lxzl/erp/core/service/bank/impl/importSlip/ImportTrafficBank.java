@@ -1,34 +1,25 @@
 package com.lxzl.erp.core.service.bank.impl.importSlip;
 
-import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.constant.BankSlipDetailStatus;
+import com.lxzl.erp.common.constant.CommonConstant;
+import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.LoanSignType;
 import com.lxzl.erp.common.domain.ServiceResult;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlip;
 import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.core.service.bank.impl.importSlip.support.BankSlipSupport;
 import com.lxzl.erp.core.service.order.impl.OrderServiceImpl;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
-import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
 import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
-import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,113 +32,6 @@ import java.util.List;
  */
 @Repository
 public class ImportTrafficBank {
-    /**
-     * 成都交通银行数据导入
-     *
-     * @param : bankSlip
-     * @param : inputStream
-     * @Author : XiaoLuYu
-     * @Date : Created in 2018/3/20 19:21
-     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.util.Map<java.lang.String,java.lang.String>>
-     */
-
-    public ServiceResult<String, BankSlipDO> saveTrafficBank(BankSlip bankSlip, InputStream inputStream) throws Exception {
-        ServiceResult<String, BankSlipDO> serviceResult = new ServiceResult<>();
-        BankSlipDO bankSlipDO = null;
-        String excelUrl = bankSlip.getExcelUrl();
-        try {
-            Workbook work = null;
-            String fileType = excelUrl.substring(excelUrl.lastIndexOf("."));
-            if (".xlsx".equals(fileType)) {
-                work = new XSSFWorkbook(inputStream);
-            } else if (".xls".equals(fileType)) {
-                work = new HSSFWorkbook(inputStream);
-            }
-
-            if (null == work) {
-                serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
-                return serviceResult;
-            }
-
-            Sheet sheet = null;
-            Row row = null;
-            Cell cell = null;
-            Date now = new Date();
-
-            //遍历Excel中所有的sheet
-            sheet = work.getSheetAt(0);
-            if (sheet == null) {
-                serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
-                return serviceResult;
-            }
-            //遍历当前sheet中的所有行
-
-            SubCompanyDO subCompanyDO = subCompanyMapper.findById(bankSlip.getSubCompanyId());
-
-            bankSlipDO = ConverterUtil.convert(bankSlip, BankSlipDO.class);
-
-            //todo 存储
-            ServiceResult<String, List<BankSlipDetailDO>> data = getTrafficBankData(sheet, row, cell, bankSlipDO, now);
-            if (!ErrorCode.SUCCESS.equals(data.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回
-                serviceResult.setErrorCode(data.getErrorCode());
-                return serviceResult;
-            }
-            List<BankSlipDetailDO> bankSlipDetailDOList = data.getResult();
-
-            //保存  银行对公流水表
-            bankSlipDO.setSubCompanyName(subCompanyDO.getSubCompanyName());
-
-            bankSlipDO.setSlipStatus(SlipStatus.INITIALIZE);
-            bankSlipDO.setDataStatus(CommonConstant.COMMON_CONSTANT_YES);
-            bankSlipDO.setClaimCount(CommonConstant.COMMON_ZERO);
-            bankSlipDO.setConfirmCount(CommonConstant.COMMON_ZERO);
-            bankSlipDO.setCreateTime(now);
-            bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());
-            bankSlipDO.setUpdateTime(now);
-            bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-
-            bankSlipDO = bankSlipSupport.formatBankSlipDetail(bankSlipDO, bankSlipDetailDOList);
-            if (bankSlipDO == null) {
-                serviceResult.setErrorCode(ErrorCode.IMPORT_BANK_SLIP_DETAILS_IS_EXIST);
-                return serviceResult;
-            }
-            bankSlipDetailDOList = bankSlipDO.getBankSlipDetailDOList();
-            //查看是否为空
-            if (CollectionUtil.isEmpty(bankSlipDetailDOList)) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                serviceResult.setErrorCode(ErrorCode.EXCEL_SHEET_IS_NULL);
-                return serviceResult;
-            }
-            //保存  银行对公流水明细表
-            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
-                bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());
-                bankSlipDetailDO.setIsLocalization(CommonConstant.COMMON_CONSTANT_NO);
-                bankSlipDetailDO.setSubCompanyId(bankSlipDO.getSubCompanyId());
-            }
-            bankSlipDetailMapper.saveBankSlipDetailDOList(bankSlipDetailDOList);
-            bankSlipDO.setBankSlipDetailDOList(bankSlipDetailDOList);
-        } catch (IOException e) {
-            logger.error("导入excel的IO流转换发生异常", e);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            serviceResult.setErrorCode(ErrorCode.INPUT_STREAM_READER_IS_FAIL);
-            return serviceResult;
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                logger.error("关闭excel的IO流转换发生异常", e);
-            }
-        }
-
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(bankSlipDO);
-        return serviceResult;
-
-    }
-
-
     //存中国银行数据
 
     public ServiceResult<String, List<BankSlipDetailDO>> getTrafficBankData(Sheet sheet, Row row, Cell cell, BankSlipDO bankSlipDO, Date now) throws Exception {
@@ -176,7 +60,7 @@ public class ImportTrafficBank {
             if (row == null) {
                 continue bbb;
             }
-            if ((row.getCell(0) == null ? "" : getValue(row.getCell(0))).contains("借方交易笔数:")) {
+            if ((row.getCell(0) == null ? "" : BankSlipSupport.getValue(row.getCell(0))).contains("借方交易笔数:")) {
                 break bbb;
             }
 
@@ -188,7 +72,7 @@ public class ImportTrafficBank {
                     if (cell == null) {
                         continue bbb;
                     }
-                    String value = getValue(cell);
+                    String value = BankSlipSupport.getValue(cell);
 
                     value = value == null ? "" : value;
                     value = value.trim();
@@ -207,7 +91,7 @@ public class ImportTrafficBank {
                             if (accountCell == null) {
                                 continue ccc;
                             }
-                            value = getValue(accountCell);
+                            value = BankSlipSupport.getValue(accountCell);
 
                             selectAccount = value;
                             continue ccc;
@@ -261,13 +145,13 @@ public class ImportTrafficBank {
                     bankSlipDetailDOListIsEmpty = false;
                     Cell payPostscriptCell = row.getCell(payPostscriptNo);
                     if (payPostscriptCell != null) {
-                        tradeMessage = (payPostscriptCell == null ? "" : getValue(payPostscriptCell).replaceAll("\\s+", ""));  //摘要
+                        tradeMessage = (payPostscriptCell == null ? "" : BankSlipSupport.getValue(payPostscriptCell).replaceAll("\\s+", ""));  //摘要
                     }
-                    payerName = (row.getCell(payerNameNo) == null ? "" : getValue(row.getCell(payerNameNo)).replaceAll("\\s+", "")); //对方户名
-                    tradeTime = (row.getCell(payTimeNo) == null ? "" : getValue(row.getCell(payTimeNo)).replaceAll("\\s+", "")); //交易时间
-                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", "")); //发生额
-                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", "")); //核心流水号
-                    otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : getValue(row.getCell(payAccountNo)).replaceAll("\\s+", "")); //付款人账号[ Debit Account No. ]
+                    payerName = (row.getCell(payerNameNo) == null ? "" : BankSlipSupport.getValue(row.getCell(payerNameNo)).replaceAll("\\s+", "")); //对方户名
+                    tradeTime = (row.getCell(payTimeNo) == null ? "" : BankSlipSupport.getValue(row.getCell(payTimeNo)).replaceAll("\\s+", "")); //交易时间
+                    tradeAmount = (row.getCell(payMoneyNo) == null ? "" : BankSlipSupport.getValue(row.getCell(payMoneyNo)).replaceAll("\\s+", "")); //发生额
+                    tradeSerialNo = (row.getCell(paySerialNumberNo) == null ? "" : BankSlipSupport.getValue(row.getCell(paySerialNumberNo)).replaceAll("\\s+", "")); //核心流水号
+                    otherSideAccountNo = (row.getCell(payAccountNo) == null ? "" : BankSlipSupport.getValue(row.getCell(payAccountNo)).replaceAll("\\s+", "")); //付款人账号[ Debit Account No. ]
 
                     bankSlipDetailDO = new BankSlipDetailDO();
                     try {
@@ -300,11 +184,11 @@ public class ImportTrafficBank {
                     bankSlipDetailDO.setTradeSerialNo(tradeSerialNo);
                     bankSlipDetailDO.setPayerName(payerName);
                     bankSlipDetailDO.setTradeMessage(tradeMessage);
-                    if ("贷".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))) {
+                    if ("贷".equals(BankSlipSupport.getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);
                         //进款比数
                         inCount = inCount + 1;
-                    } else if ("借".equals(getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))) {
+                    } else if ("借".equals(BankSlipSupport.getValue(row.getCell(borrowingMarksNo)).replaceAll("\\s+", ""))) {
                         bankSlipDetailDO.setLoanSign(LoanSignType.EXPENDITURE);
                     }
                     bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.UN_CLAIMED);
@@ -334,55 +218,10 @@ public class ImportTrafficBank {
         serviceResult.setResult(bankSlipDetailDOList);
         return serviceResult;
     }
-
-    //toString重写
-    private String getValue(Cell cell) {
-        if (cell == null) {
-
-        }
-        switch (cell.getCellType()) {
-            case 0:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                    return sdf.format(cell.getDateCellValue());
-                }
-                double value = cell.getNumericCellValue();
-                if (value > 1000000000) {
-                    DecimalFormat decimalFormat = new DecimalFormat("##0");//格式化设置
-                    return decimalFormat.format(value);
-                } else {
-                    return value + "";
-                }
-
-
-            case 1:
-                return cell.getRichStringCellValue().toString();
-            case 2:
-                return cell.getCellFormula();
-            case 3:
-                return "";
-            case 4:
-                return cell.getBooleanCellValue() ? "TRUE" : "FALSE";
-            case 5:
-                return ErrorEval.getText(cell.getErrorCellValue());
-            default:
-                return "Unknown Cell Type: " + cell.getCellType();
-        }
-    }
+    
 
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     private UserSupport userSupport;
-
-    @Autowired
-    private BankSlipDetailMapper bankSlipDetailMapper;
-
-    @Autowired
-    private SubCompanyMapper subCompanyMapper;
-
-    @Autowired
-    private BankSlipMapper bankSlipMapper;
-    @Autowired
-    private BankSlipSupport bankSlipSupport;
 }
