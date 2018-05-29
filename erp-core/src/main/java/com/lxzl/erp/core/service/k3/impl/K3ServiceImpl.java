@@ -790,14 +790,15 @@ public class K3ServiceImpl implements K3Service {
             }
         }catch (Exception e){
 //            e.printStackTrace();
-            dingDingSupport.dingDingSendMessage(getErrorMessage(response,orderConfirmChangeToK3Param.getOrderId()));
-            throw new BusinessException(e);
+            dingDingSupport.dingDingSendMessage(getErrorMessage(response,OrderDO.getOrderNo()));
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return serviceResult;
         }
     }
 
-    private String getErrorMessage(String response, Integer orderId) {
+    private String getErrorMessage(String response, String orderNo) {
         StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
-        sb.append("向K3推送【确认收货-").append(orderId).append("】数据失败：");
+        sb.append("向K3推送【确认收货-").append(orderNo).append("】数据失败：");
         sb.append(JSON.toJSONString(response));
         return sb.toString();
     }
