@@ -25,7 +25,7 @@ public class BankSlip extends BasePO {
 	private String subCompanyName;   //分公司名称
 	private Integer bankType;   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
 	@NotNull(message = ErrorCode.MONTH_IS_NOT_NULL,groups = {AddGroup.class})
-	private Date slipMonth;   //月份
+	private Date slipDay;   //导入日期
 	private String accountNo;   //查询账号
 	private Integer inCount;   //进款笔数
 	private Integer needClaimCount;   //需认领笔数
@@ -104,12 +104,12 @@ public class BankSlip extends BasePO {
 		this.bankType = bankType;
 	}
 
-	public Date getSlipMonth(){
-		return slipMonth;
+	public Date getSlipDay(){
+		return slipDay;
 	}
 
-	public void setSlipMonth(Date slipMonth){
-		this.slipMonth = slipMonth;
+	public void setSlipDay(Date slipDay){
+		this.slipDay = slipDay;
 	}
 
 	public String getAccountNo(){

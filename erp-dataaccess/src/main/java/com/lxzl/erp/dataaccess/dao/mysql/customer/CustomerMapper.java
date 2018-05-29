@@ -35,4 +35,6 @@ public interface CustomerMapper extends BaseMysqlDAO<CustomerDO> {
 
     void setIsRisk();
 
+	List<CustomerDO>  findCustomer();
+
 }

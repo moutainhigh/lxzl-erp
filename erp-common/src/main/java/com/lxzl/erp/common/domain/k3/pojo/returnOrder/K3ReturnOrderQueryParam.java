@@ -15,6 +15,15 @@ public class K3ReturnOrderQueryParam extends BasePageParam implements Serializab
     private Date returnStartTime;   //退货开始时间
     private Date returnEndTime;   //退货结束时间
     private Integer returnOrderStatus;   // 归还订单状态，0-待提交，4-审核中，16-已取消，20-已完成，24已驳回
+    private String orderNo;  //订单编号
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
     public Integer getReturnOrderStatus() {
         return returnOrderStatus;

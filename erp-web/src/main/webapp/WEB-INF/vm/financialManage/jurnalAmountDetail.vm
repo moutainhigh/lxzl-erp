@@ -70,60 +70,117 @@
                 </div>
 
                 <div class="panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <ul class="nav panel-tabs-border panel-tabs panel-tabs-left">
+                                <li class="active">
+                                    <a href="#jurnalDetail" data-toggle="tab">资金流水明细</a>
+                                </li>
+                                <li>
+                                    <a href="#operationRecord" id="operationLink" data-toggle="tab">操作记录</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="panel-body light pn">
-                        <div class="table-responsive">
-                            <script type="text/html" id="dataListTpl">
-                                <thead>
-                                <tr class="bg-light">
-                                    <th>资金流水明细ID</th>
-                                    <th>客户名称</th>
-                                    <th>客户编码</th>
-                                    <th>K3客户编码</th>
-                                    <th>对方账号</th>
-                                    <th>状态</th>
-                                    <th>认领流水号</th>
-                                    <th>认领金额</th>
-                                    <th>充值状态</th>
-                                    <th>备注</th>
-                                    <th>创建人</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {{#dataSource}}
-                                {{#listData}}
-                                <tr>
-                                    <td>{{bankSlipDetailId}}</td>
-                                    <td>{{customerName}}</td>
-                                    <td>{{customerNo}}</td>
-                                    <td>{{k3CustomerNo}}</td>
-                                    <td>{{otherSideAccountNo}}</td>
-                                    <td>{{dataStatusValue}}</td>
-                                    <td>{{claimSerialNo}}</td>
-                                    <td>￥{{#price}}{{claimAmount}}{{/price}}</td>
-                                    <td>{{rechargeStatusValue}}</td>
-                                    <td>{{remark}}</td>
-                                    <td>
-                                        <p class="mn">{{createUserRealName}}</p>
-                                        <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
-                                    </td>
-                                </tr>
-                                {{/listData}}
-                                {{^listData}}
-                                <tr>
-                                    <td valign="top" colspan="11" class="text-center">无资金流水明细数据</td>
-                                </tr>
-                                {{/listData}}
-                                {{/dataSource}}
-                                </tbody>
-                            </script>
-                            <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                        <div class="tab-content pn br-n">
+                            <div id="jurnalDetail" class="tab-pane active">
+                                <div class="table-responsive">
+                                    <script type="text/html" id="dataListTpl">
+                                        <thead>
+                                        <tr class="bg-light">
+                                            <th>资金流水明细ID</th>
+                                            <th>客户名称</th>
+                                            <th>客户编码</th>
+                                            <th>K3客户编码</th>
+                                            <th>对方账号</th>
+                                            <th>状态</th>
+                                            <th>认领流水号</th>
+                                            <th>认领金额</th>
+                                            <th>充值状态</th>
+                                            <th>备注</th>
+                                            <th>创建人</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#dataSource}}
+                                        {{#listData}}
+                                        <tr>
+                                            <td>{{bankSlipDetailId}}</td>
+                                            <td>{{customerName}}</td>
+                                            <td>{{customerNo}}</td>
+                                            <td>{{k3CustomerNo}}</td>
+                                            <td>{{otherSideAccountNo}}</td>
+                                            <td>{{dataStatusValue}}</td>
+                                            <td>{{claimSerialNo}}</td>
+                                            <td>￥{{#price}}{{claimAmount}}{{/price}}</td>
+                                            <td>{{rechargeStatusValue}}</td>
+                                            <td>{{remark}}</td>
+                                            <td>
+                                                <p class="mn">{{createUserRealName}}</p>
+                                                <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                            </td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{^listData}}
+                                        <tr>
+                                            <td valign="top" colspan="11" class="text-center">无资金流水明细数据</td>
+                                        </tr>
+                                        {{/listData}}
+                                        {{/dataSource}}
+                                        </tbody>
+                                    </script>
+                                    <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="dataListTable"></table>
+                                </div>
+                            </div>
+                            <div id="operationRecord" class="tab-pane">
+                                <div class="row" style="margin:0;">
+                                    <div class="table-responsive">
+                                        <script type="text/html" id="operationRecordTpl">
+                                            <thead>
+                                            <tr class="bg-light">
+                                                <th>资金流水明细ID</th>
+                                                <th>操作类型</th>
+                                                <th>操作内容</th>
+                                                <th>操作人</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#operationDataSource}}
+                                            {{#operationListData}}
+                                            <tr>
+                                                <td>{{bankSlipDetailId}}</td>
+                                                <td>{{operationTypeValue}}</td>
+                                                <td>{{operationContent}}</td>
+                                                <td>
+                                                    <p class="mn">{{createUserRealName}}</p>
+                                                    <p class="mn mt5">{{#clockTime}}{{createTime}}{{/clockTime}}</p>
+                                                </td>
+                                            </tr>
+                                            {{/operationListData}}
+                                            {{^operationListData}}
+                                            <tr>
+                                                <td valign="top" colspan="11" class="text-center">无操作记录</td>
+                                            </tr>
+                                            {{/operationListData}}
+                                            {{/operationDataSource}}
+                                            </tbody>
+                                        </script>
+                                        <table class="table admin-form theme-warning tc-checkbox-1 fs13" id="operationRecordTable"></table>
+                                    </div>
+                                </div>
+                                <div class="row br-t" style="margin:0;">
+                                    <div class="col-xs-12 col-md-12 text-right mt10 mb10">
+                                        #parse("component/pager.vm")
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
                         <button class="btn btn-default pull-right ml15 goBack">返回</button>
                     </div>
                 </div>
-
             </form>
         </section>
     </section>

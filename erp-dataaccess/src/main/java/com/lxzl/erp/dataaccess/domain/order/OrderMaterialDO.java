@@ -1,7 +1,8 @@
 package com.lxzl.erp.dataaccess.domain.order;
 
 import com.lxzl.se.dataaccess.mysql.domain.BaseDO;
-import java.util.Date;
+import org.springframework.data.annotation.Transient;
+
 import java.math.BigDecimal;
 
 public class OrderMaterialDO  extends BaseDO {
@@ -14,6 +15,7 @@ public class OrderMaterialDO  extends BaseDO {
 	private Integer materialId;
 	private String materialName;
 	private Integer materialCount;
+	private Integer stableMaterialCount;   //下单配件总数，该字段只在订单未提交时可变化
 	private BigDecimal materialUnitAmount;
 	private BigDecimal materialAmount;
 	private BigDecimal rentDepositAmount;
@@ -31,9 +33,38 @@ public class OrderMaterialDO  extends BaseDO {
 
 	private String serialNumber;        // 序号
 
+	private Integer orderJointProductId; // 订单组合商品id
+	private Integer jointMaterialId; // 关联的组合商品配件项id
+	@Transient
+	private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
+
+	public Integer getJointMaterialId() {
+		return jointMaterialId;
+	}
+
+	public void setJointMaterialId(Integer jointMaterialId) {
+		this.jointMaterialId = jointMaterialId;
+	}
+
+	public Integer getIdentityNo() {
+		return identityNo;
+	}
+
+	public void setIdentityNo(Integer identityNo) {
+		this.identityNo = identityNo;
+	}
+
+	public Integer getOrderJointProductId() {
+		return orderJointProductId;
+	}
+
+	public void setOrderJointProductId(Integer orderJointProductId) {
+		this.orderJointProductId = orderJointProductId;
+	}
 
 	public Integer getId(){
 		return id;
@@ -230,4 +261,12 @@ public class OrderMaterialDO  extends BaseDO {
 	public String getSerialNumber() { return serialNumber; }
 
 	public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+	public Integer getStableMaterialCount() {
+		return stableMaterialCount;
+	}
+
+	public void setStableMaterialCount(Integer stableMaterialCount) {
+		this.stableMaterialCount = stableMaterialCount;
+	}
 }

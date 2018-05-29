@@ -3,7 +3,6 @@ package com.lxzl.erp.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.ERPTransactionalTest;
-import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.ReturnOrChangeMode;
 import com.lxzl.erp.common.domain.Page;
@@ -16,11 +15,10 @@ import com.lxzl.erp.common.domain.k3.pojo.changeOrder.K3ChangeOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
+import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
+import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.order.pojo.Order;
-import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.ItemNumber;
 import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
-import com.lxzl.erp.core.service.product.ProductService;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingBrandMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCategoryMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
@@ -105,7 +103,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
         }
         k3ReturnOrderDetail1.setProductNo(number);
         k3ReturnOrderDetail1.setProductName(product.getProductName());
-        k3ReturnOrderDetail1.setProductCount(1);
+        k3ReturnOrderDetail1.setProductCount(0);
 
 //        K3ReturnOrderDetail k3ReturnOrderDetail2 = new K3ReturnOrderDetail();
 //        k3ReturnOrderDetail2.setOrderNo("LXO-20180315-020-01207");
@@ -278,7 +276,9 @@ public class K3ControllerTest extends ERPTransactionalTest {
     @Test
     public void queryReturnOrder() throws Exception {
         K3ReturnOrderQueryParam param = new K3ReturnOrderQueryParam();
-        param.setReturnOrderStatus(4);
+        param.setOrderNo("LXO-20180416-1000-00087");
+//        param.setReturnOrderStatus(16);
+        param.setK3CustomerNo("LXCC-027-20180416-00026");
         TestResult testResult = getJsonTestResult("/k3/queryReturnOrder", param);
     }
 
@@ -657,5 +657,22 @@ public class K3ControllerTest extends ERPTransactionalTest {
         k3ReturnOrder.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         TestResult testResult = getJsonTestResult("/k3/updateReturnOrderFromERP", k3ReturnOrder);
+    }
+
+    @Test
+    public void confirmOrder() throws Exception {
+        OrderConfirmChangeToK3Param orderConfirmChangeToK3Param = new OrderConfirmChangeToK3Param();
+        orderConfirmChangeToK3Param.setOrderNo("LXO-20180528-027-00150");
+
+        List<ChangeOrderItemParam> changeOrderItemParamList = new ArrayList<>();
+        ChangeOrderItemParam changeOrderItemParam1 = new ChangeOrderItemParam();
+        changeOrderItemParam1.setItemId(2961);
+        changeOrderItemParam1.setItemType(1);
+        changeOrderItemParam1.setReturnCount(1);
+
+        changeOrderItemParamList.add(changeOrderItemParam1);
+        orderConfirmChangeToK3Param.setChangeOrderItemParamList(changeOrderItemParamList);
+
+        TestResult testResult = getJsonTestResult("/k3/confirmOrder", orderConfirmChangeToK3Param);
     }
 }

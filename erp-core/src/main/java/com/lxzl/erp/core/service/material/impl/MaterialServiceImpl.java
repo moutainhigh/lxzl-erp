@@ -413,7 +413,9 @@ public class MaterialServiceImpl implements MaterialService {
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("materialQueryParam", materialQueryParam);
 
-        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())&&
+                !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())
+                ) {
             WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             maps.put("warehouseId", warehouseDO.getId());
         }
@@ -447,7 +449,8 @@ public class MaterialServiceImpl implements MaterialService {
         bulkMaterialQueryParam.setMaterialId(materialDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
 
-        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())&&
+                !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
             WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
         }
@@ -486,7 +489,8 @@ public class MaterialServiceImpl implements MaterialService {
         bulkMaterialQueryParam.setMaterialId(materialDO.getId());
         bulkMaterialQueryParam.setBulkMaterialStatus(BulkMaterialStatus.BULK_MATERIAL_STATUS_IDLE);
 
-        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())
+                &&!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
             WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             bulkMaterialQueryParam.setCurrentWarehouseId(warehouseDO.getId());
         }

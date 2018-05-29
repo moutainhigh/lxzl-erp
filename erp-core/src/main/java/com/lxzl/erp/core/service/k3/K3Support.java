@@ -35,6 +35,7 @@ public class K3Support {
         cityMap.put("028","07");
         cityMap.put("0592","08");
         cityMap.put("2000","10");
+        cityMap.put("2001","20");
     }
 
 

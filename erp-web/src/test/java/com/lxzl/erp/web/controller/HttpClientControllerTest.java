@@ -6,6 +6,7 @@ import com.lxzl.erp.TestResult;
 import com.lxzl.erp.common.constant.DeploymentType;
 import com.lxzl.erp.common.domain.ApplicationConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
+import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
 import com.lxzl.erp.common.domain.customer.pojo.Customer;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrder;
 import com.lxzl.erp.common.domain.deploymentOrder.pojo.DeploymentOrderProduct;
@@ -14,13 +15,22 @@ import com.lxzl.erp.core.service.exclt.ImplK3MappingCustomerService;
 import com.lxzl.erp.core.service.exclt.ImplK3MappingMaterialService;
 import com.lxzl.erp.core.service.exclt.ImportMaterialService;
 import com.lxzl.erp.core.service.exclt.ImportOrderDataService;
+import com.lxzl.erp.core.service.export.ExcelExportService;
+import com.lxzl.erp.core.service.export.impl.ExcelExportServiceImpl;
+import com.lxzl.erp.core.service.filterData.FilterDataService;
+import com.lxzl.erp.core.service.filterData.MatchModel;
 import com.lxzl.erp.core.service.getIpAndMac.impl.IpAndMacServiceImpl;
+import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
+import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.util.secret.MD5Util;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +41,7 @@ import static org.junit.Assert.*;
  * Date : Created in ${Date}
  * Time : Created in ${Time}
  */
-public class HttpClientControllerTest extends ERPUnTransactionalTest {
+public class HttpClientControllerTest extends ERPTransactionalTest {
     @Autowired
     CustomerService customerService;
 
@@ -46,6 +56,40 @@ public class HttpClientControllerTest extends ERPUnTransactionalTest {
 
     @Autowired
     ImportMaterialService importMaterialService;
+
+    @Autowired
+    ExcelExportServiceImpl excelExportServiceImpl;
+
+    @Autowired
+    FilterDataService filterDataService;
+
+    @Autowired
+    CustomerMapper customerMapper;
+
+    @Autowired
+    BankSlipDetailMapper bankSlipDetailMapper;
+
+    @Test
+    public void test2() throws Exception {
+
+        List<BankSlipDetailDO> list = new ArrayList<>();
+        BankSlipDetailDO bankSlipDetailDO = new BankSlipDetailDO();
+        bankSlipDetailDO.setId(1);
+        bankSlipDetailDO.setPayerName("上海司羽通信设备有限公司");
+        list.add(bankSlipDetailDO);
+        List<BankSlipDetailDO> lastBankSlipDetail = bankSlipDetailMapper.findLastBankSlipDetail(list);
+    }
+
+    @Test
+    public void test11111() throws Exception {
+        List<CustomerDO> byCustomerParam = customerMapper.findCustomer();
+        List<MatchModel> list = new ArrayList<>();
+        for (CustomerDO customerDO : byCustomerParam) {
+            list.add( new MatchModel(0.9,customerDO.getCustomerName()));
+        }
+        filterDataService.filterConformCustomer(list);
+//        TestResult testResult = getJsonTestResult("/exportExcel/exportStatisticsSalesmanDetail", null);
+    }
 
     @Test
     public void importMaterialService() throws Exception {

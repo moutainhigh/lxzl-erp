@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.erpInterface.order.InterfaceOrderQueryParam;
 import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.order.pojo.OrderProduct;
+import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.service.VerifyReceiver;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
@@ -25,12 +26,28 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String, String> createOrder(Order order);
 
     /**
+     * 创建订单（包括组合商品）使用新接口，避免影响
+     *
+     * @param order 订单信息
+     * @return 订单编号
+     */
+    ServiceResult<String, String> createOrderNew(Order order);
+
+    /**
      * 编辑订单接口
      *
      * @param order 订单信息
      * @return 订单编号
      */
     ServiceResult<String, String> updateOrder(Order order);
+
+    /**
+     * 编辑订单接口（包括组合商品）使用新接口，避免影响
+     *
+     * @param order 订单信息
+     * @return 订单编号
+     */
+    ServiceResult<String, String> updateOrderNew(Order order);
 
     /**
      * 提交订单
@@ -47,6 +64,14 @@ public interface OrderService extends VerifyReceiver {
      * @return 支付结果
      */
     ServiceResult<String, String> payOrder(String orderNo);
+
+    /**
+     * 根据订单编号查询单个订单（包含组合商品）
+     *
+     * @param orderNo 订单编号
+     * @return 订单信息
+     */
+    ServiceResult<String, Order> queryOrderByNoNew(String orderNo);
 
     /**
      * 根据订单编号查询单个订单
@@ -200,4 +225,23 @@ public interface OrderService extends VerifyReceiver {
     ServiceResult<String,String> addReturnOrderToTimeAxis();
 
     ServiceResult<String, Boolean> isNeedSecondVerify(String orderNo);
+    /**
+     * 确认收货时发生退货修改订单并推送K3保存更改记录
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @return
+     */
+    ServiceResult<String,String> confirmChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam);
+
+    /**
+     * 超级管理员修改订单
+     * @Author : sunzhipeng
+     * @param orderConfirmChangeParam
+     * @return
+     */
+    ServiceResult<String,String> supperUserChangeOrder(OrderConfirmChangeParam orderConfirmChangeParam);
+
+
+    void saveOrderProductInfo(List<OrderProductDO> orderProductDOList, Integer orderId, User loginUser, Date currentTime);
+    void saveOrderMaterialInfo(List<OrderMaterialDO> orderMaterialDOList, Integer orderId, User loginUser, Date currentTime);
 }

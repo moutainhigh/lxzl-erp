@@ -64,12 +64,18 @@ public class OrderDO extends BaseDO {
     private String orderMessage;                                //订单消息
     private Integer cancelOrderReasonType;                      //取消订单原因类型，1-下错单，2-变更数量，3-变更单价，4-变更配件，5-变更结算日，6-变更支付方式，7-变更时间/租期，8-变更型号/配置，9-变更收货人信息，10-同行调货选错，12-设备故障换货，13-客户名称错误，14-客户取消订单，15-缺货取消，16-实际出货与订单不符
 
+    private String reletOrderNo;                                //续租单编号
+    private String originOrderNo;                                //原订单编号
+
     private List<OrderProductDO> orderProductDOList;
     private List<OrderMaterialDO> orderMaterialDOList;
     private OrderConsignInfoDO orderConsignInfoDO;
     private List<OrderTimeAxisDO> orderTimeAxisDOList;
 
     private List<ReletOrderDO> reletOrderDOList;
+
+    private List<OrderJointProductDO> orderJointProductDOList;
+
 
     @Transient
     private String buyerCustomerName;
@@ -81,6 +87,14 @@ public class OrderDO extends BaseDO {
     private String orderSubCompanyName;
     @Transient
     private String deliverySubCompanyName;                         // 发货所属分公司名称
+
+    public List<OrderJointProductDO> getOrderJointProductDOList() {
+        return orderJointProductDOList;
+    }
+
+    public void setOrderJointProductDOList(List<OrderJointProductDO> orderJointProductDOList) {
+        this.orderJointProductDOList = orderJointProductDOList;
+    }
 
     public Integer getId() {
         return id;
@@ -561,5 +575,21 @@ public class OrderDO extends BaseDO {
 
     public void setCancelOrderReasonType(Integer cancelOrderReasonType) {
         this.cancelOrderReasonType = cancelOrderReasonType;
+    }
+
+    public String getReletOrderNo() {
+        return reletOrderNo;
+    }
+
+    public void setReletOrderNo(String reletOrderNo) {
+        this.reletOrderNo = reletOrderNo;
+    }
+
+    public String getOriginOrderNo() {
+        return originOrderNo;
+    }
+
+    public void setOriginOrderNo(String originOrderNo) {
+        this.originOrderNo = originOrderNo;
     }
 }

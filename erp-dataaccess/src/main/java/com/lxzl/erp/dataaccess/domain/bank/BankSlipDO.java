@@ -12,7 +12,7 @@ public class BankSlipDO  extends BaseDO {
 	private Integer subCompanyId;
 	private String subCompanyName;
 	private Integer bankType;
-	private Date slipMonth;
+	private Date slipDay;
 	private String accountNo;
 	private Integer inCount;
 	private Integer needClaimCount;
@@ -74,12 +74,12 @@ public class BankSlipDO  extends BaseDO {
 		this.bankType = bankType;
 	}
 
-	public Date getSlipMonth(){
-		return slipMonth;
+	public Date getSlipDay(){
+		return slipDay;
 	}
 
-	public void setSlipMonth(Date slipMonth){
-		this.slipMonth = slipMonth;
+	public void setSlipDay(Date slipDay){
+		this.slipDay = slipDay;
 	}
 
 	public String getAccountNo(){

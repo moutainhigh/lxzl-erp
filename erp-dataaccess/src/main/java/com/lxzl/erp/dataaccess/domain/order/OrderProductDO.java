@@ -5,7 +5,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderProductDO extends BaseDO {
@@ -19,6 +18,7 @@ public class OrderProductDO extends BaseDO {
     private Integer productSkuId;
     private String productSkuName;
     private Integer productCount;
+    private Integer stableProductCount;               // 下单商品总数，该字段只在订单未提交时可变化
     private BigDecimal productUnitAmount;
     private BigDecimal productAmount;
     private BigDecimal rentDepositAmount;
@@ -36,9 +36,38 @@ public class OrderProductDO extends BaseDO {
 
     private String serialNumber;        // 序号
 
+    private Integer orderJointProductId; // 订单组合商品id
+    private Integer jointProductProductId; // 关联的组合商品商品项id
+    @Transient
+    private Integer identityNo; // 标识号，只在业务逻辑处理时使用
+
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
+
+    public Integer getJointProductProductId() {
+        return jointProductProductId;
+    }
+
+    public void setJointProductProductId(Integer jointProductProductId) {
+        this.jointProductProductId = jointProductProductId;
+    }
+
+    public Integer getIdentityNo() {
+        return identityNo;
+    }
+
+    public void setIdentityNo(Integer identityNo) {
+        this.identityNo = identityNo;
+    }
+
+    public Integer getOrderJointProductId() {
+        return orderJointProductId;
+    }
+
+    public void setOrderJointProductId(Integer orderJointProductId) {
+        this.orderJointProductId = orderJointProductId;
+    }
 
     public Integer getId() {
         return id;
@@ -251,4 +280,12 @@ public class OrderProductDO extends BaseDO {
     public String getSerialNumber() { return serialNumber; }
 
     public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public Integer getStableProductCount() {
+        return stableProductCount;
+    }
+
+    public void setStableProductCount(Integer stableProductCount) {
+        this.stableProductCount = stableProductCount;
+    }
 }

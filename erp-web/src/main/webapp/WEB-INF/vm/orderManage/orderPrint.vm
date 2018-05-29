@@ -340,7 +340,7 @@
                 </div>
                 <div class="print-col text-right">
 ##                    <img src="" class="img-responsive pull-right" id="barcode" alt="凌雄租赁" />
-                    <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
+##                    <div class="qrcodeCanvas" id="qrcodeCanvas{{pagerIndex}}"></div>
                     <p class="orderNo" id="orderNo{{pagerIndex}}"></p>
                 </div>
             </div>

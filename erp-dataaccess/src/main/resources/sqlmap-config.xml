@@ -98,7 +98,7 @@
         <mapper resource="sqlmap/erp_repair_order_equipment.xml" />
         <mapper resource="sqlmap/erp_joint_product.xml" />
         <mapper resource="sqlmap/erp_joint_material.xml" />
-        <mapper resource="sqlmap/erp_joint_product_sku.xml" />
+        <mapper resource="sqlmap/erp_joint_product_product.xml" />
         <mapper resource="sqlmap/erp_order_time_axis.xml" />
         <mapper resource="sqlmap/erp_assemble_order.xml" />
         <mapper resource="sqlmap/erp_assemble_order_material.xml" />
@@ -149,6 +149,7 @@
         <mapper resource="sqlmap/erp_delivery_order_material.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_user.xml" />
         <mapper resource="sqlmap/erp_k3_mapping_industry.xml" />
+        <mapper resource="sqlmap/erp_k3_order_statement_config.xml" />
         <mapper resource="sqlmap/erp_bank_slip.xml" />
         <mapper resource="sqlmap/erp_bank_slip_detail.xml" />
         <mapper resource="sqlmap/erp_customer_risk_management_history.xml" />
@@ -171,7 +172,15 @@
         <mapper resource="sqlmap/erp_print_log.xml" />
 
         <mapper resource="sqlmap/erp_order_split_detail.xml" />
+        <mapper resource="sqlmap/erp_order_joint_product.xml" />
 
-    </mappers>
+        <mapper resource="sqlmap/erp_bank_slip_detail_operation_log.xml" />
+        <mapper resource="sqlmap/erp_statistics_salesman_month.xml" />
+        <mapper resource="sqlmap/erp_message_third_channel.xml" />
+        <mapper resource="sqlmap/erp_order_confirm_change_log.xml" />
+        <mapper resource="sqlmap/erp_order_confirm_change_log_detail.xml" />
+
+        <mapper resource="sqlmap/dynamic_sql.xml" />
+</mappers>
 
 </configuration>

@@ -1231,6 +1231,8 @@ CREATE TABLE `erp_order` (
   `product_summary` varchar(500)  CHARACTER SET utf8 DEFAULT NULL COMMENT '商品摘要',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]',
+  `relet_order_no`  varchar(100)  DEFAULT NULL COMMENT '续租单编号',
+  `origin_order_no`  varchar(100)  DEFAULT NULL COMMENT '原订单编号',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -1266,6 +1268,7 @@ CREATE TABLE `erp_order_product` (
   `product_sku_id` int(20) COMMENT '商品SKU ID',
   `product_sku_name` varchar(100) COLLATE utf8_bin COMMENT '商品SKU名称',
   `product_count` int(11) NOT NULL DEFAULT '0' COMMENT '商品总数',
+  `stable_product_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单商品总数，该字段只在订单未提交时可变化',
   `product_unit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '商品单价',
   `product_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '商品价格',
   `rent_deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '租赁押金金额',
@@ -1321,6 +1324,7 @@ CREATE TABLE `erp_order_material` (
   `material_count` int(11) NOT NULL DEFAULT '0' COMMENT '配件总数',
   `material_unit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '配件单价',
   `material_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '配件价格',
+  `stable_material_count` int(11) NOT NULL DEFAULT 0 COMMENT '下单配件总数，该字段只在订单未提交时可变化',
   `rent_deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '租赁押金金额',
   `deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '押金金额',
   `credit_deposit_amount` decimal(15,5) NOT NULL DEFAULT 0 COMMENT '授信押金金额',
@@ -2699,6 +2703,38 @@ CREATE TABLE `erp_joint_product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='组合商品表';
 
+DROP TABLE if exists `erp_joint_product_product`;
+CREATE TABLE `erp_joint_product_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `joint_product_id` int(20) NOT NULL COMMENT '组合商品ID',
+  `product_id` int(20) NOT NULL COMMENT '商品ID',
+  `product_count` int(11) NOT NULL COMMENT '商品数量',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='组合商品商品项表';
+
+DROP TABLE if exists `erp_order_joint_product`;
+CREATE TABLE `erp_order_joint_product` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `joint_product_id` int(20) NOT NULL COMMENT '组合商品id',
+  `joint_product_count` int(11) NOT NULL COMMENT '组合商品数量',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_user` varchar(20) NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单组合商品项表';
+
+
+
 DROP TABLE if exists `erp_joint_product_sku`;
 CREATE TABLE `erp_joint_product_sku` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
@@ -3081,7 +3117,7 @@ CREATE TABLE `erp_bank_slip` (
   `sub_company_id` int(20) NOT NULL COMMENT '分公司ID',
   `sub_company_name` varchar(20) NOT NULL DEFAULT '' COMMENT '分公司名称',
   `bank_type` int(11) NOT NULL COMMENT '银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行',
-  `slip_month` datetime NOT NULL COMMENT '月份',
+  `slip_day` datetime NOT NULL COMMENT '导入日期',
   `account_no` varchar(50) COMMENT '查询账号',
   `in_count` int(11) NOT NULL COMMENT '进款笔数',
   `need_claim_count` int(1) NOT NULL COMMENT '需认领笔数',
@@ -3144,6 +3180,18 @@ CREATE TABLE `erp_bank_slip_claim` (
   INDEX index_erp_bank_slip_detail_id ( `bank_slip_detail_id` ) ,
   INDEX index_other_side_account_no ( `other_side_account_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
+
+CREATE table `erp_bank_slip_detail_operation_log`(
+		`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+		`bank_slip_detail_id` INT(20) NOT NULL COMMENT '银行对公流水明细ID',
+		`operation_type` INT(11) NOT NULL COMMENT '1-下推，2-属地化，3-自动属地化，4-属地化，5-取消属地化，6-隐藏,7-取消隐藏，8-自动认领，9-认领，10-确认',
+		`operation_content` TEXT  COMMENT '操作内容',
+		`data_status` INT(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+		`create_time` DATETIME DEFAULT NULL COMMENT '添加时间',
+		`create_user` varchar(20) COLLATE utf8_bin DEFAULT '' COMMENT '添加人',
+		 PRIMARY KEY(`id`),
+		 INDEX index_bank_slip_detail_id ( `bank_slip_detail_id` )
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行流水明细操作记录表'
 
 
 DROP TABLE if exists `erp_return_visit`;
@@ -3515,6 +3563,76 @@ CREATE TABLE `erp_order_split_detail` (
 	PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单拆单明细表';
 
+
+DROP TABLE if exists `erp_order_confirm_change_log`;
+CREATE TABLE `erp_order_confirm_change_log` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+	`change_reason_type` INT(11) COMMENT '变更原因类型',
+	`change_reason` varchar(500) COMMENT '变更原因',
+	`is_restatement_success` INT(11) NOT NULL DEFAULT '0' COMMENT '是否重算成功：0-否，1-是',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=3000001 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录表';
+
+
+DROP TABLE if exists `erp_order_confirm_change_log_detail`;
+CREATE TABLE `erp_order_confirm_change_log_detail` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+  `item_type` int(11) NOT NULL COMMENT '类型：1-商品项，2-配件项',
+  `item_id` int(11) NOT NULL COMMENT '商品项/配件项ID',
+  `order_item_count` int(11) NOT NULL COMMENT '订单初始商品/配件数',
+  `old_item_count` int(11) NOT NULL COMMENT '原商品/配件数',
+  `new_item_count` int(11) NOT NULL COMMENT '新商品/配件数',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '添加时间',
+  `create_user` varchar(20) NOT NULL DEFAULT '' COMMENT '添加人',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` ),
+  INDEX index_item_id ( `item_id` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='订单确认收货变更记录详情表';
+
+DROP TABLE if exists `erp_k3_order_statement_config`;
+CREATE TABLE `erp_k3_order_statement_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(100) NOT NULL COMMENT '订单编号',
+  `rent_start_time` datetime NOT NULL COMMENT '起租时间',
+  PRIMARY KEY (`id`),
+  INDEX index_order_id ( `order_id` ),
+  INDEX index_order_no ( `order_no` )
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='k3订单结算配置表';
+
+CREATE TABLE `erp_message_third_channel` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`message_title` varchar(63) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '发送的信息主题',
+  `message_content` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '发送的信息内容',
+	`message_type` int(11) NOT NULL DEFAULT 1 COMMENT '消息类型，1:系统通知 其他待拓展',
+	`message_channel` int(11) NOT NULL DEFAULT 1 COMMENT '消息渠道 1:钉钉消息 其他待拓展',
+  `receiver_user_id` int(11) NOT NULL COMMENT '接受者用户id',
+	`sender_user_id` int(11) NOT NULL DEFAULT '-1' COMMENT '发送者用户id[默认-1 代表系统用户]',
+	`sender_remark` varchar(31) COLLATE utf8_bin NOT NULL DEFAULT 'System' COMMENT '发送者备注[默认系统用户]',
+
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+	KEY `index_receiver_user_id` (`receiver_user_id`),
+	KEY `index_sender_user_id` (`sender_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方渠道消息表';
 
 
 

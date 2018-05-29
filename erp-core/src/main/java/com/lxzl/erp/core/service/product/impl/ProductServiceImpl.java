@@ -352,7 +352,8 @@ public class ProductServiceImpl implements ProductService {
             productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
 
-            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())&&
+                    !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
                 WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
                 productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
             }
@@ -410,7 +411,8 @@ public class ProductServiceImpl implements ProductService {
             productEquipmentQueryParam.setSkuId(productSku.getSkuId());
             productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
-            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())&&
+                    !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
                 WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
                 productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
             }
@@ -467,7 +469,8 @@ public class ProductServiceImpl implements ProductService {
             productEquipmentQueryParam.setSkuId(productSku.getSkuId());
             productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
             productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
-            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())&&
+                    !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId()) ) {
                 WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
                 productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
             }
@@ -493,7 +496,8 @@ public class ProductServiceImpl implements ProductService {
         productEquipmentQueryParam.setProductId(productSkuDO.getProductId());
         productEquipmentQueryParam.setEquipmentStatus(ProductEquipmentStatus.PRODUCT_EQUIPMENT_STATUS_IDLE);
         productEquipmentQueryParam.setIsNew(CommonConstant.COMMON_CONSTANT_YES);
-        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
+        if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())&&
+                !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(userSupport.getCurrentUserCompanyId())) {
             WarehouseDO warehouseDO = warehouseSupport.getUserWarehouse(userSupport.getCurrentUserId());
             productEquipmentQueryParam.setCurrentWarehouseId(warehouseDO.getId());
         }

@@ -2,22 +2,32 @@ package com.lxzl.erp.core.service.payment.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.lxzl.erp.common.constant.CommonConstant;
-import com.lxzl.erp.common.constant.ErrorCode;
+import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.PaymentSystemConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.base.PaymentResult;
 import com.lxzl.erp.common.domain.erpInterface.customer.InterfaceCustomerAccountLogParam;
 import com.lxzl.erp.common.domain.payment.*;
-import com.lxzl.erp.common.domain.payment.account.pojo.*;
+import com.lxzl.erp.common.domain.payment.account.pojo.ChargeRecord;
+import com.lxzl.erp.common.domain.payment.account.pojo.CustomerAccount;
+import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.core.service.bank.impl.importSlip.support.BankSlipSupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
+import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipClaimMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipDetailOperationLogMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.bank.BankSlipMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipClaimDO;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDO;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailDO;
+import com.lxzl.erp.dataaccess.domain.bank.BankSlipDetailOperationLogDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -25,8 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -45,6 +60,16 @@ public class PaymentServiceImpl implements PaymentService {
     private UserSupport userSupport;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private BankSlipMapper bankSlipMapper;
+    @Autowired
+    private BankSlipDetailMapper bankSlipDetailMapper;
+    @Autowired
+    private BankSlipClaimMapper bankSlipClaimMapper;
+    @Autowired
+    private BankSlipDetailOperationLogMapper bankSlipDetailOperationLogMapper;
+    @Autowired
+    private BankSlipSupport bankSlipSupport;
 
     @Override
     public CustomerAccount queryCustomerAccountNoLogin(String customerNo) {
@@ -93,8 +118,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String returnDepositExpand(String customerNo,BigDecimal businessReturnRentAmount,BigDecimal businessReturnOtherAmount,BigDecimal businessReturnRentDepositAmount,
-                                      BigDecimal businessReturnDepositAmount,String remark) {
+    public String returnDepositExpand(String customerNo, BigDecimal businessReturnRentAmount, BigDecimal businessReturnOtherAmount, BigDecimal businessReturnRentDepositAmount,
+                                      BigDecimal businessReturnDepositAmount, String remark) {
         ReturnDepositExpandParam param = new ReturnDepositExpandParam();
         param.setBusinessCustomerNo(customerNo);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
@@ -113,10 +138,10 @@ public class PaymentServiceImpl implements PaymentService {
             String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemReturnDepositExpandURL, requestJson, headerBuilder, "UTF-8");
             logger.info("returnDepositExpand response:", response);
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
-            if(paymentResult==null){
+            if (paymentResult == null) {
                 throw new BusinessException("支付网关没有响应，强制取消已支付订单失败");
             }
-            if(!ErrorCode.SUCCESS.equals(paymentResult.getCode())){
+            if (!ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 throw new BusinessException(paymentResult.getDescription());
             }
             return ErrorCode.SUCCESS;
@@ -125,6 +150,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
     }
+
 
     @Override
     public ServiceResult<String, Boolean> manualCharge(ManualChargeParam param) {
@@ -316,9 +342,9 @@ public class PaymentServiceImpl implements PaymentService {
             jsonObject.remove("count");
             jsonObject.remove("subCompanyId");
             jsonObject.remove("count");
-            if(jsonObject.containsKey("customerName") && StringUtil.isNotEmpty(jsonObject.get("customerName").toString())){
-                jsonObject.put("businessCustomerName",jsonObject.get("customerName"));
-            }else{
+            if (jsonObject.containsKey("customerName") && StringUtil.isNotEmpty(jsonObject.get("customerName").toString())) {
+                jsonObject.put("businessCustomerName", jsonObject.get("customerName"));
+            } else {
                 jsonObject.remove("customerName");
             }
             requestJson = jsonObject.toJSONString();
@@ -362,16 +388,16 @@ public class PaymentServiceImpl implements PaymentService {
             headerBuilder.contentType("application/json");
             String requestJson = null;
 
-            PaymentChargeRecordPageParam paymentChargeRecordPageParam = ConverterUtil.convert(chargeRecordPageParam ,PaymentChargeRecordPageParam.class);
-            if (StringUtil.isEmpty(chargeRecordPageParam.getCustomerName())){
+            PaymentChargeRecordPageParam paymentChargeRecordPageParam = ConverterUtil.convert(chargeRecordPageParam, PaymentChargeRecordPageParam.class);
+            if (StringUtil.isEmpty(chargeRecordPageParam.getCustomerName())) {
                 paymentChargeRecordPageParam.setBusinessCustomerName(null);
-            }else{
+            } else {
                 paymentChargeRecordPageParam.setBusinessCustomerName(chargeRecordPageParam.getCustomerName());
             }
-            if (chargeRecordPageParam.getSubCompanyId() != null){
+            if (chargeRecordPageParam.getSubCompanyId() != null) {
                 paymentChargeRecordPageParam.setChargeBodyId(chargeRecordPageParam.getSubCompanyId().toString());
             }
-            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())){
+            if (StringUtil.isEmpty(chargeRecordPageParam.getBusinessCustomerNo())) {
                 paymentChargeRecordPageParam.setBusinessCustomerNo(null);
             }
             requestJson = JSON.toJSONString(paymentChargeRecordPageParam);
@@ -450,8 +476,8 @@ public class PaymentServiceImpl implements PaymentService {
 //                    }
 //                }
 //            }
-
-            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post("http://testpayment.52rental.com/payment-system/charge/queryChargeRecordPage", requestJson, headerBuilder, "UTF-8");
+//            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 Page<JSONObject> paymentChargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);
@@ -459,15 +485,15 @@ public class PaymentServiceImpl implements PaymentService {
 
                 Page<ChargeRecord> chargeRecordPage = new Page<>();
                 List<ChargeRecord> chargeRecordList = new ArrayList<>();
-                for(JSONObject jsonObject : paymentChargeRecordPageList){
+                for (JSONObject jsonObject : paymentChargeRecordPageList) {
                     ChargeRecord chargeRecord = JSON.parseObject(jsonObject.toJSONString(), ChargeRecord.class);
-                    if (jsonObject.get("chargeBodyId") != null){
+                    if (jsonObject.get("chargeBodyId") != null) {
                         chargeRecord.setSubCompanyId(Integer.parseInt(jsonObject.get("chargeBodyId").toString()));
                     }
-                    if (jsonObject.get("chargeBodyName") != null){
+                    if (jsonObject.get("chargeBodyName") != null) {
                         chargeRecord.setSubCompanyName(jsonObject.get("chargeBodyName").toString());
                     }
-                    if (jsonObject.get("businessCustomerName") != null){
+                    if (jsonObject.get("businessCustomerName") != null) {
                         chargeRecord.setCustomerName(jsonObject.get("businessCustomerName").toString());
                     }
 //                    ChargeRecord chargeRecord = JSON.parseObject(JSON.toJSONString(paymentChargeRecord),ChargeRecord.class);
@@ -670,6 +696,182 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    @Override
+    public ServiceResult<String, String> exportHistoryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException {
+        //传入查询参数
+        ChargeRecordPageParam param = new ChargeRecordPageParam();
+        param.setChannelNo(exportChargeRecordPageParam.getChannelNo());
+        param.setPageNo(CommonConstant.COMMON_ONE);
+        param.setPageSize(Integer.MAX_VALUE);
+        param.setChargeStatus(ChargeStatus.PAY_SUCCESS);
+        param.setQueryStartTime(exportChargeRecordPageParam.getStartTime());
+        param.setQueryEndTime(exportChargeRecordPageParam.getEndTime());
+        param.setSubCompanyId(exportChargeRecordPageParam.getSubCompanyId());
+        param.setBusinessCustomerNo(exportChargeRecordPageParam.getCustomerNo());
+        //调接口查询结果
+        ServiceResult<String, Page<ChargeRecord>> result = queryChargeRecordParamPage(param);
+        List<ChargeRecord> itemList = result.getResult().getItemList();
+
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        if (CollectionUtil.isEmpty(itemList)) {
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
+            return serviceResult;
+        }
+        //过滤已有的数据
+        Map<String, ChargeRecord> chargeRecordMap = ListUtil.listToMap(itemList, "thirdPartyPayOrderId");
+        List<String> chargeRecordList = new ArrayList<>(chargeRecordMap.keySet());
+        List<BankSlipDetailDO> bankSlipDetailDOList = bankSlipDetailMapper.findBankSlipDetailByTradeSerialNoList(chargeRecordList);
+        if(CollectionUtil.isNotEmpty(bankSlipDetailDOList)){
+            for (BankSlipDetailDO bankSlipDetailDO : bankSlipDetailDOList) {
+                chargeRecordMap.remove(bankSlipDetailDO.getTradeSerialNo());
+            }
+            itemList = ListUtil.mapToList(chargeRecordMap);
+        }
+        //保存过滤完成的数据
+        if(CollectionUtil.isNotEmpty(itemList)){
+            for (ChargeRecord chargeRecord : itemList) {
+                saveConstantlyExportQueryChargeRecordToBankSlip(chargeRecord);
+            }
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> constantlyExportQueryChargeRecord(ExportChargeRecordPageParam exportChargeRecordPageParam) throws ParseException {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        ChargeRecordPageParam param = new ChargeRecordPageParam();
+        param.setPageNo(CommonConstant.COMMON_ONE);
+        param.setPageSize(Integer.MAX_VALUE);
+        param.setChargeStatus(ChargeStatus.PAY_SUCCESS);
+        param.setChargeOrderNo(exportChargeRecordPageParam.getChargeOrderNo());
+
+        ServiceResult<String, Page<ChargeRecord>> result = queryChargeRecordParamPage(param);
+        if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+            serviceResult.setErrorCode(result.getErrorCode());
+            return serviceResult;
+        }
+
+        if(CollectionUtil.isEmpty(result.getResult().getItemList())){
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
+            return  serviceResult;
+        }
+        return saveConstantlyExportQueryChargeRecordToBankSlip(result.getResult().getItemList().get(0));
+    }
+
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    ServiceResult<String, String> saveConstantlyExportQueryChargeRecordToBankSlip(ChargeRecord chargeRecord) throws ParseException {
+
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+
+        if (chargeRecord == null) {
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_NULL);
+            return serviceResult;
+        }
+
+        //判断是否有重复数据
+        BankSlipDetailDO dbBankSlipDetailDO = bankSlipDetailMapper.findBankSlipDetailByTradeSerialNo(chargeRecord.getThirdPartyPayOrderId());
+        if(dbBankSlipDetailDO != null){
+            serviceResult.setErrorCode(ErrorCode.CHARGE_RECORD_IS_EXIST);
+            return serviceResult;
+        }
+
+        // 添加操作日志
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String format = simpleDateFormat.format(chargeRecord.getChargeTime());
+        Date chargeTime = simpleDateFormat.parse(format);
+        BankSlipDetailOperationLogDO bankSlipDetailOperationLogDO = new BankSlipDetailOperationLogDO();
+        try {
+            //保存流水总纪录
+            BankSlipDO bankSlipDO = bankSlipMapper.findBySubCompanyIdAndDayAndBankType(chargeRecord.getSubCompanyId(), BankType.LYCHEE_PAY, chargeTime);
+            if (bankSlipDO != null) {
+                bankSlipDO.setInCount(bankSlipDO.getInCount() + 1);   //进款笔数
+                bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + 1);   //已确认笔数
+                //跟新数据
+                bankSlipMapper.update(bankSlipDO);
+            } else {
+                //保存银行流水
+                bankSlipDO = new BankSlipDO();
+                bankSlipDO.setSubCompanyId(chargeRecord.getSubCompanyId());   //分公司ID
+                bankSlipDO.setSubCompanyName(chargeRecord.getSubCompanyName());   //分公司名称
+                bankSlipDO.setBankType(BankType.LYCHEE_PAY);   //银行类型，1-支付宝，2-中国银行，3-交通银行，4-南京银行，5-农业银行，6-工商银行，7-建设银行，8-平安银行，9-招商银行，10-浦发银行
+                bankSlipDO.setSlipDay(chargeTime);   //导入日期
+                bankSlipDO.setInCount(CommonConstant.COMMON_ONE);   //进款笔数
+                bankSlipDO.setNeedClaimCount(CommonConstant.COMMON_ZERO);
+                bankSlipDO.setClaimCount(CommonConstant.COMMON_ZERO);
+                bankSlipDO.setConfirmCount(CommonConstant.COMMON_ONE);   //已确认笔数
+                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);   //单据状态：0-初始化，1-已下推，2-部分认领，3-全部认领
+                bankSlipDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);   //状态：0不可用；1可用；2删除
+                bankSlipDO.setCreateTime(now);   //添加时间
+                bankSlipDO.setCreateUser(userSupport.getCurrentUserId().toString());   //添加人
+                bankSlipDO.setUpdateTime(now);   //修改时间
+                bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());   //修改人
+                bankSlipDO.setLocalizationCount(CommonConstant.COMMON_ZERO);  //属地化数量
+                bankSlipMapper.save(bankSlipDO);
+            }
+
+            //保存流水记录
+            BankSlipDetailDO bankSlipDetailDO = new BankSlipDetailDO();
+            bankSlipDetailDO.setPayerName(chargeRecord.getCustomerName());       //付款人名称
+            bankSlipDetailDO.setTradeAmount(chargeRecord.getChargeAmountReal());       //交易金额
+            bankSlipDetailDO.setTradeSerialNo(chargeRecord.getThirdPartyPayOrderId());       //交易流水号
+            bankSlipDetailDO.setTradeTime(chargeTime);       //交易日期
+            bankSlipDetailDO.setTradeMessage(chargeRecord.getRemark());       //交易附言
+            bankSlipDetailDO.setOtherSideAccountNo(chargeRecord.getOpenId());       //对方账号
+            bankSlipDetailDO.setMerchantOrderNo(null);       //商户订单号
+            bankSlipDetailDO.setLoanSign(LoanSignType.INCOME);       //借贷标志,1-贷（收入），2-借（支出）
+            bankSlipDetailDO.setDetailStatus(BankSlipDetailStatus.CONFIRMED);       //明细状态，1-未认领，2-已认领，3-已确定，4-忽略
+            bankSlipDetailDO.setDetailJson(null);       //明细json数据
+            bankSlipDetailDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);       //状态：0不可用；1可用；2删除
+            bankSlipDetailDO.setRemark(chargeRecord.getRemark());       //备注
+            bankSlipDetailDO.setBankSlipId(bankSlipDO.getId());       //银行对公流水表id
+            bankSlipDetailDO.setSubCompanyId(chargeRecord.getSubCompanyId());      //属地化分公司ID
+            bankSlipDetailDO.setIsLocalization(CommonConstant.NO);       //是否已属地化,0-否，1-是[总公司时有值]
+            bankSlipDetailDO.setCreateUser(userSupport.getCurrentUserId().toString());
+            bankSlipDetailDO.setCreateTime(now);
+            bankSlipDetailDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            bankSlipDetailDO.setUpdateTime(now);
+            bankSlipDetailMapper.save(bankSlipDetailDO);
+
+            //保存认领信息
+            BankSlipClaimDO bankSlipClaimDO = new BankSlipClaimDO();
+            bankSlipClaimDO.setBankSlipDetailId(bankSlipDetailDO.getId());   //银行对公流水明细ID
+            bankSlipClaimDO.setOtherSideAccountNo(chargeRecord.getOpenId());   //对方账号
+            bankSlipClaimDO.setCustomerNo(chargeRecord.getBusinessCustomerNo());   //客戶编码
+            bankSlipClaimDO.setClaimAmount(chargeRecord.getChargeAmountReal());   //认领金额
+            bankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());   //认领流水号（时间戳）
+            bankSlipClaimDO.setRechargeStatus(RechargeStatus.PAY_SUCCESS);   //充值状态，0-初始化，1-正在充值，2-充值成功，3-充值失败
+            bankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);   //状态：0不可用；1可用；2删除
+            bankSlipClaimDO.setRemark(chargeRecord.getRemark());   //备注
+            bankSlipClaimDO.setCreateTime(now);   //添加时间
+            bankSlipClaimDO.setCreateUser(userSupport.getCurrentUserId().toString());   //添加人
+            bankSlipClaimDO.setUpdateTime(now);   //修改时间
+            bankSlipClaimDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            bankSlipClaimMapper.save(bankSlipClaimDO);
+            //加款
+            bankSlipSupport.constantlyPaymentClaim(bankSlipClaimDO, bankSlipDO, bankSlipDetailDO,bankSlipDetailOperationLogDO, now);
+        } catch (Exception e) {
+            e.printStackTrace();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            serviceResult.setErrorCode(ErrorCode.EXPORT_CHARGE_RECORD_IS_FAIL);
+            return serviceResult;
+        }
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
+    @Override
+    public ServiceResult<String, String> exportTodayLeaveOutChargeRecord() throws ParseException {
+        ExportChargeRecordPageParam exportChargeRecordPageParam = new ExportChargeRecordPageParam();
+        exportChargeRecordPageParam.setStartTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ZERO));
+        exportChargeRecordPageParam.setEndTime(DateUtil.getDayByCurrentOffset(CommonConstant.COMMON_ONE));
+        return exportHistoryChargeRecord(exportChargeRecordPageParam);
     }
 
 }

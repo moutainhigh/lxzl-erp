@@ -13,59 +13,15 @@ import javax.validation.constraints.NotNull;
  */
 public class OrderSplitDetail extends BasePO {
     private Integer orderSplitDetailId;
-    private Integer orderId;
-    private String orderNo;
-    @In(value = {1, 2}, message = ErrorCode.ORDER_SPLIT_ORDER_ITEM_TYPE_NOT_NULL)
-    private Integer orderItemType;
-    @NotNull(message = ErrorCode.ORDER_SPLIT_ORDER_ITEM_REFER_ID_NOT_NULL)
-    private Integer orderItemReferId;
     @NotNull(message = ErrorCode.ORDER_SPLIT_SPLIT_COUNT_NOT_NULL)
     private Integer splitCount;
     @In(value = {0, 1}, message = ErrorCode.ORDER_SPLIT_IS_PEER_OR_SUB_COMPANY_ID_EXIST)
     private Integer isPeer;
     private Integer deliverySubCompanyId;
-    private String deliverySubCompanyName;
     private String remark;
-
-    public Integer getOrderSplitDetailId() {
-        return orderSplitDetailId;
-    }
-
-    public void setOrderSplitDetailId(Integer orderSplitDetailId) {
-        this.orderSplitDetailId = orderSplitDetailId;
-    }
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
-
-    public Integer getOrderItemType() {
-        return orderItemType;
-    }
-
-    public void setOrderItemType(Integer orderItemType) {
-        this.orderItemType = orderItemType;
-    }
-
-    public Integer getOrderItemReferId() {
-        return orderItemReferId;
-    }
-
-    public void setOrderItemReferId(Integer orderItemReferId) {
-        this.orderItemReferId = orderItemReferId;
-    }
+    private String deliverySubCompanyName;
+    private Integer orderId;
+    private String orderNo;
 
     public Integer getSplitCount() {
         return splitCount;
@@ -91,6 +47,22 @@ public class OrderSplitDetail extends BasePO {
         this.deliverySubCompanyId = deliverySubCompanyId;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public Integer getOrderSplitDetailId() {
+        return orderSplitDetailId;
+    }
+
+    public void setOrderSplitDetailId(Integer orderSplitDetailId) {
+        this.orderSplitDetailId = orderSplitDetailId;
+    }
+
     public String getDeliverySubCompanyName() {
         return deliverySubCompanyName;
     }
@@ -99,11 +71,19 @@ public class OrderSplitDetail extends BasePO {
         this.deliverySubCompanyName = deliverySubCompanyName;
     }
 
-    public String getRemark() {
-        return remark;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

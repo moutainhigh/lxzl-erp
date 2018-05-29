@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.*;
 import com.lxzl.se.core.service.BaseService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,4 +52,19 @@ public interface StatisticsService extends BaseService {
      * 长短租详细查询
      */
     ServiceResult<String, StatisticsRentInfo> queryRentInfo(StatisticsRentInfoPageParam statisticsRentInfoPageParam);
+
+    /**
+     * 确认业务员提成统计月结信息
+     * @param statisticsSalesmanMonth
+     * @return
+     */
+    ServiceResult<String,String> updateStatisticsSalesmanMonth(StatisticsSalesmanMonth statisticsSalesmanMonth);
+
+    /**
+     * 创建业务员提成统计月结信息
+     * @param date
+     * @return
+     */
+    ServiceResult<String,String> createStatisticsSalesmanMonth(Date date);
+
 }

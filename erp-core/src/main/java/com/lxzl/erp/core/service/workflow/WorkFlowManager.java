@@ -85,8 +85,9 @@ public class WorkFlowManager {
             return k3ChangeOrderService;
         }else if(WorkflowType.WORKFLOW_TYPE_K3_RETURN.equals(workflowType)){
             return k3ReturnOrderService;
-        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)
-                ||WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)){
+        }else if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)||
+                WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)||
+                WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
             return customerService;
         }
         return null;

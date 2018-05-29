@@ -148,6 +148,12 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         if (CollectionUtil.isNotEmpty(k3ReturnOrder.getK3ReturnOrderDetailList())) {
             Map<String, Order> orderCatch = new HashMap<String, Order>();
             for (K3ReturnOrderDetail k3ReturnOrderDetail : k3ReturnOrder.getK3ReturnOrderDetailList()) {
+                //添加退货商品数量不能小于零的校验
+                if (k3ReturnOrderDetail.getProductCount()<= 0) {
+                    result.setErrorCode(ErrorCode.RETURN_COUNT_ERROR);
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return result;
+                }
                 if (!orderCatch.containsKey(k3ReturnOrderDetail.getOrderNo())) {
                     ServiceResult<String, Order> serviceResult = k3Service.queryOrder(k3ReturnOrderDetail.getOrderNo());
                     if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {

@@ -183,7 +183,7 @@
 	<select id="findById" resultMap="CustomerDO" parameterType="java.lang.Integer">
 		SELECT <include refid="column_List"/>,<include refid="risk_column_List"/> FROM erp_customer ec
 		LEFT JOIN erp_customer_risk_management ecrm on ecrm.customer_id = ec.id and ecrm.data_status=1
-		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1 
+		WHERE ec.id = #{id, jdbcType=INTEGER} AND ec.data_status = 1
 	</select>
 
 	<select id="findByCustomerParam" resultMap="CustomerDO" parameterType="java.lang.Integer">

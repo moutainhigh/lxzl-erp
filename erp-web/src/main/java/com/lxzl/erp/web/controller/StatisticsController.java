@@ -3,6 +3,9 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.statistics.*;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsIndexInfo;
+import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesmanMonth;
+import com.lxzl.erp.common.domain.validGroup.IdGroup;
+import com.lxzl.erp.common.domain.validGroup.UpdateGroup;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
 import com.lxzl.erp.core.service.statistics.StatisticsService;
@@ -15,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Date;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -145,6 +150,28 @@ public class StatisticsController extends BaseController {
     public Result queryRentInfo(@RequestBody @Validated StatisticsRentInfoPageParam statisticsRentInfoPageParam) {
         return resultGenerator.generate(statisticsService.queryRentInfo(statisticsRentInfoPageParam));
     }
+
+    /**
+     * 确认业务员提成统计月结信息
+     * @param statisticsSalesmanMonth
+     * @return
+     */
+    @RequestMapping(value = "updateStatisticsSalesmanMonth", method = RequestMethod.POST)
+    public Result updateStatisticsSalesmanMonth(@RequestBody @Validated({UpdateGroup.class,IdGroup.class})  StatisticsSalesmanMonth statisticsSalesmanMonth, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = statisticsService.updateStatisticsSalesmanMonth(statisticsSalesmanMonth);
+        return resultGenerator.generate(serviceResult);
+    }
+//    /**
+//     * 创建业务员提成统计月结信息
+//     * @param date
+//     * @param validResult
+//     * @return
+//     */
+//    @RequestMapping(value = "createStatisticsSalesmanMonth",method = RequestMethod.POST)
+//    public Result createStatisticsSalesmanMonth(@RequestBody @Validated Date date, BindingResult validResult){
+//        ServiceResult<String, String> serviceResult = statisticsService.createStatisticsSalesmanMonth(date);
+//        return resultGenerator.generate(serviceResult);
+//    }
 
     @Autowired
     private ResultGenerator resultGenerator;

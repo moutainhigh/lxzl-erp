@@ -80,6 +80,12 @@ public class WorkflowType {
      */
     public static final Integer WORKFLOW_TYPE_CUSTOMER_CONSIGN = 17;
 
+    /**
+     * 渠道客户审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_CHANNEL_CUSTOMER = 18;
+
+
     public static String getWorkflowTypeDesc(Integer workflowType) {
         if (WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
             return "采购订单";

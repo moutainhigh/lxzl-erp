@@ -146,7 +146,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(userDO.getId());
         // 往钉钉网关上注册用户
-        dingdingService.registerUserToDingding(userDO.getId());
+//        dingdingService.registerUserToDingding(userDO.getId());
         return result;
     }
 

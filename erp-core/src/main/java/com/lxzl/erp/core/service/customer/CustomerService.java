@@ -217,4 +217,5 @@ public interface CustomerService extends VerifyReceiver {
      *将已授信的公司的erp_customer表中的is_risk字段设置为1
      */
     ServiceResult<String,String> setIsRisk();
+
 }

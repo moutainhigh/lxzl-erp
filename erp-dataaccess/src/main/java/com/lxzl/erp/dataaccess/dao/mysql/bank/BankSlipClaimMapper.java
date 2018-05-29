@@ -27,4 +27,7 @@ public interface BankSlipClaimMapper extends BaseMysqlDAO<BankSlipClaimDO> {
     List<BankSlipClaimDO> findBankSlipClaimPaySuccess();
 
     void deleteBankSlipClaimDO(@Param("updateUser")String updateUser, @Param("updateTime")Date updateTime,@Param("list")List<BankSlipClaimDO> bankSlipClaimDOList);
+
+    Integer findAmountByBankSlipDetailId(@Param("bankSlipDetailId")Integer id);
+
 }

@@ -2,10 +2,11 @@ package com.lxzl.erp.common.domain.order.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointMaterial;
+import org.springframework.data.annotation.Transient;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,6 +20,7 @@ public class OrderMaterial extends BasePO {
 	private Integer materialId;   //物料ID
 	private String materialName;   //物料名称
 	private Integer materialCount;   //物料总数
+	private Integer stableMaterialCount;   //下单配件总数，该字段只在订单未提交时可变化
 	private BigDecimal materialUnitAmount;   //物料单价
 	private BigDecimal materialAmount;   //物料价格
 	private BigDecimal rentDepositAmount;	// 租赁押金
@@ -46,9 +48,40 @@ public class OrderMaterial extends BasePO {
 
 	private String serialNumber;        // 序号
 
+	private Integer orderJointProductId; // 订单组合商品id
+	private Integer jointMaterialId; // 关联的组合商品配件项id
+	@Transient
+	private JointMaterial jointMaterial;
+	@Transient
+	private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
+
 	// 以下为K3的数据字段
 	private Integer FEntryID;
 	private String productNumber;
+
+	public JointMaterial getJointMaterial() {
+		return jointMaterial;
+	}
+
+	public void setJointMaterial(JointMaterial jointMaterial) {
+		this.jointMaterial = jointMaterial;
+	}
+
+	public Integer getJointMaterialId() {
+		return jointMaterialId;
+	}
+
+	public void setJointMaterialId(Integer jointMaterialId) {
+		this.jointMaterialId = jointMaterialId;
+	}
+
+	public Integer getIdentityNo() {
+		return identityNo;
+	}
+
+	public void setIdentityNo(Integer identityNo) {
+		this.identityNo = identityNo;
+	}
 
 	public Integer getOrderMaterialId(){
 		return orderMaterialId;
@@ -303,4 +336,20 @@ public class OrderMaterial extends BasePO {
 	public String getSerialNumber() { return serialNumber; }
 
 	public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+	public Integer getOrderJointProductId() {
+		return orderJointProductId;
+	}
+
+	public void setOrderJointProductId(Integer orderJointProductId) {
+		this.orderJointProductId = orderJointProductId;
+	}
+
+	public Integer getStableMaterialCount() {
+		return stableMaterialCount;
+	}
+
+	public void setStableMaterialCount(Integer stableMaterialCount) {
+		this.stableMaterialCount = stableMaterialCount;
+	}
 }

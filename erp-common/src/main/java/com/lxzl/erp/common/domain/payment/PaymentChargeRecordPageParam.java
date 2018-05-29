@@ -25,6 +25,24 @@ public class PaymentChargeRecordPageParam  extends BasePageParam {
 
     private String businessCustomerName;
     private String chargeBodyId;
+    private String chargeOrderNo;
+    private String channelNo;
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
+    }
+
+    public String getChargeOrderNo() {
+        return chargeOrderNo;
+    }
+
+    public void setChargeOrderNo(String chargeOrderNo) {
+        this.chargeOrderNo = chargeOrderNo;
+    }
 
     public String getBusinessCustomerNo() {
         return businessCustomerNo;

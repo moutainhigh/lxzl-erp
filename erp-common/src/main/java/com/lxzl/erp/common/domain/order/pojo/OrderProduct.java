@@ -1,10 +1,11 @@
 package com.lxzl.erp.common.domain.order.pojo;
 
 import com.lxzl.erp.common.domain.base.BasePO;
+import com.lxzl.erp.common.domain.jointProduct.pojo.JointProductProduct;
 import com.lxzl.erp.common.domain.product.pojo.ProductSkuProperty;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class OrderProduct extends BasePO {
     private Integer productSkuId;               // 商品配置ID
     private String productSkuName;              // 配置名称
     private Integer productCount;               // 商品数量
+    private Integer stableProductCount;               // 下单商品总数，该字段只在订单未提交时可变化
     private BigDecimal productUnitAmount;       // 单价
     private BigDecimal productAmount;           // 总价
     private BigDecimal rentDepositAmount;       // 租金押金
@@ -43,9 +45,40 @@ public class OrderProduct extends BasePO {
 
     private String serialNumber;        // 序号
 
+    private Integer orderJointProductId; // 订单组合商品id
+    private Integer jointProductProductId; // 关联的组合商品商品项id
+    @Transient
+    private JointProductProduct jointProductProduct;
+    @Transient
+    private Integer identityNo; // 标识号，只在组合商品业务逻辑处理时使用，不持久化
+
     // 以下为K3的数据字段
     private Integer FEntryID;
     private String productNumber;
+
+    public Integer getJointProductProductId() {
+        return jointProductProductId;
+    }
+
+    public JointProductProduct getJointProductProduct() {
+        return jointProductProduct;
+    }
+
+    public void setJointProductProduct(JointProductProduct jointProductProduct) {
+        this.jointProductProduct = jointProductProduct;
+    }
+
+    public void setJointProductProductId(Integer jointProductProductId) {
+        this.jointProductProductId = jointProductProductId;
+    }
+
+    public Integer getIdentityNo() {
+        return identityNo;
+    }
+
+    public void setIdentityNo(Integer identityNo) {
+        this.identityNo = identityNo;
+    }
 
     public Integer getOrderProductId() {
         return orderProductId;
@@ -292,4 +325,20 @@ public class OrderProduct extends BasePO {
     public String getSerialNumber() { return serialNumber; }
 
     public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public Integer getOrderJointProductId() {
+        return orderJointProductId;
+    }
+
+    public void setOrderJointProductId(Integer orderJointProductId) {
+        this.orderJointProductId = orderJointProductId;
+    }
+
+    public Integer getStableProductCount() {
+        return stableProductCount;
+    }
+
+    public void setStableProductCount(Integer stableProductCount) {
+        this.stableProductCount = stableProductCount;
+    }
 }

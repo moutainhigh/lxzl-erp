@@ -6,12 +6,13 @@ import com.lxzl.erp.common.domain.coupon.pojo.Coupon;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderDetail;
 import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
+import com.lxzl.erp.common.domain.system.pojo.Image;
 import com.lxzl.erp.common.domain.validGroup.IdGroup;
 import com.lxzl.erp.common.domain.workflow.pojo.WorkflowLink;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.io.Serializable;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -82,6 +83,8 @@ public class Order extends BasePO {
 
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
+    @Valid
+    private List<OrderJointProduct> orderJointProductList;      // 订单组合商品项
     private OrderConsignInfo orderConsignInfo;                  // 收货地址信息
 
     private List<OrderTimeAxis> orderTimeAxisList;
@@ -104,6 +107,29 @@ public class Order extends BasePO {
 
     private List<Coupon> couponList;//该订单使用的设备优惠券
 
+    private String reletOrderNo;                    //续租单编号
+    private String originOrderNo;                   //原订单编号
+    private Integer canReletOrder;                  //是否可续租     0不可以续租  1可以
+    private Integer isReletOrder;                   //是否为续租订单   0否  1是
+
+    private String changeReason;//确认收货变更原因
+    private Image deliveryNoteCustomerSignImg;//交货单客户签字
+
+    public String getChangeReason() {
+        return changeReason;
+    }
+
+    public void setChangeReason(String changeReason) {
+        this.changeReason = changeReason;
+    }
+
+    public Image getDeliveryNoteCustomerSignImg() {
+        return deliveryNoteCustomerSignImg;
+    }
+
+    public void setDeliveryNoteCustomerSignImg(Image deliveryNoteCustomerSignImg) {
+        this.deliveryNoteCustomerSignImg = deliveryNoteCustomerSignImg;
+    }
     public List<Coupon> getCouponList() {
         return couponList;
     }
@@ -662,5 +688,46 @@ public class Order extends BasePO {
 
     public void setWorkflowLink(WorkflowLink workflowLink) {
         this.workflowLink = workflowLink;
+    }
+
+    public List<OrderJointProduct> getOrderJointProductList() {
+        return orderJointProductList;
+    }
+
+    public void setOrderJointProductList(List<OrderJointProduct> orderJointProductList) {
+        this.orderJointProductList = orderJointProductList;
+    }
+
+    public String getReletOrderNo() {
+        return reletOrderNo;
+    }
+
+    public void setReletOrderNo(String reletOrderNo) {
+        this.reletOrderNo = reletOrderNo;
+    }
+
+    public String getOriginOrderNo() {
+        return originOrderNo;
+    }
+
+    public void setOriginOrderNo(String originOrderNo) {
+        this.originOrderNo = originOrderNo;
+    }
+
+    public Integer getCanReletOrder() {
+        return canReletOrder;
+    }
+
+    public void setCanReletOrder(Integer canReletOrder) {
+        this.canReletOrder = canReletOrder;
+    }
+
+
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
     }
 }

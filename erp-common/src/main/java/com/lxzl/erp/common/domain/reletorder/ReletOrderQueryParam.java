@@ -18,15 +18,13 @@ public class ReletOrderQueryParam extends BasePageParam implements Serializable 
     private String buyerCustomerNo;
 
     private Integer rentType;
-    private Integer orderStatus;
-    private List<Integer> orderStatusList;
+    private Integer reletOrderStatus;
     private Date createStartTime;
     private Date createEndTime;
     private Integer orderSellerId;
 
     private Integer subCompanyId;
     private Integer deliverySubCompanyId;                       // 发货所属分公司
-    private Integer payStatus;
 
 
     public Integer getReletOrderId(){return reletOrderId;}
@@ -76,21 +74,14 @@ public class ReletOrderQueryParam extends BasePageParam implements Serializable 
         this.rentType = rentType;
     }
 
-    public Integer getOrderStatus() {
-        return orderStatus;
+    public Integer getReletOrderStatus() {
+        return reletOrderStatus;
     }
 
-    public void setOrderStatus(Integer orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setReletOrderStatus(Integer reletOrderStatus) {
+        this.reletOrderStatus = reletOrderStatus;
     }
 
-    public List<Integer> getOrderStatusList() {
-        return orderStatusList;
-    }
-
-    public void setOrderStatusList(List<Integer> orderStatusList) {
-        this.orderStatusList = orderStatusList;
-    }
 
     public Date getCreateStartTime() {
         return createStartTime;
@@ -152,13 +143,6 @@ public class ReletOrderQueryParam extends BasePageParam implements Serializable 
 
     public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
 
-    public Integer getPayStatus() {
-        return payStatus;
-    }
-
-    public void setPayStatus(Integer payStatus) {
-        this.payStatus = payStatus;
-    }
 
 
 }

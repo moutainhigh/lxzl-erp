@@ -117,6 +117,21 @@
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{15} - %file:%line - %msg%n%throwable{10}</pattern>
 		</encoder>
 	</appender>
+	<appender name="quartz"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<File>${logback.file.path}/quartz.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${logback.file.path}/quartz.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date [%thread] %-5level %logger{80} - %msg%n</Pattern>
+		</layout>
+	</appender>
 
 	<jmxConfigurator></jmxConfigurator>
 
@@ -136,6 +151,10 @@
 	<logger name="com.lxzl.se.rpc.dubbo.client.DubboClientFilter" level="${logback.dubbo.level}">
 		<appender-ref ref="dubbo" />
 	</logger>
+	<logger name="com.lxzl.se.core.quartz.job.BaseJob" level="${logback.quartz.level}">
+		<appender-ref ref="quartz" />
+	</logger>
+	<logger name="org.quartz.impl.jdbcjobstore.JobStoreTX" level="${logback.quartz.level}" />
 
 	<root level="${logback.root.level}">
 		<appender-ref ref="console" />
