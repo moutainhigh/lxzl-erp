@@ -268,7 +268,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                     if(orderMaterialDO==null&&StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderEntry())){
                         OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                        if(orderDO!=null&&CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())){
+                        if(orderDO!=null&&CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())){
                             List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
                             for(OrderMaterialDO om : orderMaterialDOList){
                                 if(k3ReturnOrderDetailDO.getOrderEntry().equals(om.getFEntryID())){
