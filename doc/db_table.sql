@@ -2923,7 +2923,8 @@ CREATE TABLE `erp_k3_mapping_customer` (
   `erp_customer_code` varchar(64) COMMENT 'erp的客户编码',
   `k3_customer_code` varchar(64) COMMENT 'K3客户编码',
   `customer_name` varchar(64) COMMENT '客户名称',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX `index_erp_customer_code`(`erp_customer_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3客户映射';
 
 DROP TABLE if exists `erp_k3_mapping_supplier`;
@@ -3178,7 +3179,8 @@ CREATE TABLE `erp_bank_slip_claim` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   INDEX index_erp_bank_slip_detail_id ( `bank_slip_detail_id` ) ,
-  INDEX index_other_side_account_no ( `other_side_account_no` )
+  INDEX index_other_side_account_no ( `other_side_account_no` ),
+  INDEX `index_customer_no`(`customer_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
 
 CREATE table `erp_bank_slip_detail_operation_log`(
