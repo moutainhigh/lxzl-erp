@@ -874,5 +874,8 @@ CREATE TABLE `erp_message_third_channel` (
 	KEY `index_sender_user_id` (`sender_user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方渠道消息表';
 
+ALTER TABLE `erp_k3_mapping_customer` ADD INDEX `index_erp_customer_code`(`erp_customer_code`);
+ALTER TABLE `erp_bank_slip_claim` ADD INDEX `index_customer_no`(`customer_no`);
+
 
 
