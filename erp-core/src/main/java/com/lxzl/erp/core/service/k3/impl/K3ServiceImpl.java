@@ -779,24 +779,20 @@ public class K3ServiceImpl implements K3Service {
             headerBuilder.contentType("application/json");
             String k3confirmOrderUrl = K3Config.k3Server + "/OrderConfirml/ConfirmlOrder";  //k3确认收货url
             response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
-            if (response == null){
-                serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            responseMap = JSONObject.parseObject(response,HashMap.class);
+            if ("true".equals(responseMap.get("IsSuccess").toString())){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }else{
+                serviceResult.setErrorCode(ErrorCode.K3_CONFIRM_ORDER_ERROR,responseMap.get("Message").toString());
                 return serviceResult;
             }
-            responseMap =  JSONObject.parseObject(response,HashMap.class);
-            if ("false".equals(responseMap.get("IsSuccess").toString())){
-                throw new BusinessException(responseMap.get("Message").toString());
-            }
         }catch (Exception e){
-//            StringWriter errorInfo = new StringWriter();
-//            e.printStackTrace(new PrintWriter(errorInfo, true));
 //            e.printStackTrace();
             dingDingSupport.dingDingSendMessage(getErrorMessage(response,orderConfirmChangeToK3Param.getOrderId()));
-            throw new BusinessException(responseMap.get("Message").toString());
+            throw new BusinessException(e);
         }
-        serviceResult.setErrorCode(ErrorCode.SUCCESS);
-        serviceResult.setResult(responseMap.get("Message").toString());
-        return serviceResult;
     }
 
     private String getErrorMessage(String response, Integer orderId) {

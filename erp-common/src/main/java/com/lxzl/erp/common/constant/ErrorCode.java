@@ -809,6 +809,7 @@ public class ErrorCode {
     public static final String DELIVERY_COMPANY_ID_NULL = "J17000031";
     /** k3历史退货单响应代码 */
     public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
+    public static final String K3_CONFIRM_ORDER_ERROR = "J17000033";
 
 
     public static final String FILE_IS_NULL = "J18000001";
@@ -1740,6 +1741,7 @@ public class ErrorCode {
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
+        MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
