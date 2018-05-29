@@ -50,8 +50,8 @@ public class DynamicSqlDaoImpl implements DynamicSqlDao {
             List<Object> columnList;
             Integer num = 1;
             while(rs.next()) {
-                num++;
                 if (num > limit) break;
+                num++;
                 columnList = new LinkedList<>();
                 for (int i = 1; i <= columnCount; i++) {
                     columnList.add(rs.getObject(i));
@@ -59,7 +59,8 @@ public class DynamicSqlDaoImpl implements DynamicSqlDao {
                 result.add(columnList);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("动态SQL查询执行错误", e);
+            throw e;
         } finally {
             DBUtil.closeConn(null, sta, rs);
             DataSourceUtils.releaseConnection(connection, dynamicDataSource);
