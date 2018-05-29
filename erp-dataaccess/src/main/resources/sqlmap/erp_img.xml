@@ -103,4 +103,11 @@
 		<include refid="set_column_sql"/>
 		WHERE id = #{id, jdbcType=INTEGER}
 	</update>
+	<select id="findLastByRefIdAndType" resultMap="ImageDO" parameterType="map">
+		select
+		<include refid="column_List"/>
+		from erp_img
+		where ref_id = #{refId, jdbcType=VARCHAR} and img_type = #{imgType, jdbcType=INTEGER} and data_status = 1
+		order by id desc LIMIT 1
+	</select>
 </mapper>

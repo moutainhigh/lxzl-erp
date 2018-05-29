@@ -2923,7 +2923,8 @@ CREATE TABLE `erp_k3_mapping_customer` (
   `erp_customer_code` varchar(64) COMMENT 'erp的客户编码',
   `k3_customer_code` varchar(64) COMMENT 'K3客户编码',
   `customer_name` varchar(64) COMMENT '客户名称',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX `index_erp_customer_code`(`erp_customer_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='K3客户映射';
 
 DROP TABLE if exists `erp_k3_mapping_supplier`;
@@ -3178,7 +3179,8 @@ CREATE TABLE `erp_bank_slip_claim` (
   `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
   PRIMARY KEY (`id`),
   INDEX index_erp_bank_slip_detail_id ( `bank_slip_detail_id` ) ,
-  INDEX index_other_side_account_no ( `other_side_account_no` )
+  INDEX index_other_side_account_no ( `other_side_account_no` ),
+  INDEX `index_customer_no`(`customer_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='银行对公流水认领表';
 
 CREATE table `erp_bank_slip_detail_operation_log`(
@@ -3612,4 +3614,27 @@ CREATE TABLE `erp_k3_order_statement_config` (
   INDEX index_order_id ( `order_id` ),
   INDEX index_order_no ( `order_no` )
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='k3订单结算配置表';
+
+CREATE TABLE `erp_message_third_channel` (
+  `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+	`message_title` varchar(63) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '发送的信息主题',
+  `message_content` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '发送的信息内容',
+	`message_type` int(11) NOT NULL DEFAULT 1 COMMENT '消息类型，1:系统通知 其他待拓展',
+	`message_channel` int(11) NOT NULL DEFAULT 1 COMMENT '消息渠道 1:钉钉消息 其他待拓展',
+  `receiver_user_id` int(11) NOT NULL COMMENT '接受者用户id',
+	`sender_user_id` int(11) NOT NULL DEFAULT '-1' COMMENT '发送者用户id[默认-1 代表系统用户]',
+	`sender_remark` varchar(31) COLLATE utf8_bin NOT NULL DEFAULT 'System' COMMENT '发送者备注[默认系统用户]',
+
+  `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
+  `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '添加人',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `update_user` varchar(20) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '修改人',
+  PRIMARY KEY (`id`),
+	KEY `index_receiver_user_id` (`receiver_user_id`),
+	KEY `index_sender_user_id` (`sender_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='第三方渠道消息表';
+
+
 

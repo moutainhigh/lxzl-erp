@@ -4,6 +4,7 @@
     <title>凌雄ERP-订单管理-订单列表-订单详细</title>
     #parse("layout/header.vm")
     #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}vendor/plugins/viewer/viewer.min.css">
 </head>
 <body class="blank-page">
     #parse("layout/toolbox.vm")
@@ -84,10 +85,13 @@
                                     <a href="#returnOrderList" data-toggle="tab">退货单</a>
                                 </li>
                                 <li>
-                                    <a href="#reletOrderList" data-toggle="tab" aria-expanded="true">续租单</a>
+                                    <a href="#reletOrderList" data-toggle="tab">续租单</a>
                                 </li>
                                 <li>
-                                    <a href="#orderPrintList" data-toggle="tab" aria-expanded="true">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                    <a href="#orderPrintList" data-toggle="tab">打印记录（共<span id="printRecordCount">0</span>次）</a>
+                                </li>
+                                <li>
+                                    <a href="#orderReceiptRecord" data-toggle="tab">客户签收记录</a>
                                 </li>
                             </ul>
                         </div>
@@ -95,23 +99,26 @@
                     <div class="panel-body light pn">
                         <div class="tab-content pn br-n">
 
-                            <!-- 商品项 -->
+##                            <!-- 商品项 -->
                             #parse("component/order/orderProduct.vm")
 
-                            <!-- 配件项 -->
+##                            <!-- 配件项 -->
                             #parse("component/order/orderMaterial.vm")
 
-                            <!-- 结算单 -->
+##                            <!-- 结算单 -->
                             #parse("component/order/orderStatement.vm")
 
-                            <!-- 退货单 -->
+##                            <!-- 退货单 -->
                             #parse("component/order/returnOrder.vm")
 
-                            <!-- 续租单 -->
+##                            <!-- 续租单 -->
                             #parse("component/order/reletOrder.vm")
 
-                            <!-- 打印记录 -->
+##                            <!-- 打印记录 -->
                             #parse("component/order/orderPrintRecord.vm")
+
+##                            <!-- 打印记录 -->
+                            #parse("component/order/orderReceipt.vm")
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
@@ -124,6 +131,9 @@
     #parse("layout/sidebarRight.vm")
 </div>
     #parse("layout/footer.vm")
+
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
+    <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
                 'api.data.js',
@@ -132,6 +142,7 @@
                 'manage.order.detail.js',
                 'manage.order.item.render.js',
                 'manage.order.util.js',
+                'manage.order.receipt.confirm.js',
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
                 'manage.order.print.record.js',

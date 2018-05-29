@@ -425,13 +425,13 @@ public class ErrorCode {
     public static final String ORDER_MESSAGE_NULL = "J400146";
     public static final String CANCEL_ORDER_REASON_TYPE_NULL = "J400147";
     public static final String DAY_RENT_ORDER_NOT_PAY = "J400148";
-    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400049";
-    public static final String HAS_RETURN_ORDER = "J400050";
-    public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400051";
-    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400052";
-    public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400053";
-    public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400054";
-    public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400055";
+    public static final String ORDER_PAY_STATUS_CAN_NOT_RESETTLE = "J400149";
+    public static final String HAS_RETURN_ORDER = "J400150";
+    public static final String RETURN_ORDER_ALREADY_SUCCESS = "J400151";
+    public static final String RETURN_ORDER_CAN_NOT_CREATE_STATEMENT = "J400152";
+    public static final String ORDER_ITEM_PARAM_LIST_NOT_NULL = "J400153";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_PRODUCT_COUNT = "J400154";
+    public static final String ITEM_COUNT_MORE_THAN_STABLE_MATERIAL_COUNT = "J400155";
 
     public static final String CUSTOMER_COMPANY_NOT_NULL = "J500001";
     public static final String CUSTOMER_COMPANY_NAME_NOT_NULL = "J500002";
@@ -661,6 +661,10 @@ public class ErrorCode {
     public static final String CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS = "J1100036";
     public static final String DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS = "J1100037";
     public static final String CONFIRM_CHANGE_REASON_TYPE_ERROR = "J1100038";
+    public static final String CONFIRM_CHANGE_REASON_NOT_NULL = "J1100039";
+    public static final String CONFIRM_CHANGE_REASON_TYPE_NOT_NULL = "J1100040";
+    public static final String ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM = "J1100041";
+    public static final String ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM = "J1100042";
 
     public static final String TRANSFER_ORDER_NAME_NOT_NULL = "J1200001";
     public static final String TRANSFER_ORDER_ID_NOT_NULL = "J1200002";
@@ -805,6 +809,8 @@ public class ErrorCode {
     public static final String DELIVERY_COMPANY_ID_NULL = "J17000031";
     /** k3历史退货单响应代码 */
     public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
+    public static final String K3_CONFIRM_ORDER_ERROR = "J17000033";
+
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -855,6 +861,9 @@ public class ErrorCode {
     public static final String BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT = "J18000048";
     public static final String IMPORT_BANK_SLIP_DETAILS_IS_EXIST = "J18000049";
     public static final String CHARGE_RECORD_IS_NULL = "J18000050";
+    public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
+    public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
+    public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1567,6 +1576,10 @@ public class ErrorCode {
         MAP.put(CUSTOMER_RETURN_VISIT_IMAGE_NOT_EXISTS, "客户回访记录图片不能为空");
         MAP.put(DELIVERY_NOTE_CUSTOMER_SIGN_IMAGE_NOT_EXISTS, "交货单客户签字图片不能为空");
         MAP.put(CONFIRM_CHANGE_REASON_TYPE_ERROR, "确认收货变更原因类型不存在");
+        MAP.put(CONFIRM_CHANGE_REASON_NOT_NULL, "确认收货变更原因不能为空");
+        MAP.put(CONFIRM_CHANGE_REASON_TYPE_NOT_NULL, "确认收货变更原因类型不能为空");
+        MAP.put(ORDER_PRODUCT_COUNT_IS_ZERO_NOT_CONFIRM, "商品数量更改成0的商品项不能重复修改");
+        MAP.put(ORDER_MATERIAL_COUNT_IS_ZERO_NOT_CONFIRM, "配件数量更改成0的配件项不能重复修改");
 
 
         MAP.put(TRANSFER_ORDER_NAME_NOT_NULL, "转移单名称不能为空");
@@ -1711,11 +1724,12 @@ public class ErrorCode {
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
+        MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
         MAP.put(EXCEL_SHEET_IS_NULL, "Excel工作薄导入数据为空");
-        MAP.put(INPUT_STREAM_READER_IS_FAIL, "导入excelIO流转换发生异常！");
+        MAP.put(INPUT_STREAM_READER_IS_FAIL, "导入转换发生异常！");
         MAP.put(APPLE_EQUIPMENT_WRITE_IS_FAIL, "风控苹果设备填写有误");
         MAP.put(NEW_EQUIPMENT_WRITE_IS_FAIL, "全新设备填写有误");
         MAP.put(EXCEL_UPLOAD_ERROR, "EXCEL表格上传失败");
@@ -1732,7 +1746,7 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_STATUS_NOT_UN_CLAIMED, "银行对公流水记录不是未认领状态");
         MAP.put(BANK_SLIP_STATUS_IS_PUSH_DOWN, "单据状态为已下推,无需再下推");
         MAP.put(BANK_SLIP_DETAIL_NOT_EXISTS, "银行对公流水记录项不存在");
-        MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与填写金额总不等");
+        MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_UNEQUAL_CURRENT_AGGREGATE_AMOUNT, "银行对公流水记录项金额与认领金额总和不等");
         MAP.put(BANK_SLIP_DETAIL_STATUS_IS_CONFIRMED_OR_HIDE, "银行对公流水记录是已确认状态或者隐藏状态");
         MAP.put(IS_NOT_BUSINESS_AFFAIRS_PERSON, "当前用户不是商务人员,无权操作");
         MAP.put(BANK_SLIP_STATUS_NOT_ALREADY_PUSH_DOWN, "银行对公流水状态不是已下推");
@@ -1759,8 +1773,11 @@ public class ErrorCode {
         MAP.put(BANK_SLIP_DETAIL_DATA_IS_NULL, "银行对公流水无导入数据,");
         MAP.put(BANK_SLIP_DETAIL_IS_UNKNOWN, "银行对公流水是未知状态,");
         MAP.put(BANK_SLIP_DETAIL_TRADE_AMOUNT_LESS_THAN_CURRENT_AGGREGATE_AMOUNT, "填写金额大于银行对公流水记录项金额");
-        MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录都已存在");
+        MAP.put(IMPORT_BANK_SLIP_DETAILS_IS_EXIST, "导入银行对公流水记录已存在");
         MAP.put(CHARGE_RECORD_IS_NULL, "快付通充值记录为空");
+        MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
+        MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
+        MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");

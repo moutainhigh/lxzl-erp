@@ -73,6 +73,7 @@ import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrec
 import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
+import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
 import org.apache.ibatis.mapping.StatementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1533,7 +1534,6 @@ public class StatementServiceImpl implements StatementService {
         Date otherStatementTime = returnTime;
 
         // TODO 完成原逻辑退货
-
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
 
@@ -1545,10 +1545,14 @@ public class StatementServiceImpl implements StatementService {
                 if (orderProductDO == null) {
                     continue;
                 }
-                BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getProductCount());
+                BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
+                if(BigDecimalUtil.compare(returnCount,BigDecimal.ZERO)<=0){
+                    continue;
+                }
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
+
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
@@ -1598,52 +1602,61 @@ public class StatementServiceImpl implements StatementService {
 
                         // 如果有押金还没交，不让退货
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            continue;
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
+                            return result;
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
 
                         // 如果退货时间在结束时间之后，证明本期都没缴，不用处理，等待交
-                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
-                            continue;
-                        }
+//                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
+//                            continue;
+//                        }
                         BigDecimal itemAllAmount = orderProductDO.getProductAmount();
                         BigDecimal needPayAmount = BigDecimal.ZERO;
+                        BigDecimal payReturnAmount = BigDecimal.ZERO;
                         BigDecimal productUnitAmount = BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), returnCount);
+
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
-                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
-                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductDO.getProductUnitAmount(), k3ReturnOrderDetailDO.getProductCount());
-                                }
-                            } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProductDO.getPayMode())) {
-                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    BigDecimal firstAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(BigDecimalUtil.mul(itemAllAmount, new BigDecimal(0.3)), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
-                                    // 30%期
-                                    if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
-                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
-                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
-                                        needPayAmount = BigDecimalUtil.compare(needPayAmount, firstAmount) > 0 ? firstAmount : needPayAmount;
-                                    } else if (statementOrderDetailDO.getStatementDetailPhase() == 2) {
-                                        // 70% 期
-                                        // 加2的原因是算上前面30%的那一天
-                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 2;
-                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
-                                        // 减掉上期的30%
-                                        needPayAmount = BigDecimalUtil.sub(needPayAmount, firstAmount);
-                                    }
-                                }
-                            } else {
-                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
-                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
-                                }
+//                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderProductDO.getRentType())) {
+//                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+//                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+//                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, orderProductDO.getProductUnitAmount(), k3ReturnOrderDetailDO.getProductCount());
+//                                }
+//                            } else if (OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProductDO.getPayMode())) {
+//                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+//                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+//                                    BigDecimal firstAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(BigDecimalUtil.mul(itemAllAmount, new BigDecimal(0.3)), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
+//                                    // 30%期
+//                                    if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
+//                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
+//                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+//                                        needPayAmount = BigDecimalUtil.compare(needPayAmount, firstAmount) > 0 ? firstAmount : needPayAmount;
+//                                    } else if (statementOrderDetailDO.getStatementDetailPhase() == 2) {
+//                                        // 70% 期
+//                                        // 加2的原因是算上前面30%的那一天
+//                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 2;
+//                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+//                                        // 减掉上期的30%
+//                                        needPayAmount = BigDecimalUtil.sub(needPayAmount, firstAmount);
+//                                    }
+//                                }
+//                            } else {
+//                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+//                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+//                                    int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
+//                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+//                                }
+//                            }
+                            // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
+                            if (statementDetailStartTime.getTime()>returnTime.getTime()) {
+//                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
+                                payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.SCALE);
                             }
                         }
                         // 正常全额退
-                        BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
+//                        BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE));
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             //运费结算时间放到最接近退货单日期的结算日（大于等于退货日）
                             if (DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) <= 0 && DateUtil.daysBetween(returnTime, statementOrderDetailDO.getStatementExpectPayTime()) >= 0) {
@@ -1651,7 +1664,7 @@ public class StatementServiceImpl implements StatementService {
                             }
                         }
                         // 退款金额，扣除未交款的部分
-                        payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
+//                        payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
 
                         String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT + "-" + orderProductDO.getId() + "-" + orderProductDO.getProductSkuId() + "-" + statementOrderDetailDO.getStatementExpectPayTime();
                         if (addStatementOrderDetailDOMap.get(key) != null) {
@@ -1687,6 +1700,7 @@ public class StatementServiceImpl implements StatementService {
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+                BigDecimal payReturnAmount = BigDecimal.ZERO;
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
@@ -1735,59 +1749,67 @@ public class StatementServiceImpl implements StatementService {
 
                         // 如果有押金还没交，不让退货
                         if (StatementDetailType.STATEMENT_DETAIL_TYPE_DEPOSIT.equals(statementOrderDetailDO.getStatementDetailType())) {
-                            continue;
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                            result.setErrorCode(ErrorCode.STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT);
+                            return result;
                         }
                         statementDetailStartTime = statementOrderDetailDO.getStatementStartTime();
                         statementDetailEndTime = statementOrderDetailDO.getStatementEndTime();
                         // 如果退货时间在结束时间之后，证明本期都没缴，不用处理，等待交
-                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
-                            continue;
-                        }
+//                        if (returnTime.getTime() > statementDetailEndTime.getTime()) {
+//                            continue;
+//                        }
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         BigDecimal productUnitAmount = BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), returnCount);
 
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
-                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
-                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, productUnitAmount);
-                                }
-                            } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterialDO.getPayMode())) {
-                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    BigDecimal firstAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(BigDecimalUtil.mul(orderMaterialDO.getMaterialAmount(), new BigDecimal(0.3)), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
-                                    // 30%期
-                                    if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
-                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
-                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
-                                        needPayAmount = BigDecimalUtil.compare(needPayAmount, firstAmount) > 0 ? firstAmount : needPayAmount;
-                                    } else if (statementOrderDetailDO.getStatementDetailPhase() == 2) {
-                                        // 70% 期
-                                        // 加2的原因是算上前面30%的那一天
-                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 2;
-                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
-                                        // 减掉上期的30%
-                                        needPayAmount = BigDecimalUtil.sub(needPayAmount, firstAmount);
-                                    }
-                                }
-                            } else {
-                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
-                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
-                                    int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
-                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
-                                }
+//                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
+//                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+//                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+//                                    needPayAmount = amountSupport.calculateRentAmount(statementDetailStartTime, returnTime, productUnitAmount);
+//                                }
+//                            } else if (OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType()) && OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterialDO.getPayMode())) {
+//                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+//                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+//                                    BigDecimal firstAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(BigDecimalUtil.mul(orderMaterialDO.getMaterialAmount(), new BigDecimal(0.3)), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
+//                                    // 30%期
+//                                    if (statementOrderDetailDO.getStatementDetailPhase() == 1) {
+//                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
+//                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+//                                        needPayAmount = BigDecimalUtil.compare(needPayAmount, firstAmount) > 0 ? firstAmount : needPayAmount;
+//                                    } else if (statementOrderDetailDO.getStatementDetailPhase() == 2) {
+//                                        // 70% 期
+//                                        // 加2的原因是算上前面30%的那一天
+//                                        int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 2;
+//                                        needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+//                                        // 减掉上期的30%
+//                                        needPayAmount = BigDecimalUtil.sub(needPayAmount, firstAmount);
+//                                    }
+//                                }
+//                            } else {
+//                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
+//                                if (returnTime.getTime() >= statementDetailStartTime.getTime()) {
+//                                    int surplusDays = DateUtil.daysBetween(statementDetailStartTime, returnTime) + 1;
+//                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
+//                                }
+//                            }
+                            // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
+                            if (statementDetailStartTime.getTime()>returnTime.getTime()) {
+//                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
+                                payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.SCALE);
                             }
+
                         }
 
-                        BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
+//                        BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
                         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
                             if (DateUtil.daysBetween(otherStatementTime, statementOrderDetailDO.getStatementExpectPayTime()) <= 0 && DateUtil.daysBetween(returnTime, statementOrderDetailDO.getStatementExpectPayTime()) >= 0) {
                                 otherStatementTime = statementOrderDetailDO.getStatementExpectPayTime();
                             }
                         }
                         // 退款金额，扣除未交款的部分
-                        payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
+//                        payReturnAmount = BigDecimalUtil.sub(payReturnAmount, needPayAmount);
 
                         String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL + "-" + orderMaterialDO.getId() + "-" + orderMaterialDO.getMaterialId() + "-" + statementOrderDetailDO.getStatementExpectPayTime();
                         if (addStatementOrderDetailDOMap.get(key) != null) {
@@ -1807,7 +1829,6 @@ public class StatementServiceImpl implements StatementService {
                 }
             }
         }
-
 
         if (BigDecimalUtil.compare(otherAmount, BigDecimal.ZERO) > 0) {
             String key = OrderItemType.ORDER_ITEM_TYPE_RETURN_OTHER.toString();
@@ -2905,6 +2926,7 @@ public class StatementServiceImpl implements StatementService {
                 statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
             }
             if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
+                SqlLogInterceptor.setExecuteSql("skip print statementOrderDetailMapper.saveList  sql ......");
                 statementOrderDetailMapper.saveList(addStatementOrderDetailDOList);
             }
         }

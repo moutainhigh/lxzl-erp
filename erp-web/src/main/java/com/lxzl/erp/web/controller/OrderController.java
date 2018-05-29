@@ -180,7 +180,7 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "confirmChangeOrder", method = RequestMethod.POST)
     public Result confirmChangeOrder(@RequestBody  OrderConfirmChangeParam orderConfirmChangeParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = orderService.confirmChangeOrder(orderConfirmChangeParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     /**
@@ -192,8 +192,7 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "supperUserChangeOrder", method = RequestMethod.POST)
     public Result supperUserChangeOrder(@RequestBody  OrderConfirmChangeParam orderConfirmChangeParam, BindingResult validResult) {
-        ServiceResult<String, String> serviceResult = orderService.supperUserChangeOrder(orderConfirmChangeParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(orderService.supperUserChangeOrder(orderConfirmChangeParam));
     }
 
     @Autowired

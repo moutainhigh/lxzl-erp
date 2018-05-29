@@ -25,6 +25,24 @@ public class ChargeRecordPageParam  extends BasePageParam {
 
     private Integer subCompanyId;
     private String customerName;
+    private String chargeOrderNo;  //支付系统充值订单号
+    private String channelNo;  //充值渠道编号 1:快付通 其他待拓展
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
+    }
+
+    public String getChargeOrderNo() {
+        return chargeOrderNo;
+    }
+
+    public void setChargeOrderNo(String chargeOrderNo) {
+        this.chargeOrderNo = chargeOrderNo;
+    }
 
     public String getBusinessCustomerNo() {
         return businessCustomerNo;
