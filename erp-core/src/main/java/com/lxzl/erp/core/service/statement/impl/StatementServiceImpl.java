@@ -1649,8 +1649,8 @@ public class StatementServiceImpl implements StatementService {
 //                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
 //                                }
 //                            }
-                            // 如果退货时间>=结算明细结束时间，则生成该明细对应的退货结算单明细
-                            if (returnTime.getTime() >= statementDetailEndTime.getTime()) {
+                            // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
+                            if (statementDetailStartTime.getTime()>returnTime.getTime()) {
                                 payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
                             }
                         }
@@ -1793,10 +1793,11 @@ public class StatementServiceImpl implements StatementService {
 //                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
 //                                }
 //                            }
-                            // 如果退货时间>=结算明细结束时间，则生成该明细对应的退货结算单明细
-                            if (returnTime.getTime() >= statementDetailEndTime.getTime()) {
+                            // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
+                            if (statementDetailStartTime.getTime()>returnTime.getTime()) {
                                 payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
                             }
+
                         }
 
 //                        BigDecimal payReturnAmount = BigDecimalUtil.mul(returnCount, BigDecimalUtil.div(statementOrderDetailDO.getStatementDetailAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE));
