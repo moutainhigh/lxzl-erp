@@ -96,11 +96,11 @@ public class DingdingServiceImpl implements DingdingService {
     /**
      * 申请审批实例的线程
      */
-    private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10, new TreadFactory("approve"));
+    private ExecutorService approveThreadExecutor = Executors.newCachedThreadPool(new TreadFactory("approve"));
     /**
      * 注册用户的线程
      */
-    private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10, new TreadFactory("registUser"));
+    private ExecutorService registUserThreadExecutor = Executors.newCachedThreadPool(new TreadFactory("registUser"));
 
     /**
      * 发送钉钉消息线程
