@@ -663,6 +663,7 @@ public class K3ControllerTest extends ERPTransactionalTest {
     public void confirmOrder() throws Exception {
         OrderConfirmChangeToK3Param orderConfirmChangeToK3Param = new OrderConfirmChangeToK3Param();
         orderConfirmChangeToK3Param.setOrderNo("LXO-20180528-027-00150");
+        orderConfirmChangeToK3Param.setOrderId(3001954);
 
         List<ChangeOrderItemParam> changeOrderItemParamList = new ArrayList<>();
         ChangeOrderItemParam changeOrderItemParam1 = new ChangeOrderItemParam();
