@@ -248,6 +248,11 @@ public class PageController extends BaseController {
         return "/orderManage/orderToAuditList";
     }
 
+    @RequestMapping("/order-manage/relet-detail")
+    public String orderManageReletDetail() {
+        return "/orderManage/reletOrderDetail";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {

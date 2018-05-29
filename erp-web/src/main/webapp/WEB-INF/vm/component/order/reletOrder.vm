@@ -65,9 +65,9 @@
                 <td class="nowrap">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</td>
                 {{#hasReletButtons}}
                     <td class="nowrap text-right">
-                        <div class="btn-group text-right nowrap">
+                        <div class="btn-group" style="width:108px;">
                             {{#reletButtons}}
-                            <a href="${ctx}{{menuUrl}}" class="btn btn-default btn-xs {{class}}" data-no="{{reletOrderNo}}">{{text}}</a>
+                            <a href="${ctx}{{menuUrl}}?no={{reletOrderNo}}" class="btn btn-default btn-xs {{class}} pull-right" data-no="{{reletOrderNo}}">{{text}}</a>
                             {{/reletButtons}}
                         </div>
                     </td>

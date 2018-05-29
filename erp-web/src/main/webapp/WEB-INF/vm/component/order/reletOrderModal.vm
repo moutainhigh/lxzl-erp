@@ -6,12 +6,12 @@
         <form method="post" id="reletOrderForm" description="订单续租">
             <div class="panel-body p25">
                 <div class="row mb15">
-                    <div class="form-group field">
+                    <div class="form-group">
                         <div class="col-md-6">
                             <label class="col-md-3 control-label text-right" style="line-height:39px;">租赁时长</label>
                             <div class="col-md-9">
                                 <div>
-                                    <input id="rentTimeLength" name="rentTimeLength" class="form-control number checkInteger required" type="text" placeholder="输入租赁时长" />
+                                    <input type="text" id="rentTimeLength" name="rentTimeLength" class="form-control number checkInteger required" value=""  placeholder="输入租赁时长" />
                                 </div>
                             </div>
                         </div>
