@@ -1546,7 +1546,10 @@ public class StatementServiceImpl implements StatementService {
                 if (orderProductDO == null) {
                     continue;
                 }
-                BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getProductCount());
+                BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
+                if(BigDecimalUtil.compare(returnCount,BigDecimal.ZERO)<=0){
+                    continue;
+                }
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_PRODUCT, orderProductDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
