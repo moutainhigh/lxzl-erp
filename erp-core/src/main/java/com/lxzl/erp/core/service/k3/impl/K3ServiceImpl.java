@@ -70,6 +70,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -752,6 +754,7 @@ public class K3ServiceImpl implements K3Service {
         FormSEOrderConfirml formSEOrderConfirml = new FormSEOrderConfirml();
         Map<String, Object> requestData = new HashMap<>();
         Map responseMap = new HashMap();
+        String response = null;
 
         formSEOrderConfirml.setOrderNo(orderConfirmChangeToK3Param.getOrderNo());
         String PW = MD5Util.encrypt(K3PassWord).toUpperCase();
@@ -775,20 +778,29 @@ public class K3ServiceImpl implements K3Service {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
             String k3confirmOrderUrl = K3Config.k3Server + "/OrderConfirml/ConfirmlOrder";  //k3确认收货url
-            String response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
-            responseMap =  JSONObject.parseObject(response,HashMap.class);
+            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
+            responseMap = JSONObject.parseObject(response,HashMap.class);
             if ("true".equals(responseMap.get("IsSuccess").toString())){
                 serviceResult.setErrorCode(ErrorCode.SUCCESS);
                 serviceResult.setResult(responseMap.get("Message").toString());
                 return serviceResult;
             }else{
-                throw new BusinessException(responseMap.get("Message").toString());
+                serviceResult.setErrorCode(ErrorCode.K3_CONFIRM_ORDER_ERROR,responseMap.get("Message").toString());
+                return serviceResult;
             }
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
+            dingDingSupport.dingDingSendMessage(getErrorMessage(response,OrderDO.getOrderNo()));
             serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
             return serviceResult;
         }
+    }
+
+    private String getErrorMessage(String response, String orderNo) {
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+        sb.append("向K3推送【确认收货-").append(orderNo).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
     }
 
     @Autowired
