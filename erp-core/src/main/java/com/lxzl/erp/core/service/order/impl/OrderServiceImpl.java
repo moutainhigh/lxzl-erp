@@ -1212,11 +1212,10 @@ public class OrderServiceImpl implements OrderService {
             orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
         }
         // TODO: 2018\5\22 0022  7.传参数给K3
-        ServiceResult<String, String> serviceResult1 = k3Service.confirmOrder(orderConfirmChangeToK3Param);
-        if (!ErrorCode.SUCCESS.equals(serviceResult1.getErrorCode())) {
+        ServiceResult<String, String> k3ServiceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
+        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            result.setErrorCode(serviceResult1.getErrorCode());
-            result.setResult(serviceResult1.getResult());
+            result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
             return result;
         }
         // 推送钉钉
