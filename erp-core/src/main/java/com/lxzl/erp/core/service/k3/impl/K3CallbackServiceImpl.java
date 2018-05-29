@@ -236,6 +236,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
                 if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
                     OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                    if(orderProductDO==null&&StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderEntry())){
+                        OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+                        if(orderDO!=null&&CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())){
+                            List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+                            for(OrderProductDO op : orderProductDOList){
+                                if(k3ReturnOrderDetailDO.getOrderEntry().equals(op.getFEntryID())){
+                                    orderProductDO = op;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     if(orderProductDO!=null){
                         Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                         if(productCount<0){
@@ -254,6 +266,18 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                     k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
                 } else {
                     OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
+                    if(orderMaterialDO==null&&StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderEntry())){
+                        OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
+                        if(orderDO!=null&&CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())){
+                            List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+                            for(OrderMaterialDO om : orderMaterialDOList){
+                                if(k3ReturnOrderDetailDO.getOrderEntry().equals(om.getFEntryID())){
+                                    orderMaterialDO = om;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     if(orderMaterialDO!=null){
                         Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
                         if(materialCount<0){
