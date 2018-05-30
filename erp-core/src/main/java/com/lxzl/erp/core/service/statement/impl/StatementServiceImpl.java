@@ -1655,7 +1655,7 @@ public class StatementServiceImpl implements StatementService {
 //                                }
 //                            }
                             // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                            if (statementDetailStartTime.getTime()>returnTime.getTime()) {
+                            if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
 //                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
                                 payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.SCALE);
                             }
@@ -1800,7 +1800,7 @@ public class StatementServiceImpl implements StatementService {
 //                                }
 //                            }
                             // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
-                            if (statementDetailStartTime.getTime()>returnTime.getTime()) {
+                            if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
 //                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
                                 payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.SCALE);
                             }
