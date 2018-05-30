@@ -1150,17 +1150,18 @@ public class BankSlipServiceImpl implements BankSlipService {
             bankSlipDetailOperationLogMapper.saveBankSlipDetailOperationLogDOList(bankSlipDetailOperationLogDOList);
         }
         bankSlipClaimMapper.updateBankSlipClaimDO(newDankSlipClaimDOList);
-
-        bankSlipDetailMapper.update(bankSlipDetailDO);
-        //改变已经确认个数  再判断认领个数
-        bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - 1);
-        if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
-            bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+        if (paySuccessFlag) {
+            bankSlipDetailMapper.update(bankSlipDetailDO);
+            //改变已经确认个数  再判断认领个数
+            bankSlipDO.setClaimCount(bankSlipDO.getClaimCount() - 1);
+            if (bankSlipDO.getNeedClaimCount() == 0 && bankSlipDO.getClaimCount() == 0) {
+                bankSlipDO.setSlipStatus(SlipStatus.ALL_CLAIM);
+            }
+            bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + 1);
+            bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+            bankSlipDO.setUpdateTime(now);
+            bankSlipMapper.update(bankSlipDO);
         }
-        bankSlipDO.setConfirmCount(bankSlipDO.getConfirmCount() + 1);
-        bankSlipDO.setUpdateUser(userSupport.getCurrentUserId().toString());
-        bankSlipDO.setUpdateTime(now);
-        bankSlipMapper.update(bankSlipDO);
 
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
@@ -1271,6 +1272,10 @@ public class BankSlipServiceImpl implements BankSlipService {
         //认领总金额
         BigDecimal allClaimAmount = BigDecimal.ZERO;
         for (ClaimParam claimParam : claimParamList) {
+            if(BigDecimalUtil.compare(BigDecimal.ZERO,claimParam.getClaimAmount()) == 0 ){
+                serviceResult.setErrorCode(ErrorCode.AMOUNT_MAST_MORE_THEN_ZERO);
+                return serviceResult;
+            }
             CustomerDO customerDO = customerMapper.findByNo(claimParam.getCustomerNo());
             if (customerDO == null) {
                 serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
