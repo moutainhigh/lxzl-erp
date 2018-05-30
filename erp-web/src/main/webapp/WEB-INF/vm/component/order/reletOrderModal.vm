@@ -1,4 +1,4 @@
-<div id="reletOrderModal" class="popup-basic popup-lg admin-form mfp-with-anim ">
+<div id="reletOrderModal" class="popup-basic popup-xl admin-form mfp-with-anim ">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i>订单续租</span>
@@ -7,6 +7,14 @@
             <div class="panel-body p25">
                 <div class="row mb15">
                     <div class="form-group">
+                        <div class="col-md-6">
+                            <label class="col-md-3 control-label text-right" style="line-height:39px;">租赁类型</label>
+                            <div class="col-md-9">
+                                <div>
+                                    <select class="form-control" name="rentType" id="rentType"></select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label class="col-md-3 control-label text-right" style="line-height:39px;">租赁时长</label>
                             <div class="col-md-9">
@@ -39,9 +47,15 @@
                                             <thead>
                                             <tr class="bg-light">
                                                 <th>商品名称</th>
+                                                <th>类别</th>
+                                                <th>品牌</th>
                                                 <th>商品参数（SKU）</th>
+                                                <th>商品保值价</th>
                                                 <th class="nowrap text-center">商品数量</th>
+                                                <th>在租数量</th>
                                                 <th class="nowrap">单价</th>
+                                                <th>设备押金</th>
+                                                <th>支付方式</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -49,18 +63,29 @@
                                             {{#listData}}
                                             <tr class="productRow" data-amount="{{productUnitAmount}}" data-id="{{orderProductId}}">
                                                 <td><span class="badge {{isNewProductBadgeClass}} mr5">{{#isNewValue}}{{isNewProduct}}{{/isNewValue}}</span>{{productName}}</td>
+                                                <td>{{#productInfo}}{{categoryName}}{{/productInfo}}</td>
+                                                <td>{{#productInfo}}{{brandName}}{{/productInfo}}</td>
                                                 <td>{{propertiesToStr}}</td>
+                                                <td>￥{{currentSkuPrice}}</td>
                                                 <td class="text-center">{{productCount}}</td>
+                                                <td>{{rentingProductCount}}</td>
                                                 <td>
                                                     <label class="field prepend-icon rentCountIpt mw200">
                                                         <input type="text" name="productUnitAmount" value="" class="productUnitAmount form-control gui-input pl10" placeholder="{{productUnitAmount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{productUnitAmount}}";};'/>
                                                     </label>
                                                 </td>
+                                                <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
+                                                <td>
+                                                    <p>{{payModeValue}}</p>
+                                                    {{#isRentTypeByMonth}}
+                                                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                    {{/isRentTypeByMonth}}
+                                                </td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="4" class="text-center">无商品项</td>
+                                                <td valign="top" colspan="10" class="text-center">无商品项</td>
                                             </tr>
                                             {{/listData}}
                                             {{/dataSource}}
@@ -76,9 +101,14 @@
                                             <thead>
                                             <tr>
                                                 <th>配件名称</th>
+                                                <th>品牌</th>
                                                 <th>类型</th>
+                                                <th>配件保值价</th>
                                                 <th class="text-center">配件数量</th>
+                                                <th>在租数量</th>
                                                 <th class="rentalPriceTh nowrap"><span class="text">单价</span></th>
+                                                <th>设备押金</th>
+                                                <th>支付方式</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -89,18 +119,26 @@
                                                     {{#isNewValueBadge}}{{isNewMaterial}}{{/isNewValueBadge}}
                                                     {{materialName}}
                                                 </td>
+                                                <td>{{#materialInfo}}{{brandName}}{{/materialInfo}}</td>
                                                 <td>{{materialTypeStr}}</td>
+                                                <td>￥{{currentMaterialPrice}}</td>
                                                 <td class="text-center">{{materialCount}}</td>
+                                                <td>{{rentingMaterialCount}}</td>
                                                 <td>
                                                     <label class="field prepend-icon rentCountIpt mw200">
                                                         <input type="text" name="materialUnitAmount" value="" class="materialUnitAmount form-control gui-input pl10" placeholder="{{materialUnitAmount}}"  onfocus='this.placeholder=""' onblur='if(this.value==""){this.placeholder="{{materialUnitAmount}}";};' />
                                                     </label>
                                                 </td>
+                                                <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
+                                                <td>
+                                                    <p>{{payModeValue}}</p>
+                                                    <p>押{{depositCycle}}付{{paymentCycle}}</p>
+                                                </td>
                                             </tr>
                                             {{/listData}}
                                             {{^listData}}
                                             <tr>
-                                                <td valign="top" colspan="4" class="text-center">无配件项</td>
+                                                <td valign="top" colspan="9" class="text-center">无配件项</td>
                                             </tr>
                                             {{/listData}}
                                             {{/dataSource}}
