@@ -26,7 +26,7 @@ import java.util.List;
  * @Date: Created in 16:04 2018/3/21
  * @Modified By:
  */
-public class BankSlipControllerTest extends ERPTransactionalTest {
+public class BankSlipControllerTest extends ERPUnTransactionalTest {
     @Test
     public void confirmSingleBankSlip() throws Exception {
         BankSlipDetail bankSlipDetail = new BankSlipDetail();
@@ -143,11 +143,11 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
         bankSlipClaim.setBankSlipDetailId(1574);
 //        ArrayList<ClaimParam> list = new ArrayList<>();
 //        ClaimParam claimParam =  new ClaimParam();
-//        claimParam.setClaimAmount(new BigDecimal("234"));
+//        claimParam.setClaimAmount(new BigDecimal("133"));
 //        claimParam.setCustomerNo("LXCC-1000-20180526-00144");
 //        ClaimParam claimParam1 =  new ClaimParam();
-//        claimParam1.setClaimAmount(new BigDecimal("1500"));
-//        claimParam1.setCustomerNo("LXCC-1000-20180511-00005");
+//        claimParam1.setClaimAmount(new BigDecimal("100"));
+//        claimParam1.setCustomerNo("LXCC-027-20180530-00197");
 //        ClaimParam claimParam2 =  new ClaimParam();
 //        claimParam2.setClaimAmount(new BigDecimal(-10));
 //        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
