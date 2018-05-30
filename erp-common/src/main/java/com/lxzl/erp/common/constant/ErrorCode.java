@@ -864,6 +864,7 @@ public class ErrorCode {
     public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
     public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
     public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
+    public static final String BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED = "J18000054";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -1778,6 +1779,7 @@ public class ErrorCode {
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
         MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
+        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需取消认领后才能重复认领");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");

@@ -279,6 +279,11 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //判断是否已认领，如果该条银行对公流水记录项为已认领状态，需认领人取消认领后才能重复认领
+        if (BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED);
+            return serviceResult;
+        }
 
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
             if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
