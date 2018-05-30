@@ -408,12 +408,52 @@
         LEFT JOIN erp_order_time_axis eota ON m_order.id = eota.order_id and eota.data_status = 1
     </select>
 
+    <select id="findUnReletedOrderByParams" resultMap="OrderDO" parameterType="map">
+
+        SELECT
+        <include refid="column_List"/>
+        FROM erp_order eo
+        <where>
+
+            <if test="maps.orderQueryParam.orderStatus != null">
+                and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
+            </if>
+            <if test="maps.orderQueryParam.orderStatusList != null &amp;&amp; maps.orderQueryParam.orderStatusList.size() > 0">
+                and eo.order_status in
+                <foreach item="item" index="index" collection="maps.orderQueryParam.orderStatusList"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="maps.orderQueryParam.startExpectReturnTime != null">
+                <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endExpectReturnTime != null ">
+                <![CDATA[ AND eo.expect_return_time <= #{maps.orderQueryParam.endExpectReturnTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.rentLengthType != null">
+                and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
+            </if>
+            <if test="maps.isQueryAll == null">
+                and eo.data_status = 1
+                and eo.order_no not in (SELECT order_no from erp_relet_order)
+            </if>
+        </where>
+
+        ORDER BY eo.create_time DESC
+    </select>
+
+
     <select id="findOrderByParams" resultMap="OrderDO" parameterType="map">
 
         SELECT
         <include refid="column_List"/>
         <trim prefix=",">
             <include refid="consign_column_List"/>
+        </trim>
+        <trim prefix=",">
+            <include refid="relet_column_List"/>
         </trim>
         <trim prefix=",">
             eap.province_name AS province_name,eac.city_name AS city_name,ead.district_name AS district_name,
@@ -429,6 +469,7 @@
         INNER JOIN erp_customer ec ON ec.id = eo.buyer_customer_id AND ec.data_status = 1
         INNER JOIN erp_sub_company esc ON esc.id = eo.order_sub_company_id AND esc.data_status = 1
         LEFT JOIN erp_sub_company escd ON escd.id = eo.delivery_sub_company_id AND escd.data_status = 1
+        LEFT JOIN erp_relet_order ero ON eo.id = ero.order_id and ero.data_status = 1
         <where>
             <if test="maps.orderQueryParam.buyerRealName != null &amp;&amp; maps.orderQueryParam.buyerRealName != ''">
                 and eo.buyer_customer_name like CONCAT('%','${maps.orderQueryParam.buyerRealName}','%' )
@@ -647,6 +688,15 @@
             </if>
             <if test="maps.orderQueryParam.endRentStratTime != null ">
                 <![CDATA[ AND eo.rent_start_time <= #{maps.orderQueryParam.endRentStratTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.startExpectReturnTime != null">
+                <![CDATA[ AND eo.expect_return_time >= #{maps.orderQueryParam.startExpectReturnTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.endExpectReturnTime != null ">
+                <![CDATA[ AND eo.expect_return_time <= #{maps.orderQueryParam.endExpectReturnTime} ]]>
+            </if>
+            <if test="maps.orderQueryParam.rentLengthType != null">
+                and eo.rent_length_type = #{maps.orderQueryParam.rentLengthType, jdbcType=INTEGER}
             </if>
             <if test="maps.isQueryAll == null">
                 and eo.data_status = 1

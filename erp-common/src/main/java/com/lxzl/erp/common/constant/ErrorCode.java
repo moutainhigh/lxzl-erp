@@ -909,6 +909,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_UNIT_AMOUNT_ERROR = "J21000007";
     public static final String RELET_ORDER_RENT_TIME_LENGTH_ERROR = "J21000008";
     public static final String RELET_ORDER_NOT_EXISTS = "J21000009";
+    public static final String RELET_ORDER_EXISTS_RELET_REQUEST = "J21000010";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1796,7 +1797,7 @@ public class ErrorCode {
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
         MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
-        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需取消认领后才能重复认领");
+        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需创建人取消认领后才能重新认领");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -1843,6 +1844,7 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_UNIT_AMOUNT_ERROR, "此订单商品项或配件项的单价有误，无法续租");
         MAP.put(RELET_ORDER_RENT_TIME_LENGTH_ERROR, "此订单租赁期限有误，无法续租");
         MAP.put(RELET_ORDER_NOT_EXISTS, "此续租单不存在");
+        MAP.put(RELET_ORDER_EXISTS_RELET_REQUEST, "此订单已存在续租请求");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
