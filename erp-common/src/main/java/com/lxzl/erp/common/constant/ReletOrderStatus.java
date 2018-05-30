@@ -8,10 +8,10 @@ public class ReletOrderStatus {
 //    public static final Integer RELET_ORDER_STATUS_CANCEL = 20;        // 取消
 //    public static final Integer RELET_ORDER_STATUS_OVER = 24;        // 结束
 
-//    public static boolean canReletOrderByCurrentStatus(Integer currentStatus){
-//        if (ReletOrderStatus.RELET_ORDER_STATUS_CANCEL == currentStatus){
-//            return true;
-//        }
-//        return false;
-//    }
+    public static boolean canReletOrderByCurrentStatus(Integer currentStatus){
+        if (ReletOrderStatus.RELET_ORDER_STATUS_RELETTING == currentStatus){
+            return true;
+        }
+        return false;
+    }
 }
