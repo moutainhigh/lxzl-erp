@@ -1538,7 +1538,7 @@ public class StatementServiceImpl implements StatementService {
         Date returnTime = k3ReturnOrderDO.getReturnTime();
         Date otherStatementTime = returnTime;
 
-        // TODO 完成原逻辑退货
+        //完成原逻辑退货
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
 
@@ -1705,7 +1705,6 @@ public class StatementServiceImpl implements StatementService {
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
-                BigDecimal payReturnAmount = BigDecimal.ZERO;
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
@@ -1767,7 +1766,7 @@ public class StatementServiceImpl implements StatementService {
 
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         BigDecimal productUnitAmount = BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), returnCount);
-
+                        BigDecimal payReturnAmount = BigDecimal.ZERO;
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
 //                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
 //                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
@@ -1875,6 +1874,7 @@ public class StatementServiceImpl implements StatementService {
 //            result.setErrorCode(penaltyResult.getErrorCode());
 //            return result;
 //        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
