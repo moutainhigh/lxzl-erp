@@ -7,4 +7,5 @@ public class K3Config {
 	public static void setK3Server(String k3Server) {
 		K3Config.k3Server = k3Server;
 	}
+
 }

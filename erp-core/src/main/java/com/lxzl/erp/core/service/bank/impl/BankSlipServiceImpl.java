@@ -279,6 +279,11 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
         //校验流水总表状态是否下推，如果未下推，则商务和业务员不可以操作
         BankSlipDO bankSlipDO = bankSlipMapper.findById(bankSlipDetailDO.getBankSlipId());
+        //判断是否已认领，如果该条银行对公流水记录项为已认领状态，需认领人取消认领后才能重复认领
+        if (BankSlipDetailStatus.CLAIMED.equals(bankSlipDetailDO.getDetailStatus())) {
+            serviceResult.setErrorCode(ErrorCode.BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED);
+            return serviceResult;
+        }
 
         if (SlipStatus.INITIALIZE.equals(bankSlipDO.getSlipStatus())) {
             if (!userSupport.isFinancePerson() && !userSupport.isSuperUser() && !userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
@@ -431,7 +436,7 @@ public class BankSlipServiceImpl implements BankSlipService {
             }
             //校验认领金额总和是否等于充值金额
             String verifyClaimAmount = verifyClaimAmount(bankSlipClaimDOList, bankSlipDetailDO);
-            if(!ErrorCode.SUCCESS.equals(verifyClaimAmount)){
+            if (!ErrorCode.SUCCESS.equals(verifyClaimAmount)) {
                 serviceResult.setErrorCode(verifyClaimAmount);
                 return serviceResult;
             }
@@ -1090,17 +1095,10 @@ public class BankSlipServiceImpl implements BankSlipService {
         }
 
         //当前用户如不是总公司,看是否有权先操作
-        String verifyPermission = verifyPermission(bankSlipDO);
+        String verifyPermission = verifyPermission(bankSlipDetailDO);
         if (!ErrorCode.SUCCESS.equals(verifyPermission)) {
-            if (userSupport.getCurrentUserCompanyId().equals(bankSlipDetailDO.getSubCompanyId())) {
-                if (!userSupport.isElectric() && !userSupport.isChannelSubCompany()) {
-                    serviceResult.setErrorCode(verifyPermission);
-                    return serviceResult;
-                }
-            } else {
-                serviceResult.setErrorCode(verifyPermission);
-                return serviceResult;
-            }
+            serviceResult.setErrorCode(verifyPermission);
+            return serviceResult;
         }
 
         //是否为商务
@@ -1119,7 +1117,7 @@ public class BankSlipServiceImpl implements BankSlipService {
         List<BankSlipClaimDO> bankSlipClaimDOList = bankSlipDetailDO.getBankSlipClaimDOList();
         //校验认领金额总和是否等于充值金额
         String verifyClaimAmount = verifyClaimAmount(bankSlipClaimDOList, bankSlipDetailDO);
-        if(!ErrorCode.SUCCESS.equals(verifyClaimAmount)){
+        if (!ErrorCode.SUCCESS.equals(verifyClaimAmount)) {
             serviceResult.setErrorCode(verifyClaimAmount);
             return serviceResult;
         }
@@ -1186,6 +1184,25 @@ public class BankSlipServiceImpl implements BankSlipService {
         //当前用户如不是总公司,看是否有权先操作
         if (!userSupport.isHeadUser()) {
             if (!userSupport.getCurrentUserCompanyId().equals(bankSlipDO.getSubCompanyId())) {
+                return ErrorCode.DATA_HAVE_NO_PERMISSION;
+            }
+        }
+        return ErrorCode.SUCCESS;
+    }
+
+    /**
+     * 当前用户如不是总公司,看是否有权先操作  （总表数据）
+     *
+     * @param : bankSlipDO
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/5/26 15:48
+     * @Return : java.lang.String
+     */
+    private String verifyPermission(BankSlipDetailDO bankSlipDetailDO) {
+
+        //当前用户如不是总公司,看是否有权先操作
+        if (!userSupport.isHeadUser()) {
+            if (!userSupport.getCurrentUserCompanyId().equals(bankSlipDetailDO.getSubCompanyId())) {
                 return ErrorCode.DATA_HAVE_NO_PERMISSION;
             }
         }
@@ -1429,7 +1446,7 @@ public class BankSlipServiceImpl implements BankSlipService {
 
         //判断需确认金额和总金额额是否相等
         BigDecimal claimAmount = BigDecimal.ZERO;
-        if(CollectionUtil.isNotEmpty(bankSlipClaimDOList)){
+        if (CollectionUtil.isNotEmpty(bankSlipClaimDOList)) {
             for (BankSlipClaimDO bankSlipClaimDO : bankSlipClaimDOList) {
                 claimAmount = BigDecimalUtil.add(claimAmount, bankSlipClaimDO.getClaimAmount());
             }

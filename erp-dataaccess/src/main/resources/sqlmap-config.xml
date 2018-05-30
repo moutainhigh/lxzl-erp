@@ -179,8 +179,6 @@
         <mapper resource="sqlmap/erp_message_third_channel.xml" />
         <mapper resource="sqlmap/erp_order_confirm_change_log.xml" />
         <mapper resource="sqlmap/erp_order_confirm_change_log_detail.xml" />
-
-        <mapper resource="sqlmap/dynamic_sql.xml" />
 </mappers>
 
 </configuration>

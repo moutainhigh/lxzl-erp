@@ -29,6 +29,7 @@ import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
 import com.lxzl.erp.core.service.customer.impl.support.CustomerSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.material.impl.support.BulkMaterialSupport;
@@ -1211,7 +1212,13 @@ public class OrderServiceImpl implements OrderService {
             orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
         }
         // TODO: 2018\5\22 0022  7.传参数给K3
-        // TODO: 2018\5\22 0022  8.推送钉钉
+        ServiceResult<String, String> k3ServiceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
+        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+            result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
+            return result;
+        }
+        // 推送钉钉
         if (flag) {//有退货
             if (orderDO.getOrderStatus()==OrderStatus.ORDER_STATUS_COLSE) {//订单状态为关闭，全部退货
                 sb = new StringBuffer();
@@ -4266,4 +4273,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MessageThirdChannelService messageThirdChannelService;
+
+    @Autowired
+    private K3Service k3Service;
 }
