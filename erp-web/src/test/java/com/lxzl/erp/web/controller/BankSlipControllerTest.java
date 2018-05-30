@@ -141,20 +141,20 @@ public class BankSlipControllerTest extends ERPTransactionalTest {
 
         BankSlipClaim bankSlipClaim = new BankSlipClaim();
         bankSlipClaim.setBankSlipDetailId(1574);
-        ArrayList<ClaimParam> list = new ArrayList<>();
-        ClaimParam claimParam =  new ClaimParam();
-        claimParam.setClaimAmount(new BigDecimal("233"));
-        claimParam.setCustomerNo("LXCC-1000-20180526-00144");
+//        ArrayList<ClaimParam> list = new ArrayList<>();
+//        ClaimParam claimParam =  new ClaimParam();
+//        claimParam.setClaimAmount(new BigDecimal("234"));
+//        claimParam.setCustomerNo("LXCC-1000-20180526-00144");
 //        ClaimParam claimParam1 =  new ClaimParam();
 //        claimParam1.setClaimAmount(new BigDecimal("1500"));
 //        claimParam1.setCustomerNo("LXCC-1000-20180511-00005");
 //        ClaimParam claimParam2 =  new ClaimParam();
 //        claimParam2.setClaimAmount(new BigDecimal(-10));
 //        claimParam2.setCustomerNo("LXCC-1000-20180330-00826");
-        list.add(claimParam);
+//        list.add(claimParam);
 //        list.add(claimParam1);
 //        list.add(claimParam2);
-        bankSlipClaim.setClaimParam(list);
+//        bankSlipClaim.setClaimParam(list);
         bankSlipClaim.setRemark("aaaaaaaaaaaaaaaaaaa");
         TestResult result = getJsonTestResult("/bankSlip/claimBankSlipDetail", bankSlipClaim);
     }
