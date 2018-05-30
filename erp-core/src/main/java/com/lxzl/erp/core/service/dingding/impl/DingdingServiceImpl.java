@@ -96,23 +96,32 @@ public class DingdingServiceImpl implements DingdingService {
     /**
      * 申请审批实例的线程
      */
-    private ExecutorService approveThreadExecutor = Executors.newFixedThreadPool(10, new TreadFactory("approve"));
+    private ExecutorService approveThreadExecutor = Executors.newCachedThreadPool(new TreadFactory("approve"));
     /**
      * 注册用户的线程
      */
-    private ExecutorService registUserThreadExecutor = Executors.newFixedThreadPool(10, new TreadFactory("registUser"));
+    private ExecutorService registUserThreadExecutor = Executors.newCachedThreadPool(new TreadFactory("registUser"));
+
+    /**
+     * 发送钉钉消息线程
+     */
+    private ExecutorService sendDingdingMsgExecutor = Executors.newCachedThreadPool(new TreadFactory("sendDingdingMsg"));
 
     @Override
-    public ServiceResult<String, Object> sendMessageToDingding(DingdingMessageDTO dingdingMessageDTO) {
+    public ServiceResult<String, Object> sendMessageToDingding(final DingdingMessageDTO dingdingMessageDTO) {
         ServiceResult<String, Object> serviceResult = new ServiceResult<>();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         dingdingMessageDTO.setRequestDingdingUrl(DingDingConfig.getSendSystemMessageUrl());
-        DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingMessageDTO);
-        if (dingdingResultDTO.isSuccess()) {
-            return serviceResult;
-        }
-        serviceResult.setErrorCode(dingdingResultDTO.getCode());
-        serviceResult.setResult(dingdingResultDTO);
+        sendDingdingMsgExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingMessageDTO);
+                if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
+                    throw new BusinessException("与钉钉网关交互失败：" + JSONObject.toJSONString(dingdingResultDTO));
+                }
+            }
+        });
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
 

@@ -3,6 +3,7 @@ package com.lxzl.erp.core.service.k3.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.*;
+import com.lxzl.erp.common.domain.K3Config;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.k3.K3OrderQueryParam;
@@ -15,6 +16,8 @@ import com.lxzl.erp.common.domain.k3.pojo.order.OrderMaterial;
 import com.lxzl.erp.common.domain.k3.pojo.order.OrderProduct;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.material.pojo.Material;
+import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
+import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
@@ -23,6 +26,8 @@ import com.lxzl.erp.common.util.FastJsonUtil;
 import com.lxzl.erp.common.util.ListUtil;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirml;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirmlEntry;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -33,7 +38,6 @@ import com.lxzl.erp.core.service.user.UserRoleService;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.customer.CustomerRiskManagementMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderConsignInfoMapper;
@@ -44,9 +48,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.user.UserMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
-import com.lxzl.erp.dataaccess.domain.customer.CustomerRiskManagementDO;
 import com.lxzl.erp.dataaccess.domain.k3.*;
-import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderConsignInfoDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
@@ -57,6 +59,7 @@ import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
+import com.lxzl.se.common.util.secret.MD5Util;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +70,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -87,6 +92,9 @@ public class K3ServiceImpl implements K3Service {
     // k3历史退货单url
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
+
+    private String K3PassWord = "123";
+
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -733,6 +741,66 @@ public class K3ServiceImpl implements K3Service {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    @Override
+    public ServiceResult<String, String> confirmOrder(OrderConfirmChangeToK3Param orderConfirmChangeToK3Param) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        OrderDO OrderDO = orderMapper.findByOrderNo(orderConfirmChangeToK3Param.getOrderNo());
+        if (OrderDO == null){
+            serviceResult.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
+            return serviceResult;
+        }
+        FormSEOrderConfirml formSEOrderConfirml = new FormSEOrderConfirml();
+        Map<String, Object> requestData = new HashMap<>();
+        Map responseMap = new HashMap();
+        String response = null;
+
+        formSEOrderConfirml.setOrderNo(orderConfirmChangeToK3Param.getOrderNo());
+        String PW = MD5Util.encrypt(K3PassWord).toUpperCase();
+        formSEOrderConfirml.setPW(PW);
+
+        List<ChangeOrderItemParam> changeOrderItemParamList = orderConfirmChangeToK3Param.getChangeOrderItemParamList();
+        if (CollectionUtil.isNotEmpty(changeOrderItemParamList)){
+            List<FormSEOrderConfirmlEntry> entrys = new ArrayList<>();
+            for (ChangeOrderItemParam changeOrderItemParam : changeOrderItemParamList){
+                FormSEOrderConfirmlEntry formSEOrderConfirmlEntry = new FormSEOrderConfirmlEntry();
+                formSEOrderConfirmlEntry.setOrderEntryId(changeOrderItemParam.getItemId());
+                formSEOrderConfirmlEntry.setOrderItemType(changeOrderItemParam.getItemType());
+                formSEOrderConfirmlEntry.setQty(new BigDecimal(changeOrderItemParam.getReturnCount()));
+                entrys.add(formSEOrderConfirmlEntry);
+            }
+            formSEOrderConfirml.setEntrys(entrys);
+        }
+        requestData.put("formSEOrderConfirml",formSEOrderConfirml);
+        String requestJson  = JSONObject.toJSONString(requestData);
+        try{
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String k3confirmOrderUrl = K3Config.k3Server + "/OrderConfirml/ConfirmlOrder";  //k3确认收货url
+            response = HttpClientUtil.post(k3confirmOrderUrl, requestJson, headerBuilder, "UTF-8");
+            responseMap = JSONObject.parseObject(response,HashMap.class);
+            if ("true".equals(responseMap.get("IsSuccess").toString())){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }else{
+                serviceResult.setErrorCode(ErrorCode.K3_CONFIRM_ORDER_ERROR,responseMap.get("Message").toString());
+                return serviceResult;
+            }
+        }catch (Exception e){
+//            e.printStackTrace();
+            dingDingSupport.dingDingSendMessage(getErrorMessage(response,OrderDO.getOrderNo()));
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return serviceResult;
+        }
+    }
+
+    private String getErrorMessage(String response, String orderNo) {
+        StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+        sb.append("向K3推送【确认收货-").append(orderNo).append("】数据失败：");
+        sb.append(JSON.toJSONString(response));
+        return sb.toString();
     }
 
     @Autowired
