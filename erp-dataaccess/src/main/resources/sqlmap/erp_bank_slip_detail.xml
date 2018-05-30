@@ -235,6 +235,7 @@
 					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 				</if>
 				<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 					AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR
 					( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
@@ -246,6 +247,7 @@
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 				</if>
+				and ebsd.loan_sign = 1
 			</where>
 </select>
 
@@ -293,6 +295,7 @@
 					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 				</if>
 				<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 					AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR
 					( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
@@ -304,6 +307,7 @@
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
 				</if>
+				and ebsd.loan_sign = 1
 			</where>
 			ORDER BY ebsd.detail_status ASC ,ebsd.payer_name DESC
 			LIMIT #{maps.start},#{maps.pageSize}
@@ -556,6 +560,7 @@
 					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 				</if>
 				<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 					AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 OR ( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
@@ -602,6 +607,7 @@
 					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 				</if>
 				<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+					and ebs.slip_status !=0 AND ebsd.detail_status != 5
 					AND (ebsd.detail_status = 1 OR ebsd.detail_status = 2 or ( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 					or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})))
@@ -658,6 +664,7 @@
 				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 			</if>
 			<if test="maps.departmentType != null &amp;&amp;maps.departmentType == 3">
+				and ebs.slip_status !=0 AND ebsd.detail_status != 5
 				AND (ebsd.detail_status = 1  OR ebsd.detail_status = 2  or ( ebsd.detail_status = 3 and (ec.OWNER = #{maps.currentUser,jdbcType=VARCHAR} or ec.union_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.update_user = #{maps.currentUser,jdbcType=VARCHAR}
 				or ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR})) and ebsc.create_user = #{maps.currentUser,jdbcType=VARCHAR}
