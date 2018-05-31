@@ -547,7 +547,9 @@ public class PaymentServiceImpl implements PaymentService {
         param.setBusinessReturnDepositAmount(returnDepositAmount);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
-        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        User loginUser = userSupport.getCurrentUser();
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID:loginUser.getUserId();
+        param.setBusinessOperateUser(loginUserId.toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
