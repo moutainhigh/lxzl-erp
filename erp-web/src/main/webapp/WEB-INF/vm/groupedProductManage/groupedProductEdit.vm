@@ -39,7 +39,7 @@
                 'manage.group.choose.product.js',
                 'modal.choose.material.js',
                 'manage.order.item.render.js',
-                'manage.group.product.util.js',);
+                'manage.group.product.util.js');
     </script>
     <script type="text/javascript">
         //功能事件初始化
