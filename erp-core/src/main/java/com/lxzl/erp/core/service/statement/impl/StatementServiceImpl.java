@@ -3408,8 +3408,6 @@ public class StatementServiceImpl implements StatementService {
     public ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam) {
         ServiceResult<String, Page<FinanceStatementOrderPayDetail>> serviceResult = new ServiceResult<>();
         Map<String, Object> maps = new HashMap<>();
-        maps.put("start", 0);
-        maps.put("pageSize", Integer.MAX_VALUE);
         maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
         Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
         List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
