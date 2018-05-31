@@ -1350,37 +1350,37 @@ public class StatementServiceImpl implements StatementService {
 
     private List<StatementOrderDetail> sorting(List<StatementOrderDetail> statementOrderDetailList) {
         //存放非退货单结算单详情项
-        List<StatementOrderDetail> list1 = new ArrayList<>();
+        List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
         //存放最终结果
-        List<StatementOrderDetail> list2 = new ArrayList<>();
+        List<StatementOrderDetail> allList = new ArrayList<>();
         //存放退货结算单详情项其它费用项
-        List<StatementOrderDetail> list3 = new ArrayList<>();
+        List<StatementOrderDetail> returnOrderOtherList = new ArrayList<>();
         //存放退货结算单商品、配件项
-        Map<StatementOrderDetail,Integer> map = new HashMap<>();
+        Map<Integer,List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
         for (StatementOrderDetail statementOrderDetail:statementOrderDetailList) {
-            if (statementOrderDetail.getOrderType()!= OrderType.ORDER_TYPE_RETURN) {
-                list1.add(statementOrderDetail);
-            }else {
-                if (null==statementOrderDetail.getReturnReferId()) {
-                   list3.add(statementOrderDetail);
-                }else {
-                    map.put(statementOrderDetail,statementOrderDetail.getReturnReferId());
-                }
+            if (!OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
+                notReturnOrderList.add(statementOrderDetail);
+            }else if(null==statementOrderDetail.getReturnReferId()){
+                returnOrderOtherList.add(statementOrderDetail);
+            }else if(null!=returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())){
+                returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
+            }else{
+                List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
+                returnOrderProudctAndMaterialList.add(statementOrderDetail);
+                returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(),returnOrderProudctAndMaterialList);
             }
         }
-        for (StatementOrderDetail statementOrderDetail:list1) {
-            list2.add(statementOrderDetail);
-            for (Map.Entry<StatementOrderDetail,Integer> entry : map.entrySet()) {
-                if (statementOrderDetail.getStatementOrderDetailId().equals(entry.getValue())) {
-                    list2.add(entry.getKey());
-                }
+        if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
+            allList.addAll(returnOrderOtherList);
+        }
+        for (StatementOrderDetail statementOrderDetail:notReturnOrderList) {
+            allList.add(statementOrderDetail);
+            List<StatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
+            if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
+                allList.addAll(statementOrderDetails);
             }
         }
-        for (StatementOrderDetail statementOrderDetail:list3) {
-            list2.add(statementOrderDetail);
-        }
-
-        return list2;
+        return allList;
     }
 
     @Override
