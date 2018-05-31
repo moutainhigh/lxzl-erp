@@ -28,6 +28,7 @@ import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
 import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
+import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.statement.StatementService;
 import com.lxzl.erp.core.service.statement.impl.support.StatementOrderSupport;
 import com.lxzl.erp.core.service.statement.impl.support.StatementPaySupport;
@@ -1541,12 +1542,12 @@ public class StatementServiceImpl implements StatementService {
         //完成原逻辑退货
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-
-                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("10.") && !k3ReturnOrderDetailDO.getProductNo().startsWith("90.")) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
-                    continue;
+                OrderProductDO orderProductDO = null;
+                //如果是商品
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())){
+                    //兼容erp订单和k3订单商品项
+                    orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                 }
-
-                OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
                 if (orderProductDO == null) {
                     continue;
                 }
@@ -1693,15 +1694,19 @@ public class StatementServiceImpl implements StatementService {
 
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDO.getK3ReturnOrderDetailDOList())) {
             for (K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDO.getK3ReturnOrderDetailDOList()) {
-                if ((!k3ReturnOrderDetailDO.getProductNo().startsWith("20.") && !k3ReturnOrderDetailDO.getProductNo().startsWith("30.")) || k3ReturnOrderDetailDO.getOrderItemId() == null) {
+                OrderMaterialDO orderMaterialDO = null;
+                //如果是配件
+                if (productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())){
+                    //兼容erp订单和k3订单配件项
+                    orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
+                }
+                if(orderMaterialDO==null){
                     continue;
                 }
-                OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                if (orderMaterialDO == null) {
+                BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getRealProductCount());
+                if(BigDecimalUtil.compare(returnCount,BigDecimal.ZERO)<=0){
                     continue;
                 }
-
-                BigDecimal returnCount = new BigDecimal(k3ReturnOrderDetailDO.getProductCount());
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
@@ -3747,6 +3752,8 @@ public class StatementServiceImpl implements StatementService {
     private DingDingSupport dingDingSupport;
     @Autowired
     private ResultGenerator resultGenerator;
+    @Autowired
+    private ProductSupport productSupport;
     @Autowired
     private K3OrderStatementConfigMapper k3OrderStatementConfigMapper;
 
