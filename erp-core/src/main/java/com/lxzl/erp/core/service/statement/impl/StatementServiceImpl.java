@@ -1350,7 +1350,8 @@ public class StatementServiceImpl implements StatementService {
 
     private List<StatementOrderDetail> sorting(List<StatementOrderDetail> statementOrderDetailList) {
         //存放非退货单结算单详情项
-        List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
+//        List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
+        Map<Integer,StatementOrderDetail> notReturnOrderMap = new TreeMap<>();
         //存放最终结果
         List<StatementOrderDetail> allList = new ArrayList<>();
         //存放退货结算单详情项其它费用项
@@ -1359,7 +1360,7 @@ public class StatementServiceImpl implements StatementService {
         Map<Integer,List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
         for (StatementOrderDetail statementOrderDetail:statementOrderDetailList) {
             if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
-                notReturnOrderList.add(statementOrderDetail);
+                notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(),statementOrderDetail);
             }else {
                 if(null==statementOrderDetail.getReturnReferId()){
                     returnOrderOtherList.add(statementOrderDetail);
@@ -1377,7 +1378,8 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
             allList.addAll(returnOrderOtherList);
         }
-        for (StatementOrderDetail statementOrderDetail:notReturnOrderList) {
+        for (Integer statementOrderDetailId:notReturnOrderMap.keySet()) {
+            StatementOrderDetail statementOrderDetail = notReturnOrderMap.get(statementOrderDetailId);
             allList.add(statementOrderDetail);
             List<StatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
             if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
