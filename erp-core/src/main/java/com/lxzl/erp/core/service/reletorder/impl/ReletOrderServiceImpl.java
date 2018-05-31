@@ -841,7 +841,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             for (ReletOrderProductDO targetOrderProduct : reletOrderDO.getReletOrderProductDOList()) {
 
-                ReletOrderProduct orderProduct = getReletOrderProductById(reletOrder, targetOrderProduct.getId());
+                ReletOrderProduct orderProduct = getReletOrderProductById(reletOrder, targetOrderProduct.getOrderProductId());
                 if (null == orderProduct || null == orderProduct.getProductUnitAmount()
                         || BigDecimalUtil.compare(orderProduct.getProductUnitAmount(), BigDecimal.ZERO) < 0) {
                     result.setErrorCode(ErrorCode.RELET_ORDER_UNIT_AMOUNT_ERROR);
@@ -859,7 +859,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             for (ReletOrderMaterialDO targetOrderMaterial : reletOrderDO.getReletOrderMaterialDOList()) {
 
-                ReletOrderMaterial orderMaterial = getReletOrderMaterialById(reletOrder, targetOrderMaterial.getId());
+                ReletOrderMaterial orderMaterial = getReletOrderMaterialById(reletOrder, targetOrderMaterial.getOrderMaterialId());
                 if (null == orderMaterial || null == orderMaterial.getMaterialUnitAmount()
                         || BigDecimalUtil.compare(orderMaterial.getMaterialUnitAmount(), BigDecimal.ZERO) < 0) {
                     result.setErrorCode(ErrorCode.RELET_ORDER_UNIT_AMOUNT_ERROR);
@@ -878,12 +878,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
-    private ReletOrderProduct getReletOrderProductById(ReletOrder reletOrder, Integer id) {
+    private ReletOrderProduct getReletOrderProductById(ReletOrder reletOrder, Integer orderProductId) {
 
         if (CollectionUtil.isNotEmpty(reletOrder.getReletOrderProductList())) {
 
             for (ReletOrderProduct reletOrderProduct : reletOrder.getReletOrderProductList()) {
-                if (reletOrderProduct.getReletOrderProductId() != null && reletOrderProduct.getReletOrderProductId().equals(id)) {
+                if (reletOrderProduct.getOrderProductId() != null && reletOrderProduct.getOrderProductId().equals(orderProductId)) {
                     return reletOrderProduct;
                 }
             }
@@ -892,12 +892,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
 
-    private ReletOrderMaterial getReletOrderMaterialById(ReletOrder reletOrder, Integer id) {
+    private ReletOrderMaterial getReletOrderMaterialById(ReletOrder reletOrder, Integer orderMaterialId) {
 
         if (CollectionUtil.isNotEmpty(reletOrder.getReletOrderMaterialList())) {
 
             for (ReletOrderMaterial reletOrderMaterial : reletOrder.getReletOrderMaterialList()) {
-                if (reletOrderMaterial.getReletOrderMaterialId() != null && reletOrderMaterial.getReletOrderMaterialId().equals(id)) {
+                if (reletOrderMaterial.getOrderMaterialId() != null && reletOrderMaterial.getOrderMaterialId().equals(orderMaterialId)) {
                     return reletOrderMaterial;
                 }
             }
