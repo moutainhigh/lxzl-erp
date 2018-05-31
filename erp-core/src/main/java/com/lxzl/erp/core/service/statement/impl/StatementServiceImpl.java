@@ -1337,11 +1337,43 @@ public class StatementServiceImpl implements StatementService {
         }
 
         List<StatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
+        //排序
+        statementOrderDetailList= sorting(statementOrderDetailList);
+
         statementOrder.setStatementOrderDetailList(statementOrderDetailList);
 
         result.setResult(statementOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private List<StatementOrderDetail> sorting(List<StatementOrderDetail> statementOrderDetailList) {
+        //按结算单详情id由小到大顺序排序排序
+        Collections.sort(statementOrderDetailList, new Comparator(){
+            @Override
+            public int compare(Object o1, Object o2) {
+                StatementOrderDetail statementOrderDetail1 = (StatementOrderDetail)o1;
+                StatementOrderDetail statementOrderDetail2 = (StatementOrderDetail)o2;
+                if(statementOrderDetail1.getStatementOrderDetailId()>statementOrderDetail2.getStatementOrderDetailId()){
+                    return 1;
+                }else if(statementOrderDetail1.getStatementOrderDetailId()==statementOrderDetail2.getStatementOrderDetailId()){
+                    return 0;
+                }else{
+                    return -1;
+                }
+            }
+        });
+        List<StatementOrderDetail> newstatementOrderDetailList = new ArrayList<>();
+        Map<Integer,Integer> map = new HashMap<>();
+        for (StatementOrderDetail statementOrderDetail:statementOrderDetailList) {
+            if (statementOrderDetail.getOrderType()!= OrderType.ORDER_TYPE_RETURN) {
+                newstatementOrderDetailList.add(statementOrderDetail);
+                map.put(statementOrderDetail.getStatementOrderDetailId(),newstatementOrderDetailList.indexOf(statementOrderDetail));
+            }else {
+                newstatementOrderDetailList.add(map.get(statementOrderDetail.getReturnReferId())+1,statementOrderDetail);
+            }
+        }
+        return newstatementOrderDetailList;
     }
 
     @Override
