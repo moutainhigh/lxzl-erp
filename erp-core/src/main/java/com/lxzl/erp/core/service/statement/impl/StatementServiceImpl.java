@@ -1358,16 +1358,20 @@ public class StatementServiceImpl implements StatementService {
         //存放退货结算单商品、配件项
         Map<Integer,List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
         for (StatementOrderDetail statementOrderDetail:statementOrderDetailList) {
-            if (!OrderType.ORDER_TYPE_RETURN.equals(statementOrderDetail.getOrderType())) {
+            if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
                 notReturnOrderList.add(statementOrderDetail);
-            }else if(null==statementOrderDetail.getReturnReferId()){
-                returnOrderOtherList.add(statementOrderDetail);
-            }else if(null!=returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())){
-                returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
-            }else{
-                List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
-                returnOrderProudctAndMaterialList.add(statementOrderDetail);
-                returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(),returnOrderProudctAndMaterialList);
+            }else {
+                if(null==statementOrderDetail.getReturnReferId()){
+                    returnOrderOtherList.add(statementOrderDetail);
+                }else {
+                    if(null!=returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())){
+                        returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
+                    }else {
+                        List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
+                        returnOrderProudctAndMaterialList.add(statementOrderDetail);
+                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(),returnOrderProudctAndMaterialList);
+                    }
+                }
             }
         }
         if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
