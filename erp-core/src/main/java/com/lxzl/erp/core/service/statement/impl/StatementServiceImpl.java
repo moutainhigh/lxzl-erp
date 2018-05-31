@@ -1349,6 +1349,21 @@ public class StatementServiceImpl implements StatementService {
     }
 
     private List<StatementOrderDetail> sorting(List<StatementOrderDetail> statementOrderDetailList) {
+        //按结算单详情id由小到大顺序排序排序
+        Collections.sort(statementOrderDetailList, new Comparator(){
+            @Override
+            public int compare(Object o1, Object o2) {
+                StatementOrderDetail statementOrderDetail1 = (StatementOrderDetail)o1;
+                StatementOrderDetail statementOrderDetail2 = (StatementOrderDetail)o2;
+                if(statementOrderDetail1.getStatementOrderDetailId()>statementOrderDetail2.getStatementOrderDetailId()){
+                    return 1;
+                }else if(statementOrderDetail1.getStatementOrderDetailId()==statementOrderDetail2.getStatementOrderDetailId()){
+                    return 0;
+                }else{
+                    return -1;
+                }
+            }
+        });
         //存放非退货单结算单详情项
         List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
         //存放最终结果
