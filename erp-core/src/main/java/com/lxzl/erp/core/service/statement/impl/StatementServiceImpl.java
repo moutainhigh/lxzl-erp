@@ -5,16 +5,14 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
+import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
-import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.*;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -3404,6 +3402,21 @@ public class StatementServiceImpl implements StatementService {
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam) {
+        ServiceResult<String, Page<FinanceStatementOrderPayDetail>> serviceResult = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("start", 0);
+        maps.put("pageSize", Integer.MAX_VALUE);
+        maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
+        Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
+        List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
+        Page<FinanceStatementOrderPayDetail> page = new Page<>(financeStatementOrderPayDetailList, totalCount, statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
     }
 
     /**
