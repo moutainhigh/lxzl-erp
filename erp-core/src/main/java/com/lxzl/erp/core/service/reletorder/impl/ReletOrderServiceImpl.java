@@ -21,6 +21,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -230,7 +231,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
         if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
-            result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE);
             return result;
         }
 
@@ -295,7 +296,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             return result;
         }
         if (!ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
-            result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT);
             return result;
         }
 
@@ -351,7 +352,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 return result;
             }
 
-            //TODO 获取续租订单  ，推送K3消息
+            //推送K3消息
+            ServiceResult<String, String> k3ServiceResult = k3Service.reletOrder(reletOrderDO, orderDO);
+            if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
+                return result;
+            }
 
         }
 
@@ -438,8 +445,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                     return createStatementOrderResult.getErrorCode();
                 }
 
-                //TODO 获取续租订单详细信息，发送给k3
-
+                //推送K3消息
+                ServiceResult<String, String> k3ServiceResult = k3Service.reletOrder(reletOrderDO, orderDO);
+                if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    return k3ServiceResult.getErrorCode();
+                }
 
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
@@ -1592,4 +1603,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private K3Service k3Service;
 }

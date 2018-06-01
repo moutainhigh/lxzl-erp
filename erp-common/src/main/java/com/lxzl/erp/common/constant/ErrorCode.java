@@ -810,7 +810,7 @@ public class ErrorCode {
     /** k3历史退货单响应代码 */
     public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
     public static final String K3_CONFIRM_ORDER_ERROR = "J17000033";
-
+    public static final String K3_RELET_ORDER_ERROR = "J17000034";
 
     public static final String FILE_IS_NULL = "J18000001";
     public static final String ANALYSIS_FILE_IS_ERROR = "J18000002";
@@ -910,6 +910,8 @@ public class ErrorCode {
     public static final String RELET_ORDER_RENT_TIME_LENGTH_ERROR = "J21000008";
     public static final String RELET_ORDER_NOT_EXISTS = "J21000009";
     public static final String RELET_ORDER_EXISTS_RELET_REQUEST = "J21000010";
+    public static final String RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE = "J21000011";
+    public static final String RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT = "J21000012";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1744,6 +1746,7 @@ public class ErrorCode {
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
         MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
+        MAP.put(K3_RELET_ORDER_ERROR, "K3订单续租推送信息失败,【%s 】");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1845,6 +1848,8 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_RENT_TIME_LENGTH_ERROR, "此订单租赁期限有误，无法续租");
         MAP.put(RELET_ORDER_NOT_EXISTS, "此续租单不存在");
         MAP.put(RELET_ORDER_EXISTS_RELET_REQUEST, "此订单已存在续租请求");
+        MAP.put(RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE, "只有待提交状态的续租单允许修改");
+        MAP.put(RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT, "只有待提交状态的续租单允许提交");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");

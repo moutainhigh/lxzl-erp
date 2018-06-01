@@ -9,6 +9,8 @@ import com.lxzl.erp.common.domain.k3.pojo.K3SendRecord;
 import com.lxzl.erp.common.domain.k3.pojo.order.Order;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrderQueryParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
+import com.lxzl.erp.dataaccess.domain.order.OrderDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 
 import java.util.Map;
 
@@ -68,4 +70,14 @@ public interface K3Service {
      * @return
      */
     ServiceResult<String,String> confirmOrder(OrderConfirmChangeToK3Param orderConfirmChangeToK3Param);
+
+    /**
+     * 推送 订单续租信息 到
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/1 9:25
+     * @param
+     * @return
+     */
+    public ServiceResult<String, String> reletOrder(ReletOrderDO reletOrderDO, OrderDO orderDO);
 }
