@@ -305,7 +305,7 @@ public class ImportBankSlip {
                     newBankSlipClaimDO.setOtherSideAccountNo(otherSideAccountNo);
                     newBankSlipClaimDO.setCustomerNo(bankSlipClaimDO.getCustomerNo());
                     newBankSlipClaimDO.setCustomerName(bankSlipClaimDO.getCustomerName());
-                    newBankSlipClaimDO.setClaimAmount(bankSlipClaimDO.getClaimAmount());
+                    newBankSlipClaimDO.setClaimAmount(bankSlipDetailDO.getTradeAmount());
                     newBankSlipClaimDO.setClaimSerialNo(System.currentTimeMillis());
                     newBankSlipClaimDO.setRechargeStatus(RechargeStatus.INITIALIZE);
                     newBankSlipClaimDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);

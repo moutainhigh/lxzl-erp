@@ -167,7 +167,7 @@
                                         <ul class="dropdown-menu pull-right" role="menu">
                                             {{#rowActionButtons}}
                                             <li>
-                                                <a href="${ctx}{{menuUrl}}?bankSlipDetailId={{bankSlipDetailId}}" class="{{class}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankSlipDetailId}}" data-status="{{detailStatus}}">{{text}}</a>
+                                                <a href="${ctx}{{menuUrl}}?bankSlipDetailId={{bankSlipDetailId}}" class="{{class}}" data-tradeamount="{{tradeAmount}}" data-bankslipdetailid="{{bankSlipDetailId}}" data-status="{{detailStatus}}" data-islocal="{{isLocalization}}">{{text}}</a>
                                             </li>
                                             {{/rowActionButtons}}
                                         </ul>
