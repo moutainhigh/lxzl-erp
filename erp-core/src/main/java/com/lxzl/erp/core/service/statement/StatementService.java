@@ -3,7 +3,9 @@ package com.lxzl.erp.core.service.statement;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
+import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -186,5 +188,11 @@ public interface StatementService extends BaseService {
      * @return
      */
     ServiceResult<String, StatementOrder> queryStatementOrderMonthDetail(String customerNo , Date month);
-
+    /**
+     * 结算导出详情分页查询
+     *
+     * @param statementOrderDetailQueryParam
+     * @return
+     */
+    ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam);
 }

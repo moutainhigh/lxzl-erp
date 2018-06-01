@@ -5,16 +5,14 @@ import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
+import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
 import com.lxzl.erp.common.domain.payment.account.pojo.PayResult;
 import com.lxzl.erp.common.domain.product.pojo.Product;
-import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
-import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
-import com.lxzl.erp.common.domain.statement.StatementPayOrderQueryParam;
+import com.lxzl.erp.common.domain.statement.*;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.user.pojo.User;
@@ -1337,11 +1335,56 @@ public class StatementServiceImpl implements StatementService {
         }
 
         List<StatementOrderDetail> statementOrderDetailList = ListUtil.mapToList(hashMap);
+        //排序
+        if (CollectionUtil.isNotEmpty(statementOrderDetailList)) {
+            statementOrderDetailList= sorting(statementOrderDetailList);
+        }
         statementOrder.setStatementOrderDetailList(statementOrderDetailList);
 
         result.setResult(statementOrder);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    private List<StatementOrderDetail> sorting(List<StatementOrderDetail> statementOrderDetailList) {
+        //存放非退货单结算单详情项
+//        List<StatementOrderDetail> notReturnOrderList = new ArrayList<>();
+        Map<Integer,StatementOrderDetail> notReturnOrderMap = new TreeMap<>();
+        //存放最终结果
+        List<StatementOrderDetail> allList = new ArrayList<>();
+        //存放退货结算单详情项其它费用项
+        List<StatementOrderDetail> returnOrderOtherList = new ArrayList<>();
+        //存放退货结算单商品、配件项
+        Map<Integer,List<StatementOrderDetail>> returnOrderProudctAndMaterialMap = new HashMap<>();
+        for (StatementOrderDetail statementOrderDetail:statementOrderDetailList) {
+            if (OrderType.ORDER_TYPE_ORDER.equals(statementOrderDetail.getOrderType())) {
+                notReturnOrderMap.put(statementOrderDetail.getStatementOrderDetailId(),statementOrderDetail);
+            }else {
+                if(null==statementOrderDetail.getReturnReferId()){
+                    returnOrderOtherList.add(statementOrderDetail);
+                }else {
+                    if(null!=returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId())){
+                        returnOrderProudctAndMaterialMap.get(statementOrderDetail.getReturnReferId()).add(statementOrderDetail);
+                    }else {
+                        List<StatementOrderDetail> returnOrderProudctAndMaterialList = new ArrayList<>();
+                        returnOrderProudctAndMaterialList.add(statementOrderDetail);
+                        returnOrderProudctAndMaterialMap.put(statementOrderDetail.getReturnReferId(),returnOrderProudctAndMaterialList);
+                    }
+                }
+            }
+        }
+        if (CollectionUtil.isNotEmpty(returnOrderOtherList)) {
+            allList.addAll(returnOrderOtherList);
+        }
+        for (Integer statementOrderDetailId:notReturnOrderMap.keySet()) {
+            StatementOrderDetail statementOrderDetail = notReturnOrderMap.get(statementOrderDetailId);
+            allList.add(statementOrderDetail);
+            List<StatementOrderDetail> statementOrderDetails = returnOrderProudctAndMaterialMap.get(statementOrderDetail.getStatementOrderDetailId());
+            if (CollectionUtil.isNotEmpty(statementOrderDetails)) {
+                allList.addAll(statementOrderDetails);
+            }
+        }
+        return allList;
     }
 
     @Override
@@ -3362,6 +3405,19 @@ public class StatementServiceImpl implements StatementService {
         orderTimeAxisSupport.addOrderTimeAxis(orderDO.getId(), OrderStatus.ORDER_STATUS_PAID, null, now, userSupport.getCurrentUser().getUserId());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, Page<FinanceStatementOrderPayDetail>> queryFinanceStatementOrderPayDetail(StatementOrderDetailQueryParam statementOrderDetailQueryParam) {
+        ServiceResult<String, Page<FinanceStatementOrderPayDetail>> serviceResult = new ServiceResult<>();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("statementOrderDetailQueryParam", statementOrderDetailQueryParam);
+        Integer totalCount = statementOrderDetailMapper.queryStatementOrderDetailCountByParam(maps);
+        List<FinanceStatementOrderPayDetail> financeStatementOrderPayDetailList = statementOrderDetailMapper.queryStatementOrderDetailByParam(maps);
+        Page<FinanceStatementOrderPayDetail> page = new Page<>(financeStatementOrderPayDetailList, totalCount, statementOrderDetailQueryParam.getPageNo(), statementOrderDetailQueryParam.getPageSize());
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(page);
+        return serviceResult;
     }
 
     /**
