@@ -815,17 +815,63 @@ public class K3ServiceImpl implements K3Service {
         return sb.toString();
     }
 
-
+    @Override
     public ServiceResult<String, String> reletOrder(ReletOrderDO reletOrderDO, OrderDO orderDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
-
-        FormSEOrderOelet formSEOrderOelet = new FormSEOrderOelet();
 
         Map<String, Object> requestData = new HashMap<>();
         Map responseMap = new HashMap();
         String response = null;
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        ServiceResult<String, FormSEOrderOelet> k3ParamResult = getReletOrderToK3Param(reletOrderDO, orderDO);
+        if (!ErrorCode.SUCCESS.equals(k3ParamResult.getErrorCode())) {
+            serviceResult.setErrorCode(k3ParamResult.getErrorCode());
+            return serviceResult;
+        }
+
+        requestData.put("FormSEOrderOelet",k3ParamResult.getResult());
+        String requestJson  = JSONObject.toJSONString(requestData);
+        try{
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String k3ReletOrderUrl = K3Config.k3Server + "/OrderConfirml/OeletOrder";  //k3确认收货url
+            response = HttpClientUtil.post(k3ReletOrderUrl, requestJson, headerBuilder, "UTF-8");
+            responseMap = JSONObject.parseObject(response,HashMap.class);
+            if ("true".equals(responseMap.get("IsSuccess").toString())){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }else{
+                serviceResult.setErrorCode(ErrorCode.K3_RELET_ORDER_ERROR,responseMap.get("Message").toString());
+                return serviceResult;
+            }
+        }catch (Exception e){
+            StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+            sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
+            sb.append(JSON.toJSONString(response));
+            dingDingSupport.dingDingSendMessage(sb.toString());
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return serviceResult;
+        }
+    }
+
+    /**
+     * 根据续租单和订单信息 获k3推送消息参数
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/1 19:08
+     * @param
+     * @return
+     */
+    private ServiceResult<String, FormSEOrderOelet> getReletOrderToK3Param(ReletOrderDO reletOrderDO, OrderDO orderDO){
+        ServiceResult<String, FormSEOrderOelet> serviceResult = new ServiceResult<>();
+
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        FormSEOrderOelet formSEOrderOelet = new FormSEOrderOelet();
+        if (null == reletOrderDO || null == orderDO){
+            serviceResult.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return serviceResult;
+        }
         Integer orderType = orderDO.getIsK3Order() == CommonConstant.YES ? K3_RELET_ORDER_TYPE_OLD : K3_RELET_ORDER_TYPE_NEW;//订单类型（1-新订单  2-老订单）
         formSEOrderOelet.setOrderNo(reletOrderDO.getOrderNo());
         formSEOrderOelet.setPw(K3_RELET_ORDER_PW);
@@ -876,33 +922,10 @@ public class K3ServiceImpl implements K3Service {
             }
         }
         formSEOrderOelet.setEntrys(entrys);
-
-        requestData.put("FormSEOrderOelet",formSEOrderOelet);
-        String requestJson  = JSONObject.toJSONString(requestData);
-        try{
-            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
-            headerBuilder.contentType("application/json");
-            String k3ReletOrderUrl = K3Config.k3Server + "/OrderConfirml/OeletOrder";  //k3确认收货url
-            response = HttpClientUtil.post(k3ReletOrderUrl, requestJson, headerBuilder, "UTF-8");
-            responseMap = JSONObject.parseObject(response,HashMap.class);
-            if ("true".equals(responseMap.get("IsSuccess").toString())){
-                serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
-            }else{
-                serviceResult.setErrorCode(ErrorCode.K3_RELET_ORDER_ERROR,responseMap.get("Message").toString());
-                return serviceResult;
-            }
-        }catch (Exception e){
-            StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
-            sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
-            sb.append(JSON.toJSONString(response));
-            dingDingSupport.dingDingSendMessage(sb.toString());
-            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
-            return serviceResult;
-        }
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(formSEOrderOelet);
+        return serviceResult;
     }
-
 
     /**
      * 通过商品项id查找 订单DO中的商品项信息
