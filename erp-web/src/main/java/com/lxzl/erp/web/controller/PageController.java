@@ -682,6 +682,11 @@ public class PageController extends BaseController {
     public String statementOrderUseCoupon() {
         return "/component/statementOrder/useCoupon";
     }
+    @RequestMapping("/statement-order/list-export")
+    public String statementOrderListExport() {
+        return "/component/statementOrder/exportModal";
+    }
+
     // 对账单
     @RequestMapping("/statement-monthly-order/list")
     public String monthStatementOrderList() {
