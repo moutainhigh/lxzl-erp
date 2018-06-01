@@ -3,17 +3,28 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="fa fa-pencil"></i>财务导出</span>
         </div>
-        <form action="${ctx}{{menuUrl}}exportExcel/exportPageBankSlipDetail" method="post" id="exportForm" target="exportFrame">
+        <form method="post" id="chooseForm" description="财务导出">
             <div class="panel-body p25">
                 <div class="form-group field">
-                    <label for="startAt" class="field-label text-right col-md-4">任务开始时间</label>
-                    <div class="col-md-8">
-                        <div class="input-group date" id="createTimePicker">
-                            <input id="rentStartTime" name="rentStartTime" class="form-control" type="text" autocomplete="off"  placeholder="请选择时间" readonly />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <label for="startAt" class="field-label text-right col-md-3">结算时间</label>
+                    <div class="col-md-9">
+                        <input type="hidden" name="" id="startTime" />
+                        <input type="hidden" name="" id="endTime" />
+                        <div class="input-group date" id="createTimePicker" style="height:40px;">
+                            <input type="text" name="createTimePicker" id="createTimePickerInput" class="form-control bradiusL"  style="height:40px;" autocomplete="off" placeholder="选择结算时间">
+                            <span class="input-group-addon cursor input-sm bradiusR"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
                 </div>
+            </div>
+        </form>
+
+        <form action="" method="post" id="exportForm" target="exportFrame">
+            <div class="panel-body pn">
+                <input type="hidden" name="pageNo" id="pageNo" value="1" />
+                <input type="hidden" name="pageSize" id="pageSize" value="100000000"/>
+                <input type="hidden" name="createStartTime" id="createStartTime" />
+                <input type="hidden" name="createEndTime" id="createEndTime" />
             </div>
             <div class="panel-footer text-right">
                 <button type="submit" class="button btn-primary exportBtn">确定</button>
