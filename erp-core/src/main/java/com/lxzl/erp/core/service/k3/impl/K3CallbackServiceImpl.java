@@ -234,20 +234,9 @@ public class K3CallbackServiceImpl implements K3CallbackService {
             List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDO.getK3ReturnOrderDetailDOList();
             Set<Integer> set = new HashSet();
             for(K3ReturnOrderDetailDO k3ReturnOrderDetailDO : k3ReturnOrderDetailDOList){
-                if (!productSupport.isMaterial(k3ReturnOrderDetailDO.getProductNo())) {
-                    OrderProductDO orderProductDO = orderProductMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                    if(orderProductDO==null&&StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderEntry())){
-                        OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                        if(orderDO!=null&&CollectionUtil.isNotEmpty(orderDO.getOrderProductDOList())){
-                            List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
-                            for(OrderProductDO op : orderProductDOList){
-                                if(k3ReturnOrderDetailDO.getOrderEntry().equals(op.getFEntryID())){
-                                    orderProductDO = op;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                if (productSupport.isProduct(k3ReturnOrderDetailDO.getProductNo())) {
+                    //兼容erp订单和k3订单商品项
+                    OrderProductDO orderProductDO = productSupport.getOrderProductDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                     if(orderProductDO!=null){
                         Integer productCount = orderProductDO.getRentingProductCount() - k3ReturnOrderDetailDO.getProductCount();
                         if(productCount<0){
@@ -259,25 +248,17 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                         orderProductDO.setUpdateTime(now);
                         orderProductMapper.update(orderProductDO);
                         set.add(orderProductDO.getOrderId());
+                        k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                        k3ReturnOrderDetailDO.setUpdateUser(userId);
+                        k3ReturnOrderDetailDO.setUpdateTime(now);
+                        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                    }else{
+                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"未找到退货单项对应的商品项，退货单编号["+k3ReturnOrderDO.getReturnOrderNo()+"]，退货单项ID["+k3ReturnOrderDetailDO.getId()+"]");
                     }
-                    k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
-                    k3ReturnOrderDetailDO.setUpdateUser(userId);
-                    k3ReturnOrderDetailDO.setUpdateTime(now);
-                    k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+
                 } else {
-                    OrderMaterialDO orderMaterialDO = orderMaterialMapper.findById(Integer.parseInt(k3ReturnOrderDetailDO.getOrderItemId()));
-                    if(orderMaterialDO==null&&StringUtil.isNotEmpty(k3ReturnOrderDetailDO.getOrderEntry())){
-                        OrderDO orderDO = orderMapper.findByOrderNo(k3ReturnOrderDetailDO.getOrderNo());
-                        if(orderDO!=null&&CollectionUtil.isNotEmpty(orderDO.getOrderMaterialDOList())){
-                            List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-                            for(OrderMaterialDO om : orderMaterialDOList){
-                                if(k3ReturnOrderDetailDO.getOrderEntry().equals(om.getFEntryID())){
-                                    orderMaterialDO = om;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    //兼容erp订单和k3订单配件项
+                    OrderMaterialDO orderMaterialDO = productSupport.getOrderMaterialDO(k3ReturnOrderDetailDO.getOrderNo(),k3ReturnOrderDetailDO.getOrderItemId(),k3ReturnOrderDetailDO.getOrderEntry());
                     if(orderMaterialDO!=null){
                         Integer materialCount = orderMaterialDO.getRentingMaterialCount()-k3ReturnOrderDetailDO.getProductCount();
                         if(materialCount<0){
@@ -289,13 +270,15 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                         orderMaterialDO.setUpdateTime(now);
                         orderMaterialMapper.update(orderMaterialDO);
                         set.add(orderMaterialDO.getOrderId());
+                        k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
+                        k3ReturnOrderDetailDO.setUpdateUser(userId);
+                        k3ReturnOrderDetailDO.setUpdateTime(now);
+                        k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
+                    }else{
+                        dingDingSupport.dingDingSendMessage(dingDingSupport.getEnvironmentString()+"未找到退货单项对应的配件项，退货单编号["+k3ReturnOrderDO.getReturnOrderNo()+"]，退货单项ID["+k3ReturnOrderDetailDO.getId()+"]");
                     }
-                    k3ReturnOrderDetailDO.setRealProductCount(k3ReturnOrderDetailDO.getProductCount());
-                    k3ReturnOrderDetailDO.setUpdateUser(userId);
-                    k3ReturnOrderDetailDO.setUpdateTime(now);
-                    k3ReturnOrderDetailMapper.update(k3ReturnOrderDetailDO);
-                }
 
+                }
             }
             //是否生成退货结算单
             Boolean isCreateReturnStatement = true;
