@@ -818,10 +818,10 @@
             FROM erp_statement_order_detail esod
             <where>
                 <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
-                    <![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+                    <![CDATA[ AND esod.create_time >= #{maps.statementOrderDetailQueryParam.createStartTime} ]]>
                 </if>
                 <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
-                    <![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+                    <![CDATA[ AND esod.create_time <= #{maps.statementOrderDetailQueryParam.createEndTime} ]]>
                 </if>
                 <if test="true">
                     AND esod.data_status = 1
@@ -848,10 +848,10 @@
                 FROM erp_statement_order_detail esod
                 <where>
                     <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
-                        <![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+                        <![CDATA[ AND esod.create_time >= #{maps.statementOrderDetailQueryParam.createStartTime} ]]>
                     </if>
                     <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
-                        <![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+                        <![CDATA[ AND esod.create_time <= #{maps.statementOrderDetailQueryParam.createEndTime} ]]>
                     </if>
                     <if test="true">
                         AND esod.data_status = 1
