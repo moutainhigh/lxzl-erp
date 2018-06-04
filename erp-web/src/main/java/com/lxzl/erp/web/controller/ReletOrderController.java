@@ -64,7 +64,8 @@ public class ReletOrderController extends BaseController {
     @RequestMapping(value = "commit", method = RequestMethod.POST)
     public Result commit(@RequestBody ReletOrderCommitParam reletOrderCommitParam, BindingResult validResult) {
         ServiceResult<String, String> serviceResult = reletOrderService.commitReletOrder(reletOrderCommitParam);
-        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+//        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+        return resultGenerator.generate(serviceResult);
     }
 
     @RequestMapping(value = "isNeedVerify", method = RequestMethod.POST)

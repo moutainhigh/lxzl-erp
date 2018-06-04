@@ -21,6 +21,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -105,20 +106,17 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //查询是否有续租单信息
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB) {
-            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
-                result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_RELET_REQUEST);
-                reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
-                result.setResult(reletOrderCreateResult);
-                return result;
-            }
-            returnTime = recentlyReletOrderInDB.getExpectReturnTime();  //到期时间=最近一次续租时间的归还时间
-        }
-        else{
-            //到期时间=订单的归还时间(第一次续租)
-            returnTime = orderServiceResult.getResult().getExpectReturnTime();
+        if (null != recentlyReletOrderInDB || !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
+
+            result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_RELET_REQUEST);
+            reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
+            result.setResult(reletOrderCreateResult);
+            return result;
+            // returnTime = recentlyReletOrderInDB.getExpectReturnTime();  //到期时间=最近一次续租时间的归还时间
         }
 
+        //到期时间=订单的归还时间
+        returnTime = orderServiceResult.getResult().getExpectReturnTime();
         String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentLengthType());
         if (!ErrorCode.SUCCESS.equals(validReletTimeRangeCode)) {
             result.setErrorCode(validReletTimeRangeCode);
@@ -230,7 +228,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
         if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
-            result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE);
             return result;
         }
 
@@ -295,7 +293,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             return result;
         }
         if (!ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
-            result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT);
             return result;
         }
 
@@ -335,7 +333,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         } else {  //不需要审核时
             reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
-//            orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
+            orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
             orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
             orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -351,7 +349,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 return result;
             }
 
-            //TODO 获取续租订单  ，推送K3消息
+            //推送K3消息
+//            ServiceResult<String, String> k3ServiceResult = k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
+//            if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
+//                return result;
+//            }
 
         }
 
@@ -423,7 +427,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 if (orderDO == null){
                     return ErrorCode.ORDER_NOT_EXISTS;
                 }
-//                orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
+                orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
                 orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
                 orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
@@ -438,8 +442,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                     return createStatementOrderResult.getErrorCode();
                 }
 
-                //TODO 获取续租订单详细信息，发送给k3
-
+                //推送K3消息
+//                ServiceResult<String, String> k3ServiceResult = k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
+//                if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    return k3ServiceResult.getErrorCode();
+//                }
 
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
@@ -465,7 +473,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         result.setErrorCode(ErrorCode.SUCCESS);
-        //短租   未续租过
+        //短租
         Calendar cal = Calendar.getInstance();
         cal.setTime(currentTime);
         cal.add(Calendar.DAY_OF_MONTH, 2);  //短租 提前3天
@@ -473,21 +481,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         orderQueryParam.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
         orderQueryParam.setStartExpectReturnTime(DateUtil.getFirstOfDay(cal.getTime()));
         orderQueryParam.setEndExpectReturnTime(DateUtil.getEndOfDay(cal.getTime()));
-        ServiceResult<String, Object> shortRentMessage = UnReletedOrderSendDingDingMessage(orderQueryParam);
+        orderQueryParam.setPageSize(Integer.MAX_VALUE);
+        ServiceResult<String, Object> shortRentMessage = ReletedOrderSendDingDingMessage(orderQueryParam);
         if (!ErrorCode.SUCCESS.equals(shortRentMessage.getErrorCode())) {
             result.setErrorCode(shortRentMessage.getErrorCode());
         }
-        //续租过
-        ReletOrderQueryParam reletOrderQueryParam = new ReletOrderQueryParam();
-        reletOrderQueryParam.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
-        reletOrderQueryParam.setStartExpectReturnTime(DateUtil.getFirstOfDay(cal.getTime()));
-        reletOrderQueryParam.setEndExpectReturnTime(DateUtil.getEndOfDay(cal.getTime()));
-        ServiceResult<String, Object> reletedShortRentMessage = HasReletedOrderSendDingDingMessage(reletOrderQueryParam);
-        if (!ErrorCode.SUCCESS.equals(reletedShortRentMessage.getErrorCode())) {
-            result.setErrorCode(reletedShortRentMessage.getErrorCode());
-        }
 
-        //长租  未续租过
+        //长租
         Calendar calLong = Calendar.getInstance();
         calLong.setTime(currentTime);
         calLong.add(Calendar.DAY_OF_MONTH, 9);  //长租  提前10天
@@ -496,20 +496,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         orderQueryParamLong.setStartExpectReturnTime(DateUtil.getFirstOfDay(calLong.getTime()));
         orderQueryParamLong.setEndExpectReturnTime(DateUtil.getEndOfDay(calLong.getTime()));
         orderQueryParamLong.setPageSize(Integer.MAX_VALUE);
-        ServiceResult<String, Object> longRentMessage = UnReletedOrderSendDingDingMessage(orderQueryParamLong);
+        ServiceResult<String, Object> longRentMessage = ReletedOrderSendDingDingMessage(orderQueryParamLong);
         if (!ErrorCode.SUCCESS.equals(longRentMessage.getErrorCode())) {
             result.setErrorCode(longRentMessage.getErrorCode());
         }
-        //续租过
-        ReletOrderQueryParam reletOrderQueryParamLong = new ReletOrderQueryParam();
-        reletOrderQueryParamLong.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_LONG);
-        reletOrderQueryParamLong.setStartExpectReturnTime(DateUtil.getFirstOfDay(calLong.getTime()));
-        reletOrderQueryParamLong.setEndExpectReturnTime(DateUtil.getEndOfDay(calLong.getTime()));
-        ServiceResult<String, Object> reletedLongRentMessage = HasReletedOrderSendDingDingMessage(reletOrderQueryParamLong);
-        if (!ErrorCode.SUCCESS.equals(reletedLongRentMessage.getErrorCode())) {
-            result.setErrorCode(reletedLongRentMessage.getErrorCode());
-        }
-
 
         return result;
     }
@@ -522,19 +512,22 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @author ZhaoZiXuan
      * @date 2018/5/24 11:05
      */
-    private ServiceResult<String, Object> UnReletedOrderSendDingDingMessage(OrderQueryParam orderQueryParam) {
+    private ServiceResult<String, Object> ReletedOrderSendDingDingMessage(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         if (null == orderQueryParam) {
             return result;
         }
+        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
         result.setErrorCode(ErrorCode.SUCCESS);
         Map<String, Object> maps = new HashMap<>();
+        maps.put("start", pageQuery.getStart());
+        maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderQueryParam", orderQueryParam);
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         //未续租过的订单提醒
-        List<OrderDO> orderDOList = orderMapper.findUnReletedOrderByParams(maps);
+        List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
         if (null != orderDOList && orderDOList.size() > 0) {
             for (OrderDO orderDO : orderDOList) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
@@ -542,38 +535,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 messageThirdChannel.setMessageContent(orderDO.getOrderNo() + "订单将于" + sdf.format(orderDO.getExpectReturnTime()) + "到期，继续使用请及时续租.");
                 messageThirdChannel.setMessageTitle("续租提醒");
                 result = messageThirdChannelService.sendMessage(messageThirdChannel);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * (已续租)订单到期提醒,短期提前3天，长期提前10天（钉钉消息，接受者为订单销售员id）
-     *
-     * @author ZhaoZiXuan
-     * @date 2018/5/30 16:11
-     * @param
-     * @return
-     */
-    private ServiceResult<String, Object> HasReletedOrderSendDingDingMessage(ReletOrderQueryParam reletOrderQueryParam) {
-        ServiceResult<String, Object> result = new ServiceResult<>();
-        if (null == reletOrderQueryParam) {
-            return result;
-        }
-        result.setErrorCode(ErrorCode.SUCCESS);
-        Map<String, Object> maps = new HashMap<>();
-        maps.put("reletOrderQueryParam", reletOrderQueryParam);
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //续租过的订单提醒
-        List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findRecentlyReletedOrderByParams(maps);
-        if (null != reletOrderDOList && reletOrderDOList.size() > 0) {
-            for (ReletOrderDO reletOrderDO : reletOrderDOList) {
-                MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
-                messageThirdChannel.setReceiverUserId(reletOrderDO.getOrderSellerId());
-                messageThirdChannel.setMessageContent(reletOrderDO.getOrderNo() + "订单将于" + sdf.format(reletOrderDO.getExpectReturnTime()) + "到期，继续使用请及时续租.");
-                messageThirdChannel.setMessageTitle("续租提醒");
-                result = messageThirdChannelService.sendMessage(messageThirdChannel);
-
             }
         }
         return result;
@@ -1592,4 +1553,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private K3Service k3Service;
 }

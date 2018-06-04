@@ -20,14 +20,13 @@ import com.lxzl.erp.common.domain.order.ChangeOrderItemParam;
 import com.lxzl.erp.common.domain.order.OrderConfirmChangeToK3Param;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.user.pojo.User;
-import com.lxzl.erp.common.util.CollectionUtil;
-import com.lxzl.erp.common.util.ConverterUtil;
-import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.ListUtil;
+import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirml;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirmlEntry;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOelet;
+import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOeletEntry;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.k3.WebServiceHelper;
@@ -55,6 +54,9 @@ import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;
+import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
@@ -70,10 +72,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -94,6 +96,16 @@ public class K3ServiceImpl implements K3Service {
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
     private String K3PassWord = "123";
+
+//    private static final String k3ReletOrderUrl = "http://103.239.207.170:9090/OrderConfirml/OeletOrder";
+
+    private static final String K3_RELET_ORDER_PW = "5113f85e846056594bed8e2ece8b1cbd";
+    private static final Integer K3_RELET_ORDER_TYPE_NEW = 1; //订单类型  1新订单
+    private static final Integer K3_RELET_ORDER_TYPE_OLD = 2; //订单类型  2老订单
+
+    private static final Integer K3_RELET_ORDER_PRODUCT_TYPE_PRODUCT = 1;  //商品类型(1，商品 2，配件)
+    private static final Integer K3_RELET_ORDER_PRODUCT_TYPE_MATERIAL = 2;
+
 
 
     @Override
@@ -801,6 +813,160 @@ public class K3ServiceImpl implements K3Service {
         sb.append("向K3推送【确认收货-").append(orderNo).append("】数据失败：");
         sb.append(JSON.toJSONString(response));
         return sb.toString();
+    }
+
+    @Override
+    public ServiceResult<String, String> sendReletOrderInfoToK3(ReletOrderDO reletOrderDO, OrderDO orderDO) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+
+        Map<String, Object> requestData = new HashMap<>();
+        Map responseMap = new HashMap();
+        String response = null;
+
+        ServiceResult<String, FormSEOrderOelet> k3ParamResult = getReletOrderToK3Param(reletOrderDO, orderDO);
+        if (!ErrorCode.SUCCESS.equals(k3ParamResult.getErrorCode())) {
+            serviceResult.setErrorCode(k3ParamResult.getErrorCode());
+            return serviceResult;
+        }
+
+        requestData.put("FormSEOrderOelet",k3ParamResult.getResult());
+        String requestJson  = JSONObject.toJSONString(requestData);
+        try{
+            HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
+            headerBuilder.contentType("application/json");
+            String k3ReletOrderUrl = K3Config.k3Server + "/OrderConfirml/OeletOrder";  //k3确认收货url
+            response = HttpClientUtil.post(k3ReletOrderUrl, requestJson, headerBuilder, "UTF-8");
+            responseMap = JSONObject.parseObject(response,HashMap.class);
+            if ("true".equals(responseMap.get("IsSuccess").toString())){
+                serviceResult.setErrorCode(ErrorCode.SUCCESS);
+                serviceResult.setResult(responseMap.get("Message").toString());
+                return serviceResult;
+            }else{
+                serviceResult.setErrorCode(ErrorCode.K3_RELET_ORDER_ERROR,responseMap.get("Message").toString());
+                return serviceResult;
+            }
+        }catch (Exception e){
+            StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+            sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
+            sb.append(JSON.toJSONString(response));
+            dingDingSupport.dingDingSendMessage(sb.toString());
+            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
+            return serviceResult;
+        }
+    }
+
+    /**
+     * 根据续租单和订单信息 获k3推送消息参数
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/1 19:08
+     * @param
+     * @return
+     */
+    private ServiceResult<String, FormSEOrderOelet> getReletOrderToK3Param(ReletOrderDO reletOrderDO, OrderDO orderDO){
+        ServiceResult<String, FormSEOrderOelet> serviceResult = new ServiceResult<>();
+
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        FormSEOrderOelet formSEOrderOelet = new FormSEOrderOelet();
+        if (null == reletOrderDO || null == orderDO){
+            serviceResult.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+            return serviceResult;
+        }
+        Integer orderType = orderDO.getIsK3Order() == CommonConstant.YES ? K3_RELET_ORDER_TYPE_OLD : K3_RELET_ORDER_TYPE_NEW;//订单类型（1-新订单  2-老订单）
+        formSEOrderOelet.setOrderNo(reletOrderDO.getOrderNo());
+        formSEOrderOelet.setPw(K3_RELET_ORDER_PW);
+        formSEOrderOelet.setfAlterReason(reletOrderDO.getRemark());
+        formSEOrderOelet.setOrderType(orderType);
+        formSEOrderOelet.setfFetchDate(sdf.format(reletOrderDO.getExpectReturnTime()));
+
+        List<FormSEOrderOeletEntry> entrys = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())){
+
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()){
+
+                FormSEOrderOeletEntry formSEOrderOeletEntry = new FormSEOrderOeletEntry();
+                if (orderType == K3_RELET_ORDER_TYPE_OLD){
+                    OrderProductDO orderProductDO = getOrderProductDOById(orderDO, reletOrderProductDO.getOrderProductId());
+                    if (null == orderProductDO) {
+                        serviceResult.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                        return serviceResult;
+                    }
+                    formSEOrderOeletEntry.setOrderEntryId(orderProductDO.getFEntryID());
+                }
+                else {
+                    formSEOrderOeletEntry.setOrderEntryId(reletOrderProductDO.getOrderProductId());
+                }
+                formSEOrderOeletEntry.setUnitPrice(reletOrderProductDO.getProductUnitAmount());
+                formSEOrderOeletEntry.setOrderItemType(K3_RELET_ORDER_PRODUCT_TYPE_PRODUCT);
+                entrys.add(formSEOrderOeletEntry);
+            }
+
+        }
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())){
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()){
+                FormSEOrderOeletEntry formSEOrderOeletEntry = new FormSEOrderOeletEntry();
+                if (orderType == K3_RELET_ORDER_TYPE_OLD){
+                    OrderMaterialDO orderMaterialDO = getOrderMaterialDOById(orderDO, reletOrderMaterialDO.getOrderMaterialId());
+                    if (null == orderMaterialDO) {
+                        serviceResult.setErrorCode(ErrorCode.PARAM_IS_ERROR);
+                        return serviceResult;
+                    }
+                    formSEOrderOeletEntry.setOrderEntryId(orderMaterialDO.getFEntryID());
+                }
+                else {
+                    formSEOrderOeletEntry.setOrderEntryId(reletOrderMaterialDO.getOrderMaterialId());
+                }
+                formSEOrderOeletEntry.setUnitPrice(reletOrderMaterialDO.getMaterialUnitAmount());
+                formSEOrderOeletEntry.setOrderItemType(K3_RELET_ORDER_PRODUCT_TYPE_MATERIAL);
+                entrys.add(formSEOrderOeletEntry);
+            }
+        }
+        formSEOrderOelet.setEntrys(entrys);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(formSEOrderOelet);
+        return serviceResult;
+    }
+
+    /**
+     * 通过商品项id查找 订单DO中的商品项信息
+     *
+     * @param
+     * @return
+     * @author ZhaoZiXuan
+     * @date 2018/5/23 9:42
+     */
+    private OrderProductDO getOrderProductDOById(OrderDO order, Integer id) {
+
+        if (CollectionUtil.isNotEmpty(order.getOrderProductDOList())) {
+
+            for (OrderProductDO orderProduct : order.getOrderProductDOList()) {
+                if (orderProduct.getId().equals(id)) {
+                    return orderProduct;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 通过配件项id查找 订单中的配件项信息
+     *
+     * @param
+     * @return
+     * @author ZhaoZiXuan
+     * @date 2018/5/23 9:44
+     */
+    private OrderMaterialDO getOrderMaterialDOById(OrderDO order, Integer id) {
+
+        if (CollectionUtil.isNotEmpty(order.getOrderMaterialDOList())) {
+
+            for (OrderMaterialDO orderMaterial : order.getOrderMaterialDOList()) {
+                if (orderMaterial.getId().equals(id)) {
+                    return orderMaterial;
+                }
+            }
+        }
+        return null;
     }
 
     @Autowired

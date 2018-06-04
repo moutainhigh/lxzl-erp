@@ -85,6 +85,10 @@ public class WorkflowType {
      */
     public static final Integer WORKFLOW_TYPE_CHANNEL_CUSTOMER = 18;
 
+    /**
+     * 续租审批流程
+     */
+    public static final Integer WORKFLOW_TYPE_RELET_ORDER_INFO = 19;
 
     public static String getWorkflowTypeDesc(Integer workflowType) {
         if (WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -119,6 +123,8 @@ public class WorkflowType {
             return "客户";
         } else if (WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)) {
             return "客户地址";
+        } else if (WORKFLOW_TYPE_RELET_ORDER_INFO.equals(workflowType)) {
+            return "续租";
         } else {
             return "其他";
         }
