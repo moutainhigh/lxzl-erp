@@ -816,7 +816,7 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, String> reletOrder(ReletOrderDO reletOrderDO, OrderDO orderDO) {
+    public ServiceResult<String, String> sendReletOrderInfoToK3(ReletOrderDO reletOrderDO, OrderDO orderDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
 
         Map<String, Object> requestData = new HashMap<>();

@@ -79,5 +79,5 @@ public interface K3Service {
      * @param
      * @return
      */
-    public ServiceResult<String, String> reletOrder(ReletOrderDO reletOrderDO, OrderDO orderDO);
+    public ServiceResult<String, String> sendReletOrderInfoToK3(ReletOrderDO reletOrderDO, OrderDO orderDO);
 }

@@ -350,12 +350,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             }
 
             //推送K3消息
-            ServiceResult<String, String> k3ServiceResult = k3Service.reletOrder(reletOrderDO, orderDO);
-            if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
-                return result;
-            }
+//            ServiceResult<String, String> k3ServiceResult = k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
+//            if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
+//                return result;
+//            }
 
         }
 
@@ -443,11 +443,11 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 }
 
                 //推送K3消息
-                ServiceResult<String, String> k3ServiceResult = k3Service.reletOrder(reletOrderDO, orderDO);
-                if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-                    return k3ServiceResult.getErrorCode();
-                }
+//                ServiceResult<String, String> k3ServiceResult = k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
+//                if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
+//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+//                    return k3ServiceResult.getErrorCode();
+//                }
 
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
