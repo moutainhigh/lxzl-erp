@@ -193,7 +193,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Integer isNeedVerifyCode = isNeedVerify ? 1 : 0;
         reletOrderCreateResult.setIsNeedVerify(isNeedVerifyCode);
         if (isNeedVerify){
-            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getReletOrderNo());
+            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo());
             if (!ErrorCode.SUCCESS.equals(getVerifyUsersResult.getErrorCode())) {
                 result.setErrorCode(getVerifyUsersResult.getErrorCode());
                 return result;
@@ -263,7 +263,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Integer isNeedVerifyCode = isNeedVerify ? 1 : 0;
         reletOrderCreateResult.setIsNeedVerify(isNeedVerifyCode);
         if (isNeedVerify){
-            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getReletOrderNo());
+            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo());
             if (!ErrorCode.SUCCESS.equals(getVerifyUsersResult.getErrorCode())) {
                 result.setErrorCode(getVerifyUsersResult.getErrorCode());
                 return result;
