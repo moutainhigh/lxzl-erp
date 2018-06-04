@@ -179,6 +179,7 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
             return result;
         }
+
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = orderDO.getRentStartTime();
@@ -3511,9 +3512,14 @@ public class StatementServiceImpl implements StatementService {
 
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(reletOrderDO.getOrderId());
         if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
-            result.setErrorCode(ErrorCode.STATEMENT_ORDER_CREATE_ERROR);
-            return result;
+            for(StatementOrderDetailDO statementOrderDetailDO: dbStatementOrderDetailDOList){
+                if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus()){
+                    result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_UNPAID_STATEMENT);
+                    return result;
+                }
+            }
         }
+
         User loginUser = userSupport.getCurrentUser();
         Date currentTime = new Date();
         Date rentStartTime = reletOrderDO.getRentStartTime();
