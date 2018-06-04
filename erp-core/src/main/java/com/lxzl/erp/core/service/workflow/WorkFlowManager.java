@@ -13,6 +13,7 @@ import com.lxzl.erp.core.service.order.OrderService;
 import com.lxzl.erp.core.service.peerDeploymentOrder.PeerDeploymentOrderService;
 import com.lxzl.erp.core.service.purchase.PurchaseOrderService;
 import com.lxzl.erp.core.service.purchaseApply.PurchaseApplyOrderService;
+import com.lxzl.erp.core.service.reletorder.ReletOrderService;
 import com.lxzl.erp.core.service.repairOrder.RepairOrderService;
 import com.lxzl.erp.core.service.returnOrder.ReturnOrderService;
 import com.lxzl.erp.core.service.transferOrder.TransferOrderService;
@@ -57,6 +58,8 @@ public class WorkFlowManager {
     private K3ChangeOrderService k3ChangeOrderService;
     @Autowired
     private K3ReturnOrderService k3ReturnOrderService;
+    @Autowired
+    private ReletOrderService reletOrderService;
 
     public VerifyReceiver getService(Integer workflowType) {
         if (WorkflowType.WORKFLOW_TYPE_PURCHASE.equals(workflowType)) {
@@ -89,6 +92,8 @@ public class WorkFlowManager {
                 WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowType)||
                 WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
             return customerService;
+        }else if (WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO.equals(workflowType)) {
+            return reletOrderService;
         }
         return null;
     }
