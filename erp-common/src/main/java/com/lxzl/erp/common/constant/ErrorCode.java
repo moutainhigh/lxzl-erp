@@ -913,6 +913,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_EXISTS_RELET_REQUEST = "J21000010";
     public static final String RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE = "J21000011";
     public static final String RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT = "J21000012";
+    public static final String RELET_ORDER_EXISTS_UNPAID_STATEMENT = "J21000013";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1852,6 +1853,7 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_EXISTS_RELET_REQUEST, "此订单已存在续租请求");
         MAP.put(RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE, "只有待提交状态的续租单允许修改");
         MAP.put(RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT, "只有待提交状态的续租单允许提交");
+        MAP.put(RELET_ORDER_EXISTS_UNPAID_STATEMENT, "此订单尚有未支付的结算单，无法续租");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
