@@ -119,6 +119,7 @@ public class BankSlipSupport {
                         if (ErrorCode.SUCCESS.equals(result.getErrorCode())) {
                             //银行对公流水认领表 成功 改变状态
                             bankSlipClaimDO.setRechargeStatus(RechargeStatus.PAY_SUCCESS);
+
                             stringBuffer.append(("".equals(String.valueOf(stringBuffer)) ? "" : ",") + "客户充值(导入时间：" + new SimpleDateFormat("yyyy-MM-dd").format(bankSlipDO.getSlipDay()) + "）--银行对公流水明细id：" + bankSlipDetailDO.getId() + ",充值人：" + userSupport.getCurrentUserCompany().getSubCompanyName() + "  " + userSupport.getCurrentUser().getRoleList().get(0).getDepartmentName() + "  " + userSupport.getCurrentUser().getRealName() + ",客户编号：" + bankSlipClaimDO.getCustomerNo() + ",充值时间：" + new SimpleDateFormat("yyyy-MM-dd").format(now) + ",充值：" + bankSlipClaimDO.getClaimAmount() + "元，成功！！！");
                         } else {
                             //银行对公流水认领表 失败 改变状态
