@@ -449,6 +449,9 @@ public class DingdingServiceImpl implements DingdingService {
             HttpPost httpPost = new HttpPost(requestUrlBuild.toString());
             CloseableHttpClient client = HttpClients.createDefault();
             String jsonStr = JSONObject.toJSONString(dingdingBaseDTO);
+            if (dingdingBaseDTO instanceof DingdingUsersDTO) {
+                jsonStr = JSONArray.toJSONString(((DingdingUsersDTO) dingdingBaseDTO).getMembers());
+            }
             logger.info("发给钉钉网关请求数据：" + jsonStr);
             //解决中文乱码问题
             StringEntity entity = new StringEntity(jsonStr, "UTF-8");
