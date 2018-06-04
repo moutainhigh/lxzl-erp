@@ -11,22 +11,22 @@ import java.util.List;
  */
 public class DingdingUsersDTO extends DingdingBaseDTO {
 
-    private List<DingdingUserDTO> dingdingUserDTOs;
+    private List<DingdingUserDTO> members;
 
-    public DingdingUsersDTO(List<DingdingUserDTO> dingdingUserDTOs) {
-        this.dingdingUserDTOs = dingdingUserDTOs;
+    public DingdingUsersDTO(List<DingdingUserDTO> members) {
+        this.members = members;
     }
 
     public DingdingUsersDTO(DingdingUserDTO dingdingUserDTO) {
-        dingdingUserDTOs = new ArrayList<>();
-        dingdingUserDTOs.add(dingdingUserDTO);
+        members = new ArrayList<>();
+        members.add(dingdingUserDTO);
     }
 
-    public List<DingdingUserDTO> getDingdingUserDTOs() {
-        return dingdingUserDTOs;
+    public List<DingdingUserDTO> getMembers() {
+        return members;
     }
 
-    public void setDingdingUserDTOs(List<DingdingUserDTO> dingdingUserDTOs) {
-        this.dingdingUserDTOs = dingdingUserDTOs;
+    public void setMembers(List<DingdingUserDTO> members) {
+        this.members = members;
     }
 }
