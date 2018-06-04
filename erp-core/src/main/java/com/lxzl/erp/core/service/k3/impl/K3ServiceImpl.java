@@ -23,6 +23,7 @@ import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.common.util.http.client.HttpClientUtil;
 import com.lxzl.erp.common.util.http.client.HttpHeaderBuilder;
+import com.lxzl.erp.common.util.thread.ThreadFactoryDefault;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirml;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderConfirmlEntry;
 import com.lxzl.erp.core.k3WebServiceSdk.ERPServer_Models.FormSEOrderOelet;
@@ -77,6 +78,8 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -106,7 +109,10 @@ public class K3ServiceImpl implements K3Service {
     private static final Integer K3_RELET_ORDER_PRODUCT_TYPE_PRODUCT = 1;  //商品类型(1，商品 2，配件)
     private static final Integer K3_RELET_ORDER_PRODUCT_TYPE_MATERIAL = 2;
 
-
+//    /**
+//     * K3消息通讯线程
+//     */
+//    private ExecutorService k3ThreadExecutor = Executors.newCachedThreadPool(new ThreadFactoryDefault("sendK3Msg"));
 
     @Override
     public ServiceResult<String, Page<Order>> queryAllOrder(K3OrderQueryParam param) {
@@ -816,21 +822,33 @@ public class K3ServiceImpl implements K3Service {
     }
 
     @Override
-    public ServiceResult<String, String> sendReletOrderInfoToK3(ReletOrderDO reletOrderDO, OrderDO orderDO) {
+    public ServiceResult<String, String> sendReletOrderInfoToK3(final ReletOrderDO reletOrderDO, final OrderDO orderDO) {
         ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        // 异步线程
+//        k3ThreadExecutor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                sendReletOrderInfo(reletOrderDO,orderDO);
+//
+//            }
+//        });
+        sendReletOrderInfo(reletOrderDO,orderDO);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
 
+
+    private String sendReletOrderInfo(ReletOrderDO reletOrderDO, OrderDO orderDO){
         Map<String, Object> requestData = new HashMap<>();
         Map responseMap = new HashMap();
         String response = null;
-
         ServiceResult<String, FormSEOrderOelet> k3ParamResult = getReletOrderToK3Param(reletOrderDO, orderDO);
         if (!ErrorCode.SUCCESS.equals(k3ParamResult.getErrorCode())) {
-            serviceResult.setErrorCode(k3ParamResult.getErrorCode());
-            return serviceResult;
+            return k3ParamResult.getErrorCode();
         }
-
         requestData.put("FormSEOrderOelet",k3ParamResult.getResult());
         String requestJson  = JSONObject.toJSONString(requestData);
+
         try{
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");
@@ -838,20 +856,22 @@ public class K3ServiceImpl implements K3Service {
             response = HttpClientUtil.post(k3ReletOrderUrl, requestJson, headerBuilder, "UTF-8");
             responseMap = JSONObject.parseObject(response,HashMap.class);
             if ("true".equals(responseMap.get("IsSuccess").toString())){
-                serviceResult.setErrorCode(ErrorCode.SUCCESS);
-                serviceResult.setResult(responseMap.get("Message").toString());
-                return serviceResult;
+                logger.info(responseMap.get("Message").toString());
+                return ErrorCode.SUCCESS;
             }else{
-                serviceResult.setErrorCode(ErrorCode.K3_RELET_ORDER_ERROR,responseMap.get("Message").toString());
-                return serviceResult;
+//                serviceResult.setErrorCode(ErrorCode.K3_RELET_ORDER_ERROR,responseMap.get("Message").toString());
+                StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
+                sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
+                sb.append(responseMap.get("Message").toString());
+                dingDingSupport.dingDingSendMessage(sb.toString());
+                return ErrorCode.K3_RELET_ORDER_ERROR;
             }
         }catch (Exception e){
             StringBuffer sb = new StringBuffer(dingDingSupport.getEnvironmentString());
             sb.append("向K3推送【订单续租-").append(reletOrderDO.getOrderNo()).append("】数据失败：");
             sb.append(JSON.toJSONString(response));
             dingDingSupport.dingDingSendMessage(sb.toString());
-            serviceResult.setErrorCode(ErrorCode.K3_SERVER_ERROR);
-            return serviceResult;
+            return ErrorCode.K3_SERVER_ERROR;
         }
     }
 
