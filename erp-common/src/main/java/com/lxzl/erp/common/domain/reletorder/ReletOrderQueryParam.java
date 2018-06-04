@@ -26,6 +26,9 @@ public class ReletOrderQueryParam extends BasePageParam implements Serializable 
     private Integer subCompanyId;
     private Integer deliverySubCompanyId;                       // 发货所属分公司
 
+    private Date startExpectReturnTime;  //起始预计归还时间   （查询到期）
+    private Date endExpectReturnTime;
+    private Integer rentLengthType;    //1 短租 2长租
 
     public Integer getReletOrderId(){return reletOrderId;}
 
@@ -143,6 +146,28 @@ public class ReletOrderQueryParam extends BasePageParam implements Serializable 
 
     public void setDeliverySubCompanyId(Integer deliverySubCompanyId) { this.deliverySubCompanyId = deliverySubCompanyId; }
 
+    public Date getStartExpectReturnTime() {
+        return startExpectReturnTime;
+    }
 
+    public void setStartExpectReturnTime(Date startExpectReturnTime) {
+        this.startExpectReturnTime = startExpectReturnTime;
+    }
+
+    public Date getEndExpectReturnTime() {
+        return endExpectReturnTime;
+    }
+
+    public void setEndExpectReturnTime(Date endExpectReturnTime) {
+        this.endExpectReturnTime = endExpectReturnTime;
+    }
+
+    public Integer getRentLengthType() {
+        return rentLengthType;
+    }
+
+    public void setRentLengthType(Integer rentLengthType) {
+        this.rentLengthType = rentLengthType;
+    }
 
 }

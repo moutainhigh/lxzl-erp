@@ -1,5 +1,6 @@
 package com.lxzl.erp.dataaccess.dao.mysql.statement;
 
+import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.se.dataaccess.mysql.BaseMysqlDAO;
 import org.apache.ibatis.annotations.Param;
@@ -47,4 +48,8 @@ public interface StatementOrderDetailMapper extends BaseMysqlDAO<StatementOrderD
     List<StatementOrderDetailDO> listAllForRentInfo(@Param("maps") Map<String, Object> paramMap);
 
     void realDeleteStatementOrderDetailList(List<StatementOrderDetailDO> statementOrderDetailDOList);
+
+    Integer queryStatementOrderDetailCountByParam(@Param("maps") Map<String, Object> maps);
+
+    List<FinanceStatementOrderPayDetail> queryStatementOrderDetailByParam(@Param("maps") Map<String, Object> maps);
 }

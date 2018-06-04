@@ -809,6 +809,7 @@ public class ErrorCode {
     public static final String DELIVERY_COMPANY_ID_NULL = "J17000031";
     /** k3历史退货单响应代码 */
     public static final String K3_HISTORICAL_RETURN_CODE = "J17000032";
+    public static final String K3_CONFIRM_ORDER_ERROR = "J17000033";
 
 
     public static final String FILE_IS_NULL = "J18000001";
@@ -863,6 +864,8 @@ public class ErrorCode {
     public static final String CHARGE_ORDER_NO_IS_NULL = "J18000051";
     public static final String EXPORT_CHARGE_RECORD_IS_FAIL = "J18000052";
     public static final String CHARGE_RECORD_IS_EXIST = "J18000053";
+    public static final String BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED = "J18000054";
+    public static final String BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM = "J18000055";
 
     public static final String COUPON_BATCH_NAME_NOT_NULL = "J19000001";
     public static final String COUPON_TYPE_NOT_NULL = "J19000002";
@@ -907,6 +910,7 @@ public class ErrorCode {
     public static final String RELET_ORDER_UNIT_AMOUNT_ERROR = "J21000007";
     public static final String RELET_ORDER_RENT_TIME_LENGTH_ERROR = "J21000008";
     public static final String RELET_ORDER_NOT_EXISTS = "J21000009";
+    public static final String RELET_ORDER_EXISTS_RELET_REQUEST = "J21000010";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -942,6 +946,9 @@ public class ErrorCode {
     public static final String QUARTZ_TRIGGER_GROUP_NOT_NULL = "J250000007";
     public static final String QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL = "J250000008";
     public static final String QUARTZ_EXPRESSION_NOT_NULL = "J250000009";
+
+    // 动态SQL查询
+    public static final String DYNAMIC_SQL_ERROR = "J260000001";
 
     static {
         MAP.put(SUCCESS, "成功");
@@ -1737,6 +1744,7 @@ public class ErrorCode {
         MAP.put(DELIVERY_COMPANY_NOT_EXIT, "发货分公司不存在");
         MAP.put(DELIVERY_COMPANY_ID_NULL, "发货分公司不能为空");
         MAP.put(K3_HISTORICAL_RETURN_CODE, "退货单处理成功【%s 】条，处理失败【%s 】条");
+        MAP.put(K3_CONFIRM_ORDER_ERROR, "K3确认收货推送信息失败,【%s 】");
 
         MAP.put(FILE_IS_NULL, "文件为空");
         MAP.put(ANALYSIS_FILE_IS_ERROR, "解析的文件格式有误");
@@ -1790,6 +1798,8 @@ public class ErrorCode {
         MAP.put(CHARGE_ORDER_NO_IS_NULL, "支付系统充值订单号为空");
         MAP.put(EXPORT_CHARGE_RECORD_IS_FAIL, "充值记录导入银行流水失败");
         MAP.put(CHARGE_RECORD_IS_EXIST, "快付通充值记录以存在");
+        MAP.put(BANK_SLIP_DETAIL_DETAIL_STATUS_IS_CLAIMED, "该条银行对公流水记录项为已认领状态，需创建人取消认领后才能重新认领");
+        MAP.put(BANK_SLIP_DETAIL_STATUS_CAN_NOT_CONFIRM, "该条银行对公流水记录不允许确认");
 
         MAP.put(COUPON_BATCH_NAME_NOT_NULL, "优惠券批次名称不能为空");
         MAP.put(COUPON_TYPE_NOT_NULL, "优惠券类型不能为空");
@@ -1836,6 +1846,7 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_UNIT_AMOUNT_ERROR, "此订单商品项或配件项的单价有误，无法续租");
         MAP.put(RELET_ORDER_RENT_TIME_LENGTH_ERROR, "此订单租赁期限有误，无法续租");
         MAP.put(RELET_ORDER_NOT_EXISTS, "此续租单不存在");
+        MAP.put(RELET_ORDER_EXISTS_RELET_REQUEST, "此订单已存在续租请求");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");
@@ -1869,6 +1880,8 @@ public class ErrorCode {
         MAP.put(QUARTZ_TRIGGER_GROUP_NOT_NULL, "定时任务的触发器组名称不能为空");
         MAP.put(QUARTZ_CRON_TRIGGER_FLAG_NOT_NULL, "定时任务的CRON标识不能为空");
         MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
+
+        MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
     }
 
 

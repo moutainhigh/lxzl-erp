@@ -290,6 +290,44 @@
 	</select>
 
 
+	<select id="findRecentlyReletedOrderByParams" resultMap="ReletOrderDO" parameterType="map">
+
+		SELECT
+		<include refid="column_List"/>
+		FROM erp_relet_order   ero
+		<where>
+
+			<if test="maps.reletOrderQueryParam.orderId != null">
+				and ero.order_id = #{maps.reletOrderQueryParam.orderId, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.orderNo != null &amp;&amp; maps.reletOrderQueryParam.orderNo != ''">
+				and ero.order_no like CONCAT('%','${maps.reletOrderQueryParam.orderNo}','%' )
+			</if>
+			<if test="maps.reletOrderQueryParam.rentType != null">
+				and ero.rent_type = #{maps.reletOrderQueryParam.rentType, jdbcType=INTEGER}
+			</if>
+			<if test="maps.reletOrderQueryParam.reletOrderStatus != null">
+				and ero.relet_order_status = #{maps.reletOrderQueryParam.reletOrderStatus, jdbcType=INTEGER}
+			</if>
+
+			<if test="maps.reletOrderQueryParam.startExpectReturnTime != null">
+				<![CDATA[ AND ero.expect_return_time >= #{maps.reletOrderQueryParam.startExpectReturnTime} ]]>
+			</if>
+			<if test="maps.reletOrderQueryParam.endExpectReturnTime != null ">
+				<![CDATA[ AND ero.expect_return_time <= #{maps.reletOrderQueryParam.endExpectReturnTime} ]]>
+			</if>
+			<if test="maps.reletOrderQueryParam.rentLengthType != null">
+				and ero.rent_length_type = #{maps.reletOrderQueryParam.rentLengthType, jdbcType=INTEGER}
+			</if>
+
+			<if test="maps.isQueryAll == null">
+				and ero.data_status = 1
+				and id in ( SELECT MAX(id) as id FROM erp_relet_order group BY order_no )
+			</if>
+		</where>
+		ORDER BY ero.create_time DESC
+
+	</select>
 
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ero.id) FROM erp_relet_order ero 

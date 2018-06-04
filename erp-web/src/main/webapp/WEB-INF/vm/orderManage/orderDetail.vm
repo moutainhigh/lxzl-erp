@@ -117,7 +117,7 @@
 ##                            <!-- 打印记录 -->
                             #parse("component/order/orderPrintRecord.vm")
 
-##                            <!-- 打印记录 -->
+##                            <!-- 签收记录 -->
                             #parse("component/order/orderReceipt.vm")
                         </div>
                     </div>
@@ -132,7 +132,6 @@
 </div>
     #parse("layout/footer.vm")
 
-    <script type="text/javascript" src="${staticCommon}vendor/plugins/dropzone/dropzone.min.js"></script>
     <script type="text/javascript" src="${staticCommon}vendor/plugins/viewer/viewer.min.js"></script>
     <script type="text/javascript">
         management_load_script('${staticManagement}/js',
@@ -143,6 +142,9 @@
                 'manage.order.item.render.js',
                 'manage.order.util.js',
                 'manage.order.receipt.confirm.js',
+                'manage.order.relet.mixin.js',
+                'manage.order.relet.add.js',
+                'manage.order.relet.edit.js',
                 'modal.submit.audit.js',
                 'manage.order.picking.js',
                 'manage.order.print.record.js',
