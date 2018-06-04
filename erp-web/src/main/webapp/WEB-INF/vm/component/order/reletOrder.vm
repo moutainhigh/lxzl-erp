@@ -39,7 +39,14 @@
                 <td class="nowrap">￥{{#price}}{{totalOrderAmount}}{{/price}}</td>
                 <td class="nowrap">￥{{#price}}{{totalPaidOrderAmount}}{{/price}}</td>
                 <td class="nowrap">{{payStatusValue}}</td>
-                <td class="nowrap">{{orderStatusValue}}</td>
+                <td class="nowrap">
+                    <p class="{{reletOrderStatusClass}}">{{orderStatusValue}}</p>
+                    {{#showViewWorkFlowButton}}
+                    <p class="mn nowrap {{reletOrderStatusClass}}">
+                        <a href="javascript:void(0)" class="{{reletOrderStatusClass}} viewWorkFlowBtn" data-no="{{reletOrderNo}}">查看审核流</a>
+                    </p>
+                    {{/showViewWorkFlowButton}}
+                </td>
                 <td class="nowrap">{{orderSellerName}}</td>
                 {{#hasReletButtons}}
                     <td class="nowrap text-right">
