@@ -72,6 +72,15 @@ public class DingdingController extends BaseController {
     }
 
     /**
+     * 测试接口-----校验钉钉用户数据
+     */
+    @RequestMapping(value = "checkDingdingUserDatas")
+    public Result checkDingdingUserDatas() {
+        ServiceResult<String, Object> serviceResult = dingdingService.checkDingdingUserDatas();
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
      * 测试接口---提交审核工作流到钉钉
      */
     @RequestMapping(value = "applyApprovingWorkflowToDingding")
