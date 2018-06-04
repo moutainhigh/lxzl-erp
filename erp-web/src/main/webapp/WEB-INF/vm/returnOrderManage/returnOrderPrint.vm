@@ -214,7 +214,7 @@
                         <td class="text-center">{{rowNum}}</td>
                         <td class="text-center">{{productName}} ({{isNewProductValue}})</td>
                         <td class="text-center">{{propertiesToStr}}</td>
-                        <td class="text-center">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                        <td class="text-center">￥{{currentSkuPrice}}</td>
                         <td class="text-center">{{productCount}}</td>
                     </tr>
                     {{/listData}}
@@ -298,7 +298,6 @@
             <div class="col-md-12">
                 <table class="table table-bordered mbn">
                     <tbody>
-##                    {{#listData}}
                     <tr>
                         <td class="text-center" style="width:125px; height:35px;">合计金额</td>
                         <td></td>
@@ -319,7 +318,6 @@
                         <td class="text-center" style="width:125px; height:35px;">备注</td>
                         <td></td>
                     </tr>
-##                    {{/listData}}
                     </tbody>
                 </table>
             </div>
