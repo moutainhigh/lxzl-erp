@@ -322,7 +322,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 orderRemark = "租赁类型：月租";
             }
             String verifyMatters = null;
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getReletOrderNo(), verifyUser, verifyMatters, commitRemark, reletOrderCommitParam.getImgIdList(), orderRemark);
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo(), verifyUser, verifyMatters, commitRemark, reletOrderCommitParam.getImgIdList(), orderRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());
@@ -350,12 +350,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             }
 
             //推送K3消息
-//            ServiceResult<String, String> k3ServiceResult = k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
-//            if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
-//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
-//                return result;
-//            }
+            k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
+
 
         }
 
@@ -443,11 +439,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 }
 
                 //推送K3消息
-//                ServiceResult<String, String> k3ServiceResult = k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
-//                if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
-//                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-//                    return k3ServiceResult.getErrorCode();
-//                }
+                k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
