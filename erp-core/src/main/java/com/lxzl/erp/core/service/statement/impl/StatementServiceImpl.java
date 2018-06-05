@@ -3510,20 +3510,20 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
+        User loginUser = userSupport.getCurrentUser();
+        Date currentTime = new Date();
+        Date rentStartTime = reletOrderDO.getRentStartTime();
+
         List<StatementOrderDetailDO> dbStatementOrderDetailDOList = statementOrderDetailMapper.findByOrderId(reletOrderDO.getOrderId());
         if (CollectionUtil.isNotEmpty(dbStatementOrderDetailDOList)) {
             for(StatementOrderDetailDO statementOrderDetailDO: dbStatementOrderDetailDOList){
-                if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus()){
+                Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementOrderDetailDO.getStatementExpectPayTime(), currentTime);
+                if (CommonConstant.NO == statementOrderDetailDO.getStatementDetailStatus() && dayCount > 0){
                     result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_UNPAID_STATEMENT);
                     return result;
                 }
             }
         }
-
-        User loginUser = userSupport.getCurrentUser();
-        Date currentTime = new Date();
-        Date rentStartTime = reletOrderDO.getRentStartTime();
-
 
         CustomerDO customerDO = customerMapper.findById(reletOrderDO.getBuyerCustomerId());
         if (customerDO == null) {
