@@ -207,12 +207,12 @@ public class ExcelExportSupport<T> {
 
         if (CollectionUtil.isNotEmpty(list)) {
             for (int i = 0; i < list.size(); i++) {
-                List<T> list1 = list.get(i);
+                List<T> rowList = list.get(i);
                 HSSFRow newXssfRow = hssSheet.createRow(i);
-                for (int j = 0; j < list1.size(); j++) {
+                for (int j = 0; j < rowList.size(); j++) {
                     hssSheet.setColumnWidth(j, width);
                     Cell cell = newXssfRow.createCell(j);
-                    cell.setCellValue(String.valueOf(list1.get(j)));  //"充值订单id"
+                    cell.setCellValue(String.valueOf(rowList.get(j)));
                 }
             }
         }
