@@ -164,14 +164,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //reletOrderDO.setBuyerCustomerName(customerDO.getCustomerName());
 
         //添加客户的结算时间（天）
-        Date rentStartTime = reletOrder.getRentStartTime();
-        Integer statementDate = reletOrder.getStatementDate();//customerDO.getStatementDate();
+//        Date rentStartTime = reletOrder.getRentStartTime();
+//        Integer statementDate = reletOrder.getStatementDate();//customerDO.getStatementDate();
 
         //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
+//        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
 
         //获取
-        reletOrderDO.setStatementDate(statementDays);
+        reletOrderDO.setStatementDate(reletOrder.getStatementDate());
         reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT);
         reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         reletOrderDO.setCreateUser(loginUser.getUserId().toString());
@@ -363,8 +363,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
-
-
 
 
     @Override
