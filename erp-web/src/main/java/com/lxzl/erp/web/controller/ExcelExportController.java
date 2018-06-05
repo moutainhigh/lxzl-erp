@@ -84,10 +84,14 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportDynamicSql", method = RequestMethod.POST)
     public Result exportDynamicSql(DynamicSql dynamicSql, HttpServletResponse response) throws Exception {
-        dynamicSql.setLimit(Integer.MAX_VALUE);
-        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
 
-        ServiceResult<String, String> serviceResult = excelExportService.export(result,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
+        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
+        Object data = result.getResultMap().get("data");
+        List<List<Object>> list = null;
+        if(data != null){
+            list = (List<List<Object>>) data;
+        }
+        ServiceResult<String, String> serviceResult = excelExportService.export(list,"动态sql","sheet1" , response,5000);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 }
