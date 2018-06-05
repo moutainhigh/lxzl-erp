@@ -88,7 +88,7 @@
 	</update>
 
 	<select id="findBankSlipDetailOperationLogCountByParams" resultType="java.lang.Integer" parameterType="map">
-		SELECT  COUNT(ebsdol.id) FROM erp_bank_slip_detail ebsd
+		SELECT  COUNT(DISTINCT ebsdol.id) FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
@@ -132,7 +132,7 @@
 	</select>
 
 	<select id="findBankSlipDetailOperationLogByParams" resultMap="BankSlipDetailOperationLogDO" parameterType="map">
-		SELECT  <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
+		SELECT DISTINCT <include refid="column_List"/> FROM erp_bank_slip_detail ebsd
 		INNER JOIN erp_bank_slip ebs ON ebsd.bank_slip_id = ebs.id AND ebs.data_status = 1
 		LEFT JOIN  erp_sub_company esc ON esc.id = ebs.sub_company_id AND esc.data_status = 1
 		LEFT JOIN  erp_sub_company esc1 ON esc1.id = ebsd.sub_company_id AND esc1.data_status = 1
