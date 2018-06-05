@@ -3337,6 +3337,11 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
+        if (customerDO.getConfirmStatementStatus() == 1) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_EXIST);
+            return serviceResult;
+        }
+
         customerDO.setConfirmStatementStatus(1);
         customerDO.setConfirmStatementUser(userSupport.getCurrentUserId());
         customerDO.setConfirmStatementTime(now);

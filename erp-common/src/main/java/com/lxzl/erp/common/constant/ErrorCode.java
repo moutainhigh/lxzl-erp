@@ -603,6 +603,8 @@ public class ErrorCode {
     public static final String ORDER_JOINT_PRODUCT_PRODUCT_ERROR = "J500170";
     public static final String ORDER_JOINT_PRODUCT_MATERIAL_ERROR = "J500171";
 
+    public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
+
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
     public static final String MESSAGE_RECEIVER_NOT_NULL = "J600003";
@@ -1889,6 +1891,8 @@ public class ErrorCode {
         MAP.put(QUARTZ_EXPRESSION_NOT_NULL, "定时任务的CRON表达式不能为空");
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
+
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户结算单已经确认");
     }
 
 
