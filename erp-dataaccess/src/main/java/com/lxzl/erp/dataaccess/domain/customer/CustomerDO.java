@@ -32,6 +32,10 @@ public class CustomerDO  extends BaseDO {
 	private String failReason; //拒绝原因
 	private Integer isRisk;//'是否授信，0-未授信；1-已授信'
 
+	private Integer confirmStatementStatus; // 客户结算单确认状态 0否1是
+	private Integer confirmStatementUser; // 客户结算单确认人
+	private Date confirmStatementTime; // 客户结算单确认时间
+
 	@Transient
 	private CustomerCompanyDO customerCompanyDO;
 	@Transient
@@ -271,5 +275,29 @@ public class CustomerDO  extends BaseDO {
 
 	public void setIsRisk(Integer isRisk) {
 		this.isRisk = isRisk;
+	}
+
+	public Integer getConfirmStatementStatus() {
+		return confirmStatementStatus;
+	}
+
+	public void setConfirmStatementStatus(Integer confirmStatementStatus) {
+		this.confirmStatementStatus = confirmStatementStatus;
+	}
+
+	public Integer getConfirmStatementUser() {
+		return confirmStatementUser;
+	}
+
+	public void setConfirmStatementUser(Integer confirmStatementUser) {
+		this.confirmStatementUser = confirmStatementUser;
+	}
+
+	public Date getConfirmStatementTime() {
+		return confirmStatementTime;
+	}
+
+	public void setConfirmStatementTime(Date confirmStatementTime) {
+		this.confirmStatementTime = confirmStatementTime;
 	}
 }

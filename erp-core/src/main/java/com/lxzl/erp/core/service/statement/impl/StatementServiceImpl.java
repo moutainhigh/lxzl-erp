@@ -6,7 +6,6 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.callback.WeixinPayCallbackParam;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
-import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.material.pojo.Material;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.payment.ManualChargeParam;
@@ -23,7 +22,6 @@ import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
 import com.lxzl.erp.core.service.coupon.impl.support.CouponSupport;
 import com.lxzl.erp.core.service.dingding.DingDingSupport.DingDingSupport;
 import com.lxzl.erp.core.service.order.impl.support.OrderTimeAxisSupport;
-import com.lxzl.erp.core.service.order.impl.support.PenaltySupport;
 import com.lxzl.erp.core.service.payment.PaymentService;
 import com.lxzl.erp.core.service.permission.PermissionSupport;
 import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
@@ -40,7 +38,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
@@ -49,7 +46,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statement.StatementPayOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectDetailMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.statementOrderCorrect.StatementOrderCorrectMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.system.DataDictionaryMapper;
 import com.lxzl.erp.dataaccess.domain.changeOrder.*;
 import com.lxzl.erp.dataaccess.domain.customer.CustomerDO;
 import com.lxzl.erp.dataaccess.domain.k3.K3ChangeOrderDO;
@@ -63,17 +59,17 @@ import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.reletorder.ReletOrderProductDO;
-import com.lxzl.erp.dataaccess.domain.returnOrder.*;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderMaterialBulkDO;
+import com.lxzl.erp.dataaccess.domain.returnOrder.ReturnOrderProductEquipmentDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementOrderDetailDO;
 import com.lxzl.erp.dataaccess.domain.statement.StatementPayOrderDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDO;
 import com.lxzl.erp.dataaccess.domain.statementOrderCorrect.StatementOrderCorrectDetailDO;
-import com.lxzl.erp.dataaccess.domain.system.DataDictionaryDO;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
 import com.lxzl.se.dataaccess.mysql.source.interceptor.SqlLogInterceptor;
-import org.apache.ibatis.mapping.StatementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -312,6 +308,13 @@ public class StatementServiceImpl implements StatementService {
 //            return result;
 //        }
 
+        // 客户为确认结算单状态时，不允许重算客户的订单
+        CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
+        if (customerDO != null && ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+            result.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE);
+            return result;
+        }
+
         //有退货单不允许重算
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(orderDO.getOrderNo());
         if (CollectionUtil.isNotEmpty(k3ReturnOrderDetailDOList)) {
@@ -362,6 +365,10 @@ public class StatementServiceImpl implements StatementService {
                     sb.append("客户编号["+customerNo +"]不存在\n");
                     continue;
                 }
+                if (ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+                    sb.append("客户编号["+customerNo +"]已经是确认结算单状态\n");
+                    continue;
+                }
                 List<OrderDO> orderDOList = orderMapper.findByCustomerId(customerDO.getId());
                 for(OrderDO orderDO : orderDOList){
                     if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
@@ -396,6 +403,15 @@ public class StatementServiceImpl implements StatementService {
                     }
                     if(!PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus())){
                         sb.append("批量重算不支持已支付订单["+orderDO.getOrderNo() +"]，未处理\n");
+                        continue;
+                    }
+                    CustomerDO customerDO = customerMapper.findByNo(orderDO.getBuyerCustomerNo());
+                    if (customerDO == null) {
+                        sb.append("订单号["+orderNo+"]"+"关联的客户不存在\n");
+                        continue;
+                    }
+                    if (ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
+                        sb.append("订单号["+orderNo+"]"+"关联的客户编号["+customerDO.getCustomerNo() +"]已经是确认结算单状态\n");
                         continue;
                     }
                     ServiceResult<String, BigDecimal> result = reCreateOrderStatement(orderNo);
@@ -2911,6 +2927,8 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
             // 同一个时间的做归集
             Map<Date, StatementOrderDO> statementOrderDOMap = new HashMap<>();
+            Map<Date,Date> statementStartTimeMap = new HashMap<>();
+            Map<Date,Date> statementEndTimeMap = new HashMap<>();
             for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
                 if (statementOrderDetailDO == null) {
                     continue;
@@ -2970,14 +2988,42 @@ public class StatementServiceImpl implements StatementService {
                     if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
                         statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
                     }
+                    //存储结算单详情中最小的开始日期
+                    if (statementStartTimeMap.containsKey(dateKey)) {
+                        if (statementOrderDetailDO.getStatementStartTime().getTime() < statementStartTimeMap.get(dateKey).getTime()) {
+                            statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+                        }
+                    }else {
+                        statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+                    }
                     if (statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()) {
                         statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
+                    }
+                    //存储结算单详情中最大的结束日期
+                    if (statementEndTimeMap.containsKey(dateKey)) {
+                        if (statementOrderDetailDO.getStatementEndTime().getTime() > statementEndTimeMap.get(dateKey).getTime()) {
+                            statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
+                        }
+                    }else {
+                        statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
                     }
                     statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
                     statementOrderMapper.update(statementOrderDO);
                 }
                 statementOrderDOMap.put(dateKey, statementOrderDO);
                 statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
+            }
+            //将最小值和最大值存储进去
+            if (!statementStartTimeMap.isEmpty() && !statementEndTimeMap.isEmpty()) {
+                for (Date dateKey : statementOrderDOMap.keySet()) {
+                    if (statementStartTimeMap.containsKey(dateKey)) {
+                        statementOrderDOMap.get(dateKey).setStatementStartTime(statementStartTimeMap.get(dateKey));
+                    }
+                    if (statementEndTimeMap.containsKey(dateKey)) {
+                        statementOrderDOMap.get(dateKey).setStatementEndTime(statementEndTimeMap.get(dateKey));
+                    }
+                    statementOrderMapper.update(statementOrderDOMap.get(dateKey));
+                }
             }
             if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
                 SqlLogInterceptor.setExecuteSql("skip print statementOrderDetailMapper.saveList  sql ......");

@@ -6,6 +6,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.core.service.export.ExcelExportConfig;
 import com.lxzl.erp.core.service.export.ExcelExportService;
 import com.lxzl.erp.core.service.export.impl.support.ExcelExportSupport;
+import com.lxzl.se.common.domain.Result;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -77,8 +78,14 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
     }
 
     @Override
-    public ServiceResult<String, String> export(List<List<T>> list,String fileName, String sheetName, HttpServletResponse response,Integer width) {
+    public ServiceResult<String, String> export(Result result, String fileName, String sheetName, HttpServletResponse response, Integer width) {
         ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        Object data = result.getResultMap().get("data");
+        List<List<Object>> list = null;
+        if(data != null){
+            list = (List<List<Object>>) data;
+        }
+
         try {
             //导出设计表格
             serviceResult = ExcelExportSupport.export(list, fileName, sheetName,response,width);
