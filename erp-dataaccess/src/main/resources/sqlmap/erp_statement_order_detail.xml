@@ -818,10 +818,10 @@
             FROM erp_statement_order_detail esod
             <where>
                 <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
-                    <![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+                    <![CDATA[ AND esod.create_time >= #{maps.statementOrderDetailQueryParam.createStartTime} ]]>
                 </if>
                 <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
-                    <![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+                    <![CDATA[ AND esod.create_time <= #{maps.statementOrderDetailQueryParam.createEndTime} ]]>
                 </if>
                 <if test="true">
                     AND esod.data_status = 1
@@ -846,12 +846,13 @@
                 SUM(esod.statement_detail_deposit_paid_amount) AS depositPaidAmount,
                 SUM(esod.statement_detail_rent_deposit_paid_amount) AS rentDepositPaidAmount
                 FROM erp_statement_order_detail esod
+                INNER JOIN erp_statement_order eso ON eso.id = esod.statement_order_id AND eso.data_status = 1
                 <where>
                     <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createStartTime != null">
-                        <![CDATA[ AND eso.create_time >= #{maps.statementOrderQueryParam.createStartTime} ]]>
+                        <![CDATA[ AND eso.statement_expect_pay_time >= #{maps.statementOrderDetailQueryParam.createStartTime} ]]>
                     </if>
                     <if test="maps.statementOrderDetailQueryParam != null &amp;&amp; maps.statementOrderDetailQueryParam.createEndTime != null">
-                        <![CDATA[ AND eso.create_time <= #{maps.statementOrderQueryParam.createEndTime} ]]>
+                        <![CDATA[ AND eso.statement_expect_pay_time <= #{maps.statementOrderDetailQueryParam.createEndTime} ]]>
                     </if>
                     <if test="true">
                         AND esod.data_status = 1
