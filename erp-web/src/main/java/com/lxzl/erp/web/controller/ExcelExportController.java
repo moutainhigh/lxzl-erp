@@ -4,7 +4,6 @@ import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
-import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
 import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
 import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -14,7 +13,6 @@ import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.DynamicSqlService;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;
@@ -46,8 +44,6 @@ public class ExcelExportController {
     private ExcelExportService excelExportService;
     @Autowired
     private StatisticsService statisticsService;
-    @Autowired
-    private DynamicSqlService dynamicSqlService;
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
         bankSlipDetailQueryParam.setPayerName(ExcelExportSupport.decode(bankSlipDetailQueryParam.getPayerName()));
@@ -82,16 +78,4 @@ public class ExcelExportController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
-    @RequestMapping(value = "exportDynamicSql", method = RequestMethod.POST)
-    public Result exportDynamicSql(DynamicSql dynamicSql, HttpServletResponse response) throws Exception {
-
-        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
-        Object data = result.getResultMap().get("data");
-        List<List<Object>> list = null;
-        if(data != null){
-            list = (List<List<Object>>) data;
-        }
-        ServiceResult<String, String> serviceResult = excelExportService.export(list,"动态sql","sheet1" , response,5000);
-        return resultGenerator.generate(serviceResult.getErrorCode());
-    }
 }
