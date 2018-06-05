@@ -1698,8 +1698,8 @@ public class OrderServiceImpl implements OrderService {
         //检查是否在续租时间范围
         Date currentTime = new Date();
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
-        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == order.getRentLengthType() && dayCount < -9)
-                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == order.getRentLengthType() && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount < -9)
+                || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
             return false;
         }
 

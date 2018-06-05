@@ -117,7 +117,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //到期时间=订单的归还时间
         returnTime = orderServiceResult.getResult().getExpectReturnTime();
-        String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentLengthType());
+        String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentType());
         if (!ErrorCode.SUCCESS.equals(validReletTimeRangeCode)) {
             result.setErrorCode(validReletTimeRangeCode);
             return result;
@@ -511,9 +511,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //短租
         Calendar cal = Calendar.getInstance();
         cal.setTime(currentTime);
-        cal.add(Calendar.DAY_OF_MONTH, 2);  //短租 提前3天
+        cal.add(Calendar.DAY_OF_MONTH, 2);  //按天租 提前3天
         OrderQueryParam orderQueryParam = new OrderQueryParam();
-        orderQueryParam.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);
+        orderQueryParam.setRentType(OrderRentType.RENT_TYPE_DAY);
         orderQueryParam.setStartExpectReturnTime(DateUtil.getFirstOfDay(cal.getTime()));
         orderQueryParam.setEndExpectReturnTime(DateUtil.getEndOfDay(cal.getTime()));
         orderQueryParam.setPageSize(Integer.MAX_VALUE);
@@ -525,9 +525,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //长租
         Calendar calLong = Calendar.getInstance();
         calLong.setTime(currentTime);
-        calLong.add(Calendar.DAY_OF_MONTH, 9);  //长租  提前10天
+        calLong.add(Calendar.DAY_OF_MONTH, 9);  //按月租  提前10天
         OrderQueryParam orderQueryParamLong = new OrderQueryParam();
-        orderQueryParamLong.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_LONG);
+        orderQueryParamLong.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderQueryParamLong.setStartExpectReturnTime(DateUtil.getFirstOfDay(calLong.getTime()));
         orderQueryParamLong.setEndExpectReturnTime(DateUtil.getEndOfDay(calLong.getTime()));
         orderQueryParamLong.setPageSize(Integer.MAX_VALUE);
@@ -561,7 +561,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 //        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        //未续租过的订单提醒
+        //订单到期时 提醒续租
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
         if (null != orderDOList && orderDOList.size() > 0) {
             for (OrderDO orderDO : orderDOList) {
@@ -1386,13 +1386,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @author ZhaoZiXuan
      * @date 2018/5/9 15:16
      */
-    private String validReletTimeRange(Date returnTime, Date currentTime, Integer rentLengthType) {
+    private String validReletTimeRange(Date returnTime, Date currentTime, Integer rentType) {
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, currentTime);
-//        if (dayCount < -10 || dayCount > 2){  //订单到期 前10天 至 后2天 可续租
-//            return ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE;
-//        }
-        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType && dayCount < -9)
-                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(rentType) && dayCount < -9)
+                || (OrderRentType.RENT_TYPE_DAY.equals(rentType) && dayCount < -2)) {  //订单： 按月租前10天 和  按天租前3天 可续租
             return ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE;
         }
         return ErrorCode.SUCCESS;
@@ -1406,9 +1403,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
 
         //确认收货，部分归还，续租中，状态时 可续租
-        if (order.getOrderStatus() != OrderStatus.ORDER_STATUS_CONFIRM
-                && order.getOrderStatus() != OrderStatus.ORDER_STATUS_PART_RETURN
-                && order.getOrderStatus() != OrderStatus.ORDER_STATUS_RELET) {
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(order.getOrderStatus())
+                && !OrderStatus.ORDER_STATUS_PART_RETURN.equals(order.getOrderStatus())
+                && !OrderStatus.ORDER_STATUS_RELET.equals(order.getOrderStatus())) {
             return ErrorCode.RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE;
         }
 
