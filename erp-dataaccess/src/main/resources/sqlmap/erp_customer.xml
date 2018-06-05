@@ -412,6 +412,9 @@
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
 				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.confirmStatementStatus != null">
+				AND ec.confirm_statement_status = #{maps.customerCompanyQueryParam.confirmStatementStatus, jdbcType=INTEGER}
+			</if>
 			<if test="maps.isQueryAll == null">
 				and ecc.data_status = 1
 			</if>
@@ -467,6 +470,9 @@
 			</if>
 			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.isRisk != null">
 				AND ec.is_risk = #{maps.customerCompanyQueryParam.isRisk, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerCompanyQueryParam != null &amp;&amp; maps.customerCompanyQueryParam.confirmStatementStatus != null">
+				AND ec.confirm_statement_status = #{maps.customerCompanyQueryParam.confirmStatementStatus, jdbcType=INTEGER}
 			</if>
 			<if test="maps.isQueryAll == null">
 				and ecc.data_status = 1
@@ -538,6 +544,9 @@
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
 				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
 			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.confirmStatementStatus != null">
+				AND ec.confirm_statement_status = #{maps.customerPersonQueryParam.confirmStatementStatus, jdbcType=INTEGER}
+			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>
 	</select>
@@ -602,6 +611,9 @@
 			</if>
 			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.isRisk != null">
 				AND ec.is_risk = #{maps.customerPersonQueryParam.isRisk, jdbcType=INTEGER}
+			</if>
+			<if test="maps.customerPersonQueryParam != null &amp;&amp; maps.customerPersonQueryParam.confirmStatementStatus != null">
+				AND ec.confirm_statement_status = #{maps.customerPersonQueryParam.confirmStatementStatus, jdbcType=INTEGER}
 			</if>
 			<include refid="permission_sql.customer_control"/>
 		</where>

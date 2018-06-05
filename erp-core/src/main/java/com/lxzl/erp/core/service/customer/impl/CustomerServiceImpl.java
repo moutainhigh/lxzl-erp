@@ -3337,12 +3337,12 @@ public class CustomerServiceImpl implements CustomerService {
             return serviceResult;
         }
 
-        if (customerDO.getConfirmStatementStatus() == 1) {
+        if (ConfirmStatementStatus.CONFIRM_STATUS_YES.equals(customerDO.getConfirmStatementStatus())) {
             serviceResult.setErrorCode(ErrorCode.CUSTOMER_CONFIRM_STATEMENT_EXIST);
             return serviceResult;
         }
 
-        customerDO.setConfirmStatementStatus(1);
+        customerDO.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
         customerDO.setConfirmStatementUser(userSupport.getCurrentUserId());
         customerDO.setConfirmStatementTime(now);
         customerDO.setUpdateTime(now);

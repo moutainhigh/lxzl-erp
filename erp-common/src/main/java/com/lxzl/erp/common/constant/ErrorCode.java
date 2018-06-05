@@ -604,6 +604,7 @@ public class ErrorCode {
     public static final String ORDER_JOINT_PRODUCT_MATERIAL_ERROR = "J500171";
 
     public static final String CUSTOMER_CONFIRM_STATEMENT_EXIST = "J500172";
+    public static final String CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE = "J500173";
 
     public static final String MESSAGE_TITLE_NOT_NULL = "J600001";
     public static final String MESSAGE_CONTENT_NOT_NULL = "J600002";
@@ -1892,7 +1893,8 @@ public class ErrorCode {
 
         MAP.put(DYNAMIC_SQL_ERROR, "动态SQL查询语句不正确");
 
-        MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户结算单已经确认");
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_EXIST, "客户已经为确认结算单状态");
+        MAP.put(CUSTOMER_CONFIRM_STATEMENT_REFUSE_RECREATE, "客户为确认结算单状态时不允许重算结算单");
     }
 
 
