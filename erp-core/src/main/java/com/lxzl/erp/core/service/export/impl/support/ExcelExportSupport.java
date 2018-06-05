@@ -192,4 +192,41 @@ public class ExcelExportSupport<T> {
         return fileName + "__" + now;
     }
 
+    /**
+     * 导出设计表格
+     *
+     * @param : chargeRecordList
+     * @Author : XiaoLuYu
+     * @Date : Created in 2018/4/14 17:55
+     * @Return : com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>
+     */
+    public static <T> ServiceResult<String, String> export(List<List<T>> list,String fileName, String sheetName, HttpServletResponse response,Integer width) throws Exception {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        HSSFSheet hssSheet = hssfWorkbook.createSheet(sheetName);
+
+        if (CollectionUtil.isNotEmpty(list)) {
+            for (int i = 0; i < list.size(); i++) {
+                List<T> list1 = list.get(i);
+                HSSFRow newXssfRow = hssSheet.createRow(i);
+                for (int j = 0; j < list1.size(); j++) {
+                    hssSheet.setColumnWidth(j, width);
+                    Cell cell = newXssfRow.createCell(j);
+                    cell.setCellValue(String.valueOf(list1.get(j)));  //"充值订单id"
+                }
+            }
+        }
+        response.reset();
+        response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("GB2312"), "ISO_8859_1") + ".xls");
+        response.setContentType("application/json;charset=utf-8");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        hssfWorkbook.write(outputStream);
+        OutputStream stream = response.getOutputStream();
+        outputStream.flush();
+        outputStream.close();
+        hssfWorkbook.write(stream);
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
 }
