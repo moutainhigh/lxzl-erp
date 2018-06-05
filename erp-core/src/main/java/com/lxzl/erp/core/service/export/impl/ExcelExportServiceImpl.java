@@ -75,4 +75,17 @@ public class ExcelExportServiceImpl<T> implements ExcelExportService<T> {
         }
         return serviceResult;
     }
+
+    @Override
+    public ServiceResult<String, String> export(List<List<T>> list,String fileName, String sheetName, HttpServletResponse response,Integer width) {
+        ServiceResult<String,String> serviceResult = new ServiceResult<>();
+        try {
+            //导出设计表格
+            serviceResult = ExcelExportSupport.export(list, fileName, sheetName,response,width);
+            return serviceResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return serviceResult;
+    }
 }

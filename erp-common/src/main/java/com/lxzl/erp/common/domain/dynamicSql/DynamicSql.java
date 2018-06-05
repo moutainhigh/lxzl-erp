@@ -17,11 +17,21 @@ public class DynamicSql extends BasePageParam {
     @NotBlank(message = ErrorCode.PARAM_IS_NOT_NULL)
     private String sql;
 
+    private Integer limit;
+
     public String getSql() {
         return sql;
     }
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 }
