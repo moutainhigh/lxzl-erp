@@ -87,7 +87,7 @@ public class ExcelExportController {
         dynamicSql.setLimit(Integer.MAX_VALUE);
         Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
 
-        ServiceResult<String, String> serviceResult = excelExportService.export(result,"动态sql","sheet1" , response,5000);
+        ServiceResult<String, String> serviceResult = excelExportService.export(result,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 }
