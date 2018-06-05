@@ -336,7 +336,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
             orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
+//            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
             orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
             orderDO.setUpdateUser(loginUser.getUserId().toString());
             orderDO.setUpdateTime(currentTime);
@@ -467,7 +467,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                     return ErrorCode.ORDER_NOT_EXISTS;
                 }
                 orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
-                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
+//                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
                 orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
                 orderDO.setUpdateTime(currentTime);
@@ -1402,10 +1402,9 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             return ErrorCode.SYSTEM_ERROR;
         }
 
-        //确认收货，部分归还，续租中，状态时 可续租
+        //确认收货，部分归还，状态时 可续租
         if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(order.getOrderStatus())
-                && !OrderStatus.ORDER_STATUS_PART_RETURN.equals(order.getOrderStatus())
-                && !OrderStatus.ORDER_STATUS_RELET.equals(order.getOrderStatus())) {
+                && !OrderStatus.ORDER_STATUS_PART_RETURN.equals(order.getOrderStatus())) {
             return ErrorCode.RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE;
         }
 
