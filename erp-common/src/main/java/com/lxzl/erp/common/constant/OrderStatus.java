@@ -16,5 +16,13 @@ public class OrderStatus {
     public static final Integer ORDER_STATUS_RELET = 44;      // 续租中
     public static final Integer ORDER_STATUS_COLSE = 48;      // 关闭
 
+    public static boolean canReletOrderByCurrentStatus(Integer currentStatus){
+        if (OrderStatus.ORDER_STATUS_CONFIRM.equals(currentStatus)
+                ||OrderStatus.ORDER_STATUS_PART_RETURN.equals(currentStatus)
+                ||OrderStatus.ORDER_STATUS_RELET.equals(currentStatus)){
+            return true;
+        }
+        return false;
+    }
 
 }
