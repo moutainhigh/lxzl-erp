@@ -38,6 +38,7 @@ import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
 import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.*;
 import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.reletorder.ReletOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderMaterialBulkMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.returnOrder.ReturnOrderProductEquipmentMapper;
@@ -1619,6 +1620,20 @@ public class StatementServiceImpl implements StatementService {
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getRentDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderProductDO.getDepositAmount(), new BigDecimal(orderProductDO.getProductCount()), BigDecimalUtil.SCALE), returnCount);
 
+                //获取此订单是否有续租单
+                boolean isReletOrder = false;
+                Integer rentType = OrderRentType.RENT_TYPE_DAY;
+                List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findRecentlyReletOrderByOrderId(orderProductDO.getOrderId());
+                if (CollectionUtil.isNotEmpty(reletOrderDOList)) {
+                    for (ReletOrderDO reletOrderDO : reletOrderDOList){
+                        if (ReletOrderStatus.RELET_ORDER_STATUS_RELETTING.equals(reletOrderDO.getReletOrderStatus())){
+                            isReletOrder = true;
+                            rentType = reletOrderDO.getRentType();
+                            break;
+                        }
+                    }
+                }
+
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
@@ -1682,6 +1697,7 @@ public class StatementServiceImpl implements StatementService {
                         BigDecimal itemAllAmount = orderProductDO.getProductAmount();
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         BigDecimal payReturnAmount = BigDecimal.ZERO;
+                        BigDecimal reletCurrentPhaseReturnAmount = BigDecimal.ZERO;
                         BigDecimal productUnitAmount = BigDecimalUtil.mul(orderProductDO.getProductUnitAmount(), returnCount);
 
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
@@ -1715,10 +1731,29 @@ public class StatementServiceImpl implements StatementService {
 //                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
 //                                }
 //                            }
+                            //计算续租当期 退还金额
+                            if (isReletOrder && returnTime.getTime() > statementDetailStartTime.getTime() && returnTime.getTime() < statementDetailEndTime.getTime()){
+
+                                Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime) + 1;
+                                if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)){
+                                    //按月
+                                    Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
+                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount,
+                                            BigDecimalUtil.div(orderProductDO.getProductUnitAmount(), new BigDecimal(maxDayCount), BigDecimalUtil.SCALE)), new BigDecimal(dayCount));
+                                }
+                                else if(OrderRentType.RENT_TYPE_DAY.equals(rentType)){
+                                    //按天
+                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount, orderProductDO.getProductUnitAmount()), new BigDecimal(dayCount));
+
+                                }
+
+                                payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
+                            }
+
                             // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
                             if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
 //                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
-                                payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.SCALE);
+                                payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.SCALE));
                             }
                         }
                         // 正常全额退
@@ -1770,6 +1805,21 @@ public class StatementServiceImpl implements StatementService {
                 List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByOrderItemTypeAndId(OrderItemType.ORDER_ITEM_TYPE_MATERIAL, orderMaterialDO.getId());
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
+
+                //获取此订单是否有续租单
+                boolean isReletOrder = false;
+                Integer rentType = OrderRentType.RENT_TYPE_DAY;
+                List<ReletOrderDO> reletOrderDOList = reletOrderMapper.findRecentlyReletOrderByOrderId(orderMaterialDO.getOrderId());
+                if (CollectionUtil.isNotEmpty(reletOrderDOList)) {
+                    for (ReletOrderDO reletOrderDO : reletOrderDOList){
+                        if (ReletOrderStatus.RELET_ORDER_STATUS_RELETTING.equals(reletOrderDO.getReletOrderStatus())){
+                            isReletOrder = true;
+                            rentType = reletOrderDO.getRentType();
+                            break;
+                        }
+                    }
+                }
+
                 if (CollectionUtil.isNotEmpty(statementOrderDetailDOList)) {
                     for (int i = 0; i < statementOrderDetailDOList.size(); i++) {
                         StatementOrderDetailDO statementOrderDetailDO = statementOrderDetailDOList.get(i);
@@ -1832,6 +1882,7 @@ public class StatementServiceImpl implements StatementService {
                         BigDecimal needPayAmount = BigDecimal.ZERO;
                         BigDecimal productUnitAmount = BigDecimalUtil.mul(orderMaterialDO.getMaterialUnitAmount(), returnCount);
                         BigDecimal payReturnAmount = BigDecimal.ZERO;
+                        BigDecimal reletCurrentPhaseReturnAmount = BigDecimal.ZERO;
                         if (statementOrderDetailDO.getStatementDetailPhase() != 0) {
 //                            if (OrderRentType.RENT_TYPE_MONTH.equals(orderMaterialDO.getRentType())) {
 //                                // 如果开始时间在当前时间之前，证明先用后付，要计未缴纳费用。
@@ -1863,10 +1914,30 @@ public class StatementServiceImpl implements StatementService {
 //                                    needPayAmount = surplusDays > 0 ? BigDecimalUtil.mul(productUnitAmount, new BigDecimal(surplusDays)) : needPayAmount;
 //                                }
 //                            }
+
+                            //计算续租当期 退还金额
+                            if (isReletOrder && returnTime.getTime() > statementDetailStartTime.getTime() && returnTime.getTime() < statementDetailEndTime.getTime()){
+
+                                Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime) + 1;
+                                if (OrderRentType.RENT_TYPE_MONTH.equals(rentType)){
+                                    //按月
+                                    Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
+                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount,
+                                            BigDecimalUtil.div(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(maxDayCount), BigDecimalUtil.SCALE)), new BigDecimal(dayCount));
+                                }
+                                else if(OrderRentType.RENT_TYPE_DAY.equals(rentType)){
+                                    //按天
+                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount, orderMaterialDO.getMaterialUnitAmount()), new BigDecimal(dayCount));
+
+                                }
+
+                                payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
+                            }
+
                             // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
                             if (!OrderRentType.RENT_TYPE_DAY.equals(orderMaterialDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
 //                                payReturnAmount = statementOrderDetailDO.getStatementDetailAmount();
-                                payReturnAmount = BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.SCALE);
+                                payReturnAmount = BigDecimalUtil.add(payReturnAmount, BigDecimalUtil.div(BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount()),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.SCALE));
                             }
 
                         }
@@ -3767,6 +3838,9 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private ReletOrderMapper reletOrderMapper;
 
     @Autowired
     private UserSupport userSupport;
