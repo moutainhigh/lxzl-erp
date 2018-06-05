@@ -977,6 +977,12 @@ public class PageController extends BaseController {
         return "/privateManage/request";
     }
 
+
+    @RequestMapping("/data-analysis/dynamicSql")
+    public String systemManageDynamicSql() {
+        return "/dataAnalysisManage/dynamicSql";
+    }
+
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")
     public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
