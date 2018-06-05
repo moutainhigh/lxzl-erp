@@ -2927,6 +2927,8 @@ public class StatementServiceImpl implements StatementService {
         if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
             // 同一个时间的做归集
             Map<Date, StatementOrderDO> statementOrderDOMap = new HashMap<>();
+            Map<Date,Date> statementStartTimeMap = new HashMap<>();
+            Map<Date,Date> statementEndTimeMap = new HashMap<>();
             for (StatementOrderDetailDO statementOrderDetailDO : addStatementOrderDetailDOList) {
                 if (statementOrderDetailDO == null) {
                     continue;
@@ -2986,14 +2988,42 @@ public class StatementServiceImpl implements StatementService {
                     if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
                         statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
                     }
+                    //存储结算单详情中最小的开始日期
+                    if (statementStartTimeMap.containsKey(dateKey)) {
+                        if (statementOrderDetailDO.getStatementStartTime().getTime() < statementStartTimeMap.get(dateKey).getTime()) {
+                            statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+                        }
+                    }else {
+                        statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+                    }
                     if (statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()) {
                         statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
+                    }
+                    //存储结算单详情中最大的结束日期
+                    if (statementEndTimeMap.containsKey(dateKey)) {
+                        if (statementOrderDetailDO.getStatementEndTime().getTime() > statementEndTimeMap.get(dateKey).getTime()) {
+                            statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
+                        }
+                    }else {
+                        statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
                     }
                     statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
                     statementOrderMapper.update(statementOrderDO);
                 }
                 statementOrderDOMap.put(dateKey, statementOrderDO);
                 statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
+            }
+            //将最小值和最大值存储进去
+            if (!statementStartTimeMap.isEmpty() && !statementEndTimeMap.isEmpty()) {
+                for (Date dateKey : statementOrderDOMap.keySet()) {
+                    if (statementStartTimeMap.containsKey(dateKey)) {
+                        statementOrderDOMap.get(dateKey).setStatementStartTime(statementStartTimeMap.get(dateKey));
+                    }
+                    if (statementEndTimeMap.containsKey(dateKey)) {
+                        statementOrderDOMap.get(dateKey).setStatementEndTime(statementEndTimeMap.get(dateKey));
+                    }
+                    statementOrderMapper.update(statementOrderDOMap.get(dateKey));
+                }
             }
             if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
                 SqlLogInterceptor.setExecuteSql("skip print statementOrderDetailMapper.saveList  sql ......");
