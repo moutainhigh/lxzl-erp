@@ -3771,13 +3771,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
-        try {
-            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-            }
-        } catch (Exception e) {
-            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-        }
+//        try {
+//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+//            }
+//        } catch (Exception e) {
+//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+//        }
         if (order.getExpectDeliveryTime() == null) {
             return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
         }
