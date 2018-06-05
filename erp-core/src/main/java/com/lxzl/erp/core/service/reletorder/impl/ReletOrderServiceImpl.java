@@ -315,13 +315,15 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             return result;
         }
         if (isNeedVerfyResult.getResult()) {
-            String orderRemark = null;
-            if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                orderRemark = "租赁类型：天租";
-            } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-                orderRemark = "租赁类型：月租";
+            String orderRemark = "续租";
+            ServiceResult<String, String> verifyMattersResult = getVerifyMatters(reletOrderDO);
+            if (!ErrorCode.SUCCESS.equals(verifyMattersResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(verifyMattersResult.getErrorCode());
+                return result;
             }
-            String verifyMatters = null;
+            String verifyMatters = verifyMattersResult.getResult();
+
             ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo(), verifyUser, verifyMatters, commitRemark, reletOrderCommitParam.getImgIdList(), orderRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -360,6 +362,49 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         reletOrderMapper.update(reletOrderDO);
 
         result.setResult(reletOrderNo);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+
+    /**
+     * 审核注意事项
+     *
+     * @param reletOrderDO
+     * @return
+     */
+    private ServiceResult<String, String> getVerifyMatters(ReletOrderDO reletOrderDO) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        String orderRentType = null;
+        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
+            orderRentType = "租赁类型：天租";
+        } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
+            orderRentType = "租赁类型：月租";
+        }
+
+        String verifyMatters;
+        verifyMatters = "续租单号：【" + reletOrderDO.getReletOrderNo() + "】，"+ orderRentType +"，续租时长："
+                + reletOrderDO.getRentTimeLength() + "。" ;
+        String verifyProduct = "";
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
+                verifyProduct = "商品名称：【" + reletOrderProductDO.getProductName() + "】，商品单价："
+                        + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "。" ;
+            }
+            verifyMatters += verifyProduct;
+        }
+
+        String verifyMaterial = "";
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
+                verifyMaterial = "配件名称：【" + reletOrderMaterialDO.getMaterialName() + "】，配件单价："
+                        + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "。" ;
+
+            }
+            verifyMatters += verifyMaterial;
+        }
+
+        result.setResult(verifyMatters);
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
