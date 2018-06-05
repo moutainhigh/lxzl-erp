@@ -9,7 +9,7 @@ public class ReletOrderStatus {
 //    public static final Integer RELET_ORDER_STATUS_OVER = 24;        // 结束
 
     public static boolean canReletOrderByCurrentStatus(Integer currentStatus){
-        if (ReletOrderStatus.RELET_ORDER_STATUS_RELETTING == currentStatus){
+        if (ReletOrderStatus.RELET_ORDER_STATUS_RELETTING.equals(currentStatus)){
             return true;
         }
         return false;

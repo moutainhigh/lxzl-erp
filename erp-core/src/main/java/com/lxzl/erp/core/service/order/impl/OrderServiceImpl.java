@@ -1698,14 +1698,19 @@ public class OrderServiceImpl implements OrderService {
         //检查是否在续租时间范围
         Date currentTime = new Date();
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
-        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == order.getRentLengthType() && dayCount < -10)
-                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == order.getRentLengthType() && dayCount < -3)) {  //订单： 长租前10天 和 短租前3天 可续租
+        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == order.getRentLengthType() && dayCount < -9)
+                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == order.getRentLengthType() && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
             return false;
         }
 
-        //查询是否有续租单且不能续租 信息
+        //订单状态 必须是租赁中 ，续租中，部分退还  才可续租
+        if (!OrderStatus.canReletOrderByCurrentStatus(order.getOrderStatus())){
+            return false;
+        }
+
+        //有续租单，且续租状态为续租中 才可续租
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB) {
+        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
             return false;
         }
 
