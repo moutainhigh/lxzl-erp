@@ -41,8 +41,13 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
     public ServiceResult<String, List<List<Object>>> selectBySql(DynamicSql dynamicSql) {
         ServiceResult<String, List<List<Object>>> serviceResult = new ServiceResult<>();
         List<List<Object>> listList;
+
+        if (dynamicSql.getLimit() == null || dynamicSql.getLimit() <= 0) {
+            dynamicSql.setLimit(totalReturnCount);
+        }
+
         try {
-            listList = dynamicSqlDao.selectBySql(dynamicSql.getSql(), totalReturnCount);
+            listList = dynamicSqlDao.selectBySql(dynamicSql.getSql(), dynamicSql.getLimit());
         } catch (SQLException e) {
             throw new BusinessException(ErrorCode.DYNAMIC_SQL_ERROR);
         }
