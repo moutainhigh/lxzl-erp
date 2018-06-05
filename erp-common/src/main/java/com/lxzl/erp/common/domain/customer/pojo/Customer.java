@@ -51,6 +51,10 @@ public class Customer extends BasePO {
 	private String ownerSubCompanyName; //业务员所属分公司名称
 	private Integer isRisk;//'是否授信，0-未授信；1-已授信'
 
+	private Integer confirmStatementStatus; // 客户结算单确认状态 0否1是
+	private Integer confirmStatementUser; // 客户结算单确认人
+	private Date confirmStatementTime; // 客户结算单确认时间
+
 	private String ownerName; //业务员姓名
 	private String unionUserName; //联合业务员姓名
 	private String unionAreaProvinceName;// 联合省名
@@ -415,5 +419,29 @@ public class Customer extends BasePO {
 
 	public void setLastOrderConsigneePhone(String lastOrderConsigneePhone) {
 		this.lastOrderConsigneePhone = lastOrderConsigneePhone;
+	}
+
+	public Integer getConfirmStatementStatus() {
+		return confirmStatementStatus;
+	}
+
+	public void setConfirmStatementStatus(Integer confirmStatementStatus) {
+		this.confirmStatementStatus = confirmStatementStatus;
+	}
+
+	public Integer getConfirmStatementUser() {
+		return confirmStatementUser;
+	}
+
+	public void setConfirmStatementUser(Integer confirmStatementUser) {
+		this.confirmStatementUser = confirmStatementUser;
+	}
+
+	public Date getConfirmStatementTime() {
+		return confirmStatementTime;
+	}
+
+	public void setConfirmStatementTime(Date confirmStatementTime) {
+		this.confirmStatementTime = confirmStatementTime;
 	}
 }
