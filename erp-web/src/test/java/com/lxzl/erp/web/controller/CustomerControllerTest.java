@@ -804,5 +804,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/customer/setIsRisk",null);
     }
 
-
+    @Test
+    public void testConfirmStatement() throws Exception {
+        Customer customer = new Customer();
+//        customer.setCustomerNo("LXCP-2001-20180605-00001");
+        customer.setCustomerNo("LXCC-0755-20180112-00002");
+        TestResult testResult = getJsonTestResult("/customer/confirmStatement",customer);
+    }
 }

@@ -31,7 +31,7 @@
 		<result column="ownerSubCompanyName" jdbcType="VARCHAR" property="ownerSubCompanyName" />
 		<result column="is_risk" jdbcType="INTEGER" property="isRisk" />
 		<result column="confirm_statement_status" jdbcType="INTEGER" property="confirmStatementStatus" />
-		<result column="confirm_statement_user" jdbcType="VARCHAR" property="confirmStatementUser" />
+		<result column="confirm_statement_user" jdbcType="INTEGER" property="confirmStatementUser" />
 		<result column="confirm_statement_time" jdbcType="TIMESTAMP" property="confirmStatementTime" />
 
 		<association resultMap="CustomerCompanyDO" property="customerCompanyDO"/>
@@ -351,7 +351,7 @@
 				confirm_statement_status = #{confirmStatementStatus,jdbcType=INTEGER},
 			</if>
 			<if test="confirmStatementUser != null">
-				confirm_statement_user = #{confirmStatementUser,jdbcType=VARCHAR},
+				confirm_statement_user = #{confirmStatementUser,jdbcType=INTEGER},
 			</if>
 			<if test="confirmStatementTime != null">
 				confirm_statement_time = #{confirmStatementTime,jdbcType=TIMESTAMP},

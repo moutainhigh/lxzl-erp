@@ -3326,6 +3326,28 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceResult;
     }
 
+    @Override
+    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public ServiceResult<String, String> confirmStatement(String customerNo) {
+        ServiceResult<String, String> serviceResult = new ServiceResult<>();
+        Date now = new Date();
+        CustomerDO customerDO = customerMapper.findByNo(customerNo);
+        if (customerDO == null) {
+            serviceResult.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
+            return serviceResult;
+        }
+
+        customerDO.setConfirmStatementStatus(1);
+        customerDO.setConfirmStatementUser(userSupport.getCurrentUserId());
+        customerDO.setConfirmStatementTime(now);
+        customerDO.setUpdateTime(now);
+        customerDO.setUpdateUser(userSupport.getCurrentUserId().toString());
+        customerMapper.update(customerDO);
+
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        serviceResult.setResult(customerNo);
+        return serviceResult;
+    }
 
 
     @Autowired

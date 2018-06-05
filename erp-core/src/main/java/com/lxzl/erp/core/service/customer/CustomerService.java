@@ -218,4 +218,11 @@ public interface CustomerService extends VerifyReceiver {
      */
     ServiceResult<String,String> setIsRisk();
 
+    /**
+     * 客户的结算单确认
+     * @param customerNo
+     * @return
+     */
+    ServiceResult<String, String> confirmStatement(String customerNo);
+
 }
