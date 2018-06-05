@@ -706,8 +706,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         orderDO.setTotalOrderAmount(reletOrderDO.getTotalOrderAmount());
         orderDO.setTotalPaidOrderAmount(reletOrderDO.getTotalPaidOrderAmount());
 
-        orderDO.setReletOrderNo(reletOrderDO.getReletOrderNo());  //续租单号
-        orderDO.setOriginOrderNo(reletOrderDO.getOrderNo());//原订单号
 
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
 
