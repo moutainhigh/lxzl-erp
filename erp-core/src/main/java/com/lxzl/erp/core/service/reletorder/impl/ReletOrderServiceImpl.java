@@ -160,16 +160,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         reletOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(reletOrderDO.getTotalProductAmount(), reletOrderDO.getTotalMaterialAmount()), reletOrderDO.getTotalDiscountAmount()));
         reletOrderDO.setReletOrderNo(generateNoSupport.generateReletOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
 
-        //reletOrderDO.setOrderSellerId(customerDO.getOwner());
-        //reletOrderDO.setBuyerCustomerName(customerDO.getCustomerName());
-
-        //添加客户的结算时间（天）
-//        Date rentStartTime = reletOrder.getRentStartTime();
-//        Integer statementDate = reletOrder.getStatementDate();//customerDO.getStatementDate();
-
-        //计算结算时间
-//        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
-
         //获取
         reletOrderDO.setStatementDate(reletOrder.getStatementDate());
         reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT);
@@ -706,8 +696,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         orderDO.setTotalOrderAmount(reletOrderDO.getTotalOrderAmount());
         orderDO.setTotalPaidOrderAmount(reletOrderDO.getTotalPaidOrderAmount());
 
-        orderDO.setReletOrderNo(reletOrderDO.getReletOrderNo());  //续租单号
-        orderDO.setOriginOrderNo(reletOrderDO.getOrderNo());//原订单号
 
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
 
@@ -1129,7 +1117,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
                 reletOrderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(reletOrderProductDO.getProductUnitAmount(), new BigDecimal(reletOrderDO.getRentTimeLength()), 2), new BigDecimal(reletOrderProductDO.getRentingProductCount())));
 
-                productCount += reletOrderProductDO.getProductCount();
+                productCount += reletOrderProductDO.getRentingProductCount();
                 productAmountTotal = BigDecimalUtil.add(productAmountTotal, reletOrderProductDO.getProductAmount());
             }
 
@@ -1150,7 +1138,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
                 reletOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(reletOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(reletOrderDO.getRentTimeLength()), 2), new BigDecimal(reletOrderMaterialDO.getRentingMaterialCount())));
 
-                materialCount += reletOrderMaterialDO.getMaterialCount();
+                materialCount += reletOrderMaterialDO.getRentingMaterialCount();
                 materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, reletOrderMaterialDO.getMaterialAmount());
             }
             reletOrderDO.setTotalMaterialCount(materialCount);

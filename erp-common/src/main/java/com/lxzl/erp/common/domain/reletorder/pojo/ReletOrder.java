@@ -77,11 +77,11 @@ public class ReletOrder extends BasePO {
 		this.rentTimeLength = order.getRentTimeLength();
 		this.rentLengthType = order.getRentLengthType();
 		this.rentStartTime = order.getExpectReturnTime(); //续租时间：订单预计归还时间
-		this.totalProductCount = order.getTotalProductCount();
-		this.totalProductAmount = order.getTotalProductAmount();
-		this.totalMaterialCount = order.getTotalMaterialCount();
-		this.totalMaterialAmount = order.getTotalMaterialAmount();
-		this.totalOrderAmount = order.getTotalOrderAmount();
+//		this.totalProductCount = order.getTotalProductCount();
+//		this.totalProductAmount = order.getTotalProductAmount();
+//		this.totalMaterialCount = order.getTotalMaterialCount();
+//		this.totalMaterialAmount = order.getTotalMaterialAmount();
+//		this.totalOrderAmount = order.getTotalOrderAmount();
 		//this.totalPaidOrderAmount = order.getTotalPaidOrderAmount();
 		this.orderSellerId = order.getOrderSellerId();
 		//this.orderUnionSellerId = order.getOrder();
@@ -99,6 +99,9 @@ public class ReletOrder extends BasePO {
 
 			this.reletOrderProductList.clear();
 			for (OrderProduct orderProduct : order.getOrderProductList()) {
+				if (orderProduct.getRentingProductCount() <= 0){  //过滤在租数小于等于0
+					continue;
+				}
 				ReletOrderProduct reletOrderProduct = new ReletOrderProduct(orderProduct, order.getOrderNo());
 				this.reletOrderProductList.add(reletOrderProduct);
 			}
@@ -109,6 +112,9 @@ public class ReletOrder extends BasePO {
 
 			this.reletOrderMaterialList.clear();
 			for (OrderMaterial orderMaterial : order.getOrderMaterialList()) {
+				if (orderMaterial.getRentingMaterialCount() <= 0){  //过滤在租数小于等于0
+					continue;
+				}
 				ReletOrderMaterial reletOrderMaterial = new ReletOrderMaterial(orderMaterial, order.getOrderNo());
 				this.reletOrderMaterialList.add(reletOrderMaterial);
 			}

@@ -107,10 +107,7 @@ public class Order extends BasePO {
 
     private List<Coupon> couponList;//该订单使用的设备优惠券
 
-    private String reletOrderNo;                    //续租单编号
-    private String originOrderNo;                   //原订单编号
     private Integer canReletOrder;                  //是否可续租     0不可以续租  1可以
-    private Integer isReletOrder;                   //是否为续租订单   0否  1是
 
     private String changeReason;//确认收货变更原因
     private Image deliveryNoteCustomerSignImg;//交货单客户签字
@@ -698,21 +695,6 @@ public class Order extends BasePO {
         this.orderJointProductList = orderJointProductList;
     }
 
-    public String getReletOrderNo() {
-        return reletOrderNo;
-    }
-
-    public void setReletOrderNo(String reletOrderNo) {
-        this.reletOrderNo = reletOrderNo;
-    }
-
-    public String getOriginOrderNo() {
-        return originOrderNo;
-    }
-
-    public void setOriginOrderNo(String originOrderNo) {
-        this.originOrderNo = originOrderNo;
-    }
 
     public Integer getCanReletOrder() {
         return canReletOrder;
@@ -723,11 +705,4 @@ public class Order extends BasePO {
     }
 
 
-    public Integer getIsReletOrder() {
-        return isReletOrder;
-    }
-
-    public void setIsReletOrder(Integer isReletOrder) {
-        this.isReletOrder = isReletOrder;
-    }
 }
