@@ -890,6 +890,17 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderForReturnQueryParam", param);
+        //如果查询的状态不是已发货（16），确认收货（20），部分退还（22）,不查询数据库直接返回空集合
+        if (param.getOrderStatus()!=null
+                && !OrderStatus.ORDER_STATUS_DELIVERED.equals(param.getOrderStatus())
+                && !OrderStatus.ORDER_STATUS_CONFIRM.equals(param.getOrderStatus())
+                && !OrderStatus.ORDER_STATUS_PART_RETURN.equals(param.getOrderStatus())) {
+            List<Order> orderList = new ArrayList<>();
+            Page<Order> page = new Page<>(orderList, CommonConstant.COMMON_ZERO, param.getPageNo(), param.getPageSize());
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(page);
+            return result;
+        }
 
         Integer totalCount = orderMapper.findOrderForReturnCountParam(maps);
         List<OrderDO> orderDOList =orderMapper.findOrderForReturnParam(maps);
