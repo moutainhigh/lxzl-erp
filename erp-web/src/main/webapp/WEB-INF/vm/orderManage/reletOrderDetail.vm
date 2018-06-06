@@ -63,7 +63,7 @@
                         <div class="tab-content pn br-n">
 ##                            <!-- 商品项 -->
                             <div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
-                                <div class="table-responsive mb30">
+                                <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
