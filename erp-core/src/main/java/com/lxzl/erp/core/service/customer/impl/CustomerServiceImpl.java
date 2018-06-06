@@ -2415,52 +2415,56 @@ public class CustomerServiceImpl implements CustomerService {
 
         //更改开发员
         if (!customerDO.getOwner().equals(customer.getOwner())) {
-            Integer companyIdByUserDo = userSupport.getCompanyIdByUser(customerDO.getOwner());
-            Integer companyIdByUser = userSupport.getCompanyIdByUser(customer.getOwner());
-            //如果客户开发人不是电销人员，并且修改后的开发人是电销人员
-            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
-                return serviceResult;
-            }
-            //如果客户开发人是电销人员,并且修改后的开发人不是电销人员
-            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
-                //设置客户的属地化时间
-                customerDO.setLocalizationTime(now);
-            }
-            //如果客户开发人不是渠道大客户业务员，并且修改后的开发人是渠道大客户业务员
-            if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
-                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
-                return serviceResult;
-            }
-            //如果客户开发人是渠道大客户业务员,并且修改后的开发人不是渠道大客户业务员
-            if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
-                //设置客户的属地化时间
-                customerDO.setLocalizationTime(now);
-            }
+//            Integer companyIdByUserDo = userSupport.getCompanyIdByUser(customerDO.getOwner());
+//            Integer companyIdByUser = userSupport.getCompanyIdByUser(customer.getOwner());
+//            //如果客户开发人不是电销人员，并且修改后的开发人是电销人员
+//            if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
+//                return serviceResult;
+//            }
+//            //如果客户开发人是电销人员,并且修改后的开发人不是电销人员
+//            if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
+//                //设置客户的属地化时间
+//                customerDO.setLocalizationTime(now);
+//            }
+//            //如果客户开发人不是渠道大客户业务员，并且修改后的开发人是渠道大客户业务员
+//            if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+//                serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
+//                return serviceResult;
+//            }
+//            //如果客户开发人是渠道大客户业务员,并且修改后的开发人不是渠道大客户业务员
+//            if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && !CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+//                //设置客户的属地化时间
+//                customerDO.setLocalizationTime(now);
+//            }
+            // TODO: 2018\6\6 0006  暂时取消地方不能转电销和大客户限制
+            customerDO.setLocalizationTime(now);
             customerDO.setOwner(customer.getOwner());
         }
 
         //修改联合开发元员
         if (customer.getUnionUser() != null) {
-            if (customerDO.getUnionUser() == null) {
-                customerDO.setUnionUser(customer.getUnionUser());
-            } else {
-                if (!customerDO.getUnionUser().equals(customer.getUnionUser())) {
-                    Integer companyIdByUserDo = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
-                    Integer companyIdByUser = userSupport.getCompanyIdByUser(customer.getUnionUser());
-                    //如果联合开发员不是电销，并且修改后联合开发员是电销
-                    if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
-                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
-                        return serviceResult;
-                    }
-                    //如果联合开发员不是渠道大客户业务员，并且修改后联合开发员是渠道大客户业务员
-                    if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
-                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
-                        return serviceResult;
-                    }
-                    customerDO.setUnionUser(customer.getUnionUser());
-                }
-            }
+//            if (customerDO.getUnionUser() == null) {
+//                customerDO.setUnionUser(customer.getUnionUser());
+//            } else {
+//                if (!customerDO.getUnionUser().equals(customer.getUnionUser())) {
+//                    Integer companyIdByUserDo = userSupport.getCompanyIdByUser(customerDO.getUnionUser());
+//                    Integer companyIdByUser = userSupport.getCompanyIdByUser(customer.getUnionUser());
+//                    //如果联合开发员不是电销，并且修改后联合开发员是电销
+//                    if (!CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(companyIdByUser)) {
+//                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_UNION_USER_NOT_CHANGE_ELECTRIC_SALE_COMPANY);
+//                        return serviceResult;
+//                    }
+//                    //如果联合开发员不是渠道大客户业务员，并且修改后联合开发员是渠道大客户业务员
+//                    if (!CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUserDo) && CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(companyIdByUser)) {
+//                        serviceResult.setErrorCode(ErrorCode.CUSTOMER_OWNER_NOT_CHANGE_CHANNEL_COMPANY);
+//                        return serviceResult;
+//                    }
+//                    customerDO.setUnionUser(customer.getUnionUser());
+//                }
+//            }
+            // TODO: 2018\6\6 0006 暂时取消地方不能转电销和大客户限制
+            customerDO.setUnionUser(customer.getUnionUser());
         }
 
         if (userUnion == null && userDOUnion != null) {

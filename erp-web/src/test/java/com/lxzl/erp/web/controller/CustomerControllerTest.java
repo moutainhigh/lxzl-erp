@@ -22,9 +22,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateOwnerAndUnionUser() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180314-00333");
-        customer.setOwner(500032);
-        customer.setUnionUser(null);
+        customer.setCustomerNo("LXCC-2001-20180515-00017");
+        customer.setOwner(500325);
+        customer.setUnionUser(500326);
         TestResult result = getJsonTestResult("/customer/updateOwnerAndUnionUser", customer);
     }
 
@@ -193,9 +193,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180330-00827");
-        customer.setOwner(500014);
-        customer.setUnionUser(500003);
+        customer.setCustomerNo("LXCC-2001-20180515-00018");
+        customer.setOwner(500373);
+        customer.setUnionUser(500372);
         customer.setDeliveryMode(3);
 //        customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(2000));
@@ -473,7 +473,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-027-20180329-00833");
+        customer.setCustomerNo("LXCC-2001-20180516-00019");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
