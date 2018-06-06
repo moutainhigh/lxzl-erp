@@ -339,7 +339,7 @@ public class K3CallbackServiceImpl implements K3CallbackService {
                 }
             }
         }
-
+//        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         serviceResult.setErrorCode(ErrorCode.SUCCESS);
         return serviceResult;
     }
