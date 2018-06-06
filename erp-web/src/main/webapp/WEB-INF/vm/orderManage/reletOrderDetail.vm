@@ -63,7 +63,7 @@
                         <div class="tab-content pn br-n">
 ##                            <!-- 商品项 -->
                             <div id="purchaseOrderProductItems" class="tab-pane tab-pane-order active">
-                                <div class="table-responsive mb30">
+                                <div class="table-responsive">
                                     <script type="text/html" id="dataListTpl">
                                         <thead>
                                         <tr class="bg-light">
@@ -92,12 +92,7 @@
                                             <td>{{productCount}}</td>
                                             <td>{{rentingProductCount}}</td>
                                             <td>￥{{#price}}{{productAmount}}{{/price}}</td>
-                                            <td>
-                                                <p>{{payModeValue}}</p>
-                                                {{#isRentTypeByMonth}}
-                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
-                                                {{/isRentTypeByMonth}}
-                                            </td>
+                                            <td>{{payModeValue}}</td>
                                             <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
                                         </tr>
                                         {{/listData}}
@@ -142,10 +137,7 @@
                                             <td>{{materialCount}}</td>
                                             <td>{{rentingMaterialCount}}</td>
                                             <td>￥{{#price}}{{materialAmount}}{{/price}}</td>
-                                            <td>
-                                                <p>{{payModeValue}}</p>
-                                                <p>押{{depositCycle}}付{{paymentCycle}}</p>
-                                            </td>
+                                            <td>{{payModeValue}}</td>
                                             <td>￥{{#price}}{{depositAmount}}{{/price}}</td>
                                         </tr>
                                         {{/listData}}
