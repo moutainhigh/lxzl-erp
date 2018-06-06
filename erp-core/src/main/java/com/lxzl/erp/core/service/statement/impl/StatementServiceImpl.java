@@ -1956,7 +1956,6 @@ public class StatementServiceImpl implements StatementService {
             }
         }
 
-        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
         if (!addStatementOrderDetailDOMap.isEmpty()) {
