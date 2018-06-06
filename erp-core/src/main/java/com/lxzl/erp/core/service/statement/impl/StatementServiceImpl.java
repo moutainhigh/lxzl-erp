@@ -1726,20 +1726,14 @@ public class StatementServiceImpl implements StatementService {
 //                                }
 //                            }
                             //计算续租当期 退还金额
-                            if (isReletOrder && returnTime.getTime() > statementDetailStartTime.getTime() && returnTime.getTime() < statementDetailEndTime.getTime()){
+                            if (isReletOrder && returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()){
 
                                 Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime) + 1;
-                                if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())){
-                                    //按月
-                                    Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
-                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount,
-                                            BigDecimalUtil.div(orderProductDO.getProductUnitAmount(), new BigDecimal(maxDayCount), BigDecimalUtil.SCALE)), new BigDecimal(dayCount));
-                                }
-                                else if(OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())){
-                                    //按天
-                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount, orderProductDO.getProductUnitAmount()), new BigDecimal(dayCount));
+                                Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
 
-                                }
+                                reletCurrentPhaseReturnAmount =BigDecimalUtil.div(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(dayCount),
+                                        BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount())),new BigDecimal(orderProductDO.getProductCount()),BigDecimalUtil.SCALE),
+                                        new BigDecimal(maxDayCount),BigDecimalUtil.SCALE);
 
                                 payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                             }
@@ -1800,7 +1794,7 @@ public class StatementServiceImpl implements StatementService {
                 BigDecimal thisReturnRentDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getRentDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
                 BigDecimal thisReturnDepositAmount = BigDecimalUtil.mul(BigDecimalUtil.div(orderMaterialDO.getDepositAmount(), new BigDecimal(orderMaterialDO.getMaterialCount()), BigDecimalUtil.SCALE), returnCount);
 
-                //获取此订单是否有续租单
+                //获取此订单是否有续租成功的记录
                 boolean isReletOrder = false;
                 ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderMaterialDO.getOrderId());
                 if (reletOrderDO != null){
@@ -1904,20 +1898,14 @@ public class StatementServiceImpl implements StatementService {
 //                            }
 
                             //计算续租当期 退还金额
-                            if (isReletOrder && returnTime.getTime() > statementDetailStartTime.getTime() && returnTime.getTime() < statementDetailEndTime.getTime()){
+                            if (isReletOrder && returnTime.getTime() >= statementDetailStartTime.getTime() && returnTime.getTime() <= statementDetailEndTime.getTime()){
 
                                 Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, statementDetailEndTime) + 1;
-                                if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())){
-                                    //按月
-                                    Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
-                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount,
-                                            BigDecimalUtil.div(orderMaterialDO.getMaterialUnitAmount(), new BigDecimal(maxDayCount), BigDecimalUtil.SCALE)), new BigDecimal(dayCount));
-                                }
-                                else if(OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())){
-                                    //按天
-                                    reletCurrentPhaseReturnAmount = BigDecimalUtil.mul(BigDecimalUtil.mul(returnCount, orderMaterialDO.getMaterialUnitAmount()), new BigDecimal(dayCount));
+                                Integer maxDayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(statementDetailStartTime, statementDetailEndTime) + 1;
 
-                                }
+                                reletCurrentPhaseReturnAmount =BigDecimalUtil.div(BigDecimalUtil.div(BigDecimalUtil.mul(new BigDecimal(dayCount),
+                                        BigDecimalUtil.mul(returnCount, statementOrderDetailDO.getStatementDetailAmount())),new BigDecimal(orderMaterialDO.getMaterialCount()),BigDecimalUtil.SCALE),
+                                        new BigDecimal(maxDayCount),BigDecimalUtil.SCALE);
 
                                 payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                             }
@@ -1967,6 +1955,8 @@ public class StatementServiceImpl implements StatementService {
                 addStatementOrderDetailDOMap.put(key, thisStatementOrderDetailDO);
             }
         }
+
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
         List<StatementOrderDetailDO> addStatementOrderDetailDOList = new ArrayList<>();
         if (!addStatementOrderDetailDOMap.isEmpty()) {
