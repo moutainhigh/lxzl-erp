@@ -2,7 +2,9 @@ package com.lxzl.erp.core.service.export;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -258,8 +260,32 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("customerCompany", "客户分公司",5000))
                 .addConfig(new ColConfig("orderCompany", "订单分公司", 5000))
                 .addConfig(new ColConfig("deliveryCompany", "发货分公司",5000))
-                .addConfig(new ColConfig("rentPaidAmount", "租金"))
-                .addConfig(new ColConfig("depositPaidAmount", "押金"))
-                .addConfig(new ColConfig("totalPaidAmount", "合计"));
+                .addConfig(new ColConfig("rentPaidAmount", "租金",new ExcelExportView(){
+
+                    @Override
+                    public Object view(Object o) {
+                        BigDecimal amount = (BigDecimal) o;
+                        amount = amount==null?BigDecimal.ZERO:amount;
+                        return BigDecimalUtil.round(amount,2);
+                    }
+                }))
+                .addConfig(new ColConfig("depositPaidAmount", "押金",new ExcelExportView(){
+
+                    @Override
+                    public Object view(Object o) {
+                        BigDecimal amount = (BigDecimal) o;
+                        amount = amount==null?BigDecimal.ZERO:amount;
+                        return BigDecimalUtil.round(amount,2);
+                    }
+                }))
+                .addConfig(new ColConfig("totalPaidAmount", "合计",new ExcelExportView(){
+
+                    @Override
+                    public Object view(Object o) {
+                        BigDecimal amount = (BigDecimal) o;
+                        amount = amount==null?BigDecimal.ZERO:amount;
+                        return BigDecimalUtil.round(amount,2);
+                    }
+                }));
     }
 }
