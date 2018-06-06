@@ -1234,8 +1234,6 @@ CREATE TABLE `erp_order` (
   `product_summary` varchar(500)  CHARACTER SET utf8 DEFAULT NULL COMMENT '商品摘要',
   `data_status` int(11) NOT NULL DEFAULT '0' COMMENT '状态：0不可用；1可用；2删除',
   `order_message` text CHARACTER SET utf8 COMMENT '订单消息[JSON格式，userId,userRealName,createTime,content]',
-  `relet_order_no`  varchar(100)  DEFAULT NULL COMMENT '续租单编号',
-  `origin_order_no`  varchar(100)  DEFAULT NULL COMMENT '原订单编号',
   `remark` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '备注',
   `owner` int(20) NOT NULL DEFAULT 0 COMMENT '数据归属人',
   `create_time` datetime DEFAULT NULL COMMENT '添加时间',
@@ -2093,6 +2091,7 @@ CREATE TABLE `erp_statement_order_detail` (
   `customer_id` int(20) NOT NULL COMMENT '客户ID',
   `order_type` int(20) NOT NULL COMMENT '单子类型，1是订单，2是调配单，3是换货单，4是退货单，5是维修单',
   `order_id` int(20) NOT NULL COMMENT '订单ID',
+  `relet_order_item_refer_id` int(20) DEFAULT NULL COMMENT '续租订单项ID'
   `order_item_type` int(20) NOT NULL COMMENT '订单项类型，1为商品，2为配件',
   `order_item_refer_id` int(20) NOT NULL COMMENT '订单项ID',
   `return_refer_id` int(20) COMMENT '退款的时候，关联的付款订单项',
