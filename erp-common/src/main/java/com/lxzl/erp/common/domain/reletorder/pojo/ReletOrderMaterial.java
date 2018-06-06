@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.reletorder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 
@@ -48,7 +49,14 @@ public class ReletOrderMaterial extends BasePO {
 		this.materialAmount = orderMaterial.getMaterialAmount();
 		this.materialSnapshot = orderMaterial.getMaterialSnapshot();
 		this.paymentCycle = orderMaterial.getPaymentCycle();
-		this.payMode = orderMaterial.getPayMode();
+		//续租时，若订单是首付30%则修改支付方式为先用后付
+		if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderMaterial.getPayMode())){
+			this.payMode = OrderPayMode.PAY_MODE_PAY_AFTER;
+		}
+		else {
+			this.payMode = orderMaterial.getPayMode();
+		}
+
 		this.isNewMaterial = orderMaterial.getIsNewMaterial();
 		this.rentingMaterialCount = orderMaterial.getRentingMaterialCount();
 
