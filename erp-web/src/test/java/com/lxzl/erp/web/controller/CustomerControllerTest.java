@@ -24,7 +24,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         Customer customer = new Customer();
         customer.setCustomerNo("LXCC-2001-20180515-00017");
         customer.setOwner(500325);
-        customer.setUnionUser(500326);
+        customer.setUnionUser(null);
         TestResult result = getJsonTestResult("/customer/updateOwnerAndUnionUser", customer);
     }
 
