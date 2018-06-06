@@ -1112,7 +1112,7 @@
                 and eo.order_status = #{maps.orderForReturnQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
             <if test="maps.orderForReturnQueryParam.orderStatus == null">
-                and eo.order_status in (16,20,22)
+                and eo.order_status in (20,22)
             </if>
             <if test="maps.orderForReturnQueryParam.orderNo != null &amp;&amp; maps.orderForReturnQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.orderForReturnQueryParam.orderNo}','%' )
@@ -1153,7 +1153,7 @@
                 and eo.order_status = #{maps.orderForReturnQueryParam.orderStatus, jdbcType=INTEGER}
             </if>
             <if test="maps.orderForReturnQueryParam.orderStatus == null">
-                and eo.order_status in (16,20,22)
+                and eo.order_status in (20,22)
             </if>
             <if test="maps.orderForReturnQueryParam.orderNo != null &amp;&amp; maps.orderForReturnQueryParam.orderNo != ''">
                 and eo.order_no like CONCAT('%','${maps.orderForReturnQueryParam.orderNo}','%' )
