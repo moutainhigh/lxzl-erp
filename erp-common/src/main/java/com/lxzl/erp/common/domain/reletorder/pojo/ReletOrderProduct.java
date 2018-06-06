@@ -53,13 +53,7 @@ public class ReletOrderProduct extends BasePO {
 		this.productUnitAmount = orderProduct.getProductUnitAmount();
 		this.productAmount = orderProduct.getProductAmount();
 		this.paymentCycle = orderProduct.getPaymentCycle();
-		//续租时，若订单是首付30%则修改支付方式为先用后付
-		if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(orderProduct.getPayMode())){
-			this.payMode = OrderPayMode.PAY_MODE_PAY_AFTER;
-		}
-		else {
-			this.payMode = orderProduct.getPayMode();
-		}
+		this.payMode = orderProduct.getPayMode();
 		this.isNewProduct = orderProduct.getIsNewProduct();
 		this.rentingProductCount = orderProduct.getRentingProductCount();
 	}
