@@ -151,6 +151,14 @@
 	</select>
 
 
+	<select id="findRecentlyReletedOrderByOrderId" resultMap="ReletOrderDO" parameterType="java.lang.Integer">
+		SELECT  <include refid="column_List"/> FROM erp_relet_order ero
+		WHERE ero.order_id = #{orderId, jdbcType=INTEGER} AND ero.data_status = 1 AND ero.relet_order_status = 8
+		ORDER  BY ero.create_time DESC
+		LIMIT 0,1
+	</select>
+
+
 	<select id="findDetailByReletOrderId" resultMap="ReletOrderDO" parameterType="java.lang.Integer">
 		SELECT m_order.*
 		<trim prefix=",">
