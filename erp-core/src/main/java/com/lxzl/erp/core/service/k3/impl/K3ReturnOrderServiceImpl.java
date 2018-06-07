@@ -1106,14 +1106,14 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsPeer())){
                     number = "90"+number.substring(2,number.length());
                 }
-                if (orderProductDO.getFEntryID()==0 || orderProductDO.getFEntryID()==null) {
+                if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
                     orderProductDO.setFEntryID(orderProductDO.getId());
                 }
                 orderProductDO.setProductNumber(number);
             }
         }
         for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
-            if (orderMaterialDO.getFEntryID()==0 || orderMaterialDO.getFEntryID()==null) {
+            if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
                 orderMaterialDO.setFEntryID(orderMaterialDO.getId());
             }
         }
