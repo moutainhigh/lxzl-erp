@@ -1714,10 +1714,10 @@ public class OrderServiceImpl implements OrderService {
                 return false;
             }
 
-            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
-
-                return false;
-            }
+//            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+//
+//                return false;
+//            }
         }
 
         return true;

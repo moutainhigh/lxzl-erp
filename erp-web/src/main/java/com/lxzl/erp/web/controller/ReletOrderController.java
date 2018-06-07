@@ -76,7 +76,7 @@ public class ReletOrderController extends BaseController {
 
     @RequestMapping(value = "cancelReletOrderByNo", method = RequestMethod.POST)
     public Result cancelReletOrderByNo(@RequestBody ReletOrder reletOrder, BindingResult validResult) {
-        ServiceResult<String, Boolean> serviceResult = reletOrderService.cancelReletOrderByNo(reletOrder);
+        ServiceResult<String, String> serviceResult = reletOrderService.cancelReletOrderByNo(reletOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }

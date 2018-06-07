@@ -314,7 +314,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //获取原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
         //合法性
-        String verifyCode = verifyReletOrderCommitOperate(orderDO, reletOrderDO);
+        String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(verifyCode)) {
             result.setErrorCode(verifyCode);
             return result;
@@ -469,14 +469,21 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
 
+            OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+            if (orderDO == null){
+                return ErrorCode.ORDER_NOT_EXISTS;
+            }
+
+            //合法性
+            String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
+            if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+                return verifyCode;
+            }
+
             if (verifyResult) {
 
                 // 只有审批通过的续租单才生成 结算单
 
-                OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
-                if (orderDO == null){
-                    return ErrorCode.ORDER_NOT_EXISTS;
-                }
                 orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
 //                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
                 orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -587,8 +594,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> cancelReletOrderByNo(ReletOrder reletOrder){
-        ServiceResult<String, Boolean> result = new ServiceResult<>();
+    public ServiceResult<String, String> cancelReletOrderByNo(ReletOrder reletOrder){
+        ServiceResult<String, String> result = new ServiceResult<>();
         if (StringUtil.isBlank(reletOrder.getReletOrderNo())){
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
@@ -596,13 +603,26 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
 
-        ReletOrderDO reletOrderDO = new ReletOrderDO();
-        reletOrderDO.setReletOrderNo(reletOrder.getReletOrderNo());
-        reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        reletOrderDO.setUpdateTime(currentTime);
-        reletOrderMapper.update(reletOrderDO);
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
+        if (reletOrderDO == null) {
+            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        if (ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())){
+            reletOrderDO.setReletOrderNo(reletOrder.getReletOrderNo());
+            reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
+            reletOrderDO.setUpdateTime(currentTime);
+            reletOrderMapper.update(reletOrderDO);
+        }
+        else {
+            result.setErrorCode(ErrorCode.RELET_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(reletOrderDO.getReletOrderNo());
         return result;
     }
 
@@ -1498,7 +1518,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @param
      * @return
      */
-    private String verifyReletOrderCommitOperate(OrderDO orderDO, ReletOrderDO reletOrderDO) {
+    private String verifyReletOrderOperate(OrderDO orderDO, ReletOrderDO reletOrderDO) {
 
         if (orderDO == null || reletOrderDO == null) {
             return ErrorCode.SYSTEM_ERROR;
@@ -1522,7 +1542,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
 
                 OrderMaterialDO orderMaterial = getOrderMaterialDOById(orderDO, reletOrderMaterialDO.getOrderMaterialId());
-                if (!orderMaterial.getMaterialUnitAmount().equals(reletOrderMaterialDO.getMaterialUnitAmount())) {
+                if (!orderMaterial.getRentingMaterialCount().equals(reletOrderMaterialDO.getRentingMaterialCount())) {
 
                     return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
                 }
