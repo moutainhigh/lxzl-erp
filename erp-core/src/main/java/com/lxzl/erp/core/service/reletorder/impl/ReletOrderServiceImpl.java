@@ -133,6 +133,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         ReletOrder reletOrder = new ReletOrder(orderServiceResult.getResult());
         ReletOrderDO reletOrderDO = ConverterUtil.convert(reletOrder, ReletOrderDO.class);
 
+        //支付方式为首付百分比的订单 修改续租单支付方式为先用后付
+        String updateReletOrderPayModeCode = updateReletOrderPayModeOfBeforePercent(reletOrderDO);
+        if (!ErrorCode.SUCCESS.equals(updateReletOrderPayModeCode)) {
+            result.setErrorCode(updateReletOrderPayModeCode);
+            return result;
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(returnTime);
         cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -159,16 +166,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(reletOrderDO.getOrderSubCompanyId());
         reletOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(reletOrderDO.getTotalProductAmount(), reletOrderDO.getTotalMaterialAmount()), reletOrderDO.getTotalDiscountAmount()));
         reletOrderDO.setReletOrderNo(generateNoSupport.generateReletOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
-
-        //reletOrderDO.setOrderSellerId(customerDO.getOwner());
-        //reletOrderDO.setBuyerCustomerName(customerDO.getCustomerName());
-
-        //添加客户的结算时间（天）
-//        Date rentStartTime = reletOrder.getRentStartTime();
-//        Integer statementDate = reletOrder.getStatementDate();//customerDO.getStatementDate();
-
-        //计算结算时间
-//        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
 
         //获取
         reletOrderDO.setStatementDate(reletOrder.getStatementDate());
@@ -205,7 +202,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         result.setResult(reletOrderCreateResult);
         return result;
     }
-
 
 
 
@@ -706,8 +702,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         orderDO.setTotalOrderAmount(reletOrderDO.getTotalOrderAmount());
         orderDO.setTotalPaidOrderAmount(reletOrderDO.getTotalPaidOrderAmount());
 
-        orderDO.setReletOrderNo(reletOrderDO.getReletOrderNo());  //续租单号
-        orderDO.setOriginOrderNo(reletOrderDO.getOrderNo());//原订单号
 
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
 
@@ -1129,7 +1123,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
                 reletOrderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(reletOrderProductDO.getProductUnitAmount(), new BigDecimal(reletOrderDO.getRentTimeLength()), 2), new BigDecimal(reletOrderProductDO.getRentingProductCount())));
 
-                productCount += reletOrderProductDO.getProductCount();
+                productCount += reletOrderProductDO.getRentingProductCount();
                 productAmountTotal = BigDecimalUtil.add(productAmountTotal, reletOrderProductDO.getProductAmount());
             }
 
@@ -1150,7 +1144,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
                 reletOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(reletOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(reletOrderDO.getRentTimeLength()), 2), new BigDecimal(reletOrderMaterialDO.getRentingMaterialCount())));
 
-                materialCount += reletOrderMaterialDO.getMaterialCount();
+                materialCount += reletOrderMaterialDO.getRentingMaterialCount();
                 materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, reletOrderMaterialDO.getMaterialAmount());
             }
             reletOrderDO.setTotalMaterialCount(materialCount);
@@ -1518,6 +1512,37 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return ErrorCode.SUCCESS;
     }
 
+    /**
+     * 续租时：若订单支付方式是首付百分比则修改续租单支付方式为先用后付
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/6 15:49
+     * @param
+     * @return
+     */
+    private String updateReletOrderPayModeOfBeforePercent(ReletOrderDO reletOrderDO){
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
+
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(reletOrderProductDO.getPayMode())){
+                    reletOrderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+                }
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
+
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(reletOrderMaterialDO.getPayMode())){
+                    reletOrderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
 
     @Autowired
     private OrderMapper orderMapper;

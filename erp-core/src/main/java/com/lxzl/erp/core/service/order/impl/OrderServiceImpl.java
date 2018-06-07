@@ -1663,9 +1663,7 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
-        //判断是否是续租单，是否可续租
-        Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-        order.setIsReletOrder(isReletOrder);
+        //判断是否可续租
         Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
         order.setCanReletOrder(canReletOrder);
 
@@ -1818,9 +1816,7 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
-        //判断是否是续租单，是否可续租
-        Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-        order.setIsReletOrder(isReletOrder);
+        //判断是否可续租
         Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
         order.setCanReletOrder(canReletOrder);
 
@@ -2441,9 +2437,7 @@ public class OrderServiceImpl implements OrderService {
             orderNoList.add(orderDO.getOrderNo());
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
-            //判断是否是续租单，是否可续租
-            Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-            order.setIsReletOrder(isReletOrder);
+            //判断是否可续租
             Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
             order.setCanReletOrder(canReletOrder);
             orderList.add(order);
@@ -2481,9 +2475,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderDO orderDO : orderDOList) {
 
             Order order = ConverterUtil.convert(orderDO, Order.class);
-            //判断是否是续租单，是否可续租
-            Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-            order.setIsReletOrder(isReletOrder);
+            //判断是否可续租
             Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
             order.setCanReletOrder(canReletOrder);
             orderList.add(order);
