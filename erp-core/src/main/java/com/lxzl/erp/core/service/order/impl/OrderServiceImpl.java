@@ -2446,8 +2446,8 @@ public class OrderServiceImpl implements OrderService {
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
-            order.setCanReletOrder(canReletOrder);
+//            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+//            order.setCanReletOrder(canReletOrder);
             orderList.add(order);
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
