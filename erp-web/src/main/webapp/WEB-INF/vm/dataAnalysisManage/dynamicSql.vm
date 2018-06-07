@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>凌雄ERP-数据分析-动态SQL</title>
+    #parse("layout/header.vm")
+    #parse("layout/theme.vm")
+    <link rel="stylesheet" type="text/css" href="${staticCommon}/vendor/plugins/fixedHeaderTable/css/defaultTheme.css">
+    <script type="text/javascript">
+        common_load_css('${staticCommon}/rental/css','dropzone.css');
+    </script>
+</head>
+<body class="blank-page">
+    #parse("layout/toolbox.vm")
+    <div id="main">
+        #parse("layout/navbar.vm")
+        #parse("layout/sidebar.vm")
+
+        <section id="content_wrapper">
+            #parse("layout/topbarDropmenu.vm")
+            #parse("layout/topbar.vm")
+            <section id="content" class="animated fadeIn">
+                #parse("component/loading.vm")
+
+                <div class="section row">
+                    <div class="col-md-12">
+                        <div class="admin-form theme-primary">
+                            <form method="post" id="dynamicsqlForm">
+                                <div class="panel panel-default panel-border top">
+                                    <div class="panel-heading">
+                                        <span class="panel-title" id="panelTitle"><i class="fa fa-pencil"></i>动态sql查询</span>
+                                    </div>
+                                    <div class="panel-body p25">
+                                        <div class="section row">
+                                            <div class="col-md-12">
+                                                <label class="field prepend-icon">
+                                                    <textarea class="gui-textarea" id="sql" name="sql" placeholder="输入SQL查询语句"></textarea>
+                                                    <label for="comment" class="field-icon"><i class="fa fa-search"></i>
+                                                    </label>
+                                                ##                                                    <span class="input-footer"><strong>Hint:</strong>Don't be negative or off topic! just be awesome...</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer text-right">
+                                        <button type="reset" class="button btn-default" id="addPramButton">重置</button>
+                                        <button type="submit" class="button btn-primary" id="sendRequest">查询</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="section row">
+                    <div class="col-md-12">
+                        <div class="panel" id="spy7">
+                            <div class="panel-heading">
+                                <span class="panel-title"><span class="glyphicons glyphicons-table"></span>查询结果</span>
+                                <div class="pull-right">
+                                    <button type="submit" class="button btn btn-primary btn-xs" id="exportExcel">导出</button>
+                                    <form id="exportForm" class="hide"></form>
+                                </div>
+                            </div>
+                            <div class="panel-body pn" id="tableContainer">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr id="tbHeader">
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbdoy">
+                                        <tr>
+                                            <td>请输入sql查询语句</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="seciton row">
+
+                    <div class="col-md-8 center-block">
+                        <pre id="resultContainer" class="hide">
+
+                        </pre>
+                    </div>
+                </div>
+
+            </section>
+        </section>
+
+        #parse("layout/sidebarRight.vm")
+    </div>
+    #parse("layout/footer.vm")
+
+
+    <script type="text/javascript">
+        management_load_script('${staticManagement}/js', 'manage.data.analysis.dynamicsql.js');
+    </script>
+    <script type="text/javascript">
+        //功能事件初始化
+        Rental.init();
+        Layout.init();
+        DataAnalysisDynamicSql.init();
+
+        //UI效果初始化
+        Core.init();
+        Demo.init();
+
+
+    </script>
+</body>
+</html>
+
