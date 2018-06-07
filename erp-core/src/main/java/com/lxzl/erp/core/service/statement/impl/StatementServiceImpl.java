@@ -305,6 +305,12 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //续租不让重算
+        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
+        if(reletOrderDO!=null){
+            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
+            return result;
+        }
         //目前仅允许未支付和支付失败订单重新结算
 //        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
 //            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
@@ -1561,29 +1567,30 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
                 else {
-                    orderDO = orderDO == null ? orderMapper.findByOrderId(statementOrderDetail.getOrderId()) : orderDO;
-                    if (orderDO != null){
-                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
-                            ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                            if (reletOrderProductDO != null){
-                                statementOrderDetail.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
-                                statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
-                                statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
-                                statementOrderDetail.setItemRentType(orderDO.getRentType());
-                                statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                            }
-                        }
-                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
-                            ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                            if (reletOrderMaterialDO != null){
-                                statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
-                                statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
-                                statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
-                                statementOrderDetail.setItemRentType(orderDO.getRentType());
-                                statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                            }
+
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
+                        ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetail.getReletOrderItemReferId());
+                        if (reletOrderProductDO != null){
+                            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderProductDO.getReletOrderId());
+                            statementOrderDetail.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
+                            statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
+                            statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
+                            statementOrderDetail.setItemRentType(reletOrderDO.getRentType());
+                            statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                         }
                     }
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
+                        ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
+                        if (reletOrderMaterialDO != null){
+                            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderMaterialDO.getReletOrderId());
+                            statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
+                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
+                            statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
+                            statementOrderDetail.setItemRentType(reletOrderDO.getRentType());
+                            statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                        }
+                    }
+
                 }
             }
         }
@@ -1782,7 +1789,7 @@ public class StatementServiceImpl implements StatementService {
 //                                }
 //                            }
                             //计算续租 退还金额
-                            if (isReletOrder){
+                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null){
 
                                 ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                                 Integer rentingProductCount = reletOrderProductDO.getRentingProductCount();
@@ -1798,6 +1805,7 @@ public class StatementServiceImpl implements StatementService {
 
                                     payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                                 }
+
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
                                 if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
 
@@ -1967,7 +1975,7 @@ public class StatementServiceImpl implements StatementService {
 //                            }
 
                             //计算续租 退还金额
-                            if (isReletOrder){
+                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null){
                                 ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                                 Integer rentingMaterialCount = reletOrderMaterialDO.getRentingMaterialCount();
 

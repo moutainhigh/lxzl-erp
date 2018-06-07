@@ -778,6 +778,7 @@ public class ErrorCode {
     public static final String STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT = "J16000019";
     public static final String STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO = "J16000020";
     public static final String STATEMENT_ORDER_DETAIL_ID_NOT_NULL = "J16000021";
+    public static final String RELET_ORDER_NOT_ALLOW_RE_STATEMENT = "J16000022";
 
 
     public static final String K3_RETURN_ORDER_IS_NOT_NULL = "J17000001";
@@ -917,6 +918,8 @@ public class ErrorCode {
     public static final String RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE = "J21000011";
     public static final String RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT = "J21000012";
     public static final String RELET_ORDER_EXISTS_UNPAID_STATEMENT = "J21000013";
+    public static final String RELET_ORDER_NOT_ALLOWED_MORE_THAN_ONE_SUCCESS_RECORD = "J21000014";
+    public static final String RELET_ORDER_STATUS_CAN_NOT_CANCEL = "J21000015";
 
 
     public static final String PRINT_LOG_REFER_NO_NOT_NULL = "J220000001";
@@ -1718,6 +1721,7 @@ public class ErrorCode {
         MAP.put(STATEMENT_ORDER_DETAIL_HAVE_NOT_PAY_DEPOSIT, "结算单明细有未交纳的押金，不能进行退货操作，请先补交所需的押金");
         MAP.put(STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO, "由结算单生成结算支付记录时，结算单的支付总金额必须大于0");
         MAP.put(STATEMENT_ORDER_DETAIL_ID_NOT_NULL, "结算单详情ID不能为空");
+        MAP.put(RELET_ORDER_NOT_ALLOW_RE_STATEMENT, "续租单目前暂不支持重算");
 
         MAP.put(K3_RETURN_ORDER_IS_NOT_NULL, "K3退货单不存在");
         MAP.put(K3_RETURN_ORDER_STATUS_CAN_NOT_UPDATE, "K3退货单状态为审核中或者已推送到K3，不能修改");
@@ -1857,6 +1861,8 @@ public class ErrorCode {
         MAP.put(RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE, "只有待提交状态的续租单允许修改");
         MAP.put(RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT, "只有待提交状态的续租单允许提交");
         MAP.put(RELET_ORDER_EXISTS_UNPAID_STATEMENT, "此订单尚有未支付的结算单，无法续租");
+        MAP.put(RELET_ORDER_NOT_ALLOWED_MORE_THAN_ONE_SUCCESS_RECORD, "此订单已存在续租成功记录，但尚未开始执行，无法再次续租");
+        MAP.put(RELET_ORDER_STATUS_CAN_NOT_CANCEL, "只有待处理的续租单可以取消");
 
         MAP.put(PRINT_LOG_REFER_NO_NOT_NULL, "关联编号不能为空");
         MAP.put(PRINT_LOG_REFER_TYPE_NOT_NULL, "关联类型不能为空");

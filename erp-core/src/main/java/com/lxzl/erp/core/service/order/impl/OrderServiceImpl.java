@@ -1708,8 +1708,16 @@ public class OrderServiceImpl implements OrderService {
 
         //有续租单，且续租状态为续租中 才可续租
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
-            return false;
+        if (null != recentlyReletOrderInDB) {
+            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
+
+                return false;
+            }
+
+//            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+//
+//                return false;
+//            }
         }
 
         return true;
