@@ -3111,19 +3111,49 @@ public class StatementServiceImpl implements StatementService {
                     if (BigDecimalUtil.compare(statementOrderDO.getStatementAmount(), new BigDecimal(0.1)) < 0) {
                         statementOrderDO.setStatementStatus(StatementOrderStatus.STATEMENT_ORDER_STATUS_NO);
                     }
-                    if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
-                        statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
-                    }
-                    //存储结算单详情中最小的开始日期
+//                    if (statementOrderDetailDO.getStatementStartTime().getTime() < statementOrderDO.getStatementStartTime().getTime()) {
+//                        statementOrderDO.setStatementStartTime(statementOrderDetailDO.getStatementStartTime());
+//                    }
+//                    //存储结算单详情中最小的开始日期
+//                    if (statementStartTimeMap.containsKey(dateKey)) {
+//                        if (statementOrderDetailDO.getStatementStartTime().getTime() < statementStartTimeMap.get(dateKey).getTime()) {
+//                            statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+//                        }
+//                    }else {
+//                        statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
+//                    }
+//                    if (statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()) {
+//                        statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
+//                    }
+//                    //存储结算单详情中最大的结束日期
+//                    if (statementEndTimeMap.containsKey(dateKey)) {
+//                        if (statementOrderDetailDO.getStatementEndTime().getTime() > statementEndTimeMap.get(dateKey).getTime()) {
+//                            statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
+//                        }
+//                    }else {
+//                        statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
+//                    }
+                    statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
+                    statementOrderMapper.update(statementOrderDO);
+                }
+                statementOrderDOMap.put(dateKey, statementOrderDO);
+                statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
+            }
+
+            if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
+                SqlLogInterceptor.setExecuteSql("skip print statementOrderDetailMapper.saveList  sql ......");
+                statementOrderDetailMapper.saveList(addStatementOrderDetailDOList);
+            }
+            //找出结算单对应结算单所有结算单项的最大值和最小值
+            for (Date dateKey : statementOrderDOMap.keySet()) {
+                List<StatementOrderDetailDO> statementOrderDetailDOList = statementOrderDetailMapper.findByStatementOrderId(statementOrderDOMap.get(dateKey).getId());
+                for (StatementOrderDetailDO statementOrderDetailDO:statementOrderDetailDOList) {
                     if (statementStartTimeMap.containsKey(dateKey)) {
                         if (statementOrderDetailDO.getStatementStartTime().getTime() < statementStartTimeMap.get(dateKey).getTime()) {
                             statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
                         }
                     }else {
                         statementStartTimeMap.put(dateKey,statementOrderDetailDO.getStatementStartTime());
-                    }
-                    if (statementOrderDetailDO.getStatementEndTime().getTime() > statementOrderDO.getStatementEndTime().getTime()) {
-                        statementOrderDO.setStatementEndTime(statementOrderDetailDO.getStatementEndTime());
                     }
                     //存储结算单详情中最大的结束日期
                     if (statementEndTimeMap.containsKey(dateKey)) {
@@ -3133,11 +3163,7 @@ public class StatementServiceImpl implements StatementService {
                     }else {
                         statementEndTimeMap.put(dateKey,statementOrderDetailDO.getStatementEndTime());
                     }
-                    statementOrderDO.setStatementCouponAmount(statementOrderDetailDO.getStatementCouponAmount());
-                    statementOrderMapper.update(statementOrderDO);
                 }
-                statementOrderDOMap.put(dateKey, statementOrderDO);
-                statementOrderDetailDO.setStatementOrderId(statementOrderDO.getId());
             }
             //将最小值和最大值存储进去
             if (!statementStartTimeMap.isEmpty() && !statementEndTimeMap.isEmpty()) {
@@ -3150,10 +3176,6 @@ public class StatementServiceImpl implements StatementService {
                     }
                     statementOrderMapper.update(statementOrderDOMap.get(dateKey));
                 }
-            }
-            if (CollectionUtil.isNotEmpty(addStatementOrderDetailDOList)) {
-                SqlLogInterceptor.setExecuteSql("skip print statementOrderDetailMapper.saveList  sql ......");
-                statementOrderDetailMapper.saveList(addStatementOrderDetailDOList);
             }
         }
     }

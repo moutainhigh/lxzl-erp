@@ -56,8 +56,12 @@
                         <div class="panel" id="spy7">
                             <div class="panel-heading">
                                 <span class="panel-title"><span class="glyphicons glyphicons-table"></span>查询结果</span>
+                                <div class="pull-right">
+                                    <button type="submit" class="button btn btn-primary btn-xs" id="exportExcel">导出</button>
+                                    <form id="exportForm" class="hide"></form>
+                                </div>
                             </div>
-                            <div class="panel-body pn">
+                            <div class="panel-body pn" id="tableContainer">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr id="tbHeader">
