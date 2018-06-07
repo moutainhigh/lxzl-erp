@@ -265,4 +265,10 @@ public class CustomerController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
+    @RequestMapping(value = "confirmStatement", method = RequestMethod.POST)
+    public Result confirmStatement(@RequestBody @Validated({IdGroup.class}) Customer customer) {
+        ServiceResult<String, String> serviceResult = customerService.confirmStatement(customer.getCustomerNo());
+        return resultGenerator.generate(serviceResult);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.lxzl.erp.web.controller;
 
 import com.lxzl.erp.ERPUnTransactionalTest;
 import com.lxzl.erp.TestResult;
+import com.lxzl.erp.common.constant.ConfirmStatementStatus;
 import com.lxzl.erp.common.constant.CustomerStatus;
 import com.lxzl.erp.common.constant.CustomerType;
 import com.lxzl.erp.common.domain.customer.*;
@@ -21,8 +22,8 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateOwnerAndUnionUser() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180314-00333");
-        customer.setOwner(500032);
+        customer.setCustomerNo("LXCC-2001-20180515-00017");
+        customer.setOwner(500325);
         customer.setUnionUser(null);
         TestResult result = getJsonTestResult("/customer/updateOwnerAndUnionUser", customer);
     }
@@ -192,9 +193,9 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void updateCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-1000-20180330-00827");
-        customer.setOwner(500014);
-        customer.setUnionUser(500003);
+        customer.setCustomerNo("LXCC-2001-20180515-00018");
+        customer.setOwner(500373);
+        customer.setUnionUser(500372);
         customer.setDeliveryMode(3);
 //        customer.setIsDefaultConsignAddress(1);
         customer.setShortLimitReceivableAmount(new BigDecimal(2000));
@@ -436,6 +437,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customerCompanyQueryParam.setCustomerStatus(CustomerStatus.STATUS_PASS);
 //        customerCompanyQueryParam.setConnectPhone("13726273851");
 //        customerCompanyQueryParam.setOwnerSubCompanyId(3);
+        customerCompanyQueryParam.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
         TestResult result = getJsonTestResult("/customer/pageCustomerCompany", customerCompanyQueryParam);
     }
 
@@ -449,6 +451,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
 //        customerPersonQueryParam.setCustomerStatus(CustomerStatus.STATUS_COMMIT);
 //        customerPersonQueryParam.setOwnerSubCompanyId(2);
 //        customerPersonQueryParam.setIsRisk(1);
+        customerPersonQueryParam.setConfirmStatementStatus(ConfirmStatementStatus.CONFIRM_STATUS_YES);
         TestResult result = getJsonTestResult("/customer/pageCustomerPerson", customerPersonQueryParam);
     }
 
@@ -470,7 +473,7 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
     @Test
     public void detailCustomerCompany() throws Exception {
         Customer customer = new Customer();
-        customer.setCustomerNo("LXCC-027-20180329-00833");
+        customer.setCustomerNo("LXCC-2001-20180516-00019");
 
         TestResult result = getJsonTestResult("/customer/detailCustomerCompany", customer);
     }
@@ -804,5 +807,11 @@ public class CustomerControllerTest extends ERPUnTransactionalTest {
         TestResult testResult = getJsonTestResult("/customer/setIsRisk",null);
     }
 
-
+    @Test
+    public void testConfirmStatement() throws Exception {
+        Customer customer = new Customer();
+//        customer.setCustomerNo("LXCP-2001-20180605-00001");
+        customer.setCustomerNo("LXCP-1000-20180523-00020");
+        TestResult testResult = getJsonTestResult("/customer/confirmStatement",customer);
+    }
 }

@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.purchase.PurchaseDeliveryOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseOrderQueryParam;
 import com.lxzl.erp.common.domain.purchase.PurchaseReceiveOrderQueryParam;
 import com.lxzl.erp.common.domain.purchaseApply.PurchaseApplyOrderPageParam;
+import com.lxzl.erp.common.domain.reletorder.ReletOrderQueryParam;
 import com.lxzl.erp.common.domain.repairOrder.RepairOrderQueryParam;
 import com.lxzl.erp.common.domain.returnOrder.ReturnOrderPageParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
@@ -106,7 +107,7 @@ public class GenerateNoSupport {
         }
         synchronized (this) {
             Map<String, Object> maps = new HashMap<>();
-            OrderQueryParam orderQueryParam = new OrderQueryParam();
+            ReletOrderQueryParam orderQueryParam = new ReletOrderQueryParam();
             orderQueryParam.setCreateStartTime(DateUtil.getMonthByCurrentOffset(0));
             orderQueryParam.setCreateEndTime(DateUtil.getMonthByCurrentOffset(1));
             maps.put("reletOrderQueryParam", orderQueryParam);

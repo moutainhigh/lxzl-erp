@@ -49,10 +49,10 @@ public interface StatementService extends BaseService {
      *
      * @author ZhaoZiXuan
      * @date 2018/4/25 15:57
-     * @param   reletOrderDo 续租单的 订单编号
+     * @param   orderDO 续租单的  订单ID
      * @return
      */
-    ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO reletOrderDo);
+    ServiceResult<String, BigDecimal> createReletOrderStatement(ReletOrderDO orderDO);
 
 
     /**

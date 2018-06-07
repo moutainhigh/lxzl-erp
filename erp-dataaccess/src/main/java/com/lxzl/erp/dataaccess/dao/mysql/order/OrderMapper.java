@@ -22,6 +22,7 @@ public interface OrderMapper extends BaseMysqlDAO<OrderDO> {
     List<OrderDO> findOrderByParams(@Param("maps") Map<String, Object> paramMap);
     void updateListForReturn(@Param("orderDOList") List<OrderDO> orderDOList);
 
+    List<OrderDO> findUnReletedOrderByParams(@Param("maps") Map<String, Object> paramMap);
     /**
      * 根据订单项类型和订单项id查找关联的订单
      */

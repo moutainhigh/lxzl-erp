@@ -1,6 +1,7 @@
 package com.lxzl.erp.common.domain.reletorder.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lxzl.erp.common.constant.OrderPayMode;
 import com.lxzl.erp.common.domain.base.BasePO;
 import com.lxzl.erp.common.domain.order.pojo.OrderMaterial;
 
@@ -46,7 +47,7 @@ public class ReletOrderMaterial extends BasePO {
 		this.materialCount = orderMaterial.getMaterialCount();
 		this.materialUnitAmount = orderMaterial.getMaterialUnitAmount();
 		this.materialAmount = orderMaterial.getMaterialAmount();
-//		this.materialSnapshot = orderMaterial.getMaterialSnapshot();
+		this.materialSnapshot = orderMaterial.getMaterialSnapshot();
 		this.paymentCycle = orderMaterial.getPaymentCycle();
 		this.payMode = orderMaterial.getPayMode();
 		this.isNewMaterial = orderMaterial.getIsNewMaterial();

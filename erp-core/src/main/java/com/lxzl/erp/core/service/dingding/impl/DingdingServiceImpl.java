@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.constant.ErrorCode;
-import com.lxzl.erp.common.constant.VerifyStatus;
 import com.lxzl.erp.common.constant.WorkflowType;
 import com.lxzl.erp.common.domain.DingDingConfig;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -17,15 +16,15 @@ import com.lxzl.erp.common.domain.dingding.approve.*;
 import com.lxzl.erp.common.domain.dingding.approve.formvalue.DingdingFormComponentValueDTO;
 import com.lxzl.erp.common.domain.dingding.approve.formvalue.DingdingOrderValueDTO;
 import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
+import com.lxzl.erp.common.domain.dingding.member.DingdingUsersDTO;
 import com.lxzl.erp.common.domain.dingding.message.DingdingMessageDTO;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
-import com.lxzl.erp.common.domain.messagethirdchannel.pojo.MessageThirdChannel;
 import com.lxzl.erp.common.domain.order.pojo.Order;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.common.util.ConverterUtil;
 import com.lxzl.erp.common.util.FastJsonUtil;
-import com.lxzl.erp.common.util.thread.TreadFactory;
+import com.lxzl.erp.common.util.thread.ThreadFactoryDefault;
 import com.lxzl.erp.core.service.customer.CustomerService;
 import com.lxzl.erp.core.service.dingding.DingdingService;
 import com.lxzl.erp.core.service.k3.K3ReturnOrderService;
@@ -39,7 +38,6 @@ import com.lxzl.erp.dataaccess.dao.mysql.workflow.WorkflowVerifyUserGroupMapper;
 import com.lxzl.erp.dataaccess.domain.company.DepartmentDO;
 import com.lxzl.erp.dataaccess.domain.user.UserDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDO;
-import com.lxzl.erp.dataaccess.domain.workflow.WorkflowLinkDetailDO;
 import com.lxzl.erp.dataaccess.domain.workflow.WorkflowVerifyUserGroupDO;
 import com.lxzl.se.common.exception.BusinessException;
 import org.apache.commons.lang.StringUtils;
@@ -64,7 +62,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 描述: ${DESCRIPTION}
@@ -96,16 +93,16 @@ public class DingdingServiceImpl implements DingdingService {
     /**
      * 申请审批实例的线程
      */
-    private ExecutorService approveThreadExecutor = Executors.newCachedThreadPool(new TreadFactory("approve"));
+    private ExecutorService approveThreadExecutor = Executors.newCachedThreadPool(new ThreadFactoryDefault("approve"));
     /**
      * 注册用户的线程
      */
-    private ExecutorService registUserThreadExecutor = Executors.newCachedThreadPool(new TreadFactory("registUser"));
+    private ExecutorService registUserThreadExecutor = Executors.newCachedThreadPool(new ThreadFactoryDefault("registUser"));
 
     /**
      * 发送钉钉消息线程
      */
-    private ExecutorService sendDingdingMsgExecutor = Executors.newCachedThreadPool(new TreadFactory("sendDingdingMsg"));
+    private ExecutorService sendDingdingMsgExecutor = Executors.newCachedThreadPool(new ThreadFactoryDefault("sendDingdingMsg"));
 
     @Override
     public ServiceResult<String, Object> sendMessageToDingding(final DingdingMessageDTO dingdingMessageDTO) {
@@ -165,18 +162,7 @@ public class DingdingServiceImpl implements DingdingService {
                 throw new BusinessException("钉钉用户数据传输对象为空：" + JSONObject.toJSONString(dingdingUserDTO));
             }
             logger.info("注册的钉钉用户数据传输对象为：" + JSONObject.toJSONString(dingdingUserDTO));
-            // 往钉钉上注册用户信息
-            dingdingUserDTO.setRequestDingdingUrl(DingDingConfig.getInputMemberUrl());
-            // 异步线程执行
-            registUserThreadExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingUserDTO);
-                    if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
-                        throw new BusinessException("与钉钉网关交互失败：" + JSONObject.toJSONString(dingdingResultDTO));
-                    }
-                }
-            });
+            registerUsersToDingdingCore(new DingdingUsersDTO(dingdingUserDTO));
         } catch (Exception e) {
             e.printStackTrace();
             serviceResult.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
@@ -184,9 +170,40 @@ public class DingdingServiceImpl implements DingdingService {
         return serviceResult;
     }
 
+    /**  
+     * <p>
+     * 注册用户到钉钉网关的核心接口
+     * </p>
+     * <pre>
+     *     所需参数示例及其说明
+     *     参数名称 : 示例值 : 说明 : 是否必须
+     * </pre>
+     * @author daiqi  
+     * @date 2018/6/4 11:46
+     * @param dingdingUsersDTO  
+     * @return com.lxzl.erp.common.domain.ServiceResult<java.lang.String,java.lang.Object>  
+     */  
+    private ServiceResult<String, Object> registerUsersToDingdingCore(final DingdingUsersDTO dingdingUsersDTO) {
+    // 往钉钉上注册用户信息
+        dingdingUsersDTO.setRequestDingdingUrl(DingDingConfig.getInputMemberUrl());
+        // 异步线程执行
+        registUserThreadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                DingdingResultDTO dingdingResultDTO = postDingdingGatway(dingdingUsersDTO);
+                if (dingdingResultDTO == null || !dingdingResultDTO.isSuccess()) {
+                    throw new BusinessException("与钉钉网关交互失败：" + JSONObject.toJSONString(dingdingResultDTO));
+                }
+            }
+        });
+        ServiceResult serviceResult = new ServiceResult();
+        serviceResult.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResult;
+    }
+
     @Override
-    public ServiceResult<String, Object> getAllUsersToDingding() {
-        ServiceResult<String, Object> result = new ServiceResult<>();
+    public ServiceResult<String,  List<DingdingUserDTO>> getAllUsersToDingding() {
+        ServiceResult<String,  List<DingdingUserDTO>> result = new ServiceResult<>();
         result.setErrorCode(ErrorCode.SUCCESS);
         List<UserDO> userDOS = userMapper.listAllUser();
         if (userDOS == null) {
@@ -202,6 +219,19 @@ public class DingdingServiceImpl implements DingdingService {
         result.setResult(dingdingUserDTOS);
         // 更新数据库中钉钉编号
         return result;
+    }
+
+    @Override
+    public ServiceResult<String, Object> checkDingdingUserDatas() {
+        ServiceResult <String, Object> serviceResultCheck = new ServiceResult<>();
+        ServiceResult<String,  List<DingdingUserDTO>> serviceResult = getAllUsersToDingding();
+        if (!ErrorCode.SUCCESS.equals(serviceResult.getErrorCode())) {
+            serviceResultCheck.setErrorCode(serviceResult.getErrorCode());
+            return serviceResultCheck;
+        }
+        registerUsersToDingdingCore(new DingdingUsersDTO(serviceResult.getResult()));
+        serviceResultCheck.setErrorCode(ErrorCode.SUCCESS);
+        return serviceResultCheck;
     }
 
     /**
@@ -419,6 +449,9 @@ public class DingdingServiceImpl implements DingdingService {
             HttpPost httpPost = new HttpPost(requestUrlBuild.toString());
             CloseableHttpClient client = HttpClients.createDefault();
             String jsonStr = JSONObject.toJSONString(dingdingBaseDTO);
+            if (dingdingBaseDTO instanceof DingdingUsersDTO) {
+                jsonStr = JSONArray.toJSONString(((DingdingUsersDTO) dingdingBaseDTO).getMembers());
+            }
             logger.info("发给钉钉网关请求数据：" + jsonStr);
             //解决中文乱码问题
             StringEntity entity = new StringEntity(jsonStr, "UTF-8");

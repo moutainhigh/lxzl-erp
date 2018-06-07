@@ -34,6 +34,14 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
+		<!-- 开发测试 -->
+		<profile>
+			<id>devtest</id>
+			<properties>
+				<env>devtest</env>
+			</properties>
+			<!--  <activation> <activeByDefault>true</activeByDefault> </activation> -->
+		</profile>
 		<!-- 测试环境 -->
 		<profile>
 			<id>test</id>

@@ -248,6 +248,11 @@ public class PageController extends BaseController {
         return "/orderManage/orderToAuditList";
     }
 
+    @RequestMapping("/order-manage/relet-detail")
+    public String orderManageReletDetail() {
+        return "/orderManage/reletOrderDetail";
+    }
+
     //退货单
     @RequestMapping("/order-return-manage/list")
     public String returnOrderManageList() {
@@ -972,6 +977,13 @@ public class PageController extends BaseController {
         return "/privateManage/request";
     }
 
+
+    @RequestMapping("/data-analysis/dynamicSql")
+    public String systemManageDynamicSql() {
+        return "/dataAnalysisManage/dynamicSql";
+    }
+
+
     //上传附件
     @RequestMapping("/jurnal-attachment-list/file/upload")
     public String jurnalAttachmentList() {return "/component/jurnalAmount/upload";}
@@ -1016,6 +1028,12 @@ public class PageController extends BaseController {
     @RequestMapping("/receipt-confirm/modal")
     public String receiptConfirmModal() {
         return "/component/order/confirmReceiptModal";
+    }
+
+    //订单续租Modal
+    @RequestMapping("/relet-order/modal")
+    public String reletOrderModal() {
+        return "/component/order/reletOrderModal";
     }
 
     //提交审核选择审核人及填写审核备注

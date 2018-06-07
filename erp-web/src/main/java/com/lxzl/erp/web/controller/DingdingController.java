@@ -3,6 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.constant.CommonConstant;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.dingding.approve.DingdingApproveCallBackDTO;
+import com.lxzl.erp.common.domain.dingding.member.DingdingUserDTO;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * @author daiqi
@@ -34,7 +37,7 @@ public class DingdingController extends BaseController {
      */
     @RequestMapping(value = "getAllUsersToDingding")
     public Result getAllUsersToDingding() {
-        ServiceResult<String, Object> serviceResult = dingdingService.getAllUsersToDingding();
+        ServiceResult<String, List<DingdingUserDTO>> serviceResult = dingdingService.getAllUsersToDingding();
         return resultGenerator.generate(serviceResult);
     }
 
@@ -65,6 +68,15 @@ public class DingdingController extends BaseController {
     @RequestMapping(value = "registerUserToDingding")
     public Result registerUserToDingding(@RequestParam Integer userId) {
         ServiceResult<String, Object> serviceResult = dingdingService.registerUserToDingding(userId);
+        return resultGenerator.generate(serviceResult);
+    }
+
+    /**
+     * 测试接口-----校验钉钉用户数据
+     */
+    @RequestMapping(value = "checkDingdingUserDatas")
+    public Result checkDingdingUserDatas() {
+        ServiceResult<String, Object> serviceResult = dingdingService.checkDingdingUserDatas();
         return resultGenerator.generate(serviceResult);
     }
 

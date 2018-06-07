@@ -135,4 +135,11 @@ public interface K3ReturnOrderService extends VerifyReceiver {
      * @return
      */
     ServiceResult<String,String> updateReturnOrderFromERP(K3ReturnOrder k3ReturnOrder);
+
+    /**
+     * 创建退货单时根据订单编号查询订单详情
+     * @param orderNo
+     * @return
+     */
+    ServiceResult<String,Order> queryOrderByNoForReturn(String orderNo);
 }
