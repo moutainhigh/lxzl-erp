@@ -47,6 +47,8 @@ public class StatementOrderDetailDO extends BaseDO {
     private String remark;
     private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
+    private Integer reletOrderItemReferId;  //续租订单项ID  查询时结算单关联续租
+
     @Transient
     private Integer rentType;
     @Transient
@@ -436,4 +438,12 @@ public class StatementOrderDetailDO extends BaseDO {
     public String getSerialNumber() { return serialNumber; }
 
     public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public Integer getReletOrderItemReferId() {
+        return reletOrderItemReferId;
+    }
+
+    public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
+        this.reletOrderItemReferId = reletOrderItemReferId;
+    }
 }
