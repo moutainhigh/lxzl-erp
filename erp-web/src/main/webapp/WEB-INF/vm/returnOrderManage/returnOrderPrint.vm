@@ -214,44 +214,8 @@
                         <td class="text-center">{{rowNum}}</td>
                         <td class="text-center">{{productName}} ({{isNewProductValue}})</td>
                         <td class="text-center">{{propertiesToStr}}</td>
-                        <td class="text-center">￥{{#price}}{{productUnitAmount}}{{/price}}</td>
+                        <td class="text-center">￥{{currentSkuPrice}}</td>
                         <td class="text-center">{{productCount}}</td>
-                    </tr>
-                    {{/listData}}
-                    {{/dataSource}}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        {{/hasListData}}
-    </script>
-
-    <script type="text/html" id="materialDataListTpl">
-        {{#hasListData}}
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-bordered mbn">
-                    <thead>
-                    <tr class="bg-light">
-                        <th colspan="12" class="text-center printH2" style="padding: 5px 0px;">配件信息</th>
-                    </tr>
-                    <tr class="bg-light">
-                        <th class="text-center" style="white-space: nowrap; width:50px;">序号</th>
-                        <th class="text-center">配件名称</th>
-                        <th class="text-center">配件参数</th>
-                        <th class="text-center" style="width:130px;">配件价值</th>
-                        <th class="text-center" style="white-space: nowrap; width:60px;">数量</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{#dataSource}}
-                    {{#listData}}
-                    <tr>
-                        <td class="text-center" style="padding: 0px 2px;">{{rowNum}}</td>
-                        <td class="text-center">{{materialName}} ({{isNewMaterialValue}})</td>
-                        <td class="text-center">{{materialTypeStr}}{{#memorysize}}{{#materialInfo}}{{materialCapacityValue}}{{/materialInfo}}{{/memorysize}}</td>
-                        <td class="text-center">￥{{#price}}{{materialUnitAmount}}{{/price}}</td>
-                        <td class="text-center">{{materialCount}}</td>
                     </tr>
                     {{/listData}}
                     {{/dataSource}}
@@ -334,7 +298,6 @@
             <div class="col-md-12">
                 <table class="table table-bordered mbn">
                     <tbody>
-##                    {{#listData}}
                     <tr>
                         <td class="text-center" style="width:125px; height:35px;">合计金额</td>
                         <td></td>
@@ -355,7 +318,6 @@
                         <td class="text-center" style="width:125px; height:35px;">备注</td>
                         <td></td>
                     </tr>
-##                    {{/listData}}
                     </tbody>
                 </table>
             </div>

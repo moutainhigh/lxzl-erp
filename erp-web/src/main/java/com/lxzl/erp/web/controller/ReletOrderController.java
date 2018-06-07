@@ -73,4 +73,10 @@ public class ReletOrderController extends BaseController {
         ServiceResult<String, Boolean> serviceResult = reletOrderService.isNeedVerify(reletOrder);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+
+    @RequestMapping(value = "cancelReletOrderByNo", method = RequestMethod.POST)
+    public Result cancelReletOrderByNo(@RequestBody ReletOrder reletOrder, BindingResult validResult) {
+        ServiceResult<String, String> serviceResult = reletOrderService.cancelReletOrderByNo(reletOrder);
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 }

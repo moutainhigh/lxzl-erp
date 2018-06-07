@@ -39,21 +39,21 @@ import com.lxzl.erp.core.service.product.impl.support.ProductSupport;
 import com.lxzl.erp.core.service.user.impl.support.UserSupport;
 import com.lxzl.erp.core.service.workflow.WorkflowService;
 import com.lxzl.erp.dataaccess.dao.mysql.company.SubCompanyMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3MappingCustomerMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderDetailMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3ReturnOrderMapper;
-import com.lxzl.erp.dataaccess.dao.mysql.k3.K3SendRecordMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.k3.*;
+import com.lxzl.erp.dataaccess.dao.mysql.material.MaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderMaterialMapper;
 import com.lxzl.erp.dataaccess.dao.mysql.order.OrderProductMapper;
+import com.lxzl.erp.dataaccess.dao.mysql.product.ProductMapper;
 import com.lxzl.erp.dataaccess.domain.company.SubCompanyDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3MappingCustomerDO;
-import com.lxzl.erp.dataaccess.domain.k3.K3SendRecordDO;
+import com.lxzl.erp.dataaccess.domain.k3.*;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDO;
 import com.lxzl.erp.dataaccess.domain.k3.returnOrder.K3ReturnOrderDetailDO;
+import com.lxzl.erp.dataaccess.domain.material.MaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
+import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.se.common.exception.BusinessException;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
@@ -890,6 +890,16 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderForReturnQueryParam", param);
+        //如果查询的状态不是确认收货（20），部分退还（22）,不查询数据库直接返回空集合
+        if (param.getOrderStatus()!=null
+                && !OrderStatus.ORDER_STATUS_CONFIRM.equals(param.getOrderStatus())
+                && !OrderStatus.ORDER_STATUS_PART_RETURN.equals(param.getOrderStatus())) {
+            List<Order> orderList = new ArrayList<>();
+            Page<Order> page = new Page<>(orderList, CommonConstant.COMMON_ZERO, param.getPageNo(), param.getPageSize());
+            result.setErrorCode(ErrorCode.SUCCESS);
+            result.setResult(page);
+            return result;
+        }
 
         Integer totalCount = orderMapper.findOrderForReturnCountParam(maps);
         List<OrderDO> orderDOList =orderMapper.findOrderForReturnParam(maps);
@@ -1059,6 +1069,86 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         k3ReturnOrderMapper.update(k3ReturnOrderDO);
         result.setResult(k3ReturnOrderDO.getReturnOrderNo());
         result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
+
+    /**
+     * 创建退货单时根据订单编号查询订单详情
+     * @param orderNo
+     * @return
+     */
+    @Override
+    public ServiceResult<String, Order> queryOrderByNoForReturn(String orderNo) {
+        ServiceResult<String, Order> result = new ServiceResult<>();
+        if (orderNo == null) {
+            result.setErrorCode(ErrorCode.ID_NOT_NULL);
+            return result;
+        }
+        OrderDO orderDO = orderMapper.findByOrderNo(orderNo);
+        if (orderDO == null) {
+            result.setErrorCode(ErrorCode.RECORD_NOT_EXISTS);
+            return result;
+        }
+        List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
+        List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        Map<Integer,OrderProductDO> productDOMap = new TreeMap<>();
+        Map<Integer,OrderMaterialDO> materialDOMap = new TreeMap<>();
+
+        if (CollectionUtil.isNotEmpty(orderProductDOList)) {
+            for (OrderProductDO orderProductDO:orderProductDOList) {
+                ProductDO productDO = productMapper.findByProductId(orderProductDO.getProductId());
+                K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(productDO.getCategoryId().toString());
+                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(productDO.getBrandId().toString());
+                String number = "";
+                if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
+                    number = productDO.getK3ProductNo();
+                } else {
+                    number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
+                }
+                if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsPeer())){
+                    number = "90"+number.substring(2,number.length());
+                }
+                orderProductDO.setProductNumber(number);
+                productDOMap.put(orderProductDO.getId(),orderProductDO);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+                materialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+            }
+        }
+        if (!productDOMap.isEmpty()) {
+            Integer fEntryId = 1;
+            for (Integer id:productDOMap.keySet()) {
+                productDOMap.get(id).setFEntryID(fEntryId);
+                fEntryId += 1;
+            }
+        }
+        if (!materialDOMap.isEmpty()) {
+            Integer fEntryId = 1;
+            for (Integer id:materialDOMap.keySet()) {
+                materialDOMap.get(id).setFEntryID(fEntryId);
+                fEntryId += 1;
+            }
+        }
+        Order order = ConverterUtil.convert(orderDO, Order.class);
+        List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
+        if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+            for (OrderMaterial orderMaterial:orderMaterialList) {
+                MaterialDO materialDO = materialMapper.findById(orderMaterial.getMaterialId());
+                K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
+                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
+                String number = "";
+                if (StringUtil.isNotEmpty(materialDO.getK3MaterialNo())) {
+                    number = materialDO.getK3MaterialNo();
+                } else {
+                    number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                }
+                orderMaterial.setFNumber(number);
+            }
+        }
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(order);
         return result;
     }
 
@@ -1511,6 +1601,15 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
     private K3CallbackService k3CallbackService;
     @Autowired
     private K3MappingCustomerMapper k3MappingCustomerMapper;
-
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private K3MappingCategoryMapper k3MappingCategoryMapper;
+    @Autowired
+    private K3MappingBrandMapper k3MappingBrandMapper;
+    @Autowired
+    private MaterialMapper materialMapper;
+    @Autowired
+    private K3MappingMaterialTypeMapper k3MappingMaterialTypeMapper;
 
 }

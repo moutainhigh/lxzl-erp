@@ -54,6 +54,8 @@ public class StatementOrderDetail extends BasePO {
     private String updateUser;   //修改人
     private BigDecimal statementCouponAmount;   //结算单优惠券优惠总和
 
+    private Integer reletOrderItemReferId;  //续租订单项ID  查询时结算单关联续租
+
     private String orderNo;
     private String itemName;
     private Integer itemCount;
@@ -442,5 +444,13 @@ public class StatementOrderDetail extends BasePO {
 
     public void setStatementDetailPenaltyPaidAmount(BigDecimal statementDetailPenaltyPaidAmount) {
         this.statementDetailPenaltyPaidAmount = statementDetailPenaltyPaidAmount;
+    }
+
+    public Integer getReletOrderItemReferId() {
+        return reletOrderItemReferId;
+    }
+
+    public void setReletOrderItemReferId(Integer reletOrderItemReferId) {
+        this.reletOrderItemReferId = reletOrderItemReferId;
     }
 }
