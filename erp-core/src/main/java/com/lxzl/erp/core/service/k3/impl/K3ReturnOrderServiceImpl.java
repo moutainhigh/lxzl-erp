@@ -55,6 +55,7 @@ import com.lxzl.erp.dataaccess.domain.order.OrderMaterialDO;
 import com.lxzl.erp.dataaccess.domain.order.OrderProductDO;
 import com.lxzl.erp.dataaccess.domain.product.ProductDO;
 import com.lxzl.se.common.exception.BusinessException;
+import com.lxzl.se.common.util.CommonUtil;
 import com.lxzl.se.common.util.StringUtil;
 import com.lxzl.se.common.util.date.DateUtil;
 import com.lxzl.se.dataaccess.mysql.config.PageQuery;
@@ -1091,9 +1092,6 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
-        Map<Integer,OrderProductDO> productDOMap = new TreeMap<>();
-        Map<Integer,OrderMaterialDO> materialDOMap = new TreeMap<>();
-
         if (CollectionUtil.isNotEmpty(orderProductDOList)) {
             for (OrderProductDO orderProductDO:orderProductDOList) {
                 ProductDO productDO = productMapper.findByProductId(orderProductDO.getProductId());
@@ -1108,29 +1106,18 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
                 if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsPeer())){
                     number = "90"+number.substring(2,number.length());
                 }
+                if (orderProductDO.getFEntryID()==0 || orderProductDO.getFEntryID()==null) {
+                    orderProductDO.setFEntryID(orderProductDO.getId());
+                }
                 orderProductDO.setProductNumber(number);
-                productDOMap.put(orderProductDO.getId(),orderProductDO);
             }
         }
-        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
-            for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
-                materialDOMap.put(orderMaterialDO.getId(),orderMaterialDO);
+        for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+            if (orderMaterialDO.getFEntryID()==0 || orderMaterialDO.getFEntryID()==null) {
+                orderMaterialDO.setFEntryID(orderMaterialDO.getId());
             }
         }
-        if (!productDOMap.isEmpty()) {
-            Integer fEntryId = 1;
-            for (Integer id:productDOMap.keySet()) {
-                productDOMap.get(id).setFEntryID(fEntryId);
-                fEntryId += 1;
-            }
-        }
-        if (!materialDOMap.isEmpty()) {
-            Integer fEntryId = 1;
-            for (Integer id:materialDOMap.keySet()) {
-                materialDOMap.get(id).setFEntryID(fEntryId);
-                fEntryId += 1;
-            }
-        }
+        
         Order order = ConverterUtil.convert(orderDO, Order.class);
         List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
         if (CollectionUtil.isNotEmpty(orderMaterialList)) {
