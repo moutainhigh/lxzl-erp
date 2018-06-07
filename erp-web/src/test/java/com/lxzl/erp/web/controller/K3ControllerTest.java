@@ -534,6 +534,12 @@ public class K3ControllerTest extends ERPTransactionalTest {
         TestResult testResult = getJsonTestResult("/k3/queryOrderForReturn", param);
     }
     @Test
+    public void queryOrderByNoForReturn() throws Exception {
+        OrderForReturnQueryParam param = new OrderForReturnQueryParam();
+        param.setOrderNo("LXO-20180528-1000-00055");
+        TestResult testResult = getJsonTestResult("/k3/queryOrderByNoForReturn", param);
+    }
+    @Test
     public void createReturnOrderFromERP() throws Exception {
         K3ReturnOrder k3ReturnOrder = new K3ReturnOrder();
         k3ReturnOrder.setK3CustomerNo("LXCC-020-20180315-00773");
