@@ -1092,48 +1092,125 @@ public class K3ReturnOrderServiceImpl implements K3ReturnOrderService {
         }
         List<OrderProductDO> orderProductDOList = orderDO.getOrderProductDOList();
         List<OrderMaterialDO> orderMaterialDOList = orderDO.getOrderMaterialDOList();
+        Set<Integer> productIdSet = new HashSet<>();
+        Set<String> productDOCategoryIdSet = new HashSet<>();
+        Set<String> productDOBrandIdSet = new HashSet<>();
+        Map<Integer,ProductDO> productDOMap = new HashMap<>();
+        Map<Integer,K3MappingCategoryDO> k3MappingCategoryDOMap = new HashMap<>();
+        Map<Integer,K3MappingBrandDO> k3MappingBrandDOMap = new HashMap<>();
+
         if (CollectionUtil.isNotEmpty(orderProductDOList)) {
             for (OrderProductDO orderProductDO:orderProductDOList) {
-                ProductDO productDO = productMapper.findByProductId(orderProductDO.getProductId());
-                K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryMapper.findByErpCode(productDO.getCategoryId().toString());
-                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(productDO.getBrandId().toString());
-                String number = "";
-                if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
-                    number = productDO.getK3ProductNo();
-                } else {
-                    number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
+                productIdSet.add(orderProductDO.getProductId());
+            }
+            List<ProductDO> productDOList = productMapper.findByIds(productIdSet);
+            if (CollectionUtil.isNotEmpty(productDOList)) {
+                for (ProductDO productDO:productDOList) {
+                    productDOCategoryIdSet.add(productDO.getCategoryId().toString());
+                    productDOBrandIdSet.add(productDO.getBrandId().toString());
                 }
-                if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsPeer())){
-                    number = "90"+number.substring(2,number.length());
+                List<K3MappingCategoryDO> k3MappingCategoryDOList = k3MappingCategoryMapper.findByErpCodeList(productDOCategoryIdSet);
+                List<K3MappingBrandDO> k3MappingBrandDOList = k3MappingBrandMapper.findByErpCodeList(productDOBrandIdSet);
+                for (OrderProductDO orderProductDO:orderProductDOList) {
+                    for (ProductDO productDO:productDOList) {
+                        if (orderProductDO.getProductId().equals(productDO.getId())) {
+                            productDOMap.put(orderProductDO.getId(),productDO);
+                        }
+                        for (K3MappingCategoryDO k3MappingCategoryDO:k3MappingCategoryDOList) {
+                            if (productDO.getCategoryId().toString().equals(k3MappingCategoryDO.getErpCategoryCode())) {
+                                k3MappingCategoryDOMap.put(orderProductDO.getId(),k3MappingCategoryDO);
+                            }
+                        }
+                        for (K3MappingBrandDO k3MappingBrandDO:k3MappingBrandDOList) {
+                            if (productDO.getBrandId().toString().equals(k3MappingBrandDO.getErpBrandCode())) {
+                                k3MappingBrandDOMap.put(orderProductDO.getId(),k3MappingBrandDO);
+                            }
+                        }
+                    }
                 }
-                if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                    orderProductDO.setFEntryID(orderProductDO.getId());
+                for (OrderProductDO orderProductDO:orderProductDOList) {
+                    ProductDO productDO = productDOMap.get(orderProductDO.getId());
+                    K3MappingCategoryDO k3MappingCategoryDO = k3MappingCategoryDOMap.get(orderProductDO.getId());
+                    K3MappingBrandDO k3MappingBrandDO = k3MappingBrandDOMap.get(orderProductDO.getId());
+                    String number = "";
+                    if (StringUtil.isNotEmpty(productDO.getK3ProductNo())) {
+                        number = productDO.getK3ProductNo();
+                    } else {
+                        number = "10." + k3MappingCategoryDO.getK3CategoryCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + productDO.getProductModel();
+                    }
+                    if(CommonConstant.COMMON_CONSTANT_YES.equals(orderDO.getIsPeer())){
+                        number = "90"+number.substring(2,number.length());
+                    }
+                    if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                        orderProductDO.setFEntryID(orderProductDO.getId());
+                    }
+                    orderProductDO.setProductNumber(number);
                 }
-                orderProductDO.setProductNumber(number);
             }
         }
-        for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
-            if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
-                orderMaterialDO.setFEntryID(orderMaterialDO.getId());
+        Set<Integer> materialIdSet = new HashSet<>();
+        Set<String> materialDOMaterialTypeSet = new HashSet<>();
+        Set<String> materialDOBrandIdSet = new HashSet<>();
+        Map<Integer,MaterialDO> materialDOMap = new HashMap<>();
+        Map<Integer,K3MappingMaterialTypeDO> k3MappingMaterialTypeMap = new HashMap<>();
+        Map<Integer,K3MappingBrandDO> materialk3MappingBrandDOMap = new HashMap<>();
+        Map<Integer,String> FNumberMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(orderMaterialDOList)) {
+            for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+                materialIdSet.add(orderMaterialDO.getMaterialId());
+            }
+            List<MaterialDO> materialDOList = materialMapper.findByIds(materialIdSet);
+            if (CollectionUtil.isNotEmpty(materialDOList)) {
+                for (MaterialDO materialDO:materialDOList) {
+                    materialDOMaterialTypeSet.add(materialDO.getMaterialType().toString());
+                    materialDOBrandIdSet.add(materialDO.getBrandId().toString());
+                }
+                List<K3MappingMaterialTypeDO> k3MappingMaterialTypeDOList = k3MappingMaterialTypeMapper.findByErpCodeList(materialDOMaterialTypeSet);
+                List<K3MappingBrandDO> materialk3MappingBrandDOList = k3MappingBrandMapper.findByErpCodeList(materialDOBrandIdSet);
+                for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+                    for (MaterialDO materialDO:materialDOList) {
+                        if (orderMaterialDO.getMaterialId().equals(materialDO.getId())) {
+                            materialDOMap.put(orderMaterialDO.getId(),materialDO);
+                        }
+                        for (K3MappingMaterialTypeDO k3MappingMaterialTypeDO:k3MappingMaterialTypeDOList) {
+                            if (materialDO.getMaterialType().toString().equals(k3MappingMaterialTypeDO.getErpMaterialTypeCode())) {
+                                k3MappingMaterialTypeMap.put(orderMaterialDO.getId(),k3MappingMaterialTypeDO);
+                            }
+                        }
+                        for (K3MappingBrandDO materialk3MappingBrandDO:materialk3MappingBrandDOList) {
+                            if (materialDO.getBrandId().toString().equals(materialk3MappingBrandDO.getErpBrandCode())) {
+                                materialk3MappingBrandDOMap.put(orderMaterialDO.getId(),materialk3MappingBrandDO);
+                            }
+                        }
+                    }
+                }
+                for (OrderMaterialDO orderMaterialDO:orderMaterialDOList) {
+                    if (CommonConstant.COMMON_CONSTANT_NO.equals(orderDO.getIsK3Order())) {
+                        orderMaterialDO.setFEntryID(orderMaterialDO.getId());
+                    }
+                    MaterialDO materialDO = materialDOMap.get(orderMaterialDO.getId());
+                    K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMap.get(orderMaterialDO.getId());
+                    K3MappingBrandDO k3MappingBrandDO = materialk3MappingBrandDOMap.get(orderMaterialDO.getId());
+                    String number = "";
+                    if (StringUtil.isNotEmpty(materialDO.getK3MaterialNo())) {
+                        number = materialDO.getK3MaterialNo();
+                    } else {
+                        number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
+                    }
+                    FNumberMap.put(orderMaterialDO.getFEntryID(),number);
+                }
             }
         }
-        
         Order order = ConverterUtil.convert(orderDO, Order.class);
+
         List<OrderMaterial> orderMaterialList = order.getOrderMaterialList();
-        if (CollectionUtil.isNotEmpty(orderMaterialList)) {
+
+        if (!FNumberMap.isEmpty()) {
             for (OrderMaterial orderMaterial:orderMaterialList) {
-                MaterialDO materialDO = materialMapper.findById(orderMaterial.getMaterialId());
-                K3MappingMaterialTypeDO k3MappingMaterialTypeDO = k3MappingMaterialTypeMapper.findByErpCode(materialDO.getMaterialType().toString());
-                K3MappingBrandDO k3MappingBrandDO = k3MappingBrandMapper.findByErpCode(materialDO.getBrandId().toString());
-                String number = "";
-                if (StringUtil.isNotEmpty(materialDO.getK3MaterialNo())) {
-                    number = materialDO.getK3MaterialNo();
-                } else {
-                    number = "20." + k3MappingMaterialTypeDO.getK3MaterialTypeCode() + "." + k3MappingBrandDO.getK3BrandCode() + "." + materialDO.getMaterialModel();
-                }
-                orderMaterial.setFNumber(number);
+                orderMaterial.setFNumber(FNumberMap.get(orderMaterial.getFEntryID()));
             }
         }
+
         result.setErrorCode(ErrorCode.SUCCESS);
         result.setResult(order);
         return result;
