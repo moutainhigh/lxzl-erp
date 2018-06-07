@@ -53,6 +53,7 @@
 
             <script type="text/html" id="sidebarMenuTpl">
                 {{#menus}}
+                {{#show}}
                 <li>
                     <a class="accordion-toggle">
                         <span class="{{icon}}"></span>
@@ -69,6 +70,7 @@
                         {{/children}}
                     </ul>
                 </li>
+                {{/show}}
                 {{/menus}}
             </script>
 
