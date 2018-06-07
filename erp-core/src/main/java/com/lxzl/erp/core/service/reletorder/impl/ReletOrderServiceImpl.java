@@ -1535,7 +1535,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
 
                 OrderMaterialDO orderMaterial = getOrderMaterialDOById(orderDO, reletOrderMaterialDO.getOrderMaterialId());
-                if (!orderMaterial.getMaterialUnitAmount().equals(reletOrderMaterialDO.getMaterialUnitAmount())) {
+                if (!orderMaterial.getRentingMaterialCount().equals(reletOrderMaterialDO.getRentingMaterialCount())) {
 
                     return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
                 }

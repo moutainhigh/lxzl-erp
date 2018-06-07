@@ -1567,29 +1567,30 @@ public class StatementServiceImpl implements StatementService {
                     }
                 }
                 else {
-                    orderDO = orderDO == null ? orderMapper.findByOrderId(statementOrderDetail.getOrderId()) : orderDO;
-                    if (orderDO != null){
-                        if (OrderItemType.ORDER_ITEM_TYPE_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
-                            ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                            if (reletOrderProductDO != null){
-                                statementOrderDetail.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
-                                statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
-                                statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
-                                statementOrderDetail.setItemRentType(orderDO.getRentType());
-                                statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                            }
-                        }
-                        if (OrderItemType.ORDER_ITEM_TYPE_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
-                            ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
-                            if (reletOrderMaterialDO != null){
-                                statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
-                                statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
-                                statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
-                                statementOrderDetail.setItemRentType(orderDO.getRentType());
-                                statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
-                            }
+
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_PRODUCT.equals(statementOrderDetail.getOrderItemType())){
+                        ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetail.getReletOrderItemReferId());
+                        if (reletOrderProductDO != null){
+                            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderProductDO.getReletOrderId());
+                            statementOrderDetail.setItemName(reletOrderProductDO.getProductName() + reletOrderProductDO.getProductSkuName());
+                            statementOrderDetail.setItemCount(reletOrderProductDO.getRentingProductCount());
+                            statementOrderDetail.setUnitAmount(reletOrderProductDO.getProductUnitAmount());
+                            statementOrderDetail.setItemRentType(reletOrderDO.getRentType());
+                            statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
                         }
                     }
+                    if (OrderItemType.ORDER_ITEM_TYPE_RETURN_MATERIAL.equals(statementOrderDetail.getOrderItemType())){
+                        ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
+                        if (reletOrderMaterialDO != null){
+                            ReletOrderDO reletOrderDO = reletOrderMapper.findById(reletOrderMaterialDO.getReletOrderId());
+                            statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
+                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
+                            statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
+                            statementOrderDetail.setItemRentType(reletOrderDO.getRentType());
+                            statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
+                        }
+                    }
+
                 }
             }
         }
