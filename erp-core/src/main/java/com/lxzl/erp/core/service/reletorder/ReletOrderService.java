@@ -95,5 +95,5 @@ public interface ReletOrderService extends VerifyReceiver {
      * @param
      * @return
      */
-    ServiceResult<String, Boolean> cancelReletOrderByNo(ReletOrder reletOrder);
+    ServiceResult<String, String> cancelReletOrderByNo(ReletOrder reletOrder);
 }

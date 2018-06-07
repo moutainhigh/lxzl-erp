@@ -587,8 +587,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
     @Override
-    public ServiceResult<String, Boolean> cancelReletOrderByNo(ReletOrder reletOrder){
-        ServiceResult<String, Boolean> result = new ServiceResult<>();
+    public ServiceResult<String, String> cancelReletOrderByNo(ReletOrder reletOrder){
+        ServiceResult<String, String> result = new ServiceResult<>();
         if (StringUtil.isBlank(reletOrder.getReletOrderNo())){
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
@@ -596,13 +596,26 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Date currentTime = new Date();
         User loginUser = userSupport.getCurrentUser();
 
-        ReletOrderDO reletOrderDO = new ReletOrderDO();
-        reletOrderDO.setReletOrderNo(reletOrder.getReletOrderNo());
-        reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
-        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
-        reletOrderDO.setUpdateTime(currentTime);
-        reletOrderMapper.update(reletOrderDO);
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
+        if (reletOrderDO == null) {
+            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        if (ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())){
+            reletOrderDO.setReletOrderNo(reletOrder.getReletOrderNo());
+            reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
+            reletOrderDO.setUpdateTime(currentTime);
+            reletOrderMapper.update(reletOrderDO);
+        }
+        else {
+            result.setErrorCode(ErrorCode.RELET_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
         result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(reletOrderDO.getReletOrderNo());
         return result;
     }
 
