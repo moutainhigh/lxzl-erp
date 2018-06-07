@@ -469,20 +469,19 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                 return ErrorCode.BUSINESS_EXCEPTION;
             }
 
-            OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
-            if (orderDO == null){
-                return ErrorCode.ORDER_NOT_EXISTS;
-            }
-
-            //合法性
-            String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
-            if (!ErrorCode.SUCCESS.equals(verifyCode)) {
-                return verifyCode;
-            }
-
             if (verifyResult) {
 
                 // 只有审批通过的续租单才生成 结算单
+                OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+                if (orderDO == null){
+                    return ErrorCode.ORDER_NOT_EXISTS;
+                }
+
+                //判断在租数 是否一致
+                String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
+                if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+                    return verifyCode;
+                }
 
                 orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
 //                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
