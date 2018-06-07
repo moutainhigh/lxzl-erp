@@ -305,6 +305,12 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //续租不让重算
+        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
+        if(reletOrderDO!=null){
+            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
+            return result;
+        }
         //目前仅允许未支付和支付失败订单重新结算
 //        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
 //            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
