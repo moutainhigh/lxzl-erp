@@ -87,5 +87,13 @@ public interface ReletOrderService extends VerifyReceiver {
      */
     ServiceResult<String, Boolean> isNeedVerify(ReletOrder reletOrder);
 
-
+    /**
+     * 取消续租单 (逻辑删除)
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/7 17:15
+     * @param
+     * @return
+     */
+    ServiceResult<String, Boolean> cancelReletOrderByNo(ReletOrder reletOrder);
 }

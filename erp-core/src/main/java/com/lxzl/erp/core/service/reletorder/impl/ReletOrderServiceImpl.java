@@ -106,13 +106,21 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //查询是否有续租单信息
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
+        if (null != recentlyReletOrderInDB) {
 
-            result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_RELET_REQUEST);
-            reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
-            result.setResult(reletOrderCreateResult);
-            return result;
-            // returnTime = recentlyReletOrderInDB.getExpectReturnTime();  //到期时间=最近一次续租时间的归还时间
+            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
+                result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_RELET_REQUEST);
+                reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
+                result.setResult(reletOrderCreateResult);
+                return result;
+            }
+
+            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+                result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOWED_MORE_THAN_ONE_SUCCESS_RECORD);
+                reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
+                result.setResult(reletOrderCreateResult);
+                return result;
+            }
         }
 
         //到期时间=订单的归还时间
@@ -305,6 +313,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
         //获取原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        //合法性
+        String verifyCode = verifyReletOrderCommitOperate(orderDO, reletOrderDO);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
+            return result;
+        }
+
         ServiceResult<String, Boolean> isNeedVerfyResult = checkIsNeedVerify(orderDO, reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(isNeedVerfyResult.getErrorCode())) {
             result.setErrorCode(isNeedVerfyResult.getErrorCode());
@@ -571,6 +586,25 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, Boolean> cancelReletOrderByNo(ReletOrder reletOrder){
+        ServiceResult<String, Boolean> result = new ServiceResult<>();
+        if (StringUtil.isBlank(reletOrder.getReletOrderNo())){
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+
+        ReletOrderDO reletOrderDO = new ReletOrderDO();
+        reletOrderDO.setReletOrderNo(reletOrder.getReletOrderNo());
+        reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+        reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
+        reletOrderDO.setUpdateTime(currentTime);
+        reletOrderMapper.update(reletOrderDO);
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 
     @Override
     public ServiceResult<String, Boolean> isNeedVerify(ReletOrder reletOrder){
@@ -1391,7 +1425,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     private String verifyOperateOrder(Order order) {
-        Integer intRentIngCount = 0;
+        Integer intRentingCount = 0;
         if (order == null) {
             return ErrorCode.SYSTEM_ERROR;
         }
@@ -1423,7 +1457,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             for (OrderProduct reletOrderProduct : order.getOrderProductList()) {
 
-                intRentIngCount += reletOrderProduct.getRentingProductCount() == null ? 0 : reletOrderProduct.getRentingProductCount();
+                intRentingCount += reletOrderProduct.getRentingProductCount() == null ? 0 : reletOrderProduct.getRentingProductCount();
 
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
@@ -1439,7 +1473,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             for (OrderMaterial reletOrderMaterial : order.getOrderMaterialList()) {
 
-                intRentIngCount += reletOrderMaterial.getRentingMaterialCount() == null ? 0 : reletOrderMaterial.getRentingMaterialCount();
+                intRentingCount += reletOrderMaterial.getRentingMaterialCount() == null ? 0 : reletOrderMaterial.getRentingMaterialCount();
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(order.getRentLengthType())
@@ -1449,10 +1483,53 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             }
         }
 
-        if (intRentIngCount <= 0) {
+        if (intRentingCount <= 0) {
             return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
         }
         return verifyOrderShortRentReceivable(customerDO, ConverterUtil.convert(order, ReletOrderDO.class));
+    }
+
+
+    /**
+     * 校验续租单提交时 合法性 （在租数量 不一致无法提交）
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/7 17:08
+     * @param
+     * @return
+     */
+    private String verifyReletOrderCommitOperate(OrderDO orderDO, ReletOrderDO reletOrderDO) {
+
+        if (orderDO == null || reletOrderDO == null) {
+            return ErrorCode.SYSTEM_ERROR;
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
+
+                OrderProductDO orderProductDO = getOrderProductDOById(orderDO, reletOrderProductDO.getOrderProductId());
+                if (!orderProductDO.getRentingProductCount().equals(reletOrderProductDO.getRentingProductCount())) {
+
+                    return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
+                }
+
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
+
+                OrderMaterialDO orderMaterial = getOrderMaterialDOById(orderDO, reletOrderMaterialDO.getOrderMaterialId());
+                if (!orderMaterial.getMaterialUnitAmount().equals(reletOrderMaterialDO.getMaterialUnitAmount())) {
+
+                    return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
     }
 
 
