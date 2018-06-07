@@ -1503,7 +1503,7 @@ public class StatementServiceImpl implements StatementService {
                         ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
                         if (reletOrderMaterialDO != null){
                             statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
-                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getMaterialCount());
+                            statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
                             statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
                             statementOrderDetail.setItemRentType(orderDO.getRentType());
                         }
@@ -1574,7 +1574,7 @@ public class StatementServiceImpl implements StatementService {
                             ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetail.getReletOrderItemReferId());
                             if (reletOrderMaterialDO != null){
                                 statementOrderDetail.setItemName(reletOrderMaterialDO.getMaterialName());
-                                statementOrderDetail.setItemCount(reletOrderMaterialDO.getMaterialCount());
+                                statementOrderDetail.setItemCount(reletOrderMaterialDO.getRentingMaterialCount());
                                 statementOrderDetail.setUnitAmount(reletOrderMaterialDO.getMaterialUnitAmount());
                                 statementOrderDetail.setItemRentType(orderDO.getRentType());
                                 statementOrderDetail.setStatementDetailType(StatementDetailType.STATEMENT_DETAIL_TYPE_OFFSET_RENT);
