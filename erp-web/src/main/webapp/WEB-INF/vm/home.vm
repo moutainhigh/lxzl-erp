@@ -57,9 +57,10 @@
                     </div>
 					{{/statistics}}
 				</script>
-				<div id="statistics"></div>
 
-                <div class="panel" id="pchart3"  style="position: relative;">
+				<div class="dataAnalysis hide" id="statistics"></div>
+
+                <div class="dataAnalysis hide panel" id="pchart3"  style="position: relative;">
                     <div id="statisticsUnReceivableForSubCompanyLoading" class="bg-loading hide" style="position: absolute;">
                         <div class="box-loading">
                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
@@ -115,7 +116,7 @@
                     </div>
                 </div>
 
-                <div class="panel" style="position: relative;">
+                <div class="dataAnalysis hide panel" style="position: relative;">
                     <div id="longRentByTimeLoading" class="bg-loading hide" style="position: absolute;">
                         <div class="box-loading">
                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
@@ -135,7 +136,7 @@
                     </div>
                 </div>
 
-                <div class="panel" style="position:relative;">
+                <div class="dataAnalysis hide panel" style="position:relative;">
                     <div id="shortRentByTimeLoading" class="bg-loading hide" style="position: absolute;">
                         <div class="box-loading">
                             <div class="loading"><i></i><span>数据加载中,请稍候...</span></div>
@@ -155,7 +156,11 @@
                     </div>
                 </div>
 
-
+                <div class="section row welcome hide">
+                    <div class="mw1100 center-block">
+                        <h2 class="lh30 mt70 text-center">欢迎使用凌雄租赁ERP系统</h2>
+                    </div>
+                </div>
 			</section>
 		</section>
 		#parse("layout/sidebarRight.vm")
