@@ -1779,7 +1779,7 @@ public class StatementServiceImpl implements StatementService {
 //                                }
 //                            }
                             //计算续租 退还金额
-                            if (isReletOrder){
+                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null){
 
                                 ReletOrderProductDO reletOrderProductDO = reletOrderProductMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                                 Integer rentingProductCount = reletOrderProductDO.getRentingProductCount();
@@ -1795,6 +1795,7 @@ public class StatementServiceImpl implements StatementService {
 
                                     payReturnAmount = BigDecimalUtil.add(reletCurrentPhaseReturnAmount, payReturnAmount);
                                 }
+
                                 // 结算明细开始时间大于退货时间，则生成该明细对应的退货结算单明细
                                 if (!OrderRentType.RENT_TYPE_DAY.equals(orderProductDO.getRentType())&&statementDetailStartTime.getTime()>returnTime.getTime()) {
 
@@ -1964,7 +1965,7 @@ public class StatementServiceImpl implements StatementService {
 //                            }
 
                             //计算续租 退还金额
-                            if (isReletOrder){
+                            if (isReletOrder && statementOrderDetailDO.getReletOrderItemReferId() != null){
                                 ReletOrderMaterialDO reletOrderMaterialDO = reletOrderMaterialMapper.findById(statementOrderDetailDO.getReletOrderItemReferId());
                                 Integer rentingMaterialCount = reletOrderMaterialDO.getRentingMaterialCount();
 
