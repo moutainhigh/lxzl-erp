@@ -2446,8 +2446,8 @@ public class OrderServiceImpl implements OrderService {
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
-            order.setCanReletOrder(canReletOrder);
+//            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+//            order.setCanReletOrder(canReletOrder);
             orderList.add(order);
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
@@ -3776,13 +3776,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getRentStartTime() == null) {
             return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
         }
-//        try {
-//            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
-//                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//            }
-//        } catch (Exception e) {
-//            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
-//        }
+        try {
+            if (order.getRentStartTime().getTime() < new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2018-03-01 00:00:00").getTime()) {
+                return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+            }
+        } catch (Exception e) {
+            return ErrorCode.ORDER_HAVE_NO_RENT_START_TIME;
+        }
         if (order.getExpectDeliveryTime() == null) {
             return ErrorCode.ORDER_EXPECT_DELIVERY_TIME;
         }
