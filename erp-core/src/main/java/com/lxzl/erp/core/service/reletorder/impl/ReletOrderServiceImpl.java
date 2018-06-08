@@ -314,7 +314,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         //获取原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
         //合法性
-        String verifyCode = verifyReletOrderCommitOperate(orderDO, reletOrderDO);
+        String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(verifyCode)) {
             result.setErrorCode(verifyCode);
             return result;
@@ -392,30 +392,29 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
             orderRentType = "租赁类型：月租";
         }
+        String strReletInfo = "续租单号：【" + reletOrderDO.getReletOrderNo() + "】，"+ orderRentType +"，续租时长："
+                + reletOrderDO.getRentTimeLength() + "。";
+        StringBuilder verifyMatters = new StringBuilder(strReletInfo);
 
-        String verifyMatters;
-        verifyMatters = "续租单号：【" + reletOrderDO.getReletOrderNo() + "】，"+ orderRentType +"，续租时长："
-                + reletOrderDO.getRentTimeLength() + "。" ;
-        String verifyProduct = "";
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
             for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
-                verifyProduct = "商品名称：【" + reletOrderProductDO.getProductName() + "】，商品单价："
+                String verifyProduct = "商品名称：【" + reletOrderProductDO.getProductName() + "】，商品单价："
                         + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "。" ;
+                verifyMatters.append(verifyProduct);
             }
-            verifyMatters += verifyProduct;
+
         }
 
-        String verifyMaterial = "";
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
             for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
-                verifyMaterial = "配件名称：【" + reletOrderMaterialDO.getMaterialName() + "】，配件单价："
+                String verifyMaterial = "配件名称：【" + reletOrderMaterialDO.getMaterialName() + "】，配件单价："
                         + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "。" ;
-
+                verifyMatters.append(verifyMaterial);
             }
-            verifyMatters += verifyMaterial;
+
         }
 
-        result.setResult(verifyMatters);
+        result.setResult(verifyMatters.toString());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
@@ -472,11 +471,17 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             if (verifyResult) {
 
                 // 只有审批通过的续租单才生成 结算单
-
                 OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
                 if (orderDO == null){
                     return ErrorCode.ORDER_NOT_EXISTS;
                 }
+
+                //判断在租数 是否一致
+                String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
+                if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+                    return verifyCode;
+                }
+
                 orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
 //                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
                 orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -1511,7 +1516,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @param
      * @return
      */
-    private String verifyReletOrderCommitOperate(OrderDO orderDO, ReletOrderDO reletOrderDO) {
+    private String verifyReletOrderOperate(OrderDO orderDO, ReletOrderDO reletOrderDO) {
 
         if (orderDO == null || reletOrderDO == null) {
             return ErrorCode.SYSTEM_ERROR;
