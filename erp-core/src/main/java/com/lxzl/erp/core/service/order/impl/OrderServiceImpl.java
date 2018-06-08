@@ -1664,8 +1664,10 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+        Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
         order.setCanReletOrder(canReletOrder);
+        Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+        order.setIsReletOrder(isReletOrder);
 
         //获取确认收货变更原因及交货单客户签字图片逻辑
         if (order.getOrderStatus()>OrderStatus.ORDER_STATUS_DELIVERED) {
@@ -1706,19 +1708,19 @@ public class OrderServiceImpl implements OrderService {
             return false;
         }
 
-        //有续租单，且续租状态为续租中 才可续租
-        ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-        if (null != recentlyReletOrderInDB) {
-            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
-
-                return false;
-            }
-
-//            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+//        //有续租单，且续租状态为续租中 才可续租
+//        ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
+//        if (null != recentlyReletOrderInDB) {
+//            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
 //
 //                return false;
 //            }
-        }
+//
+////            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+////
+////                return false;
+////            }
+//        }
 
         return true;
     }
@@ -1825,8 +1827,10 @@ public class OrderServiceImpl implements OrderService {
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+        Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
         order.setCanReletOrder(canReletOrder);
+        Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+        order.setIsReletOrder(isReletOrder);
 
         /*******组合商品逻辑 start********/
         // 将orderJointProductId不为空的订单商品和配件放入对应的OrderJointProduct中, 并将数量除以组合商品数
@@ -2446,8 +2450,10 @@ public class OrderServiceImpl implements OrderService {
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+            Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
             order.setCanReletOrder(canReletOrder);
+            Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+            order.setIsReletOrder(isReletOrder);
             orderList.add(order);
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
@@ -2484,8 +2490,10 @@ public class OrderServiceImpl implements OrderService {
 
             Order order = ConverterUtil.convert(orderDO, Order.class);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+            Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
             order.setCanReletOrder(canReletOrder);
+            Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+            order.setIsReletOrder(isReletOrder);
             orderList.add(order);
         }
 

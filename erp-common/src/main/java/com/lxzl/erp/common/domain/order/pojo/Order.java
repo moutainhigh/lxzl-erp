@@ -81,6 +81,8 @@ public class Order extends BasePO {
     private Integer statementDate;                              //结算时间（天），20和31两种情况，如果为空取系统设定
     private String orderMessage;                                //订单消息
 
+
+
     private List<OrderProduct> orderProductList;                // 订单商品项
     private List<OrderMaterial> orderMaterialList;              // 订单配件项
     @Valid
@@ -107,7 +109,9 @@ public class Order extends BasePO {
 
     private List<Coupon> couponList;//该订单使用的设备优惠券
 
-    private Integer canReletOrder;                  //是否可续租     0不可以续租  1可以
+    private Integer canReletOrder;                              //是否可续租     0不可以续租  1可以
+    private Integer orderReletId;                               //续租单ID
+    private Integer isReletOrder;                               //是否为续租单    0否  1是
 
     private String changeReason;//确认收货变更原因
     private Image deliveryNoteCustomerSignImg;//交货单客户签字
@@ -695,6 +699,17 @@ public class Order extends BasePO {
         this.orderJointProductList = orderJointProductList;
     }
 
+    public Integer getOrderReletId() { return orderReletId; }
+
+    public void setOrderReletId(Integer orderReletId) { this.orderReletId = orderReletId; }
+
+    public Integer getIsReletOrder() {
+        return isReletOrder;
+    }
+
+    public void setIsReletOrder(Integer isReletOrder) {
+        this.isReletOrder = isReletOrder;
+    }
 
     public Integer getCanReletOrder() {
         return canReletOrder;
