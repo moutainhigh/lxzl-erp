@@ -392,30 +392,29 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
             orderRentType = "租赁类型：月租";
         }
+        String strReletInfo = "续租单号：【" + reletOrderDO.getReletOrderNo() + "】，"+ orderRentType +"，续租时长："
+                + reletOrderDO.getRentTimeLength() + "。";
+        StringBuilder verifyMatters = new StringBuilder(strReletInfo);
 
-        String verifyMatters;
-        verifyMatters = "续租单号：【" + reletOrderDO.getReletOrderNo() + "】，"+ orderRentType +"，续租时长："
-                + reletOrderDO.getRentTimeLength() + "。" ;
-        String verifyProduct = "";
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
             for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
-                verifyProduct = "商品名称：【" + reletOrderProductDO.getProductName() + "】，商品单价："
+                String verifyProduct = "商品名称：【" + reletOrderProductDO.getProductName() + "】，商品单价："
                         + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "。" ;
+                verifyMatters.append(verifyProduct);
             }
-            verifyMatters += verifyProduct;
+
         }
 
-        String verifyMaterial = "";
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
             for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
-                verifyMaterial = "配件名称：【" + reletOrderMaterialDO.getMaterialName() + "】，配件单价："
+                String verifyMaterial = "配件名称：【" + reletOrderMaterialDO.getMaterialName() + "】，配件单价："
                         + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "。" ;
-
+                verifyMatters.append(verifyMaterial);
             }
-            verifyMatters += verifyMaterial;
+
         }
 
-        result.setResult(verifyMatters);
+        result.setResult(verifyMatters.toString());
         result.setErrorCode(ErrorCode.SUCCESS);
         return result;
     }
