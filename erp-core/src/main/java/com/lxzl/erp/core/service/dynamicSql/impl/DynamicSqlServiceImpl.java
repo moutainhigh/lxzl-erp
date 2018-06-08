@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -105,7 +106,7 @@ public class DynamicSqlServiceImpl implements DynamicSqlService {
                     String dateStr = DateUtil.formatDate((Date) obj, "yyyy-MM-dd HH:mm:ss");
                     objList.set(i, dateStr);
                 }
-                if (obj instanceof Number) { // 格式化数字（保留两位小数）
+                if (obj instanceof Double || obj instanceof Float || obj instanceof BigDecimal) { // 格式化数字（保留两位小数）
                     DecimalFormat df = new DecimalFormat("######0.00");
                     String numberStr = df.format(obj);
                     objList.set(i, numberStr);
