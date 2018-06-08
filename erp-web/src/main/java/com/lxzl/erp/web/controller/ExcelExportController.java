@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
 import java.util.List;
 
 @RequestMapping("/exportExcel")
@@ -84,6 +85,8 @@ public class ExcelExportController {
 
     @RequestMapping(value = "exportDynamicSql", method = RequestMethod.POST)
     public Result exportDynamicSql(DynamicSql dynamicSql, HttpServletResponse response) throws Exception {
+        String sql  = URLDecoder.decode(dynamicSql.getSql(),"UTF-8");
+        dynamicSql.setSql(sql);
         dynamicSql.setLimit(Integer.MAX_VALUE);
         Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
 

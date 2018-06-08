@@ -305,6 +305,12 @@ public class StatementServiceImpl implements StatementService {
             result.setErrorCode(ErrorCode.ORDER_NOT_EXISTS);
             return result;
         }
+        //续租不让重算
+        ReletOrderDO reletOrderDO = reletOrderMapper.findRecentlyReletedOrderByOrderId(orderDO.getId());
+        if(reletOrderDO!=null){
+            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOW_RE_STATEMENT);
+            return result;
+        }
         //目前仅允许未支付和支付失败订单重新结算
 //        if (!(PayStatus.PAY_STATUS_INIT.equals(orderDO.getPayStatus()) || PayStatus.PAY_STATUS_FAILED.equals(orderDO.getPayStatus()))) {
 //            result.setErrorCode(ErrorCode.ORDER_PAY_STATUS_CAN_NOT_RESETTLE);
@@ -878,15 +884,16 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) <= 0
-                && BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) <= 0
-                && BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) <= 0
-                && BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) <= 0
-                && BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) <= 0
-                && BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) <= 0) {
-            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
-            return result;
-        }
+        // 允许冲正后的计算单更改为已支付状态
+//        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) <= 0
+//                && BigDecimalUtil.compare(payRentAmount, BigDecimal.ZERO) <= 0
+//                && BigDecimalUtil.compare(payRentDepositAmount, BigDecimal.ZERO) <= 0
+//                && BigDecimalUtil.compare(payDepositAmount, BigDecimal.ZERO) <= 0
+//                && BigDecimalUtil.compare(payOtherAmount, BigDecimal.ZERO) <= 0
+//                && BigDecimalUtil.compare(payOverdueAmount, BigDecimal.ZERO) <= 0) {
+//            result.setErrorCode(ErrorCode.STATEMENT_PAY_AMOUNT_ERROR);
+//            return result;
+//        }
 
         // 冲正后的结算单金额，必须要与现有的结算单金额相同
         if (BigDecimalUtil.compare(totalAmount, BigDecimalUtil.sub(statementOrderDO.getStatementAmount(), statementOrderDO.getStatementPaidAmount())) != 0) {
@@ -894,32 +901,34 @@ public class StatementServiceImpl implements StatementService {
             return result;
         }
 
-        StatementPayOrderDO statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, StatementOrderPayType.PAY_TYPE_BALANCE, loginUser.getUserId(), currentTime);
-        if (statementPayOrderDO == null) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(ErrorCode.STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO);
-            return result;
-        }
+        if (BigDecimalUtil.compare(totalAmount, BigDecimal.ZERO) > 0) {
+            StatementPayOrderDO statementPayOrderDO = statementPaySupport.saveStatementPayOrder(statementOrderDO.getId(), totalAmount, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, StatementOrderPayType.PAY_TYPE_BALANCE, loginUser.getUserId(), currentTime);
+            if (statementPayOrderDO == null) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(ErrorCode.STATEMENT_ORDER_AMOUNT_MAST_MORE_THEN_ZERO);
+                return result;
+            }
 
-        ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getRemark(), BigDecimalUtil.add(payRentAmount, payOverdueAmount), payRentDepositAmount, payDepositAmount, payOtherAmount);
-        if (!ErrorCode.SUCCESS.equals(paymentResult.getErrorCode()) || !paymentResult.getResult()) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(paymentResult.getErrorCode());
-            return result;
-        }
+            ServiceResult<String, Boolean> paymentResult = paymentService.balancePay(customerDO.getCustomerNo(), statementPayOrderDO.getStatementPayOrderNo(), statementOrderDO.getRemark(), BigDecimalUtil.add(payRentAmount, payOverdueAmount), payRentDepositAmount, payDepositAmount, payOtherAmount);
+            if (!ErrorCode.SUCCESS.equals(paymentResult.getErrorCode()) || !paymentResult.getResult()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(paymentResult.getErrorCode());
+                return result;
+            }
 
-//        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
-//        if (!updatePayOrderResult) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
-//            return result;
-//        }
+            //        boolean updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
+            //        if (!updatePayOrderResult) {
+            //            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            //            result.setErrorCode(ErrorCode.STATEMENT_PAY_FAILED);
+            //            return result;
+            //        }
 
-        ServiceResult<String, Boolean> updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
-        if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result.setErrorCode(updatePayOrderResult.getErrorCode());
-            return result;
+            ServiceResult<String, Boolean> updatePayOrderResult = statementPaySupport.updateStatementPayOrderStatus(statementPayOrderDO.getId(), PayStatus.PAY_STATUS_PAID, null, loginUser.getUserId(), currentTime);
+            if (!ErrorCode.SUCCESS.equals(updatePayOrderResult.getErrorCode()) && !updatePayOrderResult.getResult()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(updatePayOrderResult.getErrorCode());
+                return result;
+            }
         }
 
         updateStatementOrderResult(statementOrderDO, payRentAmount, payRentDepositAmount, payDepositAmount, payOtherAmount, payOverdueAmount, currentTime, loginUser.getUserId());

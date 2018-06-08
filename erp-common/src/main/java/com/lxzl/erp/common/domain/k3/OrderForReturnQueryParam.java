@@ -16,8 +16,17 @@ public class OrderForReturnQueryParam extends BasePageParam implements Serializa
 
     private String orderNo;
     private String customerNo;
+    private Integer orderStatus;
     private Date createStartTime;
     private Date createEndTime;
+
+    public Integer getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(Integer orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 
     public String getOrderNo() {
         return orderNo;
