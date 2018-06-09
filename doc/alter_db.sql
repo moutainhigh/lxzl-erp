@@ -872,10 +872,8 @@ ALTER TABLE `erp_bank_slip_claim` ADD INDEX `index_customer_no`(`customer_no`);
 
 -------------------------------未执行-----------------------------
 
-ALTER TABLE erp_order add `relet_order_no`  varchar(100)  DEFAULT NULL COMMENT '续租单编号';
-ALTER TABLE erp_order add `origin_order_no`  varchar(100)  DEFAULT NULL COMMENT '原订单编号';
-
-
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_status` INT(11) NOT NULL DEFAULT '0' COMMENT '结算单是否确认，0否1是';
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_user` INT(20) COMMENT '结算单确认人';
 ALTER TABLE erp_customer ADD COLUMN `confirm_statement_time` DATETIME COMMENT '结算单确认时间';
+ALTER TABLE erp_statement_order_detail add `relet_order_item_refer_id` int(20) DEFAULT NULL COMMENT '续租订单项ID';
+
