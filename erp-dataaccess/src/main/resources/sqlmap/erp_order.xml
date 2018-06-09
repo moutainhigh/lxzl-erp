@@ -334,9 +334,6 @@
             <include refid="material_column_List"/>
         </trim>
         <trim prefix=",">
-            <include refid="relet_column_List"/>
-        </trim>
-        <trim prefix=",">
             <include refid="joint_product_column_List"/>
         </trim>
         FROM (
@@ -363,7 +360,6 @@
         ) m_order
         LEFT JOIN erp_order_product eop ON m_order.id = eop.order_id and eop.data_status = 1
         LEFT JOIN erp_order_material eom ON m_order.id = eom.order_id and eom.data_status = 1
-        LEFT JOIN erp_relet_order ero ON m_order.id = ero.order_id and ero.data_status = 1
         LEFT JOIN erp_order_joint_product eojp on m_order.id = eojp.order_id and eojp.data_status = 1
         LEFT JOIN erp_joint_product ejp on ejp.id = eojp.joint_product_id
     </select>
