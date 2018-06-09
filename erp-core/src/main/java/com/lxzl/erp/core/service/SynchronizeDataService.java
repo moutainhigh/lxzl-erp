@@ -11,5 +11,5 @@ public interface SynchronizeDataService {
     /**
      * 获取订单号，然后调用批量重算接口
      */
-    void synchronizeOrderList2BatchReCreateOrderStatement(long millis);
+    void synchronizeOrderList2BatchReCreateOrderStatement(long millis, int orderNum);
 }

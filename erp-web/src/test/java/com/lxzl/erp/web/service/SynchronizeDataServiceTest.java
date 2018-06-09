@@ -19,7 +19,8 @@ public class SynchronizeDataServiceTest extends BaseUnTransactionalTest {
     @Test
     public void testSynchronizeOrderList2BatchReCreateOrderStatement(){
         // 获取所有订单号，循环每个订单号调用批量重算结算单接口
-        synchronizeDataService.synchronizeOrderList2BatchReCreateOrderStatement(100);
+        // 每次调用接口休眠100毫秒，发送50个订单号
+        synchronizeDataService.synchronizeOrderList2BatchReCreateOrderStatement(100, 10);
     }
 
 }
