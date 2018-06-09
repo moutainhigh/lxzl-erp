@@ -39,9 +39,12 @@ public class SynchronizeDataServiceImpl implements SynchronizeDataService {
     private static final String LOGIN_USER_NAME = "admin";
     private static final String LOGIN_PASSWORD = "lxzl123.456";
 
+    private static final String ORDER_NO_LIST = "LXO-20180305-010-00001,LXO-20180305-021-00002,LXO-20180305-0755-00003,LXO-20180305-021-00004,LXO-20180305-027-00005,LXO-20180305-021-00006,LXO-20180305-010-00007,LXO-20180305-2000-00008,LXO-20180305-0755-00009,LXO-20180305-027-00010";
+
     public void synchronizeOrderList2BatchReCreateOrderStatement(long millis, int orderNum) {
         CloseableHttpClient client = HttpClients.createDefault();
-        List<String> orderNoList = orderMapper.findAllOrderNo();
+//        List<String> orderNoList = orderMapper.findAllOrderNo();
+        String[] orders = ORDER_NO_LIST.split(",");
         login(client, LOGIN_USER_NAME, LOGIN_PASSWORD);
 
         List<String> postOrderList;
@@ -51,13 +54,15 @@ public class SynchronizeDataServiceImpl implements SynchronizeDataService {
 
         logger.info("***********获取所有订单号调用批量重算接口 开始**************");
         logger.info("批量重算接口为：{}", BATCH_RECREATE_ORDER_STATEMENT_URL);
-        logger.info("订单号数量为：{}", orderNoList.size());
+        logger.info("订单号数量为：{}", orders.length);
         logger.info("调用接口睡眠间隔：{}毫秒", millis);
         int currentOrderIndex = 0;
-        while (currentOrderIndex < orderNoList.size()) {
+        while (currentOrderIndex < orders.length) {
             postOrderList = new ArrayList<>();
-            int toIndex = (currentOrderIndex + orderNum) > orderNoList.size() ? orderNoList.size() : (currentOrderIndex + orderNum);
-            postOrderList.addAll(orderNoList.subList(currentOrderIndex, toIndex));
+            int toIndex = (currentOrderIndex + orderNum) > orders.length ? orders.length : (currentOrderIndex + orderNum);
+            for (int i = currentOrderIndex; i < toIndex; i++) {
+                postOrderList.add(orders[i]);
+            }
 
             batchReCreateOrderStatementParam = new BatchReCreateOrderStatementParam();
             batchReCreateOrderStatementParam.setOrderNoList(postOrderList);
