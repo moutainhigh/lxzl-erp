@@ -1669,7 +1669,7 @@ public class OrderServiceImpl implements OrderService {
         //判断是否可续租
         Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
         order.setCanReletOrder(canReletOrder);
-        Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+        Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
 
         //获取确认收货变更原因及交货单客户签字图片逻辑
@@ -1835,7 +1835,7 @@ public class OrderServiceImpl implements OrderService {
         //判断是否可续租
         Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
         order.setCanReletOrder(canReletOrder);
-        Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+        Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
 
         /*******组合商品逻辑 start********/
@@ -2457,7 +2457,8 @@ public class OrderServiceImpl implements OrderService {
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
  			Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
-            order.setCanReletOrder(canReletOrder);            Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+            order.setCanReletOrder(canReletOrder);
+            Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
             orderList.add(order);
         }
@@ -2497,7 +2498,7 @@ public class OrderServiceImpl implements OrderService {
             //判断是否可续租
             Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
             order.setCanReletOrder(canReletOrder);
-            Integer isReletOrder = order.getOrderReletId() != null ? CommonConstant.YES : CommonConstant.NO;
+            Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
             orderList.add(order);
         }
