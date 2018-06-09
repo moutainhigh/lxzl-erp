@@ -167,22 +167,22 @@ public class WorkflowServiceImpl implements WorkflowService {
                 return result;
             }
             workflowLinkNo = customerCommitWorkFlow.getResult();
-        }  else {
+        } else {
 
-            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(0));
+            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo, workflowNodeDOList.get(0));
             if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
-            if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId)&&WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
+            if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId) && WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
 
-            if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)){
+            if (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)) {
                 CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
                 WorkflowLinkDO workflowLinkDO = workflowLinkMapper.findByWorkflowTypeAndReferNo(workflowType, workflowReferNo);
                 List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
                 if (customerConsignInfoDOList.size() == 0) {
-                    return channelCustomerCommitWorkFlow(workflowLinkDO,verifyUser);
+                    return channelCustomerCommitWorkFlow(workflowLinkDO, verifyUser);
                 }
             }
             WorkflowNodeDO thisWorkflowNodeDO = workflowNodeDOList.get(0);
@@ -231,7 +231,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
     }
 
-    private Integer getSubCompanyId(Integer workflowType, String workflowReferNo,WorkflowNodeDO workflowNodeDO) {
+    private Integer getSubCompanyId(Integer workflowType, String workflowReferNo, WorkflowNodeDO workflowNodeDO) {
         Integer subCompanyId = -1;
         if (WorkflowType.WORKFLOW_TYPE_DEPLOYMENT_ORDER_INFO.equals(workflowType)) {
             DeploymentOrderDO deploymentOrderDO = deploymentOrderMapper.findByNo(workflowReferNo);
@@ -239,7 +239,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (warehouseDO != null) {
                 subCompanyId = warehouseDO.getSubCompanyId();
             }
-        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)||
+        } else if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType) ||
                 WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowType)) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             if (customerDO != null) {
@@ -259,13 +259,13 @@ public class WorkflowServiceImpl implements WorkflowService {
                     }
                 }
             }
-        }else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
-            if(CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())){
+        } else if (WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
+            if (CommonConstant.WORKFLOW_STEP_TWO.equals(workflowNodeDO.getWorkflowStep())) {
                 OrderDO orderDO = orderMapper.findByOrderNo(workflowReferNo);
-                if(orderDO != null){
+                if (orderDO != null) {
                     subCompanyId = orderDO.getDeliverySubCompanyId();
                 }
-            }else{
+            } else {
                 subCompanyId = userSupport.getCurrentUserCompanyId();
             }
         } else {
@@ -501,13 +501,13 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
             return result;
         }
-        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+        if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
-            if(customerDO ==null){
+            if (customerDO == null) {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
             }
             UserDO userDO = userMapper.findByUserId(Integer.parseInt(customerDO.getCreateUser()));
-            if(userSupport.isChannelSubCompany(ConverterUtil.convert(userDO,User.class))){
+            if (userSupport.isChannelSubCompany(ConverterUtil.convert(userDO, User.class))) {
                 workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
             }
         }
@@ -541,8 +541,8 @@ public class WorkflowServiceImpl implements WorkflowService {
                 return result;
             } else if (VerifyStatus.VERIFY_STATUS_BACK.equals(lastWorkflowLinkDetailDO.getVerifyStatus())) {
 
-                if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
-                        (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()==2)) {
+                if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) ||
+                        (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) && workflowLinkDO.getWorkflowStep() == 2)) {
                     CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
                     if (customerDO == null) {
                         result.setErrorCode(ErrorCode.CUSTOMER_NOT_EXISTS);
@@ -557,9 +557,9 @@ public class WorkflowServiceImpl implements WorkflowService {
                     }
                     List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
                     if (customerConsignInfoDOList.size() == 0) {
-                        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowLinkDO.getWorkflowType())){
+                        if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowLinkDO.getWorkflowType())) {
                             workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(1);
-                        }else if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())){
+                        } else if (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
                             if (lastWorkflowLinkDetailDO.getWorkflowStep() == 2 || lastWorkflowLinkDetailDO.getWorkflowStep() == 3) {
                                 workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(1);
                             } else {
@@ -593,21 +593,21 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowNodeDO = workflowNodeMapper.findById(lastWorkflowLinkDetailDO.getWorkflowNextNodeId());
             }
         }
-        Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDO);
+        Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo, workflowNodeDO);
         if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
             subCompanyId = CommonConstant.HEAD_COMPANY_ID;
         }
-        if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId)&&WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
+        if (CommonConstant.CHANNEL_CUSTOMER_COMPANY_ID.equals(subCompanyId) && WorkflowType.WORKFLOW_TYPE_ORDER_INFO.equals(workflowType)) {
             subCompanyId = CommonConstant.HEAD_COMPANY_ID;
         }
         //为了不影响之前审核逻辑，这里copy了部分逻辑
 
-        if (workflowLinkDO!=null&&(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
-                (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())&&workflowLinkDO.getWorkflowStep()>=1))) {
+        if (workflowLinkDO != null && (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) ||
+                (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) && workflowLinkDO.getWorkflowStep() >= 1))) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
             List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
             if (customerConsignInfoDOList.size() == 0) {
-                workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(workflowTemplateDO.getWorkflowNodeDOList().size()-1);
+                workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(workflowTemplateDO.getWorkflowNodeDOList().size() - 1);
                 List<User> userList = getUserListByNode(workflowNodeDO, subCompanyId);
                 result.setErrorCode(ErrorCode.SUCCESS);
                 result.setResult(userList);
@@ -678,14 +678,14 @@ public class WorkflowServiceImpl implements WorkflowService {
             result.setErrorCode(ErrorCode.PARAM_IS_NOT_ENOUGH);
             return result;
         }
-        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)){
+        if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowType)) {
             CustomerDO customerDO = customerMapper.findByNo(workflowReferNo);
-            if(customerDO==null){
+            if (customerDO == null) {
                 result.setErrorCode(ErrorCode.WORKFLOW_LINK_NOT_EXISTS);
                 return result;
             }
-            ServiceResult<String,User > userResult = userService.getUserById(Integer.valueOf(customerDO.getCreateUser()));
-            if(userSupport.isChannelSubCompany(userResult.getResult())){
+            ServiceResult<String, User> userResult = userService.getUserById(Integer.valueOf(customerDO.getCreateUser()));
+            if (userSupport.isChannelSubCompany(userResult.getResult())) {
                 workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
             }
         }
@@ -743,7 +743,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (!userSupport.isSuperUser()) {
             paramMap.put("verifyUserId", userSupport.getCurrentUserId().toString());
             List<String> currentUserGroupList = workflowVerifyUserGroupMapper.findGroupUUIDByUserId(userSupport.getCurrentUserId());
-            paramMap.put("currentUserGroupList",currentUserGroupList );
+            paramMap.put("currentUserGroupList", currentUserGroupList);
         }
         Integer dataCount = workflowLinkMapper.listCount(paramMap);
         List<WorkflowLinkDO> dataList = workflowLinkMapper.listPage(paramMap);
@@ -782,9 +782,10 @@ public class WorkflowServiceImpl implements WorkflowService {
      * 将该方法类的相关代码移到verifyWorkFlowFromCore方法中
      * 目的是为了动态传入当前审核人用户编号
      * </pre>
+     *
+     * @return
      * @author daiqi
      * @date 2018/4/28 15:12
-     * @return
      */
     @Override
     @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -804,9 +805,9 @@ public class WorkflowServiceImpl implements WorkflowService {
             return result;
         }
         //客户不允许拨回到上一层
-        if((WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
-                WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()))&&
-        WorkflowReturnType.RETURN_TYPE_PREVIOUS.equals(returnType) ){
+        if ((WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) ||
+                WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) &&
+                WorkflowReturnType.RETURN_TYPE_PREVIOUS.equals(returnType)) {
             result.setErrorCode(ErrorCode.WORKFLOW_CUSTOMER_CAN_NOT_BACK_PREVIOUS);
             return result;
         }
@@ -960,7 +961,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                         workflowVerifyUserGroupDOIng.setUpdateUser(currentVerifyUser.toString());
                         workflowVerifyUserGroupMapper.update(workflowVerifyUserGroupDOIng);
                     }
-                    if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||
+                    if (WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) ||
                             WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())) {
                         CustomerDO customerDO = customerMapper.findByNo(workflowLinkDO.getWorkflowReferNo());
                         if (customerDO == null) {
@@ -1010,9 +1011,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
         // 如果审核通过并且下一步审核不为空的时候，判断下一步的审核人是否正确
         //工作流为渠道分公司审核客户时，不需要校验
-        if (!WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType())&&
+        if (!WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType()) &&
                 VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus) && nextWorkflowNodeDO != null) {
-            Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo(),nextWorkflowNodeDO);
+            Integer subCompanyId = getSubCompanyId(workflowLinkDO.getWorkflowType(), workflowLinkDO.getWorkflowReferNo(), nextWorkflowNodeDO);
             if (!verifyVerifyUsers(nextWorkflowNodeDO, nextVerifyUser, subCompanyId)) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                 result.setErrorCode(ErrorCode.WORKFLOW_VERIFY_USER_ERROR);
@@ -1028,15 +1029,15 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflowLinkDetailMapper.update(lastWorkflowLinkDetailDO);
 
         if (VerifyStatus.VERIFY_STATUS_PASS.equals(verifyStatus)) {
-            if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType())&&
-                    workflowLinkDO.getWorkflowStep()==1){
-                ServiceResult<String,String> channelCustomerCommitResult = channelCustomerCommitWorkFlow(workflowLinkDO,null);
-                if(!ErrorCode.SUCCESS.equals(channelCustomerCommitResult.getErrorCode())){
+            if (WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowTemplateDO.getWorkflowType()) &&
+                    workflowLinkDO.getWorkflowStep() == 1) {
+                ServiceResult<String, String> channelCustomerCommitResult = channelCustomerCommitWorkFlow(workflowLinkDO, null);
+                if (!ErrorCode.SUCCESS.equals(channelCustomerCommitResult.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // 回滚
                     result.setErrorCode(channelCustomerCommitResult.getErrorCode());
                     return result;
                 }
-            }else if (nextWorkflowNodeDO != null) {
+            } else if (nextWorkflowNodeDO != null) {
 
                 WorkflowVerifyUserGroupDO workflowVerifyUserGroupDO = new WorkflowVerifyUserGroupDO();
                 workflowVerifyUserGroupDO.setVerifyUserGroupId(generateNoSupport.generateVerifyUserGroupId());
@@ -1085,7 +1086,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkDO.setWorkflowStep(0);
                 workflowLinkDO.setCurrentVerifyUser(CommonConstant.SUPER_USER_ID);
             } else if (previousWorkflowNodeDO != null) {
-                if ((WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType())||WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType() )&& userSupport.isRiskManagementPerson())) {
+                if ((WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) && userSupport.isRiskManagementPerson())) {
                     // 如果是客户和地址并且是风控审核就驳回，那么就相当于驳回到根部
                     noticeBusinessModule = true;
                     workflowLinkDO.setWorkflowStep(0);
@@ -1724,7 +1725,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 workflowLinkNo = workflowLinkDO.getWorkflowLinkNo();
             }
         } else {
-            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo,workflowNodeDOList.get(1));
+            Integer subCompanyId = getSubCompanyId(workflowType, workflowReferNo, workflowNodeDOList.get(1));
             if (CommonConstant.ELECTRIC_SALE_COMPANY_ID.equals(subCompanyId)) {
                 subCompanyId = CommonConstant.HEAD_COMPANY_ID;
             }
@@ -1816,7 +1817,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         return result;
     }
 
-    public ServiceResult<String, String> channelCustomerCommitWorkFlow(WorkflowLinkDO workflowLinkDO , Integer verifyUser) {
+    public ServiceResult<String, String> channelCustomerCommitWorkFlow(WorkflowLinkDO workflowLinkDO, Integer verifyUser) {
         ServiceResult<String, String> result = new ServiceResult<>();
         User loginUser = userSupport.getCurrentUser();
         Integer workflowType = WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER;
@@ -1885,16 +1886,16 @@ public class WorkflowServiceImpl implements WorkflowService {
         WorkflowNodeDO preWorkflowNodeDO = null;
         WorkflowNodeDO thisWorkflowNodeDO = null;
         WorkflowNodeDO nextWorkflowNodeDO = null;
-        for(WorkflowNodeDO workflowNodeDO : workflowNodeDOList){
-            if(workflowNodeDO.getWorkflowStep()==1){
+        for (WorkflowNodeDO workflowNodeDO : workflowNodeDOList) {
+            if (workflowNodeDO.getWorkflowStep() == 1) {
                 //修改当前步骤审核状态
                 preWorkflowNodeDO = workflowNodeDO;
             }
-            if(workflowNodeDO.getWorkflowStep()==2){
+            if (workflowNodeDO.getWorkflowStep() == 2) {
                 //修改当前步骤审核状态
                 thisWorkflowNodeDO = workflowNodeDO;
             }
-            if(workflowNodeDO.getWorkflowStep()==3){
+            if (workflowNodeDO.getWorkflowStep() == 3) {
                 nextWorkflowNodeDO = workflowNodeDO;
             }
         }
