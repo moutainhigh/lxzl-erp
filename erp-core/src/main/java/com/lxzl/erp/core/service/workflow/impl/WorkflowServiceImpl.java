@@ -557,11 +557,15 @@ public class WorkflowServiceImpl implements WorkflowService {
                     }
                     List<CustomerConsignInfoDO> customerConsignInfoDOList = customerConsignInfoMapper.findVerifyStatusByCustomerId(customerDO.getId());
                     if (customerConsignInfoDOList.size() == 0) {
-                        if (lastWorkflowLinkDetailDO.getWorkflowStep() == 2 || lastWorkflowLinkDetailDO.getWorkflowStep() == 3) {
+                        if(WorkflowType.WORKFLOW_TYPE_CUSTOMER.equals(workflowLinkDO.getWorkflowType()) || WorkflowType.WORKFLOW_TYPE_CUSTOMER_CONSIGN.equals(workflowLinkDO.getWorkflowType())){
                             workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(1);
-                        } else {
-                            result.setErrorCode(ErrorCode.SUCCESS);
-                            return result;
+                        }else if(WorkflowType.WORKFLOW_TYPE_CHANNEL_CUSTOMER.equals(workflowLinkDO.getWorkflowType())){
+                            if (lastWorkflowLinkDetailDO.getWorkflowStep() == 2 || lastWorkflowLinkDetailDO.getWorkflowStep() == 3) {
+                                workflowNodeDO = workflowTemplateDO.getWorkflowNodeDOList().get(1);
+                            } else {
+                                result.setErrorCode(ErrorCode.SUCCESS);
+                                return result;
+                            }
                         }
                     } else {
                         result.setErrorCode(ErrorCode.SUCCESS);
