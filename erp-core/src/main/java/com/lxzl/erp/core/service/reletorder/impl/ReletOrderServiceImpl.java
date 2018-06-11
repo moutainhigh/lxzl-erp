@@ -165,11 +165,11 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         calculateReletOrderProductInfo(reletOrderDO.getReletOrderProductDOList(), reletOrderDO);
         calculateReletOrderMaterialInfo(reletOrderDO.getReletOrderMaterialDOList(), reletOrderDO);
 
-        SubCompanyDO subCompanyDO = subCompanyMapper.findById(reletOrder.getDeliverySubCompanyId());
-        if (reletOrder.getDeliverySubCompanyId() == null || subCompanyDO == null) {
-            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
-            return result;
-        }
+//        SubCompanyDO subCompanyDO = subCompanyMapper.findById(reletOrder.getDeliverySubCompanyId());
+//        if (reletOrder.getDeliverySubCompanyId() == null || subCompanyDO == null) {
+//            result.setErrorCode(ErrorCode.SUB_COMPANY_NOT_EXISTS);
+//            return result;
+//        }
 
         SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(reletOrderDO.getOrderSubCompanyId());
         reletOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(reletOrderDO.getTotalProductAmount(), reletOrderDO.getTotalMaterialAmount()), reletOrderDO.getTotalDiscountAmount()));
