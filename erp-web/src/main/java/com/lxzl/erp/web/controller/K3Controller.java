@@ -54,6 +54,16 @@ public class K3Controller extends BaseController {
         ServiceResult<String, Page<Order>> serviceResult = k3ReturnOrderService.queryOrderForReturn(param);
         return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
+    /**
+     * 创建退货单时根据订单编号查询订单详情
+     * @param validResult
+     * @return
+     */
+    @RequestMapping(value = "queryOrderByNoForReturn", method = RequestMethod.POST)
+    public Result queryOrderByNoForReturn(@RequestBody OrderForReturnQueryParam param, BindingResult validResult) {
+        ServiceResult<String, Order> serviceResult = k3ReturnOrderService.queryOrderByNoForReturn(param.getOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
+    }
 
     @RequestMapping(value = "queryOrderByNo", method = RequestMethod.POST)
     public Result queryOrderByNo(@RequestBody K3OrderQueryParam param, BindingResult validResult) {

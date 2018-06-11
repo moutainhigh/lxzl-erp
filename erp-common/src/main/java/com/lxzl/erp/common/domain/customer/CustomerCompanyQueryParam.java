@@ -33,7 +33,17 @@ public class CustomerCompanyQueryParam extends BasePageParam {
     private String affiliatedEnterprise; //关联企业
     private Integer isRisk; //是否授信
 
+    private Integer confirmStatementStatus; // 是否确认结算单
+
     private List<Integer> passiveUserIdList;
+
+    public Integer getConfirmStatementStatus() {
+        return confirmStatementStatus;
+    }
+
+    public void setConfirmStatementStatus(Integer confirmStatementStatus) {
+        this.confirmStatementStatus = confirmStatementStatus;
+    }
 
     public Integer getIsRisk() {
         return isRisk;

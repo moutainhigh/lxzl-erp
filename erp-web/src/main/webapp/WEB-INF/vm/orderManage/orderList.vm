@@ -152,6 +152,9 @@
                                                 {{#isK3Order}}
                                                 <span class="label label-dark" title="K3订单">K3</span>
                                                 {{/isK3Order}}
+                                                {{#isReletOrder}}
+                                                <span class="label label-primary" title="续租单">续</span>
+                                                {{/isReletOrder}}
                                                 {{orderNo}}
                                             </td>
                                             <td>{{orderSubCompanyName}}</td>
@@ -260,6 +263,8 @@
                 'manage.order.handle.mixin.js',
                 'manage.order.js',
                 'manage.order.receipt.confirm.js',
+                'manage.order.relet.mixin.js',
+                'manage.order.relet.add.js',
                 'modal.input.js',
                 'modal.submit.audit.js');
     </script>

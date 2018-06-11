@@ -22,6 +22,22 @@
 		WHERE ekmmt.erp_material_type_code = #{erpCode}
 	</select>
 
+	<select id="findByErpCodeList" resultMap="K3MappingMaterialTypeDO" parameterType="java.util.Set">
+		SELECT <include refid="column_List"/> FROM erp_k3_mapping_material_type ekmmt
+		where 1 = 1
+		<choose>
+			<when test="materialDOMaterialTypeSet != null &amp;&amp; materialDOMaterialTypeSet.size() > 0">
+				and ekmmt.erp_material_type_code IN
+				<foreach collection="materialDOMaterialTypeSet" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and 1 = 2
+			</otherwise>
+		</choose>
+	</select>
+
 	<select id="listCount" resultType="java.lang.Integer" parameterType="map">
 		SELECT count(ekmmt.id) FROM erp_k3_mapping_material_type ekmmt 
 

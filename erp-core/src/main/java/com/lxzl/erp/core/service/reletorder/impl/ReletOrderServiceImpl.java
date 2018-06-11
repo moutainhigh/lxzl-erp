@@ -1,5 +1,6 @@
 package com.lxzl.erp.core.service.reletorder.impl;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
@@ -20,6 +21,7 @@ import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrderProduct;
 import com.lxzl.erp.common.domain.user.pojo.User;
 import com.lxzl.erp.common.util.*;
 import com.lxzl.erp.core.service.basic.impl.support.GenerateNoSupport;
+import com.lxzl.erp.core.service.k3.K3Service;
 import com.lxzl.erp.core.service.material.MaterialService;
 import com.lxzl.erp.core.service.messagethirdchannel.MessageThirdChannelService;
 import com.lxzl.erp.core.service.order.OrderService;
@@ -68,6 +70,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -102,14 +106,26 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         //查询是否有续租单信息
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-//        if (null != recentlyReletOrderInDB && !ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())) {
         if (null != recentlyReletOrderInDB) {
-            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE);
-            return result;
+
+            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
+                result.setErrorCode(ErrorCode.RELET_ORDER_EXISTS_RELET_REQUEST);
+                reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
+                result.setResult(reletOrderCreateResult);
+                return result;
+            }
+
+            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+                result.setErrorCode(ErrorCode.RELET_ORDER_NOT_ALLOWED_MORE_THAN_ONE_SUCCESS_RECORD);
+                reletOrderCreateResult.setReletOrderNo(recentlyReletOrderInDB.getReletOrderNo());
+                result.setResult(reletOrderCreateResult);
+                return result;
+            }
         }
-        //到期时间=订单的归还时间(第一次续租)
+
+        //到期时间=订单的归还时间
         returnTime = orderServiceResult.getResult().getExpectReturnTime();
-        String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentLengthType());
+        String validReletTimeRangeCode = validReletTimeRange(returnTime, currentTime, orderServiceResult.getResult().getRentType());
         if (!ErrorCode.SUCCESS.equals(validReletTimeRangeCode)) {
             result.setErrorCode(validReletTimeRangeCode);
             return result;
@@ -124,6 +140,13 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ReletOrder reletOrder = new ReletOrder(orderServiceResult.getResult());
         ReletOrderDO reletOrderDO = ConverterUtil.convert(reletOrder, ReletOrderDO.class);
+
+        //支付方式为首付百分比的订单 修改续租单支付方式为先用后付
+        String updateReletOrderPayModeCode = updateReletOrderPayModeOfBeforePercent(reletOrderDO);
+        if (!ErrorCode.SUCCESS.equals(updateReletOrderPayModeCode)) {
+            result.setErrorCode(updateReletOrderPayModeCode);
+            return result;
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(returnTime);
@@ -152,18 +175,8 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         reletOrderDO.setTotalOrderAmount(BigDecimalUtil.sub(BigDecimalUtil.add(reletOrderDO.getTotalProductAmount(), reletOrderDO.getTotalMaterialAmount()), reletOrderDO.getTotalDiscountAmount()));
         reletOrderDO.setReletOrderNo(generateNoSupport.generateReletOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
 
-        //reletOrderDO.setOrderSellerId(customerDO.getOwner());
-        //reletOrderDO.setBuyerCustomerName(customerDO.getCustomerName());
-
-        //添加客户的结算时间（天）
-        Date rentStartTime = reletOrder.getRentStartTime();
-        Integer statementDate = reletOrder.getStatementDate();//customerDO.getStatementDate();
-
-        //计算结算时间
-        Integer statementDays = statementOrderSupport.getCustomerStatementDate(statementDate, rentStartTime);
-
         //获取
-        reletOrderDO.setStatementDate(statementDays);
+        reletOrderDO.setStatementDate(reletOrder.getStatementDate());
         reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT);
         reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
         reletOrderDO.setCreateUser(loginUser.getUserId().toString());
@@ -185,7 +198,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Integer isNeedVerifyCode = isNeedVerify ? 1 : 0;
         reletOrderCreateResult.setIsNeedVerify(isNeedVerifyCode);
         if (isNeedVerify){
-            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getReletOrderNo());
+            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo());
             if (!ErrorCode.SUCCESS.equals(getVerifyUsersResult.getErrorCode())) {
                 result.setErrorCode(getVerifyUsersResult.getErrorCode());
                 return result;
@@ -197,6 +210,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         result.setResult(reletOrderCreateResult);
         return result;
     }
+
 
 
     @Override
@@ -218,7 +232,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
         if (reletOrderDO == null || !ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
-            result.setErrorCode(ErrorCode.BUSINESS_EXCEPTION);
+            result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_UPDATE);
             return result;
         }
 
@@ -253,7 +267,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         Integer isNeedVerifyCode = isNeedVerify ? 1 : 0;
         reletOrderCreateResult.setIsNeedVerify(isNeedVerifyCode);
         if (isNeedVerify){
-            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getReletOrderNo());
+            ServiceResult<String, List<User>> getVerifyUsersResult = workflowService.getNextVerifyUsers(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo());
             if (!ErrorCode.SUCCESS.equals(getVerifyUsersResult.getErrorCode())) {
                 result.setErrorCode(getVerifyUsersResult.getErrorCode());
                 return result;
@@ -282,6 +296,11 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             result.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
             return result;
         }
+        if (!ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())) {
+            result.setErrorCode(ErrorCode.RELET_ORDER_ONLY_WAIT_COMMIT_STATUS_ALLOWED_COMMIT);
+            return result;
+        }
+
         if (CollectionUtil.isEmpty(reletOrderDO.getReletOrderProductDOList())
                 && CollectionUtil.isEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
             result.setErrorCode(ErrorCode.RELET_ORDER_LIST_NOT_NULL);
@@ -294,20 +313,29 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         }
         //获取原订单信息
         OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
+        //合法性
+        String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
+        if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+            result.setErrorCode(verifyCode);
+            return result;
+        }
+
         ServiceResult<String, Boolean> isNeedVerfyResult = checkIsNeedVerify(orderDO, reletOrderDO);
         if (!ErrorCode.SUCCESS.equals(isNeedVerfyResult.getErrorCode())) {
             result.setErrorCode(isNeedVerfyResult.getErrorCode());
             return result;
         }
         if (isNeedVerfyResult.getResult()) {
-            String orderRemark = null;
-            if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
-                orderRemark = "租赁类型：天租";
-            } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
-                orderRemark = "租赁类型：月租";
+            String orderRemark = "续租";
+            ServiceResult<String, String> verifyMattersResult = getVerifyMatters(reletOrderDO);
+            if (!ErrorCode.SUCCESS.equals(verifyMattersResult.getErrorCode())) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                result.setErrorCode(verifyMattersResult.getErrorCode());
+                return result;
             }
-            String verifyMatters = null;
-            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, reletOrderDO.getReletOrderNo(), verifyUser, verifyMatters, commitRemark, reletOrderCommitParam.getImgIdList(), orderRemark);
+            String verifyMatters = verifyMattersResult.getResult();
+
+            ServiceResult<String, String> workflowCommitResult = workflowService.commitWorkFlow(WorkflowType.WORKFLOW_TYPE_RELET_ORDER_INFO, reletOrderDO.getReletOrderNo(), verifyUser, verifyMatters, commitRemark, reletOrderCommitParam.getImgIdList(), orderRemark);
             if (!ErrorCode.SUCCESS.equals(workflowCommitResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(workflowCommitResult.getErrorCode());
@@ -318,43 +346,27 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         } else {  //不需要审核时
             reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
-            Integer originOrderId = orderDO.getId();
-            //同步续租单信息 到  续租订单中
-            String syncReletOrderToOrderCode = syncReletOrderToOrder(reletOrderDO, orderDO);
-            if (!ErrorCode.SUCCESS.equals(syncReletOrderToOrderCode)) {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                result.setErrorCode(syncReletOrderToOrderCode);
-                return result;
-            }
-            //生成订单编号
-            SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
-            orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
-            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
+            orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
+//            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
             orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-            orderDO.setCreateUser(loginUser.getUserId().toString());
             orderDO.setUpdateUser(loginUser.getUserId().toString());
-            orderDO.setCreateTime(currentTime);
             orderDO.setUpdateTime(currentTime);
-            //保存续租订单，商品项，配件项
-            orderMapper.save(orderDO);
-            orderService.saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
-            orderService.saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
-            //保存续租单地址信息（方便后期退货等）
-            saveReletOrderConsignInfo(orderDO.getId(),originOrderId, loginUser, currentTime);
+            //更新订单 续租状态
+            orderMapper.update(orderDO);
 
             // 续租单生成结算单 ，关联订单Id
-            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(orderDO);
+            ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(reletOrderDO);
             if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 result.setErrorCode(createStatementOrderResult.getErrorCode());
                 return result;
             }
 
+            //推送K3消息
+            k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
-            //TODO 获取续租订单  ，推送K3消息
 
         }
-
 
         reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
         reletOrderDO.setUpdateTime(currentTime);
@@ -366,6 +378,46 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
 
+    /**
+     * 审核注意事项
+     *
+     * @param reletOrderDO
+     * @return
+     */
+    private ServiceResult<String, String> getVerifyMatters(ReletOrderDO reletOrderDO) {
+        ServiceResult<String, String> result = new ServiceResult<>();
+        String orderRentType = null;
+        if (OrderRentType.RENT_TYPE_DAY.equals(reletOrderDO.getRentType())) {
+            orderRentType = "租赁类型：天租";
+        } else if (OrderRentType.RENT_TYPE_MONTH.equals(reletOrderDO.getRentType())) {
+            orderRentType = "租赁类型：月租";
+        }
+        String strReletInfo = "续租单号：【" + reletOrderDO.getReletOrderNo() + "】，"+ orderRentType +"，续租时长："
+                + reletOrderDO.getRentTimeLength() + "。";
+        StringBuilder verifyMatters = new StringBuilder(strReletInfo);
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
+                String verifyProduct = "商品名称：【" + reletOrderProductDO.getProductName() + "】，商品单价："
+                        + AmountUtil.getCommaFormat(reletOrderProductDO.getProductUnitAmount()) + "。" ;
+                verifyMatters.append(verifyProduct);
+            }
+
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
+                String verifyMaterial = "配件名称：【" + reletOrderMaterialDO.getMaterialName() + "】，配件单价："
+                        + AmountUtil.getCommaFormat(reletOrderMaterialDO.getMaterialUnitAmount()) + "。" ;
+                verifyMatters.append(verifyMaterial);
+            }
+
+        }
+
+        result.setResult(verifyMatters.toString());
+        result.setErrorCode(ErrorCode.SUCCESS);
+        return result;
+    }
 
 
     @Override
@@ -418,43 +470,35 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             if (verifyResult) {
 
-                // 只有审批通过的订单才生成 续租订单和 结算单
+                // 只有审批通过的续租单才生成 结算单
                 OrderDO orderDO = orderMapper.findByOrderNo(reletOrderDO.getOrderNo());
                 if (orderDO == null){
                     return ErrorCode.ORDER_NOT_EXISTS;
                 }
-                Integer originOrderId = orderDO.getId();
-                //同步续租单信息 到  续租订单中
-                String syncReletOrderToOrderCode = syncReletOrderToOrder(reletOrderDO, orderDO);
-                if (!ErrorCode.SUCCESS.equals(syncReletOrderToOrderCode)) {
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    return syncReletOrderToOrderCode;
+
+                //判断在租数 是否一致
+                String verifyCode = verifyReletOrderOperate(orderDO, reletOrderDO);
+                if (!ErrorCode.SUCCESS.equals(verifyCode)) {
+                    return verifyCode;
                 }
-                //生成订单编号
-                SubCompanyDO orderSubCompanyDO = subCompanyMapper.findById(orderDO.getOrderSubCompanyId());
-                orderDO.setOrderNo(generateNoSupport.generateOrderNo(currentTime, orderSubCompanyDO != null ? orderSubCompanyDO.getSubCompanyCode() : null));
-                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
+
+                orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
+//                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
                 orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
-                orderDO.setCreateUser(loginUser.getUserId().toString());
                 orderDO.setUpdateUser(loginUser.getUserId().toString());
-                orderDO.setCreateTime(currentTime);
                 orderDO.setUpdateTime(currentTime);
-                //保存续租订单，商品项，配件项
-                orderMapper.save(orderDO);
-                orderService.saveOrderProductInfo(orderDO.getOrderProductDOList(), orderDO.getId(), loginUser, currentTime);
-                orderService.saveOrderMaterialInfo(orderDO.getOrderMaterialDOList(), orderDO.getId(), loginUser, currentTime);
-                //保存续租单地址信息（方便后期退货等）
-                saveReletOrderConsignInfo(orderDO.getId(),originOrderId, loginUser, currentTime);
+                //更新订单 续租状态
+                orderMapper.update(orderDO);
 
                 // 续租单生成结算单 ，关联订单Id
-                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(orderDO);
+                ServiceResult<String, BigDecimal> createStatementOrderResult = statementService.createReletOrderStatement(reletOrderDO);
                 if (!ErrorCode.SUCCESS.equals(createStatementOrderResult.getErrorCode())) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return createStatementOrderResult.getErrorCode();
                 }
 
-                //TODO 获取续租订单详细信息，发送给k3
-
+                //推送K3消息
+                k3Service.sendReletOrderInfoToK3(reletOrderDO, orderDO);
 
                 reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
@@ -480,28 +524,30 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
         ServiceResult<String, Boolean> result = new ServiceResult<>();
         result.setErrorCode(ErrorCode.SUCCESS);
+        //短租
         Calendar cal = Calendar.getInstance();
         cal.setTime(currentTime);
-        cal.add(Calendar.DAY_OF_MONTH, 3);
+        cal.add(Calendar.DAY_OF_MONTH, 2);  //按天租 提前3天
         OrderQueryParam orderQueryParam = new OrderQueryParam();
-        orderQueryParam.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_SHORT);  //短租
+        orderQueryParam.setRentType(OrderRentType.RENT_TYPE_DAY);
         orderQueryParam.setStartExpectReturnTime(DateUtil.getFirstOfDay(cal.getTime()));
         orderQueryParam.setEndExpectReturnTime(DateUtil.getEndOfDay(cal.getTime()));
         orderQueryParam.setPageSize(Integer.MAX_VALUE);
-        ServiceResult<String, Object> shortRentMessage = ReletSendDingDingMessage(orderQueryParam);
+        ServiceResult<String, Object> shortRentMessage = ReletedOrderSendDingDingMessage(orderQueryParam);
         if (!ErrorCode.SUCCESS.equals(shortRentMessage.getErrorCode())) {
             result.setErrorCode(shortRentMessage.getErrorCode());
         }
 
+        //长租
         Calendar calLong = Calendar.getInstance();
         calLong.setTime(currentTime);
-        calLong.add(Calendar.DAY_OF_MONTH, 10);
+        calLong.add(Calendar.DAY_OF_MONTH, 9);  //按月租  提前10天
         OrderQueryParam orderQueryParamLong = new OrderQueryParam();
-        orderQueryParamLong.setRentLengthType(RentLengthType.RENT_LENGTH_TYPE_LONG);  //长租
+        orderQueryParamLong.setRentType(OrderRentType.RENT_TYPE_MONTH);
         orderQueryParamLong.setStartExpectReturnTime(DateUtil.getFirstOfDay(calLong.getTime()));
         orderQueryParamLong.setEndExpectReturnTime(DateUtil.getEndOfDay(calLong.getTime()));
         orderQueryParamLong.setPageSize(Integer.MAX_VALUE);
-        ServiceResult<String, Object> longRentMessage = ReletSendDingDingMessage(orderQueryParamLong);
+        ServiceResult<String, Object> longRentMessage = ReletedOrderSendDingDingMessage(orderQueryParamLong);
         if (!ErrorCode.SUCCESS.equals(longRentMessage.getErrorCode())) {
             result.setErrorCode(longRentMessage.getErrorCode());
         }
@@ -510,38 +556,71 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
     /**
-     * 订单到期提醒,短期提前3天，长期提前10天（钉钉消息，接受者为订单销售员id）
+     * (未续租)订单到期提醒,短期提前3天，长期提前10天（钉钉消息，接受者为订单销售员id）
      *
      * @param
      * @return
      * @author ZhaoZiXuan
      * @date 2018/5/24 11:05
      */
-    private ServiceResult<String, Object> ReletSendDingDingMessage(OrderQueryParam orderQueryParam) {
+    private ServiceResult<String, Object> ReletedOrderSendDingDingMessage(OrderQueryParam orderQueryParam) {
         ServiceResult<String, Object> result = new ServiceResult<>();
         if (null == orderQueryParam) {
             return result;
         }
-
-        com.lxzl.se.dataaccess.mysql.config.PageQuery pageQuery = new com.lxzl.se.dataaccess.mysql.config.PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
-
+        PageQuery pageQuery = new PageQuery(orderQueryParam.getPageNo(), orderQueryParam.getPageSize());
+        result.setErrorCode(ErrorCode.SUCCESS);
         Map<String, Object> maps = new HashMap<>();
         maps.put("start", pageQuery.getStart());
         maps.put("pageSize", pageQuery.getPageSize());
         maps.put("orderQueryParam", orderQueryParam);
-        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+//        maps.put("permissionParam", permissionSupport.getPermissionParam(PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_SERVICE, PermissionType.PERMISSION_TYPE_SUB_COMPANY_FOR_BUSINESS, PermissionType.PERMISSION_TYPE_USER));
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        //订单到期时 提醒续租
         List<OrderDO> orderDOList = orderMapper.findOrderByParams(maps);
         if (null != orderDOList && orderDOList.size() > 0) {
             for (OrderDO orderDO : orderDOList) {
                 MessageThirdChannel messageThirdChannel = new MessageThirdChannel();
                 messageThirdChannel.setReceiverUserId(orderDO.getOrderSellerId());
-                messageThirdChannel.setMessageContent(orderDO.getOrderNo() + "订单将于3天后到期，继续使用请及时续租.");
+                messageThirdChannel.setMessageContent(orderDO.getOrderNo() + "订单将于" + sdf.format(orderDO.getExpectReturnTime()) + "到期，继续使用请及时续租.");
                 messageThirdChannel.setMessageTitle("续租提醒");
                 result = messageThirdChannelService.sendMessage(messageThirdChannel);
             }
         }
+        return result;
+    }
 
+    @Override
+    public ServiceResult<String, String> cancelReletOrderByNo(ReletOrder reletOrder){
+        ServiceResult<String, String> result = new ServiceResult<>();
+        if (StringUtil.isBlank(reletOrder.getReletOrderNo())){
+            result.setErrorCode(ErrorCode.PARAM_IS_NOT_NULL);
+            return result;
+        }
+        Date currentTime = new Date();
+        User loginUser = userSupport.getCurrentUser();
+
+        ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrder.getReletOrderNo());
+        if (reletOrderDO == null) {
+            result.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+            return result;
+        }
+
+        if (ReletOrderStatus.RELET_ORDER_STATUS_WAIT_COMMIT.equals(reletOrderDO.getReletOrderStatus())){
+            reletOrderDO.setReletOrderNo(reletOrder.getReletOrderNo());
+            reletOrderDO.setDataStatus(CommonConstant.DATA_STATUS_DELETE);
+            reletOrderDO.setUpdateUser(loginUser.getUserId().toString());
+            reletOrderDO.setUpdateTime(currentTime);
+            reletOrderMapper.update(reletOrderDO);
+        }
+        else {
+            result.setErrorCode(ErrorCode.RELET_ORDER_STATUS_CAN_NOT_CANCEL);
+            return result;
+        }
+
+        result.setErrorCode(ErrorCode.SUCCESS);
+        result.setResult(reletOrderDO.getReletOrderNo());
         return result;
     }
 
@@ -675,8 +754,6 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         orderDO.setTotalOrderAmount(reletOrderDO.getTotalOrderAmount());
         orderDO.setTotalPaidOrderAmount(reletOrderDO.getTotalPaidOrderAmount());
 
-        orderDO.setReletOrderNo(reletOrderDO.getReletOrderNo());  //续租单号
-        orderDO.setOriginOrderNo(reletOrderDO.getOrderNo());//原订单号
 
         if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
 
@@ -843,12 +920,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return result;
     }
 
-    private ReletOrderProduct getReletOrderProductById(ReletOrder reletOrder, Integer id) {
+    private ReletOrderProduct getReletOrderProductById(ReletOrder reletOrder, Integer orderProductId) {
 
         if (CollectionUtil.isNotEmpty(reletOrder.getReletOrderProductList())) {
 
             for (ReletOrderProduct reletOrderProduct : reletOrder.getReletOrderProductList()) {
-                if (reletOrderProduct.getOrderProductId().equals(id)) {
+                if (reletOrderProduct.getOrderProductId() != null && reletOrderProduct.getOrderProductId().equals(orderProductId)) {
                     return reletOrderProduct;
                 }
             }
@@ -857,12 +934,12 @@ public class ReletOrderServiceImpl implements ReletOrderService {
     }
 
 
-    private ReletOrderMaterial getReletOrderMaterialById(ReletOrder reletOrder, Integer id) {
+    private ReletOrderMaterial getReletOrderMaterialById(ReletOrder reletOrder, Integer orderMaterialId) {
 
         if (CollectionUtil.isNotEmpty(reletOrder.getReletOrderMaterialList())) {
 
             for (ReletOrderMaterial reletOrderMaterial : reletOrder.getReletOrderMaterialList()) {
-                if (reletOrderMaterial.getOrderMaterialId().equals(id)) {
+                if (reletOrderMaterial.getOrderMaterialId() != null && reletOrderMaterial.getOrderMaterialId().equals(orderMaterialId)) {
                     return reletOrderMaterial;
                 }
             }
@@ -1098,7 +1175,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
                 reletOrderProductDO.setProductAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(reletOrderProductDO.getProductUnitAmount(), new BigDecimal(reletOrderDO.getRentTimeLength()), 2), new BigDecimal(reletOrderProductDO.getRentingProductCount())));
 
-                productCount += reletOrderProductDO.getProductCount();
+                productCount += reletOrderProductDO.getRentingProductCount();
                 productAmountTotal = BigDecimalUtil.add(productAmountTotal, reletOrderProductDO.getProductAmount());
             }
 
@@ -1119,7 +1196,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
                 reletOrderMaterialDO.setMaterialAmount(BigDecimalUtil.mul(BigDecimalUtil.mul(reletOrderMaterialDO.getMaterialUnitAmount(), new BigDecimal(reletOrderDO.getRentTimeLength()), 2), new BigDecimal(reletOrderMaterialDO.getRentingMaterialCount())));
 
-                materialCount += reletOrderMaterialDO.getMaterialCount();
+                materialCount += reletOrderMaterialDO.getRentingMaterialCount();
                 materialAmountTotal = BigDecimalUtil.add(materialAmountTotal, reletOrderMaterialDO.getMaterialAmount());
             }
             reletOrderDO.setTotalMaterialCount(materialCount);
@@ -1355,13 +1432,10 @@ public class ReletOrderServiceImpl implements ReletOrderService {
      * @author ZhaoZiXuan
      * @date 2018/5/9 15:16
      */
-    private String validReletTimeRange(Date returnTime, Date currentTime, Integer rentLengthType) {
+    private String validReletTimeRange(Date returnTime, Date currentTime, Integer rentType) {
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(returnTime, currentTime);
-//        if (dayCount < -10 || dayCount > 2){  //订单到期 前10天 至 后2天 可续租
-//            return ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE;
-//        }
-        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == rentLengthType && dayCount < -10)
-                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == rentLengthType && dayCount < -3)) {  //订单： 长租前10天 和 短租前3天 可续租
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(rentType) && dayCount < -9)
+                || (OrderRentType.RENT_TYPE_DAY.equals(rentType) && dayCount < -2)) {  //订单： 按月租前10天 和  按天租前3天 可续租
             return ErrorCode.RELET_ORDER_NOT_IN_RELET_TIME_SCOPE;
         }
         return ErrorCode.SUCCESS;
@@ -1369,13 +1443,14 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
 
     private String verifyOperateOrder(Order order) {
-        Integer intRentIngCount = 0;
+        Integer intRentingCount = 0;
         if (order == null) {
             return ErrorCode.SYSTEM_ERROR;
         }
 
         //确认收货，部分归还，状态时 可续租
-        if (order.getOrderStatus() != OrderStatus.ORDER_STATUS_CONFIRM && order.getOrderStatus() != OrderStatus.ORDER_STATUS_PART_RETURN) {
+        if (!OrderStatus.ORDER_STATUS_CONFIRM.equals(order.getOrderStatus())
+                && !OrderStatus.ORDER_STATUS_PART_RETURN.equals(order.getOrderStatus())) {
             return ErrorCode.RELET_ORDER_NOT_IN_RELET_STATUS_SCOPE;
         }
 
@@ -1400,7 +1475,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             for (OrderProduct reletOrderProduct : order.getOrderProductList()) {
 
-                intRentIngCount += reletOrderProduct.getRentingProductCount() == null ? 0 : reletOrderProduct.getRentingProductCount();
+                intRentingCount += reletOrderProduct.getRentingProductCount() == null ? 0 : reletOrderProduct.getRentingProductCount();
 
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
@@ -1416,7 +1491,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
             for (OrderMaterial reletOrderMaterial : order.getOrderMaterialList()) {
 
-                intRentIngCount += reletOrderMaterial.getRentingMaterialCount() == null ? 0 : reletOrderMaterial.getRentingMaterialCount();
+                intRentingCount += reletOrderMaterial.getRentingMaterialCount() == null ? 0 : reletOrderMaterial.getRentingMaterialCount();
 
                 // 如果为长租，但凡有逾期，就不可以下单，如果为短租，在可用额度范围内，就可以下单
                 if (OrderRentLengthType.RENT_LENGTH_TYPE_LONG.equals(order.getRentLengthType())
@@ -1426,10 +1501,53 @@ public class ReletOrderServiceImpl implements ReletOrderService {
             }
         }
 
-        if (intRentIngCount <= 0) {
+        if (intRentingCount <= 0) {
             return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
         }
         return verifyOrderShortRentReceivable(customerDO, ConverterUtil.convert(order, ReletOrderDO.class));
+    }
+
+
+    /**
+     * 校验续租单提交时 合法性 （在租数量 不一致无法提交）
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/7 17:08
+     * @param
+     * @return
+     */
+    private String verifyReletOrderOperate(OrderDO orderDO, ReletOrderDO reletOrderDO) {
+
+        if (orderDO == null || reletOrderDO == null) {
+            return ErrorCode.SYSTEM_ERROR;
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
+
+                OrderProductDO orderProductDO = getOrderProductDOById(orderDO, reletOrderProductDO.getOrderProductId());
+                if (!orderProductDO.getRentingProductCount().equals(reletOrderProductDO.getRentingProductCount())) {
+
+                    return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
+                }
+
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
+
+                OrderMaterialDO orderMaterial = getOrderMaterialDOById(orderDO, reletOrderMaterialDO.getOrderMaterialId());
+                if (!orderMaterial.getRentingMaterialCount().equals(reletOrderMaterialDO.getRentingMaterialCount())) {
+
+                    return ErrorCode.RELET_ORDER_RENT_COUNT_ERROR;
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
     }
 
 
@@ -1489,6 +1607,37 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         return ErrorCode.SUCCESS;
     }
 
+    /**
+     * 续租时：若订单支付方式是首付百分比则修改续租单支付方式为先用后付
+     *
+     * @author ZhaoZiXuan
+     * @date 2018/6/6 15:49
+     * @param
+     * @return
+     */
+    private String updateReletOrderPayModeOfBeforePercent(ReletOrderDO reletOrderDO){
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderProductDOList())) {
+
+            for (ReletOrderProductDO reletOrderProductDO : reletOrderDO.getReletOrderProductDOList()) {
+
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(reletOrderProductDO.getPayMode())){
+                    reletOrderProductDO.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+                }
+            }
+        }
+
+        if (CollectionUtil.isNotEmpty(reletOrderDO.getReletOrderMaterialDOList())) {
+
+            for (ReletOrderMaterialDO reletOrderMaterialDO : reletOrderDO.getReletOrderMaterialDOList()) {
+
+                if (OrderPayMode.PAY_MODE_PAY_BEFORE_PERCENT.equals(reletOrderMaterialDO.getPayMode())){
+                    reletOrderMaterialDO.setPayMode(OrderPayMode.PAY_MODE_PAY_AFTER);
+                }
+            }
+        }
+
+        return ErrorCode.SUCCESS;
+    }
 
     @Autowired
     private OrderMapper orderMapper;
@@ -1555,4 +1704,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private K3Service k3Service;
 }

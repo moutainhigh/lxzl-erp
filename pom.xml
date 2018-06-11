@@ -55,6 +55,7 @@
 				<artifactId>lxse</artifactId>
 				<version>${lxzl.module.se}</version>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 	<!-- Build Settings -->

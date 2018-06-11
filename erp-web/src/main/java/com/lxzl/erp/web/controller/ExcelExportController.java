@@ -3,16 +3,18 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.Page;
 import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.bank.BankSlipDetailQueryParam;
-import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipDetail;
+import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
+import com.lxzl.erp.common.domain.export.FinanceStatementOrderPayDetail;
+import com.lxzl.erp.common.domain.statement.StatementOrderDetailQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderQueryParam;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.statistics.StatisticsSalesmanPageParam;
 import com.lxzl.erp.common.domain.statistics.pojo.StatisticsSalesman;
-import com.lxzl.erp.common.util.CollectionUtil;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
+import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.erp.core.service.bank.BankSlipService;
 import com.lxzl.erp.core.service.export.ExcelExportConfigGroup;
 import com.lxzl.erp.core.service.export.ExcelExportService;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
 import java.util.List;
 
 @RequestMapping("/exportExcel")
@@ -44,7 +47,8 @@ public class ExcelExportController {
     private ExcelExportService excelExportService;
     @Autowired
     private StatisticsService statisticsService;
-
+    @Autowired
+    private DynamicSqlService dynamicSqlService;
     @RequestMapping(value = "exportPageBankSlipDetail", method = RequestMethod.POST)
     public Result exportPageBankSlip(BankSlipDetailQueryParam bankSlipDetailQueryParam, HttpServletResponse response) throws Exception {
         bankSlipDetailQueryParam.setPayerName(ExcelExportSupport.decode(bankSlipDetailQueryParam.getPayerName()));
@@ -71,4 +75,22 @@ public class ExcelExportController {
         return resultGenerator.generate(serviceResult.getErrorCode());
     }
 
+    @RequestMapping(value = "exportPageStatementOrder", method = RequestMethod.POST)
+    public Result exportPageStatementOrder(StatementOrderDetailQueryParam statementOrderDetailQueryParam, HttpServletResponse response) throws Exception {
+
+        ServiceResult<String, Page<FinanceStatementOrderPayDetail>> result = statementService.queryFinanceStatementOrderPayDetail(statementOrderDetailQueryParam);
+        ServiceResult<String, String> serviceResult = excelExportService.export(result.getResult().getItemList(), ExcelExportConfigGroup.statementOrderPayDetailConfig,ExcelExportSupport.formatFileName("支付明细"), "sheet1", response);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
+
+    @RequestMapping(value = "exportDynamicSql", method = RequestMethod.POST)
+    public Result exportDynamicSql(DynamicSql dynamicSql, HttpServletResponse response) throws Exception {
+        String sql  = URLDecoder.decode(dynamicSql.getSql(),"UTF-8");
+        dynamicSql.setSql(sql);
+        dynamicSql.setLimit(Integer.MAX_VALUE);
+        Result result = resultGenerator.generate(dynamicSqlService.selectBySql(dynamicSql));
+
+        ServiceResult<String, String> serviceResult = excelExportService.export(result,ExcelExportSupport.formatFileName("动态sql"),"sheet1" , response,5000);
+        return resultGenerator.generate(serviceResult.getErrorCode());
+    }
 }

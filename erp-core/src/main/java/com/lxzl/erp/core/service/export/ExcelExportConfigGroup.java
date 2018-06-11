@@ -2,7 +2,9 @@ package com.lxzl.erp.core.service.export;
 
 import com.lxzl.erp.common.constant.*;
 import com.lxzl.erp.common.domain.bank.pojo.BankSlipClaim;
+import com.lxzl.erp.common.util.BigDecimalUtil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -17,12 +19,14 @@ public class ExcelExportConfigGroup {
     public static ExcelExportConfig statementOrderConfig = new ExcelExportConfig();
     public static ExcelExportConfig statementOrderDetailConfig = new ExcelExportConfig();
     public static ExcelExportConfig statisticsSalesmanDetailConfig = new ExcelExportConfig();
+    public static ExcelExportConfig statementOrderPayDetailConfig = new ExcelExportConfig();
 
     static {
         initBankSlipDetailConfig();
         initStatementOrderConfig();
         initStatementOrderDetailConfig();
         initStatisticsSalesmanDetailConfig();
+        initStatementOrderPayDetailConfig();
     }
 
 
@@ -249,5 +253,15 @@ public class ExcelExportConfigGroup {
                 .addConfig(new ColConfig("tradeSerialNo", "交易流水号"));
     }
 
-
+    public static void initStatementOrderPayDetailConfig() {
+        statementOrderPayDetailConfig.addConfig(new ColConfig("orderNo", "订单号",8000))
+                .addConfig(new ColConfig("customerName", "客户名称",8000))
+                .addConfig(new ColConfig("customerNo", "客户编码",8000))
+                .addConfig(new ColConfig("customerCompany", "客户分公司",5000))
+                .addConfig(new ColConfig("orderCompany", "订单分公司", 5000))
+                .addConfig(new ColConfig("deliveryCompany", "发货分公司",5000))
+                .addConfig(new ColConfig("rentPaidAmount", "租金",AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("depositPaidAmount", "押金",AmountExcelExportView.getInstance()))
+                .addConfig(new ColConfig("totalPaidAmount", "合计",AmountExcelExportView.getInstance()));
+    }
 }

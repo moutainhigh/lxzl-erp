@@ -17,7 +17,7 @@
         {{/hasActionButtons}}
     </script>
     <div id="pickingProductButtons"></div>
-    <div class="table-responsive mb30">
+    <div class="table-responsive">
         <script type="text/html" id="dataListTpl">
             <thead>
             <tr class="bg-light">

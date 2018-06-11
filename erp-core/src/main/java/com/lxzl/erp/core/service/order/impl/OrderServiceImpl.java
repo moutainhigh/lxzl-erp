@@ -1212,11 +1212,10 @@ public class OrderServiceImpl implements OrderService {
             orderConfirmChangeLogMapper.save(orderConfirmChangeLogDO);
         }
         // TODO: 2018\5\22 0022  7.传参数给K3
-        ServiceResult<String, String> serviceResult1 = k3Service.confirmOrder(orderConfirmChangeToK3Param);
-        if (!ErrorCode.SUCCESS.equals(serviceResult1.getErrorCode())) {
+        ServiceResult<String, String> k3ServiceResult = k3Service.confirmOrder(orderConfirmChangeToK3Param);
+        if (!ErrorCode.SUCCESS.equals(k3ServiceResult.getErrorCode())) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
-            result.setErrorCode(serviceResult1.getErrorCode());
-            result.setResult(serviceResult1.getResult());
+            result.setErrorCode(k3ServiceResult.getErrorCode(),k3ServiceResult.getFormatArgs());
             return result;
         }
         // 推送钉钉
@@ -1664,9 +1663,7 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetailDO> k3ReturnOrderDetailDOList = k3ReturnOrderDetailMapper.findListByOrderNo(order.getOrderNo());
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
-        //判断是否是续租单，是否可续租
-        Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-        order.setIsReletOrder(isReletOrder);
+        //判断是否可续租
         Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
         order.setCanReletOrder(canReletOrder);
 
@@ -1699,15 +1696,28 @@ public class OrderServiceImpl implements OrderService {
         //检查是否在续租时间范围
         Date currentTime = new Date();
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
-        if ((RentLengthType.RENT_LENGTH_TYPE_LONG == order.getRentLengthType() && dayCount < -10)
-                || (RentLengthType.RENT_LENGTH_TYPE_SHORT == order.getRentLengthType() && dayCount < -3)) {  //订单： 长租前10天 和 短租前3天 可续租
+        if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount < -9)
+                || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
             return false;
         }
 
-        //查询是否有续租单且不能续租 信息
+        //订单状态 必须是租赁中 ，续租中，部分退还  才可续租
+        if (!OrderStatus.canReletOrderByCurrentStatus(order.getOrderStatus())){
+            return false;
+        }
+
+        //有续租单，且续租状态为续租中 才可续租
         ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
         if (null != recentlyReletOrderInDB) {
-            return false;
+            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
+
+                return false;
+            }
+
+//            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+//
+//                return false;
+//            }
         }
 
         return true;
@@ -1814,9 +1824,7 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
-        //判断是否是续租单，是否可续租
-        Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-        order.setIsReletOrder(isReletOrder);
+        //判断是否可续租
         Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
         order.setCanReletOrder(canReletOrder);
 
@@ -2437,11 +2445,9 @@ public class OrderServiceImpl implements OrderService {
             orderNoList.add(orderDO.getOrderNo());
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
-            //判断是否是续租单，是否可续租
-            Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-            order.setIsReletOrder(isReletOrder);
-            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
-            order.setCanReletOrder(canReletOrder);
+            //判断是否可续租
+//            Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
+//            order.setCanReletOrder(canReletOrder);
             orderList.add(order);
         }
         List<WorkflowLinkDO> workflowLinkDOList = workflowLinkMapper.findByWorkflowTypeAndReferNoList(WorkflowType.WORKFLOW_TYPE_ORDER_INFO, orderNoList);
@@ -2477,9 +2483,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderDO orderDO : orderDOList) {
 
             Order order = ConverterUtil.convert(orderDO, Order.class);
-            //判断是否是续租单，是否可续租
-            Integer isReletOrder = StringUtil.isBlank(order.getReletOrderNo()) ? 0 : 1;
-            order.setIsReletOrder(isReletOrder);
+            //判断是否可续租
             Integer canReletOrder = isOrderCanRelet(order) ? 1 : 0;
             order.setCanReletOrder(canReletOrder);
             orderList.add(order);

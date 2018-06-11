@@ -476,8 +476,8 @@ public class PaymentServiceImpl implements PaymentService {
 //                    }
 //                }
 //            }
-            String response = HttpClientUtil.post("http://testpayment.52rental.com/payment-system/charge/queryChargeRecordPage", requestJson, headerBuilder, "UTF-8");
-//            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
+//            String response = HttpClientUtil.post("http://testpayment.52rental.com/payment-system/charge/queryChargeRecordPage", requestJson, headerBuilder, "UTF-8");
+            String response = HttpClientUtil.post(PaymentSystemConfig.paymentSystemQueryChargeRecordPageURL, requestJson, headerBuilder, "UTF-8");
             PaymentResult paymentResult = JSON.parseObject(response, PaymentResult.class);
             if (ErrorCode.SUCCESS.equals(paymentResult.getCode())) {
                 Page<JSONObject> paymentChargeRecordPage = JSON.parseObject(JSON.toJSONString(paymentResult.getResultMap().get("data")), Page.class);
@@ -547,7 +547,9 @@ public class PaymentServiceImpl implements PaymentService {
         param.setBusinessReturnDepositAmount(returnDepositAmount);
         param.setBusinessAppId(PaymentSystemConfig.paymentSystemAppId);
         param.setBusinessAppSecret(PaymentSystemConfig.paymentSystemAppSecret);
-        param.setBusinessOperateUser(userSupport.getCurrentUserId().toString());
+        User loginUser = userSupport.getCurrentUser();
+        Integer loginUserId = loginUser == null ? CommonConstant.SUPER_USER_ID:loginUser.getUserId();
+        param.setBusinessOperateUser(loginUserId.toString());
         try {
             HttpHeaderBuilder headerBuilder = HttpHeaderBuilder.custom();
             headerBuilder.contentType("application/json");

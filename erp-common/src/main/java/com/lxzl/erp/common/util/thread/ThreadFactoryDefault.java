@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author daiqi
  * @create 2018-05-12 10:24
  */
-public class TreadFactory implements ThreadFactory {
+public class ThreadFactoryDefault implements ThreadFactory {
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -17,7 +17,7 @@ public class TreadFactory implements ThreadFactory {
      *
      * @param namePrefix : String : 线程的前缀名称，用来区分不同连接池的线程
      */
-    public TreadFactory(String namePrefix) {
+    public ThreadFactoryDefault(String namePrefix) {
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() :
                 Thread.currentThread().getThreadGroup();

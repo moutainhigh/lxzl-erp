@@ -5,6 +5,7 @@ import com.lxzl.erp.dataaccess.domain.k3.K3MappingMaterialTypeDO;import org.apac
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface K3MappingMaterialTypeMapper extends BaseMysqlDAO<K3MappingMaterialTypeDO> {
@@ -16,4 +17,6 @@ public interface K3MappingMaterialTypeMapper extends BaseMysqlDAO<K3MappingMater
 	K3MappingMaterialTypeDO findByErpCode(@Param("erpCode") String erpCode);
 
     String findMaterialTypeIdByK3MaterialTypeCode(@Param("k3MaterialTypeCode")String k3MaterialTypeCode);
+
+    List<K3MappingMaterialTypeDO> findByErpCodeList(@Param("materialDOMaterialTypeSet") Set<String> materialDOMaterialTypeSet);
 }

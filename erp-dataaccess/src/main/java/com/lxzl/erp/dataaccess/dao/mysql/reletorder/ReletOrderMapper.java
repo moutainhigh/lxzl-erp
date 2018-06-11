@@ -23,4 +23,8 @@ public interface ReletOrderMapper extends BaseMysqlDAO<ReletOrderDO> {
 	ReletOrderDO findByReletOrderNo(@Param("reletOrderNo") String reletOrderNo);
 
 	ReletOrderDO findRecentlyReletOrderByOrderNo(@Param("orderNo") String orderNo);
+
+	ReletOrderDO findRecentlyReletedOrderByOrderId(@Param("orderId") Integer orderId);
+
+	List<ReletOrderDO> findRecentlyReletedOrderByParams(@Param("maps") Map<String, Object> paramMap);
 }
