@@ -346,6 +346,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
         } else {  //不需要审核时
             reletOrderDO.setReletOrderStatus(ReletOrderStatus.RELET_ORDER_STATUS_RELETTING);
 
+            orderDO.setReletOrderId(reletOrderDO.getId());
             orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
 //            orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
             orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
@@ -482,6 +483,7 @@ public class ReletOrderServiceImpl implements ReletOrderService {
                     return verifyCode;
                 }
 
+                orderDO.setReletOrderId(reletOrderDO.getId());
                 orderDO.setExpectReturnTime(reletOrderDO.getExpectReturnTime());
 //                orderDO.setOrderStatus(OrderStatus.ORDER_STATUS_RELET);
                 orderDO.setDataStatus(CommonConstant.DATA_STATUS_ENABLE);
