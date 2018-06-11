@@ -17,6 +17,7 @@ public class FinanceStatementOrderPayDetail {
     private BigDecimal rentPaidAmount; //租金
     private BigDecimal depositPaidAmount; //押金
     private BigDecimal totalPaidAmount; //合计
+    private String k3CustomerCode; //K3客户编码
 
     public String getOrderNo() {
         return orderNo;
@@ -88,5 +89,13 @@ public class FinanceStatementOrderPayDetail {
 
     public void setTotalPaidAmount(BigDecimal totalPaidAmount) {
         this.totalPaidAmount = totalPaidAmount;
+    }
+
+    public String getK3CustomerCode() {
+        return k3CustomerCode;
+    }
+
+    public void setK3CustomerCode(String k3CustomerCode) {
+        this.k3CustomerCode = k3CustomerCode;
     }
 }
