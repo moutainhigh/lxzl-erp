@@ -3,7 +3,7 @@ package com.lxzl.erp.web.controller;
 import com.lxzl.erp.common.domain.dynamicSql.DynamicSql;
 import com.lxzl.erp.core.annotation.ControllerLog;
 import com.lxzl.erp.core.component.ResultGenerator;
-import com.lxzl.erp.core.service.DynamicSqlService;
+import com.lxzl.erp.core.service.dynamicSql.DynamicSqlService;
 import com.lxzl.se.common.domain.Result;
 import com.lxzl.se.web.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;

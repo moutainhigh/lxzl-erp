@@ -143,12 +143,6 @@
 		LEFT JOIN erp_relet_order_material erom ON m_order.id = erom.relet_order_id and erom.data_status = 1
 	</select>
 
-	<select id="findReletOrderByOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">
-		SELECT  <include refid="column_List"/> FROM erp_relet_order ero
-		WHERE ero.order_no = #{orderNo, jdbcType=VARCHAR} AND ero.data_status = 1
-		ORDER  BY ero.create_time DESC
-	</select>
-
 	<select id="findRecentlyReletOrderByOrderNo" resultMap="ReletOrderDO" parameterType="java.lang.String">
 		SELECT  <include refid="column_List"/> FROM erp_relet_order ero
 		WHERE ero.order_no = #{orderNo, jdbcType=VARCHAR} AND ero.data_status = 1
