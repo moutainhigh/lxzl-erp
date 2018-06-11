@@ -44,6 +44,14 @@ public interface PaymentService extends BaseService {
      */
     ServiceResult<String, Boolean> manualCharge(ManualChargeParam param);
 
+    /**
+     * 批量充值
+     *
+     * @param param
+     * @return 充值結果
+     */
+    ServiceResult<String, Boolean> publicTransferPlusCharge(PublicTransferPlusChargeParam param);
+
 
     /**
      * 手动扣款
