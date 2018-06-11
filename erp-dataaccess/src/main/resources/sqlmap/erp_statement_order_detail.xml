@@ -71,6 +71,7 @@
         <result column="orderNo" jdbcType="VARCHAR" property="orderNo"/>
         <result column="customerName" jdbcType="VARCHAR" property="customerName"/>
         <result column="customerNo" jdbcType="VARCHAR" property="customerNo"/>
+        <result column="k3CustomerCode" jdbcType="VARCHAR" property="k3CustomerCode"/>
         <result column="customerCompany" jdbcType="VARCHAR" property="customerCompany"/>
         <result column="orderCompany" jdbcType="VARCHAR" property="orderCompany"/>
         <result column="deliveryCompany" jdbcType="VARCHAR" property="deliveryCompany"/>
@@ -835,6 +836,16 @@
             </where>
             GROUP BY esod.order_id
         ) amount
+        LEFT JOIN erp_order eo on eo.id = amount.order_id and eo.data_status = 1
+        LEFT JOIN erp_customer ec on ec.id = eo.buyer_customer_id and ec.data_status = 1
+        LEFT JOIN erp_sub_company esc on esc.id = eo.order_sub_company_id and esc.data_status = 1
+        LEFT JOIN erp_sub_company escd on escd.id = eo.delivery_sub_company_id and escd.data_status = 1
+        LEFT JOIN erp_sub_company escd1 on escd1.id = ec.owner_sub_company_id and escd1.data_status = 1
+        <where>
+            <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1">
+                esc.id = #{maps.subCompanyId,jdbcType=INTEGER} OR (CASE WHEN esc.id = 10 THEN (escd.id = #{maps.subCompanyId,jdbcType=INTEGER}) END )
+            </if>
+        </where>
     </select>
 
     <select id="queryStatementOrderDetailByParam" resultMap="FinanceStatementOrderPayDetail" parameterType="map">
@@ -844,7 +855,8 @@
         ec.customer_no AS customerNo,
         esc.sub_company_name AS  orderCompany,
         escd1.sub_company_name AS  customerCompany,
-        escd.sub_company_name AS  deliveryCompany FROM (
+        escd.sub_company_name AS  deliveryCompany,
+        ek3mc.k3_customer_code AS k3CustomerCode FROM (
                 SELECT
                 esod.order_id AS order_id,
                 SUM(esod.statement_detail_rent_paid_amount) AS rentPaidAmount,
@@ -865,15 +877,19 @@
                     AND (esod.statement_detail_status = 4 OR esod.statement_detail_status = 8) AND  esod.order_type = 1
                 </where>
                 GROUP BY esod.order_id
-                LIMIT #{maps.start},#{maps.pageSize}
         ) amount
         LEFT JOIN erp_order eo on eo.id = amount.order_id and eo.data_status = 1
         LEFT JOIN erp_customer ec on ec.id = eo.buyer_customer_id and ec.data_status = 1
         LEFT JOIN erp_sub_company esc on esc.id = eo.order_sub_company_id and esc.data_status = 1
         LEFT JOIN erp_sub_company escd on escd.id = eo.delivery_sub_company_id and escd.data_status = 1
         LEFT JOIN erp_sub_company escd1 on escd1.id = ec.owner_sub_company_id and escd1.data_status = 1
-
-
+        LEFT JOIN erp_k3_mapping_customer ek3mc on ek3mc.erp_customer_code = ec.customer_no
+        <where>
+            <if test="maps.subCompanyId != null &amp;&amp; maps.currentUserType != 1">
+                esc.id = #{maps.subCompanyId,jdbcType=INTEGER} OR (CASE WHEN (esc.id = 10 OR esc.id = 11)THEN (escd.id = #{maps.subCompanyId,jdbcType=INTEGER}) END )
+            </if>
+        </where>
+        LIMIT #{maps.start},#{maps.pageSize}
     </select>
 
 </mapper>
