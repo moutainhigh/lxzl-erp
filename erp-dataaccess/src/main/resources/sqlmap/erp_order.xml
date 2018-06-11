@@ -1177,4 +1177,11 @@
         ORDER BY eo.create_time DESC
         LIMIT #{maps.start},#{maps.pageSize}
     </select>
+
+    <select id="findAllOrderNo" resultType="java.lang.String">
+        select eo.order_no
+        from
+        erp_order eo
+        where eo.data_status = 1
+    </select>
 </mapper>
