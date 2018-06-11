@@ -73,6 +73,7 @@
         <collection property="orderMaterialDOList" resultMap="OrderMaterialDO"/>
         <collection property="orderConsignInfoDO" resultMap="OrderConsignInfoDO"/>
         <collection property="orderTimeAxisDOList" resultMap="OrderTimeAxisDO"/>
+        <collection property="reletOrderDOList" resultMap="ReletOrderDO"/>
         <collection property="orderJointProductDOList" resultMap="OrderJointProductDO"/>
     </resultMap>
 
@@ -441,6 +442,12 @@
 
     <select id="findOrderByParams" resultMap="OrderDO" parameterType="map">
 
+        SELECT e_order.*
+        <trim prefix=",">
+            <include refid="relet_column_List"/>
+        </trim>
+        FROM (
+
         SELECT
         <include refid="column_List"/>
         <trim prefix=",">
@@ -504,10 +511,10 @@
                 and eo.order_status != 28
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==1">
-                and  curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
+                and curdate() > eo.expect_return_time AND eo.order_status IN (16, 20, 22)
             </if>
             <if test="maps.orderQueryParam.isReturnOverDue != null &amp;&amp; maps.orderQueryParam.isReturnOverDue==2">
-                and (eo.expect_return_time >= curdate()  OR eo.order_status NOT  IN (16, 20, 22))
+                and (eo.expect_return_time >= curdate() OR eo.order_status NOT IN (16, 20, 22))
             </if>
             <if test="maps.orderQueryParam.orderStatus != null">
                 and eo.order_status = #{maps.orderQueryParam.orderStatus, jdbcType=INTEGER}
@@ -557,7 +564,8 @@
         </where>
         ORDER BY eo.create_time DESC
         LIMIT #{maps.start},#{maps.pageSize}
-
+        ) e_order
+        LEFT JOIN erp_relet_order ero ON ero.order_id = e_order.id and ero.data_status = 1
     </select>
     <select id="queryPaidSubCompanyOrderAmount" resultType="java.util.HashMap" parameterType="java.util.Map">
        SELECT

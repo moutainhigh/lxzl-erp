@@ -16,6 +16,7 @@ import com.lxzl.erp.common.domain.order.*;
 import com.lxzl.erp.common.domain.order.pojo.*;
 import com.lxzl.erp.common.domain.product.pojo.Product;
 import com.lxzl.erp.common.domain.product.pojo.ProductSku;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrder;
 import com.lxzl.erp.common.domain.statement.pojo.StatementOrderDetail;
 import com.lxzl.erp.common.domain.system.pojo.Image;
@@ -1667,7 +1668,7 @@ public class OrderServiceImpl implements OrderService {
         List<K3ReturnOrderDetail> k3ReturnOrderDetailList = ConverterUtil.convertList(k3ReturnOrderDetailDOList, K3ReturnOrderDetail.class);
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
+        Integer canReletOrder = isOrderCanRelet(order);
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
@@ -1696,36 +1697,38 @@ public class OrderServiceImpl implements OrderService {
      * @param
      * @return
      */
-    private Boolean isOrderCanRelet(Order order){
+    private Integer isOrderCanRelet(Order order){
 
         //检查是否在续租时间范围
         Date currentTime = new Date();
         Integer dayCount = com.lxzl.erp.common.util.DateUtil.daysBetween(order.getExpectReturnTime(), currentTime);
         if ((OrderRentType.RENT_TYPE_MONTH.equals(order.getRentType()) && dayCount < -9)
                 || (OrderRentType.RENT_TYPE_DAY.equals(order.getRentType()) && dayCount < -2)) {  //订单： 长租前10天 和 短租前3天 可续租
-            return false;
+            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
         }
 
         //订单状态 必须是租赁中 ，续租中，部分退还  才可续租
         if (!OrderStatus.canReletOrderByCurrentStatus(order.getOrderStatus())){
-            return false;
+            return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_NO;
         }
 
-//        //有续租单，且续租状态为续租中 才可续租
-//        ReletOrderDO recentlyReletOrderInDB = reletOrderMapper.findRecentlyReletOrderByOrderNo(order.getOrderNo());
-//        if (null != recentlyReletOrderInDB) {
-//            if (!ReletOrderStatus.canReletOrderByCurrentStatus(recentlyReletOrderInDB.getReletOrderStatus())){
-//
-//                return false;
-//            }
-//
-////            if (currentTime.compareTo(recentlyReletOrderInDB.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
-////
-////                return false;
-////            }
-//        }
+        if (CollectionUtil.isNotEmpty(order.getReletOrderList())){
+            for (ReletOrder reletOrder : order.getReletOrderList()){
+                if (!ReletOrderStatus.canReletOrderByCurrentStatus(reletOrder.getReletOrderStatus())){
 
-        return true;
+                    return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_WAIT_HANDLE;
+                }
+                else {
+
+                    if (currentTime.compareTo(reletOrder.getRentStartTime()) < 0){  //如果当前续租还没开始  不允许再次续租
+
+                        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_EXIST_SUCCESS_RELET_NOT_BEGIN;
+                    }
+                }
+            }
+        }
+
+        return CanReletOrderStatus.CAN_RELET_ORDER_STATUS_YES;
     }
 
     @Override
@@ -1833,7 +1836,7 @@ public class OrderServiceImpl implements OrderService {
         order.setK3ReturnOrderDetailList(k3ReturnOrderDetailList);
 
         //判断是否可续租
-        Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
+        Integer canReletOrder = isOrderCanRelet(order);
         order.setCanReletOrder(canReletOrder);
         Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
         order.setIsReletOrder(isReletOrder);
@@ -2456,7 +2459,7 @@ public class OrderServiceImpl implements OrderService {
             Order order = ConverterUtil.convert(orderDO, Order.class);
             orderDOMap.put(orderDO.getOrderNo(), order);
             //判断是否可续租
- 			Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
+ 			Integer canReletOrder = isOrderCanRelet(order);
             order.setCanReletOrder(canReletOrder);
             Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
@@ -2496,7 +2499,7 @@ public class OrderServiceImpl implements OrderService {
 
             Order order = ConverterUtil.convert(orderDO, Order.class);
             //判断是否可续租
-            Integer canReletOrder = isOrderCanRelet(order) ? CommonConstant.YES : CommonConstant.NO;
+            Integer canReletOrder = isOrderCanRelet(order);
             order.setCanReletOrder(canReletOrder);
             Integer isReletOrder = order.getReletOrderId() != null ? CommonConstant.YES : CommonConstant.NO;
             order.setIsReletOrder(isReletOrder);
