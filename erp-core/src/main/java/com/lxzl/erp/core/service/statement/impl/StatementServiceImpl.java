@@ -3999,6 +3999,36 @@ public class StatementServiceImpl implements StatementService {
         return result;
     }
 
+    @Override
+    public ServiceResult<String, BigDecimal> batchReCreateReletOrderStatement(List<String> reletOrderNos) {
+        ServiceResult<String, BigDecimal> serviceResult=new ServiceResult<>();
+        if(CollectionUtil.isNotEmpty(reletOrderNos)){
+            BigDecimal needPay=BigDecimal.ZERO;
+            for(String reletOrderNo:reletOrderNos){
+                ReletOrderDO reletOrderDO = reletOrderMapper.findByReletOrderNo(reletOrderNo);
+                if(reletOrderDO==null){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.RELET_ORDER_NOT_EXISTS);
+                    return serviceResult;
+                }
+                if( PayStatus.PAY_STATUS_PAID_PART.equals(reletOrderDO.getPayStatus()) || PayStatus.PAY_STATUS_PAID.equals(reletOrderDO.getPayStatus())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(ErrorCode.RELET_ORDER_HAS_PAID);
+                    return serviceResult;
+                }
+                ServiceResult<String, BigDecimal> result =reCreateReletOrderStatement(reletOrderNo);
+                if(!ErrorCode.SUCCESS.equals(result.getErrorCode())){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚
+                    serviceResult.setErrorCode(result.getErrorCode());
+                    return serviceResult;
+                }
+                needPay=needPay.add(result.getResult());
+            }
+            serviceResult.setResult(needPay);
+        }
+        return serviceResult;
+    }
+
     @Autowired
     private OrderMapper orderMapper;
 
