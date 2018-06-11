@@ -95,8 +95,6 @@ public class K3ServiceImpl implements K3Service {
     private String k3HistoricalRefundListUrl = "http://103.239.207.170:9090/SEOutstock/list";
     String pw = "5113f85e846056594bed8e2ece8b1cbd";
 
-    private String K3PassWord = "123";
-
 //    private static final String k3ReletOrderUrl = "http://103.239.207.170:9090/OrderConfirml/OeletOrder";
 
     private static final String K3_RELET_ORDER_PW = "5113f85e846056594bed8e2ece8b1cbd";
@@ -772,8 +770,7 @@ public class K3ServiceImpl implements K3Service {
         String response = null;
 
         formSEOrderConfirml.setOrderNo(orderConfirmChangeToK3Param.getOrderNo());
-        String PW = MD5Util.encrypt(K3PassWord).toUpperCase();
-        formSEOrderConfirml.setPW(PW);
+        formSEOrderConfirml.setPW(pw);
 
         List<ChangeOrderItemParam> changeOrderItemParamList = orderConfirmChangeToK3Param.getChangeOrderItemParamList();
         if (CollectionUtil.isNotEmpty(changeOrderItemParamList)){
