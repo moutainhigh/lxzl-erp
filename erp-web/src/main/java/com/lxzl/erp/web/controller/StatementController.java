@@ -5,6 +5,7 @@ import com.lxzl.erp.common.domain.ServiceResult;
 import com.lxzl.erp.common.domain.erpInterface.statementOrder.InterfaceStatementOrderQueryParam;
 import com.lxzl.erp.common.domain.k3.pojo.returnOrder.K3ReturnOrder;
 import com.lxzl.erp.common.domain.order.pojo.Order;
+import com.lxzl.erp.common.domain.reletorder.pojo.ReletOrder;
 import com.lxzl.erp.common.domain.statement.BatchReCreateOrderStatementParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderMonthQueryParam;
 import com.lxzl.erp.common.domain.statement.StatementOrderPayParam;
@@ -137,5 +138,11 @@ public class StatementController extends BaseController {
     public Result batchReCreateOrderStatement(@RequestBody BatchReCreateOrderStatementParam batchReCreateOrderStatementParam) {
         String result = statementService.batchReCreateOrderStatement(batchReCreateOrderStatementParam.getOrderNoList(),batchReCreateOrderStatementParam.getCustomerNoList());
         return resultGenerator.generate(result);
+    }
+
+    @RequestMapping(value = "reCreateReletOrderStatement", method = RequestMethod.POST)
+    public Result reCreateReletOrderStatement(@RequestBody ReletOrder reletOrder) {
+        ServiceResult<String, BigDecimal> serviceResult = statementService.reCreateReletOrderStatement(reletOrder.getReletOrderNo());
+        return resultGenerator.generate(serviceResult.getErrorCode(), serviceResult.getResult());
     }
 }
