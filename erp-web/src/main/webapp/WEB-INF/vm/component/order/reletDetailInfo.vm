@@ -24,7 +24,7 @@
                 <dl class="dl-horizontal dl-horizontal-rental">
                     <dt><label style="letter-spacing: 1em">税率</label><span class="mr5">：</span></dt>
                     <dd class="mb5">
-                        <em style="font-style: normal;" class="text-info mr5">17%:</em><em style="font-style: normal;" class="mr15">{{highTaxRate}}%</em>
+                        <em style="font-style: normal;" class="text-info mr5">16%:</em><em style="font-style: normal;" class="mr15">{{highTaxRate}}%</em>
                         <em style="font-style: normal;" class="text-info mr5">6%:</em><em style="font-style: normal;">{{lowTaxRate}}%</em>
                     </dd>
 
